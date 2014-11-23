@@ -1,0 +1,21 @@
+#!/bin/sh
+[ -f /etc/banner ] && cat /etc/banner
+
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export HOME=$(grep -e "^${USER:-root}:" /etc/passwd | cut -d ":" -f 6)
+export HOME=${HOME:-/root}
+
+m=$(cat /proc/cpuinfo | sed -n '/machine/s#machine[ 	]*:##p')
+export PS1='\[\033[01;31m\]$m\[\033[00m\] @ \[\033[01;37m\]\h\[\033[00m\]:\w\$ '
+
+[ -x /bin/more ] || alias more=less
+[ -x /usr/bin/vim ] && alias vi=vim || alias vim=vi
+
+[ -z "$KSH_VERSION" -o \! -s /etc/mkshrc ] || . /etc/mkshrc
+
+[ -x /usr/bin/arp ] || arp() { cat /proc/net/arp; }
+[ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
+
+alias ls='ls -F'
+alias dir='ls -lF'
+

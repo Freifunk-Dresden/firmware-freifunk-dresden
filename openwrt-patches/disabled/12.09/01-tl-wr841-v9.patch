@@ -1,0 +1,232 @@
+--- buildroot.original/target/linux/ar71xx/base-files/etc/diag.sh	2014-04-23 21:33:04.000000000 +0200
++++ buildroot/target/linux/ar71xx/base-files/etc/diag.sh	2014-05-27 12:10:31.746734508 +0200
+@@ -143,6 +143,9 @@
+ 	tl-wr703n)
+ 		status_led="tp-link:blue:system"
+ 		;;
++	tl-wr841n-v9)
++		status_led="tp-link:green:qss"
++		;;
+ 	tl-wr2543n)
+ 		status_led="tp-link:green:wps"
+ 		;;
+--- buildroot.original/target/linux/ar71xx/base-files/etc/uci-defaults/leds	2014-04-23 21:33:04.000000000 +0200
++++ buildroot/target/linux/ar71xx/base-files/etc/uci-defaults/leds	2014-05-27 11:55:08.602736810 +0200
+@@ -158,6 +158,15 @@
+ 	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
+ 	;;
+ 
++tl-wr841n-v9)
++	ucidef_set_led_netdev "wan" "WAN" "tp-link:green:wan" "eth1"
++	ucidef_set_led_switch "lan1" "LAN1" "tp-link:green:lan1" "switch0" "0x10"
++	ucidef_set_led_switch "lan2" "LAN2" "tp-link:green:lan2" "switch0" "0x08"
++	ucidef_set_led_switch "lan3" "LAN3" "tp-link:green:lan3" "switch0" "0x04"
++	ucidef_set_led_switch "lan4" "LAN4" "tp-link:green:lan4" "switch0" "0x02"
++	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
++	;;
++
+ tl-wr941nd | \
+ tl-wr1041n-v2)
+ 	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
+--- buildroot.original/target/linux/ar71xx/base-files/etc/uci-defaults/network	2014-04-23 21:33:04.000000000 +0200
++++ buildroot/target/linux/ar71xx/base-files/etc/uci-defaults/network	2014-05-27 11:56:21.374736629 +0200
+@@ -191,6 +191,7 @@
+ tl-wr741nd |\
+ tl-wr741nd-v4 |\
+ tl-wr841n-v7 |\
++tl-wr841n-v9 |\
+ whr-g301n |\
+ whr-hp-g300n |\
+ whr-hp-gn |\
+--- buildroot.original/target/linux/ar71xx/base-files/lib/ar71xx.sh	2014-04-23 21:33:04.000000000 +0200
++++ buildroot/target/linux/ar71xx/base-files/lib/ar71xx.sh	2014-05-27 12:09:35.010734650 +0200
+@@ -375,6 +375,9 @@
+ 	*"TL-WR841N/ND v8")
+ 		name="tl-wr841n-v8"
+ 		;;
++	*"TL-WR841N/ND v9")
++		name="tl-wr841n-v9"
++		;;
+ 	*TL-WR941ND)
+ 		name="tl-wr941nd"
+ 		;;
+--- buildroot.original/target/linux/ar71xx/base-files/lib/upgrade/platform.sh	2014-04-23 21:33:04.000000000 +0200
++++ buildroot/target/linux/ar71xx/base-files/lib/upgrade/platform.sh	2014-05-27 12:15:39.422733741 +0200
+@@ -162,6 +162,7 @@
+ 	tl-wr841n-v1 | \
+ 	tl-wr841n-v7 | \
+ 	tl-wr841n-v8 | \
++	tl-wr841n-v9 | \
+ 	tl-wr941nd | \
+ 	tl-wr1041n-v2 | \
+ 	tl-wr1043nd | \
+--- buildroot.original/target/linux/ar71xx/config-3.3	2014-04-23 21:33:04.000000000 +0200
++++ buildroot/target/linux/ar71xx/config-3.3	2014-05-27 12:04:25.586735421 +0200
+@@ -69,6 +69,7 @@
+ CONFIG_ATH79_MACH_TL_WR741ND_V4=y
+ CONFIG_ATH79_MACH_TL_WR841N_V1=y
+ CONFIG_ATH79_MACH_TL_WR841N_V8=y
++CONFIG_ATH79_MACH_TL_WR841N_V9=y
+ CONFIG_ATH79_MACH_TL_WR941ND=y
+ CONFIG_ATH79_MACH_UBNT=y
+ CONFIG_ATH79_MACH_UBNT_XM=y
+--- buildroot.original/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c	1970-01-01 01:00:00.000000000 +0100
++++ buildroot/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c	2014-05-27 12:11:36.194734347 +0200
+@@ -0,0 +1,138 @@
++/*
++ *  TP-LINK TL-WR841N/ND v9
++ *
++ *  Copyright (C) 2014 Matthias Schiffer <mschiffer@universe-factory.net>
++ *
++ *  This program is free software; you can redistribute it and/or modify it
++ *  under the terms of the GNU General Public License version 2 as published
++ *  by the Free Software Foundation.
++ */
++
++#include <linux/gpio.h>
++#include <linux/platform_device.h>
++
++#include <asm/mach-ath79/ath79.h>
++#include <asm/mach-ath79/ar71xx_regs.h>
++
++#include "common.h"
++#include "dev-eth.h"
++#include "dev-gpio-buttons.h"
++#include "dev-leds-gpio.h"
++#include "dev-m25p80.h"
++#include "dev-wmac.h"
++#include "machtypes.h"
++
++#define TL_WR841NV9_GPIO_LED_WLAN	13
++#define TL_WR841NV9_GPIO_LED_QSS	3
++#define TL_WR841NV9_GPIO_LED_WAN	4
++#define TL_WR841NV9_GPIO_LED_LAN1	16
++#define TL_WR841NV9_GPIO_LED_LAN2	15
++#define TL_WR841NV9_GPIO_LED_LAN3	14
++#define TL_WR841NV9_GPIO_LED_LAN4	11
++
++#define TL_WR841NV9_GPIO_BTN_RESET	12
++#define TL_WR841NV9_GPIO_BTN_WIFI	17
++
++#define TL_WR841NV9_KEYS_POLL_INTERVAL	20	/* msecs */
++#define TL_WR841NV9_KEYS_DEBOUNCE_INTERVAL (3 * TL_WR841NV9_KEYS_POLL_INTERVAL)
++
++static const char *tl_wr841n_v9_part_probes[] = {
++	"tp-link",
++	NULL,
++};
++
++static struct flash_platform_data tl_wr841n_v9_flash_data = {
++	.part_probes	= tl_wr841n_v9_part_probes,
++};
++
++static struct gpio_led tl_wr841n_v9_leds_gpio[] __initdata = {
++	{
++		.name		= "tp-link:green:lan1",
++		.gpio		= TL_WR841NV9_GPIO_LED_LAN1,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:lan2",
++		.gpio		= TL_WR841NV9_GPIO_LED_LAN2,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:lan3",
++		.gpio		= TL_WR841NV9_GPIO_LED_LAN3,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:lan4",
++		.gpio		= TL_WR841NV9_GPIO_LED_LAN4,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:qss",
++		.gpio		= TL_WR841NV9_GPIO_LED_QSS,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:wan",
++		.gpio		= TL_WR841NV9_GPIO_LED_WAN,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:wlan",
++		.gpio		= TL_WR841NV9_GPIO_LED_WLAN,
++		.active_low	= 1,
++	},
++};
++
++static struct gpio_keys_button tl_wr841n_v9_gpio_keys[] __initdata = {
++	{
++		.desc		= "Reset button",
++		.type		= EV_KEY,
++		.code		= KEY_RESTART,
++		.debounce_interval = TL_WR841NV9_KEYS_DEBOUNCE_INTERVAL,
++		.gpio		= TL_WR841NV9_GPIO_BTN_RESET,
++		.active_low	= 1,
++	}, {
++		.desc		= "WIFI button",
++		.type		= EV_KEY,
++		.code		= KEY_RFKILL,
++		.debounce_interval = TL_WR841NV9_KEYS_DEBOUNCE_INTERVAL,
++		.gpio		= TL_WR841NV9_GPIO_BTN_WIFI,
++		.active_low	= 1,
++	}
++};
++
++
++static void __init tl_ap143_setup(void)
++{
++	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
++	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
++	u8 tmpmac[ETH_ALEN];
++
++	ath79_register_m25p80(&tl_wr841n_v9_flash_data);
++
++	ath79_setup_ar933x_phy4_switch(false, false);
++
++	ath79_register_mdio(0, 0x0);
++
++	/* LAN */
++	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 0);
++	ath79_register_eth(1);
++
++	/* WAN */
++	ath79_switch_data.phy4_mii_en = 1;
++	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_MII;
++	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
++	ath79_register_eth(0);
++
++	ath79_init_mac(tmpmac, mac, 0);
++	ath79_register_wmac(ee, tmpmac);
++}
++
++static void __init tl_wr841n_v9_setup(void)
++{
++	tl_ap143_setup();
++
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wr841n_v9_leds_gpio),
++				 tl_wr841n_v9_leds_gpio);
++
++	ath79_register_gpio_keys_polled(1, TL_WR841NV9_KEYS_POLL_INTERVAL,
++					ARRAY_SIZE(tl_wr841n_v9_gpio_keys),
++					tl_wr841n_v9_gpio_keys);
++}
++
++MIPS_MACHINE(ATH79_MACH_TL_WR841N_V9, "TL-WR841N-v9", "TP-LINK TL-WR841N/ND v9",
++	     tl_wr841n_v9_setup);
+--- buildroot.original/target/linux/ar71xx/image/Makefile	2014-04-23 21:33:04.000000000 +0200
++++ buildroot/target/linux/ar71xx/image/Makefile	2014-05-27 12:14:36.778733897 +0200
+@@ -879,6 +879,7 @@
+ $(eval $(call SingleProfile,TPLINK-LZMA,$(fs_64kraw),TLWR740NV4,tl-wr740n-v4,TL-WR741ND-v4,ttyATH0,115200,0x07400004,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,$(fs_64kraw),TLWR741NV4,tl-wr741nd-v4,TL-WR741ND-v4,ttyATH0,115200,0x07410004,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,$(fs_64kraw),TLWR841NV8,tl-wr841n-v8,TL-WR841N-v8,ttyS0,115200,0x08410008,1,4Mlzma))
++$(eval $(call SingleProfile,TPLINK-LZMA,$(fs_64kraw),TLWR841NV9,tl-wr841n-v9,TL-WR841N-v9,ttyS0,115200,0x08410009,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,$(fs_64kraw),TLWR1041,tl-wr1041n-v2,TL-WR1041N-v2,ttyS0,115200,0x10410002,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,$(fs_64kraw),TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
+ $(eval $(call SingleProfile,TPLINK-LZMA,$(fs_64kraw),TLWDR3600V1,tl-wdr3600-v1,TL-WDR4300,ttyS0,115200,0x36000001,1,8Mlzma))
+@@ -923,7 +924,7 @@
+ $(eval $(call MultiProfile,TLWA7510,TLWA7510NV1))
+ $(eval $(call MultiProfile,TLWR740,TLWR740NV1 TLWR740NV3 TLWR740NV4))
+ $(eval $(call MultiProfile,TLWR741,TLWR741NV1 TLWR741NV2 TLWR741NV4))
+-$(eval $(call MultiProfile,TLWR841,TLWR841NV15 TLWR841NV3 TLWR841NV5 TLWR841NV7 TLWR841NV8))
++$(eval $(call MultiProfile,TLWR841,TLWR841NV15 TLWR841NV3 TLWR841NV5 TLWR841NV7 TLWR841NV8 TLWR841NV9))
+ $(eval $(call MultiProfile,TLWR941,TLWR941NV2 TLWR941NV3 TLWR941NV4))
+ $(eval $(call MultiProfile,TLWDR4300,TLWDR3600V1 TLWDR4300V1 TLWDR4310V1))
+ $(eval $(call MultiProfile,UBNT,UBNTAIRROUTER UBNTRS UBNTRSPRO UBNTLSSR71 UBNTBULLETM UBNTROCKETM UBNTNANOM UBNTUNIFI UBNTUNIFIOUTDOOR))

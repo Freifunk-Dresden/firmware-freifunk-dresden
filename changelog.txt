@@ -1,0 +1,219 @@
+
+2014-Nov-10 (2.1.5)
+--------------------------------------------------
+sysinfo                 - use cached internet tunnel info if present
+routing			- only accept freifunk ip ranges (no internet ips), protect against HNA redirecting
+
+
+2014-Nov-01 (2.1.4)
+--------------------------------------------------
+firewall		- fix problems when some nodes are not reachable
+wifi			- change back to HT20. HT40 not suitable for adhoc in mesh network
+
+2014-Oct-20 (2.1.3)
+--------------------------------------------------
+internal		- new node number calulation
+bmxd			- change routing protocoll daemon.  
+			  to fix some routing/gateway instabilities 
+                          use primary/non-primary interfaces and different IPs
+			  firewall
+gui: node number	- display node number in "Nodes" view
+gui: gateway info	- add gateway infos/statistic
+gui: status bar		- add device name 
+sysinfo			- add gateway statistic
+wifi 11ng		- switch to 11ng to get support for MIMO and higher data rates
+
+
+2014-Aug-02 (2.1.2)
+--------------------------------------------------
+license		- correct license text (now GPL3)
+gui-gateways	- show available and selected gateway
+bmxd		- enable two-way gateway tunnel
+
+2014-July-14 (2.1.1)
+--------------------------------------------------
+custom splash	- change of logo possible; solve problems with links to different media
+gui		- minor text corrections
+splash		- add configuration to disable splash
+splash url	- add support to include html code from other webservers (no images)
+license text	- simple language support. set via HTTP_ACCEPT_LANGUAGE
+
+
+2014-July-12 (2.1.0)
+--------------------------------------------------
+wifi		- max 32 characters for essid
+wifi		- remove antenna setting (always use mimo)
+autodisconnect	- fix setting of disconnect time
+sysinfo-json	- routing table
+splash		- remove deadlock
+webserver	- new version uhttpd (hopefully solves hanging on port 81)
+internal/gui	- add suport for Meisen
+software packets- add support to install software packages
+upgrade history - display firmware upgrade history
+internal/upgrade- correct bootconfig/upgrade process
+custom splash	- correct display of flash usage for custom html
+splash		- workround for Microsoft Phone 8 
+
+
+2014-May-21 (2.0.07) 
+--------------------------------------------------
+traffic shaping - initial added
+splash		- splash screen: mobile layout; 
+splash		- custom html support
+splash		- usage rules, pico agreement
+splash		- storage of mac addresses
+auto disconnect - allows to disconnect wifi clients after some time
+firewall	- some firewall fixes
+gui		- firewall shortcut for SPLASH users
+gui		- https/http information
+gui		- version info at footer
+license/copyright - openwrt license, copy right information added
+sysinfo		- system info request support added, to allow freifunk-dresden.de to build topology graph, collect statistics
+backbone	- avoid backbone connection via wifi
+log		- fix dhcp log
+gui		- remove bmxd ajax, which was the reason for bmxd crashes
+gui		- change http GET request to POST request (only all POST formulars) for security reasons
+internal	- file upload clean up
+internal	- version upgrade processing added
+
+
+
+2013-Nov-05 (2.0.2) test version 002
+--------------------------------------------------
+firewall	- security fix; add ports for speedtest
+gui		- add tx power check
+wlan		- correct regional domain (DE)
+sysinfo		- add missing data 
+
+2013-Okt-26 (2.0.1) test version 001
+--------------------------------------------------
+firewall	- correct forwarding (node2node)
+
+2013-Okt-24 (2.0.0) test version 001
+--------------------------------------------------
+openwrt		- port from whiterussian to openwrt 12.09 / 10.03
+backbone	- remove 172er network (uses now wifi network ip range)
+
+2013-Mar-14 (1.6.36-dd2.4d)
+--------------------------------------------------
+ddmesh_ipcalc	- change ip range 10.12.0.0/16 to 10.200.0.0/16 (because of conflicts with Graz)
+		- change ip calulation to support up to 63 dhcp clients (15 previously)
+google-maps	- add random number to google maps url to always have uptodate map (google caches url requests with kmz data files)
+
+2012-Feb-12 (1.6.36-dd2.3d)
+--------------------------------------------------
+firewall	- reworked (one file)
+splash		- change checkbox position
+register	- add automatic registration. No need to ask for project/node number.
+node number	- change project/node number to global node number (independed of location)
+dnsmasq		- dns resolution changed to remove patched clibc
+		- configuration changed to resolve router host names (e.g.r100.ddmesh.de) (if router has connection via freifunk network to ddmesh.de)
+json		- add json-info support
+webinterface	- add ajax support
+		- automatic register of router on register.ddmesh.de (remove easy setup page)
+		- move some pages to admin area
+		- add flush to have web pages updated in real time during some admin operations
+		- reordering of web menu
+		- add some configuration switches to enable/disable access to admin area from freifunk network or wan (see "System")
+vpn		- fix routing problem by using a separate public ip for vpn.ddmesh.de
+ddmesh_ipcalc	- router ip calculation implemented as lua script
+hotspot list	- hotspot list on ddmesh.de shows contact data stored in each node. 
+		- email address in this list displayed as image
+ipkg		- change handling of ipkg
+tool:speedtest	- simple speed test function added to check connection speed to other routers
+auto-setup	- easy setup replaces by auto-setup (automatic node registration if it has access to register.ddmesh.de via internet or freifunk network)
+backbone	- add indicator if a backbone connection is active
+private network - add indicator if private network connection is active
+
+
+
+2009-Jun-11 (1.6.36-dd2.2)
+--------------------------------------------------
+dnsmasq-log	- disable logging to syslog, which makes the syslog unusable
+webinterface	- status line shows currently selected internet gateway
+toplology	- support corrected to detect nodes with internet connection correctly
+bmxd		- update of routing deamon
+
+
+2009-Feb-23 (1.6.36-dd2.1)
+--------------------------------------------------
+KIT		- uses version 1.6.36 to generate firmware
+webinterface	- icons added, wlan scan beautified
+vtun		- slow tincd replaced by vtun (backbone,private network)
+private network	- support to create a vpn connection between lan ports of different routers via freifunk net
+gateway check	- fixed a bug where gateway of a route was not detected every time
+software list	- "Software (Packetliste)" does only show well tested packets provided by freifunk dresden
+		  System packages are not removable (button removed)
+splash		- check added for ip addresses that where not provided by dhcp server (message is displayed)
+easy setup	- enables mini_fo by default, to overwrite old settings from different firmwares
+auto dns	- fixes a bug while setting dns server by batmand (batmand,batmand.gw.sh)
+display nodes	- clean up node display. quality is displayed for all nodes, IPs are only links if they belong to 10er network
+display hna	- only nodes that have real hna are displayed
+easy setup	- resets password to "admin"
+RTS/CTS		- uses new settings for RTS/CTS (from freifunk berlin nord ost)
+batmand-bmxd   	- batmand (pthread-version) replaced by batman-experimental (thread-less), no need for pthread library
+www-links	- www links updated
+
+
+2008-Jul-05 (1.6.28-dd1.10)
+--------------------------------------------------
+https		- xrelayd added to support https
+google maps	- google maps from ddmesh.de now accessible from firmware (if inet present)
+splash 		- autoclean bugfix (splash was displayed (mac removed) while dhcp was refreshed and active
+md5		- md5 generating corrected for firmware download at download.ddmesh.de
+
+
+2008-Jun-04 (1.6.28-dd1.9d)
+--------------------------------------------------
+batmand		- auto DNS detect added. this is needed to make configuration of DNS easier
+
+2008-Jun-04 (1.6.28-dd1.9c)
+--------------------------------------------------
+firewall	- backbone port for WANDEV enabled (INPUT), depending on if backbone is enabled
+
+2008-Mai-24 (1.6.28-dd1.9b)
+--------------------------------------------------
+DNS		- fix DNS server for pppoed and dhcp for internet lan connection
+batmand		- fix where batman ignores the backbone interface if connection was disabled
+batmand		- fix for gateway connection if backbone connection was brocken
+2D Barcode	- added 2D Barcode
+
+
+2008-Apr-06 (1.6.28-dd1.9a)
+--------------------------------------------------
+splash		- fix for stored mac addresses. Are now restored at boot time
+firewall	- some firewall changes and fixes to access internet from lan
+routing		- avoid routing of private ip ranges
+
+2008-Mrz-28 (1.6.28-dd1.9)   
+--------------------------------------------------
+splash		- accept screen now displays images
+batmand		- rev1023 bugfixes for memory leak when routing class changes
+dnsmasq		- udhcpd replaced by dnsmasq (dhcp,dns)
+dns		- router acts as dns server for client
+linux kernel	- firmware generated from kit 1.6.28 which contains some fixes when many network connections are active
+dhcp log	- dhcp log added to web interface
+
+
+2008-Mrz-7 (1.4.5-dd1.8h) RC2 - backbone 
+--------------------------------------------------
+backbone    - firewall fix that has blocked batmand messages
+webif       - routing throw entries removed
+
+2008-Feb-20 (1.4.5-dd1.8g) RC1 - batmand,firewall,gps
+--------------------------------------------------
+Diese Firmware ist als Release Candidate eingestuft. Treten keine Probleme auf, so wird diese als offizielle Version auf v 1.9 gesetzt
+
+batmand - Fehler behoben, Backbone kann jetzt genutzt werden
+firewall    - firewall regel angepasst, damit über das backbone dns Antworten empfangen werden können
+gps         - GPS Koordinaten können jetzt bei den Kontaktinfos eingetragen werden, ohne das man über EasySetup gehen muss, bei der verschiedene
+                 Einstellungen zurück gesetzt werden.
+
+2008-Feb-13 (1.4.5-dd1.8f) Testfirmware - pppoe,dyndns 
+--------------------------------------------------
+pppoe und dyndns funktioniert. batmand hat immer noch Probleme wenn das
+Backbone aktiv ist. Wenn beim Backbone keine Verbindung zustande kommt,
+bleibt batmand irgendwann stehen. 
+
+2008-Feb-13 - changelog datei ausversehen gelöscht
+--------------------------------------------------

@@ -1,0 +1,29 @@
+--- sources/ip.h	2013-10-15 00:30:49.058466198 +0200
++++ sources/ip_neu.h	2013-10-15 00:31:08.522292847 +0200
+@@ -349,6 +349,26 @@
+ /* copy DSCP from the outer packet */
+ #define IP6_TNL_F_RCV_DSCP_COPY 0x10
+ 
++#ifdef __CHECKER__
++#define __bitwise__ __attribute__((bitwise))
++#else
++#define __bitwise__
++#endif
++#ifdef __CHECK_ENDIAN__
++#define __bitwise __bitwise__
++#else
++#define __bitwise
++#endif
++
++typedef __u16 __bitwise __le16;
++typedef __u16 __bitwise __be16;
++typedef __u32 __bitwise __le32;
++typedef __u32 __bitwise __be32;
++typedef __u64 __bitwise __le64;
++typedef __u64 __bitwise __be64;
++
++typedef __u16 __bitwise __sum16;
++typedef __u32 __bitwise __wsum;
+ 
+ struct ip6_tnl_parm {
+         char name[IFNAMSIZ]; /* name of tunnel device */

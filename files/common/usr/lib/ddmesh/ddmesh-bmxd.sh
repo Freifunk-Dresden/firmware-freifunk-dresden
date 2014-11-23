@@ -1,0 +1,135 @@
+#! /bin/sh
+
+ARG1=$1
+
+DAEMON=bmxd
+DAEMON_PATH=/usr/bin
+DB_PATH=/var/lib/ddmesh/bmxd
+RUN_STATUS_FILE=/var/run/batman-status-running
+#save added interfaces (from vtun) used to add interfaces if batmand has crashed
+IF_FILES=/var/lib/ddmesh/bmxd/interfaces
+STAT_DIR=/var/statistic
+
+mkdir -p $DB_PATH
+mkdir -p $IF_FILES
+mkdir -p $STAT_DIR
+
+eval $(/usr/bin/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+
+ROUTING_CLASS="$(uci -q get ddmesh.bmxd.routing_class)"
+ROUTING_CLASS="${ROUTING_CLASS:-3}"
+ROUTING_CLASS="-r $ROUTING_CLASS --gateway_hysteresis 10"
+
+GATEWAY_CLASS="$(uci -q get ddmesh.bmxd.gateway_class)"
+GATEWAY_CLASS="${GATEWAY_CLASS:-512/512}"
+GATEWAY_CLASS="-g $GATEWAY_CLASS"
+
+PREFERED_GATEWAY="$(uci -q get ddmesh.bmxd.prefered_gateway)"
+test -n "$PREFERED_GATEWAY" && PREFERED_GATEWAY="-p $PREFERED_GATEWAY"
+#echo "$PREFERED_GATEWAY"
+
+NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
+
+# create a virtual interface for primary interface. loopback has 
+# 127er IP would be broadcasted
+
+PRIMARY_IF="bmx_prime"
+if [ "$1" = "start" ]; then
+        ip link add link lo name $PRIMARY_IF type bridge
+        ip addr add $_ddmesh_ip/$_ddmesh_netpre broadcast $_ddmesh_broadcast dev $PRIMARY_IF 
+	ip link set dev $PRIMARY_IF up
+fi
+_IF="dev=$PRIMARY_IF /linklayer 0"
+
+#add wifi
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
+_IF="$_IF dev=$net_device"
+
+#add all possible tbb interfaces
+i=0;
+while [ $i -lt "$NUMBER_OF_CLIENTS" ]
+do
+	_IF="$_IF dev=tbb$i"
+	i=$((i+1))
+done
+
+#add active backbone interfaces
+#p=$(pwd)
+#cd $IF_FILES
+#for i in $(ls)
+#do
+#	_IF="$_IF --dev $i"
+#done
+#cd $p
+
+#echo "interfaces: $_IF"
+
+
+#default start with no gatway.will be updated by gateway_check.sh
+SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
+TUNNEL_OPTS="--one-way-tunnel 1 --two-way-tunnel 2"
+DAEMON_OPTS="$SPECIAL_OPTS $TUNNEL_OPTS $ROUTING_CLASS $PREFERED_GATEWAY $_IF"
+
+
+test -x $DAEMON_PATH/$DAEMON || exit 0
+
+case "$ARG1" in
+  start)
+	echo "Starting $DAEMON: opt: $DAEMON_OPTS"
+	$DAEMON_PATH/$DAEMON $DAEMON_OPTS
+	;;
+
+  stop)
+	echo "Stopping $DAEMON: "
+	killall -9 $DAEMON
+	;;
+
+  restart|force-reload)
+	$0 stop
+	sleep 5
+	$0 start
+	;;
+
+  gateway)
+        echo $DAEMON -c $GATEWAY_CLASS
+        $DAEMON_PATH/$DAEMON -c $GATEWAY_CLASS
+        ;;
+
+  no_gateway)
+        echo $DAEMON -c $ROUTING_CLASS
+        $DAEMON_PATH/$DAEMON -c $ROUTING_CLASS
+        ;;
+  check)
+	test -z "$(pidof $DAEMON)" && logger -s "$DAEMON not running - restart" && $0 restart && exit
+        test -n "$(pidof $DAEMON)" && test ! -f "$RUN_STATUS_FILE" && (
+	touch $RUN_STATUS_FILE
+	#$DAEMON_PATH/$DAEMON -c --routes > $DB_PATH/routes
+	$DAEMON_PATH/$DAEMON -c --gateways > $DB_PATH/gateways
+	$DAEMON_PATH/$DAEMON -c --services > $DB_PATH/services
+	$DAEMON_PATH/$DAEMON -c --links > $DB_PATH/links
+	$DAEMON_PATH/$DAEMON -c --originators > $DB_PATH/originators
+	$DAEMON_PATH/$DAEMON -c --hnas > $DB_PATH/hnas
+	$DAEMON_PATH/$DAEMON -ci > $DB_PATH/info
+	rm $RUN_STATUS_FILE
+	)
+
+        ;;
+
+  addif)
+#	$DAEMON_PATH/$DAEMON -c --dev $2
+	touch $IF_FILES/$2
+	;;
+
+  delif)
+#	$DAEMON_PATH/$DAEMON -c --dev -$2
+	rm $IF_FILES/$2
+	;;
+
+  *)
+        echo "Usage: $0 {start|stop|restart|gateway|no_gateway|check}" >&2
+        exit 1         ;;
+
+
+esac
+
+exit 0

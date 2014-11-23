@@ -1,0 +1,13 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) freiunk-dresden 
+
+START=99
+start() {
+
+	# this is called after all standard initialisations are finished and
+	# operwrt has created the jffs2 (overlay) file system and switched to it.
+	# run my own init from here because if /etc/config/ddmesh does not exist.
+	# /usr/lib/ddmesh/ddmesh-init.d.sh -> /usr/lib/ddmesh/ddmesh-bootconfig.sh will reboot (before
+	# jffs2 is created in flash (endless reboot)
+	/usr/lib/ddmesh/ddmesh-init.d.sh start
+}

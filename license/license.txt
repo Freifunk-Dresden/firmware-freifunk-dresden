@@ -1,0 +1,113 @@
+
+License Notes
+----------------
+
+There are two different part. 
+* Part one covers the source code, tools and built enviroment.
+* Part two covers the usage of own created firmware, programs or other tools which are intented to be used or connected
+  to Dresden Freifunk Network
+
+The build environment can be used to build own router firmware which should be connected to Freifunk Dresden Network
+(after adding needed technical information to /etc/config/credentials)
+You can freely extent this firmware and use it to connect to Freifunk Dresden Network as long as GPL 3 AND 
+the rules (below) are fulfilled.
+
+When building own devices which should be connected to Freifunk Dresden Network (not using firmware sources),
+needed technical information and credentials are provided via website www.freifunk-dresden.de or linked Wikis.
+ 
+Using or extracting creditials from the router firmware is prohibit !
+Any credentials data/information do not fall under GPL. These data are private to Freifunk Dresden Firmware usage.
+
+Freifunk Dresden Firmware and all tools or build environment is free software, provided AS-IS and without any warranty.
+Copyright 2013 Freifunk Dresden
+
+When using network specific information which are needed to access Freifunk Dresden Network, you have to agree and fulfill
+some rules. If you not agree with this, you are not allow to connect to the Freifunk Dresden Network. 
+
+
+Used Licenses
+-----------------
+If not otherwise stated in the source files, the firmware is provided under the terms of the GNU General Public License Version 3. The exact license text can be found gpl3-en.txt .
+
+The OpenWrt distribution (precompiled images etc.) bundles a lot of third party applications and modules which are available under various other Open Source licenses or Public Domain. The sources for those packages can be found on the OpenWrt mirror. Please refer to these source packages to find out which license applies to them. 
+
+If not otherwise stated in the source files, the OpenWrt build environment is provided under the terms of the GNU General Public License Version 2. The exact GPLv2 license text can be found in the file LICENSE in the source repository at openwrt.org. 
+
+Addtional addes programs and its notes can be found at sources directory.
+
+Sources/Patches of changed GPL source code and binary sources developed by freifunk dresden, can be found in sources directory.
+All other Freifunk Dresden specific source code can also directly retrieved via ssh login into freifunk router (scripts, website, configs).
+
+The Freifunk Dresden firmware build system is provided as it is and without any warranty .
+
+
+Freifunk Dresden Rules
+---------------------------------------
+
+There are two different types of devices that are connected to Freifunk Dresden Network.
+One device type is specified as "Hotspot" and the other is specified simply as "Node".
+There are different rules for this devices.
+
+The idea is to ensure that each person that finds a hotspot in hotspot list or sees a hotspot
+via wifi scan, can connect to this hotspot either via wifi or extent the network with another
+hotspot (wifi router).
+All people that are invest money to extent the network should be able to connect to the network
+after they have setup a new hotspot.
+Also a public hotspot is listed at different website to build a map (see hotpsot list, Dresden Themenstadtplan,
+Freifunk Community maps,....)
+
+Hotpsot-Rules
+---------------
+All hotspot rules are fulfilled by official released firmware
+- must provide Wifi access via access point mode and Ad-hoc mode
+- must use same bssid used as used in official firmware (technical information can be found at website or can be requested)
+- must provide a splash-screen which is displayed to the end user. this splash screen must tell the user to respect
+  law and fair usage. for detailt information, please see website or source tree or check splash on other routers.
+  (Note that this is used and reqired by some courts to protect other Freifunk users)
+- must have valid contact information. at least a valid email address must be supplied.
+- must provide GPS coordinates (used by hotspot list or displayed be routers web page)
+- must fulfill piko agreement: forward any traffic, never modify or redirect traffic 
+- must fully act as router.
+- must use the registrator (registrator url is provided via website) to get a uniq node number.
+- must use the correct ip address calulation to get a unique IP address and avoid address conflicts.
+- must use only allowed parameters for routing protocol (bmxd)
+- must provide a webserver access to supply contact information, statistical information (optional),
+  routing information, backbone information (optional) to  Freifunk Dresden server.
+
+Other Nodes
+-------------
+Other nodes are devices that are connected to Freifunk Dresden Network. They can offer services or simply use the Network.
+But those devices have also some rules that are apply.
+
+- must NOT use "Freifunk Dresden" within there wifi ssid. (else other may think this is a Hotspot)
+- must NOT announce any network ip ranges (routing protocol is able to do this). annoucing internet ip addresses or
+  other private range addresses may disturb the complete routing of Freifunk Network.
+
+- must have valid contact information. at least a valid email address must be supplied.
+- must fulfill piko agreement: forward any traffic, never modify or redirect traffic 
+- must fully act as router.
+- must use the registrator (registrator url is provided via website) to get a uniq node number.
+- must use the correct ip address calulation to get a unique IP address and avoid address conflicts.
+- must use only allowed parameters for routing protocol (bmxd)
+- must provide a webserver access to supply contact information, statistical information (optional),
+  routing information, backbone information (optional) to  Freifunk Dresden server.
+  
+
+Technical information for routing protocol, firewall, wifi or needed supplied information are provided at website (or wiki)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr buildroot/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch buildroot.b/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch
+--- buildroot/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch	1970-01-01 01:00:00.000000000 +0100
++++ buildroot.b/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch	2014-05-31 12:09:02.917142623 +0200
+@@ -0,0 +1,41 @@
++diff -Naur --suppress-blank-empty --strip-trailing-cr a/arch/mips/ath79/Kconfig b/arch/mips/ath79/Kconfig
++--- a/arch/mips/ath79/Kconfig	2014-05-31 11:52:14.201696911 +0200
+++++ b/arch/mips/ath79/Kconfig	2014-05-31 11:57:48.029519813 +0200
++@@ -536,6 +536,15 @@
++ 	select ATH79_DEV_M25P80
++ 	select ATH79_DEV_WMAC
++
+++config ATH79_MACH_TL_WR841N_V9
+++	bool "TP-LINK TL-WR841N/ND v9 support"
+++	select SOC_QCA953X
+++	select ATH79_DEV_ETH
+++	select ATH79_DEV_GPIO_BUTTONS
+++	select ATH79_DEV_LEDS_GPIO
+++	select ATH79_DEV_M25P80
+++	select ATH79_DEV_WMAC
+++
++ config ATH79_MACH_TL_WR941ND
++ 	bool "TP-LINK TL-WR941ND support"
++ 	select SOC_AR913X
++diff -Naur --suppress-blank-empty --strip-trailing-cr a/arch/mips/ath79/machtypes.h b/arch/mips/ath79/machtypes.h
++--- a/arch/mips/ath79/machtypes.h	2014-05-31 11:52:14.217696894 +0200
+++++ b/arch/mips/ath79/machtypes.h	2014-05-31 11:56:18.181567053 +0200
++@@ -89,6 +89,7 @@
++ 	ATH79_MACH_TL_WR841N_V1,	/* TP-LINK TL-WR841N v1 */
++ 	ATH79_MACH_TL_WR841N_V7,	/* TP-LINK TL-WR841N/ND v7 */
++ 	ATH79_MACH_TL_WR841N_V8,	/* TP-LINK TL-WR841N/ND v8 */
+++	ATH79_MACH_TL_WR841N_V9,	/* TP-LINK TL-WR841N/ND v9 */
++ 	ATH79_MACH_TL_WR941ND,		/* TP-LINK TL-WR941ND */
++ 	ATH79_MACH_UBNT_AIRROUTER,	/* Ubiquiti AirRouter */
++ 	ATH79_MACH_UBNT_BULLET_M,	/* Ubiquiti Bullet M */
++diff -Naur --suppress-blank-empty --strip-trailing-cr a/arch/mips/ath79/Makefile b/arch/mips/ath79/Makefile
++--- a/arch/mips/ath79/Makefile	2014-05-31 11:52:14.205696905 +0200
+++++ b/arch/mips/ath79/Makefile	2014-05-31 11:55:37.049588785 +0200
++@@ -84,6 +84,7 @@
++ obj-$(CONFIG_ATH79_MACH_TL_WR741ND_V4)	+= mach-tl-wr741nd-v4.o
++ obj-$(CONFIG_ATH79_MACH_TL_WR841N_V1)	+= mach-tl-wr841n.o
++ obj-$(CONFIG_ATH79_MACH_TL_WR841N_V8)	+= mach-tl-wr841n-v8.o
+++obj-$(CONFIG_ATH79_MACH_TL_WR841N_V9)	+= mach-tl-wr841n-v9.o
++ obj-$(CONFIG_ATH79_MACH_TL_WR941ND)	+= mach-tl-wr941nd.o
++ obj-$(CONFIG_ATH79_MACH_TL_WR1041N_V2)	+= mach-tl-wr1041n-v2.o
++ obj-$(CONFIG_ATH79_MACH_TL_WR1043ND)	+= mach-tl-wr1043nd.o

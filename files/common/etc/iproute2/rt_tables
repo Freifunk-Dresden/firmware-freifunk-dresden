@@ -1,0 +1,28 @@
+#
+# reserved values
+#
+255	local
+254	main
+253	default
+0	unspec
+#
+# local
+#
+#1	inr.ruhep
+
+#
+# local
+#
+251     public_gateway
+250     local_gateway
+249     ping
+248     ping_unreachable
+247     vpn
+246     unreachable
+
+#batman
+64      bat_route
+65      bat_hna
+66      bat_default
+
+

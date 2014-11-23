@@ -1,0 +1,814 @@
+config defaults
+	option syn_flood	1
+	option input		REJECT	
+	option output		ACCEPT
+	option forward		REJECT
+	option custom_chains	1
+# Uncomment this line to disable ipv6 rules
+	option disable_ipv6	1
+
+config zone zone_lan
+	option name		lan
+	option network		'lan'
+	option input		REJECT
+	option output		ACCEPT
+	option forward		REJECT
+	option masq		0
+	option conntrack	1
+
+
+#mask: any->wan
+config zone zone_wan
+	option name		wan
+	option network		'wan'
+	option input		REJECT
+	option output		ACCEPT
+	option forward		REJECT
+	option masq		1
+	option mtu_fix		1
+	option conntrack	1
+
+#snat: lan->wifi
+#snat: wifi2->wifi
+config zone zone_wifi
+	option name		wifi
+	option network		'wifi'
+	option input		REJECT
+	option output		ACCEPT 
+	option forward		REJECT
+	option masq		0
+	option masq_src		''
+	option mtu_fix		0
+	option conntrack	1
+
+config zone zone_wifi2
+	option name		wifi2
+	option network		'wifi2'
+	option input		REJECT
+	option output		ACCEPT 
+	option forward		REJECT
+	option masq		0
+	option mtu_fix		0
+	option conntrack	1
+
+#interface is not brought up by network system, because it is created not by openwrt network environment.
+#it is created by vtun
+#mask: lan->bat
+#mask: wifi2->bat
+#mask: wifi->bat
+#mask: tbb->bat
+config zone zone_bat
+	option name		bat	
+	option network		'bat'
+	option input		REJECT
+	option output		ACCEPT 
+	option forward		REJECT
+	option masq		1 
+	option mtu_fix		0
+	option conntrack	1
+
+#interface is not brought up by network system, because it is created not by openwrt network environment.
+#it is created by vtun
+#snat: lan->tbb
+#snat: wifi2->tbb
+config zone zone_tbb
+	option name		tbb	
+	option network		'tbb'
+	option input		REJECT
+	option output		ACCEPT 
+	option forward		REJECT
+	option masq		0
+	option mtu_fix		0
+	option conntrack	1
+
+#interface is not brought up by network system, because it is created not by openwrt network environment.
+#created by openvpn
+#mask: any->vpn
+config zone 'zone_vpn'          
+        option name 'vpn'       
+        option network 'vpn'   
+        option input 'REJECT'  
+        option output 'ACCEPT' 
+        option forward 'REJECT'
+        option masq '1'        
+        option mtu_fix '1'     
+        option conntrack '1'
+
+#### zone forwarding rules
+## LAN 
+
+config rule forward_lan_wan_192_168
+	option name	forward_lan_wan_192_168
+	option proto	all
+	option src	lan
+	option dest	wan
+	option dest_ip	'192.168.0.0/16'
+	option target	REJECT	
+
+config rule forward_lan_wan_172_16
+	option name	forward_lan_wan_172_16
+	option proto	all
+	option src	lan
+	option dest	wan
+	option dest_ip	'172.16.0.0/12'
+	option target	REJECT
+
+config rule forward_lan_wan_10
+	option name	forward_lan_wan_10
+	option proto	all
+	option src	lan
+	option dest	wan
+	option dest_ip	'10.0.0.0/8'
+	option target	REJECT
+
+config rule forward_lan_wan
+	option name	forward_lan_wan
+	option proto	all
+	option src	lan
+	option dest	wan
+	option target	ACCEPT
+
+config rule forward_lan_tbb
+	option name	forward_lan_tbb
+	option proto	all
+	option src	lan
+	option dest	tbb
+	option target	ACCEPT
+
+config rule forward_lan_wifi
+	option name	forward_lan_wifi
+	option proto	all
+	option src	lan
+	option dest	wifi
+	option target	ACCEPT
+
+config rule forward_lan_bat_192_168
+	option name	forward_lan_bat_192_168
+	option proto	all
+	option src	lan
+	option dest	bat
+	option dest_ip	'192.168.0.0/16'	
+	option target	REJECT	
+
+config rule forward_lan_bat_172_16
+	option name	forward_lan_bat_172_16
+	option proto	all
+	option src	lan
+	option dest	bat
+	option dest_ip	'172.16.0.0/12'	
+	option target	REJECT	
+
+config rule forward_lan_bat_10
+	option name	forward_lan_bat_10
+	option proto	all
+	option src	lan
+	option dest	bat
+	option dest_ip	'10.0.0.0/8'	
+	option target	REJECT	
+
+config rule forward_lan_bat
+        option name     forward_lan_bat
+	option proto	all
+        option src      lan
+        option dest     bat
+        option target   ACCEPT
+
+config rule forward_lan_vpn_192_168
+	option name	forward_lan_vpn_192_168
+	option proto	all
+	option src	lan
+	option dest	vpn
+	option dest_ip	'192.168.0.0/16'	
+	option target	REJECT	
+
+config rule forward_lan_vpn_172_16
+	option name	forward_lan_vpn_172_16
+	option proto	all
+	option src	lan
+	option dest	vpn
+	option dest_ip	'172.16.0.0/12'	
+	option target	REJECT	
+
+config rule forward_lan_vpn_10
+	option name	forward_lan_vpn_10
+	option proto	all
+	option src	lan
+	option dest	vpn
+	option dest_ip	'10.0.0.0/8'	
+	option target	REJECT	
+
+config rule forward_lan_vpn
+        option name     forward_lan_vpn
+	option proto	all
+        option src      lan
+        option dest     vpn
+        option target   ACCEPT
+
+##WAN
+#config rule forward_wan_wan
+#	option name	forward_wan_wan
+#	option proto	all
+#	option src	wan
+#	option dest	wan	
+#	option target	REJECT
+
+##TBB
+config rule forward_tbb_wan_192_168
+	option name	forward_tbb_wan_192_168
+	option proto	all
+	option src	tbb
+	option dest	wan
+	option dest_ip	'192.168.0.0/16'
+	option target	REJECT
+
+config rule forward_tbb_wan_172_16
+	option name	forward_tbb_wan_172_16
+	option proto	all
+	option src	tbb
+	option dest	wan
+	option dest_ip	'172.16.0.0/12'
+	option target	REJECT
+
+config rule forward_tbb_wan_10
+	option name	forward_tbb_wan_10
+	option proto	all
+	option src	tbb
+	option dest	wan	
+	option dest_ip	'10.0.0.0/8'
+	option target	REJECT
+
+config rule forward_tbb_wan
+        option name     forward_tbb_wan
+	option proto	all
+        option src      tbb
+        option dest     wan
+        option target   ACCEPT
+
+config rule forward_tbb_tbb
+	option name	forward_tbb_tbb
+	option proto	all
+	option src	tbb
+	option dest	tbb	
+	option target	ACCEPT
+
+config rule forward_tbb_wifi
+	option name	forward_tbb_wifi
+	option proto	all
+	option src	tbb
+	option dest	wifi	
+	option target	ACCEPT
+
+config rule forward_tbb_bat_192_168
+	option name	forward_tbb_bat_192_168
+	option proto	all
+	option src	tbb
+	option dest	bat	
+	option dest_ip	'192.168.0.0/16'
+	option target	REJECT
+
+config rule forward_tbb_bat_172_16
+	option name	forward_tbb_bat_172_16
+	option proto	all
+	option src	tbb
+	option dest	bat
+	option dest_ip	'172.16.0.0/12'
+	option target	REJECT
+
+config rule forward_tbb_bat_10
+	option name	forward_tbb_bat_10
+	option proto	all
+	option src	tbb
+	option dest	bat
+	option dest_ip	'10.0.0.0/8'
+	option target	REJECT
+
+config rule forward_tbb_bat
+        option name     forward_tbb_bat
+	option proto	all
+        option src      tbb
+        option dest     bat
+        option target   ACCEPT
+
+config rule forward_tbb_vpn_192_168
+	option name	forward_tbb_vpn_192_168
+	option proto	all
+	option src	tbb
+	option dest	vpn
+	option dest_ip	'192.168.0.0/16'	
+	option target	REJECT	
+
+config rule forward_tbb_vpn_172_16
+	option name	forward_tbb_vpn_172_16
+	option proto	all
+	option src	tbb
+	option dest	vpn
+	option dest_ip	'172.16.0.0/12'	
+	option target	REJECT	
+
+config rule forward_tbb_vpn_10
+	option name	forward_tbb_vpn_10
+	option proto	all
+	option src	tbb
+	option dest	vpn
+	option dest_ip	'10.0.0.0/8'	
+	option target	REJECT	
+
+config rule forward_tbb_vpn
+        option name     forward_tbb_vpn
+	option proto	all
+        option src      tbb
+        option dest     vpn
+        option target   ACCEPT
+
+##WIFI
+
+config rule forward_wifi_wan_192_168
+	option name	forward_wifi_wan_192_168
+	option proto	all
+	option src	wifi
+	option dest	wan
+	option dest_ip	'192.168.0.0/16'
+	option target	REJECT
+
+config rule forward_wifi_wan_172_16
+	option name	forward_wifi_wan_172_16
+	option proto	all
+	option src	wifi
+	option dest	wan
+	option dest_ip	'172.16.0.0/12'
+	option target	REJECT
+
+config rule forward_wifi_wan_10
+	option name	forward_wifi_wan_10
+	option proto	all
+	option src	wifi
+	option dest	wan	
+	option dest_ip	'10.0.0.0/8'
+	option target	REJECT
+
+config rule forward_wifi_wan
+        option name     forward_wifi_wan
+	option proto	all
+        option src      wifi
+        option dest     wan
+        option target   ACCEPT
+
+config rule forward_wifi_tbb
+	option name	forward_wifi_tbb
+	option proto	all
+	option src	wifi
+	option dest	tbb	
+	option target	ACCEPT
+
+config rule forward_wifi_wifi
+	option name	forward_wifi_wifi
+	option proto	all
+	option src	wifi
+	option dest	wifi	
+	option target	ACCEPT
+
+config rule forward_wifi_bat_192_168
+	option name	forward_wifi_bat_192_168
+	option proto	all
+	option src	wifi
+	option dest	bat	
+	option dest_ip	'192.168.0.0/16'
+	option target	REJECT
+
+config rule forward_wifi_bat_172_16
+	option name	forward_wifi_bat_172_16
+	option proto	all
+	option src	wifi
+	option dest	bat
+	option dest_ip	'172.16.0.0/12'
+	option target	REJECT
+
+config rule forward_wifi_bat_10
+	option name	forward_wifi_bat_10
+	option proto	all
+	option src	wifi
+	option dest	bat
+	option dest_ip	'10.0.0.0/8'
+	option target	REJECT
+
+config rule forward_wifi_bat
+        option name     forward_wifi_bat
+	option proto	all
+        option src      wifi
+        option dest     bat
+        option target   ACCEPT
+
+config rule forward_wifi_vpn_192_168
+	option name	forward_wifi_vpn_192_168
+	option proto	all
+	option src	wifi
+	option dest	vpn
+	option dest_ip	'192.168.0.0/16'	
+	option target	REJECT	
+
+config rule forward_wifi_vpn_172_16
+	option name	forward_wifi_vpn_172_16
+	option proto	all
+	option src	wifi
+	option dest	vpn
+	option dest_ip	'172.16.0.0/12'	
+	option target	REJECT	
+
+config rule forward_wifi_vpn_10
+	option name	forward_wifi_vpn_10
+	option proto	all
+	option src	wifi
+	option dest	vpn
+	option dest_ip	'10.0.0.0/8'	
+	option target	REJECT	
+
+config rule forward_wifi_vpn
+        option name     forward_wifi_vpn
+	option proto	all
+        option src      wifi
+        option dest     vpn
+        option target   ACCEPT
+
+##WIFI2
+
+config rule forward_wifi2_wan_192_168
+	option name	forward_wifi2_wan_192_168
+	option proto	all
+	option src	wifi2
+	option dest	wan
+	option dest_ip	'192.168.0.0/16'
+	option target	REJECT
+
+config rule forward_wifi2_wan_172_16
+	option name	forward_wifi2_wan_172_16
+	option proto	all
+	option src	wifi2
+	option dest	wan
+	option dest_ip	'172.16.0.0/12'
+	option target	REJECT
+
+config rule forward_wifi2_wan_10
+	option name	forward_wifi2_wan_10
+	option proto	all
+	option src	wifi2
+	option dest	wan	
+	option dest_ip	'10.0.0.0/8'
+	option target	REJECT
+
+config rule forward_wifi2_wan
+        option name     forward_wifi2_wan
+	option proto	all
+        option src      wifi2
+        option dest     wan
+        option target   ACCEPT
+
+config rule forward_wifi2_tbb
+	option name	forward_wifi2_tbb
+	option proto	all
+	option src	wifi2
+	option dest	tbb	
+	option target	ACCEPT
+
+config rule forward_wifi2_wifi
+	option name	forward_wifi2_wifi
+	option proto	all
+	option src	wifi2
+	option dest	wifi	
+	option target	ACCEPT
+
+config rule forward_wifi2_bat_192_168
+	option name	forward_wifi2_bat_192_168
+	option proto	all
+	option src	wifi2
+	option dest	bat	
+	option dest_ip	'192.168.0.0/16'
+	option target	REJECT
+
+config rule forward_wifi2_bat_172_16
+	option name	forward_wifi2_bat_172_16
+	option proto	all
+	option src	wifi2
+	option dest	bat
+	option dest_ip	'172.16.0.0/12'
+	option target	REJECT
+
+config rule forward_wifi2_bat_10
+	option name	forward_wifi2_bat_10
+	option proto	all
+	option src	wifi2
+	option dest	bat
+	option dest_ip	'10.0.0.0/8'
+	option target	REJECT
+
+config rule forward_wifi2_bat
+        option name     forward_wifi2_bat
+	option proto	all
+        option src      wifi2
+        option dest     bat
+        option target   ACCEPT
+
+config rule forward_wifi2_vpn_192_168
+	option name	forward_wifi2_vpn_192_168
+	option proto	all
+	option src	wifi2
+	option dest	vpn
+	option dest_ip	'192.168.0.0/16'	
+	option target	REJECT	
+
+config rule forward_wifi2_vpn_172_16
+	option name	forward_wifi2_vpn_172_16
+	option proto	all
+	option src	wifi2
+	option dest	vpn
+	option dest_ip	'172.16.0.0/12'	
+	option target	REJECT	
+
+config rule forward_wifi2_vpn_10
+	option name	forward_wifi2_vpn_10
+	option proto	all
+	option src	wifi2
+	option dest	vpn
+	option dest_ip	'10.0.0.0/8'	
+	option target	REJECT	
+
+config rule forward_wifi2_vpn
+        option name     forward_wifi2_vpn
+	option proto	all
+        option src      wifi2
+        option dest     vpn
+        option target   ACCEPT
+
+##BAT
+config rule forward_bat_wan_192_168
+	option name	forward_bat_wan_192_168
+	option proto	all
+	option src	bat
+	option dest	wan
+	option dest_ip	'192.168.0.0/16'	
+	option target	REJECT
+
+config rule forward_bat_wan_172_16
+	option name	forward_bat_wan_172_16
+	option proto	all
+	option src	bat
+	option dest	wan
+	option dest_ip	'172.16.0.0/8'	
+	option target	REJECT
+
+config rule forward_bat_wan_10
+	option name	forward_bat_wan_10
+	option proto	all
+	option src	bat
+	option dest	wan
+	option dest_ip	'10.0.0.0/8'	
+	option target	REJECT
+
+config rule forward_bat_wan
+        option name     forward_bat_wan
+	option proto	all
+        option src      bat
+        option dest     wan
+        option target   ACCEPT
+
+config rule forward_bat_vpn_192_168
+	option name	forward_bat_vpn_192_168
+	option proto	all
+	option src	bat
+	option dest	vpn
+	option dest_ip	'192.168.0.0/16'	
+	option target	REJECT	
+
+config rule forward_bat_vpn_172_16
+	option name	forward_bat_vpn_172_16
+	option proto	all
+	option src	bat
+	option dest	vpn
+	option dest_ip	'172.16.0.0/12'	
+	option target	REJECT	
+
+config rule forward_bat_vpn_10
+	option name	forward_bat_vpn_10
+	option proto	all
+	option src	bat
+	option dest	vpn
+	option dest_ip	'10.0.0.0/8'	
+	option target	REJECT	
+
+config rule forward_bat_vpn
+        option name     forward_bat_vpn
+	option proto	all
+        option src      bat
+        option dest     vpn
+        option target   ACCEPT
+
+## INPUT Rules ###
+
+#### ssh ####
+config rule
+	option name		Allow-lan-ssh
+	option src		lan
+	option proto		tcp
+	option dest_port	22
+	option target		ACCEPT
+
+##### bmxd #####
+config rule
+	option name		Allow-bmxd-wifi
+	option src		wifi	
+	option proto		udp
+	option dest_port	'4305:4307'
+	option target		ACCEPT
+	option family		ipv4
+
+config rule
+	option name		Allow-bmxd-tbb
+	option src		tbb	
+	option proto		udp
+	option dest_port	'4305:4307'
+	option target		ACCEPT
+	option family		ipv4
+
+#### dhcp ####
+# We need to accept udp packets on port 68,
+# see https://dev.openwrt.org/ticket/4108
+config rule
+	option name		Allow-DHCP-Renew
+	option src		wan
+	option proto		udp
+	option dest_port	68
+	option target		ACCEPT
+	option family		ipv4
+
+config rule
+	option name		Allow-DHCP-lan
+	option src		lan
+	option proto		udp
+	option src_port		68
+	option dest_port	67
+	option target		ACCEPT
+	option family		ipv4
+
+config rule
+	option name		Allow-DHCP-wifi
+	option src		wifi
+	option proto		udp
+	option src_port		68
+	option dest_port	67
+	option target		ACCEPT
+	option family		ipv4
+
+config rule
+	option name		Allow-DHCP-wifi2
+	option src		wifi2
+	option proto		udp
+	option src_port		68
+	option dest_port	67
+	option target		ACCEPT
+	option family		ipv4
+
+#dns
+config rule
+	option name		Allow-DNS_lan
+	option src		lan
+	option proto		udp
+	option dest_port 	53	
+	option target		ACCEPT
+
+config rule
+	option name		Allow-DNS_wifi
+	option src		wifi
+	option proto		udp
+	option dest_port	53
+	option target		ACCEPT
+
+config rule
+	option name		Allow-DNS_wifi2
+	option src		wifi2
+	option proto		udp
+	option dest_port	53
+	option target		ACCEPT
+
+config rule
+	option name		Allow-DNS_tbb
+	option src		tbb
+	option proto		udp
+	option dest_port	53
+	option target		ACCEPT
+
+#### http ####
+
+config rule
+	option name 		Allow-HTTP-lan
+	option src		lan
+	option proto		tcp
+	option dest_port	80:81
+	option target		ACCEPT
+	
+config rule
+	option name 		Allow-HTTP-wifi
+	option src		wifi	
+	option proto		tcp
+	option dest_port	80:81
+	option target		ACCEPT
+	
+config rule
+	option name 		Allow-HTTP-tbb
+	option src		tbb	
+	option proto		tcp
+	option dest_port	80
+	option target		ACCEPT
+	
+config rule
+	option name 		Allow-HTTP-wifi2
+	option src		wifi2	
+	option proto		tcp
+	option dest_port	80:81
+	option target		ACCEPT
+	
+#### https ####
+
+config rule
+	option name 		Allow-HTTPS-lan
+	option src		lan
+	option proto		tcp
+	option dest_port	443
+	option target		ACCEPT
+	
+config rule
+	option name 		Allow-HTTPS-wifi
+	option src		wifi	
+	option proto		tcp
+	option dest_port	443
+	option target		ACCEPT
+	
+config rule
+	option name 		Allow-HTTPS-tbb
+	option src		tbb	
+	option proto		tcp
+	option dest_port	443
+	option target		ACCEPT
+	option family		ipv4
+	
+config rule
+	option name 		Allow-HTTPS-wifi2
+	option src		wifi2
+	option proto		tcp
+	option dest_port	443
+	option target		ACCEPT
+	
+#### icmp ####
+
+# Allow IPv4 ping
+config rule
+	option name		Allow-icmp-lan
+	option src		lan
+	option proto		icmp
+	option icmp_type	echo-request
+	option family		ipv4
+	option target		ACCEPT
+
+config rule
+	option name		Allow-icmp-wifi
+	option src		wifi	
+	option proto		icmp
+	option icmp_type	echo-request
+	option family		ipv4
+	option target		ACCEPT
+
+config rule
+	option name		Allow-icmp-tbb
+	option src		tbb
+	option proto		icmp
+	option icmp_type	echo-request
+	option family		ipv4
+	option target		ACCEPT
+
+config rule
+	option name		Allow-icmp-wifi2
+	option src		wifi2
+	option proto		icmp
+	option icmp_type	echo-request
+	option family		ipv4
+	option target		ACCEPT
+
+config rule
+	option name 		Allow-nuttcp
+	option src		wifi	
+	option proto		tcp
+	option dest_port	5010:5011	
+	option target		ACCEPT
+	option family		ipv4
+	
+config rule
+	option name 		Allow-nuttcp
+	option src		tbb	
+	option proto		tcp
+	option dest_port	5010:5011	
+	option target		ACCEPT
+	option family		ipv4
+	
+
+# include a file with users custom iptables rules
+config include
+	option path /etc/firewall.user
+

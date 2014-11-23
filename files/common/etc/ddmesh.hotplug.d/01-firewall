@@ -1,0 +1,38 @@
+#!/bin/sh
+
+#ddmesh_hotplug_ifname='eth0'
+#ddmesh_hotplug_network='wifi2'
+#ddmesh_hotplug_state=up | down | unknown
+#ddmesh_hotplug_type='network'
+
+IPT=iptables
+case $ddmesh_hotplug_type in
+	network)
+		logger -t "ddmesh_hotplug:" "setting addtional firewall rules (network:$ddmesh_hotplug_network)"
+		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh $ddmesh_hotplug_network)
+		
+		if [ "$ddmesh_hotplug_state" = "up" ]; then
+			CMD='-A'
+		else
+			CMD='-D'
+		fi
+		
+		#interface came up; update network-deny rules 
+		case $ddmesh_hotplug_network in
+			lan)	$IPT $CMD input_wan_deny -d $net_network/$net_mask -j DROP 
+				$IPT $CMD input_wifi_deny -d $net_network/$net_mask -j DROP
+				$IPT $CMD input_wifi2_deny -d $net_network/$net_mask -j DROP
+				$IPT $CMD input_tbb_deny -d $net_network/$net_mask -j DROP
+				$IPT $CMD input_bat_deny -d $net_network/$net_mask -j DROP
+				$IPT $CMD input_vpn_deny -d $net_network/$net_mask -j DROP
+				;;
+			wan)	$IPT $CMD input_lan_deny -d $net_network/$net_mask -j DROP 
+				$IPT $CMD input_wifi_deny -d $net_network/$net_mask -j DROP
+				$IPT $CMD input_wifi2_deny -d $net_network/$net_mask -j DROP
+				$IPT $CMD input_tbb_deny -d $net_network/$net_mask -j DROP
+				$IPT $CMD input_bat_deny -d $net_network/$net_mask -j DROP
+				$IPT $CMD input_vpn_deny -d $net_network/$net_mask -j DROP
+				;;
+		esac
+		;;
+esac
