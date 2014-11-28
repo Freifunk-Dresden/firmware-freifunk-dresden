@@ -147,6 +147,7 @@ upgrade_2_1_5() {
  rm -rf /etc/crontabs/root
  ln -s /var/etc/crontabs/root /etc/crontabs/root
 }
+upgrade_2_1_6() { echo "nothing todo"; }
 
 
 run_upgrade
