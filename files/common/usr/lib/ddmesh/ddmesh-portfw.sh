@@ -15,7 +15,9 @@ setup_forwarding() {
 	$IPT -t nat -A PORT_FORWARDING -j PORT_FORWARDING_RULES
 	$IPT -t nat -A prerouting_wifi_rule -d $_ddmesh_ip -j PORT_FORWARDING 
 	$IPT -t nat -A prerouting_tbb_rule -d $_ddmesh_ip -j PORT_FORWARDING 
+	$IPT -t nat -A prerouting_lan_rule -d $_ddmesh_ip -j PORT_FORWARDING 
 	$IPT -t nat -A prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING 
+	$IPT -t nat -A prerouting_wifi2_rule -d $_ddmesh_ip -j PORT_FORWARDING 
 	$IPT -t nat -A prerouting_wifi2_rule -d $wifi2_ipaddr -j PORT_FORWARDING 
 	
 	$IPT -N PORT_FORWARDING
