@@ -130,12 +130,13 @@ then
  	done 
  fi
 
- log echo "create dl directory/links and feed links"
- log ln -s ../../../feeds.conf/feeds-$VER.conf $buildroot/feeds.conf
- log ln -s ../../../$openwrt_dl_dir $buildroot/dl
 else
  log echo "Buildroot [$buildroot] already present"
 fi
+
+log echo "create dl directory/links and feed links"
+log ln -sf ../../../feeds.conf/feeds-$VER.conf $buildroot/feeds.conf
+log ln -sf ../../../$openwrt_dl_dir $buildroot/dl
 
 #if feeds_copied directory contains same packages as delivered with
 #openwrt, then assume that the packages came with openwrt git clone are
@@ -168,6 +169,7 @@ echo "change to buildroot [$buildroot]"
 cd $buildroot
 
 echo "install feeds"
+log scripts/feeds clean 
 log scripts/feeds update -a
 log scripts/feeds install -a
 
