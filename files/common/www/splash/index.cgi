@@ -39,7 +39,7 @@ if [ -z "$form_submit_accept" -a -z "$form_submit_abort" ]; then
 
 cat<<EOM
 <fieldset class="bubble">
-Dies ist ein Freifunk WLAN-Access-Point l&auml;uft.<br/>
+Dies ist ein Freifunk WLAN-Access-Point.<br/>
 Informationen &uuml;ber das Freifunk-Projekt finden sich im Internet unter <A HREF="http://$FFDD/">http://$FFDD/</A><br/>
 Es gelten die folgenden <a href="license.cgi?license=1">Nutzungsbedingungen</a> und das <a href="license.cgi?license=2">Pico Agreement</a>, welche akzeptiert werden m&uuml;ssen!
 Der Zugang ist kostenlos. Es besteht kein Anspruch oder Garantie auf eine Internetverbindung.<br />
