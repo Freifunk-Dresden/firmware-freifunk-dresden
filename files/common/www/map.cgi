@@ -10,7 +10,7 @@ cat <<EOF
 <br>
 <fieldset class="bubble">
 <legend>Google Maps</legend>
-<iframe onload="iFrameHeight()" src="http://maps.google.de/maps?f=q&amp;hl=de&amp;geocode=&amp;q=http:%2F%2Finfo.freifunk-dresden.de%2Finfo%2Fnetwork.kmz%3Frandom%3D$(date +"%s")-$RANDOM&amp;ie=UTF8&amp&amp;ll=$(nvram get gps_latitude),$(nvram get gps_longitude)&amp;spn=0.01,0.01&amp;output=embed&amp;s=AARTsJqa9QXWhdEZZRirvObWlK4yEMZzHg" name="iframe" id="blockrandom" class="wrapper" align="top" frameborder="0" height="400" width="100%"></iframe>
+<img border="0" alt="standort" src="//maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:R%7C$(uci get ddmesh.gps.latitude),$(uci get ddmesh.gps.longitude)&sensor=false">
 $QR_IMG
 </fieldset>
 EOF
