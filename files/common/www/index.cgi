@@ -1,12 +1,5 @@
 #!/bin/sh
 
-#redirect to splash               
-if [ "$SERVER_PORT" = "81" ];then          
-        export DOCUMENT_ROOT="/www/splash" 
-        $DOCUMENT_ROOT/index.cgi                      
-        exit 0                                        
-fi                                     
-
 node=$(uci get ddmesh.system.node)                                                          
 tmpmin=$(uci get ddmesh.system.tmp_min_node)                                                
 tmpmax=$(uci get ddmesh.system.tmp_max_node)                                                
@@ -14,7 +7,7 @@ if [ $node -ge $tmpmin -a $node -le $tmpmax ]; then
  	#export NOMENU=1
 	export TITLE="Auto-Setup"
 
-	. $DOCUMENT_ROOT/page-pre.sh
+	. /usr/lib/www/page-pre.sh
 
 #echo "<pre>";set;echo "/<pre>"
 
@@ -30,12 +23,12 @@ Nach einem Update mit  Werkseinstellung oder nach dem erstmaligem Aufspielen der
 <a href="/admin/autosetup.cgi">Starte Auto-Setup</a>
 EOM
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh
 
 else #autosetup
 
 export TITLE="Hauptseite"
-. $DOCUMENT_ROOT/page-pre.sh
+. /usr/lib/www/page-pre.sh
 
 cat<<EOM
 <fieldset class="bubble">
@@ -56,6 +49,6 @@ F&uuml;r die Nutzung des Netzes gelten diese <a href="license.cgi?license=1">Nut
 </fieldset>
 EOM
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh
 
 fi #autosetup

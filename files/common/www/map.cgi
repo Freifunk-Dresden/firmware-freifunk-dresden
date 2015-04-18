@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Infos: Karte"
-. $DOCUMENT_ROOT/page-pre.sh
+. /usr/lib/www/page-pre.sh
 
 text -x /usr/bin/qrencode && QR_IMG="<img style=\"float:right\" src=\"/images/qr-geo.png\">"
 
@@ -16,4 +16,4 @@ $QR_IMG
 EOF
 
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh

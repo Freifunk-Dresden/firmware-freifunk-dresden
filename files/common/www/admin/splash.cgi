@@ -3,7 +3,7 @@
 . /lib/functions.sh
 
 export TITLE="Verwaltung > Expert > Splash"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
 <h2>$TITLE</h2>
@@ -62,7 +62,8 @@ Diese Einstellung ist nicht empfohlen, da der Splash die Nutzungsbedinungen bere
 
 <fieldset class="bubble">
 <legend>Automatische Trennung</legend>
-<form name="form_disconnect" action="splash.cgi" method="post">
+<form name="form_splash_disconnect" action="splash.cgi" method="post">
+<input name="form_splash_action" value="disconnect" type="hidden">
 <table>
 <tr><td colspan="4">Hier wird die Zeit eingestellt, nach der der Nutzer zwangsgetrennt wird. Dies kann an Orten verwendet werden,
 an denen viele Nutzer sich einloggen, um die Verf&uuml;gbarkeit des Knotens f&uuml;r andere zu erh&ouml;en.<br/>
@@ -71,8 +72,9 @@ Ebenso kann es das Filesharing erschweren</td></tr>
 <tr>
 <td class="nowrap" width="150">
 Trennung nach:
-	<select name="form_timeout" size="1">
+	<select name="form_disconnect_timeout" size="1">
 	<option selected value="0">niemals</option>
+	<option value="15">15min</option>
 	<option value="30">30min</option>
 	<option value="60"> 1h (60min)</option>
 	<option value="90"> 1.5h (90min)</option>
@@ -93,11 +95,44 @@ Trennung nach:
 </form>
 </fieldset>
 <br/>
-Hier k&ouml;nnen MAC Adressen dauerhaft eingetragen werden, so dass diese nach einem Neustart aktiv sind.
-<br><br>
+<fieldset class="bubble">
+<legend>Wifi Dhcp Lease Zeit</legend>
+<form name="form_splash_lease" action="splash.cgi" method="post">
+<input name="form_splash_action" value="lease" type="hidden">
+<table>
+<tr><td colspan="4">Hier wird die Zeit eingestellt, nach der ein Endger&auml;t die Wifi IP Adressen aktualisieren muss.
+Erfolgt keine Aktualisierung, wird der Nutzer wieder gespeert (falls Splash aktiv ist).<br/>
+F&uuml;r &ouml;ffentliche Orte, sollte der Wert klein gehalten werden,
+um die Verf&uuml;gbarkeit des Knotens f&uuml;r andere zu erh&ouml;en.<br/>
+</td></tr>
+<tr>
+<td class="nowrap" width="150">
+DHCP Lease:
+	<select name="form_lease_time" size="1">
+	<option selected value="5m"> 5min (öffentliche Plätze)</option>
+	<option value="10m">10min</option>
+	<option value="15m">15min</option>
+	<option value="20m">20min (Imbiss)</option>
+	<option value="30m">30min</option>
+	<option value="45m">45min (Kneipe)</option>
+	<option value="1h"> 1h</option>
+	<option value="2h"> 2h(Veranstaltungen)</option>
+	<option value="3h"> 3h</option>
+	<option value="5h"> 5h</option>
+	<option value="10h">10h</option>
+	</select>
+	&nbsp;(<b>aktuell:</b> $(uci get ddmesh.network.wifi2_dhcplease))
+</td>
+<td><input name="form_lease_submit" type="submit" value="Anwenden"></td>
+</tr>
+</table>
+</form>
+</fieldset>
+<br/>
 <fieldset class="bubble">
 <legend>Aktuelle WLAN Client MAC Adressen</legend>
 <table>
+<tr><td colspan="4">Hier k&ouml;nnen MAC Adressen dauerhaft eingetragen werden, so dass diese nach einem Neustart aktiv sind.</td></tr>
 EOM
 
 echo "<tr><th>MAC</th><th>IP</th><th>Hostname</th><th>Dauer</th></tr>"
@@ -223,15 +258,20 @@ if [ -n "$QUERY_STRING" ]; then
 			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="firmware.cgi">Neustart</A> aktiv."
 			uci commit
 		  	;;
+		  lease)
+			uci set ddmesh.network.wifi2_dhcplease="$form_lease_time"
+			uci commit
+			notebox "Lease Zeit aktualisiert."
+			;;
+		  disconnect)
+			uci set ddmesh.network.client_disconnect_timeout="$form_disconnect_timeout"
+			uci commit
+			notebox "WLAN Clientverbindungen werden absofort nach $form_disconnect_timeout Minuten unterbrochen"
+			;;
 		esac
-	fi
-	if [ -n "$form_disconnect_submit" ]; then
-		uci set ddmesh.network.client_disconnect_timeout="$form_timeout"
-		uci commit
-		notebox "WLAN Clientverbindungen werden absofort nach $form_timeout Minuten unterbrochen"
 	fi
 fi                                                                                                                                                                                               
 
 display_splash
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

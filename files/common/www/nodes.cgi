@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Allgemein: Nodes"
-. $DOCUMENT_ROOT/page-pre.sh
+. /usr/lib/www/page-pre.sh
 
 cat<<EOM
 <h2>$TITLE</h2>
@@ -154,4 +154,4 @@ cat<<EOM
 </fieldset>
 EOM
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh

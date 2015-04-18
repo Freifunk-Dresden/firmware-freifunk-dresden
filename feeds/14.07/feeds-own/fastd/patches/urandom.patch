@@ -1,0 +1,14 @@
+diff -rupN fastd-16.ori/src/random.c fastd-16/src/random.c
+--- fastd-16.ori/src/random.c	2014-11-15 18:17:49.000000000 +0100
++++ fastd-16/src/random.c	2015-01-24 15:41:53.291299661 +0100
+@@ -42,6 +42,10 @@ void fastd_random_bytes(void *buffer, si
+ 	int fd;
+ 	size_t read_bytes = 0;
+ 
++//stephan: always use /dev/urandom, because it is same secure and random 
++//         as /dev/random, but random blocks key generation
++secure=false;
++
+ 	if (secure)
+ 		fd = open("/dev/random", O_RDONLY);
+ 	else

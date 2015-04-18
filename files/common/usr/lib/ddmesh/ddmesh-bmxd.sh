@@ -24,9 +24,8 @@ GATEWAY_CLASS="$(uci -q get ddmesh.bmxd.gateway_class)"
 GATEWAY_CLASS="${GATEWAY_CLASS:-512/512}"
 GATEWAY_CLASS="-g $GATEWAY_CLASS"
 
-PREFERED_GATEWAY="$(uci -q get ddmesh.bmxd.prefered_gateway)"
-test -n "$PREFERED_GATEWAY" && PREFERED_GATEWAY="-p $PREFERED_GATEWAY"
-#echo "$PREFERED_GATEWAY"
+PREFERRED_GATEWAY="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
+test -n "$PREFERRED_GATEWAY" && PREFERRED_GATEWAY="-p $PREFERRED_GATEWAY"
 
 NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
 
@@ -68,7 +67,7 @@ done
 #default start with no gatway.will be updated by gateway_check.sh
 SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 TUNNEL_OPTS="--one-way-tunnel 1 --two-way-tunnel 2"
-DAEMON_OPTS="$SPECIAL_OPTS $TUNNEL_OPTS $ROUTING_CLASS $PREFERED_GATEWAY $_IF"
+DAEMON_OPTS="$SPECIAL_OPTS $TUNNEL_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
 
 
 test -x $DAEMON_PATH/$DAEMON || exit 0
@@ -86,7 +85,13 @@ case "$ARG1" in
 
   restart|force-reload)
 	$0 stop
-	sleep 5
+	sleep 1
+	$0 start
+	;;
+  
+  nightly)
+	logger -t bmx-nightly "bmxd restart bat0: $(ip addr show bat0 | grep 'inet')"
+	$0 stop
 	$0 start
 	;;
 
@@ -109,6 +114,7 @@ case "$ARG1" in
 	$DAEMON_PATH/$DAEMON -c --links > $DB_PATH/links
 	$DAEMON_PATH/$DAEMON -c --originators > $DB_PATH/originators
 	$DAEMON_PATH/$DAEMON -c --hnas > $DB_PATH/hnas
+	$DAEMON_PATH/$DAEMON -c --status > $DB_PATH/status
 	$DAEMON_PATH/$DAEMON -ci > $DB_PATH/info
 	rm $RUN_STATUS_FILE
 	)

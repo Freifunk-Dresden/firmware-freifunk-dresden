@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Allgemein: Status"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 TMPFILE=/tmp/top.output
 
@@ -33,4 +33,4 @@ cat<<EOF
 EOF
 
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh

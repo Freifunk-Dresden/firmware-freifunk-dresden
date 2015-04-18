@@ -4,19 +4,19 @@
 
 export TITLE="Verwaltung > Software"
 
-IPK_FILE="/tmp/packet.ipk"
+IPK_FILE="/tmp/paket.ipk"
 OPKG_ERROR="/tmp/opkg.error"
 
 if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
-	. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+	. /usr/lib/www/page-pre.sh ${0%/*}
 	notebox 'GET not allowed'
-	. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+	. /usr/lib/www/page-post.sh ${0%/*}
 	exit 0
 fi
 #get form data and optionally file 
 eval $(/usr/bin/freifunk-upload -e 2>/dev/null)
 
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 echo "<H1>$TITLE</H1>"
 
 avail_size="$(df -k /overlay | sed -n '2,1{s# \+# #g; s#[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\) .*#\1#;p}')"
@@ -64,12 +64,13 @@ EOM
 T=1
 IFS='
 '
-#generates: p=packet v=version [installed=true] clear
+#generates: p=paket v=version [installed=true] clear
 #"clear" is just a separator and used to do the action. all other are used to set variables via eval
-for i in $(zcat /var/opkg-lists/ddmesh | sed -n '
+for i in $( opkg info | sed -n '
 /^Package:.*/{s#^Package: \(.*\)#p="\1"#;h}
 /^Version:.*/{s#^Version: \(.*\)#v="\1"#;H}
-/^Installed-Size:.*/{s#^Installed-Size: \(.*\)#s="\1"#;H}
+/^Status:.*/{s#^Status: \(.*\)#t="\1"#;H}
+/^Size:.*/{s#^Size: \(.*\)#s="\1"#;H}
 /^$/{x;a \
 clear
 p
@@ -79,6 +80,7 @@ do
 		test -z "$p" && continue
 		test -z "$v" && continue
 		test -z "$s" && continue
+		test "${t/not-installed/}" = "$t" && continue
 
 		size=$(( ($s+1023) / 1024))
 
@@ -86,7 +88,7 @@ do
 		<TR class="colortoggle$T"><TD>$p</TD><td>$v</td><td>$size Kbyte</td><TD ALIGN="center">
 		<form name="form_ipk_avail" action="opkg.cgi" method="post">
 		<input name="form_action" value="install" type="hidden">
-		<input name="form_packet" value="$p" type="hidden">
+		<input name="form_paket" value="$p" type="hidden">
 		<input name="form_submit" type="submit" value="Installieren"></TD></TR>
 		</form>
 EOM
@@ -118,7 +120,7 @@ EOM
 T=1
 IFS='
 '
-#generates: p=packet v=version [installed=true] clear
+#generates: p=paket v=version [installed=true] clear
 #"clear" is just a separator and used to do the action. all other are used to set variables via eval
 for i in $(cat /usr/lib/opkg/status | sed -n '
 /^Package:.*/{s#^Package: \(.*\)#p="\1"#;h}
@@ -134,8 +136,8 @@ do
 		test -z "$v" && continue
 		test -z "$s" && continue
 
-		#only user installed packages	
-		test "${s/user/}" = "$s" && continue
+		#only own installed packages	
+		test "${s/ok/}" = "$s" && continue
 
 		echo "<TR class=\"colortoggle$T\"><TD>$p</TD><td>$v</td></tr>"
 
@@ -177,37 +179,48 @@ else #form_action
 				<legend>Erweiterung Installieren</legend>
 				<form name="form_ipk_update" action="opkg.cgi" method="POST">
 	 			<input name="form_action" value="upload_install" type="hidden">
-				 <table>
-				 <tr><th>Paket:</th><td>$ffout</td></tr>
-				 <tr><th>md5sum:</th><td>$(md5sum $IPK_FILE | cut -d' ' -f1)</td></tr>
-				 <tr><td colspan="2">Bitte &Uuml;berpr&uuml;fen Sie die md5sum, welche sicherstellt, dass das Erweiterungspaket korrekt &uuml;bertragen wurde.<br />
-	  			  Bitte schalten Sie das Ger&auml;t nicht aus. Es ist m&ouml;glich, dass sich der Router
-	    			  mehrfach neustarted, um alle aktualisierungen vorzunehmen.<br />
-             			  </td></tr>
-				 <tr><td colspan="2">
-				 <input name="form_ipk_submit" type="submit" value="Erweiterung installieren">
-				 <input name="form_ipk_abort" type="submit" value="Abbruch">
-				 </td></tr>
-				 </table>
+				<table>
+				<tr><th>Paket:</th><td>$ffout</td></tr>
+				<tr><th>md5sum:</th><td>$(md5sum $IPK_FILE | cut -d' ' -f1)</td></tr>
+				<tr><td colspan="2">Bitte &Uuml;berpr&uuml;fen Sie die md5sum, welche sicherstellt, dass das Erweiterungspaket korrekt &uuml;bertragen wurde.<br />
+	  			 Bitte schalten Sie das Ger&auml;t nicht aus. Es ist m&ouml;glich, dass sich der Router
+	    			 mehrfach neustarted, um alle aktualisierungen vorzunehmen.<br />
+             			</td></tr>
+				<tr><td colspan="2">
+				<input name="form_ipk_submit" type="submit" value="Erweiterung installieren">
+				</td></tr>
+				</table>
 				</form>
 				</fieldset>
 EOM
 			;;
 		upload_install)
-			echo "<pre>"
-			opkg install $IPK_FILE 2>$OPKG_ERROR | flush
-			cat $OPKG_ERROR
-			echo "</pre><br/> Aktion beendet. Bitte Fehlermeldung beachten."
+			if [ -z "$IPK_FILE" ]; then
+				notebox "Kein Paket geladen"
+			else
+				echo "<pre>"
+				opkg --force-overwrite install $IPK_FILE 2>$OPKG_ERROR | flush
+				name=$(opkg --noaction install $IPK_FILE 2>/dev/null | cut -d' ' -f2)
+				opkg flag ok $name 2>$OPKG_ERROR | flush
+				cat $OPKG_ERROR
+				echo "</pre><br/> Aktion beendet. Bitte Fehlermeldung beachten."
+			fi
 			;;
 		install)
-			echo "<pre>"
-			opkg install $form_packet 2>$OPKG_ERROR | flush
-			cat $OPKG_ERROR
-			echo "</pre><br/> Aktion beendet. Bitte Fehlermeldung beachten."
+			if [ -z "$form_paket" ]; then
+				notebox "Kein Paket geladen"
+			else
+				echo "<pre>"
+				opkg --force-overwrite install $form_paket 2>$OPKG_ERROR | flush
+				name=$(opkg --noaction install $form_paket 2>/dev/null | cut -d' ' -f2)
+				opkg flag ok $name 2>$OPKG_ERROR | flush
+				cat $OPKG_ERROR
+				echo "</pre><br/> Aktion beendet. Bitte Fehlermeldung beachten."
+			fi
 			;;
 		*)
 		;;
 	esac
 fi	 
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

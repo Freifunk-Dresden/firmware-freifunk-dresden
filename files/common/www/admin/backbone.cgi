@@ -2,7 +2,7 @@
 
 export TITLE="Verwaltung > Expert > Backbone"
 
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh
 
 #grep
@@ -69,12 +69,6 @@ html_checkbox() {
 cat<<EOM
 <input type="checkbox" name="$1" value="1"$(test "$2" = "1" && echo ' checked="checked"')>&nbsp;
 EOM
-}
-# ARGS: name textfile readonly rows cols
-html_textarea() {
-echo "<textarea name=\"${1:-noname}\" $3 ROWS=\"${4:-8}\" COLS=\"${5:-80}\">"
-test -n "$2" && cat $2 2>/dev/null
-echo "</textarea>"
 }
 html_msg()
 {
@@ -165,8 +159,6 @@ COUNT=$(uci show ddmesh | grep '=backbone_\(client\|accept\)' | wc -l)
 <tr><th>Client (baut Verbindungen auf):</th><td>$(html_checkbox form_backbone_clients_enabled $backbone_clients_enabled)</td></tr>
 <tr><th>Server (akzeptiert eingehende Verbindungen):</th><td>$(html_checkbox form_backbone_server_enabled $backbone_server_enabled)</td></tr>
 <tr><td colspan="3">&nbsp;</td></tr>
-<tr><th colspan="3">Folgende Ports werden von der Firmware verwendet:</th></tr>
-<tr><td colspan="3"><font color="red">$(/etc/init.d/S45firewall showports)</font></td></tr>
 <tr><th title="TCP Port des Servers">Server TCP Port:</th><td><input name="form_backbone_server_port" type="text" size="8" value="$backbone_server_port"</td>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="if(checkinput_server())form_submit(document.forms.backbone_form_server,'local','none')" name="bb_btn_new" type="button">Speichern</button></td></tr>
 </table>
@@ -324,4 +316,4 @@ else
 
 fi
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

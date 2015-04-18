@@ -3,7 +3,7 @@
 #usage: build.ar71xx.sh [VER]
 #       VER: openwrt version. default is "12.09"
 #excample: build.ar71xx.sh
-#excample: build.ar71xx.sh 12.09
+#excample: build.ar71xx.sh 14.07
 
 PLATFORM=ar71xx
 DL_DIR=dl
@@ -15,7 +15,7 @@ OPENWRT_PATCHES_DIR=openwrt-patches
 CONFIG_TYPE=ddmesh
 
 #define a list of supported versions
-VERSIONS="12.09"
+VERSIONS="14.07"
 
 
 # process argument
@@ -58,9 +58,9 @@ echo "select $VER"
 
 #openwrt
 case "$VER" in
-	12.09)
+	14.07)
 		git_url="git://git.openwrt.org/$VER/openwrt.git"
-		openwrt_rev="80c728365438d670bca4ed30251bfd00d773bae8"
+		openwrt_rev="7d01d821b05b26304ab8f8fc148e690cb5ffd8b3"
 		;;
 	*)
 		echo "[ERROR: VERSION $VER, not defined: no git url and revision] - exit"
@@ -135,8 +135,10 @@ else
 fi
 
 log echo "create dl directory/links and feed links"
-log ln -sf ../../../feeds.conf/feeds-$VER.conf $buildroot/feeds.conf
-log ln -sf ../../../$openwrt_dl_dir $buildroot/dl
+log rm $buildroot/feeds.conf
+log ln -s ../../../feeds/feeds-$VER.conf $buildroot/feeds.conf
+log rm $buildroot/dl
+log ln -s ../../../$openwrt_dl_dir $buildroot/dl
 
 #if feeds_copied directory contains same packages as delivered with
 #openwrt, then assume that the packages came with openwrt git clone are
@@ -144,12 +146,12 @@ log ln -sf ../../../$openwrt_dl_dir $buildroot/dl
 #new versions of packages from feeds-copied directory
 
 echo "delete old packages from buildroot/package"
-for i in feeds-copied/* feeds-own/*
+for i in $(ls -1 feeds/$VER/feeds-copied) $(ls -1 feeds/$VER/feeds-own)
 do
 	base=$(basename $i)
-	log echo "$i [$buildroot/package/$base]"
+	log echo "check: [$base]"
 #	test -x $buildroot/package/$base && log echo "rm -rf $buildroot/package/$base" && rm -rf $buildroot/package/$base
-	find $buildroot/package -type d -wholename "*/$base" -exec rm -rf {} \;
+	find $buildroot/package -type d -wholename "*/$base" -exec echo "  -> rm {} " \;  -exec rm -rf {} \;
 done
 
 #now copy rootfs files to builddir
@@ -160,6 +162,7 @@ log cp -a $RUN_DIR/files/common/* $buildroot/files/
 log cp -a $RUN_DIR/files/$VER/* $buildroot/files/
 
 echo "create rootfs/etc/built_info file"
+mkdir -p $buildroot/files/etc
 echo "#git revision" > $buildroot/files/etc/built_info
 git --no-pager log -n 1 | sed -n '1,1s#^[^ ]*[ ]*#revision:#p' >> $buildroot/files/etc/built_info
 echo "builtdate:$(date)" >> $buildroot/files/etc/built_info
@@ -168,10 +171,15 @@ echo "builtdate:$(date)" >> $buildroot/files/etc/built_info
 echo "change to buildroot [$buildroot]"
 cd $buildroot
 
+echo "delete previous firmware: bin/$PLATFORM"
+rm -rf bin/$PLATFORM
+
 echo "install feeds"
-log scripts/feeds clean 
-log scripts/feeds update -a
-log scripts/feeds install -a
+#log scripts/feeds clean 
+log scripts/feeds update ddmesh_own 
+log scripts/feeds update ddmesh_copied 
+log scripts/feeds install -a -p ddmesh_own 
+log scripts/feeds install -a -p ddmesh_copied 
 
 #copy after install feeds, because .config will be overwritten by default config
 log echo "copy configuration \($RUN_DIR/$config_file\)"

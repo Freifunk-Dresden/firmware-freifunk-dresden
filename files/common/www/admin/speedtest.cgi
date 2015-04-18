@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Verwaltung > Tools > Speedtest"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 
 cat<<EOF
@@ -49,4 +49,4 @@ EOM
 #query
 fi
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

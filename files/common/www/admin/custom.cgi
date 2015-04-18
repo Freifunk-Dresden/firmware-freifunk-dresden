@@ -9,15 +9,15 @@ export TITLE="Verwaltung > Update > Custom"
 CUSTOM_PATH="/www/custom"
 
 if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
-	. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+	. /usr/lib/www/page-pre.sh ${0%/*}
 	notebox 'GET not allowed'
-	. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+	. /usr/lib/www/page-post.sh ${0%/*}
 	exit 0
 fi
 #get form data and optionally file 
 eval $(/usr/bin/freifunk-upload -e 2>&1); then
 
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 echo "<H1>$TITLE</H1>"
 
 case "$form_action" in
@@ -81,4 +81,4 @@ cat<<EOM
 EOM
 
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

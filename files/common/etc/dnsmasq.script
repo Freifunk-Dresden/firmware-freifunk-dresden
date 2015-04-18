@@ -1,5 +1,8 @@
 #!/bin/sh
 
+#first factory boot check
+if [ ! -f /etc/config/ddmesh ]; then logger -t ddmesh "ddmesh not ready - ignore dhcp event" ; exit; fi
+
 logger -t DHCP "cmd:$1  mac:$2 ip:$3 hostname:$4"
 
 #ignore refresh

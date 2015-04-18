@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Verwaltung > Allgemein > Kontaktinfos"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOF
 <h2>$TITLE</h2>
@@ -87,4 +87,4 @@ else
 	fi
 fi
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Infos: Routen"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOF
 <h2>$TITLE</h2>
@@ -45,4 +45,4 @@ EOF
 
 done
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

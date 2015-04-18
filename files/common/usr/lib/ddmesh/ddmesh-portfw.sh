@@ -18,7 +18,6 @@ setup_forwarding() {
 	$IPT -t nat -A prerouting_lan_rule -d $_ddmesh_ip -j PORT_FORWARDING 
 	$IPT -t nat -A prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING 
 	$IPT -t nat -A prerouting_wifi2_rule -d $_ddmesh_ip -j PORT_FORWARDING 
-	$IPT -t nat -A prerouting_wifi2_rule -d $wifi2_ipaddr -j PORT_FORWARDING 
 	
 	$IPT -N PORT_FORWARDING
 	$IPT -N PORT_FORWARDING_RULES
@@ -67,7 +66,6 @@ load() {
 if [ "$1" = "init" -o "$1" = "load" ]; then
 	eval $(/usr/bin/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh lan lan)
-	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi2 wifi2)
 fi
 
 case "$1" in

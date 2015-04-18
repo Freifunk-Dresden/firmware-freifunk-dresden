@@ -4,36 +4,22 @@ export TITLE="Freifunk Dresden"
 export HTTP_ALLOW_GET_REQUEST=1
 remote_ip=${REMOTE_ADDR#*=}
 remote_mac=$(/usr/lib/ddmesh/ddmesh-splash.sh getmac $remote_ip)
-isclient=$(/usr/lib/ddmesh/ddmesh-splash.sh isclient $remote_ip)
-
 
 if [ -z $remote_mac ]; then
-	. $DOCUMENT_ROOT/page-pre.sh
+	export REDIRECT=0
+	. /usr/lib/www/splash-pre.sh
         cat <<EOM
         <font color="red" size="+1">Ihre IP Addresse ($remote_ip) wurde nicht per DHCP von diesem Knoten vergeben.</font><br><br>
         Normalerweise wird per DHCP die IP Adresse vergeben. Wurde eine feste IP verwendet, so kann keine
         MAC bestimmt werden.  
 EOM
-	. $DOCUMENT_ROOT/page-post.sh
+	. /usr/lib/www/splash-post.sh
         exit
 fi
 
-if [ $isclient = "no" ]; then
-	. $DOCUMENT_ROOT/page-pre.sh
-        cat <<EOM
-        Ihre IP: $remote_ip<br />
-        Ihre MAC: $remote_mac<br />
-        <br />
-        Weiter zu <a href="http://$FFDD/">Dresden-Freifunk</a><br />
-EOM
-        . $DOCUMENT_ROOT/page-post.sh
-        exit
-fi
-
-#enable REDIRECT after checks
 export REDIRECT=1
 
-. $DOCUMENT_ROOT/page-pre.sh
+. /usr/lib/www/splash-pre.sh
 
 if [ -z "$form_submit_accept" -a -z "$form_submit_abort" ]; then
 
@@ -89,5 +75,5 @@ fi
 
 
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/splash-post.sh
 

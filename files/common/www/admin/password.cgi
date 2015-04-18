@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Verwaltung > Allgemein > Kennwort"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 export uhttpd_restart=0
 
@@ -62,4 +62,4 @@ else
 	fi
 fi
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh

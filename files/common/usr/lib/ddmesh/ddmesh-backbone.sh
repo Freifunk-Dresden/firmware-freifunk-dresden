@@ -8,6 +8,7 @@ VTUND=/usr/bin/vtund
 CONF=/var/etc/vtund-backbone.conf
 STATUS_DIR=/var/vtund/backbone
 NETWORK_DEV=tbb
+PROTO=tcp
 NUMBER_OF_CLIENTS=$(uci get ddmesh.backbone.number_of_clients)
 DEFAULT_PORT=$(uci get ddmesh.backbone.default_server_port)
 DEFAULT_PASSWORD=$(uci get credentials.backbone.default_passwd)
@@ -49,7 +50,7 @@ addconf() {
 $1 {
  passwd a$(echo "$2" | md5sum | sed 's# .*$##')78; 
  type ether;
- proto tcp;
+ proto $PROTO;
  compress no;
  encrypt no;
  stat no;
@@ -116,8 +117,8 @@ callback_outgoing_config ()
 	fi
 
 	#dont use hostnames, can not be resolved	
-	iptables -A output_backbone_accept -p tcp --dport $port -j ACCEPT
-	iptables -A output_backbone_reject -p tcp --dport $port -j reject
+	iptables -A output_backbone_accept -p $PROTO --dport $port -j ACCEPT
+	iptables -A output_backbone_reject -p $PROTO --dport $port -j reject
 
 }
 				
@@ -136,8 +137,8 @@ if [ "$1" = "start" ]; then
  		config_load ddmesh
  		config_foreach callback_accept_config backbone_accept
 
-  		iptables -A input_backbone_accept -p tcp --dport $backbone_server_port -j ACCEPT
-  		iptables -A input_backbone_reject -p tcp --dport $backbone_server_port -j reject
+  		iptables -A input_backbone_accept -p $PROTO --dport $backbone_server_port -j ACCEPT
+  		iptables -A input_backbone_reject -p $PROTO --dport $backbone_server_port -j reject
 
 		$VTUND -s -f $CONF -P $backbone_server_port -I "vtund-tbb[s]: "
 		echo "vtund - server started."

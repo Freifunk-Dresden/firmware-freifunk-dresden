@@ -2,7 +2,7 @@
 
 export TITLE="Infos: WLAN-Scan"
 
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
 <H2>$TITLE</H2>
@@ -23,4 +23,4 @@ ajax_wlan();
 
 EOM
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

@@ -7,7 +7,7 @@ else
 	export TITLE="Verwaltung &gt; Allgemein &gt; Automatic-Setup"
 fi
  
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
  
 WIDTH=100
 
@@ -51,7 +51,12 @@ ajax_register();
 ajax_wlan();
 //--></SCRIPT>
 <br />
+EOM
 
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wan)          
+if [ -n "$net_device" ]; then
+
+cat<<EOM
 <fieldset class="bubble">
 <legend >WAN Anschlu&szlig; Status (automatische Aktualisierung)</legend>
 <div id="ajax_dhcp">Lade...</div>
@@ -59,8 +64,9 @@ ajax_wlan();
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 ajax_dhcp();
 //--></SCRIPT>
- 
 EOM
 
-. $DOCUMENT_ROOT/page-post.sh
+fi
+
+. /usr/lib/www/page-post.sh
 

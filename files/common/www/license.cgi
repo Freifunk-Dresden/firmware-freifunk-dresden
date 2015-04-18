@@ -1,9 +1,10 @@
 #!/bin/sh
 
+export ALLOW_PAGE=1
 export NOMENU=1
 export HTTP_ALLOW_GET_REQUEST=1
 export TITLE="Licenses"
-. $DOCUMENT_ROOT/page-pre.sh
+. /usr/lib/www/page-pre.sh
 
 display_title() {
  file=/usr/lib/license/$1-${LANG}.txt
@@ -28,7 +29,7 @@ case "$license" in
 	1) display_text agreement ;;
 	2) display_text pico ;;
 	3) display_text gpl ;;
-	4) display_text lpl ;;
+	4) display_text lgpl ;;
  	*)
  cat<<EOM
  <fieldset class="bubble">
@@ -50,32 +51,23 @@ If not otherwise stated in the source files, the OpenWrt build environment is pr
 The freifunk dresden firmware build system it self is currently closed source.
 The freifunk server (vserver) are closed source.
 </p>
-<p>
-License Notes for Freifunk Dresden Network<br />
-----------------------------------------------
-It is not allowed to add computers/routers to freifunk network, which acts as a Freifunk Node. This means any computer/router which runs the
-routing protokoll used in Freifunk Dresden network, uses the same bssid for wifi adhoc or connects via lan, backbone, wifi to Freifunk Dresden Network is forbitten.<br />
-Actually only router with the provided freifunk firmware is accepted to be connected to the network, except already permitted devices.<br /> 
-If there is any other device which is build separately as a Freifunk node and would like to be connected to the network, must be accepted bei Freifunk Dresden
-After some checks that this does not influence the runing network and other nodes and users.<br />
-</p>
- </fieldset>
- <br/>
- <fieldset class="bubble">
- <ul>
- <li><a href="/license.cgi?license=1">$(display_title agreement)</a></li>                                        
- <li><a href="/license.cgi?license=2">$(display_title pico)</a></li>                                            
- <li><a href="/license.cgi?license=3">$(display_title gpl)</a></li>                                            
- <li><a href="/license.cgi?license=4">$(display_title lgpl)</a></li>                                            
- </ul>
- </fieldset>
+</fieldset>
+<br/>
+<fieldset class="bubble">
+<ul>
+<li><a href="/license.cgi?license=1">$(display_title agreement)</a></li>                                        
+<li><a href="/license.cgi?license=2">$(display_title pico)</a></li>                                            
+<li><a href="/license.cgi?license=3">$(display_title gpl)</a></li>                                            
+<li><a href="/license.cgi?license=4">$(display_title lgpl)</a></li>                                            
+</ul>
+</fieldset>
 
 
 EOM
 	;;
 esac
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh
 
 fi #autosetup
 

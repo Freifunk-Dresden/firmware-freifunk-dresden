@@ -1,0 +1,14 @@
+#!/bin/sh
+
+params="$*"
+
+test "$1" = "-q" && silent=1 && shift
+
+if [ "$1" = "set" ]; then
+ L=${2%%=*}
+ R=${2#*=}
+ /sbin/uci set $L="$R" || (echo "UCI-ERROR: [$params]" >/proc/self/fd/2)
+else
+ /sbin/uci $params || [ "$silent" = 1 ] || (echo "UCI-ERROR: [$params]" >/proc/self/fd/2)
+fi
+

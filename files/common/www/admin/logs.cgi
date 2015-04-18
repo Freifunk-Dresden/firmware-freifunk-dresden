@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Infos: Logs"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
 <h2>$TITLE</h2>
@@ -55,28 +55,16 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Aktive Verbindungen: <a href="#" onclick="return fold('fs_conntrk')">Ein-/Ausblenden</a></legend>
 <table class="hidden" id="fs_conntrk">
+<tr><th colspan="2">Lokal</th><th colspan="2">Entfernt</th></tr>
 EOM
 
-eval $(sed -e'
-s/src=\([0-9\.]\+\).*/conn_\1=$(( \$conn_\1 + 1 ));/
-s/^.* conn_/conn_/
-s/\./_/g
-' /proc/net/nf_conntrack)
-set|sed -ne"
-s/^conn_//
-tp
-b
-:p
-s/_/./g
-s/^\(.*\)='\([0-9]\+\)'/\2	\1/
-p
-"|sort | sed -n '
-s#^[	 ]*\([^ 	]\+\)[	 ]\+\(.*\)$#<tr class="colortoggle1"><td>\1</td><td>\2</td></tr>#
-p
-n
-s#^[	 ]*\([^ 	]\+\)[	 ]\+\(.*\)$#<tr class="colortoggle2"><td>\1</td><td>\2</td></tr>#
-p
-'
+netstat -tn 2>/dev/null | grep ESTABLISHED | awk '                                                                                                                                       
+{                                                                                                                                                                                        
+	split($4,a,":");                                                                                                                                                                 
+	split($5,b,":");                                                                                   
+	if(match(a[1],"169.254")) a[1]="Gateway Tunnel"                                                                                                                                  
+	printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",(NR%2)+1,a[1],a[2],b[1],b[2]);                                                          
+}'                                                                                                                                                                                       
 
 cat<<EOM
 </table>
@@ -102,4 +90,4 @@ cat<<EOM
 </fieldset>
 EOM
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh

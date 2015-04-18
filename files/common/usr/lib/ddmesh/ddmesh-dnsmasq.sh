@@ -10,25 +10,38 @@ eval $(/usr/bin/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 #create LAN DHCP: IP,NETMASK,BROADCAST,NETWORK,PREFIX,START,END
 eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask) $(uci get ddmesh.network.dhcp_lan_offset) $(uci get ddmesh.network.dhcp_lan_limit))
 
+
 cat >$CONF <<EOM
 #config file created by $0
 
 # filter what we send upstream
 #domain-needed
 bogus-priv
+stop-dns-rebind
 
 #enable filterwin2k if dial-on-demand is used (not used at moment)
 #filterwin2k
 user=root
 group=root
 dhcp-authoritative
-all-servers
 dhcp-fqdn
-stop-dns-rebind
 no-negcache
 
 #read upstream server from resolv.conf.auto instead resolv.conf
+all-servers
 resolv-file=/tmp/resolv.conf.auto
+EOM
+
+
+nameserver="$(uci get ddmesh.network.internal_dns | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
+if [ -n "$nameserver" ]; then
+	echo "rebind-domain-ok=/ffdd/mei/" >>$CONF
+	echo "server=/ffdd/$nameserver" >>$CONF
+	echo "server=/mei/$nameserver" >>$CONF
+	echo "server=//#" >>$CONF
+fi
+
+cat >>$CONF <<EOM
 
 # allow /etc/hosts and dhcp lookups via *.lan
 #addn-hosts=/etc/local.hosts
@@ -77,7 +90,7 @@ fi
 #domain search:119
 cat >>$CONF <<EOM
 #------ wifi2 ---------
-dhcp-range=wifi2,$(uci get ddmesh.network.wifi2_dhcpstart),$(uci get ddmesh.network.wifi2_dhcpend),$(uci get ddmesh.network.wifi2_dhcplease)
+dhcp-range=set:wifi2,$(uci get ddmesh.network.wifi2_dhcpstart),$(uci get ddmesh.network.wifi2_dhcpend),$(uci get ddmesh.network.wifi2_dhcplease)
 dhcp-option=wifi2,6,$(uci get ddmesh.network.wifi2_dns)
 dhcp-option=wifi2,3,$(uci get ddmesh.network.wifi2_ip)
 dhcp-option=wifi2,1,$(uci get ddmesh.network.wifi2_netmask)

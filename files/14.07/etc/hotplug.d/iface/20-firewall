@@ -1,0 +1,3 @@
+#firewall reloading disabled; it would delete all rules set by backbone/vpn.
+#all interfaces are preset to "up" state, so all rules are set during boot.
+

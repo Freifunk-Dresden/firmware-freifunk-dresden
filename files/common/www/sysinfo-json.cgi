@@ -19,7 +19,8 @@ eval $(/usr/lib/ddmesh/freifunk-gateway-info.sh cache)
 
 cat << EOM
 {
- "version":"1",
+ "version":"4",
+ "timestamp":"$(date +'%s')",
  "data":{
 
 EOM
@@ -39,13 +40,17 @@ cat << EOM
 			"uptime":"$(uptime)",
 			"uname":"$(uname -a)",
 			"nameserver": [
-			$(cat /tmp/resolv.conf.auto| sed -n '/nameserver/{s#[ 	]*nameserver[ 	]*\(.*\)#"\1",#;p}' | sed '$s#,##')
+$(cat /tmp/resolv.conf.auto| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*\(.*\)#\t\t\t\t"\1",#;p}' | sed '$s#,##')
 			],
 			"date":"$(date)",
-			"model":"$(cat /var/sysinfo/model):$(cat /proc/diag/model)"
+			"board":"$(cat /var/sysinfo/board_name)",
+			"model":"$(cat /var/sysinfo/model)",
+			"model2":"$(cat /proc/diag/model)",
+			"cpuinfo":"$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')",
+			"bmxd" : "$(cat $BMXD_DB_PATH/status)"
 		},
 		"common":{
-			"city":"Dresden",
+			"city":"$(uci get ddmesh.system.community | awk '{print $2}')",
 			"node":"$_ddmesh_node",
 			"domain":"$_ddmesh_domain",
 			"ip":"$_ddmesh_ip"
@@ -64,22 +69,23 @@ cat << EOM
 EOM
 
 cat<<EOM
-	"statistic" : {
-		"accepted_user_count" : "$(ls -l /tmp/dhcp.autodisconnect.db | wc -l )",
-		"dhcp_count" : "$(wc -l /var/dhcp.leases | cut -d' ' -f1)",
-		"dhcp_lease" : "$(grep 'dhcp-range=wifi2' /etc/dnsmasq.conf | cut -d',' -f 6)",
-		"traffic_adhoc": "$(ifconfig $wifi | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
-		"traffic_ap": "$(ifconfig $wifi2 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
-		"traffic_ovpn": "$(ifconfig $vpn | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
-		"traffic_tbb0": "$(ifconfig tbb0 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
-		"traffic_tbb1": "$(ifconfig tbb1 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
-		"traffic_tbb2": "$(ifconfig tbb2 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
-		"traffic_tbb3": "$(ifconfig tbb3 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
-		"traffic_tbb4": "$(ifconfig tbb4 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
-		$(cat /proc/meminfo | sed 's#\(.*\):[ 	]\+\([0-9]\+\)[ 	]\+\(.*\)#\"meminfo_\1\" : \"\2\ \3\",#')
-		"cpu_load" : "$(cat /proc/loadavg)",
-		"cpu_stat" : "$(cat /proc/stat | sed -n '/^cpu[ 	]\+/{s# \+# #;p}')",
-		"gateway_usage" : [ $(cat /var/statistic/gateway_usage | sed 's#\([^:]*\):\(.*\)#{"\1":"\2"},#' | sed '$s#,[ 	]*$##') ]
+		"statistic" : {
+			"accepted_user_count" : "$(ls -l /tmp/dhcp.autodisconnect.db | wc -l )",
+			"dhcp_count" : "$(wc -l /var/dhcp.leases | cut -d' ' -f1)",
+			"dhcp_lease" : "$(grep 'dhcp-range=wifi2' /etc/dnsmasq.conf | cut -d',' -f4)",
+			"traffic_adhoc": "$(ifconfig $wifi | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
+			"traffic_ap": "$(ifconfig $wifi2 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
+			"traffic_ovpn": "$(ifconfig $vpn | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
+			"traffic_tbb0": "$(ifconfig tbb0 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
+			"traffic_tbb1": "$(ifconfig tbb1 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
+			"traffic_tbb2": "$(ifconfig tbb2 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
+			"traffic_tbb3": "$(ifconfig tbb3 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
+			"traffic_tbb4": "$(ifconfig tbb4 | sed -n '/RX bytes/{s#[ ]*RX bytes:\([0-9]\+\)[^:]\+:\([0-9]\+\).*#\1,\2#;p}')",
+$(cat /proc/meminfo | sed 's#\(.*\):[ 	]\+\([0-9]\+\)[ 	]\+\(.*\)#\t\t\t\"meminfo_\1\" : \"\2\ \3\",#')
+			"cpu_load" : "$(cat /proc/loadavg)",
+			"cpu_stat" : "$(cat /proc/stat | sed -n '/^cpu[ 	]\+/{s# \+# #;p}')",
+			"gateway_usage" : [
+$(cat /var/statistic/gateway_usage | sed 's#\([^:]*\):\(.*\)#\t\t\t\t{"\1":"\2"},#' | sed '$s#,[ 	]*$##') ]
 	},
 EOM
 
@@ -90,32 +96,16 @@ cat<<EOM
 			"routing_tables":{
 				"route":{
 					"link":[
-$(ip route list table bat_route | sed -n '/scope[ ]\+link/{s#^\([0-9./]\+\)[	 ]\+dev[	 ]\+\([^	 ]\+\).*#			{"target":"\1","interface":"\2"},#;p}' | sed '$s#,[ 	]*$##') ],
+$(ip route list table bat_route | sed -n '/scope[ ]\+link/{s#^\([0-9./]\+\)[	 ]\+dev[	 ]\+\([^	 ]\+\).*#\t\t\t\t{"target":"\1","interface":"\2"},#;p}' | sed '$s#,[ 	]*$##') ],
 		  			"global":[
-$(ip route list table bat_route | sed  '/scope[ ]\+link/d;s#^\([0-9./]\+\)[	 ]\+via[	 ]\+\([0-9.]\+\)[	 ]\+dev[	 ]\+\([^	 ]\+\).*#			{"target":"\1","via":"\2","interface":"\3"},#p' | sed '$s#,[ 	]*$##') ]
+$(ip route list table bat_route | sed  '/scope[ ]\+link/d;s#^\([0-9./]\+\)[	 ]\+via[	 ]\+\([0-9.]\+\)[	 ]\+dev[	 ]\+\([^	 ]\+\).*#\t\t\t\t{"target":"\1","via":"\2","interface":"\3"},#p' | sed '$s#,[ 	]*$##') ]
 		  		},
 			"hna":{
 				"link":[
-$(ip route list table bat_hna | sed -n '/scope[ ]\+link/{s#^\([0-9./]\+\)[	 ]\+dev[	 ]\+\([^	 ]\+\).*#			{"target":"\1","interface":"\2"},#;p}' | sed '$s#,[ 	]*$##') ],
+$(ip route list table bat_hna | sed -n '/scope[ ]\+link/{s#^\([0-9./]\+\)[	 ]\+dev[	 ]\+\([^	 ]\+\).*#\t\t\t\t{"target":"\1","interface":"\2"},#;p}' | sed '$s#,[ 	]*$##') ],
 		  		"global":[
-$(ip route list table bat_hna | sed  '/scope[ ]\+link/d;s#^\([0-9./]\+\)[	 ]\+via[	 ]\+\([0-9.]\+\)[	 ]\+dev[	 ]\+\([^	 ]\+\).*#			{"target":"\1","via":"\2","interface":"\3"},#p' | sed '$s#,[ 	]*$##') ]
+$(ip route list table bat_hna | sed -n '/scope[ ]\+link/d;s#^\([0-9./]\+\)[	 ]\+via[	 ]\+\([0-9.]\+\)[	 ]\+dev[	 ]\+\([^	 ]\+\).*#\t\t\t\t{"target":"\1","via":"\2","interface":"\3"},#p' | sed '$s#,[ 	]*$##') ]
 				}
-			},
-			"details": {
-				"head":"$(cat $BMXD_DB_PATH/details | sed -n '1,1s#\(^.*$\)#\1#p')",
-				"neighbor":[
-$(cat $BMXD_DB_PATH/details | sed -n '
-				/^Originator/q
-				s#^[	 ]*\([0-9.]\+\)[	 ]\+\([^	 ]\+\)[	 ]\+\([0-9.]\+\)[	 ]\+\([0-9]\+\)[	 ]\+\([0-9]\+\)[	 ]\+\([0-9]\+\)[	 ]\+\([0-9]\+\).*#				{"ip":"\1","interface":"\2","originator":"\3","rtq":"\4","rq":"\5","tq":"\6","lseq":"\7"},#p
-				' | sed '$s#,[	 ]*$##') ],
-				"originator":[
-$(cat $BMXD_DB_PATH/details | sed -n '
-				/^Originator/!d
-				:start
-				n
-				s#^[	 ]*\([0-9.]\+\)[	 ]\+\([^	 ]\+\)[	 ]\+\([0-9.]\+\)[	 ]\+\([0-9]\+\)[	 ]\+\([0-9]\+\)[	 ]\+\([0-9:]\+\)[	 ]\+\([0-9]\+\).*#				{"ip":"\1","interface":"\2","nexthop":"\3","tq":"\4","rcnt":"\5","knownsince":"\6","lsqn":"\7"},#p
-				b start
-				' | sed '$s#,[	 ]*$##') ]
 			},
 			"gateways":{
 				"selected":"$(cat $BMXD_DB_PATH/gateways | sed -n 's#^[	 ]*=>[	 ]\+\([0-9.]\+\).*$#\1#p')",
@@ -124,7 +114,7 @@ $(cat $BMXD_DB_PATH/details | sed -n '
 $(cat $BMXD_DB_PATH/gateways | sed -n '
 				/^[	 ]*$/d
 				1,1d
-				s#^[	 =>]*\([0-9.]\+\).*$#			{"ip":"\1"},#p
+				s#^[	 =>]*\([0-9.]\+\).*$#\t\t\t\t{"ip":"\1"},#p
 				' | sed '$s#,[	 ]*$##') ]
 			},
 			"info":[
@@ -139,7 +129,22 @@ $(bmxd -ci | sed 's#^[ 	]*\(.*\)$#			"\1",#; $s#,[ 	]*$##') ]
 			"ipv6_country":"$iptest_country6",
 			"ipv6_country_code":"$iptest_country_code6",
 			"ipv6_imgurl":"$iptest_imgurl6"
-		  }
+		},
+		"connections":[
+EOM
+netstat -tn 2>/dev/null | grep ESTABLISHED | awk '
+	{
+		split($4,a,":");
+		split($5,b,":");
+		if(match(a[1],"169.254")) a[1]=ENVIRON["_ddmesh_ip"]
+		#allow display node ip
+		if(a[1] == ENVIRON["_ddmesh_ip"])
+		{
+			printf("\t\t\t{\"local\":{\"ip\":\"%s\",\"port\":\"%s\"},\"foreign\":{\"ip\":\"%s\",\"port\":\"%s\"}},\n",a[1],a[2],b[1],b[2]);
+		}
+	}' | sed '$s#,[ 	]*$##'
+cat << EOM
+		]
 EOM
 
 # remove last comma

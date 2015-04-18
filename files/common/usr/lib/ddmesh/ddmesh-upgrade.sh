@@ -55,10 +55,6 @@ run_upgrade()
 
  test "$previous_version_found" = "0" && echo "ERROR: missing upgrade function for previous version $previous_version" && exit 1
  test "$current_version" != "$v" && echo "ERROR: no upgrade function found for current version $current_version" && exit 1
- uci commit
- sync
- sleep 3
- reboot
 }
 
 #############################################
@@ -94,8 +90,8 @@ upgrade_2_0_05()
  uci set ddmesh.network.wifi_txpower=18
  uci set ddmesh.network.wifi_diversity=1
  uci set ddmesh.network.lan_local_internet=0
- uci get ddmesh.network.wan_speed_down=100000
- uci get ddmesh.network.wan_speed_up=10000
+ uci set ddmesh.network.wan_speed_down=100000
+ uci set ddmesh.network.wan_speed_up=10000
  #change vpn server
  i=0
  while true
@@ -130,7 +126,7 @@ upgrade_2_0_08() {
 upgrade_2_1_0() { echo "nothing todo"; }
 upgrade_2_1_1() { echo "nothing todo"; }
 upgrade_2_1_2() { echo "nothing todo"; }
-upgrade_2_1_3() { 
+upgrade_2_1_3() {
  #scroll register_key to get new node
  x="$(uci get ddmesh.system.register_key)"
  uci set ddmesh.system.register_key="${x#*:}:${x%%:*}"
@@ -138,7 +134,7 @@ upgrade_2_1_3() {
  uci set ddmesh.bmxd.gateway_class='1024/1024'
  uci set network.wifi.ipaddr="$_ddmesh_nonprimary_ip"
 }
-upgrade_2_1_4() { 
+upgrade_2_1_4() {
  cp /rom/etc/firewall.user /etc/
  uci set ddmesh.network.wifi_htmode="HT20"
 }
@@ -147,7 +143,51 @@ upgrade_2_1_5() {
  rm -rf /etc/crontabs/root
  ln -s /var/etc/crontabs/root /etc/crontabs/root
 }
-upgrade_2_1_6() { echo "nothing todo"; }
+upgrade_3_1_6() {
+ uci set wireless.@wifi-iface[1].isolate='1'
+ rm -rf /etc/hosts
+ ln -s /var/etc/dnsmasq.hosts /etc/hosts
+ #clear firewall, moved to ddmesh-firewall.sh
+ >/etc/firewall.user
+ uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
+ uci set ddmesh.network.wifi2_dhcplease='5m'
+ uci set ddmesh.network.client_disconnect_timeout=0
+ uci del ddmesh.system.disable_gateway
+ uci sel ddmesh.system.announce_gateway=0
+}
+upgrade_3_1_7() {
+ uci set ddmesh.network.wan_speed_down=100000
+ uci set ddmesh.network.wan_speed_up=10000
+ uci set ddmesh.network.lan_speed_down=100000
+ uci set ddmesh.network.lan_speed_up=10000
+ uci set ddmesh.system.firmware_autoupdate=0
+ uci add credentials url
+ uci rename credentials.@url[-1]='url'
+ uci set credentials.url.firmware_download_release='http://download.freifunk-dresden.de/firmware/latest'
+ uci set credentials.url.firmware_download_testing='http://download.freifunk-dresden.de/firmware/testing'
+}
+upgrade_3_1_8() {
+ essid="Freifunk Mesh-Net"
+ uci -q set ddmesh.network.essid_adhoc="$essid"
+ uci set wireless.@wifi-iface[0].ssid="${essid:0:32}"
+ uci add_list ddmesh.system.communities="Freifunk Radebeul"
+ uci set ddmesh.network.internal_dns='10.200.0.4'
+ uci set ddmesh.network.wifi2_ip='192.168.252.1'
+ uci set ddmesh.network.wifi2_dns='192.168.252.1'
+ uci set ddmesh.network.wifi2_netmask='255.255.252.0'
+ uci set ddmesh.network.wifi2_broadcast='192.168.255.255'
+ uci set ddmesh.network.wifi2_dhcpstart='192.168.252.2'
+ uci set ddmesh.network.wifi2_dhcpend='192.168.255.254'
+ uci set firewall.zone_wifi.masq='0'
+ uci set firewall.zone_tbb.masq='0'
+}
+upgrade_3_1_9() {
+ uci set network.wifi2.type='bridge'
+ uci set credentials.url.firmware_download_server='download.freifunk-dresden.de'
+ uci set ddmesh.system.bmxd_nightly_restart='0'
+ test -n "$(uci get ddmesh.network.essid_ap)" && uci set ddmesh.network.custom_essid=1
+ uci set credentials.registration.register_service_url="$(uci get credentials.registration.register_service_url | sed 's#ddmesh.de#freifunk-dresden.de#')"
+}
 
 
 run_upgrade

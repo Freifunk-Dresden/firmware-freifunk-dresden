@@ -16,6 +16,12 @@ table.note {
 	background-color: #ff99ff;
 	border: 2px solid black;
 }
+table.nowrap th {
+	white-space:nowrap;
+}
+table.nowrap th.heading {
+	color:blue
+}
 pre {
 	background-color: lightgrey;
 }
@@ -156,6 +162,7 @@ p,ol,ul,dl,li,td,dd {
 	line-height: 16px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	text-align: left;
+	vertical-align:top;
 }
 dt,th {
 	font-size: 11px;
@@ -163,6 +170,7 @@ dt,th {
 	line-height: 16px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	text-align: left;
+	vertical-align:top;
 }
 p,ol,ul,dl,pre {
 	margin-top: 4px;
@@ -249,13 +257,11 @@ fieldset.bubble table.hidden {
 }
 fieldset.bubble th {
 	color: #444444;
-	vertical-align: bottom;
 	font-weight: bolder;
 	text-align: left;
 }
 fieldset.bubble td {
 	padding: 1px 10px;
-	vertical-align:top;
 }
 .navi {
 	background-color: #ffcb05;
@@ -364,4 +370,19 @@ form.splash
 	border: 0px;
 	text-align: left;
 	font-size: 16px;
+}
+
+@keyframes blink {  
+	0% { opacity: 1.0; }
+	50% { opacity: 0.0; }
+	100% { opacity: 1.0; }
+}
+@-webkit-keyframes blink {
+	0% { opacity: 1.0; }
+	50% { opacity: 0.0; }
+	100% { opacity: 1.0; }
+}
+.blink {
+	animation: blink 1s step-start 0s infinite;
+	-webkit-animation: blink 1s step-start 0s infinite;
 }

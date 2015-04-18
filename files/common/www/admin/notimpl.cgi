@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Verwaltung > Allgemein > Kennwort"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
 <h2>$TITLE</h2>
@@ -13,4 +13,4 @@ cat<<EOM
 </fieldset>
 EOM
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh

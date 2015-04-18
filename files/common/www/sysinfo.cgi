@@ -7,7 +7,7 @@ BMXD_DB_PATH=/var/lib/ddmesh/bmxd
 eval $(/usr/bin/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 test -z "$_ddmesh_node" && exit
 
-eval $(ddmesh_ipcalc.sh -n $ddmesh_node -e)
+eval $(ddmesh-ipcalc.sh -n $ddmesh_node -e)
 
 #node info
 contact_name="$(uci get ddmesh.contact.name)"

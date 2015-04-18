@@ -1,4 +1,49 @@
 
+2015-Mar-09 3.1.9
+--------------------------------------------------
+essid			- add separator and fix spaces in essid
+OVPNCert		- add support for cyberghost vpn
+openvpn			- fix possible interface name conflicts
+bmxd			- fix crash when adding a lot of tunnel devices
+passwd			- move passwd default passwd check to header line (always displayed)
+gui			- move scripts to separate directory not accessable from webdir
+gateway-check		- restart openvpn in case link is active but dead
+sysinfo-json		- remove private dns ip to hide private ip address range
+
+2015-Jan-28 3.1.8 (testing)
+--------------------------------------------------
+openwrt			- update revision
+bmxd			- resolve internet gateway problems
+gateway selection	- add configuration to set preferred gateway
+watchdog		- add watchdog to reboot router (wifi stopps working on TP-Link TL-WDR4300 v1)
+wifi			- uses same adhoc essid for all routers "Freifunk Mesh-Net"
+passwd			- add note if password has not be changed
+syslog-json		- add bmxd status info
+node registration	- enable continues node registration from auto setup
+dns			- add freifunk internal dns support
+wifi2 ip range		- increment ip dhcp range up to 1022 hosts per node
+gui: firewall		- some improvments when displaying firewall rules
+
+
+2015-Jan-28 3.1.7 (testing)
+--------------------------------------------------
+OPENWRT 14.07		- move to new openwrt branch (support more routers), changes majore version number
+dhcp			- change dhcp lease to 5min default
+gui-dhcp		- add settings for dhcp lease
+wifi			- isolate wifi clients
+sysinfo			- add network connections
+gui-log			- add network connection to logs
+syslog			- add remote syslog
+sysinfo-json		- add timestamp, model, board_name
+announce gateway	- correct announcing own gateway
+LED-boot state		- show boot status
+LED-freifunk state	- wifi led shows freifunk/gateway state
+firmware upgrade	- add firmware file name and firmware download function
+nightly bmxd restart	- add workaround for problem within routing protocoll bmxd, where it may happen that connection
+			  to gateway is not created
+firmware auto update	- nightly check for new firmware version and auto update added
+
+
 2014-Nov-10 (2.1.5)
 --------------------------------------------------
 sysinfo                 - use cached internet tunnel info if present

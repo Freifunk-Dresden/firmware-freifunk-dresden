@@ -1,5 +1,12 @@
 #!/bin/sh
 
+if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
+	. /usr/lib/www/page-pre.sh ${0%/*}
+	notebox 'GET not allowed'
+	. /usr/lib/www/page-post.sh ${0%/*}
+	exit 0
+fi
+
 node=$(uci get ddmesh.system.node)
 tmpmin=$(uci get ddmesh.system.tmp_min_node)
 tmpmax=$(uci get ddmesh.system.tmp_max_node)
@@ -7,9 +14,7 @@ if [ $node -ge $tmpmin -a $node -le $tmpmax ]; then
 # 	export NOMENU=1	
 	export TITLE="Auto-Setup"
 
-	. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
-
-#echo "<pre>";set;echo "/<pre>"
+	. /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
 <h1>Auto-Setup</h1>
@@ -21,12 +26,16 @@ Das Passwort sollte nach dem Durchlaufen des Autosetups ge&auml;ndert werden.<br
 	<a href="/admin/autosetup.cgi">Starte Auto-Setup</a>
 EOM
 
-	. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+	. /usr/lib/www/page-post.sh ${0%/*}
 
 else #autosetup
 
 	export TITLE="Verwaltung > Allgemein"
-	. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+	. /usr/lib/www/page-pre.sh ${0%/*}
+
+	if [ "$form_action" = "overlay" ]; then
+		/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write >/dev/null
+	fi
 
 	cat<<EOM
 <h1>$TITLE</h1>
@@ -76,7 +85,7 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle2
 <tr class="colortoggle2"><th>Nameserver:</th><td colspan="5">$(grep nameserver /tmp/resolv.conf.auto | sed 's#nameserver##g')</td></tr>                              
 <tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="5">$(uptime)</td></tr>                                                                            
 <tr class="colortoggle2"><th>System:</th><td colspan="5">$(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>                  
-<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="5">$(cat /var/sysinfo/model) - $(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')</td></tr>   
+<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="5">$(cat /var/sysinfo/model) - $(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p') [$(cat /tmp/sysinfo/board_name)]</td></tr>   
 <tr class="colortoggle2"><th>SSH Fingerprint (md5)</th><td colspan="5">$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | sed -n '/Fingerprint/s#Fingerprint: md5 ##p')</td></tr>
 <tr class="colortoggle1"><th></th><th>Total</th> <th>Used</th> <th>Free</th> <th>Shared</th> <th>Buffers</th> </tr>
 $(free | sed -n '2,${s#[ 	]*\(.*\):[ 	]*\([0-9]\+\)[ 	]*\([0-9]\+\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)#<tr class="colortoggle2"><th>\1</th><td>\2</td><td>\2</td><td>\3</td><td>\4</td><td>\4</td></tr>#g;p}' )
@@ -107,6 +116,9 @@ EOM
 <br>
 <fieldset class="bubble">
 <legend>Internals</legend>
+<form name="form_overlay" action="index.cgi" method="POST">
+<input name="form_action" value="overlay" type="hidden">
+<p>Zeigt Flash&auml;nderungen, welche nur nach &Auml;nderung der Einstellungen vorhanden sein sollten.</p>
 <table>
 <tr><th></th><th>Vorhergehend</th><th>Aktuell</th></tr>
 EOM
@@ -118,14 +130,15 @@ else
  co="red"
 fi
 
-echo "<tr class=\"colortoggle1\" style=\"font-weight:bold;color: $co;\"><th>Overlay(md5sum)</th><td>$ovl_old</td><td>$ovl_cur</td></tr>"
-
 cat<<EOM
+<tr class="colortoggle1" style="font-weight:bold;color: $co;"><th>Flash Overlay MD5</th><td>$ovl_old</td><td>$ovl_cur</td>
+<td><input name="form_firmware_submit" type="submit" value="Reset"></td></tr>
 </table>
+</form>
 </fieldset>
 EOM
 
-	. $DOCUMENT_ROOT/page-post.sh
+	. /usr/lib/www/page-post.sh
 
 fi #autosetup
 

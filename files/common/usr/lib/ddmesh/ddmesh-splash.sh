@@ -18,18 +18,6 @@ config_splash_addmac() {
 }
 
 case "$1" in 
-	isclient)
-		test -z "$(uci -q get ddmesh.system.node)" && echo no && exit 1
-
-		eval $(ddmesh-ipcalc.sh -n $(uci -q get ddmesh.system.node))
-		test -z "$2" && echo "arg 2 (IP) missing" && exit 1
-		localnet=$(ipcalc -n $(uci get ddmesh.network.wifi2_ip) $(uci get ddmesh.network.wifi2_netmask))
-		localnet=${localnet#NETWORK=}
-		clientnet=$(ipcalc -n $2 $(uci get ddmesh.network.wifi2_netmask))
-		clientnet=${clientnet#NETWORK=}
-		test "$localnet" = "$clientnet" && echo yes && exit 0
-		echo no 
-	;;
 	getmac)
 		test -z "$2" && echo "arg 2 (IP) missing" && exit 1
 		cat /tmp/dhcp.leases | grep "[ 	]$2[ 	]" | cut -d' ' -f2 | sed 'y#ABCDEF#abcdef#'
@@ -39,10 +27,10 @@ case "$1" in
 		test -z "$(iptables -t nat -L -n | grep SPLASH_AUTH_USERS)" && exit 1
  		mac=$(echo $2 | sed 'y#ABCDEF#abcdef#') 
 		logger -t splash "addmac $mac"
-		iptables -t nat -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN >/dev/null 2>&1
-		iptables -t nat -I SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN >/dev/null 2>&1
-		iptables -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN >/dev/null 2>&1
-		iptables -I SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN >/dev/null 2>&1
+		iptables -t nat -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
+		iptables -t nat -I SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
+		iptables -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
+		iptables -I SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
 
 		#del old entry and add mac to auto disconnect db.
 		echo "$(date +%s)" >> $AD/$mac
@@ -59,8 +47,8 @@ case "$1" in
 	
   		echo "del: $mac"
 		logger -t splash "delmac $mac"
-		iptables -t nat -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN >/dev/null 2>&1
-		iptables -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN >/dev/null 2>&1
+		iptables -t nat -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
+		iptables -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
 
 		#remove mac from auto disconnect db.
 		rm $AD/$mac
@@ -81,7 +69,7 @@ case "$1" in
 		config_list_foreach network splash_mac config_splash_addmac
   	;;
 	autodisconnect)
-		test "$(uci get ddmesh.system.disable_splash)" = "1" && exit 0
+		test "$(uci get ddmesh.system.disable_splash 2>/dev/null)" = "1" && exit 0
 
 		AUTO_DISCONNECT_TIME_M=$(uci get ddmesh.network.client_disconnect_timeout)
 		AUTO_DISCONNECT_TIME_S=$(( ${AUTO_DISCONNECT_TIME_M:-0} * 60 ))
@@ -90,23 +78,22 @@ case "$1" in
 			current="$(date +%s)"
 			IFS='
 '
-			for i in $(ls -1 $AD/*)
+			for i in $(ls -1 $AD/* 2>/dev/null)
 			do
 				mac=${i##*/}
 				start=$(cat $i)
 				end=$(($start+$AUTO_DISCONNECT_TIME_S))
-				echo "start=[$start], current=[$current], end=[$end], mac=[$mac]"
+				logger -st "splash auto disconnect" "start=[$start], current=[$current], end=[$end], mac=[$mac]"
 				if [ $current -gt $end ]; then
-				  logger -t splash "Client Auto disconnect $mac"
+				  logger -st splash "Client Auto disconnect $mac"
 				  $0 delmac $mac
 				fi
 			done
 		fi
 	;;
 	*)
-		echo "splash.sh [isclient ip] [islan ip] | | [getmac ip] | [addmac mac] | [delmac mac] | listmac | [checkmac mac] | loadconfig"
-		echo " Version: 1.3 4/2014"
-		echo "  isclient       check if ip belongs to node net"
+		echo "splash.sh [islan ip] | | [getmac ip] | [addmac mac] | [delmac mac] | listmac | [checkmac mac] | loadconfig"
+		echo " Version: 2 3/2015"
 		echo "  getmac         gets the mac from dhcp leases"
 		echo "  addmac         add mac to iptable SPLASH_AUTH"
 		echo "  delmac         deletes mac from iptable SPLASH_AUTH (only if not stored in config)"

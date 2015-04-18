@@ -1,18 +1,21 @@
 #!/bin/sh
 
-#test "$(uci -q get freifunk.system.disable_gateway)" = "1" && exit 0 
-
 RESOLV_CONF="/tmp/resolv.conf.auto"
 RESOLV_CONF_SAVED="/tmp/resolv.conf.auto.bmxd.saved"
 
 case $1 in
+	gateway)
+		cp $RESOLV_CONF_SAVED $RESOLV_CONF
+		/usr/lib/ddmesh/ddmesh-led.sh wifi gateway 
+	;;
 	del)
 		cp $RESOLV_CONF_SAVED $RESOLV_CONF
+		/usr/lib/ddmesh/ddmesh-led.sh wifi alive
 	;;
 	*)
 		cp $RESOLV_CONF $RESOLV_CONF_SAVED
 		echo "nameserver $1" >$RESOLV_CONF
-
+		/usr/lib/ddmesh/ddmesh-led.sh wifi freifunk 
 	;;
 esac
 

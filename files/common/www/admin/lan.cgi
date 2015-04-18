@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Verwaltung > Expert > LAN"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
 <h2>$TITLE</h2>
@@ -9,7 +9,7 @@ cat<<EOM
 EOM
 
 if [ -z "$QUERY_STRING" ]; then
-
+	eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask))
 	cat<<EOM
 <form name="form_lan" action="lan.cgi" class="form" method="POST">
 <fieldset class="bubble">
@@ -39,7 +39,7 @@ LAN und WAN IP-Adressen/Bereiche sollten sich nicht &uuml;berschneiden!</td></tr
 
 <TR TITLE="Startwert f&uuml;r die per DHCP zugewiesenen IP-Adressen.">
 <TH>DHCP-Start-IP:</TH>
-<TD>$(ipcalc -n $(uci get network.lan.ipaddr) $(uci get network.lan.netmask)|cut -d'=' -f2|cut -d'.' -f1-3).<INPUT NAME="form_dhcp_offset" SIZE="6" TYPE="TEXT" VALUE="$(uci get ddmesh.network.dhcp_lan_offset)"></TD>
+<TD>$(echo $NETWORK|cut -d'=' -f2|cut -d'.' -f1-3).<INPUT NAME="form_dhcp_offset" SIZE="6" TYPE="TEXT" VALUE="$(uci get ddmesh.network.dhcp_lan_offset)"></TD>
 </TR>
 
 <TR TITLE="Anzahl der vom DHCP-Server verwalteten IP-Adressen. Die Summe aus Startwert und Anzahl sollte kleiner als 255 sein.">
@@ -65,7 +65,7 @@ EOM
 else #query string
 
 	if [ -n "$form_lan_submit" ]; then
-		if [ -n "$form_lan_ip" -a -n "$form_lan_netmask" -a $(ipcalc -m $form_lan_ip 2>&-) ]; then
+		if [ -n "$form_lan_ip" -a -n "$form_lan_netmask" ]; then
 			uci set network.lan.ipaddr="$form_lan_ip"
 			uci set network.lan.netmask="$form_lan_netmask"
 			uci set network.lan.gateway="$form_lan_gateway"
@@ -84,4 +84,4 @@ else #query string
 	fi #submit
 fi #query string
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

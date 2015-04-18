@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Allgemein: Kontakt"
-. $DOCUMENT_ROOT/page-pre.sh
+. /usr/lib/www/page-pre.sh
 
 lat=$(uci get ddmesh.gps.latitude)
 long=$(uci get ddmesh.gps.longitude)
@@ -24,4 +24,4 @@ cat<<EOF
 </fieldset>
 EOF
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh

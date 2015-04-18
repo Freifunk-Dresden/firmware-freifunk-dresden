@@ -22,12 +22,14 @@ ip4=$(nslookup v4.ipv6-test.com | sed '1,4d;s#.*: \(.*\) .*#\1#')
 test -n "$ip4" && {
 
  ip rule add prio 200 to $ip4 table public_gateway
+ ip rule add prio 201 to $ip4 table unreachable
  ip route add $ip4 via $via dev $dev table public_gateway
  
  v4="$(wget -O - http://v4.ipv6-test.com/json/widgetdata.php 2>/dev/null | sed -n 's#(\(.*\))#\1#p')"
  #v6="$(wget -O - http://v6.ipv6-test.com/json/widgetdata.php 2>/dev/null | sed -n 's#(\(.*\))#\1#p')"
 
  ip rule del prio 200 to $ip4 table public_gateway
+ ip rule del prio 201 to $ip4 table unreachable
  ip route del $ip4 via $via dev $dev table public_gateway
 
 > $DATA

@@ -4,7 +4,7 @@ LOGGER_TAG="register.node"
 AUTO_REBOOT=1
 
 #check if initial setup was run before
-test ! -f /etc/config/ddmesh && echo "no /etc/config/ddmesh" && exit 1
+if [ ! -f /etc/config/ddmesh ]; then logger -t $LOGGER_TAG "ddmesh not ready - ignore register.node" ; exit; fi
 
 node="$(uci get ddmesh.system.node)"
 key="$(uci get ddmesh.system.register_key)"
@@ -20,14 +20,6 @@ if [ -z "$arg1" ]; then
 	echo ""
 fi
 
-#if function is called via ajax then register only once
-if [ "$arg1" = "ajax" ]; then
-	ajax=1;
-	arg1=""	
-else
-	ajax=0;
-fi
-
 #check if user want's to register with a different node
 test -n "$arg1" && node=$arg1
 
@@ -35,12 +27,6 @@ test -z "$node" && {
 	echo "node number not set or passed as parameter"
 	exit 1	
 }
-
-#check if we running from ajax and we have already a valid node
-[ $ajax = 1 -a $node -ge "$_ddmesh_min" ] && {
-	echo "Router already registered with node: $node"
-	exit 0
-} 
 
 test -z "$key" && {
 	echo "no register key"

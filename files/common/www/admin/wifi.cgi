@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Verwaltung > Expert > WIFI"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
 
@@ -25,6 +25,10 @@ function disable_fields(s) {
 	var c=document.getElementsByName('form_wifi_diversity')[0].checked;
 	document.getElementsByName('form_wifi_rxantenna')[0].disabled=c;
 	document.getElementsByName('form_wifi_txantenna')[0].disabled=c;
+}
+function enable_custom_essid(s) {
+	var c=document.getElementsByName('form_wifi_custom_essid')[0].checked;
+	document.getElementsByName('form_wifi_ap_ssid')[0].disabled= !c;
 }
 </script>
 
@@ -71,10 +75,10 @@ function disable_fields(s) {
 
 <tr><th></th><td></td></tr>
 <tr><th>Access Point-SSID:</th>
-<TD class="nowrap"><INPUT NAME="form_wifi_ap_ssid_prefix" SIZE="16" TYPE="TEXT" VALUE="$(uci get ddmesh.system.community)" disabled><INPUT NAME="form_wifi_ap_ssid" SIZE="23" maxlength="15" TYPE="TEXT" VALUE="$(uci get ddmesh.network.essid_ap)"> aktuell: $(uci get wireless.@wifi-iface[1].ssid)</TD>
+<TD class="nowrap"><INPUT NAME="form_wifi_ap_ssid_prefix" SIZE="16" TYPE="TEXT" VALUE="$(uci get ddmesh.system.community)" disabled>
+<INPUT onchange="enable_custom_essid();" NAME="form_wifi_custom_essid" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.network.custom_essid)" = "1" ];then echo ' checked="checked"';fi)>
+<INPUT NAME="form_wifi_ap_ssid" SIZE="23" maxlength="15" TYPE="TEXT" VALUE="$(uci get ddmesh.network.essid_ap)"> aktuell: $(uci get wireless.@wifi-iface[1].ssid)</TD>
 </tr>
-
-<tr><th></th><td>Leeres Feld erzeugt ein vorgebenen Wert.</td></tr>
 
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
@@ -92,6 +96,11 @@ function disable_fields(s) {
 $(iw phy0 info | sed -n '/[      ]*\*[   ]*[0-9]* MHz/{s#[       *]\+\([0-9]\+\) MHz \[\([0-9]\+\)\] (\(.*\))#<tr><td>\1</td><td>\2</td><td>\3</td></tr>#;p}')
 </table>
 </fieldset>
+
+<script type="text/javascript">
+enable_custom_essid();
+</script>
+
 EOM
 
 else #query string
@@ -103,7 +112,8 @@ else #query string
 			uci set ddmesh.network.wifi_diversity="$form_wifi_diversity"
 			uci set ddmesh.network.wifi_rxantenna="$form_wifi_rxantenna"
 			uci set ddmesh.network.wifi_txantenna="$form_wifi_txantenna"
-			uci set ddmesh.network.essid_ap=$(uhttpd -d "$form_wifi_ap_ssid")
+			uci set ddmesh.network.essid_ap="$(uhttpd -d "$form_wifi_ap_ssid")"
+			uci set ddmesh.network.custom_essid="$form_wifi_custom_essid"
 			uci set ddmesh.boot.boot_step=2
 			uci commit
 			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="firmware.cgi">Neustart</A> aktiv."
@@ -116,4 +126,4 @@ else #query string
 	fi #submit
 fi #query string
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

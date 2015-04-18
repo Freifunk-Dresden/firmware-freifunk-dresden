@@ -1,0 +1,6 @@
+#echo "$ACTION:$INTERFACE:$DEVICE" >>/tmp/x
+#deaktivate gateway immediately, when cable is unplugged
+[ ifdown = "$ACTION" ] && {
+	[ wan = "$INTERFACE" -o lan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-bmxd.sh no_gateway
+}
+

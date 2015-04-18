@@ -1,7 +1,7 @@
 #!/bin/sh
 
 export TITLE="Verwaltung > Expert > Portweiterleitung"
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh
 
 show_rules() {
@@ -69,7 +69,7 @@ cat<<EOM
 <br/><br/>
 
 <b>Folgende Ports werden vom Router verwendet und k&oumlnnen nicht verwendet werden:</b><br/>
-$PORTS, $(uci get ddmesh.backbone.server_port), $(uci get ddmesh.vpn.server_port)<br/>
+$PORTS, $(uci get ddmesh.backbone.server_port), $(uci get ddmesh.privnet.server_port)<br/>
 <br />
 <form name="form_portfw_new" action="portfw.cgi" method="POST">
 <input name="form_action" value="add" type="hidden">
@@ -120,4 +120,4 @@ else
 fi
 
 
-. $DOCUMENT_ROOT/page-post.sh ${0%/*}
+. /usr/lib/www/page-post.sh ${0%/*}

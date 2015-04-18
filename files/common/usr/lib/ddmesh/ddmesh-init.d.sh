@@ -1,19 +1,18 @@
 #!/bin/sh /etc/rc.common
-# Copyright (C) 2006 OpenWrt.org 
+# Copyright (C) 2006 OpenWrt.org
 
 
 start() {
 
 	eval $(cat /etc/openwrt_release)
-	
+
+	/usr/lib/ddmesh/ddmesh-led.sh wifi_off
 	LOGGER_TAG="ddmesh boot"
 
 	#initial setup and node depended setup (crond calles ddmesh-register-node.sh to update node)
 	logger -t $LOGGER_TAG "inital boot setting"
-	/usr/lib/ddmesh/ddmesh-bootconfig.sh
-
-	logger -t $LOGGER_TAG "run ddmesh upgrade"
-	/usr/lib/ddmesh/ddmesh-upgrade.sh
+	#check if boot process should be stopped
+	/usr/lib/ddmesh/ddmesh-bootconfig.sh || exit
 
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && echo "router not registered" && exit
@@ -46,9 +45,9 @@ start() {
 	echo "backbone"
 	/usr/lib/ddmesh/ddmesh-backbone.sh start
 
-	logger -t $LOGGER_TAG "start service private vpn"
-	echo "private vpn"
-	/usr/lib/ddmesh/ddmesh-vpn.sh start
+	logger -t $LOGGER_TAG "start service privnet"
+	echo "privnet"
+	/usr/lib/ddmesh/ddmesh-privnet.sh start
 
 	logger -t $LOGGER_TAG "start service openvpn"
 	echo "openvpn"
@@ -62,35 +61,32 @@ start() {
 		test -x /etc/init.d/openvpn && /etc/init.d/openvpn start
 	fi
 
-	logger -t $LOGGER_TAG "start service nuttcp"     
-	echo "nuttcp"                            
+	logger -t $LOGGER_TAG "start service nuttcp"
+	echo "nuttcp"
 	nuttcp -S -P5010
 
-	logger -t $LOGGER_TAG "generate qr code"     
-	echo "qrencode"                            
+	logger -t $LOGGER_TAG "generate qr code"
+	echo "qrencode"
 	/usr/lib/ddmesh/ddmesh-qrencode.sh
 
-	logger -t $LOGGER_TAG "register node"     
-	echo "register node"                            
+	logger -t $LOGGER_TAG "register node"
+	echo "register node"
 	/usr/bin/ddmesh-register-node.sh
 
-	logger -t $LOGGER_TAG "rdate"     
-	echo "rdate"                            
-	/usr/lib/ddmesh/ddmesh-rdate.sh start	
-
-	logger -t $LOGGER_TAG "ifstatd"     
-	echo "run ifstatd"                            
+	logger -t $LOGGER_TAG "ifstatd"
+	echo "run ifstatd"
 	/usr/lib/ddmesh/ddmesh-ifstatd.sh &
 
-	logger -t $LOGGER_TAG "finished."     
+	logger -t $LOGGER_TAG "finished."
+	/usr/lib/ddmesh/ddmesh-led.sh status done
 }
 
 stop() {
 	/usr/lib/ddmesh/ddmesh-backbone.sh stop
-	/usr/lib/ddmesh/ddmesh-vpn.sh stop		
+	/usr/lib/ddmesh/ddmesh-privnet.sh stop		
 	/usr/lib/ddmesh/ddmesh-bmxd.sh stop
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh stop
-	setup_routing del 
+	setup_routing del
 }
 
 

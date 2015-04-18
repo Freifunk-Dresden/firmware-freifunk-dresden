@@ -2,7 +2,7 @@
 
 export TITLE="Infos: Firewall"
 export HTTP_ALLOW_GET_REQUEST=1
-. $DOCUMENT_ROOT/page-pre.sh ${0%/*}
+. /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
 <h2>$TITLE</h2>
@@ -11,92 +11,91 @@ EOM
 
 show_table()
 {
- table=$1
- chain=$2
- ip_version=$3
+ export table=$1
+ export chain=$2
+ export ipv=$3
 
- if [ "$ip_version" = "ipv6" ]; then
-	ipt=ip6tables
+ if [ "$ipv" = "ipv6" ]; then
+	export ipt=ip6tables
  else
-	ipt=iptables
+	export ipt=iptables
  fi
 
 
 cat<<EOM
 <fieldset class="bubble">
-<legend>Iptables $ip_version: $table -> $chain</legend>
+<legend>Iptables $ipv: $table -> $chain</legend>
 <table>
 EOM
 
-$ipt -t $table -L $chain -vn 2>&1 | sed -n '
-:m
-/Chain/{
-s#^.*#<tr><th colspan="15"><hr size=1></th></tr><tr><th colspan="15">&</th></tr>#
-p
-n
-b m
-}
-/pkts/{
-s#[ 	]\+#;#g
-s#;\+$##
-s#^;#<tr><th>#
-s#;#</th><th>#g
-s#$#</th></tr>#
-p
-n
-b m
-}
-:a
-/^[ 	]*$/{
-n
-b m
-}
-s#^[ 	]*#;#
-s#[ 	]\+#;#g
-/^;[^;]\+;[^;]\+;ACCEPT/b b
-/^;[^;]\+;[^;]\+;REJECT/b b
-/^;[^;]\+;[^;]\+;LOG/b b
-/^;[^;]\+;[^;]\+;QUEUE/b b
-/^;[^;]\+;[^;]\+;NFQUEUE/b b
-/^;[^;]\+;[^;]\+;RETURN/b b
-/^;[^;]\+;[^;]\+;DROP/b b
-/^;[^;]\+;[^;]\+;MASQUERADE/b b
-/^;[^;]\+;[^;]\+;SNAT/b b
-/^;[^;]\+;[^;]\+;DNAT/b b
-s#^;\([^;]\+\);\([^;]\+\);\([^;]\+\)#;\1;\2;<a href="firewall.cgi?ipt_table='$table'\&ipt_chain=\3\&ip_version='$ip_version'">\3</a>#
-:b
-s#^;#<tr class="colortoggle1"><td>#
-s#;\+$##
-s#;#</td><td>#g
-s#$#</td></tr>#
-p
-n
-/Chain/b m
-/pkts/b m
-/^[ 	]*$/{
-n
-b m
-}
-s#^[ 	]*#;#
-s#[ 	]\+#;#g
-s#[ 	]\+#;#g
-/^;[^;]\+;[^;]\+;ACCEPT/b c
-/^;[^;]\+;[^;]\+;REJECT/b c
-/^;[^;]\+;[^;]\+;LOG/b c
-/^;[^;]\+;[^;]\+;QUEUE/b c
-/^;[^;]\+;[^;]\+;NFQUEUE/b c
-/^;[^;]\+;[^;]\+;RETURN/b c
-/^;[^;]\+;[^;]\+;DROP/b c
-/^;[^;]\+;[^;]\+;MASQUERADE/b c
-/^;[^;]\+;[^;]\+;SNAT/b c
-/^;[^;]\+;[^;]\+;DNAT/b c
-s#^;\([^;]\+\);\([^;]\+\);\([^;]\+\)#;\1;\2;<a href="firewall.cgi?ipt_table='$table'\&ipt_chain=\3\&ip_version='$ip_version'">\3</a>#
-:c
-s#^;#<tr class="colortoggle2"><td>#
-s#;\+$##
-s#;#</td><td>#g
-s#$#</td></tr>#
-p
+$ipt -t $table -L $chain -vn 2>&1 | awk '
+	function join(array, start, end, separator)
+	{
+		result=""
+		for (i=start;i<=end;i++)
+		{
+			result = result separator array[i]
+		}
+		return result;
+	}
+	function extractComment(line)
+	{
+		split(line, array, " ");
+		result=""
+		inComment=0
+		for (i=1; i<=length(array);i++)
+		{
+			if(inComment==0 && match(array[i],"/\\*")>0)
+			{
+				inComment=1
+				continue
+			}
+			if(inComment==1 && match(array[i],"\\*/")>0)
+			{
+				inComment=0
+				continue
+			}
+			if(inComment)
+				result = result " " array[i]
+		}
+		return result;
+	}
+
+
+ /Chain/{ 
+		print "<tr><th colspan=\"11\">"$0"</th></tr>";
+		next
+	}
+ /pkts/ {
+		print "<tr><th>Pkts</th><th>Bytes</th><th>Target</th><th>Prot</th><th>Opt</th><th>In</th><th>Out</th><th>Source</th><th>Destination</th><th>Params</th><th>Comment</th></tr>"
+		next
+	}
+	{
+		if(match($3,/^(ACCEPT|REJECT|LOG|QUEUE|NFQUEUE|RETURN|DROP|MASQUERADE|SNAT|DNAT)$/)!=0)
+			link=$3
+		else
+			link="<a href=\"firewall.cgi?ipt_table="ENVIRON["table"]"&ipt_chain="$3"&ip_version="ENVIRON["ipv"]"\">"$3"</a>"
+	
+
+		if(toggel==1)
+			toggel=2
+		else
+			toggel=1
+
+		# extract params
+		#  remove comment
+		raw=gensub(/\/\*.*\*\//,"",1, $0)
+		#  split (space separated)
+		split(raw, array, " ")
+		#  params are from index 10 to end
+		params=join(array, 10, length(array), " ")
+
+		# extract comment
+		comment=extractComment($0)
+
+		print "<tr class=\"colortoggle"toggel"\"><td>"$1"</td><td>"$2"</td><td>"link"</a></td><td>"$4"</td><td>"$5"</td><td>"$6"</td><td>"$7"</td><td>"$8"</td><td>"$9"</td><td>"params"</td><td>"comment"</td></tr>"
+		
+	}
 '
 
 cat<<EOF
@@ -170,4 +169,4 @@ fi
 
 show_links
 
-. $DOCUMENT_ROOT/page-post.sh
+. /usr/lib/www/page-post.sh
