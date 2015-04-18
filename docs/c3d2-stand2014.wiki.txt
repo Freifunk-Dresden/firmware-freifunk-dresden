@@ -1,0 +1,304 @@
+== WLAN-Einstellungen ==
+
+In Syntax der <code>/etc/config/wireless</code> unter OpenWRT:
+<pre>
+config wifi-device 'radio0'
+	option type 'mac80211'
+	option hwmode '11ng'
+	option macaddr 'a0:f3:c1:84:a3:e2'
+	# Je Nach Verbindungsqualität auch HT40-
+	option htmode 'HT20'
+	list ht_capab 'LDPC'
+	list ht_capab 'SHORT-GI-20'
+	list ht_capab 'SHORT-GI-40'
+	list ht_capab 'TX-STBC'
+	list ht_capab 'RX-STBC1'
+	list ht_capab 'DSSS_CCK-40'
+	option channel '13'
+	option country 'DE'
+
+config wifi-iface
+        option device 'radio0'
+        option encryption 'none'
+        option network 'mesh'
+        # WLAN-Modus:
+        option mode 'adhoc'
+        # Zellen-Id, muss gleich sein:
+        option bssid '64:64:6d:65:73:68'
+        # Name zum Wiedererkennen:
+        option ssid 'Freifunk Dresden [adhoc]'
+</pre>
+
+Oder manuell, bis zum nächsten Reboot:
+<pre>
+iw phy phy0 interface add adhoc0 type ibss
+iw dev adhoc0 ibss join "Freifunk Dresden [adhoc]" HT20 fixed-freq 64:64:6d:65:73:68
+</pre>
+
+Viele WLAN-Treiber unter Linux lassen mehrere Interfaces pro Adapter zu. Du kannst Adhoc also auch mit AccessPoints konfigurieren. Allerdings sollte der Channel übereinstimmen.
+
+
+== Adressvergabe ==
+
+=== Knotennummer reservieren ===
+
+Du solltest deinen Namen bei ''node'' und irgend 2× MD5 bei ''registerkey'' einsetzen.
+<pre>
+curl http://register.ddmesh.de/bot.php\?node\=Puddingknoten\&registerkey\=d4:1d:8c:d9:8f:00:b2:04:e9:80:09:98:ec:f8:42:7e:d4:1d:8c:d9:8f:00:b2:04:e9:80:09:98:ec:f8:42:7e         
+
+OK:141<br />
+</pre>
+
+'''TODO:''' Aktuell einen Monat lang gültig, wie wird die Erreichbarkeit gecheckt?
+
+=== Adressen berechnen ===
+
+Auf der Original-Firmware gibts ein Skript für die Knotennummer. Bis jemand die Berechnung formalisiert, müssen wir darauf zurückgreifen:
+<pre>
+ TP-LINK TL-WR841N/ND v8 @ r150:~# ddmesh-ipcalc.sh -n 141
+export _ddmesh_dhcplimit=62
+export _ddmesh_netmask=255.0.0.0
+export _ddmesh_ip=10.200.35.65
+export _ddmesh_dhcpoffset=1
+export _ddmesh_mesh6net=fd11:11ae:7466::
+export _ddmesh_hostname=r141
+export _ddmesh_node=141
+export _ddmesh_dhcpstart=10.200.35.66
+export _ddmesh_dhcpnetwork=10.200.35.64
+export _ddmesh_broadcast=10.255.255.255
+export _ddmesh_network=10.200.0.0
+export _ddmesh_mesh6nodenet=fd11:11ae:7466:8d::
+export _ddmesh_max=2048
+export _ddmesh_mesh6nodepre=64
+export _ddmesh_domain=freifunk-dresden.de
+export _ddmesh_mesh6pre=48
+export _ddmesh_mesh6ip=fd11:11ae:7466:8d::1
+export _ddmesh_clienthna=10.200.35.64/26
+export _ddmesh_netpre=15
+export _ddmesh_dhcpnetmask=255.255.255.255
+export _ddmesh_dhcpbroadcast=10.255.255.255
+export _ddmesh_dhcprangemask=255.255.255.192
+export _ddmesh_dhcprangepre=26
+export _ddmesh_dhcpend=10.200.35.127
+</pre>
+
+Für die Knotennummer 141 generiert es ein Netzzuweisung von '''10.200.35.64/26'''. Die erste nutzbare Adresse wird als '''10.200.35.65/8''' auf das Adhoc-Interface konfiguriert. Dann sollte auch die Broadcast-Adresse '''10.255.255.255''' stimmen.
+
+==== IP-Adressberechnungs mit Shell- und Lua Script ====
+
+Die Scripte deren Algorithmus formalisiert werden soll:
+
+'''usr/bin/ddmesh-ipcalc.sh'''
+<pre>
+#!/bin/sh
+
+if [ "$1" = "" ]
+then
+	echo ""
+        echo "ddmesh-ipcalc.sh (lua) Stephan Enderlein (c) 2013 V1.7"
+	echo ""
+        echo "Calculates all the addresses for the ddmesh freifunk node"
+	echo "usage: ddmesh-ipcalc.sh [-n node] | [ip]"
+	echo ""
+        exit 1
+fi
+
+if [ "$1" = "-n" ]; then
+	node=`echo "$2" | sed 's/[\$\`\(\)]/0/g'`
+	lua -lddmesh -e "ipcalc.print($node)"
+else
+	ip=`echo "$1" | sed 's/[\$\`\(\)]/0/g'`
+	lua -lddmesh -e "print(iplookup(\"$ip\"))"
+fi
+
+</pre>
+
+'''usr/lib/lua/ddmesh.lua'''
+<pre>
+--[[----------------------------------------------------------------------------------------
+ddmesh.lua
+library for different freifunk functions
+version: 6
+-------------------------------------------------------------------------------------------]]
+
+----------------- ipcalc ---------------
+ipcalc={}
+ipcalc.data={}
+ipcalc.data.max=2048
+
+function split(str, delim, maxNb)
+    -- Eliminate bad cases...
+    if string.find(str, delim) == nil then
+        return { str }
+    end
+    if maxNb == nil or maxNb < 1 then
+        maxNb = 0    -- No limit
+    end
+    local result = {}
+    local pat = "(.-)" .. delim .. "()"
+    local nb = 0
+    local lastPos
+    for part, pos in string.gfind(str, pat) do
+        nb = nb + 1
+        result[nb] = part
+        lastPos = pos
+        if nb == maxNb then break end
+    end
+    -- Handle the last field
+    if nb ~= maxNb then
+        result[nb + 1] = string.sub(str, lastPos)
+    end
+    return result
+end
+
+function ipcalc.rCalcIp(ip)
+    if ip==nil or ip=="" then return -1 end
+    a = split(ip, "[.]")
+    if #a ~= 4 then return -1 end
+    if a[1]==nil or a[1]=="" or tonumber(a[1]) ~= 10 then return -1 end
+    if a[2]==nil or a[2]=="" or tonumber(a[2]) ~= 200 and tonumber(a[2]) ~= 201 then return -1 end
+    if a[3]==nil or a[3]=="" or tonumber(a[3]) < 0 or tonumber(a[3]) > 255 then return -1 end
+    if a[4]==nil or a[4]=="" or tonumber(a[4]) < 0 or tonumber(a[4]) > 255 then return -1 end
+
+    middle = a[3]
+    if a[2]=="201" then middle = middle + 256 end
+    minor = math.floor(a[4]/64) --x>>6 
+    node = middle*4+minor	--x<<2
+    if node < 0 or node > ipcalc.data.max then return -1 end
+    return node
+end
+
+function ipcalc.calc(node)
+    if node==nil or node=="" then return -1 end
+    node=tonumber(node)
+    if node==nil or node=="" then return -1 end
+    if node < 0 or node > ipcalc.data.max then return -1 end
+
+    local domain	= "freifunk-dresden.de"
+
+    local major   = node >= 1024 and 201 or 200                     --a[2]
+    local middle  = node >= 1024 and math.floor((node-1024) / 4) or math.floor(node / 4)  --a[3]
+    local minor   = (node % 4) * 64 
+
+    local meshnet	= "10"
+    local nodeip  	= meshnet .. "." .. major .. "." .. middle .. "." .. minor + 1 
+    local meshnetmask	= "255.0.0.0"
+    local meshpre 	= 15
+    local meshbroadcast = "10.255.255.255"
+    local meshnetwork   = "10.200.0.0"
+
+    local dhcpstart     = meshnet .. "." .. major .. "." .. middle .. "." .. minor + 2
+    local dhcpend       = meshnet .. "." .. major .. "." .. middle .. "." .. minor + 63 
+    local dhcpoffset    = 1	--used by config/dhcp 
+    local dhcplimit     = 62	--used by config/dhcp
+    local dhcprangepre  = 26
+    local dhcprangemask = "255.255.255.192"
+    local dhcpnetmask   = "255.255.255.255"
+    local dhcpbroadcast = "10.255.255.255" -- needed, else dnsmasq will not start
+    local dhcpnetwork   = meshnet .. "." .. major .. "." .. middle .. "." .. minor
+
+    local hna = meshnet .. "." .. major .. "." .. middle .. "." .. minor .. "/" .. dhcprangepre
+    local mesh6pre	= "48"
+    local mesh6net	= "fd11:11ae:7466::"
+    -- client range
+    local mesh6nodenet= "fd11:11ae:7466:" .. string.format("%x", node) .. "::"
+    local mesh6ip	= mesh6nodenet .. "1" 
+    local mesh6nodepre= "64"
+
+    ipcalc.data.node               = node
+    ipcalc.data.domain             = domain 
+    ipcalc.data.hostname           = "r" .. node
+    ipcalc.data.ip                 = nodeip 
+    ipcalc.data.network            = meshnetwork 
+    ipcalc.data.netpre             = meshpre
+    ipcalc.data.netmask            = meshnetmask 
+    ipcalc.data.broadcast          = meshbroadcast 
+    ipcalc.data.dhcpstart          = dhcpstart
+    ipcalc.data.dhcpend            = dhcpend
+    ipcalc.data.dhcpoffset	   = dhcpoffset
+    ipcalc.data.dhcplimit      	   = dhcplimit
+    ipcalc.data.dhcprangepre       = dhcprangepre 
+    ipcalc.data.dhcprangemask      = dhcprangemask 
+    ipcalc.data.dhcpnetwork        = dhcpnetwork 
+    ipcalc.data.dhcpbroadcast      = dhcpbroadcast 
+    ipcalc.data.dhcpnetmask        = dhcpnetmask 
+    ipcalc.data.clienthna          = hna 
+    ipcalc.data.mesh6ip		   = mesh6ip
+    ipcalc.data.mesh6net	   = mesh6net
+    ipcalc.data.mesh6pre	   = mesh6pre
+    ipcalc.data.mesh6nodenet	   = mesh6nodenet
+    ipcalc.data.mesh6nodepre	   = mesh6nodepre
+end
+
+function ipcalc.print(node)
+
+    if node==nil or node=="" then print("ERROR"); return -1 end
+    node=tonumber(node)
+    if node==nil then print("ERROR"); return -1 end
+    if node < 0 or node > ipcalc.data.max then return -1 end
+    ipcalc.calc(node)
+
+    for k,v in pairs(ipcalc.data)
+    do
+        print("export _ddmesh_"..k.."="..v)
+    end
+end
+
+function iplookup(ip)
+	if ip==nil then return -1 end
+	n=ipcalc.rCalcIp(ip)
+	if n == -1 then return -1 end
+	ipcalc.calc(n)
+	return ipcalc.data.hostname
+end
+
+function lookup(node)
+	if node==nil then return -1 end
+	if string.sub(node,1,1) == "r" then 
+		n=tonumber(string.sub(node,2)) 
+	else 
+		n=tonumber(node)
+	end
+	if n==nil then return -1 end
+	if n < 0 or n > ipcalc.data.max then return -1 end
+	ipcalc.calc(n)
+	return ipcalc.data.ip
+end
+</pre>
+
+== IPv4-Meshing mit bmxd ==
+
+=== Bauen ===
+
+Code, letzte Commits im Feb 2011, gibts [https://github.com/axn/bmxd auf Github].
+
+<pre>
+git clone git://github.com/axn/bmxd.git
+cd bmxd
+make -j5
+strip bmxd  # Spart Platz
+</pre>
+
+=== Voraussetzungen ===
+
+* Lies die [http://man7.org/linux/man-pages/man8/ip-rule.8.html ip-rule Manpage] um die Abarbeitung von Regeln mit mehreren Routing-Tabellen zu verstehen.
+* Vergewisser dich ob der Broadcast-Adresse deines Adhoc-Interfaces. Mit ''ip addr add'' stimmte manchmal was nicht.
+
+=== Starten ===
+
+<pre>bmxd dev=adhoc0</pre>
+
+Der Routing-Daemon daemonisiert sofort und schreibt ins Syslog. Mit <code>bmxd -c</code> kann man sich nun zu ihm verbinden und Informationen entlocken (siehe [[#Nützliches]]).
+
+Geht alles glatt, legt er seine Routen in den Tabellen 64 & 65 ab. Das bedeuetet, dass ein einfacher ''ip r''-Aufruf keine Meshadressen anzeigt. Erst ''ip route show table all'' bringt sie zum Vorschein. Diese Routing Tabellen werden bevorzugt, da bmxd entsprechende ''ip rule''-Regeln mit höherer Präferenz als der default-Tabelle anlegt.
+
+=== Nützliches ===
+
+;Ausführliche Hilfe:
+:<pre>bmxd -x</pre>
+;Aktuelle Routen
+:<pre>bmxd -cid8</pre>
+;Aktuelle empfangene HNAs (''Host and Network Association'', Subnetze)
+:<pre>bmxd -c --hnas</pre>
+;HNA ankündigen
+:<pre>bmxd -c -a 172.22.99.0/24</pre>
