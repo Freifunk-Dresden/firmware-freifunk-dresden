@@ -15,11 +15,12 @@ License:
 --------
 Um die Firmware zu nutzen und im Dresdner Freifunk Netzwerk zu verwenden, sind die License und einige Regeln
 zubeachten. Der genaue Text und die Regeln lassen sich in license/license.txt nachlesen und MÜSSEN eingehalten werden.
+(siehe dazu Knotenspezifikationen im Wiki)
 
 Links:
 ------
 <a href="www.freifunk-dresden.de" >Freifunk Dresden</a><br>
-<a href="wiki.freifunk-dresden.de" >Allgemeine Dokumentation - Freifunk Dresden</a><br>
+<a href="wiki.freifunk-dresden.de" >Wiki: Freifunk Dresden</a><br>
 <a href="http://google.com/+FreifunkDresden%EF%BB%BF/about"> Google+</a><br>
 <a href="https://plus.google.com/communities/108088672678522515509"> Google+ Community</a><br>
 <a href="https://www.facebook.com/FreifunkDresden"> Facebook</a>
