@@ -17,7 +17,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-	corrects firmware filenames and gateway-check when using static ip for lan/wan 
+	corrects firmware filenames, gateway-check when using static ip for lan/wan, gui routes.cgi
 endef
 
 define Build/Prepare
@@ -34,6 +34,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DATA) files/ddmesh-gateway-check.sh $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/usr/lib/ddmesh
 	$(INSTALL_DATA) files/ddmesh-get-firmware-name.sh $(1)/usr/lib/ddmesh/
+	$(INSTALL_DIR) $(1)/www/admin
+	$(INSTALL_DATA) files/routes.cgi $(1)/www/admin/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
