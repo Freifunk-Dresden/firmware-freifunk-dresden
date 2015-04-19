@@ -93,7 +93,7 @@ cat<<EOM
 	<tr><td colspan="2">
 	<form name="form_firmware_dl_testing" action="firmware.cgi" method="POST" style="text-align: left;">
 	<input name="form_action" value="download_testing" type="hidden">
-	<input $(test -z "$firmware_testing_version" && echo disabled) name="form_firmware_submit" type="submit" value="Download latest ($firmware_testing_version) Version from Server"></td></tr>
+	<input $(test -z "$firmware_testing_version" && echo disabled) name="form_firmware_submit" type="submit" value="Download testing ($firmware_testing_version) Version from Server"></td></tr>
 	</form>
 	</td></tr>
 	<tr><td colspan="2">(Wenn der direkte Download nicht verf&uuml;gbar ist, konnte der Download-Server nicht erreicht werden. Bitte Seite neu laden.)</td></tr>
