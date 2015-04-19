@@ -31,11 +31,11 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin/
-	$(INSTALL_DATA) files/ddmesh-gateway-check.sh $(1)/usr/bin/
+	$(INSTALL_BIN) files/ddmesh-gateway-check.sh $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/usr/lib/ddmesh
-	$(INSTALL_DATA) files/ddmesh-get-firmware-name.sh $(1)/usr/lib/ddmesh/
+	$(INSTALL_BIN) files/ddmesh-get-firmware-name.sh $(1)/usr/lib/ddmesh/
 	$(INSTALL_DIR) $(1)/www/admin
-	$(INSTALL_DATA) files/routes.cgi $(1)/www/admin/
+	$(INSTALL_BIN) files/routes.cgi $(1)/www/admin/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
