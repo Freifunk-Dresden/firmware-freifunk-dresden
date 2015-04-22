@@ -96,6 +96,8 @@ setup_custom_rules() {
         $IPT -t nat -A postrouting_tbb_rule -s $lan_ipaddr/$lan_mask -j SNAT --to-source $_ddmesh_ip
         $IPT -t nat -A postrouting_tbb_rule -s $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $_ddmesh_ip
 
+        $IPT -t nat -A postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'LAN portfw'
+
 	#add rules if gateway is on lan
 	if [ -n "$lan_gateway" ]; then
 		$IPT -A forwarding_bat_rule -o $lan_device ! -d $lan_ipaddr/$lan_mask -j ACCEPT
