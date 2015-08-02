@@ -16,14 +16,17 @@
 # 02110-1301, USA
 #
 
-REVISION =	$(shell if [ -d .svn ]; then which svn > /dev/null && which sed > /dev/null && which awk > /dev/null && { svn info | grep "Rev:" | sed -e '1p' -n | awk '{print $$4}';} fi )
-REVISION_VERSION =	\"\ rv$(REVISION)\"
+REVISION =	"$(shell git show --abbrev-commit | sed -n '1{s/.* //p}')"
+DATE=		"$(shell git show --abbrev-commit | sed -n '3{s/Date:[ ]\+\(.*\) +.*/\1/p}' )"
+REVISION_VERSION =\"-git:[$(REVISION):$(DATE)]\"
 
 
-CFLAGS +=	 -pedantic -Wall -W -Wno-unused-parameter -Os -g3 -std=gnu99 -I./ -DREVISION_VERSION=$(REVISION_VERSION) -DDEBUG_MALLOC -DMEMORY_USAGE
+CFLAGS += -pedantic -Wall -W -Wno-unused-parameter -Os -g3 -std=gnu99 -I./
+CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
+#CFLAGS += -DDEBUG_MALLOC -DMEMORY_USAGE
 
 #EXTRA_CFLAGS += -DTESTDEBUG
-#EXTRA_CFLAGS += -DNODEBUGALL
+EXTRA_CFLAGS += -DNODEBUGALL
 
 # Recommended defines and approximate binary sizes with gcc-x86
 # -static
@@ -53,8 +56,7 @@ CFLAGS +=	 -pedantic -Wall -W -Wno-unused-parameter -Os -g3 -std=gnu99 -I./ -DRE
 # -DTESTDEBUG		(testing syntax of __VA_ARGS__ dbg...() macros)
 # -DWITHUNUSED		(includes yet unused stuff)
 
-EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNODEBUGALL
-#EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS 
+EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS 
 
 LDFLAGS +=	-Wl,-export-dynamic -ldl -g3
 # -static

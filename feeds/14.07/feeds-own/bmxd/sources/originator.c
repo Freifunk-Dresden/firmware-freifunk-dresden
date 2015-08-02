@@ -1274,11 +1274,11 @@ void process_ogm( struct msg_buff *mb ) {
 	
 	
 	dbgf_all( DBGT_INFO, "OG %s  via IF %s %s  NB %s  "
-	          "SQN %d  TTL %d  V %d  UDF %d  IDF %d  DPF %d, directNB %d", 
+	          "SQN %d  TTL %d  V %d  UDF %d  IDF %d  DPF %d, directNB %d, asocial %d(%d)", 
 	          ipStr( ogm->orig ), iif->dev, iif->if_ip_str, mb->neigh_str, 
 	          ogm->ogm_seqno, ogm->ogm_ttl, COMPAT_VERSION, 
 	          (oCtx & HAS_UNIDIRECT_FLAG), (oCtx & HAS_DIRECTLINK_FLAG), 
-	          (oCtx & HAS_CLONED_FLAG), (oCtx & IS_DIRECT_NEIGH) );
+	          (oCtx & HAS_CLONED_FLAG), (oCtx & IS_DIRECT_NEIGH), (oCtx & IS_ASOCIAL), Asocial_device);
 	
 	
 	if ( ogm->ogm_pws < MIN_PWS  ||  ogm->ogm_pws > MAX_PWS ) {
@@ -1365,7 +1365,7 @@ void process_ogm( struct msg_buff *mb ) {
 	
 	// drop packet if sender is not a direct NB and if we have no route towards the rebroadcasting NB
         if (!(oCtx & IS_DIRECT_NEIGH) && !(orig_node_neigh->router)) {
-                dbgf_all(DBGT_INFO, "drop OGM: via unknown (non-direct) neighbor!");
+		dbgf_all(DBGT_INFO, "drop OGM: %s via unknown (%s) (non-direct) neighbor!", ipStr(ogm->orig), mb->neigh_str);
                 goto process_ogm_end;
         }
 	
@@ -1499,14 +1499,14 @@ void process_ogm( struct msg_buff *mb ) {
 	
 	
 	dbgf_all( DBGT_INFO,
-	          "done OGM accepted %s  acceptable %s  bidirectLink %s  new %s  BNTOG %s  asocial %s  tq %d  "
+	          "done OGM accepted %s  acceptable %s  bidirectLink %s  new %s  BNTOG %s  asocial %s(%d)  tq %d  "
 	          "hop_penalty %d  asym_w %d  acceptSQN %d  rcvdSQN %d  rand100 %d",
 	          ( oCtx & IS_ACCEPTED   ? "Y" : "N" ), 
 	          ( oCtx & IS_ACCEPTABLE ? "Y" : "N" ), 
 	          ( oCtx & IS_BIDIRECTIONAL ? "Y" : "N" ), 
 	          ( oCtx & IS_NEW ? "Y" : "N" ), 
 	          ( oCtx & IS_BEST_NEIGH_AND_NOT_BROADCASTED ? "Y" : "N" ), 
-	          ( oCtx & IS_ASOCIAL ? "Y" : "N" ), 
+	          ( oCtx & IS_ASOCIAL ? "Y" : "N" ), Asocial_device,
 	          tq_rate_value, my_hop_penalty, my_asym_weight, orig_node->last_accepted_sqn, ogm->ogm_seqno, rand_100 );
 	
 	
@@ -1542,8 +1542,7 @@ int32_t opt_show_origs ( uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
         struct avl_node *an;
 	uint16_t batman_count = 0;
 	
-	int dbg_ogm_out = 0, rq, tq, rtq;
-	static char dbg_ogm_str[MAX_DBG_STR_SIZE + 1]; // TBD: must be checked for overflow when using with sprintf
+    int rq, tq, rtq;
 	
 	if ( cmd == OPT_APPLY ) {
 		
@@ -1724,29 +1723,26 @@ int32_t opt_show_origs ( uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 				if ( !onn  ||  !onn->last_valid_time  ||  !onn->router )
 					continue;
 */
-				
-				dbg_ogm_out = snprintf( dbg_ogm_str, MAX_DBG_STR_SIZE, "%-15s (%3i) %15s [%10s] ", 
-				                        orig_node->orig_str, 
-				                        orig_node->router->longtm_sqr.wa_val/PROBE_TO100,
-				                        ipStr( orig_node->router->nnkey_addr ),
-				                        orig_node->router->nnkey_iif->dev );
-				
-				list_for_each( neigh_pos, &orig_node->neigh_list ) {
-					neigh_node = list_entry( neigh_pos, struct neigh_node, list );
-					
-					if( neigh_node->nnkey_addr != orig_node->router->nnkey_addr ) {
-						
-						dbg_ogm_out = dbg_ogm_out + 
-							snprintf( (dbg_ogm_str + dbg_ogm_out), (MAX_DBG_STR_SIZE - dbg_ogm_out), 
-							          " %15s (%3i)", 
-							          ipStr( neigh_node->nnkey_addr ),
-							          neigh_node->longtm_sqr.wa_val/PROBE_TO100 );
-						
-					}
-				}
-				
-				dbg_printf( cn, "%s \n", dbg_ogm_str );
-			}
+                dbg_printf(cn, "%-15s (%3i) %15s [%10s] ",
+                                        orig_node->orig_str,
+                                        orig_node->router->longtm_sqr.wa_val/PROBE_TO100,
+                                        ipStr( orig_node->router->nnkey_addr ),
+                                        orig_node->router->nnkey_iif->dev );
+
+                list_for_each( neigh_pos, &orig_node->neigh_list ) {
+                    neigh_node = list_entry( neigh_pos, struct neigh_node, list );
+
+                    if( neigh_node->nnkey_addr != orig_node->router->nnkey_addr ) {
+
+                            dbg_printf(cn,	" %15s (%3i)",
+                                      ipStr( neigh_node->nnkey_addr ),
+                                      neigh_node->longtm_sqr.wa_val/PROBE_TO100 );
+
+                    }
+                }
+
+                dbg_printf( cn, "\n");
+         }
 			
 		} else {
 			return FAILURE;
