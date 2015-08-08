@@ -41,8 +41,11 @@ if [ -n "$nameserver" ]; then
 	echo "server=//#" >>$CONF
 fi
 
-wan_dns="$(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wan | grep dns | sed -rn 's/^net_dns\=([0-9]+\.[0-9]+\.[0-9]+\.[0-9])+$/\1/p')"
-echo "server=freifunk-dresden.de/$wan_dns" >> $CONF
+eval $(/usr/lib/ddmesh_ddmesh-utils-network-info.sh wan wan)
+# wenn das waninterface an ist
+if [ $wan_up == '1' ] ; then
+    echo "server=freifunk-dresden.de/$wan_dns" >> $CONF
+fi
 
 
 
