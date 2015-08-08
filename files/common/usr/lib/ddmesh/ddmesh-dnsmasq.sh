@@ -41,6 +41,11 @@ if [ -n "$nameserver" ]; then
 	echo "server=//#" >>$CONF
 fi
 
+wan_dns="$(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wan | grep dns | sed -rn 's/^net_dns\=([0-9]+\.[0-9]+\.[0-9]+\.[0-9])+$/\1/p')"
+echo "server=freifunk-dresden.de/$wan_dns" >> $CONF
+
+
+
 cat >>$CONF <<EOM
 
 # allow /etc/hosts and dhcp lookups via *.lan
