@@ -43,7 +43,7 @@ fi
 
 eval $(/usr/lib/ddmesh_ddmesh-utils-network-info.sh wan wan)
 # wenn das waninterface an ist
-if [ $wan_up == '1' ] ; then
+if [[ $wan_up == '1' ]] ; then
     echo "server=freifunk-dresden.de/$wan_dns" >> $CONF
 fi
 
