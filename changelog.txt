@@ -1,5 +1,5 @@
 
-2017- 4.3.0 
+2017-08-06 4.2.5   Development state (NOT stable)
 --------------------------------------------------
 openwrt			- upgrade to 15.05
 sysinfo			- correct dhcp count
