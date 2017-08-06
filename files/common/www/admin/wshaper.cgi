@@ -1,22 +1,23 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert >Traffic Shaping"
+export TITLE="Verwaltung > Expert > Bandbreiten Einstellungen (Traffic Shaping)"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 
 if [ -n "$form_wshaper_submit" ]; then
-	uci set ddmesh.network.wan_speed_up="$form_wshaper_wan_upload"
-	uci set ddmesh.network.wan_speed_down="$form_wshaper_wan_download"
-	uci set ddmesh.network.lan_speed_up="$form_wshaper_lan_upload"
-	uci set ddmesh.network.lan_speed_down="$form_wshaper_lan_download"
+	uci set ddmesh.network.speed_up="${form_wshaper_upload:=0}"
+	uci set ddmesh.network.speed_down="${form_wshaper_download:=0}"
+	uci set ddmesh.network.speed_network="${form_wshaper_network:=0}"
+	uci set ddmesh.network.speed_enabled="${form_wshaper_enabled:=0}"
+
 	#update temp config
-	uci set wshaper.wan_settings.uplink="$form_wshaper_wan_upload"
-	uci set wshaper.wan_settings.downlink="$form_wshaper_wan_download"
-	uci set wshaper.lan_settings.uplink="$form_wshaper_wan_upload"
-	uci set wshaper.lan_settings.downlink="$form_wshaper_wan_download"
+	uci set wshaper.settings.uplink="$form_wshaper_upload"
+	uci set wshaper.settings.downlink="$form_wshaper_download"
+	uci set wshaper.settings.network="$form_wshaper_network"
+
 	uci commit
 	/etc/init.d/wshaper restart
-	notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="firmware.cgi">Neustart</A> aktiv."
+	notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind sofort aktiv."
 fi
 
 cat<<EOM
@@ -24,29 +25,52 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Traffic Shaping</legend>
 <table>
-<tr><td colspan="2">Traffic Shaping begrenzt die Upload/Download Geschwindigkeit. Meist wird der Freifunk Router an einen anderen Router
-	angeschlossen. Um im privaten Netz weiterhin gen&uuml;gend Bandbreite zur Verf&uuml;gung zu haben, kann hier der Freifunkbedarf
- 	begrenzt werden.</td></tr>
+<tr><td colspan="2">Traffic Shaping begrenzt die Upload/Download Geschwindigkeit.
+	Meist wird der Freifunk Router an einen anderen Router
+	angeschlossen. Um im privaten Netz weiterhin gen&uuml;gend Bandbreite zur Verf&uuml;gung zu haben,
+	kann hier der Freifunkbedarf begrenzt werden.</td></tr>
+<tr><td width="120" colspan="2">&nbsp;</td></tr>
 EOM
 
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wan)          
-if [ -n "$net_device" ]; then 
+speed_network="$(uci get ddmesh.network.speed_network)"
+speed_network=${speed_network:-lan}
+
+if [ "$wan_iface_present" = "1" -a "$speed_network" = "wan" ]; then
+	checked_wan='checked="checked"'
+else
+	checked_lan='checked="checked"'
+fi
+
+if [ "$(uci get ddmesh.network.speed_enabled)" = "1" ]; then
+	speed_enabled='checked="checked"'
+fi
 
 cat<<EOM
-<tr><th width="120">WAN-Upload-Rate:</th>
-<td class="nowrap"><input name="form_wshaper_wan_upload" size="10" type="text" value="$(uci get ddmesh.network.wan_speed_up)"> kbits/s</td></tr>
-<tr><th >WAN-Download-Rate:</th>
-<td class="nowrap"><input name="form_wshaper_wan_download" size="10"  type="text" value="$(uci get ddmesh.network.wan_speed_down)"> kbits/s</td></tr>
+<tr><th class="nowrap">Traffic-Shaping einschalten:</th><td><input name="form_wshaper_enabled" type="checkbox" value="1" $speed_enabled ></td></tr>
+<tr><th width="120" colspan="1">Gateway-Netzwerk:</th>
+<td class="nowrap">
+EOM
+
+if [ "$wan_iface_present" = "1" ]; then
+cat<<EOM
+<input name="form_wshaper_network" type="radio" value="wan" $checked_wan">WAN
 EOM
 fi
 
 cat<<EOM
-<tr><th width="120">LAN-Upload-Rate:</th>
-<td class="nowrap"><input name="form_wshaper_lan_upload" size="10" type="text" value="$(uci get ddmesh.network.lan_speed_up)"> kbits/s</td></tr>
-<tr><th >LAN-Download-Rate:</th>
-<td class="nowrap"><input name="form_wshaper_lan_download" size="10"  type="text" value="$(uci get ddmesh.network.lan_speed_down)"> kbits/s</td></tr>
-<TR>
-	<td colspan="2" class="nowrap"><input name="form_wshaper_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="SUBMIT" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_wshaper_abort" title="Abbruch dieser Dialogseite" type="submit" value="Abbruch"></td> </tr>
+<input name="form_wshaper_network" type="radio" value="lan" $checked_lan">LAN
+</td></tr>
+<tr><td width="120" colspan="2">&nbsp;</td></tr>
+EOM
+
+cat<<EOM
+<tr><th width="120">Upload-Rate (ausgehend):</th>
+<td class="nowrap"><input name="form_wshaper_upload" size="10" type="text" value="$(uci get ddmesh.network.speed_up)"> kbits/s (z.B.: 5000)</td></tr>
+<tr><th>Download-Rate (ankommend):</th>
+<td class="nowrap"><input name="form_wshaper_download" size="10"  type="text" value="$(uci get ddmesh.network.speed_down)"> kbits/s (z.B.: 200000)</td></tr>
+<tr><td colspan="2">(Die Datenraten werden aus Sicht des Routers angegeben.)</td></tr>
+<tr><td width="120" colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2" class="nowrap"><input name="form_wshaper_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="SUBMIT" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_wshaper_abort" title="Abbruch dieser Dialogseite" type="submit" value="Abbruch"></td></tr>
 </table>
 </fieldset>
 </form>

@@ -1,4 +1,66 @@
 
+2017- 4.3.0 
+--------------------------------------------------
+openwrt			- upgrade to 15.05
+sysinfo			- correct dhcp count
+sysinfo			- new version (add essid, reorder statistic, bmx links, traffic shaping)
+sysinfo			- add email notification and splash
+sysinfo			- via http://.../sysinfo.json 
+statistic		- use iptables to collect statisitc (instead reading data from interfaces)
+httpd			- increment timeout to 600s
+firmware upgrade	- update filenames for new supported devices
+firmware upgrade	- fix version check
+firmware upgrade	- auto firmware update or gui firmware update uses https and certificate check
+register node		- node registration uses https and certificate check. this ensures secure transfer of registration information
+register node		- replace registration api with json (preferred gw, netid)
+opkg			- add opkg https support (via wget->uclient-fetch) to ensure packet integrity
+gui-nodes		- display gateways before node list
+gui-wlan scan		- colorize wlan scan result
+gui-restart		- separate firmware upgrade and reboot/reset
+gui-wan			- fix wan configuration: display static settings or dhcp data
+gui-speedtest		- change to node number
+gui-system		- add configuration for node type (mobile,router,server)
+gui-wifi		- display used wifi transmit power (supported by hardware)
+gui-contact		- add geolocation support
+portforwarding		- update portforwarding for WAN interface if wan is configured with dhcp and lan cable is inserted later
+backbone		- use new fastd version 18+
+network			- bridge: enable Spanning Tree Protocol to avoid loops
+network			- fix problem where openwrt removes all ip rules
+network-mtu(privnet)	- fix mtu problem with private network
+network-mtu(fastd)	- reduce fastd mtu to 1200 for some ISP (new port 5002)
+network meshing		- add support for LAN/WAN meshing
+wifi			- restrict wifi data rates to 6Mbit/s (add config to reduce wife data rate)
+OOM Killer		- security-fix: reboot device when running out of memory instead of killing applications
+gateway-check		- change ip addresses that are used to check internet connection. now freifunk server are used to
+			  allow situations where internet provider only allows internet connections to freifunk server
+firewall		- add source ip checks to prevent fake source ip attacks
+bmxd			- reduce gateway changes
+wifi-watchdog		- add wifi background scan to fix issues when wifi is dead
+webserver		- move from openssl to polarssl to save 300kbyte flash memory
+openvpn			- move from openssl to polarssl to save 300kbyte flash memory
+openvpn			- avoid creating openvpn connection via freifunk gateway (bat0)
+speedtest		- move from nuttcp to iperf3
+support new device	- Futron S550: x86 target, usb-wlan stick (adhoc only), tcpdump, openvpn-polarssl
+
+
+
+2016-Jan-17 4.2.2
+--------------------------------------------------
+traffic shaping		- correct traffic shaping when using computer at LAN
+sysinfo			- prepare sysinfo-json every minute and just return generated data via webserver to reduce loading time
+watchdog		- add bmxd watchdog
+wifi			- add functionality to ignore node connections via wifi and prefere lan/backbone connections between routers
+firewall		- add port forwarding to WAN
+openvpn			- avoid endless openvpn re-init if openvpn connections failes
+mesh-mtu		- fix backbone connection lost errors (MTU value, TCP MMS)
+backbone		- replace vtund with fastd
+private network		- replace vtund with fastd
+gui:konfiguration	- add loading/saving konfiguration inclusive reinstalling packages 
+gui:Knoten ingoriern	- now use node number instead of ip address
+gui:https		- change configuration page link "Verwalten" to https
+dns			- add configuration option for a second DNS
+
+
 2015-Mar-09 3.1.9
 --------------------------------------------------
 essid			- add separator and fix spaces in essid

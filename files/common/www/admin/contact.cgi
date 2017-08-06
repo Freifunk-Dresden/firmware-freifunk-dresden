@@ -8,7 +8,8 @@ cat<<EOF
 <br>
 EOF
 
-if [ -z "$QUERY_STRING" ]; then
+display()
+{
 tmp_name=$(uhttpd -d "$(uci get ddmesh.contact.name)")
 tmp_email=$(uhttpd -d "$(uci get ddmesh.contact.email)")
 tmp_location=$(uhttpd -d "$(uci get ddmesh.contact.location)")
@@ -22,43 +23,46 @@ cat<<EOF
 
 <tr title="Freiwillige Angabe eines Namens">
 <th>Name:</th>
-<td><input name="form_contact_name" size="48" style="width: 100%;" type="text" value="$tmp_name"></td>
+<td colspan="2"><input name="form_contact_name" size="48" style="width: 100%;" type="text" value="$tmp_name"></td>
 </tr>
 
 <tr title="Freiwillige Angabe einer E-Mail-Adresse">
 <th>E-Mail:</th>
-<td><input name="form_contact_email" size="48" style="width: 100%;" type="text" value="$tmp_email"></td>
+<td colspan="2"><input name="form_contact_email" size="48" style="width: 100%;" type="text" value="$tmp_email"></td>
 </tr>
 
 <tr title="Standort-Angabe des Ger&auml;tes">
 <th>Standort:</th>
-<td><input name="form_contact_location" size="48" style="width: 100%;" type="text" value="$tmp_location"></td>
+<td colspan="2"><input name="form_contact_location" size="48" style="width: 100%;" type="text" value="$tmp_location"></td>
 </tr>
 
 <tr title="GPS-Position,H&ouml;he &uuml;ber Boden in Meter (z.B.: 9)">
 <th>GPS Altitude:</th>
-<td><input name="form_gps_altitude" size="20" type="text" value="$(uci get ddmesh.gps.altitude)"> GPS-Position,H&ouml;he &uuml;ber Boden in Meter (z.B.: 9)</td>
+<td><input id="geoloc_alt" name="form_gps_altitude" size="20" type="text" value="$(uci get ddmesh.gps.altitude)"> GPS-Position,H&ouml;he &uuml;ber Boden in Meter (z.B.: 9)</td>
+<td></td>
 </tr>
 
 <tr title="GPS-Position,Breitengrad (z.B.: 51.05812205978327)">
 <th>GPS Latitude:</th>
-<td><input name="form_gps_latitude" size="20" type="text" value="$(uci get ddmesh.gps.latitude)">(z.B.: 51.05812205978327)</td>
+<td><input id="geoloc_lat" name="form_gps_latitude" size="20" type="text" value="$(uci get ddmesh.gps.latitude)">(z.B.: 51.05812205978327)</td>
+<td><button onclick="ajax_geoloc()" type="button" title="$(lang text-geoloc01)">$(lang text-geoloc00)</button></td>
 </tr>
 
 <tr title="GPS-Position,L&auml;ngengrad (z.B.:13.72053812812492">
 <th>GPS Longitude:</th>
-<td><input name="form_gps_longitude" size="20" type="text" value="$(uci get ddmesh.gps.longitude)">(z.B.:13.720</td>
+<td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$(uci get ddmesh.gps.longitude)">(z.B.:13.720</td>
+<td></td>
 </tr>
 
 <tr title="Notizen und kurze Hinweise zu diesem Access-Point. Die Notiz sollte nicht l&auml;nger als 500 Zeichen sein.">
 <th>Notiz:</th>
-<td><textarea COLS="48" name="form_contact_note" ROWS="3" style="width: 100%;">$tmp_note</textarea></td>
+<td colspan="2"><textarea COLS="48" name="form_contact_note" ROWS="3" style="width: 100%;">$tmp_note</textarea></td>
 </tr>
 
-<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="3">&nbsp;</td></tr>
 
 <tr>
-<td colspan="2"><input name="form_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden sofort auf der Seite 'Status' angezeigt." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_abort" title="Abbruch dieser Dialogseite" type="submit" value="Abbruch"></td>
+<td colspan="3"><input name="form_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden sofort auf der Seite 'Status' angezeigt." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_abort" title="Abbruch dieser Dialogseite" type="submit" value="Abbruch"></td>
 </tr>
 
 </table>
@@ -68,9 +72,15 @@ cat<<EOF
 <p><b>Tipp</b>:
 Diese Angaben sind auf der Seite <a href="/contact.cgi">Kontakt</a>
 f&uuml;r andere sichtbar.</p>
-EOF
+<fieldset class="bubble">
+<legend>Google Maps</legend>
+<img id="geoloc_map" border="0" src="https://maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x300&maptype=roadmap&markers=color:green%7Clabel:R%7C$(uci get ddmesh.gps.latitude),$(uci get ddmesh.gps.longitude)&sensor=false">
+</fieldset>
 
-else
+EOF
+}
+
+if [ -n "$QUERY_STRING" ]; then
 	if [ -n "$form_submit" ]
 	then
 		uci set ddmesh.contact.name="$form_contact_name"
@@ -86,5 +96,7 @@ else
 		notebox 'Es wurden keine Einstellungen ge&auml;ndert.'
 	fi
 fi
+
+display
 
 . /usr/lib/www/page-post.sh

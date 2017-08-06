@@ -58,13 +58,13 @@ cat<<EOM
 <tr><th colspan="2">Lokal</th><th colspan="2">Entfernt</th></tr>
 EOM
 
-netstat -tn 2>/dev/null | grep ESTABLISHED | awk '                                                                                                                                       
-{                                                                                                                                                                                        
-	split($4,a,":");                                                                                                                                                                 
-	split($5,b,":");                                                                                   
-	if(match(a[1],"169.254")) a[1]="Gateway Tunnel"                                                                                                                                  
-	printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",(NR%2)+1,a[1],a[2],b[1],b[2]);                                                          
-}'                                                                                                                                                                                       
+netstat -tn 2>/dev/null | grep ESTABLISHED | awk '
+{
+	split($4,a,":");
+	split($5,b,":");
+	if(match(a[1],"169.254")) a[1]="Gateway Tunnel"
+	printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",(NR%2)+1,a[1],a[2],b[1],b[2]);
+}'
 
 cat<<EOM
 </table>

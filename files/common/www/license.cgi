@@ -55,10 +55,10 @@ The freifunk server (vserver) are closed source.
 <br/>
 <fieldset class="bubble">
 <ul>
-<li><a href="/license.cgi?license=1">$(display_title agreement)</a></li>                                        
-<li><a href="/license.cgi?license=2">$(display_title pico)</a></li>                                            
-<li><a href="/license.cgi?license=3">$(display_title gpl)</a></li>                                            
-<li><a href="/license.cgi?license=4">$(display_title lgpl)</a></li>                                            
+<li><a href="/license.cgi?license=1">$(display_title agreement)</a></li>
+<li><a href="/license.cgi?license=2">$(display_title pico)</a></li>
+<li><a href="/license.cgi?license=3">$(display_title gpl)</a></li>
+<li><a href="/license.cgi?license=4">$(display_title lgpl)</a></li>
 </ul>
 </fieldset>
 

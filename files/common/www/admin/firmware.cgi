@@ -38,11 +38,27 @@ URL_RELEASE="$(uci get credentials.url.firmware_download_release)"
 URL_TESTING="$(uci get credentials.url.firmware_download_testing)"
 URL_ARCH="${DISTRIB_TARGET%/*}"
 FIRMWARE_FILE="/tmp/firmware.bin"
+ERROR_FILE1=/tmp/uclient.error1
+ERROR_FILE2=/tmp/uclient.error2
+CERT="--ca-certificate=/etc/ssl/certs/download.crt"
+
+rm $ERROR_FILE1
+rm $ERROR_FILE2
 
 #check connection, reduce timeout
-ping -c 1 -W 3 $DL_SERVER >/dev/null 2>/dev/null  && {
-	firmware_release_version=$(wget -O - "$URL_RELEASE/version")
-	firmware_testing_version=$(wget -O - "$URL_TESTING/version")
+get_firmware_versions()
+{
+	echo "Connection timeout" > $ERROR_FILE1
+	cp $ERROR_FILE1 $ERROR_FILE2
+	ping -c 1 -W 3 $DL_SERVER >/dev/null 2>/dev/null  && {
+		firmware_release_version=$(uclient-fetch $CERT -O - "$URL_RELEASE/version" 2>$ERROR_FILE1)
+		firmware_testing_version=$(uclient-fetch $CERT -O - "$URL_TESTING/version" 2>$ERROR_FILE2)
+		# only keep relevant message
+		T="$(cat $ERROR_FILE | sed -n '/error/s#.*:##p')"
+		echo "$T" >$ERROR_FILE1
+		T="$(cat $ERROR_FILE2 | sed -n '/error/s#.*:##p')"
+		echo "$T" >$ERROR_FILE2
+	}
 }
 
 echo "<H1>$TITLE</H1>"
@@ -59,10 +75,11 @@ if [ -z "$form_action" ]; then
 cat<<EOM
 	<fieldset class="bubble">
 	<legend>Firmware-Update</legend>
-	<table>
 	<form name="form_firmware_upload" action="firmware.cgi" enctype="multipart/form-data" method="POST">
 	<input name="form_action" value="upload" type="hidden">
-	<tr><th>Ger&auml;teinfo:</th><td>$(cat /var/sysinfo/model);$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')</td></tr>
+	<table>
+	<tr><th>Ger&auml;teinfo:</th><td>$device_model;$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')</td></tr>
+	<tr><th>Filesystem:</th><td>$(cat /proc/cmdline | sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#')</td></tr>
 	<tr><th width="100" style="white-space: nowrap;">Erwartete Firmware-Datei:</th><td>$FIRMWARE</td></tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
 EOM
@@ -82,38 +99,30 @@ cat<<EOM
 EOM
 
 	if [ -n "$FIRMWARE" ]; then
+
+	get_firmware_versions
+
 cat<<EOM
-	<table>
-	<tr><td colspan="2">
+	<table class="firmware">
+	<tr><td class="nowrap">
 	<form name="form_firmware_dl_release" action="firmware.cgi" method="POST" style="text-align: left;">
 	<input name="form_action" value="download_release" type="hidden">
-	<input $(test -z "$firmware_release_version" && echo disabled) name="form_firmware_submit" type="submit" value="Download latest ($firmware_release_version) Version from Server"></td></tr>
+	<input $(test -z "$firmware_release_version" && echo disabled) name="form_firmware_submit" type="submit" value="Download latest ($firmware_release_version) Version from Server">
 	</form>
-	</td></tr>
-	<tr><td colspan="2">
+	<div style="color:red;">$(test -z "$firmware_release_version" && cat $ERROR_FILE1)</div></td>
+	</tr>
+	<tr><td class="nowrap">
 	<form name="form_firmware_dl_testing" action="firmware.cgi" method="POST" style="text-align: left;">
 	<input name="form_action" value="download_testing" type="hidden">
-	<input $(test -z "$firmware_testing_version" && echo disabled) name="form_firmware_submit" type="submit" value="Download testing ($firmware_testing_version) Version from Server"></td></tr>
+	<input $(test -z "$firmware_testing_version" && echo disabled) name="form_firmware_submit" type="submit" value="Download testing ($firmware_testing_version) Version from Server">
 	</form>
-	</td></tr>
-	<tr><td colspan="2">(Wenn der direkte Download nicht verf&uuml;gbar ist, konnte der Download-Server nicht erreicht werden. Bitte Seite neu laden.)</td></tr>
+	<div style="color:red;">$(test -z "$firmware_testing_version" && cat $ERROR_FILE2)</div></td>
+	</tr>
+	<tr><td>(Wenn der direkte Download nicht verf&uuml;gbar ist, konnte der Download-Server nicht erreicht werden. Bitte Seite neu laden.)</td></tr>
 	</table>
 EOM
 	fi
 cat<<EOM
-	</fieldset>
-
-	<br/><br/>
-
-	<fieldset class="bubble">
-	<legend>Reset</legend>
-	<form name="form_reset" action="firmware.cgi" method="POST">
-	<input name="form_action" value="reset" type="hidden">
-	<table>
-	<tr><th>Werkseinstellung:<input name="form_firmware_factory" type="checkbox" value="1"></th></tr>
-	<tr><th><input name="form_reset_submit" type="submit" value="Neustart"></tr>
-	</table>
-	</form>
 	</fieldset>
 
 	<br/><br/>
@@ -127,7 +136,7 @@ print_upgrade_hist() {
 }
 config_load ddmesh
 config_list_foreach boot upgraded print_upgrade_hist
-	
+
 cat<<EOM
 	 </table>
 	 </fieldset>
@@ -140,7 +149,7 @@ else #form_action
 			if [ -n "$form_update_abort" ]; then
 				rm -f $FIRMWARE_FILE
 				notebox 'Firmware Laden abgebrochen'
-			else	
+			else
 				cat<<EOM
 				<fieldset class="bubble">
 				<legend>Firmware-Update</legend>
@@ -165,34 +174,13 @@ EOM
 				fi
 			fi
 			;;
-		reset)
-			cat<<EOM
-			<fieldset class="bubble">
-			<legend>Neustart</legend>
-			<table>
-			<tr><td>Router wird neu gestartet</td></tr>
-			<tr><td>
-EOM
-			if [ -n "$form_firmware_factory" ]; then
-				echo "Alle Einstellungen werden auf Standardwerte gesetzt (Passwort,IP Adressen,ssh-key,https Zertifikate).<br />Ebenso wird eine neue Node-Nummber erzeugt."
-			else
-				echo "Alle Einstellungen bleiben erhalten."
-			fi
-			cat <<EOM
-			</td></tr>
-			<tr><td><img src="/images/progress170.gif?s=$(date +'%s')" vspace="10" width="255"></td></tr>
-			</table>
-			</fieldset>
-			<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-			window.setTimeout("window.location=\"/\"", 100*1000);
-			</SCRIPT>
-EOM
-			test -n "$form_firmware_factory" && mtd -r erase rootfs_data
-			sleep 2
-			reboot&
-			;;
 		upload|download_release|download_testing)
+
+
 			if [ "$form_action" = "download_release" -o "$form_action" = "download_testing" ]; then
+
+				get_firmware_versions
+
 				if [ "$form_action" = "download_release" ]; then
 					URL="$URL_RELEASE/$URL_ARCH"
 					VER="$firmware_release_version"
@@ -203,23 +191,26 @@ EOM
 
 				echo "<pre>"
 				echo "Try downloading $URL/$FIRMWARE"
-				wget -O $FIRMWARE_FILE "$URL/$FIRMWARE" 2>&1 | flush
+				uclient-fetch $CERT -O $FIRMWARE_FILE "$URL/$FIRMWARE" 2>&1 | flush
 				echo "</pre>"
 
-				server_md5sum=$(wget -O - "$URL/md5sums" | grep "$FIRMWARE" | cut -d ' ' -f1)
+				server_md5sum=$(uclient-fetch $CERT -O - "$URL/md5sums" | grep "$FIRMWARE" | cut -d ' ' -f1)
 				file_md5sum=$(md5sum $FIRMWARE_FILE | cut -d' ' -f1)
-				if [ "$server_md5sum" != "$file_md5sum" ]; then
+				if [ -z "$server_md5sum" -o "$server_md5sum" != "$file_md5sum" ]; then
 					notebox "ERROR: Download fehlerhaft !"
 					rm -f $FIRMWARE_FILE
 					break
 				fi
 				cur_version="$(cat /etc/version)"
-				compare_versions "$VER"  "$cur_version" || notebox "Hinweis: Firmware version ist kleiner oder gleich der aktuellen Firmware ($VER <= $cur_version) !"
+				compare_versions "$VER"  "$cur_version" || VERSION_WARNING="<div style=\"color: red;\">Hinweis: Firmware version ist kleiner oder gleich der aktuellen Firmware (<b>$VER <= $cur_version</b>) !</div>"
+				MD5_WARNING=""
+				MD5_OK='<div style="color: green;">Korrekt</div>'
 			else
 				mv $ffout $FIRMWARE_FILE
+				MD5_WARNING="Bitte &Uuml;berpr&uuml;fen Sie die <b>md5sum</b>, welche sicherstellt, dass die Firmware korrekt &uuml;bertragen wurde."
 			fi
 
-			file_md5sum=$(md5sum $FIRMWARE_FILE | cut -d' ' -f1)	
+			file_md5sum=$(md5sum $FIRMWARE_FILE | cut -d' ' -f1)
 			#check firmware (see /lib/upgrade)
 			if m=$(platform_check_image $FIRMWARE_FILE) ;then
 				cat<<EOM
@@ -230,13 +221,15 @@ EOM
 				 <table>
 				 <tr><th>Firmware File</th><td>$ffout</td></tr>
 				 <tr><th>Firmware Version</th><td>$VER</td></tr>
-				 <tr><th>Firmware md5sum</th><td>$file_md5sum</td></tr>
+				 <tr><th>Firmware md5sum</th><td>$file_md5sum $MD5_OK</td></tr>
 				 <tr><th>Werkseinstellung:</th><td><input name="form_firmware_factory" type="checkbox" value="1"></td></tr>
-				 <tr><td colspan="2">Bitte &Uuml;berpr&uuml;fen Sie die md5sum, welche sicherstellt, dass die Firmware korrekt &uuml;bertragen wurde.<br />
+				 <tr><td colspan="2">
+				  $MD5_WARNING</br>
 	  			  Das Speichern der Firmware dauert einige Zeit. Bitte schalten Sie das Ger&auml;t nicht aus. Es ist m&ouml;glich, dass sich der Router
 	    			  mehrfach neustarted, um alle aktualisierungen vorzunehmen.<br />
 	     			  Wird die Werkseinstellung aktiviert, erh&auml;lt der Router bei der n&auml;chsten Registrierung eine neue Node-Nummer und damit auch
              			  eine neue IP-Adresse im Freifunknetz.</td></tr>
+				 <tr><td colspan="2"> $VERSION_WARNING </td></tr>
 				 <tr><td colspan="2">
 				 <input name="form_update_submit" type="submit" value="Firmware speichern">
 				 <input name="form_update_abort" type="submit" value="Abbruch">
@@ -253,6 +246,7 @@ EOM
 		*)
 		;;
 	esac
-fi	
+fi
 
 . /usr/lib/www/page-post.sh ${0%/*}
+

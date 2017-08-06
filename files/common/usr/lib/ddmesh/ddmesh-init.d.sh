@@ -4,53 +4,50 @@
 
 start() {
 
+	# enable OOM killer reboot
+	sysctl  -wq vm.panic_on_oom=1
+
 	eval $(cat /etc/openwrt_release)
 
 	/usr/lib/ddmesh/ddmesh-led.sh wifi_off
 	LOGGER_TAG="ddmesh boot"
 
 	#initial setup and node depended setup (crond calles ddmesh-register-node.sh to update node)
-	logger -t $LOGGER_TAG "inital boot setting"
+	logger -s -t $LOGGER_TAG "inital boot setting"
 	#check if boot process should be stopped
 	/usr/lib/ddmesh/ddmesh-bootconfig.sh || exit
 
 	#check if we have a node
-	test -z "$(uci get ddmesh.system.node)" && echo "router not registered" && exit
-	eval $(/usr/bin/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
-	
+	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit
+	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+
 	#setup network (routing rules) manually (no support by uci)
-	logger -t $LOGGER_TAG "network"
-	echo "setup network"
-	/usr/lib/ddmesh/ddmesh-routing.sh add
+	logger -s -t $LOGGER_TAG "network"
+	/usr/lib/ddmesh/ddmesh-routing.sh start
 
 	#load splash mac from config to firewall
-	logger -t $LOGGER_TAG "splash firewall"
+	logger -s -t $LOGGER_TAG "splash firewall"
 	/usr/lib/ddmesh/ddmesh-splash.sh loadconfig
 
-	logger -t $LOGGER_TAG "portforwarding"
+	logger -s -t $LOGGER_TAG "portforwarding"
 	/usr/lib/ddmesh/ddmesh-portfw.sh init
-	
+
 	#---- starting serivces ------
 
 	#setup dnsmasq
-	logger -t $LOGGER_TAG "dnsmasq"
-	echo "setup dnsmasq"
+	logger -s -t $LOGGER_TAG "dnsmasq"
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh start
 
-	logger -t $LOGGER_TAG "start service bmxd"
-	echo "start service bmxd"
+	logger -s -t $LOGGER_TAG "start service bmxd"
 	/usr/lib/ddmesh/ddmesh-bmxd.sh start
 
-	logger -t $LOGGER_TAG "start service backbone"
-	echo "backbone"
+	logger -s -t $LOGGER_TAG "start service backbone"
 	/usr/lib/ddmesh/ddmesh-backbone.sh start
 
-	logger -t $LOGGER_TAG "start service privnet"
-	echo "privnet"
+	logger -s -t $LOGGER_TAG "start service privnet"
 	/usr/lib/ddmesh/ddmesh-privnet.sh start
 
-	logger -t $LOGGER_TAG "start service openvpn"
-	echo "openvpn"
+	logger -s -t $LOGGER_TAG "start service openvpn"
 	if [ "$DISTRIB_CODENAME" = "attitude_adjustment" ]; then
 		cd /etc/openvpn
 		for i in /etc/openvpn/*.conf
@@ -61,29 +58,30 @@ start() {
 		test -x /etc/init.d/openvpn && /etc/init.d/openvpn start
 	fi
 
-	logger -t $LOGGER_TAG "start service nuttcp"
-	echo "nuttcp"
-	nuttcp -S -P5010
+	if [ -x /usr/bin/nuttcp ]; then
+		logger -s -t $LOGGER_TAG "start service nuttcp"
+		nuttcp -S -P5010
+	else
+		logger -s -t $LOGGER_TAG "service nuttcp not installed"
+	fi
 
-	logger -t $LOGGER_TAG "generate qr code"
-	echo "qrencode"
-	/usr/lib/ddmesh/ddmesh-qrencode.sh
+	if [ -x /usr/bin/iperf3 ]; then
+		logger -s -t $LOGGER_TAG "start service iperf3"
+		iperf3 -s -D
+	else
+		logger -s -t $LOGGER_TAG "service iperf3 not installed"
+	fi
 
-	logger -t $LOGGER_TAG "register node"
-	echo "register node"
-	/usr/bin/ddmesh-register-node.sh
+	logger -s -t $LOGGER_TAG "register node"
+	/usr/lib/ddmesh/ddmesh-register-node.sh
 
-	logger -t $LOGGER_TAG "ifstatd"
-	echo "run ifstatd"
-	/usr/lib/ddmesh/ddmesh-ifstatd.sh &
-
-	logger -t $LOGGER_TAG "finished."
+	logger -s -t $LOGGER_TAG "finished."
 	/usr/lib/ddmesh/ddmesh-led.sh status done
 }
 
 stop() {
 	/usr/lib/ddmesh/ddmesh-backbone.sh stop
-	/usr/lib/ddmesh/ddmesh-privnet.sh stop		
+	/usr/lib/ddmesh/ddmesh-privnet.sh stop
 	/usr/lib/ddmesh/ddmesh-bmxd.sh stop
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh stop
 	setup_routing del

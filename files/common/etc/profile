@@ -5,7 +5,7 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export HOME=$(grep -e "^${USER:-root}:" /etc/passwd | cut -d ":" -f 6)
 export HOME=${HOME:-/root}
 
-m=$(cat /proc/cpuinfo | sed -n '/machine/s#machine[ 	]*:##p')
+m=$(cat /var/sysinfo/model 2>/dev/null)
 export PS1='\[\033[01;31m\]$m\[\033[00m\] @ \[\033[01;37m\]\h\[\033[00m\]:\w\$ '
 
 [ -x /bin/more ] || alias more=less

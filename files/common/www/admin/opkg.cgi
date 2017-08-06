@@ -13,7 +13,7 @@ if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
 	. /usr/lib/www/page-post.sh ${0%/*}
 	exit 0
 fi
-#get form data and optionally file 
+#get form data and optionally file
 eval $(/usr/bin/freifunk-upload -e 2>/dev/null)
 
 . /usr/lib/www/page-pre.sh ${0%/*}
@@ -30,9 +30,9 @@ show_page() {
 	 <fieldset class="bubble">
 	 <legend>Zusatz-Software-Installation</legend>
 	 <table>
-	 <tr><th>Ger&auml;teinfo:</th><td>$(cat /var/sysinfo/model);$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')</td></tr>
+	 <tr><th>Ger&auml;teinfo:</th><td>$(cat /var/sysinfo/model 2>/dev/null);$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')</td></tr>
 	 <tr><th width="100">Zusatzpaket-Datei&nbsp;(*.ipk):</th>
-	     <td><input name="form_ipk_filename" size="40" type="file" value="Durchsuche..."></td></tr>	
+	     <td><input name="form_ipk_filename" size="40" type="file" value="Durchsuche..."></td></tr>
 	 <tr><td colspan="2">&nbsp;</td></tr>
 	 <tr><td colspan="2"><input name="form_ipk_submit" type="submit" value="Paket laden">
 	     <input name="form_ipk_abort" type="reset" value="Abbruch"></td></tr>
@@ -43,7 +43,7 @@ show_page() {
 	<br />
 	<font size="2"><b>Verf&uuml;gbarer Speicher:</b> $avail_size Kbyte</font> <br />
 	<b>Hinweis:</b> Die Pakete k&ouml;nnen mehr Speicher im Flash belegen, als hier angegeben. Es k&ouml;nnen Abh&auml;ngigkeiten zu anderen Paketen bestehen, die ebenfalls installiert werden. Sollte der restliche freie Speicher zu klein werden, lassen sich auch keine Konfigurationen mehr speichern. Bei Ger&auml;ten mit weniger als <b>8Mbyte Flash</b>, sollten KEINE Pakete installiert werden.<br/>
-	Nur durch ein Neustart mit Werkseinstellung, werden alle &Auml;nderungen verworfen. Dabei gehen aber alle Einstellungen verloren und eine neue Knotennummer (IP Adresse) wird vergeben.	
+	Nur durch ein Neustart mit Werkseinstellung, werden alle &Auml;nderungen verworfen. Dabei gehen aber alle Einstellungen verloren und eine neue Knotennummer (IP Adresse) wird vergeben.
 	<br /><br />
 	<fieldset class="bubble">
 	<legend>Verf&uuml;gbare Pakete</legend>
@@ -93,7 +93,7 @@ do
 		</form>
 EOM
 
-		if [ "$T" = "1" ];then T=2; else T=1; fi 
+		if [ "$T" = "1" ];then T=2; else T=1; fi
 
 		#del old values
 		unset p
@@ -120,36 +120,12 @@ EOM
 T=1
 IFS='
 '
-#generates: p=paket v=version [installed=true] clear
-#"clear" is just a separator and used to do the action. all other are used to set variables via eval
-for i in $(cat /usr/lib/opkg/status | sed -n '
-/^Package:.*/{s#^Package: \(.*\)#p="\1"#;h}
-/^Version:.*/{s#^Version: \(.*\)#v="\1"#;H}
-/^Status:.*/{s#^Status: \(.*\)#s="\1"#;H}
-/^$/{x;a \
-clear
-p
-}')
+for i in $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh)
 do
-	if [ "$i" = "clear" ]; then
-		test -z "$p" && continue
-		test -z "$v" && continue
-		test -z "$s" && continue
-
-		#only own installed packages	
-		test "${s/ok/}" = "$s" && continue
-
-		echo "<TR class=\"colortoggle$T\"><TD>$p</TD><td>$v</td></tr>"
-
-		if [ "$T" = "1" ];then T=2; else T=1; fi 
-
-		#del old values
-		unset p
-		unset v
-		unset installed
-	else
-		eval $i
-	fi
+	IFS=':'
+	set $i
+	echo "<TR class=\"colortoggle$T\"><TD>$1</TD><td>$2</td></tr>"
+	if [ "$T" = "1" ];then T=2; else T=1; fi
 done
 
 cat<<EOM
@@ -159,9 +135,9 @@ EOM
 }
 
 if [ -z "$form_action" ]; then
-	
+
 	show_page
-	
+
 else #form_action
 
 	case "$form_action" in
@@ -173,7 +149,7 @@ else #form_action
 			;;
 		upload)
 			mv $ffout $IPK_FILE
-	
+
 			cat<<EOM
 				<fieldset class="bubble">
 				<legend>Erweiterung Installieren</legend>
@@ -199,9 +175,11 @@ EOM
 				notebox "Kein Paket geladen"
 			else
 				echo "<pre>"
-				opkg --force-overwrite install $IPK_FILE 2>$OPKG_ERROR | flush
+				echo "*** install [$IPK_FILE]"
+				opkg -V2 --force-overwrite install $IPK_FILE 2>$OPKG_ERROR | flush
 				name=$(opkg --noaction install $IPK_FILE 2>/dev/null | cut -d' ' -f2)
-				opkg flag ok $name 2>$OPKG_ERROR | flush
+				echo "*** set flag ok [$name]"
+				opkg flag ok $name 2>>$OPKG_ERROR | flush
 				cat $OPKG_ERROR
 				echo "</pre><br/> Aktion beendet. Bitte Fehlermeldung beachten."
 			fi
@@ -211,9 +189,11 @@ EOM
 				notebox "Kein Paket geladen"
 			else
 				echo "<pre>"
-				opkg --force-overwrite install $form_paket 2>$OPKG_ERROR | flush
+				echo "*** install [$IPK_FILE]"
+				opkg -V2 --force-overwrite install $form_paket 2>$OPKG_ERROR | flush
 				name=$(opkg --noaction install $form_paket 2>/dev/null | cut -d' ' -f2)
-				opkg flag ok $name 2>$OPKG_ERROR | flush
+				echo "*** set flag ok [$name]"
+				opkg flag ok $name 2>>$OPKG_ERROR | flush
 				cat $OPKG_ERROR
 				echo "</pre><br/> Aktion beendet. Bitte Fehlermeldung beachten."
 			fi
@@ -221,6 +201,6 @@ EOM
 		*)
 		;;
 	esac
-fi	 
+fi
 
 . /usr/lib/www/page-post.sh ${0%/*}

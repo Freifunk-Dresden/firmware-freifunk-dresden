@@ -3,4 +3,4 @@
 echo 'Content-type: text/plain txt'
 echo ''
 
-/usr/bin/ddmesh-register-node.sh 
+/usr/lib/ddmesh/ddmesh-register-node.sh

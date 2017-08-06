@@ -62,7 +62,7 @@ $ipt -t $table -L $chain -vn 2>&1 | awk '
 	}
 
 
- /Chain/{ 
+ /Chain/{
 		print "<tr><th colspan=\"11\">"$0"</th></tr>";
 		next
 	}
@@ -75,7 +75,7 @@ $ipt -t $table -L $chain -vn 2>&1 | awk '
 			link=$3
 		else
 			link="<a href=\"firewall.cgi?ipt_table="ENVIRON["table"]"&ipt_chain="$3"&ip_version="ENVIRON["ipv"]"\">"$3"</a>"
-	
+
 
 		if(toggel==1)
 			toggel=2
@@ -94,7 +94,7 @@ $ipt -t $table -L $chain -vn 2>&1 | awk '
 		comment=extractComment($0)
 
 		print "<tr class=\"colortoggle"toggel"\"><td>"$1"</td><td>"$2"</td><td>"link"</a></td><td>"$4"</td><td>"$5"</td><td>"$6"</td><td>"$7"</td><td>"$8"</td><td>"$9"</td><td>"params"</td><td>"comment"</td></tr>"
-		
+
 	}
 '
 
@@ -122,6 +122,7 @@ cat<<EOM
 	<a href="firewall.cgi?ipt_table=nat&ip_version=ipv4">nat</a>,
 	<a href="firewall.cgi?ipt_table=mangle&ip_version=ipv4">mangle</a>,
 	<a href="firewall.cgi?ipt_table=raw&ip_version=ipv4">raw</a>
+	<a href="firewall.cgi?ipt_table=filter&ipt_chain=statistic&ip_version=ipv4">statistic</a>
 EOM
 if [ "$(uci get ddmesh.system.disable_splash)" != "1" ]; then
 cat<<EOM
@@ -133,8 +134,8 @@ cat<<EOM
 	<br/>
 	<br/>
 EOM
-	${ipt_table:=filter}
-	${ip_version:=ipv4}
+	ipt_table=${ipt_table:-filter}
+	ip_version=${ip_version:-ipv4}
 
 if [ -z "$ipt_table" -o -z "$ipt_chain" -o -z "$ip_version" ]; then
 

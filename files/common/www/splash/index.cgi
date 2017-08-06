@@ -11,7 +11,7 @@ if [ -z $remote_mac ]; then
         cat <<EOM
         <font color="red" size="+1">Ihre IP Addresse ($remote_ip) wurde nicht per DHCP von diesem Knoten vergeben.</font><br><br>
         Normalerweise wird per DHCP die IP Adresse vergeben. Wurde eine feste IP verwendet, so kann keine
-        MAC bestimmt werden.  
+        MAC bestimmt werden.
 EOM
 	. /usr/lib/www/splash-post.sh
         exit
@@ -48,9 +48,9 @@ EOM
 echo "<div>"
 if [ -f /www/custom/custom.url ]; then
 	url="$(cat /www/custom/custom.url | sed '1,1{s#[`$()]##}')"
-	wget -O - "$url"	
+	uclient-fetch -O - "$url"
 else
-	cat /www/custom/custom.html 
+	cat /www/custom/custom.html
 fi
 echo "</div>"
 
@@ -58,12 +58,13 @@ else
 	if [ -n "$form_check" ]
         then
                 /usr/lib/ddmesh/ddmesh-splash.sh addmac $remote_mac
-		form_uri="$(uhttpd -d $form_uri)"
-cat <<EOM               
+                #remove http://host/ from uri if any and add it if missing
+                form_uri="http://$form_host/$(uhttpd -d $form_uri | sed 's#^http://[^/]\+/##;s#^/##')"
+cat <<EOM
                 Sie haben die Nutzungsbedingungen akzeptiert.<br />
-                <b>MAC:</b>$remote_mac<br /> 
+                <b>MAC:</b>$remote_mac<br />
                 <b>Aktuelle IP:</b>$remote_ip <br />
-                Weiter zu: <a href="http://$form_host$form_uri">$form_host</a>
+                Weiter zu: <a href="$form_uri">$form_host</a>
 EOM
         else
 cat <<EOM

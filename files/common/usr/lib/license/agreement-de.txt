@@ -6,7 +6,7 @@ Das offene und freie drahtlose Freifunk.net wird von Freiwilligen betrieben ("Be
 
 2. Zugang
 ---------
-Der Zugang zum Freifunk.net wird nicht garantiert. Er kann jederzeit und ohne Angabe von Gründen unterbrochen oder für bestimmte Endgeräte und Teilnehmer gesperrt werden. Der Zugang und die notwendigen Daten zum Verbinden mit dem Netz werden durch die Knoten definiert und per DHCP oder ähnlichen Protokollen an die Endgeräte übertragen. Das Verwenden von alten, ungültigen oder selbst definierten Daten (z.B. IP Adresse) ist nicht gestattet, da diese das Netz stören oder beschädigen können. Durch die Funktionsweise des Netzes ist es nicht vorhersehbar, welcher Router für den Internetzugang verwendet wird.  
+Der Zugang zum Freifunk.net wird nicht garantiert. Er kann jederzeit und ohne Angabe von Gründen unterbrochen oder für bestimmte Endgeräte und Teilnehmer gesperrt werden. Der Zugang und die notwendigen Daten zum Verbinden mit dem Netz werden durch die Knoten definiert und per DHCP oder ähnlichen Protokollen an die Endgeräte übertragen. Das Verwenden von alten, ungültigen oder selbst definierten Daten (z.B. IP Adresse) ist nicht gestattet, da diese das Netz stören oder beschädigen können. Durch die Funktionsweise des Netzes ist es nicht vorhersehbar, welcher Router für den Internetzugang verwendet wird.
 
 3. Gesetzlich verbotene Handlungen
 ----------------------------------
@@ -22,7 +22,7 @@ Die Betreiber des Freifunk.net Netzwerkes sind nicht verantwortlich für die üb
 
 6. Datenprotokollierung
 -----------------------
-Netzwerk/Router speichert keine Daten, sondern leitet diese nur über Router weiter. Ebenso werden keine Logindaten gespeichert. Es werden nur die MAC Adresse des Endgerätes im RAM des Zugangsknoten (Router) gepeichert, um den Zugang über den jeweiligen Router zuermöglichen. Es ist jedoch möglich bei Verdacht des Missbrauches (z.B. illegaler Datenaustausch, Surfen auf illegalen Seiten, Austausch von kopiergeschützen Inhalten und anderes, was gegen geltendes Recht verstößt) auf Verlangen Daten entsprechend technischer Möglichkeiten zu speichern, die dann weitergegeben werden. 
+Netzwerk/Router speichert keine Daten, sondern leitet diese nur über Router weiter. Ebenso werden keine Logindaten gespeichert. Es werden nur die MAC Adresse des Endgerätes im RAM des Zugangsknoten (Router) gepeichert, um den Zugang über den jeweiligen Router zuermöglichen. Es ist jedoch möglich bei Verdacht des Missbrauches (z.B. illegaler Datenaustausch, Surfen auf illegalen Seiten, Austausch von kopiergeschützen Inhalten und anderes, was gegen geltendes Recht verstößt) auf Verlangen Daten entsprechend technischer Möglichkeiten zu speichern, die dann weitergegeben werden.
 
 7. Fair Use Policy
 ------------------

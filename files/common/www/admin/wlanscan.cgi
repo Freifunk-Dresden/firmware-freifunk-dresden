@@ -12,7 +12,7 @@ cat<<EOM
 <div id="ajax_wlan">
 EOM
 
-/www/cgi-bin/ajax-wlan.cgi no-html-header
+/www/admin/ajax-wlan.cgi no-html-header
 
 cat<<EOM
 </div>

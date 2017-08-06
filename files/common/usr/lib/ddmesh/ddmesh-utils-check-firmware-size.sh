@@ -1,6 +1,6 @@
 #!/bin/ash
 
-test ! -f "$1" && echo "missing filename" &&  exit 0 
+test ! -f "$1" && echo "missing filename" &&  exit 0
 
 export firmware_default_partition_size=0x3d0000
 export jffs2_min_size=0x50000

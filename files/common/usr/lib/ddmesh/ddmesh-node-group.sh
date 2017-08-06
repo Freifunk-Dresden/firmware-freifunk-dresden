@@ -20,10 +20,10 @@ privnet_server_enabled=${privnet_server_enabled:-0}
 privnet_clients_enabled=$(uci get ddmesh.privnet.clients_enabled)
 privnet_clients_enabled=${privnet_clients_enabled:-0}
 
-eval $(/usr/bin/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
-CMD_IP="$(type -p ip)"                                                
-CMD_TOUCH="$(type -p touch)"                                          
+CMD_IP="$(type -p ip)"
+CMD_TOUCH="$(type -p touch)"
 CMD_RM="$(type -p rm)"
 CMD_BRCTL="$(type -p brctl)"
 
@@ -48,7 +48,7 @@ EOM
 addconf() {
  cat << EOM >>$CONF
 $1 {
- passwd a$(echo "$2" | md5sum | sed 's# .*$##')78; 
+ passwd a$(echo "$2" | md5sum | sed 's# .*$##')78;
  type ether;
  proto $PROTO;
  compress no;
@@ -58,7 +58,7 @@ $1 {
 #only one client;to ensure that the old interface is deleted before creating new one (in case connection is dead and client creates a new one.e.g. IP address change on DSL line)
  multi no;
  persist yes;
- up { 
+ up {
   program $CMD_IP "link set %% down" wait;
   program $CMD_IP "link set %% promisc off" wait;
   #program $CMD_IP "link set %% mtu 1450" wait;
@@ -80,27 +80,27 @@ callback_accept_config ()
 	local config="$1"
 	local name
 	local password
-	 
-	config_get name "$config" name 
+
+	config_get name "$config" name
 	config_get password "$config" password
-	
+
 	echo incomming line:$i $name,$password
 	if [ -n "$name" -a -n "$password" ]; then
 		addconf privnet-$name $password incomming_$name
 	fi
 }
-				
+
 callback_outgoing_config ()
 {
 	local config="$1"
 	local name #node name "r100"
-	local port 
+	local port
 	local password
-	
-	config_get name "$config" name 
-	config_get port "$config" port 
+
+	config_get name "$config" name
+	config_get port "$config" port
 	config_get password "$config" password
-	
+
 	echo outgoing line:$i: $name,$port,$password
 	if [ -n "$name" -a -n "$port" -a -n "$password" ]; then
 		echo "config=[$name:$port:$password]"
@@ -108,18 +108,18 @@ callback_outgoing_config ()
 		addconf	$CONF_NAME $password outgoing_$name"_"$port
 
 		#get ip from node name
-		host=$(ddmesh-ipcalc.sh -n ${name#*r} | grep _ddmesh_ip | cut -d'=' -f2)
+		host=$(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n ${name#*r} | grep _ddmesh_ip | cut -d'=' -f2)
 		$VTUND -f $CONF -P $port $CONF_NAME $host -I "vtund-privnet[c]: "
 		echo "vtund - client $host:$port started."
 	fi
 }
-				
+
 if [ "$1" = "start" ]; then
 	echo "Starting privnet network ..."
 
 	mkdir -p $STATUS_DIR
 	mkdir -p /var/lock/vtund
-	
+
 	createconf
 
 	iptables -F input_privnet_accept
@@ -136,7 +136,7 @@ if [ "$1" = "start" ]; then
 		echo "vtund - server started."
 	fi
 
- 	if [ "$privnet_clients_enabled" = "1" ]; then	
+ 	if [ "$privnet_clients_enabled" = "1" ]; then
  		config_load ddmesh
  		config_foreach callback_outgoing_config privnet_client
 

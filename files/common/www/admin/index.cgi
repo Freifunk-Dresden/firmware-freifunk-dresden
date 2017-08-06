@@ -11,7 +11,7 @@ node=$(uci get ddmesh.system.node)
 tmpmin=$(uci get ddmesh.system.tmp_min_node)
 tmpmax=$(uci get ddmesh.system.tmp_max_node)
 if [ $node -ge $tmpmin -a $node -le $tmpmax ]; then
-# 	export NOMENU=1	
+# 	export NOMENU=1
 	export TITLE="Auto-Setup"
 
 	. /usr/lib/www/page-pre.sh ${0%/*}
@@ -47,7 +47,7 @@ Web-Oberfl&auml;che unter Angabe der Firmware-Version ($(cat /etc/version)) in d
 </fieldset>
 
 <NOSCRIPT><table BORDER="0" class="note">
-<tr><td>F&uuml;r das automatische Laden der Startseiten beim <a href="firmware.cgi">Neustart</a>
+<tr><td>F&uuml;r das automatische Laden der Startseiten beim <a href="reset.cgi">Neustart</a>
 wird JavaScript ben&ouml;tigt.</td></tr>
 </table></NOSCRIPT>
 
@@ -60,9 +60,9 @@ auf eines der Steuerungselemente, um kurze Hilfetexte einzublenden.</p>
 <legend>Notwendige Einstellungen</legend>
 <table>
 <tr><th width="20">Status</th><th>Einstellung</th></tr>
-<tr class="colortoggle1"><td>$(test -n "$(uci get ddmesh.contact.email)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: E-Mail</td></tr>
-<tr class="colortoggle2"><td>$(test -n "$(uci get ddmesh.contact.location)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: Standort </td></tr>
-<tr class="colortoggle1"><td>$(test -n "$(uci get ddmesh.gps.latitude)" && test -n "$(uci get ddmesh.gps.longitude)" && test -n "$(uci get ddmesh.gps.altitude)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: GPS Koordinaten </td></tr>
+<tr class="colortoggle1"><td>$(test -n "$(uci -q get ddmesh.contact.email)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: E-Mail</td></tr>
+<tr class="colortoggle2"><td>$(test -n "$(uci -q get ddmesh.contact.location)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: Standort </td></tr>
+<tr class="colortoggle1"><td>$(test -n "$(uci -q get ddmesh.gps.latitude)" && test -n "$(uci -q get ddmesh.gps.longitude)" && test -n "$(uci -q get ddmesh.gps.altitude)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: GPS Koordinaten </td></tr>
 
 </table>
 </fieldset>
@@ -82,10 +82,12 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle2
 <fieldset class="bubble">
 <legend>System Info</legend>
 <table>
-<tr class="colortoggle2"><th>Nameserver:</th><td colspan="5">$(grep nameserver /tmp/resolv.conf.auto | sed 's#nameserver##g')</td></tr>                              
-<tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="5">$(uptime)</td></tr>                                                                            
-<tr class="colortoggle2"><th>System:</th><td colspan="5">$(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>                  
-<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="5">$(cat /var/sysinfo/model) - $(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p') [$(cat /tmp/sysinfo/board_name)]</td></tr>   
+<tr class="colortoggle2"><th>Knoten-IP:</th><td colspan="5">$_ddmesh_ip</td></tr>
+<tr class="colortoggle2"><th>Nameserver:</th><td colspan="5">$(grep nameserver /tmp/resolv.conf.auto | sed 's#nameserver##g')</td></tr>
+<tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="5">$(uptime)</td></tr>
+<tr class="colortoggle2"><th>System:</th><td colspan="5">$(uname -m) $(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>
+<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="5">$device_model - $(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p') [$(cat /tmp/sysinfo/board_name)]</td></tr>
+<tr class="colortoggle2"><th>Filesystem:</th><td>$(cat /proc/cmdline | sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#')</td></tr>
 <tr class="colortoggle2"><th>SSH Fingerprint (md5)</th><td colspan="5">$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | sed -n '/Fingerprint/s#Fingerprint: md5 ##p')</td></tr>
 <tr class="colortoggle1"><th></th><th>Total</th> <th>Used</th> <th>Free</th> <th>Shared</th> <th>Buffers</th> </tr>
 $(free | sed -n '2,${s#[ 	]*\(.*\):[ 	]*\([0-9]\+\)[ 	]*\([0-9]\+\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)#<tr class="colortoggle2"><th>\1</th><td>\2</td><td>\2</td><td>\3</td><td>\4</td><td>\4</td></tr>#g;p}' )

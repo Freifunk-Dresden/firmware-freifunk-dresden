@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo 'Content-Type: application/json;charset=UTF-8'
+echo ''
+
+JSON=/tmp/sysinfo.json
+cat $JSON

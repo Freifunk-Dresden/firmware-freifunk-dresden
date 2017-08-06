@@ -86,6 +86,8 @@ Trennung nach:
 	<option value="600">10h (600min)</option>
 	<option value="900">15h (900min)</option>
 	<option value="1440">24h (1440min)</option>
+	<option value="2880">48h (2880min)</option>
+	<option value="5760">96h (5760min)</option>
 	</select>
 	&nbsp;(<b>aktuell:</b> $(uci get ddmesh.network.client_disconnect_timeout) min)
 </td>
@@ -116,10 +118,12 @@ DHCP Lease:
 	<option value="30m">30min</option>
 	<option value="45m">45min (Kneipe)</option>
 	<option value="1h"> 1h</option>
-	<option value="2h"> 2h(Veranstaltungen)</option>
+	<option value="2h"> 2h (Veranstaltungen)</option>
 	<option value="3h"> 3h</option>
 	<option value="5h"> 5h</option>
 	<option value="10h">10h</option>
+	<option value="48h">48h (Camps)</option>
+	<option value="96h">96h</option>
 	</select>
 	&nbsp;(<b>aktuell:</b> $(uci get ddmesh.network.wifi2_dhcplease))
 </td>
@@ -155,13 +159,13 @@ do
 	else
 	 echo "<td>nicht registriert oder gespeichert</td>"
 	fi
-	
+
 	echo "<td valign=bottom><FORM name=\"form_splash_add_"$C"\" ACTION=\"splash.cgi\" METHOD=\"POST\">"
 	echo "<input name=\"form_splash_action\" value=\"add\" type=\"hidden\">"
 	echo "<input name=\"form_splash_mac\" value=\"$MAC1\" type=\"hidden\">"
 	echo "<input type=\"submit\" value=\"Speichern\">"
 	echo "</form></td>"
-	
+
 	echo "</tr>"
 	if [ $T = 1 ]; then T=2 ;else T=1; fi
 	C=$(($C+1))
@@ -255,7 +259,7 @@ if [ -n "$QUERY_STRING" ]; then
 		  	else
 		  		uci set ddmesh.system.disable_splash="0"
 		  	fi
-			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="firmware.cgi">Neustart</A> aktiv."
+			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 			uci commit
 		  	;;
 		  lease)
@@ -270,7 +274,7 @@ if [ -n "$QUERY_STRING" ]; then
 			;;
 		esac
 	fi
-fi                                                                                                                                                                                               
+fi
 
 display_splash
 

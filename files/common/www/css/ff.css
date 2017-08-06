@@ -1,4 +1,3 @@
-/* Form layout */
 input {
 	vertical-align: middle;
 }
@@ -9,8 +8,8 @@ table.form {
 	background-color: gainsboro;
 	border: 3px solid gainsboro;
 	position: relative;
-	top: -1px;
-	left: -1px;
+/*	top: -1px;
+	left: -1px;*/
 }
 table.note {
 	background-color: #ff99ff;
@@ -46,7 +45,7 @@ A:active {
   color: crimson;
 }
 A:hover {
-  color: darkmagenta; 
+  color: darkmagenta;
 }
 A.form:link,A.form:visited,A.form:active,
 A.color:link,A.color:visited,A.color:active,
@@ -95,6 +94,18 @@ div.plugin {
 	font-family: Trebuchet, Arial, Helvetica, sans-serif;
 	margin-left: 10px;
 }
+div.plugin-disabled {
+	/* Navbar left */
+	color: grey;
+	background-image: url(images/ff-arrow-white.gif);
+	background-repeat: no-repeat;
+	background-position: right;
+	padding-right: 14px;
+	font-size: 13px;
+	font-weight: bolder;
+	font-family: Trebuchet, Arial, Helvetica, sans-serif;
+	margin-left: 10px;
+}
 div.subplugin {
 	/* Navbar left */
 	color: black;
@@ -122,8 +133,8 @@ span.color {
 	padding-left: 5px;
 	padding-right: 5px;
 	font-family: Trebuchet, Arial, Helvetica, sans-serif;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
 	border: 0px ;
 }
 span.magenta {
@@ -156,7 +167,7 @@ h2 {
 h3 {
 	font-size: 11px;
 }
-p,ol,ul,dl,li,td,dd {
+p,ol,ul,dl,li,dt,dd {
 	font-size: 11px;
 	font-weight: normal;
 	line-height: 16px;
@@ -164,10 +175,15 @@ p,ol,ul,dl,li,td,dd {
 	text-align: left;
 	vertical-align:top;
 }
-dt,th {
+th {
 	font-size: 11px;
 	font-weight: bold;
-	line-height: 16px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-align: left;
+	vertical-align:top;
+}
+td {
+	font-size: 11px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	text-align: left;
 	vertical-align:top;
@@ -214,6 +230,9 @@ tr.default {
 tr.selected{
 	background-color: #aaaaff;
 }
+tr.selected_ap{
+	background-color: #ffa0e0;
+}
 tr.colortoggle1 {
 	background-color: #c0c0c0;
 }
@@ -228,12 +247,12 @@ fieldset.bubble {
 	border: 1px solid #d0d0d0;
 	font-size: 10px;
 	background: #f0f0f0;
-	border-radius: 7px;
+	border-radius: 4px;
 }
 *>fieldset.bubble {
 	background: #f0f0f0;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
 }
 fieldset.bubble legend {
 	font-family: Verdana, sans-serif;
@@ -243,8 +262,8 @@ fieldset.bubble legend {
 	border: #0f0f0f 1px solid;
 	color: #000000;
 	font-size: 10px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
 }
 fieldset.bubble table {
 	border: 0px;
@@ -265,27 +284,29 @@ fieldset.bubble td {
 }
 .navi {
 	background-color: #ffcb05;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
 	border: 0px solid #ffcb05;
 }
 .navibar {
   background-color: #dc0067;
-  -moz-border-radius: 7px;
-  border-radius: 7px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
   border: 0px ;
   /* Bottom bar */
   color: black;
   font-size: 13px;
   font-weight: bolder;
   padding-left: 5px;
- # padding-right: 5px;
   font-family: Trebuchet, Arial, Helvetica, sans-serif;
+}
+.navibar td{
+	line-height: 16px;
 }
 .navihead {
 	background-color: #ffcb05;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
 	border: 0px ;
 }
 *+html td.ie_color {
@@ -361,7 +382,6 @@ form
 {
 	margin: 0px;
 	border: 0px;
-	text-align: right;
 }
 
 form.splash
@@ -372,7 +392,7 @@ form.splash
 	font-size: 16px;
 }
 
-@keyframes blink {  
+@keyframes blink {
 	0% { opacity: 1.0; }
 	50% { opacity: 0.0; }
 	100% { opacity: 1.0; }

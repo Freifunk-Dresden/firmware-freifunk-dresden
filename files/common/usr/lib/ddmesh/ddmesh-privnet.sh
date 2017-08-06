@@ -1,160 +1,181 @@
 #!/bin/sh
 
-test -x /usr/bin/vtund || exit
-
 . /lib/functions.sh
 
-VTUND=/usr/bin/vtund
-CONF=/var/etc/vtund-privnet.conf
-STATUS_DIR=/var/vtund/privnet
-NETWORK_DEV=priv
-PROTO=tcp
-NUMBER_OF_CLIENTS=$(uci get ddmesh.privnet.number_of_clients)
-DEFAULT_PORT=$(uci get ddmesh.privnet.default_server_port)
+CONF_DIR=/var/etc/fastd
+FASTD_CONF=$CONF_DIR/privnet-fastd.conf
+CONF_PEERS=privnet-peers
+PID_FILE=/var/run/privnet-fastd.pid
+LOGGER_TAG="fastd-privnet"
 
-privnet_server_port=$(uci get ddmesh.privnet.server_port)
+DEFAULT_PORT=$(uci -q get ddmesh.privnet.default_server_port)
+privnet_server_port=$(uci -q get ddmesh.privnet.server_port)
 privnet_server_port=${privnet_server_port:-$DEFAULT_PORT}
-privnet_server_enabled=$(uci get ddmesh.privnet.server_enabled)
-privnet_server_enabled=${privnet_server_enabled:-0}
-privnet_clients_enabled=$(uci get ddmesh.privnet.clients_enabled)
-privnet_clients_enabled=${privnet_clients_enabled:-0}
 
-eval $(/usr/bin/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh privnet)
 
-CMD_IP="$(type -p ip)"                                                
-CMD_TOUCH="$(type -p touch)"                                          
-CMD_RM="$(type -p rm)"
-CMD_BRCTL="$(type -p brctl)"
+# priv interface is added to br-lan. a bridge derives
+# its mtu from lowest mtu of added interfaces.
+# if this lan is also used to carry fastd pakets of
+# priv (e.g. gateway over lan), those pakets would not fit into mtu.
+# Therefore leave mtu 1500 and let kernel fragment this paket.
+# note: backbone fastd pakets use mesh_mtu as this iface
+# is not bridged.
+MTU=1500
 
-createconf () {
- cat<<EOM >$CONF
-options {
- syslog daemon;
- timeout 30;
- ifname $NETWORK_DEV;
-}
-default {
- speed 0;
-}
-EOM
+genkey()
+{
+	test -z "$(uci -q get credentials.privnet)" && {
+		uci -q add credentials privnet
+		uci -q rename credentials.@privnet[-1]='privnet'
+	}
+	uci -q set credentials.privnet.secret_key="$(fastd --machine-readable --generate-key)"
+	uci -q commit
 }
 
-#addconf <name> <pw> <status_id>
-#bsp: privnet-r100 freifunk incomming-r100
-#status_id: unterscheidet sich bei client oder server. benutzt um verbindung zu erkennen im webinterface
-#bei up: wird %% umbenannt, bei down wird es zurueck benannt, damit vtun dass entsprechende
-#tapX loescht. Ich nehme an, dass vtun sich den tapX namen merkt und dieses loeschen will
-addconf() {
- cat << EOM >>$CONF
-$1 {
- passwd a$(echo "$2" | md5sum | sed 's# .*$##')78; 
- type ether;
- proto $PROTO;
- compress no;
- encrypt yes;
- stat no;
- keepalive yes;
-#only one client;to ensure that the old interface is deleted before creating new one (in case connection is dead and client creates a new one.e.g. IP address change on DSL line)
- multi no;
- persist yes;
- up { 
-  program $CMD_IP "link set %% down" wait;
-  program $CMD_IP "link set %% promisc off" wait;
-  #program $CMD_IP "link set %% mtu 1450" wait;
-  program $CMD_IP "link set %% up" wait;
-  program $CMD_BRCTL "addif br-lan %%" wait;
-  program $CMD_TOUCH "$STATUS_DIR/$3" wait;
- };
- down {
-  program $CMD_BRCTL "delif br-lan %%" wait;
-  program $CMD_IP "link set %% down" wait;
-  program $CMD_RM "$STATUS_DIR/$3" wait;
- };
-}
+generate_fastd_conf()
+{
+ # sources: https://projects.universe-factory.net/projects/fastd/wiki
+ # docs: http://fastd.readthedocs.org/en/v17/
+
+ secret="$(uci -q get credentials.privnet.secret_key)"
+ if [ -z "$secret" ]; then
+	logger -t $LOGGER_TAG "no secret key - generating..."
+	genkey
+	secret="$(uci -q get credentials.privnet.secret_key)"
+ fi
+
+ cat << EOM > $FASTD_CONF
+log level error;
+log to syslog level error;
+mode tap;
+interface "$net_ifname";
+method "salsa2012+umac";
+secure handshakes yes;
+bind any:$privnet_server_port;
+secret "$secret";
+mtu $MTU;
+include peers from "$CONF_PEERS";
+forward no;
+on up sync "/etc/fastd/privnet-cmd.sh up";
+on down sync "/etc/fastd/privnet-cmd.sh down";
+on connect sync "/etc/fastd/privnet-cmd.sh connect";
+on establish sync "/etc/fastd/privnet-cmd.sh establish";
+on disestablish sync "/etc/fastd/privnet-cmd.sh disestablish";
+
+#only enable verify if I want to ignore peer config files
+#on verify sync "/etc/fastd/privnet-cmd.sh verify";
+
 EOM
 }
 
 callback_accept_config ()
 {
 	local config="$1"
-	local name
-	local password
-	 
-	config_get name "$config" name 
-	config_get password "$config" password
-	
-	echo incomming line:$i $name,$password
-	if [ -n "$name" -a -n "$password" ]; then
-		addconf privnet-$name $password incomming_$name
+	local key
+	local comment
+
+	config_get key "$config" public_key
+	config_get comment "$config" comment
+
+	if [ -n "$key" -a -n "$comment" ]; then
+		#echo "[$key:$comment]"
+		FILE=$CONF_DIR/$CONF_PEERS/accept_$key.conf
+		echo "# $comment" > $FILE
+		echo "key \"$key\";" >> $FILE
 	fi
 }
-				
+
+
 callback_outgoing_config ()
 {
 	local config="$1"
-	local name #node name "r100"
-	local port 
-	local password
-	
-	config_get name "$config" name 
-	config_get port "$config" port 
-	config_get password "$config" password
-	
-	echo outgoing line:$i: $name,$port,$password
-	if [ -n "$name" -a -n "$port" -a -n "$password" ]; then
-		echo "config=[$name:$port:$password]"
-		CONF_NAME="privnet-$_ddmesh_hostname"
-		addconf	$CONF_NAME $password outgoing_$name"_"$port
+	local node
+	local port
+	local key
 
-		#get ip from node name
-		host=$(ddmesh-ipcalc.sh -n ${name#*r} | grep _ddmesh_ip | cut -d'=' -f2)
-		$VTUND -f $CONF -P $port $CONF_NAME $host -I "vtund-privnet[c]: "
-		echo "vtund - client $host:$port started."
+	config_get node "$config" node
+	config_get port "$config" port
+	config_get key "$config" public_key
+
+	if [ -n "$node" -a -n "$port" -a -n "$key" -a -n "$key" ]; then
+		#echo "[$node:$port:$key]"
+		FILE=$CONF_DIR/$CONF_PEERS/"connect_"$node"_"$port".conf"
+		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+		echo "key \"$key\";" > $FILE
+		echo "remote ipv4 \"$_ddmesh_ip\":$port;" >> $FILE
 	fi
 }
-				
-if [ "$1" = "start" ]; then
-	echo "Starting privnet network ..."
 
-	mkdir -p $STATUS_DIR
-	mkdir -p /var/lock/vtund
-	
-	createconf
+case "$1" in
 
-	iptables -F input_privnet_accept
-	iptables -F input_privnet_reject
+ start)
+	echo "Starting privnet..."
 
- 	if [ "$privnet_server_enabled" = "1" ]; then
- 		config_load ddmesh
+	if [ "$(uci -q get ddmesh.network.mesh_on_lan)" != "1" ]; then
+
+		mkdir -p $CONF_DIR
+		mkdir -p $CONF_DIR/$CONF_PEERS
+
+		rm -f $FAST_CONF
+		rm -f $CONF_DIR/$CONF_PEERS/*
+
+		generate_fastd_conf
+
+		iptables -F input_privnet_accept
+		iptables -F input_privnet_reject
+
+		# accept clients
+	 	config_load ddmesh
  		config_foreach callback_accept_config privnet_accept
 
-  		iptables -A input_privnet_accept -p $PROTO --dport $privnet_server_port -j ACCEPT
-  		iptables -A input_privnet_reject -p $PROTO --dport $privnet_server_port -j reject
+		iptables -A input_privnet_accept -p udp --dport $privnet_server_port -j ACCEPT
+  		iptables -A input_privnet_reject -p udp --dport $privnet_server_port -j reject
 
-		$VTUND -s -f $CONF -P $privnet_server_port -I "vtund-privnet[s]: "
-		echo "vtund - server started."
+	 	config_load ddmesh
+	 	config_foreach callback_outgoing_config privnet_client
+
+		fastd --config $FASTD_CONF --pid-file $PID_FILE --daemon
 	fi
+	;;
 
- 	if [ "$privnet_clients_enabled" = "1" ]; then	
- 		config_load ddmesh
- 		config_foreach callback_outgoing_config privnet_client
-
+  stop)
+	echo "Stopping privnet ..."
+	if [ "$(uci -q get ddmesh.network.mesh_on_lan)" != "1" ]; then
+		if [ -f $PID_FILE ]; then
+			kill $(cat $PID_FILE)
+			rm -f $PID_FILE
+		fi
 	fi
-fi
+	;;
 
-if [ "$1" = "stop" ]; then
-	echo "Stopping privnet network..."
-	for i in $(ps | sed -n '/sed/d;/vtund-privnet/s#^[	 ]*\([0-9]\+\).*$#\1#p')
-	do
-		kill $i
-	done
-fi
-
-
-if [ "$1" = "restart" ]; then
+  restart)
 	$0 stop
 	sleep 2
 	$0 start
-fi
+  	;;
+
+  gen_secret_key)
+	genkey
+	generate_fastd_conf
+	;;
+
+  get_public_key)
+	fastd --machine-readable --show-key --config $FASTD_CONF
+	;;
+
+  runcheck)
+	if [ "$(uci -q get ddmesh.network.mesh_on_lan)" != "1" ]; then
+		present="$(grep $FASTD_CONF /proc/$(cat $PID_FILE)/cmdline 2>/dev/null)"
+		if [ -z "$present" ]; then
+			logger -t $LOGGER_TAG "fastd not running -> restarting"
+			$0 start
+		fi
+	fi
+	;;
+
+   *)
+	echo "usage: $0 start|stop|restart|gen_secret_key|get_public_key|runcheck"
+esac
 
 

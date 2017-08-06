@@ -1,9 +1,6 @@
 #!/bin/bash
 
-#usage: build.ar71xx.sh [VER]
-#       VER: openwrt version. default is "12.09"
-#excample: build.ar71xx.sh
-#excample: build.ar71xx.sh 14.07
+#usage: see below
 
 PLATFORM=ar71xx
 DL_DIR=dl
@@ -15,7 +12,7 @@ OPENWRT_PATCHES_DIR=openwrt-patches
 CONFIG_TYPE=ddmesh
 
 #define a list of supported versions
-VERSIONS="14.07"
+VERSIONS="trunk 15.05 lede"
 
 
 # process argument
@@ -30,10 +27,22 @@ do
 	fi
 done
 
+#check if next argument is "menuconfig"
+if [ "$1" = "menuconfig" ]; then
+	MENUCONFIG=1
+	shift;
+fi
+
 if [ -z "$VER" ]; then
 	# create a simple menu
+	echo ""
+	echo "usage: $(basename $0) [openwrt-version] [menuconfig] [[make params] ...]"
+	echo " openwrt-version 	- builds for specific openwrt version ($VERSIONS)"
+	echo " menuconfig	- displays configuration menu before building images"
+	echo " make params	- all paramerters that follows are passed to make command"
+	echo ""
 	echo "================================"
-	echo " Arguments: $* "
+	echo " Additional make parameters: $* "
 	echo " Config type: $CONFIG_TYPE"
 	echo " Select openwrt version "
 	echo "================================"
@@ -58,9 +67,17 @@ echo "select $VER"
 
 #openwrt
 case "$VER" in
-	14.07)
+	trunk)
+		git_url="git://git.openwrt.org/openwrt.git"
+		openwrt_rev="9b4650b3b92e6246b986ac9e3d7c2a80d66b805b"
+		;;
+	15.05)
 		git_url="git://git.openwrt.org/$VER/openwrt.git"
-		openwrt_rev="7d01d821b05b26304ab8f8fc148e690cb5ffd8b3"
+		openwrt_rev="03d52cfcff87c0e8e09e7a455a6fdefb7138e369"
+		;;
+	lede)
+		git_url="https://github.com/lede-project/source.git"
+		openwrt_rev="70395ae8cbe0bc7d0d0b27b5088b9ac4b2f67f86"
 		;;
 	*)
 		echo "[ERROR: VERSION $VER, not defined: no git url and revision] - exit"
@@ -94,11 +111,13 @@ log ()
  script $RUN_DIR/$script_file -q -f -a -c "$*"
 }
 
+
 #check if directory exists
 if [ ! -d $buildroot ]
 then
  log echo "directory [$buildroot] not present"
 
+ log mkdir -p $buildroot
  log mkdir -p $openwrt_dl_dir
 
  #check if we have already downloaded the openwrt revision
@@ -106,7 +125,6 @@ then
  then
  	#extract into buildroot dir
  	log echo "using already downloaded $openwrt_dl_tgz"
- 	log mkdir -p $buildroot
  	log tar xzf $openwrt_dl_tgz 
  else
  	#clone from openwrt
@@ -159,6 +177,9 @@ echo "copy rootfs"
 rm -rf $buildroot/files
 mkdir -p $buildroot/files
 log cp -a $RUN_DIR/files/common/* $buildroot/files/
+# always recreated version specific file directory (removed by git if empty). this is just to
+# know that there is such a directory ;-)
+mkdir -p $RUN_DIR/files/$VER
 log cp -a $RUN_DIR/files/$VER/* $buildroot/files/
 
 echo "create rootfs/etc/built_info file"
@@ -185,8 +206,12 @@ log scripts/feeds install -a -p ddmesh_copied
 log echo "copy configuration \($RUN_DIR/$config_file\)"
 log cp $RUN_DIR/$config_file .config 
 
-log echo "run menuconfig"
-log make menuconfig
+if [ "$MENUCONFIG" = "1" ]; then
+	log echo "run menuconfig"
+	log make menuconfig
+fi
+
+# run make command
 log time make $*
 
 $RUN_DIR/files/common/usr/lib/ddmesh/ddmesh-utils-check-firmware-size.sh bin/ar71xx/openwrt-ar71xx-generic-tl-mr3020-v1-squashfs-factory.bin

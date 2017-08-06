@@ -3,15 +3,6 @@
 export TITLE="Verwaltung > Expert > WIFI"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
-
-eval "$(cat /etc/openwrt_release)"
-if [ ! "$DISTRIB_TARGET" = "brcm-2.4" ]; then
-	MAX_TX_POWER=$(iw phy | sed -n '/\* 2412 MHz \[1\]/{s#.*(\([0-9]\+\).*#\1#; p}')
-else
-	MAX_TX_POWER=$(iwlist $net_device txpower | sed -n '2,${/Current/d;/^[	 ]*$/d;p}' | sed -n '$s#^[	 ]*\([0-9]\+\).*#\1#p')
-fi
-
 cat<<EOF
 <h2>$TITLE</h2>
 <br>
@@ -50,7 +41,9 @@ function enable_custom_essid(s) {
 </tr>
 
 <tr><th>TX Power:</th>
-<td><input name="form_wifi_txpower" size="32" type="text" value="$(uci get ddmesh.network.wifi_txpower)"> dBm</td>
+<td><select name="form_wifi_txpower" size="1">
+$(iwinfo $wifi_ifname txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;txt=$0}else{sel="";v=$1;txt=$0}; print "<option "sel" value=\""v"\">"txt"</option>"}')
+</select> (konfiguriert: $(uci get ddmesh.network.wifi_txpower) dBm) <b>Aktuell:</b> $(iw $wifi_ifname info | awk '/txpower/{print $2,$3}')</td>
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
 
@@ -70,7 +63,7 @@ function enable_custom_essid(s) {
 </tr>
 
 <tr><th>BSSID:</th>
-<td><input name="form_wifi_bssid" size="32" type="text" value="$(uci get ddmesh.network.bssid_adhoc)" disabled></td>
+<td><input name="form_wifi_bssid" size="32" type="text" value="$(uci get credentials.wifi.bssid)" disabled></td>
 </tr>
 
 <tr><th></th><td></td></tr>
@@ -79,6 +72,7 @@ function enable_custom_essid(s) {
 <INPUT onchange="enable_custom_essid();" NAME="form_wifi_custom_essid" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.network.custom_essid)" = "1" ];then echo ' checked="checked"';fi)>
 <INPUT NAME="form_wifi_ap_ssid" SIZE="23" maxlength="15" TYPE="TEXT" VALUE="$(uci get ddmesh.network.essid_ap)"> aktuell: $(uci get wireless.@wifi-iface[1].ssid)</TD>
 </tr>
+<tr><th>Reduziere WLAN Datenrate:</th><td><INPUT NAME="form_wifi_slow_rates" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" = "1" ];then echo ' checked="checked"';fi)> (Nicht empfohlen. Wenn aktiviert, kann Reichweite auf Kosten der &Uuml;bertragungsrate erh&ouml;ht werden.<br /> <b>Dieses gilt auch f&uuml;r Verbindungen zu anderen Knoten</b>)</td></tr>
 
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
@@ -106,7 +100,6 @@ EOM
 else #query string
 
 	if [ -n "$form_wifi_submit" ]; then
-#		if [ -n "$form_wifi_channel" -a "$form_wifi_txpower" -le "$MAX_TX_POWER" ]; then
 		if [ -n "$form_wifi_txpower" ]; then
 			uci set ddmesh.network.wifi_txpower="$form_wifi_txpower"
 			uci set ddmesh.network.wifi_diversity="$form_wifi_diversity"
@@ -114,9 +107,10 @@ else #query string
 			uci set ddmesh.network.wifi_txantenna="$form_wifi_txantenna"
 			uci set ddmesh.network.essid_ap="$(uhttpd -d "$form_wifi_ap_ssid")"
 			uci set ddmesh.network.custom_essid="$form_wifi_custom_essid"
+			uci set ddmesh.network.wifi_slow_rates="$form_wifi_slow_rates"
 			uci set ddmesh.boot.boot_step=2
 			uci commit
-			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="firmware.cgi">Neustart</A> aktiv."
+			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 		else #empty
 			notebox "TXPower falsch"
 		fi #empty

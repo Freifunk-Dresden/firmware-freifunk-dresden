@@ -34,13 +34,13 @@ print_rules() {
 	local vsrc_dport
 	local vdest_ip
 	local vdest_port
-	
+
 	config_get vname "$config" name
 	config_get vproto "$config" proto
 	config_get vsrc_dport "$config" src_dport
 	config_get vdest_ip "$config" dest_ip
 	config_get vdest_port "$config" dest_port
-		
+
 	echo "<tr class=\"colortoggle$T\" >"
 	echo "<td >$C</td>"
 	echo "<td >$vname</td>"
@@ -58,17 +58,17 @@ print_rules() {
 	C=$(($C+1))
 }
 
-config_load ddmesh 
+config_load ddmesh
 config_foreach print_rules portforwarding
 
 PORTS=$(/usr/lib/ddmesh/ddmesh-portfw.sh ports | sed 's# #, #')
- 
+
 cat<<EOM
 </table>
 </fieldset>
 <br/><br/>
 
-<b>Folgende Ports werden vom Router verwendet und k&oumlnnen nicht verwendet werden:</b><br/>
+<b>Folgende Ports werden vom Router verwendet und k&ouml;nnen nicht verwendet werden:</b><br/>
 $PORTS, $(uci get ddmesh.backbone.server_port), $(uci get ddmesh.privnet.server_port)<br/>
 <br />
 <form name="form_portfw_new" action="portfw.cgi" method="POST">
@@ -106,11 +106,11 @@ else
 		;;
 		add)
 			uci add ddmesh portforwarding >/dev/null
-			uci set ddmesh.@portforwarding[-1].name="$form_rule_name"	
-			uci set ddmesh.@portforwarding[-1].proto="$form_rule_proto"	
-			uci set ddmesh.@portforwarding[-1].src_dport="$form_rule_src_dport"	
-			uci set ddmesh.@portforwarding[-1].dest_ip="$form_rule_dest_ip"	
-			uci set ddmesh.@portforwarding[-1].dest_port="$form_rule_dest_port"	
+			uci set ddmesh.@portforwarding[-1].name="$form_rule_name"
+			uci set ddmesh.@portforwarding[-1].proto="$form_rule_proto"
+			uci set ddmesh.@portforwarding[-1].src_dport="$form_rule_src_dport"
+			uci set ddmesh.@portforwarding[-1].dest_ip="$form_rule_dest_ip"
+			uci set ddmesh.@portforwarding[-1].dest_port="$form_rule_dest_port"
 			uci commit
 			notebox "&Auml;nderungen sind sofort aktiv."
 			/usr/lib/ddmesh/ddmesh-portfw.sh load

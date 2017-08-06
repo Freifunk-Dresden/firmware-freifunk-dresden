@@ -1,8 +1,8 @@
 #!/bin/sh
 
-node=$(uci get ddmesh.system.node)                                                          
-tmpmin=$(uci get ddmesh.system.tmp_min_node)                                                
-tmpmax=$(uci get ddmesh.system.tmp_max_node)                                                
+node=$(uci get ddmesh.system.node)
+tmpmin=$(uci get ddmesh.system.tmp_min_node)
+tmpmax=$(uci get ddmesh.system.tmp_max_node)
 if [ $node -ge $tmpmin -a $node -le $tmpmax ]; then
  	#export NOMENU=1
 	export TITLE="Auto-Setup"

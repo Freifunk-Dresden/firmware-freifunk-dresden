@@ -1,19 +1,35 @@
 #!/bin/sh
 
 #set vars for all included sites
-eval $(/usr/bin/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 eval $(cat /etc/openwrt_release)
 export FFDD="www.freifunk-dresden.de"
 
 #parse language
 #http://de.selfhtml.org/diverses/sprachenlaenderkuerzel.htm#uebersicht_iso_639_1
 langbrowser="$(echo $HTTP_ACCEPT_LANGUAGE |sed 'y/[ABCDEFGHIJKLMNOPQRSTUVWXYZ]/[abcdefghijklmnopqrstuvwxyz/')"
+DEFAULT_LANG="de"
 case "$langbrowser" in
         de*) LANG="de" ;;
         en*) LANG="en" ;;
-        *) LANG="en" ;;
+        *) LANG="$DEFAULT_LANG" ;;
 esac
 export LANG
+
+lang ()
+{
+ f=/usr/lib/www/lang/$LANG/$1
+ if [ -f $f ]; then
+	cat $f
+ else
+ 	f=/usr/lib/www/lang/$DEFAULT_LANG/$1
+	if [ -f $f ]; then
+		cat $f
+	else
+		echo "[ERROR: missing translation]"
+	fi
+ fi
+}
 
 show_set ()
 {
@@ -51,10 +67,9 @@ process_query()
   unset right
 }
 
-#use lua to flush stdout after each line
 flush ()
 {
- lua -e 'for line in io.lines() do io.write(line,"<br />") io.flush() end'
+	awk '{printf("%s<br>",$0); fflush();}'
 }
 
 notebox ()
@@ -67,7 +82,7 @@ check_passwd()
  rom="$(cat /rom/etc/shadow | sed -n '/^root:/s#root:\([^:]\+\).*$#\1#p')"
  ram="$(cat /etc/shadow | sed -n '/^root:/s#root:\([^:]\+\).*$#\1#p')"
  if [ "$rom" = "$ram" ]; then
-  return 0 
+  return 0
  else
   return 1
  fi
@@ -82,7 +97,7 @@ export INET_GW=$(cat $BMXD_DB_PATH/gateways | grep '^[ 	]*[0-9]*[ 	]*=>' | sed '
 if [ -z "$INET_GW" ]; then
 	INET_GW="local/none"
 else
-	INET_GW="$INET_GW&nbsp;($(ddmesh-ipcalc.sh $INET_GW))"
+	INET_GW="$INET_GW&nbsp;($(/usr/lib/ddmesh/ddmesh-ipcalc.sh $INET_GW))"
 fi
 
 process_query

@@ -16,9 +16,8 @@
 251     public_gateway
 250     local_gateway
 249     ping
-248     ping_unreachable
-247     vpn
-246     unreachable
+248     vpn
+247     unreachable
 
 #batman
 64      bat_route

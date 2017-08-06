@@ -34,7 +34,7 @@ Begriffserkl&auml;rungen
   Eigent&uuml;mer: Der Eigent&uuml;mer verf&uuml;gt &uuml;ber das Recht, seine Netzwerkinfrastruktur zu betreiben und einen Teil ihrer Funktionalit&auml;t f&uuml; das freie Netzwerk (FreeNetwork) bereitzustellen.
   Transit: Transit ist der Austausch von Daten in ein Netzwerk hinein, heraus oder durch ein Netzwerk hindurch.
   Freier Transit: Freier Transit bedeutet, dass der Eigent&uuml;mer weder Geb&uuml;hren f&uuml;r den Transit von Daten erhebt, noch die Daten ver&auml;ndert oder den Transit behindert.
-  Freies Netzwerk: Das Freie Netzwerk ist die Summe der miteinander verbundenen Hard- und Software, dessen Anteil f&uuml;r den freien Transit vom Eigent&uuml;mer dieser Ressourcen zu Verf&uuml;gung gestellt wird. 
+  Freies Netzwerk: Das Freie Netzwerk ist die Summe der miteinander verbundenen Hard- und Software, dessen Anteil f&uuml;r den freien Transit vom Eigent&uuml;mer dieser Ressourcen zu Verf&uuml;gung gestellt wird.
   Der Dienst: Der Dienst (Betrieb, Service) besteht aus freiem Transit und zus&auml;tzlichen Diensten.
   Zus&auml;tzliche Dienste: Im Sinne des PPA ist ein Zus&auml;tzlicher Dienst alles war &uuml;ber freien Transit hinaus geht. Zum Beispiel die Bereitstellung eines WEB-Servers oder Mail-Servers.
 

@@ -1,0 +1,44 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr iproute2-4.0.0.ori/ip/ip.c iproute2-4.0.0/ip/ip.c
+--- iproute2-4.0.0.ori/ip/ip.c	2015-12-13 01:27:01.812899928 +0100
++++ iproute2-4.0.0/ip/ip.c	2015-12-13 01:35:24.007600290 +0100
+@@ -73,13 +73,13 @@
+ 	{ "address",	do_ipaddr },
+ #ifndef IPROUTE2_TINY
+ 	{ "addrlabel",	do_ipaddrlabel },
+-#endif
+ 	{ "maddress",	do_multiaddr },
++#endif
+ 	{ "route",	do_iproute },
+ 	{ "rule",	do_iprule },
++#ifndef IPROUTE2_TINY
+ 	{ "neighbor",	do_ipneigh },
+ 	{ "neighbour",	do_ipneigh },
+-#ifndef IPROUTE2_TINY
+ 	{ "ntable",	do_ipntable },
+ 	{ "ntbl",	do_ipntable },
+ #endif
+@@ -90,21 +90,21 @@
+ #endif
+ 	{ "tunnel",	do_iptunnel },
+ 	{ "tunl",	do_iptunnel },
+-#ifndef IPROUTE2_TINY
+ 	{ "tuntap",	do_iptuntap },
+ 	{ "tap",	do_iptuntap },
++#ifndef IPROUTE2_TINY
+ 	{ "token",	do_iptoken },
+ 	{ "tcpmetrics",	do_tcp_metrics },
+ 	{ "tcp_metrics",do_tcp_metrics },
+ #endif
+-	{ "monitor",	do_ipmonitor },
+ #ifndef IPROUTE2_TINY
++	{ "monitor",	do_ipmonitor },
+ 	{ "xfrm",	do_xfrm },
+ #endif
++#ifndef IPROUTE2_TINY
+ 	{ "mroute",	do_multiroute },
+ 	{ "mrule",	do_multirule },
+ 	{ "netns",	do_netns },
+-#ifndef IPROUTE2_TINY
+ 	{ "netconf",	do_ipnetconf },
+ #endif
+ 	{ "help",	do_help },

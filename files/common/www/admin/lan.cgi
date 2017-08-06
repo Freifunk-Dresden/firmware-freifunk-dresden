@@ -15,8 +15,9 @@ if [ -z "$QUERY_STRING" ]; then
 <fieldset class="bubble">
 <legend>LAN-Einstellungen</legend>
 <table>
-<tr><td colspan="2">Achtung, falsche Werte k&ouml;nnen den Zugang &uuml;ber den LAN Anschlu&szlig; verhindern.<br>
-LAN und WAN IP-Adressen/Bereiche sollten sich nicht &uuml;berschneiden!</td></tr>
+<tr><th colspan="2">Achtung, falsche Werte k&ouml;nnen den Zugang &uuml;ber den LAN Anschlu&szlig; verhindern.<br>
+LAN und WAN IP-Adressen/Bereiche sollten sich nicht &uuml;berschneiden!</th></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
 <tr>
 <th>LAN-IP:</th>
 <td><input name="form_lan_ip" size="32" type="text" value="$(uci get network.lan.ipaddr)"></td>
@@ -73,8 +74,9 @@ else #query string
 			uci set ddmesh.network.dhcp_lan_offset="$form_dhcp_offset"
 			uci set ddmesh.network.dhcp_lan_limit="$form_dhcp_limit"
 			uci set ddmesh.network.dhcp_lan_lease="$form_dhcp_lease"
+			uci set ddmesh.boot.boot_step=2	#let update fw
 			uci commit
-			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <a href="firmware.cgi">Neustart</a> aktiv."
+			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <a href="reset.cgi">Neustart</a> aktiv."
 		else #empty
 			notebox "IP oder Netmask sind falsch"
 		fi #empty

@@ -6,9 +6,9 @@ if [ "$(uci get ddmesh.system.node)" -le "$(uci get ddmesh.system.tmp_max_node)"
 else
 	export TITLE="Verwaltung &gt; Allgemein &gt; Automatic-Setup"
 fi
- 
+
 . /usr/lib/www/page-pre.sh ${0%/*}
- 
+
 WIDTH=100
 
 cat<<EOF
@@ -33,10 +33,10 @@ cat<<EOM
 	Hat der Router keine Verbindung zum Registrator, wird eine tempor&auml;re Node-Nummer vergeben, die dann automatisch aktualisiert wird. <br />
 
 	</td>
-	</tr>		
+	</tr>
 
-	<tr><td><b>Aktuelle Node:</b> $(uci get ddmesh.system.node)</td></tr>	
-	<tr><td><pre><div id="ajax_register">Lade...</div></pre></td></tr>	
+	<tr><td><b>Aktuelle Node:</b> $(uci get ddmesh.system.node)</td></tr>
+	<tr><td><pre><div id="ajax_register">Lade...</div></pre></td></tr>
 	</table>
 </fieldset>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
@@ -53,8 +53,7 @@ ajax_wlan();
 <br />
 EOM
 
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wan)          
-if [ -n "$net_device" ]; then
+if [ "$wan_iface_present" = "1" ]; then
 
 cat<<EOM
 <fieldset class="bubble">

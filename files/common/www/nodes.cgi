@@ -42,8 +42,48 @@ cat<<EOM
 <TD class="quality"><div class="quality4"></div>unbenutzbar</TD></TR>
 </TABLE>
 </fieldset>
-<br>
+<br/>
+<fieldset class="bubble">
+<legend>Gateways</legend>
+<table>
+<tr><th></th><th>Statistik</th><th>Node</th><th>Ip</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
+EOM
 
+cat $BMXD_DB_PATH/gateways | awk '
+ function getnode(ip) {
+ 	split($0,a,".");
+ 	f1=a[3]*255;f2=a[4]-1;
+ 	return f1+f2;
+ }
+ BEGIN {c=1;count=0;}
+ {
+
+	if(match($0,"^[=> 	]*[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
+ 	{
+		img=match($0,"=>") ? "<img src=\"/images/yes.png\">" : ""
+		gsub("^=>","")
+ 		rest=substr($0,index($0,$4))
+ 		sub(",","",$3)
+		statfile="/var/statistic/gateway_usage"
+		stat=0
+		while((getline line < statfile) > 0)
+		{
+			split(line,a,":");
+			if(a[1]==$1) { stat=a[2]; break; }
+		}
+		close(statfile)
+ 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",c,img,stat,getnode($1),$1,$1,$2,$3,$3,rest);
+		if(c==1)c=2;else c=1;
+		count=count+1;
+	}
+ }
+ END { printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td></tr>", count);}
+'
+
+cat<<EOM
+</table>
+</fieldset>
+<br/>
 <fieldset class="bubble">
 <legend>Freifunk Knoten</legend>
 <table>
@@ -110,47 +150,6 @@ cat $BMXD_DB_PATH/hnas | awk '
 
 cat<<EOM
 </table><br />
-</fieldset>
-<br/>
-<fieldset class="bubble">
-<legend>Gateways</legend>
-<table>
-<tr><th></th><th>Statistik</th><th>Node</th><th>Ip</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
-EOM
-
-cat $BMXD_DB_PATH/gateways | awk '
- function getnode(ip) {
- 	split($0,a,".");
- 	f1=a[3]*255;f2=a[4]-1;
- 	return f1+f2;
- }
- BEGIN {c=1;count=0;}
- {
-
-	if(match($0,"^[=> 	]*[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
- 	{
-		img=match($0,"=>") ? "<img src=\"/images/yes.png\">" : ""
-		gsub("^=>","")
- 		rest=substr($0,index($0,$4))
- 		sub(",","",$3)
-		statfile="/var/statistic/gateway_usage"
-		stat=0
-		while((getline line < statfile) > 0)
-		{
-			split(line,a,":");
-			if(a[1]==$1) { stat=a[2]; break; }
-		}
-		close(statfile)
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",c,img,stat,getnode($1),$1,$1,$2,$3,$3,rest);
-		if(c==1)c=2;else c=1;
-		count=count+1;
-	}
- }
- END { printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td></tr>", count);}
-'
-
-cat<<EOM
-</table>
 </fieldset>
 EOM
 

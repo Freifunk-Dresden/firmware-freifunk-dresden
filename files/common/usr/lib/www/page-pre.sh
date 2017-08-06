@@ -8,16 +8,20 @@ if [ "$SERVER_PORT" = "81" -a "$ALLOW_PAGE" != "1" ];then
 fi
 
 . /usr/lib/www/page-functions.sh
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi wifi)
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi2 wifi2)
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
+
+device_model="$(cat /var/sysinfo/model 2>/dev/null)"
+test -z "$device_model" && device_model="$(cat /proc/cpuinfo | grep 'model name' | cut -d':' -f2)"
+export device_model
 
 #check if access comes from disabled network and we have access to "Verwalten" enabled
 in_ifname="$(ip ro get $REMOTE_ADDR | sed -n '1,2s#.*dev[ ]\+\([^ ]\+\).*#\1#p')"
 enable_setup=1
 test ! "$(uci get ddmesh.system.wansetup)" = "1" && test "$in_ifname" = "$(uci get network.wan.ifname)" && enable_setup=0
-test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "$in_ifname" = "$wifi_device" && enable_setup=0
-test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "$in_ifname" = "$wifi2_device" && enable_setup=0
-test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "${in_ifname%%[0-9]*}" = "tbb" && enable_setup=0
+test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "$in_ifname" = "$wifi_ifname" && enable_setup=0
+test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "$in_ifname" = "$wifi2_ifname" && enable_setup=0
+test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "${in_ifname%%[_0-9]*}" = "tbb" && enable_setup=0
+test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "$in_ifname" = "$tbb_ifname" && enable_setup=0
 
 echo "Status: 200 OK"
 echo "Content-Type: text/html; charset=utf-8"
@@ -52,7 +56,14 @@ cat<<EOF
 	<link href="/css/ff.css" rel="StyleSheet" TYPE="text/css">
 	<link rel="shortcut icon" href="/images/favicon.ico">
 	<script type="text/javascript" src="/js/jquery.js"></script>
-	<script type="text/javascript" src="/js/ff.js"></script>
+	<script type="text/javascript" src="/js/help.js"></script>
+EOF
+
+test "$URI_PATH" = "/www/admin" && {
+	echo '<script type="text/javascript" src="/admin/js/admin.js"></script>'
+}
+
+cat<<EOF
 </head>
 
 <body>
@@ -68,7 +79,7 @@ EOM
 
 	if [ "$enable_setup" = "1" ]; then
 		cat <<EOM
-<span class="color"><a class="color" href="/admin/index.cgi"><img class="icon" src="/images/process.png">Verwalten</a></span>
+<span class="color"><a class="color" href="https://$HTTP_HOST/admin/index.cgi"><img class="icon" src="/images/process.png">Verwalten</a></span>
 <img alt="" height="10" hspace="2" src="/images/vertbar.gif" width="1">
 EOM
 	fi
@@ -112,7 +123,7 @@ cat<<EOM
  <tr><td COLSPAN="5">
   <table class="navibar" width="100%" CELLPADDING="0" CELLSPACING="0">
   <tr>
-  <TD COLSPAN="4" HEIGHT="19">Model: <font color="white">$(cat /var/sysinfo/model)</font></TD>
+  <TD COLSPAN="4" HEIGHT="19">Model: <font color="white">$device_model</font></TD>
   <TD HEIGHT="19" WIDTH="150"><IMG ALT="" BORDER="0" HEIGHT="19" SRC="/images/ff-logo-2.gif" WIDTH="150"></TD></TR>
   </table></td></tr>
  <TR><TD class="ie_color" HEIGHT="100%" VALIGN="top">
@@ -139,7 +150,7 @@ cat<<EOF
 	</table>
 </td>
 <td width="5">&nbsp;</td>
-<td valign="top" width="100%">
+<td valign="top" style="min-width:300px; width:100%;">
 	<table height="100%" border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr><td height="5" valign="top" width="100%"></td></tr>
 		<tr><td valign="top" height="100%" width="100%">

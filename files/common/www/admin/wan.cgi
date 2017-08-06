@@ -8,13 +8,13 @@ if [ -x /usr/sbin/pppd ]; then
 else
  PPP=false
 fi
-   
+
 cat<<EOM
 <script type="text/javascript">
   function disable_fields(s) {
      var s=document.getElementsByName('form_wan_proto')[0].value;
      var d;
-     
+
      d = (s=="dhcp" || s=="pppoe") ? true : false;
      document.getElementsByName('form_wan_ip')[0].disabled=d;
      document.getElementsByName('form_wan_netmask')[0].disabled=d;
@@ -38,12 +38,20 @@ cat<<EOM
 <br>
 EOM
 
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wan)
+# get network settings from config or dhcp
+wan_proto="$(uci get network.wan.proto)"
+if [ "$wan_proto" = "static" ];then
 
-if [ -n "$net_device" ]; then
+	wan_ipaddr="$(uci get network.wan.ipaddr)"
+	wan_netmask="$(uci get network.wan.netmask)"
+	wan_gateway="$(uci get network.wan.gateway)"
+	wan_dns="$(uci get network.wan.dns)"
+fi
+
+# wan interface present?
+if [ "$wan_iface_present" = "1" ]; then
 
 if [ -z "$QUERY_STRING" ]; then
-wan_proto="$(uci get network.wan.proto)"
 
 cat<<EOM
 <FORM ACTION="wan.cgi" METHOD="POST">
@@ -53,7 +61,7 @@ cat<<EOM
 
 <TR>
 <TH>WAN-Protokoll:</TH>
-<TD><SELECT name="form_wan_proto" onchange="disable_fields();"> 
+<TD><SELECT name="form_wan_proto" onchange="disable_fields();">
 <OPTION VALUE='dhcp' $(test "$wan_proto" = "dhcp" && echo "selected=selected")>DHCP-Server abfragen</OPTION>
 <OPTION VALUE='static' $(test "$wan_proto" = "static" && echo "selected=selected")>Statisch</OPTION>
 EOM
@@ -68,22 +76,22 @@ cat<<EOM
 
 <TR TITLE="Dies ist die IP-Adresse des Internet-Anschlusses (RJ45).">
 <TH>WAN-IP:</TH>
-<TD><INPUT NAME="form_wan_ip" SIZE="32" TYPE="TEXT" VALUE="$net_ipaddr"$(if [ "$wan_proto" != "static" ];then echo ' disabled="disabled"';fi)></TD>
+<TD><INPUT NAME="form_wan_ip" SIZE="32" TYPE="TEXT" VALUE="$wan_ipaddr"$(if [ "$wan_proto" != "static" ];then echo ' disabled="disabled"';fi)></TD>
 </TR>
 
 <TR TITLE="Die Netzmaske bestimmt, welche drahtgebundenen IP-Adressen am Internet-Anschluss direkt erreicht werden k&ouml;nnen.">
 <TH>WAN-Netzmaske:</TH>
-<TD><INPUT NAME="form_wan_netmask" SIZE="32" TYPE="TEXT" VALUE="$net_netmask"$(if [ "$wan_proto" != "static" ];then echo ' disabled="disabled"';fi)></TD>
+<TD><INPUT NAME="form_wan_netmask" SIZE="32" TYPE="TEXT" VALUE="$wan_netmask"$(if [ "$wan_proto" != "static" ];then echo ' disabled="disabled"';fi)></TD>
 </TR>
 
 <TR TITLE="Default-Route f&uuml;r den Internet-Anschluss.">
 <TH>WAN-Gateway:</TH>
-<TD><INPUT NAME="form_wan_gateway" SIZE="32" TYPE="TEXT" VALUE="$net_gateway"$(if [ "$wan_proto" != "static" ];then echo ' disabled="disabled"';fi)></TD>
+<TD><INPUT NAME="form_wan_gateway" SIZE="32" TYPE="TEXT" VALUE="$wan_gateway"$(if [ "$wan_proto" != "static" ];then echo ' disabled="disabled"';fi)></TD>
 </TR>
 
 <TR TITLE="DNS-Server f&uuml;r den Internet-Anschluss.">
 <TH>WAN-DNS-IP:</TH>
-<TD><INPUT NAME="form_wan_dns" SIZE="32" TYPE="TEXT" VALUE="$net_dns"$(if [ "$wan_proto" != "static" ];then echo ' disabled="disabled"';fi)></TD>
+<TD><INPUT NAME="form_wan_dns" SIZE="32" TYPE="TEXT" VALUE="$wan_dns"$(if [ "$wan_proto" != "static" ];then echo ' disabled="disabled"';fi)></TD>
 </TR>
 EOM
 
@@ -132,9 +140,9 @@ disable_fields();
 </script>
 EOM
 
- 
 
-else
+else # query_sring
+
 	if [ -n "$form_submit" ]; then
 		uci set network.wan.proto=$form_wan_proto
 		uci set network.wan.ipaddr=$form_wan_ip
@@ -150,7 +158,7 @@ else
 		}
 		uci commit
 
-		notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="firmware.cgi">Neustart</A> aktiv."
+		notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 	else
 
 		notebox "Es wurden keine Einstellungen ge&auml;ndert."
@@ -167,5 +175,5 @@ Konfigurationen &uuml;ber die Konsole (ssh-login) sollten <b>NICHT</b> gemacht w
 werden und das private Netz zug&auml;nglich wird.
 EOM
 fi
-. /usr/lib/www/page-post.sh ${0%/*} 
+. /usr/lib/www/page-post.sh ${0%/*}
 

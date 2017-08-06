@@ -18,15 +18,38 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Systemeinstellungen</legend>
 <table class="nowrap">
+EOM
 
+cat<<EOM
+<TR>
+<TH>Ger&auml;te-Typ:</TH>
+<TD colspan="2">
+        <select name="form_node_type" size="1">
+EOM
+print_nodetypes() {
+#$1 - node types entry
+#$2 - current node type
+	if [ "$1" = "$2" ]; then
+		echo " <option selected value=\"$1\">$1</option>"
+	else
+		echo " <option value=\"$1\">$1</option>"
+	fi
+}
+config_load ddmesh
+config_list_foreach system node_types print_nodetypes "$(uci get ddmesh.system.node_type)"
+cat<<EOM
+        </select>
+</TR>
+EOM
+
+cat<<EOM
 <TR>
 <TH>Community:</TH>
 <TD colspan="2">
         <select name="form_community" size="1">
 EOM
-
 print_communities() {
-#$1 - community entry 
+#$1 - community entry
 #$2 - current community
 	if [ "$1" = "$2" ]; then
 		echo " <option selected value=\"$1\">$1</option>"
@@ -39,7 +62,9 @@ config_list_foreach system communities print_communities "$(uci get ddmesh.syste
 cat<<EOM
         </select>
 </TR>
+EOM
 
+cat<<EOM
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 
 <TR TITLE="Setzt die Umgebungsvariable TZ zur Korrektur von Zeitangaben.">
@@ -110,6 +135,26 @@ cat<<EOM
 <TD><INPUT NAME="form_lan_local_internet" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.network.lan_local_internet)" = "1" ];then echo ' checked="checked"';fi)></TD>
 <td></td>
 </TR>
+
+EOM
+if [ "$wan_iface_present" = "1" ]; then
+cat<<EOM
+
+<TR>
+<TH>- WAN Meshing:</TH>
+<TD><INPUT NAME="form_wan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ];then echo ' checked="checked"';fi)></TD>
+<td>Wenn aktiv, wird der WAN Port zum direkten 'Meshing' genutzt. Der Router ist dann NUR noch &uuml;ber Knoten IP via WAN erreichbar.<br/>WAN Konfiguration ist deaktiviert. WAN Meshing wird 5min nach Routerstart aktiviert.</td>
+</TR>
+
+EOM
+fi
+cat<<EOM
+
+<TR>
+<TH>- LAN Meshing:</TH>
+<TD><INPUT NAME="form_lan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ];then echo ' checked="checked"';fi)></TD>
+<td>Wenn aktiv, werden alle LAN Ports zum direkten 'Meshing' genutzt. Der Router ist dann NUR noch &uuml;ber Knoten IP via LAN erreichbar.<br/>LAN Konfiguration und Privates-Netzwerk sind deaktiviert. LAN Meshing wird 5min nach Routerstart aktiviert.</td>
+</TR>
 <TR>
 <TH>- Bevorzugtes Gateway (IP):</TH>
 <TD><INPUT NAME="form_lan_preferred_gateway" TYPE="TEXT" VALUE="$(uci -q get ddmesh.bmxd.preferred_gateway)"></TD>
@@ -120,6 +165,16 @@ cat<<EOM
 <TD><INPUT NAME="form_internal_dns" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.internal_dns)"></TD>
 <td></td>
 </TR>
+<TR>
+<TH>- Fallback DNS (IP):</TH>
+<TD><INPUT NAME="form_fallback_dns" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.fallback_dns)"></TD>
+<td>DNS IP wird zus&auml;tzlich an Wifi Ger&auml;te per DHCP als alternativen Nameserver vergeben, falls DNS im Freifunk gest&ouml;rt ist. (z.B.: 8.8.8.8).</td>
+</TR>
+<TR>
+<TH>- Netzwerk Id:</TH>
+<TD><INPUT NAME="form_mesh_network_id" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.mesh_network_id)"></TD>
+<td></td>
+</TR>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR><TH COLSPAN="3" class="heading">Cron</TH></TR>
@@ -127,9 +182,14 @@ cat<<EOM
 <TR>
 <TH>- Automatisches Firmware Update:</TH>
 <TD><INPUT NAME="form_firmware_autoupdate" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.firmware_autoupdate)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td>T&auml;glich 03:00 Uhr wird auf eine neue Firmwareversion getestet. Gibt es eine, so aktualisiert sich der Router selbst&auml;ndig. Nachtr&auml;glich installierted Pakete werden m&uuml;ssen erneut installiert werden.<td> 
+<td>T&auml;glich 05:00 Uhr wird auf eine neue Firmwareversion getestet. Gibt es eine, so aktualisiert sich der Router selbst&auml;ndig. Nachtr&auml;glich installierted Pakete werden m&uuml;ssen erneut installiert werden.<td>
 </TR>
 
+<TR>
+<TH>- Automatischer n&auml;chtlicher Neustart:</TH>
+<TD><INPUT NAME="form_nightly_reboot" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.bmxd_nightly_restart)" = "1" ];then echo ' checked="checked"';fi)></td>
+<td>T&auml;glich 4:00 Uhr wird der Router neu gestartet. Das l&ouml;sst manchmal seltsame Probleme, wenn der Router nicht mehr richtig funktioniert.<td>
+</TR>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR>
@@ -145,8 +205,9 @@ EOM
 
 else
 
-# process form abort or save 
+# process form abort or save
 	if [ -n "$form_submit" ]; then
+		uci set ddmesh.system.node_type="$(uhttpd -d $form_node_type)"
 		uci set ddmesh.system.community="$(uhttpd -d $form_community)"
 		uci set ddmesh.system.wanssh=${form_wanssh:-0}
 		uci set ddmesh.system.wanhttp=${form_wanhttp:-0}
@@ -157,12 +218,19 @@ else
 		uci set ddmesh.system.wifisetup=${form_wifisetup:-0}
 		uci set ddmesh.system.announce_gateway=${form_announce_gateway:-0}
 		uci set ddmesh.network.lan_local_internet=${form_lan_local_internet:-0}
-		uci set ddmesh.bmxd.preferred_gateway=$form_lan_preferred_gateway
+		uci set ddmesh.network.mesh_on_lan=${form_lan_meshing:-0}
+		uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
+		prefgw="$(uhttpd -d $form_lan_preferred_gateway)"
+		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}
-		uci set ddmesh.network.internal_dns=$form_internal_dns
+		uci set ddmesh.system.bmxd_nightly_restart=${form_nightly_reboot:-0}
+		uci set ddmesh.network.internal_dns="$(uhttpd -d $form_internal_dns)"
+		uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
+		uci set ddmesh.network.mesh_network_id=${form_mesh_network_id:-0}
 		uci set ddmesh.boot.boot_step=2
 		uci commit
-		notebox  'Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="/admin/firmware.cgi">Neustart</A> aktiv.'
+		notebox  'Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv.'
+		test -n "$prefgw" && bmxd -cp $prefgw 2>&1 >/dev/null
 	else
 		notebox  'Einstellungen wurden nicht &uuml;bernommen.'
 	fi

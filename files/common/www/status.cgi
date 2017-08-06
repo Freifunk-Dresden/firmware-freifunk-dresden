@@ -12,6 +12,7 @@ cat<<EOF
 <fieldset class="bubble">
 <legend>Allgemeines</legend>
 <table>
+<tr><th>Knoten-IP:</th><td>$_ddmesh_ip</td></td></tr>
 <tr><th>Internet Gateway:</th><td>$INET_GW</td></td></tr>
 <tr><th>Nameserver:</th><td>$(grep nameserver /tmp/resolv.conf.auto | sed 's#nameserver##g')</td></tr>
 <tr><th>Ger&auml;telaufzeit:</th><td>$(uptime)</td></tr>

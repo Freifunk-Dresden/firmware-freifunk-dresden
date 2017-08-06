@@ -40,8 +40,6 @@ $SPLASH_BASE
 <meta name="robots" content="noindex">
 <link HREF="/css/ff.css" REL="StyleSheet" TYPE="text/css">
 <link rel="shortcut icon" href="/images/favicon.ico">
-<script type="text/javascript" src="/js/jquery.js"></script>
-<script type="text/javascript" src="/js/ff.js"></script>
 </HEAD>
 <BODY>
 <table border=0>
@@ -55,7 +53,7 @@ $SPLASH_BASE
 EOM
 if [ -f /www/custom/custom-head.url ]; then
         url="$(cat /www/custom/custom-head.url | sed '1,1{s#[`$()]##}')"
-        wget -O - "$url"
+        uclient-fetch -O - "$url"
 else
 	cat /www/custom/custom-head.html
 fi
@@ -63,7 +61,7 @@ fi
 cat<<EOM
 	</div></td></tr>
 	</table></td></tr>
-	
+
 	</table>
 </td></tr>
 <tr><td><table>

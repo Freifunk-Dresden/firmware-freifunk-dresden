@@ -6,7 +6,7 @@ if [ ! -f /etc/config/ddmesh ]; then logger -t ddmesh "ddmesh not ready - ignore
 logger -t DHCP "cmd:$1  mac:$2 ip:$3 hostname:$4"
 
 #ignore refresh
-test "$1" = "old" && exit 0 
+test "$1" = "old" && exit 0
 
 F=/var/log/dnsmasq.log
 

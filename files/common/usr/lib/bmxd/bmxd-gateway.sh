@@ -1,26 +1,27 @@
 #!/bin/sh
 
-RESOLV_CONF="/tmp/resolv.conf.auto"
-RESOLV_CONF_SAVED="/tmp/resolv.conf.auto.bmxd.saved"
+RESOLV_CONF_FINAL="/tmp/resolv.conf.final"
+RESOLV_CONF_AUTO="/tmp/resolv.conf.auto"
 
 case $1 in
 	gateway)
-		cp $RESOLV_CONF_SAVED $RESOLV_CONF
-		/usr/lib/ddmesh/ddmesh-led.sh wifi gateway 
+		cp $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
+		/usr/lib/ddmesh/ddmesh-led.sh wifi gateway
 	;;
 	del)
-		cp $RESOLV_CONF_SAVED $RESOLV_CONF
+		cp $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
 		/usr/lib/ddmesh/ddmesh-led.sh wifi alive
 	;;
 	*)
-		cp $RESOLV_CONF $RESOLV_CONF_SAVED
-		echo "nameserver $1" >$RESOLV_CONF
-		/usr/lib/ddmesh/ddmesh-led.sh wifi freifunk 
+		# delete initial symlink
+		rm $RESOLV_CONF_FINAL
+		echo "nameserver $1" >$RESOLV_CONF_FINAL
+		/usr/lib/ddmesh/ddmesh-led.sh wifi freifunk
 	;;
 esac
 
 GW_STAT="/var/statistic/gateway_usage"
-count=$(sed -n "/$1:/s#.*:##p" $GW_STAT)        
+count=$(sed -n "/$1:/s#.*:##p" $GW_STAT)
 if [ -z $count ]; then
 	echo "$1:1" >> $GW_STAT
 else

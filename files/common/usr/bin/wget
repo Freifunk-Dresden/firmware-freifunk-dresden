@@ -1,0 +1,11 @@
+#!/bin/sh
+
+CERT="--ca-certificate=/etc/ssl/certs/download.crt"
+
+CMD="uclient-fetch $CERT $*"
+
+echo "Calling $0 (forward to uclient-fetch with ssl/cert support)"
+
+$CMD
+
+exit 0

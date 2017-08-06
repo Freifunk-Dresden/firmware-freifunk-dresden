@@ -1,9 +1,0 @@
-#echo "$ACTION:$INTERFACE:$DEVICE" >>/tmp/x
-[ ifdown = "$ACTION" ] && {
-	[ wifi = "$INTERFACE" -o wifi2 = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-led.sh wifi off
-}
-
-[ ifup = "$ACTION" ] && {
-	[ wifi = "$INTERFACE" -o wifi2 = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-led.sh wifi alive 
-}
-
