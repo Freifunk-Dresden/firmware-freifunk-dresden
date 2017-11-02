@@ -8,15 +8,18 @@ if [ -z "$1" ]; then
 	exit 0
 fi
 
+. /lib/functions.sh
+
 eval $(cat /etc/openwrt_release)
 platform="${DISTRIB_TARGET%/*}"
+boardname="none"
 
 case "$platform" in
 
 	ar71xx)
-		. /lib/functions/leds.sh
 		. /etc/diag.sh
-		. /lib/ar71xx.sh
+		ar71xx_board_detect
+		boardname=$AR71XX_BOARD_NAME
 		;;
 	*)
 		echo "platform $platform not supported"
@@ -26,7 +29,7 @@ esac
 
 get_wifi_led()
 {
-	case  $(ar71xx_board_name) in
+	case  "$boardname" in
 		unifi)
 			wifi_led=ubnt:orange:dome
 			;;
@@ -60,14 +63,14 @@ case $1 in
 		;;
 	status)
 		case $2 in
-			boot1) 	led_morse $status_led 200 'e '
+			boot1) 	led_timer $status_led 30 30
 				;;
-			boot2)	led_morse $status_led 200 'ee '
+			boot2)	led_timer $status_led 60 60
 				;;
-			boot3)	led_morse $status_led 200 'eee '
+			boot3)	led_timer $status_led 110 110
 				;;
 			done)
-				case  $(ar71xx_board_name) in
+				case  "$boardname" in
 					unifi)
 						# one LED: turn green off to enable orange
 						led_off $status_led

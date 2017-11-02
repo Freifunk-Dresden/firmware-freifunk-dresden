@@ -10,7 +10,7 @@ fi
 . /usr/lib/www/page-functions.sh
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
-device_model="$(cat /var/sysinfo/model 2>/dev/null)"
+device_model="$(cat /var/sysinfo/model 2>/dev/null | sed 's#[ ]\+$##')"
 test -z "$device_model" && device_model="$(cat /proc/cpuinfo | grep 'model name' | cut -d':' -f2)"
 export device_model
 
@@ -18,10 +18,12 @@ export device_model
 in_ifname="$(ip ro get $REMOTE_ADDR | sed -n '1,2s#.*dev[ ]\+\([^ ]\+\).*#\1#p')"
 enable_setup=1
 test ! "$(uci get ddmesh.system.wansetup)" = "1" && test "$in_ifname" = "$(uci get network.wan.ifname)" && enable_setup=0
-test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "$in_ifname" = "$wifi_ifname" && enable_setup=0
-test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "$in_ifname" = "$wifi2_ifname" && enable_setup=0
-test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "${in_ifname%%[_0-9]*}" = "tbb" && enable_setup=0
-test ! "$(uci get ddmesh.system.wifisetup)" = "1" && test "$in_ifname" = "$tbb_ifname" && enable_setup=0
+if [ "$(uci get ddmesh.system.meshsetup)" != "1" ]; then
+	test "$in_ifname" = "$wifi_ifname" && enable_setup=0
+	test "$in_ifname" = "$wifi2_ifname" && enable_setup=0
+	test "${in_ifname%%[_0-9]*}" = "tbb" && enable_setup=0
+	test "$in_ifname" = "$tbb_ifname" && enable_setup=0
+fi
 
 echo "Status: 200 OK"
 echo "Content-Type: text/html; charset=utf-8"
@@ -123,7 +125,7 @@ cat<<EOM
  <tr><td COLSPAN="5">
   <table class="navibar" width="100%" CELLPADDING="0" CELLSPACING="0">
   <tr>
-  <TD COLSPAN="4" HEIGHT="19">Model: <font color="white">$device_model</font></TD>
+  <TD COLSPAN="4" HEIGHT="19" class="infobar" >Model: <span class="infobarvalue">$device_model</span>, Version:<span class="infobarvalue">$(cat /etc/version)</span></TD>
   <TD HEIGHT="19" WIDTH="150"><IMG ALT="" BORDER="0" HEIGHT="19" SRC="/images/ff-logo-2.gif" WIDTH="150"></TD></TR>
   </table></td></tr>
  <TR><TD class="ie_color" HEIGHT="100%" VALIGN="top">

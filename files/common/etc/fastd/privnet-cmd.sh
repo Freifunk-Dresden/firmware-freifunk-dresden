@@ -3,7 +3,7 @@
 TAG="fastd-privnet"
 
 #commands $1: up, down, connect, establish, disestablish, verify
-if [ "$(uci -q get ddmesh.network.mesh_on_lan)" != "1" ]; then
+if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ]; then
 	logger -s -t $TAG "privnet disabled. mesh-on-lan is active"
 	exit 0
 fi

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# use /etc/hotplug.d/iface  instead  /etc/hotplug.d/net because
+# "net" is triggered serveral times during boot, but final state
+# is only triggerred once via "iface"
+
+gger -t ddmesh "network-hotplug iface: network:[$INTERFACE] interface:$DEVICE $ACTION"
+
+if [ "$INTERFACE" = "wifi" ]; then 
+
+	if [ "$ACTION" = "ifup" ]; then
+		logger -t ddmesh "network-hotplug: add [$INTERFACE] to bmxd"
+		/usr/lib/ddmesh/ddmesh-bmxd.sh add_if $INTERFACE
+	fi
+	if [ "$ACTION" = "ifdown" ]; then
+		logger -t ddmesh "network-hotplug: remove [$INTERFACE] from bmxd"
+		/usr/lib/ddmesh/ddmesh-bmxd.sh del_if $INTERFACE
+	fi
+fi

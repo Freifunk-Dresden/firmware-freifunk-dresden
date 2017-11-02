@@ -9,13 +9,13 @@ eval $(cat /etc/openwrt_release)
 
 FIRMWARE="$(/usr/lib/ddmesh/ddmesh-get-firmware-name.sh)"
 URL_RELEASE="$(uci get credentials.url.firmware_download_release)"
-URL_ARCH="${DISTRIB_TARGET%/*}"
+URL_ARCH="$DISTRIB_TARGET"
 FIRMWARE_FILE="/tmp/firmware.bin"
 TAG="AutoFirmwareUpdate"
 ERROR_FILE=/tmp/uclient.error
 CERT="--ca-certificate=/etc/ssl/certs/download.crt"
 
-rm $ERROR_FILE
+rm -f $ERROR_FILE
 
 enabled="$(uci get ddmesh.system.firmware_autoupdate)"
 

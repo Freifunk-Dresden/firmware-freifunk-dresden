@@ -7,15 +7,6 @@
 
 export TITLE="Verwaltung > Update > Reset"
 
-if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
-	. /usr/lib/www/page-pre.sh ${0%/*}
-	notebox 'GET not allowed'
-	. /usr/lib/www/page-post.sh ${0%/*}
-	exit 0
-fi
-#get form data and optionally file
-eval $(/usr/bin/freifunk-upload -e 2>/dev/null)
-
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 echo "<H1>$TITLE</H1>"
@@ -29,7 +20,8 @@ cat<<EOM
 	<input name="form_action" value="reset" type="hidden">
 	<br/>
 	<table>
-	<tr><th><input name="form_reset_factory" type="checkbox" value="1"> Werkseinstellung</th></tr>
+	<tr><th style="color:red;"><input name="form_reset_factory" type="checkbox" value="1"> Werkseinstellung (setzt alle Einstellungen zur&uuml;ck und l&ouml;scht Passwort, Kontaktinfos, Portforwarding, Backbone, installierte Pakete)</th></tr>
+	<tr><th><input name="form_reset_reconfig" type="checkbox" value="1"> Konfiguration neuer Hardware</th></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td><input name="form_reset_submit" type="submit" value="Neustart"></td</tr>
 	</table>
@@ -51,6 +43,11 @@ EOM
 			if [ -n "$form_reset_factory" ]; then
 				echo "Alle Einstellungen werden auf Standardwerte gesetzt (Passwort,IP Adressen,ssh-key,https Zertifikate).<br />Ebenso wird eine neue Node-Nummber erzeugt."
 			else
+				if [ -n "$form_reset_reconfig" ]; then
+					echo "System passt Konfiguration an neue Hardware an.<br/>"
+					uci -q set ddmesh.boot.boot_step=2
+					uci commit
+				fi
 				echo "Alle Einstellungen bleiben erhalten."
 			fi
 			cat <<EOM

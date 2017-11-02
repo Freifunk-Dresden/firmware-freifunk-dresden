@@ -8,8 +8,10 @@ current_version=$(cat /etc/version)
 echo "previous_version=$previous_version"
 echo "current_version=$current_version"
 
-#set initial version; needed for correct behavior
-previous_version=${previous_version:-2.1.2}
+# if no previous version then set initial version; needed for correct behavior
+previous_version=${previous_version:-$current_version}
+
+# check if upgrade is needed
 test "$previous_version" = "$current_version" && {
 	echo "nothing to upgrade"
 	exit 0
@@ -34,7 +36,7 @@ run_upgrade()
 	ignore=0
 	previous_version_found=1
 
-	#ignore if already on same version (safety check)
+	#ignore if already on same version
 	test "$v" = "$previous_version" && echo " ignored (same)" && continue
 
 	#create name of upgrade function (version dependet)
@@ -61,69 +63,6 @@ run_upgrade()
 ### keep ORDER - only change below
 ### uci commit is called after booting via ddmesh.boot_step=2
 
-
-upgrade_2_1_3() {
- #scroll register_key to get new node
- x="$(uci get ddmesh.system.register_key)"
- uci set ddmesh.system.register_key="${x#*:}:${x%%:*}"
- uci set ddmesh.network.wifi2_dhcplease='2h'
- uci set ddmesh.bmxd.gateway_class='1024/1024'
- uci set network.wifi.ipaddr="$_ddmesh_nonprimary_ip"
-}
-upgrade_2_1_4() {
- cp /rom/etc/firewall.user /etc/
- uci set ddmesh.network.wifi_htmode="HT20"
-}
-upgrade_2_1_5() {
- cp /rom/etc/config/credentials /etc/config/
- rm -rf /etc/crontabs/root
- ln -s /var/etc/crontabs/root /etc/crontabs/root
-}
-upgrade_3_1_6() {
- uci set wireless.@wifi-iface[1].isolate='1'
- rm -rf /etc/hosts
- ln -s /var/etc/dnsmasq.hosts /etc/hosts
- #clear firewall, moved to ddmesh-firewall.sh
- >/etc/firewall.user
- uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
- uci set ddmesh.network.wifi2_dhcplease='5m'
- uci set ddmesh.network.client_disconnect_timeout=0
- uci del ddmesh.system.disable_gateway
- uci sel ddmesh.system.announce_gateway=0
-}
-upgrade_3_1_7() {
- uci set ddmesh.network.wan_speed_down=100000
- uci set ddmesh.network.wan_speed_up=10000
- uci set ddmesh.network.lan_speed_down=100000
- uci set ddmesh.network.lan_speed_up=10000
- uci set ddmesh.system.firmware_autoupdate=0
- uci add credentials url
- uci rename credentials.@url[-1]='url'
- uci set credentials.url.firmware_download_release='http://download.freifunk-dresden.de/firmware/latest'
- uci set credentials.url.firmware_download_testing='http://download.freifunk-dresden.de/firmware/testing'
-}
-upgrade_3_1_8() {
- essid="Freifunk Mesh-Net"
- uci -q set ddmesh.network.essid_adhoc="$essid"
- uci set wireless.@wifi-iface[0].ssid="${essid:0:32}"
- uci add_list ddmesh.system.communities="Freifunk Radebeul"
- uci set ddmesh.network.internal_dns='10.200.0.4'
- uci set ddmesh.network.wifi2_ip='192.168.252.1'
- uci set ddmesh.network.wifi2_dns='192.168.252.1'
- uci set ddmesh.network.wifi2_netmask='255.255.252.0'
- uci set ddmesh.network.wifi2_broadcast='192.168.255.255'
- uci set ddmesh.network.wifi2_dhcpstart='192.168.252.2'
- uci set ddmesh.network.wifi2_dhcpend='192.168.255.254'
- uci set firewall.zone_wifi.masq='0'
- uci set firewall.zone_tbb.masq='0'
-}
-upgrade_3_1_9() {
- uci set network.wifi2.type='bridge'
- uci set credentials.url.firmware_download_server='download.freifunk-dresden.de'
- uci set ddmesh.system.bmxd_nightly_restart='0'
- test -n "$(uci get ddmesh.network.essid_ap)" && uci set ddmesh.network.custom_essid=1
- uci set credentials.registration.register_service_url="$(uci get credentials.registration.register_service_url | sed 's#ddmesh.de#freifunk-dresden.de#')"
-}
 
 upgrade_4_2_0() {
  echo dummy
@@ -237,14 +176,14 @@ upgrade_4_2_4() {
  #geoloc
  uci add credentials geoloc
  uci rename credentials.@geoloc[-1]='geoloc'
- uci set credentials.geoloc.host="$(uci get -c /rom/etc/config credentials.geoloc.host)"
- uci set credentials.geoloc.port="$(uci get -c /rom/etc/config credentials.geoloc.port)"
- uci set credentials.geoloc.uri="$(uci get -c /rom/etc/config credentials.geoloc.uri)"
+ uci set credentials.geoloc.host="$(uci -c /rom/etc/config get credentials.geoloc.host)"
+ uci set credentials.geoloc.port="$(uci -c /rom/etc/config get credentials.geoloc.port)"
+ uci set credentials.geoloc.uri="$(uci -c /rom/etc/config get credentials.geoloc.uri)"
  #https
- uci set credentials.url.firmware_download_release="$(uci get -c /rom/etc/config credentials.url.firmware_download_release)"
- uci set credentials.url.firmware_download_testing="$(uci get -c /rom/etc/config credentials.url.firmware_download_testing)"
- uci set credentials.url.opkg="$(uci get -c /rom/etc/config credentials.url.opkg)"
- uci set credentials.registration.register_service_url="$(uci get -c /rom/etc/config credentials.registration.register_service_url)"
+ uci set credentials.url.firmware_download_release="$(uci -c /rom/etc/config get credentials.url.firmware_download_release)"
+ uci set credentials.url.firmware_download_testing="$(uci -c /rom/etc/config get credentials.url.firmware_download_testing)"
+ uci set credentials.url.opkg="$(uci -c /rom/etc/config get credentials.url.opkg)"
+ uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
 }
 
 
@@ -257,6 +196,52 @@ upgrade_4_2_5() {
 }
 
 
+upgrade_4_2_6() {
+	echo dummy
+}
+
+upgrade_4_2_7() {
+	echo dummy
+}
+
+upgrade_4_2_8() {
+	echo dummy
+	uci delete ddmesh.system.bmxd_nightly_restart
+	cp /rom/etc/config/dhcp /etc/config/
+}
+
+upgrade_4_2_9() {
+	uci rename overlay.@overlay[0]='data'
+}
+
+upgrade_4_2_10() {
+	if [ -z "$(uci -q get credentials.backbone_secret)" ]; then
+		uci -q add credentials backbone_secret
+		uci -q rename credentials.@backbone_secret[-1]='backbone_secret'
+	fi
+	secret="$(uci -q get credentials.backbone.secret_key)"
+	if [ -n "$secret" ]; then
+		uci -q set credentials.backbone_secret.key="$secret"
+		uci -q delete credentials.backbone.secret_key
+	fi
+	uci -q delete credentials.backbone
+
+	if [ -z "$(uci -q get credentials.privnet_secret)" ]; then
+		uci -q add credentials privnet_secret
+		uci -q rename credentials.@privnet_secret[-1]='privnet_secret'
+	fi
+	secret="$(uci -q get credentials.privnet.secret_key)"
+	if [ -n "$secret" ]; then
+		uci -q set credentials.privnet_secret.key="$secret"
+		uci -q delete credentials.privnet.secret_key
+	fi
+	uci -q delete credentials.privnet
+
+	uci -q rename ddmesh.system.wifissh='meshssh'
+	uci -q rename ddmesh.system.wifisetup='meshsetup'
+	uci -q delete network.tbb # will be created with 'meshwire' on next boot
+	cp /rom/etc/config/firewall /etc/config/firewall
+}
 
 ##################################
 

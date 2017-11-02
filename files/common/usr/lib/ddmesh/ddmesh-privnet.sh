@@ -25,11 +25,11 @@ MTU=1500
 
 genkey()
 {
-	test -z "$(uci -q get credentials.privnet)" && {
-		uci -q add credentials privnet
-		uci -q rename credentials.@privnet[-1]='privnet'
+	test -z "$(uci -q get credentials.privnet_secret)" && {
+		uci -q add credentials privnet_secret
+		uci -q rename credentials.@privnet[-1]='privnet_secret'
 	}
-	uci -q set credentials.privnet.secret_key="$(fastd --machine-readable --generate-key)"
+	uci -q set credentials.privnet_secret.key="$(fastd --machine-readable --generate-key)"
 	uci -q commit
 }
 
@@ -38,11 +38,11 @@ generate_fastd_conf()
  # sources: https://projects.universe-factory.net/projects/fastd/wiki
  # docs: http://fastd.readthedocs.org/en/v17/
 
- secret="$(uci -q get credentials.privnet.secret_key)"
+ secret="$(uci -q get credentials.privnet_secret.key)"
  if [ -z "$secret" ]; then
 	logger -t $LOGGER_TAG "no secret key - generating..."
 	genkey
-	secret="$(uci -q get credentials.privnet.secret_key)"
+	secret="$(uci -q get credentials.privnet_secret.key)"
  fi
 
  cat << EOM > $FASTD_CONF

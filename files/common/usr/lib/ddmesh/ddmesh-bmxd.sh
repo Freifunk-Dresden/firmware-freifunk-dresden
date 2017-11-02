@@ -1,16 +1,25 @@
 #! /bin/sh
 
 ARG1=$1
+ARG2=$2
 
 DAEMON=bmxd
 DAEMON_PATH=/usr/bin
-DB_PATH=/var/lib/ddmesh/bmxd
 RUN_STATUS_FILE=/var/run/batman-status-running
-#save added interfaces (from vtun) used to add interfaces if batmand has crashed
+DB_PATH=/var/lib/ddmesh/bmxd
 STAT_DIR=/var/statistic
 
 mkdir -p $DB_PATH
 mkdir -p $STAT_DIR
+
+touch $DB_PATH/links
+touch $DB_PATH/gateways
+touch $DB_PATH/originators
+touch $DB_PATH/status
+touch $DB_PATH/networks	# network ids
+touch $DB_PATH/hnas
+touch $STAT_DIR/gateway_usage
+
 
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
@@ -34,8 +43,8 @@ NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
 # 127er IP would be broadcasted
 
 PRIMARY_IF="bmx_prime"
-FASTD_IF="tbb_fastd"
-LAN_IF="br-tbb"
+FASTD_IF="tbb-fastd"
+LAN_IF="br-meshwire"
 if [ "$1" = "start" ]; then
 	ip tuntap add dev $PRIMARY_IF mod tun
 	ip addr add $_ddmesh_ip/$_ddmesh_netpre broadcast $_ddmesh_broadcast dev $PRIMARY_IF
@@ -43,7 +52,7 @@ if [ "$1" = "start" ]; then
 fi
 _IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1 dev=$LAN_IF /linklayer 1"
 
-#add wifi
+#add wifi, if hotplug event did occur before starting bmxd
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
 if [ -n "$net_ifname" ]; then
 	_IF="$_IF dev=$net_ifname /linklayer 2"
@@ -91,13 +100,17 @@ case "$ARG1" in
 	echo $DAEMON -c $ROUTING_CLASS
 	$DAEMON_PATH/$DAEMON -c $ROUTING_CLASS
 	;;
+  add_if)
+	$DAEMON_PATH/$DAEMON -c dev=$ARG2 /linklayer 2
+	;;
+  del_if)
+	$DAEMON_PATH/$DAEMON -c dev=-$ARG2
+	;;
   check)
 	test -z "$(pidof $DAEMON)" && logger -s "$DAEMON not running - restart" && $0 restart && exit
 	test -n "$(pidof $DAEMON)" && test ! -f "$RUN_STATUS_FILE" && (
 	touch $RUN_STATUS_FILE
-	#$DAEMON_PATH/$DAEMON -c --routes > $DB_PATH/routes
 	$DAEMON_PATH/$DAEMON -c --gateways > $DB_PATH/gateways
-#	$DAEMON_PATH/$DAEMON -c --services > $DB_PATH/services
 	$DAEMON_PATH/$DAEMON -c --links > $DB_PATH/links
 	$DAEMON_PATH/$DAEMON -c --originators > $DB_PATH/originators
 	$DAEMON_PATH/$DAEMON -c --hnas > $DB_PATH/hnas
@@ -110,7 +123,7 @@ case "$ARG1" in
 	;;
 
   *)
-	echo "Usage: $0 {start|stop|restart|gateway|no_gateway|check}" >&2
+	echo "Usage: $0 {start|stop|restart|gateway|no_gateway|check|add_if|del_if}" >&2
 	exit 1         ;;
 
 

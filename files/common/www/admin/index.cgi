@@ -1,43 +1,15 @@
 #!/bin/sh
 
-if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
-	. /usr/lib/www/page-pre.sh ${0%/*}
-	notebox 'GET not allowed'
-	. /usr/lib/www/page-post.sh ${0%/*}
-	exit 0
+export TITLE="Verwaltung > Allgemein"
+. /usr/lib/www/page-pre.sh ${0%/*}
+
+if [ "$form_action" = "overlay" ]; then
+	/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write >/dev/null
 fi
 
-node=$(uci get ddmesh.system.node)
-tmpmin=$(uci get ddmesh.system.tmp_min_node)
-tmpmax=$(uci get ddmesh.system.tmp_max_node)
-if [ $node -ge $tmpmin -a $node -le $tmpmax ]; then
-# 	export NOMENU=1
-	export TITLE="Auto-Setup"
-
-	. /usr/lib/www/page-pre.sh ${0%/*}
+eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
 
 cat<<EOM
-<h1>Auto-Setup</h1>
-Diese Seite wird automatisch aufgerufen, wenn das erste Mal eine Freifunk Firmware auf den Router gespielt wurde.<br />
-Der Router wird mit am h&auml;ufigsten verwendeten Einstellungen konfiguriert. Die Einstellungen k&ouml;nnen sp&auml;ter ge&auml;ndert werden.<br />
-Bei Starten des Auto-Setups, wird nach einem Nutzernamen und Passwort gefragt. Wurden diese bisher nicht ge&auml;ndert, so lauten der
-Nutzername "root" und das Passwort "Admin".<br />
-Das Passwort sollte nach dem Durchlaufen des Autosetups ge&auml;ndert werden.<br /><br />
-	<a href="/admin/autosetup.cgi">Starte Auto-Setup</a>
-EOM
-
-	. /usr/lib/www/page-post.sh ${0%/*}
-
-else #autosetup
-
-	export TITLE="Verwaltung > Allgemein"
-	. /usr/lib/www/page-pre.sh ${0%/*}
-
-	if [ "$form_action" = "overlay" ]; then
-		/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write >/dev/null
-	fi
-
-	cat<<EOM
 <h1>$TITLE</h1>
 <br>
 <fieldset class="bubble">
@@ -72,9 +44,12 @@ auf eines der Steuerungselemente, um kurze Hilfetexte einzublenden.</p>
 <legend>System Version</legend>
 <table>
 <tr class="colortoggle1"><th>Freifunk Version (Dresden)</th><td>$(cat /etc/version)</td></tr>
-<tr class="colortoggle2"><th>Git Revision</th><td>$(cat /etc/built_info | sed -n '/revision/s#.*:##p')</td></tr>
-<tr class="colortoggle1"><th>Built Datum</th><td>$(cat /etc/built_info | sed -n '/builtdate/s#[^:]*:##p')</td></tr>
-$(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle2"><th>\1</th><td>\2</td></tr>#')
+<tr class="colortoggle2"><th>Git Firmware Referenz</th><td>$git_ddmesh_ref</td></tr>
+<tr class="colortoggle1"><th>Git Firmware Branch</th><td>$git_ddmesh_branch</td></tr>
+<tr class="colortoggle2"><th>Git Lede Referenz</th><td>$git_lede_ref</td></tr>
+<tr class="colortoggle1"><th>Git Lede Branch</th><td>$git_lede_branch</td></tr>
+<tr class="colortoggle2"><th>Built Datum</th><td>$(cat /etc/built_info | sed -n '/builtdate/s#[^:]*:##p')</td></tr>
+$(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#')
 </table>
 </fieldset>
 
@@ -82,15 +57,15 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle2
 <fieldset class="bubble">
 <legend>System Info</legend>
 <table>
-<tr class="colortoggle2"><th>Knoten-IP:</th><td colspan="5">$_ddmesh_ip</td></tr>
-<tr class="colortoggle2"><th>Nameserver:</th><td colspan="5">$(grep nameserver /tmp/resolv.conf.auto | sed 's#nameserver##g')</td></tr>
-<tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="5">$(uptime)</td></tr>
-<tr class="colortoggle2"><th>System:</th><td colspan="5">$(uname -m) $(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>
-<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="5">$device_model - $(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p') [$(cat /tmp/sysinfo/board_name)]</td></tr>
-<tr class="colortoggle2"><th>Filesystem:</th><td>$(cat /proc/cmdline | sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#')</td></tr>
-<tr class="colortoggle2"><th>SSH Fingerprint (md5)</th><td colspan="5">$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | sed -n '/Fingerprint/s#Fingerprint: md5 ##p')</td></tr>
-<tr class="colortoggle1"><th></th><th>Total</th> <th>Used</th> <th>Free</th> <th>Shared</th> <th>Buffers</th> </tr>
-$(free | sed -n '2,${s#[ 	]*\(.*\):[ 	]*\([0-9]\+\)[ 	]*\([0-9]\+\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)#<tr class="colortoggle2"><th>\1</th><td>\2</td><td>\2</td><td>\3</td><td>\4</td><td>\4</td></tr>#g;p}' )
+<tr class="colortoggle2"><th>Knoten-IP:</th><td colspan="6">$_ddmesh_ip</td></tr>
+<tr class="colortoggle2"><th>Nameserver:</th><td colspan="6">$(grep nameserver /tmp/resolv.conf.auto | sed 's#nameserver##g')</td></tr>
+<tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="6">$(uptime)</td></tr>
+<tr class="colortoggle2"><th>System:</th><td colspan="6">$(uname -m) $(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>
+<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="6">$device_model - $(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p') [$(cat /tmp/sysinfo/board_name)]</td></tr>
+<tr class="colortoggle2"><th>Filesystem:</th><td colspan="6">$(cat /proc/cmdline | sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#')</td></tr>
+<tr class="colortoggle2"><th>SSH Fingerprint (md5)</th><td colspan="6">$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | sed -n '/Fingerprint/s#Fingerprint: md5 ##p')</td></tr>
+<tr class="colortoggle1"><th></th><th>Total</th> <th>Used</th> <th>Free</th> <th>Shared</th> <th>Buffers</th> <th>Cached</th></tr>
+$(free | sed -n '2,${s#[ 	]*\(.*\):[ 	]*\([0-9]\+\)[ 	]*\([0-9]\+\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)#<tr class="colortoggle2"><th>\1</th><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>#g;p}' )
 </table>
 </fieldset>
 EOM
@@ -140,8 +115,6 @@ cat<<EOM
 </fieldset>
 EOM
 
-	. /usr/lib/www/page-post.sh
-
-fi #autosetup
+. /usr/lib/www/page-post.sh
 
 

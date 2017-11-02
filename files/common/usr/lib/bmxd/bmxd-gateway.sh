@@ -20,6 +20,10 @@ case $1 in
 	;;
 esac
 
+# restart dnsmasq, as workaround for dead dnsmasq
+/etc/init.d/dnsmasq restart
+                                        
+
 GW_STAT="/var/statistic/gateway_usage"
 count=$(sed -n "/$1:/s#.*:##p" $GW_STAT)
 if [ -z $count ]; then

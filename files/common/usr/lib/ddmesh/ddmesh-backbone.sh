@@ -17,11 +17,11 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_fastd)
 
 genkey()
 {
-	test -z "$(uci -q get credentials.backbone)" && {
-		uci -q add credentials backbone
-		uci -q rename credentials.@backbone[-1]='backbone'
+	test -z "$(uci -q get credentials.backbone_secret)" && {
+		uci -q add credentials backbone_secret
+		uci -q rename credentials.@backbone_secret[-1]='backbone_secret'
 	}
-	uci -q set credentials.backbone.secret_key="$(fastd --machine-readable --generate-key)"
+	uci -q set credentials.backbone_secret.key="$(fastd --machine-readable --generate-key)"
 	uci -q commit
 }
 
@@ -30,11 +30,11 @@ generate_fastd_conf()
  # sources: https://projects.universe-factory.net/projects/fastd/wiki
  # docs: http://fastd.readthedocs.org/en/v17/
 
- secret="$(uci -q get credentials.backbone.secret_key)"
+ secret="$(uci -q get credentials.backbone_secret.key)"
  if [ -z "$secret" ]; then
 	logger -t $LOGGER_TAG "no secret key - generating..."
 	genkey
-	secret="$(uci -q get credentials.backbone.secret_key)"
+	secret="$(uci -q get credentials.backbone_secret.key)"
  fi
 
  cat << EOM > $FASTD_CONF
@@ -99,6 +99,8 @@ callback_outgoing_config ()
 		echo "remote ipv4 \"$host\":$port;" >> $FILE
 
 		#dont use hostnames, can not be resolved
+		iptables -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
+		iptables -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
 		iptables -A output_backbone_accept -p udp --dport $port -j ACCEPT
 		iptables -A output_backbone_reject -p udp --dport $port -j reject
 	fi

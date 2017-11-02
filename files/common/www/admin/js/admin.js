@@ -41,7 +41,7 @@ function geoloc_callback(data)
 		$("#geoloc_lat").val(data.location.lat);
 		$("#geoloc_lng").val(data.location.lng);
 		$("#geoloc_alt").val(0);
-		$("#geoloc_map").attr("src","https://maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x300&maptype=roadmap&markers=color:red%7Clabel:R%7C"
+		$("#geoloc_map").attr("src","http://maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x300&maptype=roadmap&markers=color:red%7Clabel:R%7C"
 			 + data.location.lat + "," + data.location.lng +"&sensor=false");
 
 	} catch (e) {}

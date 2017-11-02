@@ -1,5 +1,4 @@
 #!/bin/sh
-logger -t ddmesh "network-hotplug: [$INTERFACE] $ACTION "
 
 # check existence of one rule to assume all rules are present.
 # only restart routing if netifd has removed all rules

@@ -54,7 +54,8 @@ if [ "$1" != "scan" ]; then
 	SIZE=$(ls -l $FINAL_OUTPUT | awk '{print $5}')
 	DATA="$(cat $FINAL_OUTPUT)"
 
-cat<<EOM > $FINAL_OUTPUT.req
+# append '\r' before newline. required by HTTP standard
+cat<<EOM | sed 's#$#\r#' > $FINAL_OUTPUT.req
 POST /geoloc HTTP/1.1
 User-Agent: Wget/1.17.1 (linux-gnu)
 Accept: */*
@@ -64,9 +65,9 @@ Connection: Keep-Alive
 Content-Type: application/json
 Content-Length: $SIZE
 
-$DATA
-
 EOM
+	# send data
+	echo "$DATA" >> $FINAL_OUTPUT.req
 
 	cat $FINAL_OUTPUT.req | nc $host $port | sed 's#\r##' | awk 'BEGIN{s=0} /^$/{ if(s==0){s=1; getline;getline}else{s=0}} {if(s)print $0}'
 

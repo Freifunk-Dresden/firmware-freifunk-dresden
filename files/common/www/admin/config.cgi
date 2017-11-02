@@ -10,6 +10,7 @@ CONF_FILE="router-$(uci get ddmesh.system.node)-config-$(date +"%Y%b%d-%H%M%S").
 PACKAGES="/etc/installed.packages"
 OPKG_ERROR="/tmp/opkg.error"
 
+# check before freifunk-upload
 if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
 	. /usr/lib/www/page-pre.sh ${0%/*}
 	notebox 'GET not allowed'

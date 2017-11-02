@@ -36,7 +36,7 @@ fi
 
 
 cat <<EOM >/etc/config/overlay
-config overlay
+config overlay 'data'
 	option	md5sum '0'
 EOM
 
@@ -60,14 +60,15 @@ config system 'system'
 	option  wanhttps                1
 	option  wanicmp                 1
 	option  wansetup                1
-	option  wifissh                 1
-	option  wifisetup               1
+	option  meshssh                 1
+	option  meshsetup               1
 	option	firmware_autoupdate     0
 	option	email_notification	0
 	option	node_type		'node'
 	list	node_types		'node'
 	list	node_types		'mobile'
 	list	node_types		'server'
+	option	nightly_reboot		0
 
 config boot 'boot'
 	option boot_step                0
@@ -147,11 +148,6 @@ config backbone_client
 	option 	port			'5002'
 	option	public_key 		''
 
-config backbone_client
-	option 	host			'vpn10.freifunk-dresden.de'
-	option 	port			'5002'
-	option	public_key 		''
-
 config privnet 'privnet'
 	option  server_port		'4000'
 	option  default_server_port	'4000'
@@ -189,17 +185,11 @@ EOM
 
 	#no key -> generate key
 	test  -z "$(uci -q get ddmesh.system.register_key)" && {
-		#check if we have a ssh key; should not happen, because is created before running S80register
-		key1=$(dropbearkey -y -f /etc/dropbear/dropbear_dss_host_key | sed -n '/Fingerprint/{s#.* \([a-f0-9:]\+\)#\1#;p}')
-		test -z "$key1" && {
-			logger -s -t "$LOGGER_TAG" "ERROR: no dropbear fingerprint (no ssh key)!"
-			return
-		}
-		#use ip link instead of addr (avoid changes if ip change and key must be regenerated)
-		key2=$(ip link | grep ether | md5sum | cut -d' ' -f1 | sed 's#\(..\)#\1:#g')
-		key="$key2$key1"
-		echo "key2: $key2"
+		key1=$(dd if=/dev/urandom bs=16 count=1 2>/dev/null | hexdump -e '16/1 "%02x:"' | sed 's#:$##')
+		key2=$(ip link | grep ether | md5sum | cut -d' ' -f1 | sed 's#\(..\)#\1:#g;s#:$##')
+		key="$key1:$key2"
 		echo "key1: $key1"
+		echo "key2: $key2"
 		echo "save key [$key]"
 		uci set ddmesh.system.register_key=$key
 		logger -s -t "$LOGGER_TAG" "key=[$key] stored."
@@ -208,9 +198,9 @@ EOM
 	#no node -> generate dummy node. if router was registered already with a different node and has just
 	#deleted the node locally or is using node out of rage (like temporary node), the stored node or a
 	#new node will be returnd by registrator
-	TMP_MIN_NODE="$(uci get ddmesh.system.tmp_min_node)"
-	TMP_MAX_NODE="$(uci get ddmesh.system.tmp_max_node)"
 	test -z "$(uci -q get ddmesh.system.node)" && {
+		TMP_MIN_NODE="$(uci get ddmesh.system.tmp_min_node)"
+		TMP_MAX_NODE="$(uci get ddmesh.system.tmp_max_node)"
 		echo "no local node -> create dummy node"
 		a=$(cat /proc/uptime);a=${a%%.*}
 		b=$(ip addr | md5sum | sed 's#[a-f:0 \-]##g' | dd bs=1 count=6 2>/dev/null) #remove leading '0'
@@ -218,6 +208,7 @@ EOM
 		logger -s -t "$LOGGER_TAG" "INFO: generated temorary node is $node"
 		uci set ddmesh.system.node=$node
 	}
+
 } # config_boot_step1
 
 #############################################################################
@@ -272,17 +263,17 @@ done
 	uci set network.wan.bridge_empty=1
  }
 
- test -z "$(uci -q get network.tbb)" && {
+ test -z "$(uci -q get network.meshwire)" && {
  	uci add network interface
- 	uci rename network.@interface[-1]='tbb'
+ 	uci rename network.@interface[-1]='meshwire'
  }
- uci set network.tbb.bridge_empty=1
- uci set network.tbb.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.tbb.netmask="$_ddmesh_netmask"
- uci set network.tbb.broadcast="$_ddmesh_broadcast"
- uci set network.tbb.proto='static'
- uci set network.tbb.type='bridge'
- uci set network.tbb.stp=1
+ uci set network.meshwire.bridge_empty=1
+ uci set network.meshwire.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.meshwire.netmask="$_ddmesh_netmask"
+ uci set network.meshwire.broadcast="$_ddmesh_broadcast"
+ uci set network.meshwire.proto='static'
+ uci set network.meshwire.type='bridge'
+ uci set network.meshwire.stp=1
 
  #############################################################################
  # setup wifi
@@ -310,8 +301,9 @@ done
  uci set network.wifi2.stp=1
  #don't store dns for wifi2 to avoid adding it to resolv.conf
 
-#wireless
- test ! -f /etc/config/wireless && wifi detect > /etc/config/wireless
+#wireless, regenerate config in case wifi usb stick plugged into different usb port
+ rm /etc/config/wireless
+ wifi config
 
  uci set wireless.@wifi-device[0].disabled=0
  uci set wireless.@wifi-device[0].hwmode=11n
@@ -350,7 +342,7 @@ done
  uci set wireless.@wifi-iface[0].mode='adhoc'
  uci set wireless.@wifi-iface[0].bssid="$(uci get credentials.wifi.bssid)"
  uci set wireless.@wifi-iface[0].encryption='none'
- test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" ] && uci set wireless.@wifi-iface[0].mcast_rate='6000'
+ test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[0].mcast_rate='6000'
 
  essid="$(uci -q get ddmesh.network.essid_adhoc)"
  essid="${essid:-Freifunk Mesh-Net}"
@@ -376,12 +368,12 @@ done
  		essid="$(uci get ddmesh.system.community) [$_ddmesh_node]"
 	fi
  	uci set wireless.@wifi-iface[1].ssid="${essid:0:32}"
- 	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" ] && uci set wireless.@wifi-iface[1].mcast_rate='6000'
+ 	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[1].mcast_rate='6000'
  fi
 
 
  #############################################################################
- # setup tbb_fastd network assigned to a firewall zone (tbb) for a interface that is not controlled
+ # setup tbb_fastd network assigned to a firewall zone (mesh) for a interface that is not controlled
  # by openwrt. Bringing up tbb+ failes, but firewall rules are created anyway
  # got this information by testing, because openwrt feature to add non-controlled
  # interfaces (via netifd) was not working.
@@ -390,7 +382,7 @@ done
  	uci add network interface
  	uci rename network.@interface[-1]='tbb_fastd'
  }
- uci set network.tbb_fastd.ifname="tbb_fastd"
+ uci set network.tbb_fastd.ifname="tbb-fastd"
  uci set network.tbb_fastd.proto='static'
 
  #bmxd bat zone, to a masq rules to firewall
@@ -436,12 +428,6 @@ done
  # add source net to zone to avoid fake source ip attacks
  # except for lan and wan, to allow internet ip going to gw
  # if bmxd one-way-tunnel is used, we must accept inet
- uci delete firewall.zone_lan.subnet
-# uci add_list firewall.zone_lan.subnet="$lan_net/$lan_pre"
- uci delete firewall.zone_wifi.subnet
-# uci add_list firewall.zone_wifi.subnet="$_ddmesh_fullnet"
- uci delete firewall.zone_tbb.subnet
-# uci add_list firewall.zone_tbb.subnet="$_ddmesh_fullnet"
  uci delete firewall.zone_wifi2.subnet
  uci add_list firewall.zone_wifi2.subnet="$_ddmesh_wifi2net"
 
@@ -457,31 +443,19 @@ done
 	uci set firewall.@rule[-1].target="ACCEPT"
 #	uci set firewall.@rule[-1].family="ipv4"
  }
- uci -q del firewall.wifissh
- test "$(uci -q get ddmesh.system.wifissh)" = "1" && {
+ uci -q del firewall.meshssh
+ test "$(uci -q get ddmesh.system.meshssh)" = "1" && {
  	uci add firewall rule
- 	uci rename firewall.@rule[-1]='wifissh'
- 	uci set firewall.@rule[-1].name="Allow-wifi-ssh"
-	uci set firewall.@rule[-1].src="wifi"
-	uci set firewall.@rule[-1].proto="tcp"
-	uci set firewall.@rule[-1].dest_port="22"
-	uci set firewall.@rule[-1].target="ACCEPT"
-#	uci set firewall.@rule[-1].family="ipv4"
- }
- #tbb same as wifi (no extra switch)
- uci -q del firewall.tbbssh
- test "$(uci -q get ddmesh.system.wifissh)" = "1" && {
- 	uci add firewall rule
- 	uci rename firewall.@rule[-1]='tbbssh'
- 	uci set firewall.@rule[-1].name="Allow-tbb-ssh"
-	uci set firewall.@rule[-1].src="tbb"
+ 	uci rename firewall.@rule[-1]='meshssh'
+ 	uci set firewall.@rule[-1].name="Allow-mesh-ssh"
+	uci set firewall.@rule[-1].src="mesh"
 	uci set firewall.@rule[-1].proto="tcp"
 	uci set firewall.@rule[-1].dest_port="22"
 	uci set firewall.@rule[-1].target="ACCEPT"
 #	uci set firewall.@rule[-1].family="ipv4"
  }
  uci -q del firewall.wifi2ssh
- test "$(uci -q get ddmesh.system.wifissh)" = "1" && {
+ test "$(uci -q get ddmesh.system.meshssh)" = "1" && {
  	uci add firewall rule
  	uci rename firewall.@rule[-1]='wifi2ssh'
  	uci set firewall.@rule[-1].name="Allow-wifi2-ssh"
@@ -525,13 +499,32 @@ done
  }
 
 
+ /usr/lib/ddmesh/ddmesh-dnsmasq.sh configure
+
+}
+
+# uci needs valid symlinks
+config_create_symlink_files()
+{
+	mkdir -p /var/etc/config
+
+	#ensure we use temporarily created config after sysupgrade has restored config as file instead of symlink   
+	[ -L /etc/config/uhttpd ] || ( rm -f /etc/config/uhttpd && ln -s /var/etc/config/uhttpd /etc/config/uhttpd )
+	touch /var/etc/config/uhttpd
+
+	#ensure we use temporarily created config after sysupgrade has restored config as file instead of symlink   
+	[ -L /etc/config/wshaper ] || ( rm -f /etc/config/wshaper && ln -s /var/etc/config/wshaper /etc/config/wshaper )
+	touch /var/etc/config/wshaper
+
 }
 
 config_temp_configs() {
-#create directory to calm dnsmasq
-mkdir -p /tmp/hosts
-mkdir -p /var/etc
-cat<<EOM >/var/etc/dnsmasq.hosts
+# dnsmasq
+	# create directory to calm dnsmasq
+	mkdir -p /tmp/hosts
+	mkdir -p /var/etc
+
+	cat<<EOM >/var/etc/dnsmasq.hosts
 127.0.0.1 localhost
 $_ddmesh_wifi2ip hotspot
 EOM
@@ -543,7 +536,7 @@ EOM
 	# update /etc/opkg.conf
 	eval $(cat /etc/openwrt_release)
 	version="$(cat /etc/version)"
-	platform="${DISTRIB_TARGET%/*}"
+	platform="$DISTRIB_TARGET"
 	url="$(uci -q get credentials.url.opkg)"
 	cat <<EOM >/tmp/opkg.conf
 src/gz ddmesh $url/$version/$platform/packages
@@ -561,7 +554,10 @@ config uhttpd main
 	list listen_https	0.0.0.0:443
 	option home		/www
 	option rfc1918_filter 1
-	option max_requests	20
+	option max_requests	20	
+	option max_connections	100
+	option tcp_keepalive    1
+	option http_keepalive   60
 	option cert		/etc/uhttpd.crt
 	option key		/etc/uhttpd.key
 	list interpreter	".cgi=/bin/sh"
@@ -578,8 +574,6 @@ EOM
 cat <<EOM >>/var/etc/config/uhttpd
 	option script_timeout	600
 	option network_timeout	600
-	option tcp_keepalive	0
-	option http_keepalive	0
 	option realm		'$(uci get ddmesh.system.community)'
 	option index_page	index.cgi
 	option error_page	/index.cgi
@@ -596,6 +590,7 @@ config cert px5g
 EOM
 
 #traffic shaping
+
 cat <<EOM >/var/etc/config/wshaper
 config 'wshaper' 'settings'
   option network "$(uci get ddmesh.network.speed_network)"
@@ -628,12 +623,11 @@ $m */2 * * *  /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
 #internet
 */15 * * * * /usr/lib/ddmesh/freifunk-gateway-info.sh >/dev/null 2>/dev/null
 
-*/15 * * * * /usr/lib/ddmesh/ddmesh-geoloc.sh scan >/dev/null 2>/dev/null
 EOM
 
-if [ "$(uci -q get ddmesh.system.bmxd_nightly_restart)" = "1" ];then
+if [ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ];then
 cat<<EOM >> /var/etc/crontabs/root
-0 4 * * *  /usr/lib/ddmesh/ddmesh-bmxd.sh nightly >/dev/null 2>/dev/null
+0 4 * * *  /sbin/reboot
 EOM
 fi
 
@@ -655,37 +649,54 @@ setup_mesh_on_wire()
  if [ "$mesh_on_lan" = "1" -o "$mesh_on_wan" = "1" ]; then
 	sleep 300
 
- 	# mesh-on-lan: move phys ethernet to br-tbb
+ 	# mesh-on-lan: move phys ethernet to br-meshwire
 	 lan_phy="$(uci -q get network.lan.ifname)"
 	 wan_phy="$(uci -q get network.wan.ifname)"
 
 	 if [ "$mesh_on_lan" = "1" ]; then
  		brctl delif $lan_ifname $lan_phy
-	 	brctl addif $tbb_ifname $lan_phy
+	 	brctl addif $meshwire_ifname $lan_phy
 	 fi
 
 	 if [ "$mesh_on_wan" = "1" -a "$wan_iface_present" = "1" ]; then
  		brctl delif $wan_ifname $wan_phy
-	 	brctl addif $tbb_ifname $wan_phy
+	 	brctl addif $meshwire_ifname $wan_phy
 	 fi
  fi
 }
 
 wait_for_wifi()
 {
+	logger -s -t "$LOGGER_TAG" "check  for WIFI"
+	#check if usb stick is used. mostly do not support AP beside Adhoc
+	if [ -n "$(uci -q get wireless.@wifi-device[0].path | grep '/usb')" ]; then
+		only_adhoc=1
+	fi
+
 	c=0
-	max=20
+	max=30
 	while [ $c -lt $max ]
 	do
-		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi wifi)
-		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi2 wifi2)
-		if [ "$wifi_up" = 1 -a "$wifi2_up" = 1 ]; then
+		# use /tmp/state  instead of ubus because up-state is wrong.
+		# /tmp/state is never set back (but this can be ignored here. if needed use /etc/hotplug.d/iface)
+		wifi_up="$(uci -q -P /tmp/state get network.wifi.up)"
+		wifi2_up="$(uci -q -P /tmp/state get network.wifi2.up)"
+
+		logger -s -t "$LOGGER_TAG" "Wait for WIFI up: $c/$max (only_adhoc=$only_adhoc, wifi:$wifi_up, wifi2:$wifi_up)"
+
+		if [ -n "$only_adhoc" ]; then
+			wifi_is_up="$wifi_up"
+		else
+			if [ "$wifi_up" = 1 -a "$wifi2_up" = 1 ]; then
+				wifi_is_up=1
+			fi
+		fi
+		if [ "$wifi_is_up" = 1 ]; then
 			logger -s -t "$LOGGER_TAG" "WIFI is up - continue"
 			/usr/lib/ddmesh/ddmesh-led.sh wifi alive
 			break;
 		fi
-		logger -s -t "$LOGGER_TAG" "Wait for WIFI up: $c/$max"
-		sleep 5
+		sleep 1
 		c=$((c+1))
 	done
 }
@@ -699,6 +710,8 @@ if [ "$(uci -q get ddmesh.boot.firstboot)" = "1" ]; then
 	boot_step=3
 	uci -q del ddmesh.boot.firstboot
 fi
+
+config_create_symlink_files
 
 case "$boot_step" in
 	1) # initial boot step
@@ -718,44 +731,53 @@ case "$boot_step" in
 
 		#node valid after boot_step >= 2
 		node=$(uci get ddmesh.system.node)
-		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+		if [ -z "$node" ]; then                                                     
+			logger -t $LOGGER_TAG "ERROR: no node number"
+                else 
+			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
-		logger -t $LOGGER_TAG "run ddmesh upgrade"
-		/usr/lib/ddmesh/ddmesh-upgrade.sh
+			logger -t $LOGGER_TAG "run ddmesh upgrade"
+			/usr/lib/ddmesh/ddmesh-upgrade.sh
 
-		config_update
+			config_update
 
-		uci set ddmesh.boot.boot_step=3
-		/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
+			uci set ddmesh.boot.boot_step=3
+			/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
 
-		uci commit
-		logger -s -t "$LOGGER_TAG" "reboot boot step 2"
+			uci commit
+			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
 
-		sync
-		reboot
-		#stop boot process
-		exit 1
+			sync
+			reboot
+			#stop boot process
+			exit 1
+		fi
 		;;
 	3) # temp config
 		/usr/lib/ddmesh/ddmesh-led.sh status boot3
 		logger -s -t "$LOGGER_TAG" "boot step 3"
 		node=$(uci get ddmesh.system.node)
-		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
-		if [ "$1"  != "firewall" ]; then
-			config_temp_configs
-			wifi
-			#restart fw, because sometimes fw was not setup correctly by openwrt
-			wait_for_wifi
-			fw3 restart
-			/usr/lib/ddmesh/ddmesh-firewall-addons.sh once
-			/etc/init.d/uhttpd restart
-			/etc/init.d/wshaper restart
-			/etc/init.d/cron restart
+		if [ -z "$node" ]; then                                                     
+			logger -t $LOGGER_TAG "ERROR: no node number"
+                else 
+			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+			if [ "$1"  != "firewall" ]; then
+				config_temp_configs
+				logger -s -t "$LOGGER_TAG" "start wifi"
+				wifi &
+				#restart fw, because sometimes fw was not setup correctly by openwrt
+				wait_for_wifi
+				fw3 restart
+				/usr/lib/ddmesh/ddmesh-firewall-addons.sh once
+				/etc/init.d/uhttpd restart
+				/etc/init.d/wshaper restart
+				/etc/init.d/cron restart
+			fi
+			/usr/lib/ddmesh/ddmesh-firewall-addons.sh post
+			/usr/lib/ddmesh/ddmesh-firewall-addons.sh update
+			# delay start mesh_on_wire, to allow access routeri config via lan/wan ip
+			setup_mesh_on_wire &
 		fi
-		/usr/lib/ddmesh/ddmesh-firewall-addons.sh post
-		/usr/lib/ddmesh/ddmesh-firewall-addons.sh update
-		# delay start mesh_on_wire, to allow access routeri config via lan/wan ip
-		setup_mesh_on_wire &
 esac
 #continue boot-process
 exit 0

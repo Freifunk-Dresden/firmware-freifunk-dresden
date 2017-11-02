@@ -21,6 +21,7 @@ compare_versions() {
 
 export TITLE="Verwaltung > Update > Firmware"
 
+# check before calling freifunk-upload
 if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
 	. /usr/lib/www/page-pre.sh ${0%/*}
 	notebox 'GET not allowed'
@@ -36,14 +37,14 @@ FIRMWARE="$(/usr/lib/ddmesh/ddmesh-get-firmware-name.sh)"
 DL_SERVER="$(uci get credentials.url.firmware_download_server)"
 URL_RELEASE="$(uci get credentials.url.firmware_download_release)"
 URL_TESTING="$(uci get credentials.url.firmware_download_testing)"
-URL_ARCH="${DISTRIB_TARGET%/*}"
+URL_ARCH="$DISTRIB_TARGET"
 FIRMWARE_FILE="/tmp/firmware.bin"
 ERROR_FILE1=/tmp/uclient.error1
 ERROR_FILE2=/tmp/uclient.error2
 CERT="--ca-certificate=/etc/ssl/certs/download.crt"
 
-rm $ERROR_FILE1
-rm $ERROR_FILE2
+rm -f $ERROR_FILE1
+rm -f $ERROR_FILE2
 
 #check connection, reduce timeout
 get_firmware_versions()
@@ -101,20 +102,28 @@ EOM
 	if [ -n "$FIRMWARE" ]; then
 
 	get_firmware_versions
+	cur_version="$(cat /etc/version)"
+	if [ -n "$firmware_release_version" ]; then
+		compare_versions "$firmware_release_version" "$cur_version" && firmware_release_version_ok=1
+	fi
+	if [ -n "$firmware_testing_version" ]; then
+		compare_versions "$firmware_testing_version" "$cur_version" && firmware_testing_version_ok=1
+	fi
+
 
 cat<<EOM
 	<table class="firmware">
 	<tr><td class="nowrap">
 	<form name="form_firmware_dl_release" action="firmware.cgi" method="POST" style="text-align: left;">
 	<input name="form_action" value="download_release" type="hidden">
-	<input $(test -z "$firmware_release_version" && echo disabled) name="form_firmware_submit" type="submit" value="Download latest ($firmware_release_version) Version from Server">
+	<input $(test -z "$firmware_release_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download latest ($firmware_release_version) Version from Server">
 	</form>
 	<div style="color:red;">$(test -z "$firmware_release_version" && cat $ERROR_FILE1)</div></td>
 	</tr>
 	<tr><td class="nowrap">
 	<form name="form_firmware_dl_testing" action="firmware.cgi" method="POST" style="text-align: left;">
 	<input name="form_action" value="download_testing" type="hidden">
-	<input $(test -z "$firmware_testing_version" && echo disabled) name="form_firmware_submit" type="submit" value="Download testing ($firmware_testing_version) Version from Server">
+	<input $(test -z "$firmware_testing_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download testing ($firmware_testing_version) Version from Server">
 	</form>
 	<div style="color:red;">$(test -z "$firmware_testing_version" && cat $ERROR_FILE2)</div></td>
 	</tr>
@@ -187,6 +196,12 @@ EOM
 				else
 					URL="$URL_TESTING/$URL_ARCH"
 					VER="$firmware_testing_version"
+				fi
+
+				if [ -z "$VER" ]; then
+					notebox "Error: Verbindungsfehler zum Server"
+					rm -f $FIRMWARE_FILE
+					break
 				fi
 
 				echo "<pre>"

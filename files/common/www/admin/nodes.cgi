@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Allgemein: Nodes"
+export TITLE="Allgemein: Knoten"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 

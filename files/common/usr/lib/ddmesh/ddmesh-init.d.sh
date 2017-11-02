@@ -7,6 +7,9 @@ start() {
 	# enable OOM killer reboot
 	sysctl  -wq vm.panic_on_oom=1
 
+	# disable cron job to avoid 'run-checks' starting services
+	/etc/init.d/cron stop
+
 	eval $(cat /etc/openwrt_release)
 
 	/usr/lib/ddmesh/ddmesh-led.sh wifi_off
@@ -29,15 +32,13 @@ start() {
 	logger -s -t $LOGGER_TAG "splash firewall"
 	/usr/lib/ddmesh/ddmesh-splash.sh loadconfig
 
-	logger -s -t $LOGGER_TAG "portforwarding"
-	/usr/lib/ddmesh/ddmesh-portfw.sh init
-
 	#---- starting serivces ------
 
-	#setup dnsmasq
+	# setup dnsmasq (BEFORE BMXD)
 	logger -s -t $LOGGER_TAG "dnsmasq"
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh start
 
+	# AFTER dnsmasq (bmxd script will overwrite resolv.conf.final)
 	logger -s -t $LOGGER_TAG "start service bmxd"
 	/usr/lib/ddmesh/ddmesh-bmxd.sh start
 
@@ -58,13 +59,6 @@ start() {
 		test -x /etc/init.d/openvpn && /etc/init.d/openvpn start
 	fi
 
-	if [ -x /usr/bin/nuttcp ]; then
-		logger -s -t $LOGGER_TAG "start service nuttcp"
-		nuttcp -S -P5010
-	else
-		logger -s -t $LOGGER_TAG "service nuttcp not installed"
-	fi
-
 	if [ -x /usr/bin/iperf3 ]; then
 		logger -s -t $LOGGER_TAG "start service iperf3"
 		iperf3 -s -D
@@ -74,6 +68,9 @@ start() {
 
 	logger -s -t $LOGGER_TAG "register node"
 	/usr/lib/ddmesh/ddmesh-register-node.sh
+
+	logger -s -t $LOGGER_TAG "start cron."
+	/etc/init.d/cron start
 
 	logger -s -t $LOGGER_TAG "finished."
 	/usr/lib/ddmesh/ddmesh-led.sh status done

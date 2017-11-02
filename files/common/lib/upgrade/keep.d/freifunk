@@ -1,0 +1,8 @@
+/etc/config/
+/etc/dropbear/
+/etc/hosts
+/etc/group
+/etc/passwd
+/etc/shadow
+/etc/openvpn
+

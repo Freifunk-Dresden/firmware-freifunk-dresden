@@ -1,4 +1,51 @@
 
+
+2017-10-1 4.2.10 (testing)
+--------------------------------------------------
+firmware upgrade	- fix upgradeing credentials
+firewall/network	- reduce firewall rules by creating one mesh zone and add tbb-fastd, wifi and meshwire
+			  to it
+syslog			- remove issues where syslog has displayed errors
+
+issues:
+	openvpn with certificates from Freifunk Berlin e.V. not working
+
+
+
+2017-10-1 4.2.9 (testing)
+--------------------------------------------------
+lede support		- for needed changes to support lede
+passwd			- factory resetted device can be accessed without passwort (instead default password)
+dnsmasq			- has still problems, Please specifiy second DNS in "Verwaltung-System" with 8.8.8.8
+			  as workaround
+sysupgrade		- fix problem with sysupgrade where no firmware could be loaded via gui.
+			  please load software paket fix_428.. to fix firmware update via gui when upgrading from
+			  4.2.8 if needed.
+gui-firmware update	- disable download button if no newer version is present (prevent downgrade issues)
+
+
+issues:
+	openvpn with certificates from Freifunk Berlin e.V. not working
+
+
+
+
+2017-09-12 4.2.8 
+--------------------------------------------------
+lede support		- add lede support for ar71xx and x86
+lede gui		- change color of info bar to blue (also for better reading)
+hotplug			- correct usage of hotplug event for wifi interface (adding interface to bmxd)
+boot			- lede: correct waiting for wifi interface before setting up firewall
+dnsmasq			- move from plain config to uci-config
+gui-sysinfo		- correct displaying free memory
+
+
+2017-08-06 4.2.6   Development state (NOT stable)
+--------------------------------------------------
+bugfix booting		- wait for wifi before firewall setup
+restart-gui		- reconfigure hardware option added (needed for x86 Futro S550 with wifi usb stick)
+
+
 2017-08-06 4.2.5   Development state (NOT stable)
 --------------------------------------------------
 openwrt			- upgrade to 15.05

@@ -8,6 +8,7 @@ export TITLE="Verwaltung > Update > Custom"
 
 CUSTOM_PATH="/www/custom"
 
+# check before freifunk-upload
 if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
 	. /usr/lib/www/page-pre.sh ${0%/*}
 	notebox 'GET not allowed'

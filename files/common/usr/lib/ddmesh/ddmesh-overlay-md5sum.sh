@@ -6,12 +6,12 @@ else
  d="/overlay"
 fi
 
-md5="$(find $d ! -regex "$d/etc/config/overlay" -exec md5sum {} 2>/dev/null \; | md5sum | cut -d' ' -f1)"
+md5="$(find $d ! -type l ! -name "overlay" -exec md5sum {} 2>/dev/null \; | md5sum | cut -d' ' -f1)"
 echo "cur:$md5"
 echo "old:$(uci get overlay.@overlay[0].md5sum)"
 
 test "$1" = "write" && {
-	uci set overlay.@overlay[0].md5sum="$md5"
+	uci set overlay.data.md5sum="$md5"
 	uci commit
 	echo "saved."
 }

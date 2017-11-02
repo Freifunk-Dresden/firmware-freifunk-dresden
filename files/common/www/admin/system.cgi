@@ -111,13 +111,13 @@ cat<<EOM
 
 <TR>
 <TH>- SSH erlauben:</TH>
-<TD><INPUT NAME="form_wifissh" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.wifissh)" = "1" ];then echo ' checked="checked"';fi)></TD>
+<TD><INPUT NAME="form_meshssh" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.meshssh)" = "1" ];then echo ' checked="checked"';fi)></TD>
 <td></td>
 </TR>
 
 <TR>
 <TH>- Zugang zur Verwaltung erlauben:</TH>
-<TD><INPUT NAME="form_wifisetup" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.wifisetup)" = "1" ];then echo ' checked="checked"';fi)></td>
+<TD><INPUT NAME="form_meshsetup" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.meshsetup)" = "1" ];then echo ' checked="checked"';fi)></td>
 <td><font color="#ff0000">&Auml;nderung nach &Uuml;bernahme sofort aktiv. Router-Reset via Verwaltung aus dem Freifunk-Netz ist nicht erreichbar.</font></TD>
 </TR>
 
@@ -187,7 +187,7 @@ cat<<EOM
 
 <TR>
 <TH>- Automatischer n&auml;chtlicher Neustart:</TH>
-<TD><INPUT NAME="form_nightly_reboot" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.bmxd_nightly_restart)" = "1" ];then echo ' checked="checked"';fi)></td>
+<TD><INPUT NAME="form_nightly_reboot" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ];then echo ' checked="checked"';fi)></td>
 <td>T&auml;glich 4:00 Uhr wird der Router neu gestartet. Das l&ouml;sst manchmal seltsame Probleme, wenn der Router nicht mehr richtig funktioniert.<td>
 </TR>
 
@@ -214,8 +214,8 @@ else
 		uci set ddmesh.system.wanhttps=${form_wanhttps:-0}
 		uci set ddmesh.system.wanicmp=${form_wanicmp:-0}
 		uci set ddmesh.system.wansetup=${form_wansetup:-0}
-		uci set ddmesh.system.wifissh=${form_wifissh:-0}
-		uci set ddmesh.system.wifisetup=${form_wifisetup:-0}
+		uci set ddmesh.system.meshssh=${form_meshssh:-0}
+		uci set ddmesh.system.meshsetup=${form_meshsetup:-0}
 		uci set ddmesh.system.announce_gateway=${form_announce_gateway:-0}
 		uci set ddmesh.network.lan_local_internet=${form_lan_local_internet:-0}
 		uci set ddmesh.network.mesh_on_lan=${form_lan_meshing:-0}
@@ -223,7 +223,7 @@ else
 		prefgw="$(uhttpd -d $form_lan_preferred_gateway)"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}
-		uci set ddmesh.system.bmxd_nightly_restart=${form_nightly_reboot:-0}
+		uci set ddmesh.system.nightly_reboot=${form_nightly_reboot:-0}
 		uci set ddmesh.network.internal_dns="$(uhttpd -d $form_internal_dns)"
 		uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
 		uci set ddmesh.network.mesh_network_id=${form_mesh_network_id:-0}

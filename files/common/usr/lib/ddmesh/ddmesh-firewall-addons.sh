@@ -8,7 +8,7 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
 fwprint()
 {
- #echo iptables $*
+ # logger -s -t "addon" "iptables $*"
  iptables -w $*
 }
 
@@ -65,18 +65,16 @@ setup_custom_rules() {
 	$IPT -N input_backbone_reject
 	$IPT -A input_wan_rule -j input_backbone_accept
 	$IPT -A input_lan_rule -j input_backbone_accept
-	$IPT -A input_tbb_rule -j input_backbone_reject
+	$IPT -A input_mesh_rule -j input_backbone_reject
 	$IPT -A input_bat_rule -j input_backbone_reject
-	$IPT -A input_wifi_rule -j input_backbone_reject
 	$IPT -A input_wifi2_rule -j input_backbone_reject
 
 	$IPT -N output_backbone_accept
 	$IPT -N output_backbone_reject
 	$IPT -A output_wan_rule -j output_backbone_accept
 	$IPT -A output_lan_rule -j output_backbone_accept
-	$IPT -A output_tbb_rule -j output_backbone_reject
+	$IPT -A output_mesh_rule -j output_backbone_reject
 	$IPT -A output_bat_rule -j output_backbone_reject
-	$IPT -A output_wifi_rule -j output_backbone_reject
 	$IPT -A output_wifi2_rule -j output_backbone_reject
 
 	#input rules for privnet/ifirewall ( to restrict tunnel pakets only via allowed interfaces )
@@ -85,15 +83,14 @@ setup_custom_rules() {
 	$IPT -N input_privnet_reject
 	$IPT -A input_wan_rule -j input_privnet_reject
 	$IPT -A input_lan_rule -j input_privnet_reject
-	$IPT -A input_tbb_rule -j input_privnet_accept
+	$IPT -A input_mesh_rule -j input_privnet_accept
 	$IPT -A input_bat_rule -j input_privnet_reject
-	$IPT -A input_wifi_rule -j input_privnet_accept
 	$IPT -A input_wifi2_rule -j input_privnet_reject
 
 	#add rules to avoid access node via lan/wan ip; insert at start
 	#to consider other tables (backbone)
 	# loop through zones
-	for i in wifi wifi2 tbb bat lan wan vpn
+	for i in mesh wifi2 bat lan wan vpn
 	do
 	        $IPT -N input_"$i"_deny
 	        $IPT -I input_"$i"_rule -j input_"$i"_deny
@@ -105,16 +102,11 @@ setup_custom_rules() {
 	$IPT -A input_rule -i $lan_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-lan-request'
 	$IPT -A output_rule -o $lan_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-lan-response'
 
-	#snat tbb and wifi fro 10.201.xxx to 10.200.xxxx
-	$IPT -t nat -A postrouting_wifi_rule -p udp --dport 4305:4307 -j ACCEPT
-	$IPT -t nat -A postrouting_wifi_rule -p tcp --dport 4305:4307 -j ACCEPT
-	test "$lan_up" = "1" && $IPT -t nat -A postrouting_wifi_rule -s $lan_ipaddr/$lan_mask -j SNAT --to-source $_ddmesh_ip
-	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_wifi_rule -s $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $_ddmesh_ip
-
-	$IPT -t nat -A postrouting_tbb_rule -p udp --dport 4305:4307 -j ACCEPT
-	$IPT -t nat -A postrouting_tbb_rule -p tcp --dport 4305:4307 -j ACCEPT
-	test "$lan_up" = "1" && $IPT -t nat -A postrouting_tbb_rule -s $lan_ipaddr/$lan_mask -j SNAT --to-source $_ddmesh_ip
-	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_tbb_rule -s $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $_ddmesh_ip
+	#snat mesh from 10.201.xxx to 10.200.xxxx
+	$IPT -t nat -A postrouting_mesh_rule -p udp --dport 4305:4307 -j ACCEPT
+	$IPT -t nat -A postrouting_mesh_rule -p tcp --dport 4305:4307 -j ACCEPT
+	test "$lan_up" = "1" && $IPT -t nat -A postrouting_mesh_rule -s $lan_ipaddr/$lan_mask -j SNAT --to-source $_ddmesh_ip
+	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_mesh_rule -s $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $_ddmesh_ip
 
 	test "$lan_up" = "1" && $IPT -t nat -A postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan'
 	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2'
@@ -131,9 +123,8 @@ setup_openvpn_rules() {
 
 	CONF=/etc/openvpn/openvpn.conf
 	$IPT -N output_openvpn_reject
-	$IPT -A output_tbb_rule -j output_openvpn_reject
+	$IPT -A output_mesh_rule -j output_openvpn_reject
 	$IPT -A output_bat_rule -j output_openvpn_reject
-	$IPT -A output_wifi_rule -j output_openvpn_reject
 	$IPT -A output_wifi2_rule -j output_openvpn_reject
 	$IPT -A output_vpn_rule -j output_openvpn_reject
 
@@ -169,9 +160,9 @@ setup_statistic_rules() {
 	$IPT -A statistic -o $bat_ifname -j statistic_bat_output
 
 	$IPT -N statistic_wan_input
-	$IPT -A statistic -i $wan_ifname -j statistic_wan_input
+	test -n "$wan_ifname" && $IPT -A statistic -i $wan_ifname -j statistic_wan_input
 	$IPT -N statistic_wan_output
-	$IPT -A statistic -o $wan_ifname -j statistic_wan_output
+	test -n "$wan_ifname" && $IPT -A statistic -o $wan_ifname -j statistic_wan_output
 
 	$IPT -N statistic_lan_input
 	$IPT -A statistic -i $lan_ifname -j statistic_lan_input
@@ -201,12 +192,14 @@ callback_add_ignored_nodes() {
 
 setup_ignored_nodes() {
 
-	#add rules to deny some nodes to prefer backbone connections
-	$IPT -N input_ignore_nodes
-	$IPT -I input_wifi_rule -j input_ignore_nodes
+	if [ -n "$wifi_ifname" ]; then
+		#add rules to deny some nodes to prefer backbone connections
+		$IPT -N input_ignore_nodes
+		$IPT -I input_mesh_rule -i $wifi_ifname -j input_ignore_nodes
 
-	config_load ddmesh
-	config_list_foreach ignore_nodes node callback_add_ignored_nodes
+		config_load ddmesh
+		config_list_foreach ignore_nodes node callback_add_ignored_nodes
+	fi
 }
 
 
@@ -227,28 +220,25 @@ case "$1" in
 		# ips are not valid if iface went down -> clear tables
 		# use reject instead of DROP, else it is possible to scan for ip timeout
 		$IPT -F input_wan_deny
-		$IPT -F input_wifi_deny
+		$IPT -F input_mesh_deny
 		$IPT -F input_wifi2_deny
-		$IPT -F input_tbb_deny
 		$IPT -F input_bat_deny
 		$IPT -F input_vpn_deny
 
 		if [ "$lan_up" = "1" ]; then
-			$IPT -A input_wan_deny -d $lan_network/$lan_mask -j reject
-			$IPT -A input_wifi_deny -d $lan_network/$lan_mask -j reject
-			$IPT -A input_wifi2_deny -d $lan_network/$lan_mask -j reject
-			$IPT -A input_tbb_deny -d $lan_network/$lan_mask -j reject
-			$IPT -A input_bat_deny -d $lan_network/$lan_mask -j reject
-			$IPT -A input_vpn_deny -d $lan_network/$lan_mask -j reject
+			for n in wan mesh wifi2 bat vpn
+			do
+				$IPT -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
+				$IPT -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
+			done
 		fi
 
 		if [ "$wan_up" = "1" ]; then
-			$IPT -A input_lan_deny -d $wan_network/$wan_mask -j reject
-			$IPT -A input_wifi_deny -d $wan_network/$wan_mask -j reject
-			$IPT -A input_wifi2_deny -d $wan_network/$wan_mask -j reject
-			$IPT -A input_tbb_deny -d $wan_network/$wan_mask -j reject
-			$IPT -A input_bat_deny -d $wan_network/$wan_mask -j reject
-			$IPT -A input_vpn_deny -d $wan_network/$wan_mask -j reject
+			for n in lan mesh wifi2 bat vpn
+			do
+				$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
+				$IPT -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject
+			done
 		fi
 
 		#update port forwarding on hotplug.d/iface (wan rules)

@@ -14,6 +14,7 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 vpn=vpn0
 gwt=bat0
 
+eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
 eval $(cat /etc/openwrt_release)
 tunnel_info="$(/usr/lib/ddmesh/freifunk-gateway-info.sh cache)"
 gps_lat=$(uci -q get ddmesh.gps.latitude)
@@ -23,8 +24,6 @@ gps_lon=${gps_lon:=0}
 gps_alt=$(uci -q get ddmesh.gps.altitude)
 gps_alt=${gps_alt:=0}
 avail_flash_size=$(df -k -h /overlay | sed -n '2,1{s# \+# #g; s#[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\) .*#\1#;p}')
-
-geoloc=/tmp/geoloc.json
 
 if [ "$(uci get ddmesh.system.disable_splash)" = "1" ]; then
 	splash=0
@@ -48,9 +47,11 @@ esac
 wifi_txpower="-1"
 test "$wifi_iface_present" = "1" && wifi_txpower="$(iw $wifi_ifname info | awk '/txpower/{print $2}')"
 
-device_model="$(cat /var/sysinfo/model 2>/dev/null)"
+device_model="$(cat /var/sysinfo/model 2>/dev/null | sed 's#[ ]\+$##')"
 test -z "$device_model" && device_model="$(cat /proc/cpuinfo | grep 'model name' | cut -d':' -f2)"
 
+cpu_info="$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')"
+test -z "$cpu_info" && cpu_info="$(cat /proc/cpuinfo | grep 'model name' | cut -d':' -f2)"
 
 cat << EOM >> $OUTPUT
 {
@@ -69,19 +70,23 @@ cat << EOM >> $OUTPUT
 			"DISTRIB_REVISION":"$DISTRIB_REVISION",
 			"DISTRIB_CODENAME":"$DISTRIB_CODENAME",
 			"DISTRIB_TARGET":"$DISTRIB_TARGET",
-			"DISTRIB_DESCRIPTION":"$DISTRIB_DESCRIPTION"
+			"DISTRIB_DESCRIPTION":"$DISTRIB_DESCRIPTION",
+			"git-lede-ref":"$git_lede_ref",
+			"git-lede-branch":"$git_lede_branch",
+			"git-ddmesh-ref":"$git_ddmesh_ref",
+			"git-ddmesh-branch":"$git_ddmesh_branch"
 		},
 		"system":{
 			"uptime":"$(cat /proc/uptime)",
 			"uname":"$(uname -a)",
 			"nameserver": [
-$(cat /tmp/resolv.conf.auto| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*\(.*\)#\t\t\t\t"\1",#;p}' | sed '$s#,##')
+$(cat /tmp/resolv.conf.auto| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*\(.*\)#\t\t\t\t"\1",#;p}' | sed '$s#,[ 	]*$##')
 			],
 			"date":"$(date)",
 			"board":"$(cat /var/sysinfo/board_name 2>/dev/null)",
 			"model":"$device_model",
 			"model2":"$(cat /proc/diag/model 2>/dev/null)",
-			"cpuinfo":"$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')",
+			"cpuinfo":"$cpu_info",
 			"bmxd" : "$(cat $BMXD_DB_PATH/status)",
 			"essid":"$(uci get wireless.@wifi-iface[1].ssid)",
 			"node_type":"$node_type",
@@ -107,16 +112,6 @@ $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 			"longitude":$gps_lon,
 			"altitude":$gps_alt
 		},
-		"geoloc":
-EOM
-
-if [ -f $geoloc ]; then
-        echo "$(cat $geoloc)," >> $OUTPUT
-else
-        echo '{"nodata":1},' >> $OUTPUT
-fi
-
-cat<<EOM >> $OUTPUT
 		"contact":{
 			"name":"$(uci -q get ddmesh.contact.name)",
 			"location":"$(uci -q get ddmesh.contact.location)",
@@ -145,7 +140,7 @@ EOM
 			done
 			# from /sys
 			# iface:sysinfo_key
-			for net in priv:privnet tbb_fastd:tbb_fastd br-tbb:tbb_lan
+			for net in priv:privnet tbb-fastd:tbb_fastd br-meshwire:mesh_wire
 			do
 				first=${net%:*}
 				second=${net#*:}

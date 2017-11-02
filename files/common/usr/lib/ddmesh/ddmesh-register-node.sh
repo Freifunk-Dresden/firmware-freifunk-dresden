@@ -1,7 +1,5 @@
 #!/bin/sh
 
-. /usr/share/libubox/jshn.sh
-
 LOGGER_TAG="register.node"
 AUTO_REBOOT=1
 
@@ -32,7 +30,7 @@ test -z "$key" && {
 }
 
 echo "Try to register node [$node], key [$key]"
-n="$(uclient-fetch $CERT -O- "$(uci get credentials.registration.register_service_url)$key&node=$node" 2>/dev/null)"
+n="$(uclient-fetch $CERT -O- $(uci get credentials.registration.register_service_url)$key&node=$node 2>/dev/null)"
 
 if [ -z "$n" ]; then
 	echo "connection error"
@@ -40,17 +38,16 @@ if [ -z "$n" ]; then
 fi
 
 json=$(echo "$n" | sed -n '/^{/{:L;p;n;bL;}')
-json_load "$json"
-json_get_var j_version "version"
-json_select "registration"
-json_get_var j_status "status"
-json_get_var j_error "error"
-json_get_var j_node "node"
-json_select ".."
-json_select "control"
-json_get_var j_gateway "gateway"
-json_get_var j_netid "netid"
-json_get_var j_dns "dns"
+
+eval $(echo "$json" | jsonfilter \
+	-e j_version='@.version' \
+	-e j_status='@.registration.status' \
+	-e j_error='@.registration.error' \
+	-e j_node='@.registration.node' \
+	-e j_gateway='@.control.gateway' \
+	-e j_netid='@.control.netid' \
+	-e j_dns='@.control.dns' \
+)
 
 #echo "j_version:$j_version"
 #echo "j_status:$j_status"

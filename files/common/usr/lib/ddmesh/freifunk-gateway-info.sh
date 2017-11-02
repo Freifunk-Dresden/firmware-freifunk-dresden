@@ -2,8 +2,6 @@
 
 # determines ip address/country for tunnel ip of running openvpn (dev vpn)
 
-. /usr/share/libubox/jshn.sh
-
 DATA=/var/lib/ddmesh/tunnel_info
 
 eval $(ip ro list ta public_gateway | sed -n 's#default.*[ ]\([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\) dev \([^ ]\+\).*#via=\1; dev=\2#p')

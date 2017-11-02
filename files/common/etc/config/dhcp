@@ -1,8 +1,30 @@
-config dnsmasq
-	#option	domain 'ddmesh.de'
-	#add search to resolv.conf
-	#option  add_local_domain 1
-	#dont add hostname/lan
-	#option  add_local_hostname 0
-	#same as in dnsmasq.conf.manual
-	#option leasefile '/tmp/dhcp.leases'
+config dnsmasq 'dnsmasq'
+        option logqueries '0'
+        option localise_queries '1'
+        option rebind_protection '0'
+        option authoritative '1'
+        option leasefile '/tmp/dhcp.leases'
+        option localservice '1'
+	option allservers '1'
+	option fqdn '1'
+	option expandhosts '1'
+        option dnssec '0'
+	# cachesize must be > 100 else geoloc.ffdd is not resolved
+        option cachesize '100'
+	option nonegcache '1'
+        option readethers '1'
+        option filterwin2k '0'
+	list notinterface ''
+	option leasefile '/tmp/dhcp.leases'
+        option resolvfile '/tmp/resolv.conf.final'
+        option boguspriv '1'
+
+config dhcp 'lan'
+	# start dhcp server also if another server is running in network
+	option force '1'
+        option interface 'lan'
+
+config dhcp 'wifi2'
+	# start dhcp server also if another server is running in network
+	option force '1'
+        option interface 'wifi2'

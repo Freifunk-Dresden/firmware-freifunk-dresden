@@ -13,8 +13,7 @@ cat<<EOM
 		<td class="navi" valign="top" height="100%" width="150"><img alt="" border="0" height="62" src="/images/ff-logo-3.gif" width="150"></td>
 	</tr>
 	<tr><td colspan="5" height="5"></td></tr>
-	<tr><td class="navibar" colspan="5" height="18" width="100%"><a href="/license.cgi?license=0">License/Copyright</a>
-Version:<font color="white">&nbsp;$(cat /etc/version)</font>, Internet&nbsp;IPv4&nbsp;via:&nbsp;<font color="white">$INET_GW</font>, Verbunden&nbsp;via:&nbsp;<font color="white">$in_ifname</font></td></tr>
+	<tr><td class="navibar" colspan="5" height="18" width="100%"><span class="infobar"><a href="/license.cgi?license=0">License/Copyright</a>, Internet&nbsp;IPv4&nbsp;via:&nbsp;<span class="infobarvalue">$INET_GW</span>, Verbunden&nbsp;via:&nbsp;<span class="infobarvalue">$in_ifname</span></span></td></tr>
 </table>
 </body>
 </html>

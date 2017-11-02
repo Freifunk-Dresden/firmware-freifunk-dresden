@@ -74,7 +74,7 @@ Diese Angaben sind auf der Seite <a href="/contact.cgi">Kontakt</a>
 f&uuml;r andere sichtbar.</p>
 <fieldset class="bubble">
 <legend>Google Maps</legend>
-<img id="geoloc_map" border="0" src="https://maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x300&maptype=roadmap&markers=color:green%7Clabel:R%7C$(uci get ddmesh.gps.latitude),$(uci get ddmesh.gps.longitude)&sensor=false">
+<img id="geoloc_map" border="0" src="http://maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x300&maptype=roadmap&markers=color:green%7Clabel:R%7C$(uci get ddmesh.gps.latitude),$(uci get ddmesh.gps.longitude)&sensor=false">
 </fieldset>
 
 EOF

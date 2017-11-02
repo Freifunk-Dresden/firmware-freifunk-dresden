@@ -1,0 +1,3 @@
+#!/bin/sh
+logger -t ddmesh "network-hotplug net: [$INTERFACE] $ACTION type:$DEVTYPE"
+
