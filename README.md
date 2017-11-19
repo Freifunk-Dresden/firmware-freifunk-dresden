@@ -27,9 +27,9 @@ zubeachten. Der genaue Text und die Regeln lassen sich in license/license.txt na
 
 Links:
 ------
-<a href="www.freifunk-dresden.de" >Freifunk Dresden</a><br>
-<a href="wiki.freifunk-dresden.de" >Wiki: Freifunk Dresden</a><br>
-<a href="bt.freifunk-dresden.de" >Bugtracker</a><br>
+<a href="http://www.freifunk-dresden.de" >Freifunk Dresden</a><br>
+<a href="http://wiki.freifunk-dresden.de" >Wiki: Freifunk Dresden</a><br>
+<a href="http://bt.freifunk-dresden.de" >Bugtracker</a><br>
 <a href="http://google.com/+FreifunkDresden%EF%BB%BF/about"> Google+</a><br>
 <a href="https://plus.google.com/communities/108088672678522515509"> Google+ Community</a><br>
 <a href="https://www.facebook.com/FreifunkDresden"> Facebook</a>
