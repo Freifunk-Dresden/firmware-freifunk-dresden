@@ -1,7 +1,7 @@
 Freifunk Dresden: Router Firmware
 =================================
 
-Original Source / Built tree for <a href="www.freifunk-dresden.de" >Freifunk Dresden</a> Firmware<br>
+Original Source / Built tree for <a href="http://www.freifunk-dresden.de" >Freifunk Dresden</a> Firmware<br>
 
 ACHTUNG
 =======
