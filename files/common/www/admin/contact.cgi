@@ -14,6 +14,8 @@ tmp_name=$(uhttpd -d "$(uci get ddmesh.contact.name)")
 tmp_email=$(uhttpd -d "$(uci get ddmesh.contact.email)")
 tmp_location=$(uhttpd -d "$(uci get ddmesh.contact.location)")
 tmp_note=$(uhttpd -d "$(uci get ddmesh.contact.note)")
+lat=$(uci get ddmesh.gps.latitude)
+lon=$(uci get ddmesh.gps.longitude)
 
 cat<<EOF
 <form action="contact.cgi" method="POST">
@@ -44,13 +46,13 @@ cat<<EOF
 
 <tr title="GPS-Position,Breitengrad (z.B.: 51.05812205978327)">
 <th>GPS Latitude:</th>
-<td><input id="geoloc_lat" name="form_gps_latitude" size="20" type="text" value="$(uci get ddmesh.gps.latitude)">(z.B.: 51.05812205978327)</td>
+<td><input id="geoloc_lat" name="form_gps_latitude" size="20" type="text" value="$lat">(z.B.: 51.05812205978327)</td>
 <td><button onclick="ajax_geoloc()" type="button" title="$(lang text-geoloc01)">$(lang text-geoloc00)</button></td>
 </tr>
 
 <tr title="GPS-Position,L&auml;ngengrad (z.B.:13.72053812812492">
 <th>GPS Longitude:</th>
-<td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$(uci get ddmesh.gps.longitude)">(z.B.:13.720</td>
+<td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$lon">(z.B.:13.720</td>
 <td></td>
 </tr>
 
@@ -74,7 +76,7 @@ Diese Angaben sind auf der Seite <a href="/contact.cgi">Kontakt</a>
 f&uuml;r andere sichtbar.</p>
 <fieldset class="bubble">
 <legend>Google Maps</legend>
-<img id="geoloc_map" border="0" src="http://maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x300&maptype=roadmap&markers=color:green%7Clabel:R%7C$(uci get ddmesh.gps.latitude),$(uci get ddmesh.gps.longitude)&sensor=false">
+<img id="geoloc_map" border="0" src="https://freifunk.it-service-merkelt.de/staticmap.php?center=$lat,$lon&zoom=15&markers=$lat,$lon,ol-marker-blue">
 </fieldset>
 
 EOF
