@@ -17,7 +17,7 @@ Ziel:
 ----
 Freifunk hat es sich zum Ziel gesetzt, Menschen möglichst flächendeckend mit freiem WLAN zu versorgen. Freier Zugang zu Informationen ist nicht nur eine Quelle für Wissen, sondern kann sich auch positiv auf die wirtschaftliche und kulturelle Entwicklung einer Stadt, Region und Land auswirken, da das Internet in der heutigen Zeit sicher ein fester Bestandteil des täglichen Lebens geworden ist. Freifunk bietet die Möglichkeit, Internet per WLAN frei zu nutzen - ohne Zugangssperren und sicher, da der Internettraffic via verschlüsselten Internettunnel (VPN) ins Ausland geroutet wird. 
 
-Diese Firmware ist für verschiedene Router (derzeit auf ar71xx Plattform) gedacht.
+Diese Firmware ist für verschiedene Router (derzeit Plattformen: ar71xx, x86) gedacht.
 
 License:
 --------
