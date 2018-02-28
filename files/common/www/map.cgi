@@ -10,7 +10,19 @@ cat <<EOF
 <br>
 <fieldset class="bubble">
 <legend>Openstreetmap</legend>
-<img border="0" alt="standort" src="https://freifunk.it-service-merkelt.de/staticmap.php?center=$lat,$lon&zoom=15&markers=$lat,$lon,ol-marker-blue">
+<div id="nodeMap"></div>
+<style>
+@import"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css";
+#nodeMap{height:300px;width:600px;}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js"></script>
+<script>
+var map = L.map('nodeMap').setView([$lat, $lon], 18);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+L.marker([$lat, $lon]).addTo(map).bindPopup('$COMMUNITY [$_ddmesh_node]').openPopup();
+</script>
 </fieldset>
 EOF
 

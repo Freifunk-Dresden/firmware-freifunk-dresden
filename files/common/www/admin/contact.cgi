@@ -50,9 +50,9 @@ cat<<EOF
 <td><button onclick="ajax_geoloc()" type="button" title="$(lang text-geoloc01)">$(lang text-geoloc00)</button></td>
 </tr>
 
-<tr title="GPS-Position,L&auml;ngengrad (z.B.:13.72053812812492">
+<tr title="GPS-Position,L&auml;ngengrad (z.B.:13.72053812812492)">
 <th>GPS Longitude:</th>
-<td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$lon">(z.B.:13.720</td>
+<td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$lon">(z.B.:13.72053812812492)</td>
 <td></td>
 </tr>
 
@@ -75,10 +75,21 @@ cat<<EOF
 Diese Angaben sind auf der Seite <a href="/contact.cgi">Kontakt</a>
 f&uuml;r andere sichtbar.</p>
 <fieldset class="bubble">
-<legend>Google Maps</legend>
-<img id="geoloc_map" border="0" src="https://freifunk.it-service-merkelt.de/staticmap.php?center=$lat,$lon&zoom=15&markers=$lat,$lon,ol-marker-blue">
+<legend>Openstreetmap</legend>
+<div id="nodeMap"></div>
+<style>
+@import"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css";
+#nodeMap{height:300px;width:600px;}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js"></script>
+<script>
+var map = L.map('nodeMap').setView([$lat, $lon], 18);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+L.marker([$lat, $lon]).addTo(map).bindPopup('$COMMUNITY [$_ddmesh_node]').openPopup();
+</script>
 </fieldset>
-
 EOF
 }
 
