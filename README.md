@@ -23,7 +23,7 @@ License:
 --------
 Um die Firmware zu nutzen und im Dresdner Freifunk Netzwerk zu verwenden, sind die License und einige Regeln
 zubeachten. Der genaue Text und die Regeln lassen sich in license/license.txt nachlesen und MÜSSEN eingehalten werden
-(siehe dazu Knotenspezifikationen im Wiki).
+(siehe dazu Knotenspezifikationen im Wiki). 
 
 Links:
 ------
