@@ -17,13 +17,13 @@ Ziel:
 ----
 Freifunk hat es sich zum Ziel gesetzt, Menschen möglichst flächendeckend mit freiem WLAN zu versorgen. Freier Zugang zu Informationen ist nicht nur eine Quelle für Wissen, sondern kann sich auch positiv auf die wirtschaftliche und kulturelle Entwicklung einer Stadt, Region und Land auswirken, da das Internet in der heutigen Zeit sicher ein fester Bestandteil des täglichen Lebens geworden ist. Freifunk bietet die Möglichkeit, Internet per WLAN frei zu nutzen - ohne Zugangssperren und sicher, da der Internettraffic via verschlüsselten Internettunnel (VPN) ins Ausland geroutet wird. 
 
-Diese Firmware ist für verschiedene Router (derzeit Plattformen: ar71xx, x86) gedacht.
+Diese Firmware ist für verschiedene Router gedacht.
 
 License:
 --------
 Um die Firmware zu nutzen und im Dresdner Freifunk Netzwerk zu verwenden, sind die License und einige Regeln
-zubeachten. Der genaue Text und die Regeln lassen sich in license/license.txt nachlesen und MÜSSEN eingehalten werden
-(siehe dazu Knotenspezifikationen im Wiki). 
+zubeachten. Der genaue Text und die Regeln lassen sich in license/license.txt nachlesen und MÜSSEN eingehalten werden.
+Siehe dazu Knotenspezifikationen im Wiki!
 
 Links:
 ------

@@ -110,7 +110,7 @@ else #query string
 		uci set ddns.dyndns.domain="$form_ddns_domain"
 
 		uci set ddmesh.boot.boot_step=2
-		uci commit
+		uci_commit.sh
 		notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 	else #submit
 		notebox "Es wurden keine Einstellungen ge&auml;ndert."

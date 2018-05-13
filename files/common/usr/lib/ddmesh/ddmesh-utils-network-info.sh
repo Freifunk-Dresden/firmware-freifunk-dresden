@@ -4,7 +4,7 @@
 
 test -z "$1" && {
 	echo "$0 <list> | <network-name>"
-	echo "  network name (wan,wifi,wifi2,meshwire,vpn,...) or all"
+	echo "  network name (wan,wifi,wifi2,mesh_lan,mesh_wan,vpn,...) or all"
 	exit 1
 }
 
@@ -71,6 +71,11 @@ test -z "$1" && {
 		else
 			prefix=${2:-net}
 		fi
+
+		# replace "-" with "_" to allow network names with "-" in there names
+		# but have valid variable names
+		prefix=${prefix/-/_}
+
 		echo export $prefix"_iface_present=$net_iface_present"
 		echo export $prefix"_mask=$net_mask"
 		echo export $prefix"_ipaddr=$net_ipaddr"

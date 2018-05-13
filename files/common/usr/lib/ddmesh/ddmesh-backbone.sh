@@ -22,7 +22,7 @@ genkey()
 		uci -q rename credentials.@backbone_secret[-1]='backbone_secret'
 	}
 	uci -q set credentials.backbone_secret.key="$(fastd --machine-readable --generate-key)"
-	uci -q commit
+	uci_commit.sh
 }
 
 generate_fastd_conf()

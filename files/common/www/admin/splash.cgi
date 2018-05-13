@@ -98,42 +98,6 @@ Trennung nach:
 </fieldset>
 <br/>
 <fieldset class="bubble">
-<legend>Wifi Dhcp Lease Zeit</legend>
-<form name="form_splash_lease" action="splash.cgi" method="post">
-<input name="form_splash_action" value="lease" type="hidden">
-<table>
-<tr><td colspan="4">Hier wird die Zeit eingestellt, nach der ein Endger&auml;t die Wifi IP Adressen aktualisieren muss.
-Erfolgt keine Aktualisierung, wird der Nutzer wieder gespeert (falls Splash aktiv ist).<br/>
-F&uuml;r &ouml;ffentliche Orte, sollte der Wert klein gehalten werden,
-um die Verf&uuml;gbarkeit des Knotens f&uuml;r andere zu erh&ouml;en.<br/>
-</td></tr>
-<tr>
-<td class="nowrap" width="150">
-DHCP Lease:
-	<select name="form_lease_time" size="1">
-	<option selected value="5m"> 5min (öffentliche Plätze)</option>
-	<option value="10m">10min</option>
-	<option value="15m">15min</option>
-	<option value="20m">20min (Imbiss)</option>
-	<option value="30m">30min</option>
-	<option value="45m">45min (Kneipe)</option>
-	<option value="1h"> 1h</option>
-	<option value="2h"> 2h (Veranstaltungen)</option>
-	<option value="3h"> 3h</option>
-	<option value="5h"> 5h</option>
-	<option value="10h">10h</option>
-	<option value="48h">48h (Camps)</option>
-	<option value="96h">96h</option>
-	</select>
-	&nbsp;(<b>aktuell:</b> $(uci get ddmesh.network.wifi2_dhcplease))
-</td>
-<td><input name="form_lease_submit" type="submit" value="Anwenden"></td>
-</tr>
-</table>
-</form>
-</fieldset>
-<br/>
-<fieldset class="bubble">
 <legend>Aktuelle WLAN Client MAC Adressen</legend>
 <table>
 <tr><td colspan="4">Hier k&ouml;nnen MAC Adressen dauerhaft eingetragen werden, so dass diese nach einem Neustart aktiv sind.</td></tr>
@@ -232,14 +196,14 @@ if [ -n "$QUERY_STRING" ]; then
 		  add)
 			mac=$(uhttpd -d $form_splash_mac)
 			uci add_list ddmesh.network.splash_mac="$mac"
-			uci commit
+			uci_commit.sh
 			/usr/lib/ddmesh/ddmesh-splash.sh addmac $mac >/dev/null
 			notebox "MAC Adresse <b>$mac</b> hinzugef&uuml;gt."
 			;;
 		  del)
 			mac=$(uhttpd -d $form_splash_mac)
 			uci del_list ddmesh.network.splash_mac="$mac"
-			uci commit
+			uci_commit.sh
 			/usr/lib/ddmesh/ddmesh-splash.sh delmac $mac >/dev/null
 			notebox "MAC Adresse <b>$mac</b> gel&ouml;scht."
 			;;
@@ -250,7 +214,7 @@ if [ -n "$QUERY_STRING" ]; then
 			;;
 		  delall)
 			uci delete ddmesh.network.splash_mac
-			uci commit
+			uci_commit.sh
 			notebox "Alle MAC Adressen wurden gel&ouml;scht."
 			;;
 		  disable)
@@ -260,16 +224,11 @@ if [ -n "$QUERY_STRING" ]; then
 		  		uci set ddmesh.system.disable_splash="0"
 		  	fi
 			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
-			uci commit
+			uci_commit.sh
 		  	;;
-		  lease)
-			uci set ddmesh.network.wifi2_dhcplease="$form_lease_time"
-			uci commit
-			notebox "Lease Zeit aktualisiert."
-			;;
 		  disconnect)
 			uci set ddmesh.network.client_disconnect_timeout="$form_disconnect_timeout"
-			uci commit
+			uci_commit.sh
 			notebox "WLAN Clientverbindungen werden absofort nach $form_disconnect_timeout Minuten unterbrochen"
 			;;
 		esac

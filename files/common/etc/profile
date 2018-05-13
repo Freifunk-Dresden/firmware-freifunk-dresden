@@ -5,6 +5,7 @@ fgrep -sq '/ overlay ro,' /proc/mounts && {
 	echo 'Your JFFS2-partition seems full and overlayfs is mounted read-only.'
 	echo 'Please try to remove files from /overlay/upper/... and reboot!'
 }
+echo "Firmware version: $(cat /etc/version)"
 
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export HOME=$(grep -e "^${USER:-root}:" /etc/passwd | cut -d ":" -f 6)
@@ -14,6 +15,7 @@ export HOME=${HOME:-/root}
 alias ls='ls -F'
 alias dir='ls -lF'
 m=$(cat /var/sysinfo/model 2>/dev/null)
+m="$(echo $m | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 export PS1='\[\033[01;31m\]$m\[\033[00m\] @ \[\033[01;37m\]\h\[\033[00m\]:\w\$ '
 
 [ -x /bin/more ] || alias more=less

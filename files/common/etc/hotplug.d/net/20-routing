@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# check existence of one rule to assume all rules are present.
-# only restart routing if netifd has removed all rules
-rules="$(ip rule | grep local_gateway)"
-if [ "$ACTION" = add -a -z "$rules" ]; then
-	logger -t ddmesh "network-hotplug: [$INTERFACE] re-setup freifunk networking"
-	/usr/lib/ddmesh/ddmesh-routing.sh restart
-fi

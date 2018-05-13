@@ -143,7 +143,7 @@ cat<<EOM
 <TR>
 <TH>- WAN Meshing:</TH>
 <TD><INPUT NAME="form_wan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ];then echo ' checked="checked"';fi)></TD>
-<td>Wenn aktiv, wird der WAN Port zum direkten 'Meshing' genutzt. Der Router ist dann NUR noch &uuml;ber Knoten IP via WAN erreichbar.<br/>WAN Konfiguration ist deaktiviert. WAN Meshing wird 5min nach Routerstart aktiviert.</td>
+<td>Wenn aktiv, wird der WAN Port zum direkten 'Meshing' genutzt. Der Router ist dann NUR noch &uuml;ber Knoten IP via WAN erreichbar.<br/>WAN Konfiguration ist deaktiviert. WAN Meshing wird 5 min nach Routerstart aktiviert.</td>
 </TR>
 
 EOM
@@ -153,7 +153,7 @@ cat<<EOM
 <TR>
 <TH>- LAN Meshing:</TH>
 <TD><INPUT NAME="form_lan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ];then echo ' checked="checked"';fi)></TD>
-<td>Wenn aktiv, werden alle LAN Ports zum direkten 'Meshing' genutzt. Der Router ist dann NUR noch &uuml;ber Knoten IP via LAN erreichbar.<br/>LAN Konfiguration und Privates-Netzwerk sind deaktiviert. LAN Meshing wird 5min nach Routerstart aktiviert.</td>
+<td>Wenn aktiv, werden alle LAN Ports zum direkten 'Meshing' genutzt. Der Router ist dann NUR noch &uuml;ber Knoten IP via LAN erreichbar.<br/>LAN Konfiguration und Privates-Netzwerk sind deaktiviert. LAN Meshing wird 5 min nach Routerstart aktiviert.</td>
 </TR>
 <TR>
 <TH>- Bevorzugtes Gateway (IP):</TH>
@@ -228,7 +228,7 @@ else
 		uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
 		uci set ddmesh.network.mesh_network_id=${form_mesh_network_id:-0}
 		uci set ddmesh.boot.boot_step=2
-		uci commit
+		uci_commit.sh
 		notebox  'Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv.'
 		test -n "$prefgw" && bmxd -cp $prefgw 2>&1 >/dev/null
 	else

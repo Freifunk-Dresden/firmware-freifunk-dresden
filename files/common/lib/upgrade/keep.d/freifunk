@@ -5,4 +5,6 @@
 /etc/passwd
 /etc/shadow
 /etc/openvpn
+# keep urandom.seeds else it will be regenerated after firmware flash and modify overlay md5sum
+/etc/urandom.seed
 

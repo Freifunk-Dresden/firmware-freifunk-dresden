@@ -21,7 +21,6 @@
 
 #batman
 64      bat_route
-65      bat_hna
 66      bat_default
 
 

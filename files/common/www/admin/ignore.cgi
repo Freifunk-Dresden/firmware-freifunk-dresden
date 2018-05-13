@@ -78,18 +78,18 @@ if [ -n "$QUERY_STRING" ]; then
 			node=$(uhttpd -d $form_node)
 			uci
 			uci add_list ddmesh.ignore_nodes.node="$node"
-			uci commit
+			uci_commit.sh
 			notebox "Knoten <b>$node</b> hinzugef&uuml;gt. Neustart notwendig"
 			;;
 		  del)
 			node=$(uhttpd -d $form_node)
 			uci del_list ddmesh.ignore_nodes.node="$node"
-			uci commit
+			uci_commit.sh
 			notebox "Knoten <b>$node</b> gel&ouml;scht. Neustart notwendig."
 			;;
 		  delall)
 			uci delete ddmesh.ignore_nodes.node
-			uci commit
+			uci_commit.sh
 			notebox "Alle Knoten wurden gel&ouml;scht. Neustart notwendig."
 			;;
 		esac

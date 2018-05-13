@@ -35,14 +35,25 @@ function ajax_register(data)
 	lock_register=0;
 }
 
+function onMarkerMove(event)
+{
+	lat=event.target.getLatLng().lat.toFixed(5) 
+	lng=event.target.getLatLng().lng.toFixed(5)
+	$("#geoloc_lat").val(lat);
+	$("#geoloc_lng").val(lng);
+//	var icon = L.icon({iconUrl:"https://leafletjs.com/examples/custom-icons/leaf-red.png", iconSize: [20, 20], iconAnchor: [10, 20]});
+//	marker.setIcon(icon);
+	marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
+}
 function geoloc_callback(data)
 {
 	try {
-		$("#geoloc_lat").val(data.location.lat);
-		$("#geoloc_lng").val(data.location.lng);
-		$("#geoloc_alt").val(0);
-		$("#geoloc_map").attr("src","http://maps.googleapis.com/maps/api/staticmap?zoom=15&size=600x300&maptype=roadmap&markers=color:red%7Clabel:R%7C"
-			 + data.location.lat + "," + data.location.lng +"&sensor=false");
+		lat=data.location.lat.toFixed(5) 
+		lng=data.location.lng.toFixed(5) 
+		$("#geoloc_lat").val(lat);
+		$("#geoloc_lng").val(lng);
+		marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
+		marker.setLatLng([lat, lng]);
 
 	} catch (e) {}
 }
@@ -59,7 +70,7 @@ function ajax_geoloc(data)
 
 function checknumber (v)
 {
-	var re = new RegExp("[0-9]+");
+	var re = new RegExp("^[0-9]+$");
 	return ! re.test(v);
 }
 
@@ -76,3 +87,20 @@ function isNumberKey(evt)
  if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
  return true;
 }
+
+function isWifiKey(evt)
+{
+ var charCode = (evt.which) ? evt.which : event.keyCode
+ if (charCode < 32 || charCode > 127) return false;
+ return true;
+}
+function checkWifiKey(key)
+{
+ for(var i=0; i<key.length; i++)
+ {
+  charCode = key.charCodeAt(i);
+  if (charCode < 32 || charCode > 127) return false;
+ } 
+ return true;
+}
+

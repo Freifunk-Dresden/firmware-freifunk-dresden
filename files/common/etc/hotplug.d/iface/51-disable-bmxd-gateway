@@ -1,3 +1,6 @@
+
+test -f /tmp/freifunk-running || exit 0
+
 #echo "$ACTION:$INTERFACE:$DEVICE" >>/tmp/x
 #deaktivate gateway immediately, when cable is unplugged
 [ ifdown = "$ACTION" ] && {

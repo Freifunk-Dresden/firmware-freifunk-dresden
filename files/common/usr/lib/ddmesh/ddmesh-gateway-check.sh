@@ -5,7 +5,7 @@ ip_rule_priority=98
 ip_rule_priority_unreachable=99
 ip_fwmark=0x7	# restrict gwcheck to icmp only.firewall marks icmp traffic to allow registration to same ip
 
-DEBUG=false
+DEBUG=true
 LOGGER_TAG="GW_CHECK"
 OVPN=/etc/init.d/openvpn
 
@@ -48,7 +48,7 @@ start_openvpn()
 	local_gateway_present="$(ip ro li ta local_gateway)"
 	#only start openvpn when we have
 	if [ -n "$local_gateway_present" -a -x $OVPN ]; then
-		logger -s -t "$LOGGER_TAG" "restart openvpn"
+		#logger -s -t "$LOGGER_TAG" "restart openvpn"
 		$OVPN restart
 	fi
 }
@@ -72,6 +72,7 @@ $DEBUG && echo "start"
 
 #dont use vpn server (or any openvpn server), it could interrupt connection
 ping_vpn_hosts="85.114.135.114 178.254.18.30 85.14.253.99 46.38.243.230 5.45.106.241 84.200.50.17 46.105.31.203 84.200.85.38 109.73.51.35 178.63.61.147"
+#ping_vpn_hosts="85.14.253.99 46.38.243.230 5.45.106.241 84.200.50.17 46.105.31.203 84.200.85.38 109.73.51.35 178.63.61.147"
 ping_hosts="$ping_vpn_hosts 8.8.8.8"
 #process max 3 user ping
 cfg_ping="$(uci -q get ddmesh.network.gateway_check_ping)"
@@ -139,7 +140,9 @@ do
 	#add route to gateway, to avoid routing via freifunk
 	ip route add $via/32 dev $dev table ping
 
+	# ping must be working for at least the half of IPs
 	IFS=' '
+	numIPs=0
 	for ip in $gw_ping
 	do
 		$DEBUG && echo "add ping route ip:$ip"
@@ -149,7 +152,9 @@ do
 
 		# mark only tested ip addresses
 		iptables -t mangle -A output_gateway_check -p icmp -d $ip -j MARK --set-mark $ip_fwmark
+		numIPs=$((numIPs+1))
 	done
+	echo "number IPs: $numIPs"
 
 	ip route add unreachable default table ping
 
@@ -160,24 +165,35 @@ do
 
 	#run check
 	ok=false
+	countSuccessful=0
+	minSuccessful=$(( (numIPs+1)/2 ))
+	if [ $minSuccessful -lt 4 ]; then minSuccessful=4; fi
+	echo "minSuccessful: $minSuccessful"
+
 	IFS=' '
 	for ip in $gw_ping
 	do
 		$DEBUG && echo "ping to: $ip via dev $dev"
 		# specify interface is needed when there is no route yet
-		ping -I $dev -c 2 -w 5 $ip  2>&1 && ok=true && break
+		# And count successful pings
+		ping -I $dev -c 2 -w 5 $ip  2>&1 && countSuccessful=$((countSuccessful+1))
+
+		if [ $countSuccessful -ge $minSuccessful ]; then
+			ok=true
+			break
+		fi
 	done
 	if $ok; then
 		$DEBUG && echo "gateway found: via [$via] dev [$dev] (landev: [$default_lan_ifname], wandev=[$default_wan_ifname, vpndev=[$default_vpn_ifname]])"
 
 		#always add wan or lan to local gateway
 		if [ "$dev" = "$default_lan_ifname" -o "$dev" = "$default_wan_ifname" ]; then
-			logger -s -t "$LOGGER_TAG" "Set local gateway: dev:$dev, ip:$via"
+			#logger -s -t "$LOGGER_TAG" "Set local gateway: dev:$dev, ip:$via"
 			setup_gateway_table $dev $via local_gateway
 			#if lan/wan is tested, then we have no vpn which is working. so clear public gateway
 			#if not announced
 			if [ ! "$(uci -q get ddmesh.system.announce_gateway)" = "1" ]; then
-				logger -s -t "$LOGGER_TAG" "remove public gateway: dev:$dev, ip:$via"
+				#logger -s -t "$LOGGER_TAG" "remove public gateway: dev:$dev, ip:$via"
 				ip route flush table public_gateway 2>/dev/null
 				/usr/lib/ddmesh/ddmesh-bmxd.sh no_gateway
 
@@ -203,7 +219,7 @@ do
 	else
 		$DEBUG && echo "gateway not found: via $via dev $dev (landev:$default_lan_ifname, wandev=$default_wan_ifname)"
 
-		logger -s -t "$LOGGER_TAG" "remove local/public gateway: dev:$dev, ip:$via"
+		#logger -s -t "$LOGGER_TAG" "remove local/public gateway: dev:$dev, ip:$via"
 		# remove default route only for interface that was tested! if wan and lan is set
 		# but wan is dead, then default route via lan must not be deleted
 		ip route del default via $via dev $dev table local_gateway
@@ -225,7 +241,7 @@ iptables -t mangle -F output_gateway_check
 #in case no single gateway was working but gateway was announced, clear gateways
 if ! $ok; then
 	#remove all in default route from public_gateway table
-	$DEBUG && logger -s -t "$LOGGER_TAG" "no gateway found"
+	$DEBUG && echo "no gateway found"
 	ip route flush table local_gateway 2>/dev/null
 	ip route flush table public_gateway 2>/dev/null
 	/usr/lib/ddmesh/ddmesh-bmxd.sh no_gateway

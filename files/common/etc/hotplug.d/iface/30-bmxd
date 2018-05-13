@@ -1,10 +1,12 @@
 #!/bin/sh
 
+test -f /tmp/freifunk-running || exit 0
+
 # use /etc/hotplug.d/iface  instead  /etc/hotplug.d/net because
 # "net" is triggered serveral times during boot, but final state
 # is only triggerred once via "iface"
 
-gger -t ddmesh "network-hotplug iface: network:[$INTERFACE] interface:$DEVICE $ACTION"
+logger -t ddmesh "network-hotplug iface: network:[$INTERFACE] interface:$DEVICE $ACTION"
 
 if [ "$INTERFACE" = "wifi" ]; then 
 

@@ -54,6 +54,15 @@ watchdog_bmxd()
 
 }
 
+watchdog_routing()
+{
+	rules="$(ip rule | grep bat_route)"
+	if [ -z "$rules" ]; then
+		logger -t $TAG "routing: restore routing rules"
+		/usr/lib/ddmesh/ddmesh-routing.sh restart
+	fi
+}
+
 #--------- watchdog definitions ----
 
 # call watchdog scripts
@@ -63,6 +72,7 @@ watchdog_bmxd()
 # "iw reg get" has changed its output format. perhaps wifi-dead bug is solved?
 # call_watchdog 2 watchdog_wifi
 
+call_watchdog 3 watchdog_routing
 call_watchdog 2 watchdog_bmxd
 call_watchdog 5 watchdog_wifi_scanfix
 call_watchdog 5 /usr/lib/ddmesh/ddmesh-backbone.sh runcheck

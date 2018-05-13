@@ -33,6 +33,7 @@ define Package/libuecc
   CATEGORY:=ddmesh
   TITLE:=Very small Elliptic Curve Cryptography library
   URL:=http://git.universe-factory.net/libuecc/
+  SUBMENU:=Packages
 endef
 
 TARGET_CFLAGS += -ffunction-sections -fdata-sections

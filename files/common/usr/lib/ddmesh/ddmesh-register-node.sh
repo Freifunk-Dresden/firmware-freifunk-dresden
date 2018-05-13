@@ -97,7 +97,7 @@ case "$j_status" in
 				logger -s -t $LOGGER_TAG "update preferred gateway to $j_gateway."
 			fi
 
-			test "$uci_commit" = 1 && uci commit
+			test "$uci_commit" = 1 && uci_commit.sh
 
 			#if node wasn't stored before
 			[ -n "$node" ] && [ "$(uci get ddmesh.system.node)" != "$node" ] && {
@@ -106,7 +106,7 @@ case "$j_status" in
 				uci set ddmesh.system.node=$node
 				#config depending on node must be updated and causes a second reboot
 				uci set ddmesh.boot.boot_step=2
-			  	uci commit
+			  	uci_commit.sh
 
 				echo "update https certificate"
 				rm /etc/uhttpd.key

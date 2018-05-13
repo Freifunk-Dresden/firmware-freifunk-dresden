@@ -5,6 +5,19 @@ export TITLE="Verwaltung > Tools > Speedtest-iperf3"
 
 
 cat<<EOF
+<script type="text/javascript"> 
+function checkInput()                                                     
+{                                                                         
+	var node = document.getElementById('id_node').value;  
+	if( node === undefined || checknumber(node) || node < 0)
+	{                                                                                    
+		alert("Falsche Knotennummer");
+		return false;                                                                                    
+	}                                                                                                        
+	return true;                                                                                                     
+}                                                                                                                        
+</script>
+
 <h2>$TITLE</h2>
 <br>
 EOF
@@ -48,13 +61,13 @@ EOM
 fi
 
 cat<<EOF
-<form action="speedtest-iperf3.cgi" method="POST">
+<form action="speedtest-iperf3.cgi" method="POST" onsubmit="return checkInput();">
 <fieldset class="bubble">
 <legend>Speedtest</legend>
 <table>
 <tr>
 <th>Knotennummer:</th>
-<td><input name="node" size="10" type="text"></td>
+<td><input id="id_node" name="node" size="10" type="text" onkeypress="return isNumberKey(event);"></td>
 <td><input name="post_speedtest" type="submit" value="Test"></td>
 <td style="width: 100%;"></td>
 </tr>

@@ -51,15 +51,18 @@
 //packete eintreffen.
 #define STEPHAN_ALLOW_TUNNEL_PAKETS
 
+#ifdef STEPHAN_ENABLE_TWT
 #define ARG_UNRESP_GW_CHK "unresp_gateway_check"
 static int32_t unresp_gw_chk;
-
-#define ARG_TWO_WAY_TUNNEL "two_way_tunnel"
-static int32_t one_way_tunnel;
+#endif //#ifdef STEPHAN_ENABLE_TWT
 
 #define ARG_ONE_WAY_TUNNEL "one_way_tunnel"
-static int32_t two_way_tunnel;
+static int32_t one_way_tunnel;
 
+#ifdef STEPHAN_ENABLE_TWT
+#define ARG_TWO_WAY_TUNNEL "two_way_tunnel"
+static int32_t two_way_tunnel;
+#endif //#ifdef STEPHAN_ENABLE_TWT
 
 #define ARG_GW_HYSTERESIS "gateway_hysteresis"
 #define MIN_GW_HYSTERE    1
@@ -71,7 +74,13 @@ static int32_t gw_hysteresis;
 #define DEF_GWTUN_NETW_PREFIX  "169.254.0.0" /* 0x0000FEA9 */
 static uint32_t gw_tunnel_prefix;
 
-#define MIN_GWTUN_NETW_MASK 20
+#ifdef STEPHAN_ENABLE_TWT
+    #define MIN_GWTUN_NETW_MASK 20
+#else
+    #define MIN_GWTUN_NETW_MASK 16  //damit ich per options 10.200er network angeben kann und
+                                    //wenn bmxd als gateway arbeitet die ip auch gesetzt wird
+#endif //#ifdef STEPHAN_ENABLE_TWT
+
 #define MAX_GWTUN_NETW_MASK 30
 //change default from 22 to 20 to have 2^ (32-20) clients: 1023 -> 4095 clients
 #define DEF_GWTUN_NETW_MASK 20
@@ -219,15 +228,19 @@ struct gws_args
 	int8_t netmask;
 	int32_t port;
 	int32_t owt;
+#ifdef STEPHAN_ENABLE_TWT
 	int32_t twt;
 	int32_t lease_time;
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	int mtu_min;
 	uint32_t my_tun_ip;
 	uint32_t my_tun_netmask;
 	uint32_t my_tun_ip_h;
 	uint32_t my_tun_suffix_mask_h;
 	struct sockaddr_in  client_addr;
+#ifdef STEPHAN_ENABLE_TWT
 	struct gw_client **gw_client_list;
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	int32_t sock;
 	int32_t tun_fd;
 	int32_t tun_ifi;
@@ -676,7 +689,11 @@ static int32_t cb_tun_ogm_hook( struct msg_buff *mb, uint16_t oCtx, struct neigh
 		tuno  &&
 		tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS  &&
                 ( tuno->tun_array[0].EXT_GW_FIELD_GWTYPES &
-                  ((two_way_tunnel ? TWO_WAY_TUNNEL_FLAG : 0) | (one_way_tunnel ? ONE_WAY_TUNNEL_FLAG : 0))) &&
+                  (
+#ifdef STEPHAN_ENABLE_TWT
+                      (two_way_tunnel ? TWO_WAY_TUNNEL_FLAG : 0) |
+#endif //#ifdef STEPHAN_ENABLE_TWT
+                      (one_way_tunnel ? ONE_WAY_TUNNEL_FLAG : 0))) &&
 		curr_gateway->orig_node != on  &&
 		(	( pref_gateway == on->orig )  ||
 			( pref_gateway != curr_gateway->orig_node->orig  &&  
@@ -702,7 +719,7 @@ static int32_t cb_tun_ogm_hook( struct msg_buff *mb, uint16_t oCtx, struct neigh
 
 
 
-
+#ifdef STEPHAN_ENABLE_TWT
 static int32_t gwc_handle_tun_ip_reply( struct tun_packet *tp, uint32_t sender_ip, int32_t rcv_buff_len ) {
 	
     dbg( DBGL_SYS, DBGT_INFO, "got IP reply: sender %s ip %s", ipStr(sender_ip), ipStr(gwc_args->gw_addr.sin_addr.s_addr));
@@ -867,17 +884,19 @@ static void gwc_maintain_twt( void* unused ) {
 
 	}
 
-	
 	register_task( 1000 + rand_num(100), gwc_maintain_twt, NULL );
 	
 	return;
 }
-
+#endif //#ifdef STEPHAN_ENABLE_TWT
 
 
 static void gwc_recv_tun( int32_t fd_in ) {
 	
-	uint16_t r=0, dns_port = htons( 53 );
+        uint16_t r=0;
+#ifdef STEPHAN_ENABLE_TWT
+        uint16_t  = htons( 53 );
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	int32_t tp_data_len, tp_len;
 	struct iphdr *iphdr;
 	
@@ -921,11 +940,14 @@ static void gwc_recv_tun( int32_t fd_in ) {
 		}
 		
 		
-		if ( (gwc_args->tunnel_type & ONE_WAY_TUNNEL_FLAG) ||
-		     (gwc_args->tunnel_type & TWO_WAY_TUNNEL_FLAG  &&  
+                if ( (gwc_args->tunnel_type & ONE_WAY_TUNNEL_FLAG)
+#ifdef STEPHAN_ENABLE_TWT
+                     || (gwc_args->tunnel_type & TWO_WAY_TUNNEL_FLAG  &&
 		      gwc_args->tun_ip_lease_duration  &&  
 		      iphdr->saddr == gwc_args->my_tun_addr &&  
-		      iphdr->saddr != gwc_args->gw_addr.sin_addr.s_addr ) ) 
+                      iphdr->saddr != gwc_args->gw_addr.sin_addr.s_addr )
+#endif //#ifdef STEPHAN_ENABLE_TWT
+                     )
 		{
 			
 			if ( sendto( gwc_args->udp_sock, (unsigned char*) &tp.start, tp_len, 0, 
@@ -941,7 +963,8 @@ static void gwc_recv_tun( int32_t fd_in ) {
 			}
 		
 			// dbgf_all( DBGT_INFO "Send data to gateway %s, len %d", gw_str, tp_len );
-			
+
+#ifdef STEPHAN_ENABLE_TWT
 			// activate unresponsive GW check only based on TCP and DNS data
 			if ( (gwc_args->tunnel_type & TWO_WAY_TUNNEL_FLAG)  &&  
 			     unresp_gw_chk  &&  
@@ -955,6 +978,7 @@ static void gwc_recv_tun( int32_t fd_in ) {
 					gwc_args->gw_state_stamp = batman_time;
 				  }
 			}
+#endif //#ifdef STEPHAN_ENABLE_TWT
 
 
 		} else /*if ( gwc_args->last_invalidip_warning == 0 || 
@@ -978,7 +1002,7 @@ static void gwc_recv_tun( int32_t fd_in ) {
 }
 
 
-
+#ifdef STEPHAN_ENABLE_TWT
 
 void gwc_recv_udp( int32_t fd_in ) {
 	
@@ -1099,7 +1123,7 @@ void gwc_recv_udp( int32_t fd_in ) {
 	}
 
 }
-
+#endif //#ifdef STEPHAN_ENABLE_TWT
 
 
 
@@ -1109,8 +1133,10 @@ static void gwc_cleanup( void ) {
 	if ( gwc_args ) {
 		
 		dbgf( DBGL_CHANGES, DBGT_WARN, "aborted: %s, curr_gateway_changed", (is_aborted()? "YES":"NO") );
-		
+
+#ifdef STEPHAN_ENABLE_TWT
 		remove_task( gwc_maintain_twt, NULL );
+#endif //#ifdef STEPHAN_ENABLE_TWT
 		
 		update_interface_rules( IF_RULE_CLR_TUNNEL );
 		
@@ -1127,7 +1153,9 @@ static void gwc_cleanup( void ) {
 		
 		if ( gwc_args->udp_sock ) {
 			close( gwc_args->udp_sock );
+#ifdef STEPHAN_ENABLE_TWT
 			set_fd_hook( gwc_args->udp_sock, gwc_recv_udp, YES /*delete*/ );
+#endif //#ifdef STEPHAN_ENABLE_TWT
 		}
 		
 		// critical syntax: may be used for nameserver updates
@@ -1165,7 +1193,11 @@ static int8_t gwc_init( void ) {
 	struct orig_node *on = curr_gateway->orig_node;
 	struct tun_orig_data *tuno = on->plugin_data[ tun_orig_registry ];
 	
-	if ( !( tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & ((two_way_tunnel?TWO_WAY_TUNNEL_FLAG:0)|(one_way_tunnel?ONE_WAY_TUNNEL_FLAG:0)) ) ) {
+        if ( !( tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & (
+#ifdef STEPHAN_ENABLE_TWT
+                    (two_way_tunnel?TWO_WAY_TUNNEL_FLAG:0)|
+#endif //#ifdef STEPHAN_ENABLE_TWT
+                    (one_way_tunnel?ONE_WAY_TUNNEL_FLAG:0)) ) ) {
 		dbgf( DBGL_SYS, DBGT_ERR, "curr_gateway does not support desired tunnel type!");
 		goto gwc_init_failure;
 	}
@@ -1195,14 +1227,14 @@ static int8_t gwc_init( void ) {
 	gwc_args->my_addr.sin_addr.s_addr = primary_addr;
 
 	gwc_args->mtu_min = Mtu_min;
-	
+#ifdef STEPHAN_ENABLE_TWT
 	if ( /*two_way_tunnel > which_tunnel_max &&*/ (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & TWO_WAY_TUNNEL_FLAG) ){
 		
 		gwc_args->tunnel_type = TWO_WAY_TUNNEL_FLAG;
 		which_tunnel_max = two_way_tunnel;
 		
 	}
-	
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	if (one_way_tunnel > which_tunnel_max && (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & ONE_WAY_TUNNEL_FLAG) ) {
 			
 		gwc_args->tunnel_type = ONE_WAY_TUNNEL_FLAG;
@@ -1242,12 +1274,12 @@ static int8_t gwc_init( void ) {
 		dbg( DBGL_SYS, DBGT_ERR, "can't set opts of tunnel socket: %s", strerror(errno) );
 		goto gwc_init_failure;
 	}
-	
+#ifdef STEPHAN_ENABLE_TWT
 	if ( set_fd_hook( gwc_args->udp_sock, gwc_recv_udp, NO /*no delete*/ ) < 0 ) {
 		dbg( DBGL_SYS, DBGT_ERR, "can't register gwc_recv_udp hook" );
 		goto gwc_init_failure;
 	}
-
+#endif //#ifdef STEPHAN_ENABLE_TWT
 
 	curr_gateway->last_failure = batman_time;
 	
@@ -1292,12 +1324,14 @@ static int8_t gwc_init( void ) {
 		     gwc_args->tun_dev, ipStr( gwc_args->my_addr.sin_addr.s_addr ) , gwc_args->mtu_min  );
 		
 		
-	} else /*if ( gwc_args->tunnel_type & TWO_WAY_TUNNEL_FLAG )*/ {
+        }
+#ifdef STEPHAN_ENABLE_TWT
+        else /*if ( gwc_args->tunnel_type & TWO_WAY_TUNNEL_FLAG )*/ {
 		
 		register_task( 0, gwc_maintain_twt, NULL );
 		
 	}
-
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	
 	return SUCCESS;
 	
@@ -1317,7 +1351,7 @@ gwc_init_failure:
 
 
 
-
+#ifdef STEPHAN_ENABLE_TWT
 
 static void gws_cleanup_leased_tun_ips( uint32_t lt, struct gw_client **gw_client_list, uint32_t my_tun_ip, uint32_t my_tun_netmask ) {
 	
@@ -1440,13 +1474,14 @@ static void gws_garbage_collector( void* unused ) {
 
 	if ( gws_args == NULL )
 		return;
-	
+
 	// close unresponsive client connections (free unused IPs)
 	gws_cleanup_leased_tun_ips( gws_args->lease_time, gws_args->gw_client_list, gws_args->my_tun_ip, gws_args->my_tun_netmask );
 
 	register_task( 5000 + rand_num( 100 ), gws_garbage_collector, NULL );
 }
 
+#endif //#ifdef STEPHAN_ENABLE_TWT
 
 // is udp packet from GW-Client
 static void gws_recv_udp( int32_t fd_in ) {
@@ -1502,7 +1537,7 @@ static void gws_recv_udp( int32_t fd_in ) {
 
 			}
 			
-			
+#ifdef STEPHAN_ENABLE_TWT
 			if ( gws_args->twt ) {
 			
 				uint32_t iph_addr_suffix_h = ntohl( iphdr->saddr ) & ntohl( ~gws_args->my_tun_netmask );
@@ -1533,8 +1568,12 @@ static void gws_recv_udp( int32_t fd_in ) {
 					dbg( DBGL_SYS, DBGT_ERR, "can't write packet: %s", strerror(errno) );  
 				
 			}
+#endif //#ifdef STEPHAN_ENABLE_TWT
 		
-		} else if ( tp.TP_TYPE == TUNNEL_IP_REQUEST && gws_args->twt ) {
+                }
+
+#ifdef STEPHAN_ENABLE_TWT
+                else if ( tp.TP_TYPE == TUNNEL_IP_REQUEST && gws_args->twt ) {
 			
 			if ( gws_get_ip_addr( addr.sin_addr.s_addr, &tp.LEASE_IP, gws_args->gw_client_list, gws_args->my_tun_ip, gws_args->my_tun_netmask ) )
 				tp.LEASE_LT = htons( gws_args->lease_time );
@@ -1555,8 +1594,9 @@ static void gws_recv_udp( int32_t fd_in ) {
 				dbgf( DBGL_CHANGES, DBGT_INFO, "assigned %s to client: %s", 
 					      ipStr(tp.LEASE_IP), ipStr(addr.sin_addr.s_addr) );
 			}
-
-		} else {
+                }
+#endif //#ifdef STEPHAN_ENABLE_TWT
+                else {
 			
 			dbgf( DBGL_SYS, DBGT_ERR, "received unknown packet type %d from %s", 
 				      tp.TP_VERS, ipStr(addr.sin_addr.s_addr) );
@@ -1565,7 +1605,7 @@ static void gws_recv_udp( int32_t fd_in ) {
 	}
 }
 
-
+#ifdef STEPHAN_ENABLE_TWT
 // /dev/tunX activity 
 static void gws_recv_tun( int32_t fd_in ) {
 	
@@ -1619,7 +1659,7 @@ static void gws_recv_tun( int32_t fd_in ) {
 	return;
 }
 
-
+#endif //#ifdef STEPHAN_ENABLE_TWT
 
 static void gws_cleanup( void ) {
 		
@@ -1627,30 +1667,35 @@ static void gws_cleanup( void ) {
 	memset( my_gw_ext_array, 0, sizeof(struct ext_packet) );
 	
 	if ( gws_args ) {
-	
+
+#ifdef STEPHAN_ENABLE_TWT
 		remove_task( gws_garbage_collector, NULL );
-		
+#endif //#ifdef STEPHAN_ENABLE_TWT
+
 		if ( gws_args->tun_ifi )
 			add_del_route( gws_args->my_tun_ip, gws_args->netmask, 
 			               0, 0, gws_args->tun_ifi, gws_args->tun_dev, 254, RTN_UNICAST, DEL, TRACK_TUNNEL );
 			
 		if ( gws_args->tun_fd ) {
 			del_dev_tun( gws_args->tun_fd, gws_args->tun_dev, gws_args->my_tun_ip, __func__ );
+#ifdef STEPHAN_ENABLE_TWT
 			set_fd_hook( gws_args->tun_fd, gws_recv_tun, YES /*delete*/ );
+#endif //#ifdef STEPHAN_ENABLE_TWT
 		}
 		
 		if ( gws_args->sock ) {
 			close( gws_args->sock );
 			set_fd_hook( gws_args->sock, gws_recv_udp, YES /*delete*/ );
 		}
-		
+#ifdef STEPHAN_ENABLE_TWT
 		if( gws_args->gw_client_list ) {
 			
 			gws_cleanup_leased_tun_ips( 0, gws_args->gw_client_list, gws_args->my_tun_ip, gws_args->my_tun_netmask );
 			debugFree( gws_args->gw_client_list, 1210 );
 			
 		}
-		
+#endif //STEPHAN_ENABLE_TWT
+
 		// critical syntax: may be used for nameserver updates
 		dbg( DBGL_CHANGES, DBGT_INFO, "GWT: GW-server tunnel closed - dev: %s  IP: %s/%d  MTU: %d", 
 		     gws_args->tun_dev, ipStr( gws_args->my_tun_ip ), gws_args->netmask , gws_args->mtu_min  );
@@ -1692,8 +1737,10 @@ static int32_t gws_init( void ) {
 	gws_args->netmask = gw_tunnel_netmask;
 	gws_args->port = my_gw_port;
 	gws_args->owt = one_way_tunnel;
+#ifdef STEPHAN_ENABLE_TWT
 	gws_args->twt = two_way_tunnel;
 	gws_args->lease_time = Tun_leasetime;
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	gws_args->mtu_min = Mtu_min;
 	gws_args->my_tun_ip = gw_tunnel_prefix;
 	gws_args->my_tun_netmask = htonl( 0xFFFFFFFF<<(32-(gws_args->netmask)) );
@@ -1707,7 +1754,7 @@ static int32_t gws_init( void ) {
 	gws_args->client_addr.sin_family = AF_INET;
 	gws_args->client_addr.sin_port = htons(gws_args->port);
 	
-	
+#ifdef STEPHAN_ENABLE_TWT
 	if( (gws_args->gw_client_list = debugMalloc( (0xFFFFFFFF>>gw_tunnel_netmask) * sizeof( struct gw_client* ), 210 ) ) == NULL ) {
 	
 		dbgf( DBGL_SYS, DBGT_ERR, "could not allocate memory for gw_client_list");
@@ -1715,7 +1762,7 @@ static int32_t gws_init( void ) {
 	}
 	
 	memset( gws_args->gw_client_list, 0, (0xFFFFFFFF>>gw_tunnel_netmask) * sizeof( struct gw_client* ) );
-
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	if ( (gws_args->sock = socket( PF_INET, SOCK_DGRAM, 0 )) < 0 ) {
 
 		dbg( DBGL_SYS, DBGT_ERR, "can't create tunnel socket: %s", strerror(errno) );
@@ -1759,24 +1806,34 @@ static int32_t gws_init( void ) {
 		dbg( DBGL_SYS, DBGT_ERR, "can't add tun device" );
 		goto gws_init_failure;
 	}
-
+#ifdef STEPHAN_ENABLE_TWT
 	if ( set_fd_hook( gws_args->tun_fd, gws_recv_tun, NO /*no delete*/ ) < 0 ) {
 		dbg( DBGL_SYS, DBGT_ERR, "can't register gws_recv_tun hook" );
 		goto gws_init_failure;
 	}
-	
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	add_del_route( gws_args->my_tun_ip, gws_args->netmask, 
 	               0, 0, gws_args->tun_ifi, gws_args->tun_dev, 254, RTN_UNICAST, ADD, TRACK_TUNNEL );
-	
+
+#ifdef STEPHAN_ENABLE_TWT
 	register_task( 5000, gws_garbage_collector, NULL );
-	
+#endif //#ifdef STEPHAN_ENABLE_TWT
+
 	memset( my_gw_ext_array, 0, sizeof(struct ext_packet) );
 		
 	my_gw_ext_array->EXT_FIELD_MSG  = YES;
 	my_gw_ext_array->EXT_FIELD_TYPE = EXT_TYPE_64B_GW;
 	
-	my_gw_ext_array->EXT_GW_FIELD_GWFLAGS = ( ( two_way_tunnel || one_way_tunnel ) ? Gateway_class : 0 );
-	my_gw_ext_array->EXT_GW_FIELD_GWTYPES = ( Gateway_class ? ( (two_way_tunnel?TWO_WAY_TUNNEL_FLAG:0) | (one_way_tunnel?ONE_WAY_TUNNEL_FLAG:0) ) : 0);
+        my_gw_ext_array->EXT_GW_FIELD_GWFLAGS = ( (
+#ifdef STEPHAN_ENABLE_TWT
+                                                      two_way_tunnel ||
+#endif //#ifdef STEPHAN_ENABLE_TWT
+                                                      one_way_tunnel ) ? Gateway_class : 0 );
+        my_gw_ext_array->EXT_GW_FIELD_GWTYPES = ( Gateway_class ? (
+#ifdef STEPHAN_ENABLE_TWT
+                                                                      (two_way_tunnel?TWO_WAY_TUNNEL_FLAG:0) |
+#endif //#ifdef STEPHAN_ENABLE_TWT
+                                                                      (one_way_tunnel?ONE_WAY_TUNNEL_FLAG:0) ) : 0);
 	
 	my_gw_ext_array->EXT_GW_FIELD_GWPORT = htons( my_gw_port );
 	my_gw_ext_array->EXT_GW_FIELD_GWADDR = my_gw_addr;
@@ -1809,7 +1866,9 @@ static void cb_tun_conf_changed( void *unused ) {
 	
 	static int32_t prev_routing_class = 0;
 	static int32_t prev_one_way_tunnel = 0;
+#ifdef STEPHAN_ENABLE_TWT
 	static int32_t prev_two_way_tunnel = 0;
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	static int32_t prev_gateway_class = 0;
 //	static uint32_t prev_pref_gateway = 0;
 	static uint32_t prev_primary_ip = 0;
@@ -1817,7 +1876,9 @@ static void cb_tun_conf_changed( void *unused ) {
 	static struct gw_node *prev_curr_gateway = NULL;
 	
 	if ( prev_one_way_tunnel    != one_way_tunnel        ||
+#ifdef STEPHAN_ENABLE_TWT
 	     prev_two_way_tunnel    != two_way_tunnel        ||
+#endif //#ifdef STEPHAN_ENABLE_TWT
 	     prev_primary_ip        != primary_addr   ||
 	     prev_mtu_min           != Mtu_min               ||
 	     prev_curr_gateway      != curr_gateway          || 
@@ -1832,7 +1893,11 @@ static void cb_tun_conf_changed( void *unused ) {
 		if ( gwc_args )
 			gwc_cleanup();
 		
-		if ( primary_addr  &&  (one_way_tunnel || two_way_tunnel) ) {
+                if ( primary_addr  &&  (one_way_tunnel
+#ifdef STEPHAN_ENABLE_TWT
+                                        || two_way_tunnel
+#endif //#ifdef STEPHAN_ENABLE_TWT
+                                        ) ) {
 		
 			if ( routing_class  &&  curr_gateway ) {
 			
@@ -1847,7 +1912,9 @@ static void cb_tun_conf_changed( void *unused ) {
 		}
 	
 		prev_one_way_tunnel = one_way_tunnel;
+#ifdef STEPHAN_ENABLE_TWT
 		prev_two_way_tunnel = two_way_tunnel;
+#endif //#ifdef STEPHAN_ENABLE_TWT
 //		prev_pref_gateway   = pref_gateway;
 		prev_primary_ip     = primary_addr;
 		prev_mtu_min        = Mtu_min;
@@ -1907,7 +1974,11 @@ static void cb_choose_gw( void* unused ) {
 		if ( !on->router  ||  !tuno )
 			continue;
 
-		if ( !( tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & ( (two_way_tunnel?TWO_WAY_TUNNEL_FLAG:0) | (one_way_tunnel?ONE_WAY_TUNNEL_FLAG:0) ) ) )
+                if ( !( tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & (
+#ifdef STEPHAN_ENABLE_TWT
+                            (two_way_tunnel?TWO_WAY_TUNNEL_FLAG:0) |
+#endif //#ifdef STEPHAN_ENABLE_TWT
+                            (one_way_tunnel?ONE_WAY_TUNNEL_FLAG:0) ) ) )
 			continue;
 	
 		switch ( routing_class ) {
@@ -2192,7 +2263,7 @@ static int32_t opt_gw_class ( uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 			gateway_class = download_speed = upload_speed = 0;
 		}
 		
-		sprintf( gwarg, "%i%s/%i%s", 
+        sprintf( gwarg, "%u%s/%u%s",
 		         ( download_speed > 2048 ? download_speed / 1024 : download_speed ), 
 		         ( download_speed > 2048 ? "MBit" : "KBit" ), 
 		         ( upload_speed > 2048 ? upload_speed / 1024 : upload_speed ), 
@@ -2249,15 +2320,16 @@ static struct opt_type tunnel_options[]= {
 			ARG_VALUE_FORM,"set preference for one-way-tunnel (OWT) mode over other tunnel modes:\n"
 			"	For GW nodes: 0 disables OWT mode, a larger value enables this mode.\n"
 			"	For GW-client nodes: 0 disables OWT mode, a larger value sets the preference for this mode."},
- 
+ #ifdef STEPHAN_ENABLE_TWT
 	{ODI,5,0,ARG_TWO_WAY_TUNNEL, 	0,  A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&two_way_tunnel,0, 		4,		2, 		0,
 			ARG_VALUE_FORM,"set preference for two-way-tunnel (TWT) mode over other tunnel modes:\n"
 			"	For GW nodes: 0 disables TWT mode, a larger value enables this mode.\n"
 			"	For GW-client nodes: 0 disables TWT mode, a larger value sets the preference for this mode."},
- 
+
  
 	{ODI,5,0,ARG_UNRESP_GW_CHK,	0,  A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&unresp_gw_chk,	0, 		1,		1, 		0,
 			ARG_VALUE_FORM,"disable/enable unresponsive GW check (only relevant for GW clients in TWT mode)"},
+#endif //#ifdef STEPHAN_ENABLE_TWT
 
 #ifndef LESS_OPTIONS
 	{ODI,5,0,ARG_TUN_LTIME, 	0,  A_PS1,A_ADM,A_DYI,A_CFA,A_ANY,	&Tun_leasetime, MIN_TUN_LTIME, MAX_TUN_LTIME,	DEF_TUN_LTIME, 0,
@@ -2265,7 +2337,7 @@ static struct opt_type tunnel_options[]= {
 #endif
 
 	{ODI,4,0,ARG_GWTUN_NETW,	0,  A_PS1,A_ADM,A_INI,A_CFA,A_ANY,	0,		0, 		0,		0, 		opt_gwtun_netw,
-			ARG_PREFIX_FORM,"set network used by two-way-tunnel gateway nodes\n"},
+                        ARG_PREFIX_FORM,"set network used by gateway nodes\n"},
 
 #ifndef LESS_OPTIONS
 	{ODI,5,0,"tun_persist", 	0,  A_PS1,A_ADM,A_INI,A_CFA,A_ANY,	&Tun_persist, 	0,		1,		DEF_TUN_PERSIST,0,

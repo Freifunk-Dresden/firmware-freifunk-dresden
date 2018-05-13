@@ -1,4 +1,49 @@
 
+2018-05-13 5.0.1 (testing)
+--------------------------------------------------
+gui-map 		- set default gps coordinates
+DSGVO			- add text for DSGVO (Datenschutz Grundverordnung)
+Wifi			- remove unneeded dhcp lease configuration (solves problem with
+			  invalid statistic for number of clients
+
+
+2018-03-1 4.2.19 (testing)
+--------------------------------------------------
+gui-map			- replace google maps with openstreatmap (leaflet)
+booting			- support devices which must be flashed in two steps
+			  (initramfs-kernel.bin + sysupgrade.tar) 
+			  UBNT EdgeRouter-X
+bmxd			- remove unused HNA, dynamic plugin loading (saves flash memory)
+			- fix crash when using -d4/7/9 options
+wifi2			- add option to configure isolation
+meshing			- separate lan and wan meshing to allow connecting different
+			  freifunk networks without forwarding private network
+
+2018-02-1 4.2.18 (testing)
+--------------------------------------------------
+lede update		- Lede 17.01 (3.February 2018)
+wifi			- add option to create 'open' private wifi
+
+
+2018-01-1 4.2.17 (testing)
+--------------------------------------------------
+firmware upgrade	- fix firewall upgrade
+gui-wifi		- fix formular check
+
+
+2017-10-1 4.2.16 (testing)
+--------------------------------------------------
+dhcp server		- delete dhcp server config (lan) to disable server
+factory reset		- fix factory reset for x86 non-jffs2 overlay file systems
+private wifi		- prepare encrypted wifi (WPA2-PSK) bridged with lan/wan
+gui-progress-bar	- implement javascript progress bar (remove animated gif)
+factory reset		- fix not working factory reset
+firmware download	- switch to new "download.json" to get all needed data for 
+			  nightly update and manual update from within firmware
+			  (remove hardcoded filenames)
+sysinfo.json		- add link type to neighours (bmxd --links)
+			- add "auto update" info
+statistic		- separate input/output/forward statistic
 
 2017-10-1 4.2.10 (testing)
 --------------------------------------------------

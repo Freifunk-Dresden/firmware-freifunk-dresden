@@ -142,47 +142,40 @@ setup_openvpn_rules() {
 }
 
 setup_statistic_rules() {
+	$IPT -N statistic_input	2>/dev/null
+	$IPT -N statistic_forward 2>/dev/null
+	$IPT -N statistic_output 2>/dev/null
+	$IPT -F statistic_input
+	$IPT -F statistic_forward
+	$IPT -F statistic_output
+	$IPT -D input_rule -j statistic_input 2>/dev/null
+	$IPT -D forwarding_rule -j statistic_forward 2>/dev/null
+	$IPT -D output_rule -j statistic_output 2>/dev/null
 
+	$IPT -A input_rule -j statistic_input
+	$IPT -A forwarding_rule -j statistic_forward
+	$IPT -A output_rule -j statistic_output
 
-	$IPT -N statistic
-	$IPT -F statistic
-	$IPT -D input_rule -j statistic 2>/dev/null
-	$IPT -D forwarding_rule -j statistic 2>/dev/null
-	$IPT -D output_rule -j statistic 2>/dev/null
+	NETWORKS="bat wan lan wifi wifi2 vpn tbb_fastd mesh_lan mesh_wan privnet"
+	for net in $NETWORKS
+	do
+		ifname=$(eval echo \$$net"_ifname")
+		$IPT -N stat_"$net"_in 2>/dev/null
+		$IPT -D statistic_input -i $ifname -j stat_"$net"_in 2>/dev/null
+		$IPT -A statistic_input -i $ifname -j stat_"$net"_in
 
-	$IPT -A input_rule -j statistic
-	$IPT -A forwarding_rule -j statistic
-	$IPT -A output_rule -j statistic
+		$IPT -N stat_"$net"_out 2>/dev/null
+		$IPT -D statistic_output -o $ifname -j stat_"$net"_out 2>/dev/null
+		$IPT -A statistic_output -o $ifname -j stat_"$net"_out
 
-	$IPT -N statistic_bat_input
-	$IPT -A statistic -i $bat_ifname -j statistic_bat_input
-	$IPT -N statistic_bat_output
-	$IPT -A statistic -o $bat_ifname -j statistic_bat_output
-
-	$IPT -N statistic_wan_input
-	test -n "$wan_ifname" && $IPT -A statistic -i $wan_ifname -j statistic_wan_input
-	$IPT -N statistic_wan_output
-	test -n "$wan_ifname" && $IPT -A statistic -o $wan_ifname -j statistic_wan_output
-
-	$IPT -N statistic_lan_input
-	$IPT -A statistic -i $lan_ifname -j statistic_lan_input
-	$IPT -N statistic_lan_output
-	$IPT -A statistic -o $lan_ifname -j statistic_lan_output
-
-	$IPT -N statistic_wifi_input
-	$IPT -A statistic -i $wifi_ifname -j statistic_wifi_input
-	$IPT -N statistic_wifi_output
-	$IPT -A statistic -o $wifi_ifname -j statistic_wifi_output
-
-	$IPT -N statistic_wifi2_input
-	$IPT -A statistic -i $wifi2_ifname -j statistic_wifi2_input
-	$IPT -N statistic_wifi2_output
-	$IPT -A statistic -o $wifi2_ifname -j statistic_wifi2_output
-
-	$IPT -N statistic_vpn_input
-	$IPT -A statistic -i $vpn_ifname -j statistic_vpn_input
-	$IPT -N statistic_vpn_output
-	$IPT -A statistic -o $vpn_ifname -j statistic_vpn_output
+		for net2 in $NETWORKS
+		do
+			ifname2=$(eval echo \$$net2"_ifname")
+			$IPT -N stat_"$net"_"$net2"_fwd 2>/dev/null
+			$IPT -D statistic_forward -i $ifname -o $ifname2 -j stat_"$net"_"$net2"_fwd 2>/dev/null
+			$IPT -A statistic_forward -i $ifname -o $ifname2 -j stat_"$net"_"$net2"_fwd
+		done
+	done
 }
 
 callback_add_ignored_nodes() {
@@ -220,6 +213,7 @@ case "$1" in
 		# ips are not valid if iface went down -> clear tables
 		# use reject instead of DROP, else it is possible to scan for ip timeout
 		$IPT -F input_wan_deny
+		$IPT -F input_lan_deny
 		$IPT -F input_mesh_deny
 		$IPT -F input_wifi2_deny
 		$IPT -F input_bat_deny

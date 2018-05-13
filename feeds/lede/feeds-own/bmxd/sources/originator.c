@@ -1562,8 +1562,9 @@ int32_t opt_show_origs ( uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
                                 orig_ip = orig_node->orig;
 
 				if ( !orig_node->router  ||  orig_node->primary_orig_node != orig_node )
+				{
 					continue;
-
+				}
                                 /*
                                 struct orig_node *onn = get_orig_node( orig_node->router->addr, NO );
 

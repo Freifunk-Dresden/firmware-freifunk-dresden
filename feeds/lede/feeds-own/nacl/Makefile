@@ -27,6 +27,7 @@ define Package/nacl
   CATEGORY:=ddmesh
   TITLE:=NaCl Networking and Cryptography library
   URL:=http://nacl.cace-project.eu/
+  SUBMENU:=Packages
 endef
 
 define Build/Compile

@@ -8,7 +8,7 @@ export lon=$(uci get ddmesh.gps.longitude)
 cat <<EOF
 <h2>$TITLE</h2>
 <br>
-<fieldset class="bubble">
+<fieldset class="bubble" style="width: 600px">
 <legend>Openstreetmap</legend>
 <div id="nodeMap"></div>
 <style>

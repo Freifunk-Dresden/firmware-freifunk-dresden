@@ -17,7 +17,6 @@ touch $DB_PATH/gateways
 touch $DB_PATH/originators
 touch $DB_PATH/status
 touch $DB_PATH/networks	# network ids
-touch $DB_PATH/hnas
 touch $STAT_DIR/gateway_usage
 
 
@@ -37,20 +36,20 @@ MESH_NETWORK_ID="${MESH_NETWORK_ID:-0}"
 PREFERRED_GATEWAY="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
 test -n "$PREFERRED_GATEWAY" && PREFERRED_GATEWAY="-p $PREFERRED_GATEWAY"
 
-NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
-
 # create a virtual interface for primary interface. loopback has
 # 127er IP would be broadcasted
 
 PRIMARY_IF="bmx_prime"
-FASTD_IF="tbb-fastd"
-LAN_IF="br-meshwire"
+FASTD_IF="tbb_fastd"
+LAN_IF="br-mesh_lan"
+WAN_IF="br-mesh_wan"
 if [ "$1" = "start" ]; then
-	ip tuntap add dev $PRIMARY_IF mod tun
+#	ip tuntap add dev $PRIMARY_IF mod tun
+	brctl addbr $PRIMARY_IF
 	ip addr add $_ddmesh_ip/$_ddmesh_netpre broadcast $_ddmesh_broadcast dev $PRIMARY_IF
 	ip link set dev $PRIMARY_IF up
 fi
-_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1 dev=$LAN_IF /linklayer 1"
+_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1 dev=$LAN_IF /linklayer 1 dev=$WAN_IF /linklayer 1"
 
 #add wifi, if hotplug event did occur before starting bmxd
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
@@ -61,7 +60,7 @@ fi
 #default start with no gatway.will be updated by gateway_check.sh
 #SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"
 SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
-TUNNEL_OPTS="--one-way-tunnel 2 --two-way-tunnel 1"
+TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre --one-way-tunnel 1"
 TUNING_OPTS="--purge_timeout 20"
 DAEMON_OPTS="$SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
 
@@ -71,6 +70,8 @@ test -x $DAEMON_PATH/$DAEMON || exit 0
 case "$ARG1" in
   start)
 	echo "Starting $DAEMON: opt: $DAEMON_OPTS"
+	# set initial wifi ssid to "FF no-inet"
+	/usr/lib/bmxd/bmxd-gateway.sh init
 	$DAEMON_PATH/$DAEMON $DAEMON_OPTS
 	;;
 
@@ -113,7 +114,6 @@ case "$ARG1" in
 	$DAEMON_PATH/$DAEMON -c --gateways > $DB_PATH/gateways
 	$DAEMON_PATH/$DAEMON -c --links > $DB_PATH/links
 	$DAEMON_PATH/$DAEMON -c --originators > $DB_PATH/originators
-	$DAEMON_PATH/$DAEMON -c --hnas > $DB_PATH/hnas
 	$DAEMON_PATH/$DAEMON -c --status > $DB_PATH/status
 #	$DAEMON_PATH/$DAEMON -c --networks > $DB_PATH/networks
 	$DAEMON_PATH/$DAEMON -ci > $DB_PATH/info

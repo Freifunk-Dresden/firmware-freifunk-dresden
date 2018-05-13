@@ -8,7 +8,7 @@ cat<<EOF
 <br>
 EOF
 
-for t in main local_gateway public_gateway bat_route bat_hna ; do
+for t in main local_gateway public_gateway bat_route ; do
 
 	cat<<EOF
 <fieldset class="bubble">

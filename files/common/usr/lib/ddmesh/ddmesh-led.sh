@@ -22,10 +22,12 @@ case "$platform" in
 		boardname=$AR71XX_BOARD_NAME
 		;;
 	*)
-		echo "platform $platform not supported"
+		echo "$(basename $0): platform '$platform' not supported"
 		exit 1
 esac
 
+echo "platform: $platform"
+echo "board: $boardname"
 
 get_wifi_led()
 {
@@ -43,6 +45,9 @@ get_wifi_led()
 
 get_status_led
 get_wifi_led
+
+echo "status-led: $status_led"
+echo "wifi-led: $wifi_led"
 
 case $1 in
 	wifi)

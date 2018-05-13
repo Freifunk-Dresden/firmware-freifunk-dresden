@@ -4,12 +4,19 @@
 
 previous_version=$(uci get ddmesh.boot.upgrade_version 2>/dev/null)
 current_version=$(cat /etc/version)
+upgrade_running=$(uci -q get ddmesh.boot.upgrade_running)
+nightly_upgrade_running=$(uci -q get ddmesh.boot.nightly_upgrade_running)
 
 echo "previous_version=$previous_version"
 echo "current_version=$current_version"
+echo "upgrade_running=$upgrade_running"
+echo "nightly_upgrade_running=$nightly_upgrade_running"
 
 # if no previous version then set initial version; needed for correct behavior
 previous_version=${previous_version:-$current_version}
+
+test "$nightly_upgrade_running" = "1" && MESSAGE=" (Auto-Update)"
+
 
 # check if upgrade is needed
 test "$previous_version" = "$current_version" && {
@@ -44,15 +51,16 @@ run_upgrade()
 	echo " upgrade to $v"
 	upgrade_$function_suffix;
 
- 	#force config update after each upgrade or firmware flash
+ 	# force config update after next boot 
+	# in case this script is called from terminal (manually)
  	uci set ddmesh.boot.boot_step=2
 
 	#save current state in case of later errors
 	uci set ddmesh.boot.upgrade_version=$v
-	uci add_list ddmesh.boot.upgraded="$previous_version to $v"
+	uci add_list ddmesh.boot.upgraded="$previous_version to $v$MESSAGE"
 
 	#stop if we have reached "current version" (ignore other upgrades)
-	test "$v" = "$current_version" && echo "last valid upgrade finished" && uci commit && break;
+	test "$v" = "$current_version" && echo "last valid upgrade finished" && uci_commit.sh && break;
  done
 
  test "$previous_version_found" = "0" && echo "ERROR: missing upgrade function for previous version $previous_version" && exit 1
@@ -61,7 +69,7 @@ run_upgrade()
 
 #############################################
 ### keep ORDER - only change below
-### uci commit is called after booting via ddmesh.boot_step=2
+### uci_commit.sh is called after booting via ddmesh.boot_step=2
 
 
 upgrade_4_2_0() {
@@ -241,6 +249,57 @@ upgrade_4_2_10() {
 	uci -q rename ddmesh.system.wifisetup='meshsetup'
 	uci -q delete network.tbb # will be created with 'meshwire' on next boot
 	cp /rom/etc/config/firewall /etc/config/firewall
+}
+
+upgrade_4_2_11() {
+	echo "dummy"
+}
+
+upgrade_4_2_12() {
+	cp /rom/etc/config/firewall /etc/config/firewall
+	uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
+}
+
+upgrade_4_2_13() {
+	echo "dummy"
+}
+
+upgrade_4_2_14() {
+	echo "dummy"
+}
+
+upgrade_4_2_15() {
+	rm /etc/config/wireless
+	ln -s /var/etc/config/wireless /etc/config/wireless
+	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
+}
+
+upgrade_4_2_16() {
+	uci -q delete credentials.url.firmware_download_server
+}
+
+upgrade_4_2_17() {
+ 	uci set network.wan.stp=1
+	cp /rom/etc/config/firewall /etc/config/firewall
+}
+
+
+upgrade_4_2_18() {
+	uci set dhcp.dnsmasq.quietdhcp=1
+}
+
+upgrade_4_2_19() {
+	uci -q delete network.meshwire # mesh_lan/wan will be created on next boot
+	uci set network.tbb_fastd.ifname='tbb_fastd'
+	cp /rom/etc/config/firewall /etc/config/firewall
+	uci set dhcp.dnsmasq.logqueries=0
+}
+
+upgrade_5_0_1() {
+	test -z "$(uci -q get ddmesh.gps.latitude)" && uci -q set ddmesh.gps.latitude='51.054741'
+	test -z "$(uci -q get ddmesh.gps.longitude)" && uci -q set ddmesh.gps.longitude='13.742642'
+	test -z "$(uci -q get ddmesh.gps.altitude)" && uci -q set ddmesh.gps.altitude='0'
+	uci -q set ddmesh.network.wifi2_dhcplease='5m'
 }
 
 ##################################

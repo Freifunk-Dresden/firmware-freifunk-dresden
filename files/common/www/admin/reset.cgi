@@ -1,10 +1,5 @@
 #!/bin/sh
 
-. /lib/functions.sh
-. /lib/upgrade/common.sh
-. /lib/upgrade/platform.sh
-
-
 export TITLE="Verwaltung > Update > Reset"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
@@ -41,25 +36,43 @@ else #form_action
 			<tr><td>
 EOM
 			if [ -n "$form_reset_factory" ]; then
+				SECONDS=210
+				BARS=3
 				echo "Alle Einstellungen werden auf Standardwerte gesetzt (Passwort,IP Adressen,ssh-key,https Zertifikate).<br />Ebenso wird eine neue Node-Nummber erzeugt."
 			else
 				if [ -n "$form_reset_reconfig" ]; then
 					echo "System passt Konfiguration an neue Hardware an.<br/>"
 					uci -q set ddmesh.boot.boot_step=2
-					uci commit
+					uci_commit.sh
 				fi
+
+				if [ "$(uci -q get ddmesh.boot.boot_step)" = "3" ]; then
+					SECONDS=70
+					BARS=1
+				else
+					SECONDS=120
+					BARS=2
+				fi
+
 				echo "Alle Einstellungen bleiben erhalten."
 			fi
 			cat <<EOM
 			</td></tr>
-			<tr><td><img src="/images/progress170.gif?s=$(date +'%s')" vspace="10" width="255"></td></tr>
+			<tr><td><div style="max-width: 300px" id="progress"></div></td></tr>
 			</table>
 			</fieldset>
 			<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-			window.setTimeout("window.location=\"/\"", 100*1000);
+				var t=$SECONDS * 1000;
+				var bars=$BARS;
+				var fields=20;
+				var p = new GridField("progress", "myProgress", bars, fields, 10, 5, "#aaaaaa", "#0000ff");
+				p.autoCounter(t / (bars*fields), bars*fields);
+				window.setTimeout("window.location=\"/\"", t);
 			</SCRIPT>
 EOM
-			test -n "$form_reset_factory" && mtd -r erase rootfs_data
+			if [ -n "$form_reset_factory" ]; then
+				/sbin/firstboot
+			fi
 			sleep 2
 			reboot&
 			;;

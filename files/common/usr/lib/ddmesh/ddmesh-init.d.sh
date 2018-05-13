@@ -74,6 +74,9 @@ start() {
 
 	logger -s -t $LOGGER_TAG "finished."
 	/usr/lib/ddmesh/ddmesh-led.sh status done
+
+	# enable hotplug events
+	touch /tmp/freifunk-running
 }
 
 stop() {

@@ -7,7 +7,7 @@ export TITLE="Verwaltung > Expert >Remote Syslog"
 if [ -n "$form_syslog_submit" ]; then
 	uci set system.@system[0].log_ip="$form_syslog_ip"
 	uci set system.@system[0].log_port="$form_syslog_port"
-	uci commit
+	uci_commit.sh
 	/etc/init.d/log restart
 	notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind sofort aktiv."
 fi

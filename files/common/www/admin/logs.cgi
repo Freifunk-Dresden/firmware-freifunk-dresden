@@ -40,37 +40,6 @@ cat<<EOM
 </fieldset>
 <br>
 <fieldset class="bubble">
-<legend>Netzwerk: <a href="#" onclick="return fold('fs_ifconfig')">Ein-/Ausblenden</a></legend>
-<table class="hidden" id="fs_ifconfig">
-EOM
-
-ifconfig | sed '
-/^[^ ]/s#^\([^ ]*\)\(.*\)#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#
-/^[ ]/s#.*#<tr class="colortoggle2"><th></th><td>&</td></tr>#'
-
-cat<<EOM
-</table>
-</fieldset>
-<br>
-<fieldset class="bubble">
-<legend>Aktive Verbindungen: <a href="#" onclick="return fold('fs_conntrk')">Ein-/Ausblenden</a></legend>
-<table class="hidden" id="fs_conntrk">
-<tr><th colspan="2">Lokal</th><th colspan="2">Entfernt</th></tr>
-EOM
-
-netstat -tn 2>/dev/null | grep ESTABLISHED | awk '
-{
-	split($4,a,":");
-	split($5,b,":");
-	if(match(a[1],"169.254")) a[1]="Gateway Tunnel"
-	printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",(NR%2)+1,a[1],a[2],b[1],b[2]);
-}'
-
-cat<<EOM
-</table>
-</fieldset>
-<br>
-<fieldset class="bubble">
 <legend>DHCP Log: <a href="#" onclick="return fold('fs_dhcp')">Ein-/Ausblenden</a></legend>
 <table class="hidden" id="fs_dhcp">
 <tr><th>Date</th><th>CMD</th><th>MAC</th><th>IP</th><!--<th>Hostname</th>--></tr>

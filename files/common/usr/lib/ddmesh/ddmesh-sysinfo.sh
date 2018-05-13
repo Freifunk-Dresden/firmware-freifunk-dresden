@@ -25,16 +25,22 @@ gps_alt=$(uci -q get ddmesh.gps.altitude)
 gps_alt=${gps_alt:=0}
 avail_flash_size=$(df -k -h /overlay | sed -n '2,1{s# \+# #g; s#[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\) .*#\1#;p}')
 
-if [ "$(uci get ddmesh.system.disable_splash)" = "1" ]; then
+if [ "$(uci -q get ddmesh.system.disable_splash)" = "1" ]; then
 	splash=0
 else
 	splash=1
 fi
 
-if [ "$(uci get ddmesh.system.email_notification)" = "1" ]; then
+if [ "$(uci -q get ddmesh.system.email_notification)" = "1" ]; then
 	email_notification=1
 else
 	email_notification=0
+fi
+
+if [ "$(uci -q get ddmesh.system.firmware_autoupdate)" = "1" ]; then
+	autoupdate=1
+else
+	autoupdate=0
 fi
 
 case "$(uci -q get ddmesh.system.node_type)" in
@@ -44,18 +50,17 @@ case "$(uci -q get ddmesh.system.node_type)" in
 	*) node_type="node";;
 esac
 
-wifi_txpower="-1"
-test "$wifi_iface_present" = "1" && wifi_txpower="$(iw $wifi_ifname info | awk '/txpower/{print $2}')"
-
-device_model="$(cat /var/sysinfo/model 2>/dev/null | sed 's#[ ]\+$##')"
-test -z "$device_model" && device_model="$(cat /proc/cpuinfo | grep 'model name' | cut -d':' -f2)"
+# get model
+eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
+model="$(echo $model | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
+model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 
 cpu_info="$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')"
 test -z "$cpu_info" && cpu_info="$(cat /proc/cpuinfo | grep 'model name' | cut -d':' -f2)"
 
 cat << EOM >> $OUTPUT
 {
- "version":"13",
+ "version":"14",
  "timestamp":"$(date +'%s')",
  "data":{
 
@@ -71,9 +76,9 @@ cat << EOM >> $OUTPUT
 			"DISTRIB_CODENAME":"$DISTRIB_CODENAME",
 			"DISTRIB_TARGET":"$DISTRIB_TARGET",
 			"DISTRIB_DESCRIPTION":"$DISTRIB_DESCRIPTION",
-			"git-lede-ref":"$git_lede_ref",
+			"git-lede-rev":"$git_lede_rev",
 			"git-lede-branch":"$git_lede_branch",
-			"git-ddmesh-ref":"$git_ddmesh_ref",
+			"git-ddmesh-rev":"$git_ddmesh_rev",
 			"git-ddmesh-branch":"$git_ddmesh_branch"
 		},
 		"system":{
@@ -84,17 +89,18 @@ $(cat /tmp/resolv.conf.auto| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver
 			],
 			"date":"$(date)",
 			"board":"$(cat /var/sysinfo/board_name 2>/dev/null)",
-			"model":"$device_model",
-			"model2":"$(cat /proc/diag/model 2>/dev/null)",
+			"model":"$model",
+			"model2":"$model2",
 			"cpuinfo":"$cpu_info",
 			"bmxd" : "$(cat $BMXD_DB_PATH/status)",
 			"essid":"$(uci get wireless.@wifi-iface[1].ssid)",
 			"node_type":"$node_type",
 			"splash":$splash,
 			"email_notification":$email_notification,
+			"autoupdate":$autoupdate,
 			"available_flash_size":"$avail_flash_size",
 			"bmxd_restart_counter":0,
-			"wifi_txpower":"$wifi_txpower"
+			"overlay_md5sum": $(/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh -json) 
 		},
 		"opkg":{
 $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
@@ -128,29 +134,25 @@ cat<<EOM >> $OUTPUT
 EOM
 
 			# firewall_rule_name:sysinfo_key_name
-			for net in wan:wan wifi:adhoc wifi2:ap vpn:ovpn bat:gwt
+			NETWORKS="wan:wan wifi:adhoc wifi2:ap vpn:ovpn bat:gwt privnet:privnet tbb_fastd:tbb_fastd mesh_lan:mesh_lan mesh_wan:mesh_wan"
+			for net in $NETWORKS 
 			do
 				first=${net%:*}
 				second=${net#*:}
-				rx=$(iptables -L statistic -xvn | awk '/statistic_'$first'_input/{print $2}')
-				tx=$(iptables -L statistic -xvn | awk '/statistic_'$first'_output/{print $2}')
+				rx=$(iptables -L statistic_input -xvn | awk '/stat_'$first'_in/{print $2}')
+				tx=$(iptables -L statistic_output -xvn | awk '/stat_'$first'_out/{print $2}')
 				[ -z "$rx" ] && rx=0
 				[ -z "$tx" ] && tx=0
 				echo "			\"traffic_$second\": \"$rx,$tx\"," >> $OUTPUT
-			done
-			# from /sys
-			# iface:sysinfo_key
-			for net in priv:privnet tbb-fastd:tbb_fastd br-meshwire:mesh_wire
-			do
-				first=${net%:*}
-				second=${net#*:}
-				if [ -f /sys/devices/virtual/net/$first/statistics/rx_bytes ]; then
-					rx=$(cat /sys/devices/virtual/net/$first/statistics/rx_bytes)
-					tx=$(cat /sys/devices/virtual/net/$first/statistics/tx_bytes)
-				fi
-				[ -z "$rx" ] && rx=0
-				[ -z "$tx" ] && tx=0
-				echo "			\"traffic_$second\": \"$rx,$tx\"," >> $OUTPUT
+
+				for net2 in $NETWORKS
+				do
+					first2=${net2%:*}
+					second2=${net2#*:}
+					x=$(iptables -L statistic_forward -xvn | awk '/stat_'$first'_'$first2'_fwd/{print $2}')
+					[ -z "$x" ] && x=0
+					echo "			\"traffic_"$second"_"$second2"\": \"$x\"," >> $OUTPUT
+				done
 			done
 
 cat<<EOM >> $OUTPUT
@@ -174,10 +176,18 @@ EOM
 						f1=a[3]*255;f2=a[4]-1;
 						return f1+f2;
 					}
+					BEGIN {
+						# map iface to net type
+						nettype_lookup[ENVIRON["wifi_ifname"]]="wifi";
+						nettype_lookup[ENVIRON["mesh_lan_ifname"]]="lan";
+						nettype_lookup[ENVIRON["mesh_wan_ifname"]]="lan";
+						nettype_lookup[ENVIRON["tbb_fastd_ifname"]]="backbone";
+					}
 					{
 						if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
 						{
-							printf("\t\t\t\t{\"node\":\"%d\", \"ip\":\"%s\", \"interface\":\"%s\",\"rtq\":\"%d\", \"rq\":\"%d\", \"tq\":\"%d\"}, \n",getnode($1),$3,$2,$4,$5,$6);
+							printf("\t\t\t\t{\"node\":\"%d\", \"ip\":\"%s\", \"interface\":\"%s\",\"rtq\":\"%d\", \"rq\":\"%d\", \"tq\":\"%d\",\"type\":\"%s\"}, \n",
+								getnode($1),$3,$2,$4,$5,$6, nettype_lookup[$2]);
 						}
 					}
 ' | sed '$s#,[	 ]*$##' >>$OUTPUT

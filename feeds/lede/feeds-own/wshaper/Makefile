@@ -18,12 +18,13 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 include $(INCLUDE_DIR)/package.mk
 
 define Package/wshaper
-  SECTION:=net
-  CATEGORY:=Network
+  SECTION:=base
+  CATEGORY:=ddmesh
   DEPENDS:=+kmod-sched +tc
   TITLE:=wshaper (patched by me (stephan) for wan/lan support)
   URL:=http://lartc.org/wondershaper/
   PKGARCH:=all
+  SUBMENU:=Packages
 endef
 
 define Package/wshaper/description

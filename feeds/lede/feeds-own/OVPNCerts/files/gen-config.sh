@@ -33,6 +33,7 @@ s#[ 	]*$##
 /^dhcp-release/d
 /^explicit-exit-notify/d
 /^ping/d
+/^pull-filter/d
 s#^auth-user-pass.*#auth-user-pass openvpn.login#
 ' >> $CONF
 

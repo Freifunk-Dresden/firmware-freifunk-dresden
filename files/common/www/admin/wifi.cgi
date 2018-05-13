@@ -10,7 +10,19 @@ EOF
 
 if [ -z "$QUERY_STRING" ]; then
 
+if [ "$(uci -q get ddmesh.network.wifi3_network)" = "wan" ]; then
+	checked_wan='checked="checked"'
+else
+	checked_lan='checked="checked"'
+fi
+
+# workaround to pass key with " and ' to input field
+# javascript setWifi3_key reads content and assigns it to value of input field
+wifi3_key="$(uci get credentials.wifi.private_key)"
+echo "<div style=\"visibility: hidden;\" id=\"wifi3_key\">$wifi3_key</div>"
+
 cat<<EOM
+<div id="status"></div>
 <script type="text/javascript">
 function disable_fields(s) {
 	var c=document.getElementsByName('form_wifi_diversity')[0].checked;
@@ -21,19 +33,47 @@ function enable_custom_essid(s) {
 	var c=document.getElementsByName('form_wifi_custom_essid')[0].checked;
 	document.getElementsByName('form_wifi_ap_ssid')[0].disabled= !c;
 }
+function enable_private_wifi(s) {
+	var c=document.getElementsByName('form_wifi3_enabled')[0].checked;
+	document.getElementsByName('form_wifi3_ssid')[0].disabled= !c;
+	document.getElementsByName('form_wifi3_key')[0].disabled= !c;
+	document.getElementsByName('form_wifi3_security_open')[0].disabled= !c;
+}
+function setWifi3_key()
+{
+	var k = document.getElementById('wifi3_key');
+	//use textContent because innerText is empty when div is invisible
+	document.getElementById('id_wifi3_key').value = k.textContent;
+}
+function checkInput()
+{
+	var enabled = document.getElementById('id_wifi3_enabled').checked;
+	if(enabled)
+	{
+		var key = document.getElementById('id_wifi3_key').value;
+		var ssid = document.getElementById('id_wifi3_ssid').value;
+		if( key === undefined || ssid === undefined
+		   || key.length < 8 || !checkWifiKey(document.getElementById('id_wifi3_key').value))
+		{
+			alert("Unkültige Wifi Konfiguration!\nWifi Key/SSID zu kurz oder enthielt ungültige Zeichen.");
+			return false;
+		}
+	}
+	return true;
+}
 </script>
 
-<form name="form_wifi" action="wifi.cgi" class="form" method="POST">
+<form onsubmit="return checkInput();" name="form_wifi" action="wifi.cgi" class="form" method="POST">
 <fieldset class="bubble">
 <legend>Wifi-Einstellungen</legend>
 <table>
 
 <tr><th>Freifunk-IP:</th>
-<td><input name="form_wifi_ip" size="32" type="text" value="$(uci get network.wifi.ipaddr)" disabled></td>
+<td><input name="form_wifi_ip" size="32" type="text" value="$_ddmesh_ip" disabled></td>
 </tr>
 
 <tr><th>Freifunk-Netmask:</th>
-<td><input name="form_wifi_netmask" size="32" type="text" value="$(uci get network.wifi.netmask)" disabled></td>
+<td><input name="form_wifi_netmask" size="32" type="text" value="$_ddmesh_netmask" disabled></td>
 </tr>
 
 <tr><th>Kanal:</th>
@@ -74,6 +114,22 @@ $(iwinfo $wifi_ifname txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;
 </tr>
 <tr><th>Reduziere WLAN Datenrate:</th><td><INPUT NAME="form_wifi_slow_rates" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" = "1" ];then echo ' checked="checked"';fi)> (Nicht empfohlen. Wenn aktiviert, kann Reichweite auf Kosten der &Uuml;bertragungsrate erh&ouml;ht werden.<br /> <b>Dieses gilt auch f&uuml;r Verbindungen zu anderen Knoten</b>)</td></tr>
 
+<tr><td colspan="2"><hr size=1></td></tr>
+
+<tr><th>Aktiviere Privates Wifi:</th>
+<td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es ein Privates Wifi aufzubauen (WPA2-PSK)</td></tr>
+<tr><th>Verschl&uuml;sselung:</th>
+<td><INPUT id="id_wifi3_security_open" NAME="form_wifi3_security_open" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_security_open)" = "1" ];then echo ' checked="checked"';fi)>Offenes privates Wifi (sonst WPA2-PSK)</td></tr>
+<tr><th>SSID:</th>
+<td><input id="id_wifi3_ssid" name="form_wifi3_ssid" size="32" type="text" value="$(uci get credentials.wifi.private_ssid)"></td>
+</tr>
+<tr><th>Key (mind. 8 Zeichen):</th>
+<td><input onkeypress="return isWifiKey(event);" id="id_wifi3_key" name="form_wifi3_key" width="30" type="text"></td>
+</tr>
+<tr><th>Verbinde Wifi mit:</th><td class="nowrap">
+<input name="form_wifi3_network" type="radio" value="lan" $checked_lan>LAN
+<input name="form_wifi3_network" type="radio" value="wan" $checked_wan>WAN
+</td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
 <td colspan="2"><input name="form_wifi_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_wifi_abort" title="Abbruch dieser Dialogseite" type="submit" value="Abbruch"></td>
@@ -93,6 +149,8 @@ $(iw phy0 info | sed -n '/[      ]*\*[   ]*[0-9]* MHz/{s#[       *]\+\([0-9]\+\)
 
 <script type="text/javascript">
 enable_custom_essid();
+enable_private_wifi();
+setWifi3_key();
 </script>
 
 EOM
@@ -108,8 +166,17 @@ else #query string
 			uci set ddmesh.network.essid_ap="$(uhttpd -d "$form_wifi_ap_ssid")"
 			uci set ddmesh.network.custom_essid="$form_wifi_custom_essid"
 			uci set ddmesh.network.wifi_slow_rates="$form_wifi_slow_rates"
+			uci set ddmesh.network.wifi3_enabled="$form_wifi3_enabled"
+			# avoid clearing values when disabled
+			if [ "$form_wifi3_enabled" = 1 ]; then
+				uci set ddmesh.network.wifi3_network="$form_wifi3_network"
+				uci set ddmesh.network.wifi3_security_open="$form_wifi3_security_open"
+				uci set credentials.wifi.private_ssid="$form_wifi3_ssid"
+				key=$(uhttpd -d "$form_wifi3_key")
+				uci set credentials.wifi.private_key="$key"
+			fi
 			uci set ddmesh.boot.boot_step=2
-			uci commit
+			uci_commit.sh
 			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 		else #empty
 			notebox "TXPower falsch"

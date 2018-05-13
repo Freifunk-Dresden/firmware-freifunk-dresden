@@ -1,6 +1,6 @@
 [ Pico - Vereinbarung ] - Deutsch
 
-http://www.picopeer.net/PPA-de.html
+http://www.picopeer.net/
 
 1. Freier Transit
 -----------------

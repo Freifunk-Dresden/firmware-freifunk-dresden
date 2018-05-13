@@ -17,11 +17,13 @@
  *
  */
 
+//move include here to calm compiler warning when NOHNA is defined
+#include <stdio.h>
 
 #ifndef NOHNA
 #include <arpa/inet.h>
 #include <string.h>
-#include <stdio.h>
+
 #include <asm/types.h>
 #include <sys/socket.h>
 #include <linux/netlink.h>

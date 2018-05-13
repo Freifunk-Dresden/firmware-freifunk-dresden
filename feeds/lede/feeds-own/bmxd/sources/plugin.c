@@ -395,6 +395,7 @@ static void deactivate_plugin( void *p ) {
 
 }
 
+#ifndef STEPHAN_NO_DYNAMIC_PLUGIN
 static int8_t activate_dyn_plugin( const char* name ) {
 	
 	struct plugin_v1* (*get_plugin_v1) ( void ) = NULL;
@@ -518,7 +519,7 @@ static struct opt_type plugin_options[]=
 			ARG_FILE_FORM,	"load plugin. "ARG_FILE_FORM" must be in LD_LIBRARY_PATH or " BMX_ENV_LIB_PATH 
 			"\n	path (e.g. --plugin bmx_howto_plugin.so )\n"}
 };
-
+#endif //STEPHAN_NO_DYNAMIC_PLUGIN
 
 void init_plugin( void ) {
 
@@ -529,12 +530,13 @@ void init_plugin( void ) {
 	struct plugin_v1 *pv1;
 	
 	pv1=NULL;
-	
+#ifndef STEPHAN_NO_DYNAMIC_PLUGIN	
 	// first try loading config plugin, if succesfull, continue loading optinal plugins depending on config
 	activate_dyn_plugin( BMX_LIB_UCI_CONFIG );
 	
 	register_options_array( plugin_options, sizeof( plugin_options ) );
-	
+#endif //STEPHAN_NO_DYNAMIC_PLUGIN
+
 #ifndef NOHNA
 	if ( (pv1 = hna_get_plugin_v1()) != NULL )
 		activate_plugin( pv1, PLUGIN_VERSION_01, NULL, NULL );

@@ -156,7 +156,7 @@ else # query_sring
 		 uci set network.wan.service=$form_pppoe_service
 		 uci set network.wan.mtu=$form_pppoe_mtu
 		}
-		uci commit
+		uci_commit.sh
 
 		notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 	else

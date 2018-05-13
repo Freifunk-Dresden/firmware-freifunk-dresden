@@ -15,7 +15,7 @@ if [ -n "$form_wshaper_submit" ]; then
 	uci set wshaper.settings.downlink="$form_wshaper_download"
 	uci set wshaper.settings.network="$form_wshaper_network"
 
-	uci commit
+	uci_commit.sh
 	/etc/init.d/wshaper restart
 	notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind sofort aktiv."
 fi
@@ -53,12 +53,12 @@ EOM
 
 if [ "$wan_iface_present" = "1" ]; then
 cat<<EOM
-<input name="form_wshaper_network" type="radio" value="wan" $checked_wan">WAN
+<input name="form_wshaper_network" type="radio" value="wan" $checked_wan>WAN
 EOM
 fi
 
 cat<<EOM
-<input name="form_wshaper_network" type="radio" value="lan" $checked_lan">LAN
+<input name="form_wshaper_network" type="radio" value="lan" $checked_lan>LAN
 </td></tr>
 <tr><td width="120" colspan="2">&nbsp;</td></tr>
 EOM

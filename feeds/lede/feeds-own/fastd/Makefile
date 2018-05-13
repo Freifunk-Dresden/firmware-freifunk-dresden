@@ -58,7 +58,7 @@ define Package/fastd
 #  DEPENDS:=+kmod-tun +librt +libpthread +libjson-c +libuecc +nacl 
   TITLE:=Fast and Secure Tunneling Daemon
   URL:=https://projects.universe-factory.net/projects/fastd
-  SUBMENU:=VPN
+  SUBMENU:=Packages
 endef
 
 define Package/fastd/config
@@ -164,19 +164,21 @@ define Package/fastd/description
  Fast and secure tunneling daemon, which is optimized on small code size and few dependencies
 endef
 
-define Package/fastd/conffiles
-/etc/config/fastd
-endef
+# ddmesh: not used
+#define Package/fastd/conffiles
+#/etc/config/fastd
+#endef
 
 define Package/fastd/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/fastd $(1)/usr/bin/
 
-	$(INSTALL_DIR) $(1)/etc/init.d/
-	$(INSTALL_BIN) files/fastd.init $(1)/etc/init.d/fastd
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) files/fastd.config $(1)/etc/config/fastd
-	$(INSTALL_DIR) $(1)/etc/fastd
+# ddmesh: not used
+#	$(INSTALL_DIR) $(1)/etc/init.d/
+#	$(INSTALL_BIN) files/fastd.init $(1)/etc/init.d/fastd
+#	$(INSTALL_DIR) $(1)/etc/config
+#	$(INSTALL_CONF) files/fastd.config $(1)/etc/config/fastd
+#	$(INSTALL_DIR) $(1)/etc/fastd
 endef
 
 $(eval $(call BuildPackage,fastd))

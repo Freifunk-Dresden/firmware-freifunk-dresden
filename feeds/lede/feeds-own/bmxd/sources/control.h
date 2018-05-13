@@ -37,9 +37,13 @@
 #define DBGL_ALL	4
 #define DBGL_PROFILE	5
 #define DBGL_UNUSED	6
-#define DBGL_SERVICES	7
+#ifndef NOSRV
+    #define DBGL_SERVICES	7
+#endif
 #define DBGL_DETAILS	8
-#define DBGL_HNAS	9
+#ifndef NOHNA
+    #define DBGL_HNAS	9
+#endif
 #define DBGL_LINKS	10
 #define DBGL_TEST	11
 #define DBGL_MAX 	11
@@ -115,11 +119,11 @@ struct dbg_histogram {
 #ifdef  NODEBUGALL
 #define dbgf_all(...) {;}
 #else
-#define dbgf_all( dbgt, ... ); do { if ( __dbgf_all() ) { _dbgf_all( dbgt, __func__, __VA_ARGS__ ); } } while (0)
+#define dbgf_all( dbgt, ... ) do { if ( __dbgf_all() ) { _dbgf_all( dbgt, __func__, __VA_ARGS__ ); } } while (0)
 #endif
 
 #ifdef EXTDEBUG
-#define dbgf_ext( dbgt, ... ); do { if ( __dbgf_all() ) { _dbgf_all( dbgt, __func__, __VA_ARGS__ ); } } while (0)
+#define dbgf_ext( dbgt, ... ) do { if ( __dbgf_all() ) { _dbgf_all( dbgt, __func__, __VA_ARGS__ ); } } while (0)
 #else
 #define dbgf_ext(...) {;}
 #endif

@@ -59,6 +59,7 @@ cat<<EOF
 	<link rel="shortcut icon" href="/images/favicon.ico">
 	<script type="text/javascript" src="/js/jquery.js"></script>
 	<script type="text/javascript" src="/js/help.js"></script>
+	<script type="text/javascript" src="/js/grid.js"></script>
 EOF
 
 test "$URI_PATH" = "/www/admin" && {

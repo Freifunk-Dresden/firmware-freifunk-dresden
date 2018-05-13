@@ -1,5 +1,8 @@
 config dnsmasq 'dnsmasq'
+	option quietdhcp '1'
         option logqueries '0'
+	# no logging to syslog or file
+	option logfacility '-'
         option localise_queries '1'
         option rebind_protection '0'
         option authoritative '1'

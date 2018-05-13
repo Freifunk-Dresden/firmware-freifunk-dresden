@@ -1,0 +1,11 @@
+--- buildroot/include/target.mk	2018-04-01 16:49:08.940983457 +0200
++++ buildroot/include/target.mk	2018-04-01 16:58:46.832779099 +0200
+@@ -17,7 +17,7 @@
+ # For nas targets
+ DEFAULT_PACKAGES.nas:=block-mount fdisk lsblk mdadm
+ # For router targets
+-DEFAULT_PACKAGES.router:=dnsmasq iptables ip6tables ppp ppp-mod-pppoe firewall odhcpd odhcp6c
++DEFAULT_PACKAGES.router:=dnsmasq iptables firewall 
+ DEFAULT_PACKAGES.bootloader:=
+
+ ifneq ($(DUMP),)

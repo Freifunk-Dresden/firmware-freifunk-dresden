@@ -267,15 +267,15 @@ else
 	case $form_action in
 		local)
 			uci set ddmesh.backbone.server_port=$form_backbone_server_port
-			uci commit
+			uci_commit.sh
 			MSG=2
 		;;
 		client_del) uci delete ddmesh.$form_entry;
-		uci commit
+		uci_commit.sh
 		MSG=4
 		;;
 		accept_del) uci delete ddmesh.$form_entry;
-		uci commit
+		uci_commit.sh
 		MSG=4;
 		;;
 		client_add)
@@ -284,7 +284,7 @@ else
 				uci set ddmesh.@backbone_client[-1].host="$form_backbone_server_hostname"
 				uci set ddmesh.@backbone_client[-1].port="$form_backbone_server_port"
 				uci set ddmesh.@backbone_client[-1].public_key="$form_backbone_server_key"
-				uci commit
+				uci_commit.sh
 				MSG=3;
 			else
 				MSG=6;
@@ -295,7 +295,7 @@ else
 				uci add ddmesh backbone_accept >/dev/null
 				uci set ddmesh.@backbone_accept[-1].comment="$form_backbone_peer_comment"
 				uci set ddmesh.@backbone_accept[-1].public_key="$form_backbone_peer_key"
-				uci commit
+				uci_commit.sh
 				MSG=3;
 			else
 				MSG=6;

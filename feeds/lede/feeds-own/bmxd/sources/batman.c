@@ -117,10 +117,13 @@ void batman( void ) {
 				check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_STATUS ), 0, cn );
 				check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_LINKS ), 0, cn );
 				check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_ORIGINATORS ), 0, cn );
+#ifndef NOHNA
 				check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_HNAS ), 0, cn );
+#endif
 				check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_GATEWAYS ), 0, cn );
+#ifndef NOSRV
 				check_apply_parent_option( ADD, OPT_APPLY, 0, get_option( 0, 0, ARG_SERVICES ), 0, cn );
-				
+#endif
 				dbg_printf( cn, "--------------- END DEBUG ---------------\n" );
 				
 			}

@@ -380,8 +380,7 @@ int8_t send_udp_packet( unsigned char *packet_buff, int32_t packet_buff_len, str
 
 }
 
-
-
+#ifdef STEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
 static void segmentation_fault( int32_t sig ) {
 
 	signal( SIGSEGV, SIG_DFL );
@@ -405,6 +404,7 @@ static void segmentation_fault( int32_t sig ) {
 	}
 	
 }
+#endif // STEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
 
 
 void cleanup_all( int status ) {
@@ -504,7 +504,9 @@ int main( int argc, char *argv[] ) {
 	signal( SIGINT, handler );
 	signal( SIGTERM, handler );
 	signal( SIGPIPE, SIG_IGN );
+#ifdef STEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
 	signal( SIGSEGV, segmentation_fault );
+#endif
 	
 	init_control();
 

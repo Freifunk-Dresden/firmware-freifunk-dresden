@@ -1,4 +1,6 @@
 
+test -f /tmp/freifunk-running || exit 0
+
 [ ifup = "$ACTION" -o ifdown = "$ACTION" ] && {
 	[ wan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-firewall-addons.sh update
 	[ lan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-firewall-addons.sh update

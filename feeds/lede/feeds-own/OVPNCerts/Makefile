@@ -18,9 +18,10 @@ include $(INCLUDE_DIR)/package.mk
 define Package/OVPNCerts
   SECTION:=base
   CATEGORY:=ddmesh
-  DEFAULT:=m
+  DEFAULT:=n
   DEPENDS:=+openvpn-mbedtls
   TITLE:=Open VPN Tunnel
+  SUBMENU:=Packages
 endef
 
 define Package/OVPNCerts/description

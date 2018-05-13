@@ -9,12 +9,12 @@ config FASTD_ENABLE_METHOD_CIPHER_TEST
 config FASTD_ENABLE_METHOD_COMPOSED_GMAC
 	bool "Enable composed-gmac method provider"
 	depends on PACKAGE_fastd
-	default y
+	default n
 
 config FASTD_ENABLE_METHOD_GENERIC_GMAC
 	bool "Enable generic-gmac method provider"
 	depends on PACKAGE_fastd
-	default y
+	default n
 
 config FASTD_ENABLE_METHOD_GENERIC_POLY1305
 	bool "Enable generic-poly1305 method provider"
@@ -56,7 +56,7 @@ config FASTD_ENABLE_CIPHER_SALSA2012
 config FASTD_ENABLE_MAC_GHASH
 	bool "Enable the GHASH message authentication code"
 	depends on PACKAGE_fastd
-	default y
+	default n
 
 
 config FASTD_WITH_CMDLINE_USER

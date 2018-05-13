@@ -17,7 +17,7 @@ export ARG2="$2"
 if [ "$ARG1" = "" ]
 then
 	echo ""
-	echo "ddmesh-ipcalc.sh (awk) Stephan Enderlein (c) 2015 V4"
+	echo "ddmesh-ipcalc.sh (awk) Stephan Enderlein (c) 2017 V5"
 	echo ""
 	echo "Calculates all the addresses for the ddmesh freifunk node"
 	echo "usage: ddmesh-ipcalc.sh [-t] [-n node] | [ipv4 ip]"
@@ -82,6 +82,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	nodeip		= _meshnet "." _primary_major "." _middle "." _minor
 	nonprimary_ip	= _meshnet "." _nonprimary_major "." _middle "." _minor
 	meshpre		= 16
+	meshnetwork	= _meshnet "." _primary_major ".0.0"
 	meshnetmask	= "255.255.0.0"
 	meshbroadcast	= "10.255.255.255"
 
@@ -93,6 +94,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	mesh6ip		= mesh6nodenet "1"
 	mesh6nodepre	= "64"
 
+	meshnet		= "10.200.0.0/16"
 	fullnet		= "10.200.0.0/15"
 	wifi2net	= "100.64.0.0/16"
 	wifi2ip		= "100.64.0.1"
@@ -109,6 +111,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	print "export _ddmesh_hostname=\"r"node"\""
 	print "export _ddmesh_ip=\""nodeip"\""
 	print "export _ddmesh_nonprimary_ip=\""nonprimary_ip"\""
+	print "export _ddmesh_network=\""meshnetwork"\""
 	print "export _ddmesh_netpre=\""meshpre"\""
 	print "export _ddmesh_netmask=\""meshnetmask"\""
 	print "export _ddmesh_broadcast=\""meshbroadcast"\""
@@ -117,6 +120,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	print "export _ddmesh_mesh6nodenet=\""mesh6nodenet"\""
 	print "export _ddmesh_mesh6ip=\""mesh6ip"\""
 	print "export _ddmesh_mesh6nodepre=\""mesh6nodepre"\""
+	print "export _ddmesh_meshnet=\""meshnet"\""
 	print "export _ddmesh_fullnet=\""fullnet"\""
 	print "export _ddmesh_wifi2net=\""wifi2net"\""
 	print "export _ddmesh_wifi2ip=\""wifi2ip"\""

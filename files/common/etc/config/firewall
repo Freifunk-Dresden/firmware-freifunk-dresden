@@ -1,7 +1,7 @@
 
 config defaults
 	option syn_flood '1'
-	option input 'REJECT'
+	option input 'ACCEPT'
 	option output 'ACCEPT'
 	option forward 'REJECT'
 	option custom_chains '1'
@@ -52,7 +52,8 @@ config zone 'zone_bat'
 
 config zone 'zone_mesh'
 	option name 'mesh'
-	list network 'meshwire'
+	list network 'mesh_lan'
+	list network 'mesh_wan'
 	list network 'tbb_fastd'
 	list network 'wifi'
 	option input 'REJECT'

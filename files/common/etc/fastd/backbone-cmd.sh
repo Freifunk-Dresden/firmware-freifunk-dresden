@@ -7,16 +7,16 @@ eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 case $1 in
 
  up)
-  /usr/sbin/ip link set $INTERFACE down
-  /usr/sbin/ip link set $INTERFACE promisc off
-  /usr/sbin/ip link set $INTERFACE multicast off mtu $INTERFACE_MTU
-  /usr/sbin/ip addr add $_ddmesh_nonprimary_ip/$_ddmesh_netpre broadcast $_ddmesh_broadcast dev $INTERFACE
-  /usr/sbin/ip link set $INTERFACE up
+  ip link set $INTERFACE down
+  ip link set $INTERFACE promisc off
+  ip link set $INTERFACE multicast off mtu $INTERFACE_MTU
+  ip addr add $_ddmesh_nonprimary_ip/$_ddmesh_netpre broadcast $_ddmesh_broadcast dev $INTERFACE
+  ip link set $INTERFACE up
  ;;
 
  down)
-  /usr/sbin/ip link set $INTERFACE down
-  /usr/sbin/ip addr del $_ddmesh_nonprimary_ip/$_ddmesh_netpre broadcast $_ddmesh_broadcast dev $INTERFACE
+  ip link set $INTERFACE down
+  ip addr del $_ddmesh_nonprimary_ip/$_ddmesh_netpre broadcast $_ddmesh_broadcast dev $INTERFACE
  ;;
 
  establish)

@@ -1,6 +1,7 @@
 #!/bin/sh
 
-
+# set when called from commmand line                                                              
+test -z "$_ddmesh_ip" && eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
 setup()
 { # $1 - add | del
@@ -19,18 +20,16 @@ ip rule $1 to 100.64.0.0/16 table main priority 350
 #route local and lan traffic through own internet gateway
 #route public traffic via second table (KEEP ORDER!)
 ip rule $1 iif $(uci get network.loopback.ifname) table local_gateway priority 400
-test "$(uci get ddmesh.network.lan_local_internet)" = "1" && ip rule $1 iif br-lan table local_gateway priority 401
+test "$(uci -q get ddmesh.network.lan_local_internet)" = "1" && ip rule $1 iif br-lan table local_gateway priority 401
 ip rule $1 table public_gateway priority 402
 
 #byepass private ranges (not freifunk ranges) after processing specific default route
 ip rule $1 to 192.168.0.0/16 table main priority 450
 
 # avoid fastd going through mesh/bat (in case WAN dhcp did not get ip)
-ip rule add fwmark 0x5002 unreachable prio 460
+ip rule add fwmark 0x5002 table unreachable prio 460
 
 ip rule $1 to $_ddmesh_fullnet table bat_route priority 500
-ip rule $1 to 10.0.0.0/8 table bat_hna priority 501
-ip rule $1 to 172.16.0.0/12 table bat_hna priority 502
 
 #avoid ip packages go through bmx_gateway if bmx6 has removed entries from its tables
 #at this point only let inet ips go further. let all other network ips (10er) be unreachable
@@ -60,6 +59,8 @@ clean()
 			ip rule del prio $i
 		}
 	done
+
+	ip route del unreachable default table unreachable
 }
 
 case "$1" in

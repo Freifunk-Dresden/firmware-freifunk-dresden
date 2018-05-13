@@ -57,9 +57,23 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 # -DTESTDEBUG		(testing syntax of __VA_ARGS__ dbg...() macros)
 # -DWITHUNUSED		(includes yet unused stuff)
 
-EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNOSRV -DNODEBUGALL 
+# remove all twt functions, as this would allocated memory also when
+# not using it (disabled by command line options of bmxd)
+# -DSTEPHAN_ENABLE_TWT
 
-LDFLAGS +=	-Wl,-export-dynamic -ldl -g3
+# to create coredumps on pc /var/crash) disable SIGSEGV handling
+#EXTRA_CFLAGS += -DSTEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
+
+# This disables dynamic plugin support
+EXTRA_CFLAGS += -DSTEPHAN_NO_DYNAMIC_PLUGIN
+
+
+#EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNOSRV -DNODEBUGALL -DNOHNA
+# um viele debug traces zu bekommen (nur fuer entwicklung nutzen)
+EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNOSRV -DNOHNA
+
+#LDFLAGS +=	-Wl,-export-dynamic -ldl -g3
+LDFLAGS +=	-g3
 # -static
 # -pg
 

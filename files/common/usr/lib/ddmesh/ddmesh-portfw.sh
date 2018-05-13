@@ -16,9 +16,9 @@ IPT=fwprint
 
 setup_forwarding() {
 	# prepare forwarding
-	$IPT -t nat -N PORT_FORWARDING
-	$IPT -t nat -N PORT_FORWARDING_PROTECT
-	$IPT -t nat -N PORT_FORWARDING_RULES
+	$IPT -t nat -N PORT_FORWARDING 2>/dev/null
+	$IPT -t nat -N PORT_FORWARDING_PROTECT 2>/dev/null
+	$IPT -t nat -N PORT_FORWARDING_RULES 2>/dev/null
 
 	#flush when script is re-started (wan dhcp, delayed)
 	$IPT -t nat -F PORT_FORWARDING
@@ -36,8 +36,8 @@ setup_forwarding() {
 	$IPT -t nat -D prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING 2>/dev/null
 	$IPT -t nat -A prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING
 
-	$IPT -N PORT_FORWARDING
-	$IPT -N PORT_FORWARDING_RULES
+	$IPT -N PORT_FORWARDING 2>/dev/null
+	$IPT -N PORT_FORWARDING_RULES 2>/dev/null
 
 	#flush when script is re-started (wan dhcp, delayed)
 	$IPT -F PORT_FORWARDING

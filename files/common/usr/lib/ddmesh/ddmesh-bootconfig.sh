@@ -1,17 +1,14 @@
 #!/bin/ash
 
 #Freifunk Router Setup
-#ddmesh-boot.sh [firewall]
-#  - Resets router settings to default freifunk settings depending on NODE
-#  firewall - only restarts firewall. (is needed after interface hotplug events)
-#             is called from /etc/hotplug.d/iface/50-bootconfig
 #
 # boot sequence for  flash with factory reset:
 # boot1	-> reboot after flash, openwrt creates jffs2 -> reboot
 # boot2	-> openwrt creates initial configs
 #	-> ddmesh-bootconfig.sh: check if ddmesh config is already there
 #		-> yes -> firmware running
-#		-> no -> delete all config to clear firmware settings in case other firmware was replaced, create /etc/config/ddmesh -> reboot
+#		-> no -> delete all config to clear firmware settings in 
+#			case other firmware was replaced, create /etc/config/ddmesh -> reboot
 # boot3 -> ddmesh_bootconfig.sh: create rest ddmesh config with temp node number -> reboot
 # boot4 -> ddmesh-bootconfig.sh: update ddmesh config -> firmware running
 #  firmware is ready and running: update config depending on node number -> reboot
@@ -25,15 +22,6 @@ LOGGER_TAG="ddmesh-boot"
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
 config_boot_step1() {
-
-# enable dhcp
-
-if [ "$wan_iface_present" = "1" ]; then
-	dhcp_lan_limit=150
-else
-	dhcp_lan_limit=0
-fi
-
 
 cat <<EOM >/etc/config/overlay
 config overlay 'data'
@@ -62,6 +50,7 @@ config system 'system'
 	option  wansetup                1
 	option  meshssh                 1
 	option  meshsetup               1
+	option	disable_splash		1
 	option	firmware_autoupdate     0
 	option	email_notification	0
 	option	node_type		'node'
@@ -73,11 +62,13 @@ config system 'system'
 config boot 'boot'
 	option boot_step                0
 	option upgrade_version		$(cat /etc/version)
+	option nightly_upgrade_running	0
+	option upgrade_running		0
 
 config gps 'gps'
-	option 	latitude
-	option  longitude
-	option  altitude
+	option 	latitude		'51.054741'
+	option  longitude		'13.742642'
+	option  altitude		'0'
 
 config contact 'contact'
 	option	name			''
@@ -91,10 +82,10 @@ config network 'network'
 #0-disable; in minutes;
 	option	client_disconnect_timeout 0
 	option	dhcp_lan_offset		100
-	option	dhcp_lan_limit		$dhcp_lan_limit
+	option	dhcp_lan_limit		0
 	option	dhcp_lan_lease		'12h'
 	option	essid_adhoc		'Freifunk Mesh-Net'
-#	option	essid_ap		''
+#	option	essid_ap		'' #custom essid
 	option	wifi_country		'BO'
 	option	wifi_channel		13
 	option  wifi_txpower		18
@@ -103,6 +94,7 @@ config network 'network'
 #	option	wifi_txantenna		1
 	option	wifi_slow_rates		0
 	option	wifi2_dhcplease		'5m'
+	option	wifi2_isolate		'1'
 	option	lan_local_internet	'0'
 	option	speed_down		'200000'
 	option	speed_up		'50000'
@@ -112,6 +104,8 @@ config network 'network'
 	option	mesh_network_id		'1206'
 	option	mesh_mtu		1200
 	option	mesh_on_lan		0
+	option	wifi3_enabled		0
+	option	wifi3_network		'lan'
 
 config bmxd 'bmxd'
 	option  routing_class           3
@@ -208,101 +202,16 @@ EOM
 		logger -s -t "$LOGGER_TAG" "INFO: generated temorary node is $node"
 		uci set ddmesh.system.node=$node
 	}
+	
+	# dropbear ssh
+	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
 
 } # config_boot_step1
 
-#############################################################################
-# update configuration depending on new ddmesh settings
-config_update() {
-
- #ONLY uci settings, to ensure not flashing on every boot
- #function called when node is valid, to setup all settings depending on node
- #or other updates of system generated configs
-
- #set hostname
- uci set system.@system[0].hostname="$_ddmesh_hostname"
- uci set system.@system[0].timezone="CET-1CEST,M3.5.0,M10.5.0/3"
-
- #syslog
- uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
-
- #############################################################################
- # setup backbone clients
- #############################################################################
- for i in $(seq 0 4)
- do
-	host="$(uci -q get ddmesh.@backbone_client[$i].host)"
-	fastd_pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
-	if [ -n "$host" -a -z "$fastd_pubkey" ]; then
-		uci -q del ddmesh.@backbone_client[$i].password
-		uci -q set ddmesh.@backbone_client[$i].port="5002"
-		#lookup key
-		for k in $(seq 1 10)
-		do
-			kk=$(( $k - 1))
-			h=$(uci -q get credentials.@backbone[$kk].host)
-			if [ "$h" = "$host" ]; then
-				uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
-				break;
-			fi
-		done
-	fi
-done
-
- #############################################################################
- # setup lan
- # Interface for "lan" is initally  set in /etc/config/network
- # tbb is a bridge used by mesh-on-lan
- #############################################################################
- uci set network.lan.stp=1
- uci set network.lan.bridge_empty=1
-
- #wan as bridge for mesh_on_wan support
- test -n "$(uci -q get network.wan)" && {
-	uci set network.wan.type='bridge'
-	uci set network.wan.bridge_empty=1
- }
-
- test -z "$(uci -q get network.meshwire)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='meshwire'
- }
- uci set network.meshwire.bridge_empty=1
- uci set network.meshwire.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.meshwire.netmask="$_ddmesh_netmask"
- uci set network.meshwire.broadcast="$_ddmesh_broadcast"
- uci set network.meshwire.proto='static'
- uci set network.meshwire.type='bridge'
- uci set network.meshwire.stp=1
-
- #############################################################################
- # setup wifi
- # Interfaces for "wifi" and "wifi2" are created by wireless subsystem and
- # assigned to this networks
- #############################################################################
- test -z "$(uci -q get network.wifi)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='wifi'
- }
- uci set network.wifi.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi.netmask="$_ddmesh_netmask"
- uci set network.wifi.broadcast="$_ddmesh_broadcast"
- uci set network.wifi.proto='static'
-
- test -z "$(uci -q get network.wifi2)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='wifi2'
- }
- uci set network.wifi2.ipaddr="$_ddmesh_wifi2ip"
- uci set network.wifi2.netmask="$_ddmesh_wifi2netmask"
- uci set network.wifi2.broadcast="$_ddmesh_wifi2broadcast"
- uci set network.wifi2.proto='static'
- uci set network.wifi2.type='bridge'
- uci set network.wifi2.stp=1
- #don't store dns for wifi2 to avoid adding it to resolv.conf
-
-#wireless, regenerate config in case wifi usb stick plugged into different usb port
- rm /etc/config/wireless
+setup_wireless()
+{
+ #wireless, regenerate config in case wifi usb stick plugged into different usb port
+ rm /var/etc/config/wireless
  wifi config
 
  uci set wireless.@wifi-device[0].disabled=0
@@ -355,7 +264,15 @@ done
 	uci set wireless.@wifi-iface[1].network='wifi2'
 	uci set wireless.@wifi-iface[1].mode='ap'
 	uci set wireless.@wifi-iface[1].encryption='none'
-	uci set wireless.@wifi-iface[1].isolate='1'
+
+	isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
+	isolate="${isolate:-1}" #default isolate
+	uci set wireless.@wifi-iface[1].isolate="$isolate"
+
+	#uci set wireless.@wifi-iface[2].wpa_disable_eapol_key_retries='1'
+	#uci set wireless.@wifi-iface[2].tdls_prohibit='1'
+	#uci set wireless.@wifi-iface[1].ieee80211w='1'
+	
 
 	if [ "$(uci get ddmesh.network.custom_essid)" = "1" ]; then
 		custom="$(uci get ddmesh.network.essid_ap)"
@@ -369,8 +286,137 @@ done
 	fi
  	uci set wireless.@wifi-iface[1].ssid="${essid:0:32}"
  	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[1].mcast_rate='6000'
+
+	# add encrypted access point
+	 if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" -a -n "$(uci -q get credentials.wifi.private_ssid)" -a -n "$(uci -q get credentials.wifi.private_key)" ]; then
+		test -z "$(uci -q get wireless.@wifi-iface[2])" && uci add wireless wifi-iface
+		uci set wireless.@wifi-iface[2].device='radio0'
+		uci set wireless.@wifi-iface[2].network="$(uci -q get ddmesh.network.wifi3_network)"
+		uci set wireless.@wifi-iface[2].mode='ap'
+		if [ "$(uci -q get ddmesh.network.wifi3_security_open)" = "1" ]; then
+			uci set wireless.@wifi-iface[2].encryption='none'
+		else
+			uci set wireless.@wifi-iface[2].encryption='psk2'
+			uci set wireless.@wifi-iface[2].key="$(uci -q get credentials.wifi.private_key)"
+		fi
+		uci set wireless.@wifi-iface[2].isolate='0'
+		ssid="$(uci -q get credentials.wifi.private_ssid)"
+		uci set wireless.@wifi-iface[2].ssid="${ssid:0:32}"
+		#uci set wireless.@wifi-iface[2].wpa_disable_eapol_key_retries='1'
+		#uci set wireless.@wifi-iface[2].tdls_prohibit='1'
+		#uci set wireless.@wifi-iface[2].ieee80211w='1'
+	fi
  fi
 
+ # only wireless should be commited. if overlay-md5sum changes we have
+ # an error
+ uci_commit.sh
+}
+
+#############################################################################
+# update configuration depending on new ddmesh settings
+config_update() {
+
+ #ONLY uci settings, to ensure not flashing on every boot
+ #function called when node is valid, to setup all settings depending on node
+ #or other updates of system generated configs
+
+ #set hostname
+ uci set system.@system[0].hostname="$_ddmesh_hostname"
+ uci set system.@system[0].timezone="CET-1CEST,M3.5.0,M10.5.0/3"
+
+ #syslog
+ uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
+
+ #############################################################################
+ # setup backbone clients
+ #############################################################################
+ for i in $(seq 0 4)
+ do
+	host="$(uci -q get ddmesh.@backbone_client[$i].host)"
+	fastd_pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
+	if [ -n "$host" -a -z "$fastd_pubkey" ]; then
+		uci -q del ddmesh.@backbone_client[$i].password
+		uci -q set ddmesh.@backbone_client[$i].port="5002"
+		#lookup key
+		for k in $(seq 1 10)
+		do
+			kk=$(( $k - 1))
+			h=$(uci -q get credentials.@backbone[$kk].host)
+			if [ "$h" = "$host" ]; then
+				uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
+				break;
+			fi
+		done
+	fi
+done
+
+ #############################################################################
+ # setup lan
+ # Interface for "lan" is initally  set in /etc/config/network
+ # tbb is a bridge used by mesh-on-lan
+ #############################################################################
+ uci set network.lan.stp=1
+ uci set network.lan.bridge_empty=1
+
+ #wan as bridge for mesh_on_wan support
+ test -n "$(uci -q get network.wan)" && {
+	uci set network.wan.type='bridge'
+ 	uci set network.wan.stp=1
+	uci set network.wan.bridge_empty=1
+ }
+
+ test -z "$(uci -q get network.mesh_lan)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='mesh_lan'
+ }
+ uci set network.mesh_lan.bridge_empty=1
+ uci set network.mesh_lan.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.mesh_lan.netmask="$_ddmesh_netmask"
+ uci set network.mesh_lan.broadcast="$_ddmesh_broadcast"
+ uci set network.mesh_lan.proto='static'
+ uci set network.mesh_lan.type='bridge'
+ uci set network.mesh_lan.stp=1
+
+ test -z "$(uci -q get network.mesh_wan)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='mesh_wan'
+ }
+ uci set network.mesh_wan.bridge_empty=1
+ uci set network.mesh_wan.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.mesh_wan.netmask="$_ddmesh_netmask"
+ uci set network.mesh_wan.broadcast="$_ddmesh_broadcast"
+ uci set network.mesh_wan.proto='static'
+ uci set network.mesh_wan.type='bridge'
+ uci set network.mesh_wan.stp=1
+
+ #############################################################################
+ # setup wifi
+ # Interfaces for "wifi" and "wifi2" are created by wireless subsystem and
+ # assigned to this networks
+ #############################################################################
+ test -z "$(uci -q get network.wifi)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='wifi'
+ }
+ uci set network.wifi.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.wifi.netmask="$_ddmesh_netmask"
+ uci set network.wifi.broadcast="$_ddmesh_broadcast"
+ uci set network.wifi.proto='static'
+
+ test -z "$(uci -q get network.wifi2)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='wifi2'
+ }
+ uci set network.wifi2.ipaddr="$_ddmesh_wifi2ip"
+ uci set network.wifi2.netmask="$_ddmesh_wifi2netmask"
+ uci set network.wifi2.broadcast="$_ddmesh_wifi2broadcast"
+ uci set network.wifi2.proto='static'
+ uci set network.wifi2.type='bridge'
+ uci set network.wifi2.stp=1
+ #don't store dns for wifi2 to avoid adding it to resolv.conf
+
+# setup_wireless
 
  #############################################################################
  # setup tbb_fastd network assigned to a firewall zone (mesh) for a interface that is not controlled
@@ -382,7 +428,7 @@ done
  	uci add network interface
  	uci rename network.@interface[-1]='tbb_fastd'
  }
- uci set network.tbb_fastd.ifname="tbb-fastd"
+ uci set network.tbb_fastd.ifname='tbb_fastd'
  uci set network.tbb_fastd.proto='static'
 
  #bmxd bat zone, to a masq rules to firewall
@@ -524,6 +570,8 @@ config_temp_configs() {
 	mkdir -p /tmp/hosts
 	mkdir -p /var/etc
 
+	setup_wireless
+	
 	cat<<EOM >/var/etc/dnsmasq.hosts
 127.0.0.1 localhost
 $_ddmesh_wifi2ip hotspot
@@ -634,7 +682,7 @@ fi
 # ALWAYS update check AFTER nightly reboot
 if [ "$(uci -q get ddmesh.system.firmware_autoupdate)" = "1" ];then
 cat<<EOM >> /var/etc/crontabs/root
-$m 5 * * *  /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run >/dev/null 2>/dev/null
+$m 5 * * *  /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run nightly >/dev/null 2>/dev/null
 EOM
 fi
 
@@ -649,18 +697,18 @@ setup_mesh_on_wire()
  if [ "$mesh_on_lan" = "1" -o "$mesh_on_wan" = "1" ]; then
 	sleep 300
 
- 	# mesh-on-lan: move phys ethernet to br-meshwire
+ 	# mesh-on-lan: move phys ethernet to br-mesh_lan/br-mesh_wan
 	 lan_phy="$(uci -q get network.lan.ifname)"
 	 wan_phy="$(uci -q get network.wan.ifname)"
 
 	 if [ "$mesh_on_lan" = "1" ]; then
  		brctl delif $lan_ifname $lan_phy
-	 	brctl addif $meshwire_ifname $lan_phy
+	 	brctl addif $mesh_lan_ifname $lan_phy
 	 fi
 
 	 if [ "$mesh_on_wan" = "1" -a "$wan_iface_present" = "1" ]; then
  		brctl delif $wan_ifname $wan_phy
-	 	brctl addif $meshwire_ifname $wan_phy
+	 	brctl addif $mesh_wan_ifname $wan_phy
 	 fi
  fi
 }
@@ -719,7 +767,7 @@ case "$boot_step" in
 		logger -s -t "$LOGGER_TAG" "boot step 1"
 		config_boot_step1
 		uci set ddmesh.boot.boot_step=2
-		uci commit
+		uci_commit.sh
 		logger -s -t "$LOGGER_TAG" "reboot boot step 1"
 		reboot
 		#stop boot process
@@ -741,14 +789,25 @@ case "$boot_step" in
 
 			config_update
 
+			upgrade_running=$(uci -q get ddmesh.boot.upgrade_running)
 			uci set ddmesh.boot.boot_step=3
-			/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
+			uci set ddmesh.boot.nightly_upgrade_running=0
+			uci set ddmesh.boot.upgrade_running=0
 
-			uci commit
+			uci_commit.sh
+
+			# after uci commit and only when fw was upgraded
+			if [ "$upgrade_running" = "1" ]; then
+				logger -t $LOGGER_TAG "firmware upgrade finished"
+
+				/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
+			fi
+
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
 
-			sync
+			sleep 5 # no sync, it might modify flash
 			reboot
+
 			#stop boot process
 			exit 1
 		fi
@@ -771,7 +830,7 @@ case "$boot_step" in
 				/usr/lib/ddmesh/ddmesh-firewall-addons.sh once
 				/etc/init.d/uhttpd restart
 				/etc/init.d/wshaper restart
-				/etc/init.d/cron restart
+				# cron job is started from ddmesh-init.sh after bmxd
 			fi
 			/usr/lib/ddmesh/ddmesh-firewall-addons.sh post
 			/usr/lib/ddmesh/ddmesh-firewall-addons.sh update

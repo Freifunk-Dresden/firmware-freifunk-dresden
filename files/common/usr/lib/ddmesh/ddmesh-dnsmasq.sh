@@ -32,6 +32,11 @@ if [ "$1" = "configure" ]; then
 		#create LAN DHCP: IP,NETMASK,BROADCAST,NETWORK,PREFIX,START,END
 		eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask) $(uci get ddmesh.network.dhcp_lan_offset) $(uci get ddmesh.network.dhcp_lan_limit))
 
+		test -z "$(uci -q get dhcp.dhcp)" && {                                                 
+			uci add dhcp dhcp             
+			uci rename dhcp.@dhcp[-1]='lan'
+		}                                      
+
 		# start dhcp server also if another server is running in network
 		uci -q set dhcp.lan.force='1'
 
@@ -47,6 +52,9 @@ if [ "$1" = "configure" ]; then
 		uci -q add_list dhcp.lan.dhcp_option="12,$_ddmesh_hostname"	# hostname
 		uci -q add_list dhcp.lan.dhcp_option="15,$domain"		# domain
 		uci -q add_list dhcp.lan.dhcp_option="119,$domain"		# search path
+	else
+		# disable dhcp on lan
+		uci -q delete dhcp.lan
 	fi
 
 	# wifi2
@@ -70,7 +78,7 @@ if [ "$1" = "configure" ]; then
 	uci -q add_list dhcp.wifi2.dhcp_option="15,$domain"		# domain
 	uci -q add_list dhcp.wifi2.dhcp_option="119,$domain"		# search path
 
-	uci commit
+	uci_commit.sh
 fi
 
 if [ "$1" == start ]; then

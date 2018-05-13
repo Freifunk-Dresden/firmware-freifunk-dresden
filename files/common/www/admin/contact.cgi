@@ -21,6 +21,11 @@ cat<<EOF
 <form action="contact.cgi" method="POST">
 <fieldset class="bubble">
 <legend>Kontakt-Informationen</legend>
+<div style="color: #000088;">
+<font size="+1"><b>Hinweis zur Datenschutz-Grundverordnung (EU-DSGVO):</b></font><br/>
+$(lang text-dsgvo)
+<br /><br />
+</div>
 <table>
 
 <tr title="Freiwillige Angabe eines Namens">
@@ -71,10 +76,12 @@ cat<<EOF
 </fieldset>
 </form>
 <br>
-<p><b>Tipp</b>:
+<p><b>Tipp</b>:<br />
 Diese Angaben sind auf der Seite <a href="/contact.cgi">Kontakt</a>
-f&uuml;r andere sichtbar.</p>
-<fieldset class="bubble">
+f&uuml;r andere sichtbar.<br />
+Der Standort kann mit der Mouse verschoben werden.<br/>
+</p>
+<fieldset class="bubble" style="width: 600px" >
 <legend>Openstreetmap</legend>
 <div id="nodeMap"></div>
 <style>
@@ -87,7 +94,12 @@ var map = L.map('nodeMap').setView([$lat, $lon], 18);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
-L.marker([$lat, $lon]).addTo(map).bindPopup('$COMMUNITY [$_ddmesh_node]').openPopup();
+var marker = L.marker([$lat, $lon]);
+//marker.bindPopup('$COMMUNITY [$_ddmesh_node]').openPopup();
+marker.on('moveend', onMarkerMove);
+marker.addTo(map);
+marker.dragging.enable(); // after adding to map !
+
 </script>
 </fieldset>
 EOF
@@ -103,7 +115,7 @@ if [ -n "$QUERY_STRING" ]; then
 		uci set ddmesh.gps.latitude="$form_gps_latitude"
 		uci set ddmesh.gps.longitude="$form_gps_longitude"
 		uci set ddmesh.gps.altitude="$form_gps_altitude"
-		uci commit
+		uci_commit.sh
 		notebox 'Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind sofort aktiv.'
 	else
 		notebox 'Es wurden keine Einstellungen ge&auml;ndert.'

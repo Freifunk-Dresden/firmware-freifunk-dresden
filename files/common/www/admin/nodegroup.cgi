@@ -270,15 +270,15 @@ else
 		local) uci set ddmesh.privnet.server_enabled=${form_privnet_server_enabled:-0}
 			uci set ddmesh.privnet.clients_enabled=${form_privnet_clients_enabled:-0}
 			uci set ddmesh.privnet.server_port=$form_privnet_server_port
-			uci commit
+			uci_commit.sh
 			MSG=2
 		;;
 		client_del) uci delete ddmesh.$form_entry;
-		uci commit
+		uci_commit.sh
 		MSG=4
 		;;
 		accept_del) uci delete ddmesh.$form_entry;
-		uci commit
+		uci_commit.sh
 		MSG=4;
 		;;
 		client_add)
@@ -287,7 +287,7 @@ else
 				uci set ddmesh.@privnet_client[-1].name="$form_privnet_peer_node"
 				uci set ddmesh.@privnet_client[-1].port="$form_privnet_peer_port"
 				uci set ddmesh.@privnet_client[-1].password="$form_privnet_peer_passwd"
-				uci commit
+				uci_commit.sh
 				MSG=3;
 			else
 				MSG=6;
@@ -298,7 +298,7 @@ else
 				uci add ddmesh privnet_accept >/dev/null
 				uci set ddmesh.@privnet_accept[-1].name="$form_privnet_peer_node"
 				uci set ddmesh.@privnet_accept[-1].password="$form_privnet_peer_passwd"
-				uci commit
+				uci_commit.sh
 				MSG=3;
 			else
 				MSG=6;

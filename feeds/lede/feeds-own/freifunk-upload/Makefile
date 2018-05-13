@@ -22,6 +22,7 @@ define Package/freifunk-upload
   DEPENDS:
   TITLE:=Altes Firmware Upload Tool
   URL:=http://download.ddmesh.de/
+  SUBMENU:=Packages
 endef
 
 define Package/freifunk-upload/description
