@@ -1,5 +1,5 @@
 
-2018-05-13 5.0.1 (testing)
+2018-05-13 5.0.2 (testing)
 --------------------------------------------------
 gui-map 		- set default gps coordinates
 DSGVO			- add text for DSGVO (Datenschutz Grundverordnung)

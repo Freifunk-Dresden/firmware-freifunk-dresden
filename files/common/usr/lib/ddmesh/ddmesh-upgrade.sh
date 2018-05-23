@@ -302,6 +302,13 @@ upgrade_5_0_1() {
 	uci -q set ddmesh.network.wifi2_dhcplease='5m'
 }
 
+upgrade_5_0_2() {
+	uci -q delete network.meshwire # mesh_lan/wan will be created on next boot
+	uci set network.tbb_fastd.ifname='tbb_fastd'
+	cp /rom/etc/config/firewall /etc/config/firewall
+	uci set dhcp.dnsmasq.logqueries=0
+}
+
 ##################################
 
 run_upgrade
