@@ -29,7 +29,7 @@ template(name="myfile" type="string" string="/var/log/freifunk-router/node.%sysl
 	</td></tr>
 
 	<tr>
-	<th width="120">Syslog-Server-IP</th>
+	<th width="120">Syslog-Server-IP-Adresse</th>
 	<td class="nowrap"><input name="form_syslog_ip" size="15" type="text" value="$(uci get system.@system[0].log_ip)"></td></tr>
 	<tr>
 	<th >Syslog-Server-Port (UDP)</th>
