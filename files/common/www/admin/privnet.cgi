@@ -28,7 +28,7 @@ function checkinput_server ()
 {
 	var v;
 	v = document.privnet_form_server.form_privnet_server_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ungültig (1-65535)");return 0;}
+	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ungültig (1-65535).");return 0;}
 	return 1;
 }
 
@@ -36,14 +36,14 @@ function checkinput_outgoing ()
 {
 	var v;
 	v = document.privnet_form_connection_out.form_privnet_peer_node.value;
-	if( v.replace(/[0-9]/g,"") != "" ){ alert("Knoten ist ungültig");return 0;}
+	if( v.replace(/[0-9]/g,"") != "" ){ alert("Knoten ist ungültig.");return 0;}
 	if( checknumber(v) || v<1 || v>$_ddmesh_max){ alert("Knoten ist ungültig.");return 0;}
 
 	v = document.privnet_form_connection_out.form_privnet_peer_port.value;
 	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ungültig (1-65535).");return 0;}
 
 	v = document.privnet_form_connection_out.form_privnet_peer_key.value;
-	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen)");return 0;}
+	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen).");return 0;}
 	if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig.");return 0;}
 	return 1;
 }
@@ -52,7 +52,7 @@ function checkinput_incomming ()
 {
 	var v;
 	v = document.privnet_form_connection_in.form_privnet_peer_key.value;
-	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen)");return 0;}
+	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen).");return 0;}
 	if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig.");return 0;}
 	return 1;
 }
