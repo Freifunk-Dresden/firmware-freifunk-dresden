@@ -18,9 +18,9 @@ cat<<EOM
 
 <tr><th>Aktiviere DynDNS:</th><td><INPUT NAME="form_ddns_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddns.dyndns.enabled)" = "1" ];then echo ' checked="checked"';fi)></td></tr>
 
-<tr><th>DynDNS Dienst:</th>
+<tr><th>DynDNS-Dienst:</th>
 <td><select name="form_ddns_service_name" size="1">
-<option value=""> - manual DynDNS URL</option>
+<option value=""> - manuelle DynDNS-URL</option>
 EOM
 export service=$(uci -q get ddns.dyndns.service_name)
 cat /etc/ddns/services | awk '
@@ -43,8 +43,8 @@ cat<<EOM
 </select> </td>
 </tr>
 
-<tr><th>Update URL:</th>
-<td><INPUT NAME="form_ddns_use_https" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddns.dyndns.use_https)" = "1" ];then echo ' checked="checked"';fi)<input name="form_ddns_update_url" size="32" type="text" value="$(uci get ddns.dyndns.update_url)">Verwendet nur wenn DynDNS Dienst auf 'manual' gestellt ist. Siehe openwrt.org: ddns</td>
+<tr><th>Update-URL:</th>
+<td><INPUT NAME="form_ddns_use_https" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddns.dyndns.use_https)" = "1" ];then echo ' checked="checked"';fi)<input name="form_ddns_update_url" size="32" type="text" value="$(uci get ddns.dyndns.update_url)">Zu verwendende URL, wenn DynDNS-Dienst auf <i>manuelle DynDNS-URL</i> gestellt ist. Siehe <a href="https://openwrt.org/docs/guide-user/base-system/ddns">openwrt.org: ddns</a></td>
 </tr>
 
 <tr><th>Domain:</th>
@@ -59,17 +59,17 @@ cat<<EOM
 <td><input name="form_ddns_password" size="32" type="text" value="$(uci get ddns.dyndns.password)"></td>
 </tr>
 
-<tr><th>IP Check Interval:</th>
+<tr><th>IP-Check-Intervall:</th>
 <td><input name="form_ddns_check_interval" size="32" type="text" value="$(uci get ddns.dyndns.check_interval)"> min</td>
 </tr>
 
-<tr><th>Zwangsaktualisierung Interval:</th>
+<tr><th>Zwangsaktualisierungs-Intervall:</th>
 <td><input name="form_ddns_force_interval" size="32" type="text" value="$(uci get ddns.dyndns.force_interval)"> days</td>
 </tr>
 
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
-<td colspan="2"><input name="form_ddns_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_ddns_abort" title="Abbruch dieser Dialogseite" type="submit" value="Abbruch"></td>
+<td colspan="2"><input name="form_ddns_submit" title="Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_ddns_abort" title="Abbrechen und &Auml;nderungen verwerfen." type="submit" value="Abbrechen"></td>
 </tr>
 </table>
 </fieldset>
@@ -111,7 +111,7 @@ else #query string
 
 		uci set ddmesh.boot.boot_step=2
 		uci_commit.sh
-		notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
+		notebox "Die Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst nach dem n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 	else #submit
 		notebox "Es wurden keine Einstellungen ge&auml;ndert."
 
