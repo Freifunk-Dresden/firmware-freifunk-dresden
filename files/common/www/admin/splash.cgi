@@ -2,7 +2,7 @@
 
 . /lib/functions.sh
 
-export TITLE="Verwaltung > Expert > Splash"
+export TITLE="Verwaltung > Konfiguration > Splash"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM

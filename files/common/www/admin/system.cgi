@@ -2,7 +2,7 @@
 
 . /lib/functions.sh
 
-export TITLE="Verwaltung > Expert > System"
+export TITLE="Verwaltung > Konfiguration > System"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 

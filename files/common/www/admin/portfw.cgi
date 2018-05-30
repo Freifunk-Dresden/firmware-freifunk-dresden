@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > Portweiterleitung"
+export TITLE="Verwaltung > Konfiguration > Portweiterleitung"
 . /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh
 
