@@ -166,7 +166,7 @@ config_list_foreach network splash_mac print_splash_mac
 cat<<EOM
 <tr><td colspan="3"><form name="form_splash_del_all" action="splash.cgi" method="post">
 <input name="form_splash_action" value="delall" type="hidden">
-<button onclick="if(ask('alle'))document.forms.form_splash_del_all.submit()" name="form_splash_btn_delall" title="L&ouml;sche alle MAC Adressen" type="button">Alle MACs l&ouml;schen</button>
+<button onclick="if(ask('alle'))document.forms.form_splash_del_all.submit()" name="form_splash_btn_delall" title="L&ouml;sche alle MAC-Adressen" type="button">Alle MAC-Adressen l&ouml;schen</button>
 </form></td></tr>
 
 </table>
@@ -176,12 +176,12 @@ cat<<EOM
 <legend>MAC-Adresse hinzuf&uuml;gen</legend>
 <form name="form_splash_new" action="splash.cgi" method="post" onsubmit="return checkinput();">
 <table>
-<tr><td width="150" title="MAC Adresse im Format 11:22:33:44:55:66">
+<tr><td width="150" title="MAC-Adresse im Format 11:22:33:44:55:66">
  <input name="form_splash_action" value="add" type="hidden">
  <input name="form_splash_mac" type="text" value="" size="17" maxlength="17">
  </td>
  <td>
- <input title="MAC hinzuf&uuml;gen" type="submit" value="Neu">
+ <input title="MAC-Adresse hinzuf&uuml;gen" type="submit" value="Neu">
 </td></tr>
 </table>
 </form>
