@@ -15,11 +15,11 @@ cat<<EOM
 
 <script type="text/javascript">
 function ask (m) {
-	var x = window.confirm("MAC: ["+m+"] wirklich loeschen?");
+	var x = window.confirm("MAC-Adresse: ["+m+"] wirklich loeschen?");
 	return x;
 }
 function checkinput () {
-	var msg="MAC Adresse ist ungueltig";
+	var msg="MAC-Adresse ist ungueltig";
 	var mac=document.form_splash_new.form_splash_mac.value;
 	var i,c;
 	for(i=0;i<mac.length;i++)
@@ -44,15 +44,15 @@ function checkinput () {
 </script>
 
 <fieldset class="bubble">
-<legend>Splash</legend>
+<legend>Splash-Screen</legend>
 <form name="form_disable" action="splash.cgi" method="post">
 <input name="form_splash_action" value="disable" type="hidden">
 <table>
 <tr><td colspan="2">
-Der Splash kann komplett abgeschaltet werden. Damit k&ouml;nnen Nutzer sich ohne Splash mit dem Freifunk verbinden.<br/>
-Diese Einstellung ist nicht empfohlen, da der Splash die Nutzungsbedinungen bereitstellt und als Freifunk-Werbung dient.
+Der Splash-Screen kann komplett abgeschaltet werden. Damit k&ouml;nnen Nutzer sich ohne Einblendung einer Vorschaltseite mit dem Freifunk-WLAN verbinden.<br/>
+Diese Einstellung ist nicht empfohlen, da der Splash-Screen den User &uuml;ber Freifunk und seine Nutzungsbedingungen informiert.
 </td></tr>
-<tr><td>Splash Abschalten:<input name="form_disable_check" type="checkbox" value="1" $([ "$(uci get ddmesh.system.disable_splash)" = "1" ] && echo "checked")>
+<tr><td>Splash-Screen abschalten:<input name="form_disable_check" type="checkbox" value="1" $([ "$(uci get ddmesh.system.disable_splash)" = "1" ] && echo "checked")>
 <input name="form_disable_submit" type="submit" value="Anwenden"></td>
 </tr>
 </table>
@@ -65,29 +65,29 @@ Diese Einstellung ist nicht empfohlen, da der Splash die Nutzungsbedinungen bere
 <form name="form_splash_disconnect" action="splash.cgi" method="post">
 <input name="form_splash_action" value="disconnect" type="hidden">
 <table>
-<tr><td colspan="4">Hier wird die Zeit eingestellt, nach der der Nutzer zwangsgetrennt wird. Dies kann an Orten verwendet werden,
-an denen viele Nutzer sich einloggen, um die Verf&uuml;gbarkeit des Knotens f&uuml;r andere zu erh&ouml;en.<br/>
+<tr><td colspan="4">Hier wird die Zeit eingestellt, nach der der Nutzer zwangsgetrennt wird. Diese Option kann an Orten verwendet werden,
+an denen sich viele Nutzer einloggen, um die Verf&uuml;gbarkeit des Knotens f&uuml;r andere zu erh&ouml;en.<br/>
 Ist eine MAC gespeichert, so wird die Verbindung nicht getrennt.<br/>
-Ebenso kann es das Filesharing erschweren</td></tr>
+Ebenso kann die automatische Trennung das Filesharing erschweren.</td></tr>
 <tr>
 <td class="nowrap" width="150">
 Trennung nach:
 	<select name="form_disconnect_timeout" size="1">
 	<option selected value="0">niemals</option>
-	<option value="15">15min</option>
-	<option value="30">30min</option>
-	<option value="60"> 1h (60min)</option>
-	<option value="90"> 1.5h (90min)</option>
-	<option value="120"> 2h (120min)</option>
-	<option value="180"> 3h (180min)</option>
-	<option value="240"> 4h (240min)</option>
-	<option value="300"> 5h (300min)</option>
-	<option value="480"> 8h (480min)</option>
-	<option value="600">10h (600min)</option>
-	<option value="900">15h (900min)</option>
-	<option value="1440">24h (1440min)</option>
-	<option value="2880">48h (2880min)</option>
-	<option value="5760">96h (5760min)</option>
+	<option value="15">15 min</option>
+	<option value="30">30 min</option>
+	<option value="60"> 1 h (60 min)</option>
+	<option value="90"> 1.5 h (90 min)</option>
+	<option value="120"> 2 h (120 min)</option>
+	<option value="180"> 3 h (180 min)</option>
+	<option value="240"> 4 h (240 min)</option>
+	<option value="300"> 5 h (300 min)</option>
+	<option value="480"> 8 h (480 min)</option>
+	<option value="600">10 h (600 min)</option>
+	<option value="900">15 h (900 min)</option>
+	<option value="1440">24 h (1440 min)</option>
+	<option value="2880">48 h (2880 min)</option>
+	<option value="5760">96 h (5760 min)</option>
 	</select>
 	&nbsp;(<b>aktuell:</b> $(uci get ddmesh.network.client_disconnect_timeout) min)
 </td>
@@ -98,9 +98,9 @@ Trennung nach:
 </fieldset>
 <br/>
 <fieldset class="bubble">
-<legend>Aktuelle WLAN Client MAC Adressen</legend>
+<legend>Aktuelle WLAN-Client-MAC-Adressen</legend>
 <table>
-<tr><td colspan="4">Hier k&ouml;nnen MAC Adressen dauerhaft eingetragen werden, so dass diese nach einem Neustart aktiv sind.</td></tr>
+<tr><td colspan="4">Hier k&ouml;nnen MAC-Adressen dauerhaft eingetragen werden, sodass f&uuml;r einzelne Ger&auml;te kein Splash-Screen eingeblendet wird.</td></tr>
 EOM
 
 echo "<tr><th>MAC</th><th>IP</th><th>Hostname</th><th>Dauer</th></tr>"
@@ -141,7 +141,7 @@ cat<<EOM
 </fieldset>
 <br>
 <fieldset class="bubble">
-<legend>Gespeicherte MAC Adressen</legend>
+<legend>Gespeicherte MAC-Adressen</legend>
 <table>
 
 <tr><th width="100">MAC-Adresse</th><th></th></tr>
@@ -173,7 +173,7 @@ cat<<EOM
 </fieldset>
 <br>
 <fieldset class="bubble">
-<legend>MAC Adresse hinzuf&uuml;gen</legend>
+<legend>MAC-Adresse hinzuf&uuml;gen</legend>
 <form name="form_splash_new" action="splash.cgi" method="post" onsubmit="return checkinput();">
 <table>
 <tr><td width="150" title="MAC Adresse im Format 11:22:33:44:55:66">
@@ -198,24 +198,24 @@ if [ -n "$QUERY_STRING" ]; then
 			uci add_list ddmesh.network.splash_mac="$mac"
 			uci_commit.sh
 			/usr/lib/ddmesh/ddmesh-splash.sh addmac $mac >/dev/null
-			notebox "MAC Adresse <b>$mac</b> hinzugef&uuml;gt."
+			notebox "MAC-Adresse <b>$mac</b> hinzugef&uuml;gt."
 			;;
 		  del)
 			mac=$(uhttpd -d $form_splash_mac)
 			uci del_list ddmesh.network.splash_mac="$mac"
 			uci_commit.sh
 			/usr/lib/ddmesh/ddmesh-splash.sh delmac $mac >/dev/null
-			notebox "MAC Adresse <b>$mac</b> gel&ouml;scht."
+			notebox "MAC-Adresse <b>$mac</b> gel&ouml;scht."
 			;;
 		  rm)
 			mac=$(uhttpd -d $form_splash_mac)
 			/usr/lib/ddmesh/ddmesh-splash.sh delmac $mac >/dev/null
-			notebox "MAC Adresse <b>$mac</b> vom Firewall gel&ouml;scht."
+			notebox "MAC-Adresse <b>$mac</b> von Firewall gel&ouml;scht."
 			;;
 		  delall)
 			uci delete ddmesh.network.splash_mac
 			uci_commit.sh
-			notebox "Alle MAC Adressen wurden gel&ouml;scht."
+			notebox "Alle MAC-Adressen gel&ouml;scht."
 			;;
 		  disable)
 		  	if [ "$form_disable_check" = "1" ]; then
@@ -223,13 +223,13 @@ if [ -n "$QUERY_STRING" ]; then
 		  	else
 		  		uci set ddmesh.system.disable_splash="0"
 		  	fi
-			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
+			notebox "Die Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst nach dem n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 			uci_commit.sh
 		  	;;
 		  disconnect)
 			uci set ddmesh.network.client_disconnect_timeout="$form_disconnect_timeout"
 			uci_commit.sh
-			notebox "WLAN Clientverbindungen werden absofort nach $form_disconnect_timeout Minuten unterbrochen"
+			notebox "WLAN-Clientverbindungen werden ab sofort nach $form_disconnect_timeout Minuten unterbrochen."
 			;;
 		esac
 	fi
