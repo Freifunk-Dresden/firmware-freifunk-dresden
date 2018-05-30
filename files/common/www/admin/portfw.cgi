@@ -77,7 +77,7 @@ $PORTS, $(uci get ddmesh.backbone.server_port), $(uci get ddmesh.privnet.server_
 <legend>Neue Regel</legend>
 <table>
 <tr><th>Name</th><th>Protokoll</th><th>Port(-Bereich)</th><th>LAN-Ziel-IP</th><th>Ziel-Port</th><th></th></tr>
-<tr class="colortoggle0"><td title="Der Name dient lediglich der Wiedererkennung"><input name="form_rule_name" type="text" size="8"></td>
+<tr class="colortoggle0"><td title="Der Name dient lediglich der Wiedererkennung."><input name="form_rule_name" type="text" size="8"></td>
 <td> <select name="form_rule_proto" size="1">
  <option selected value="tcp">tcp</option>
  <option value="udp">udp</option>
