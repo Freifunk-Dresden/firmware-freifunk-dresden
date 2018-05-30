@@ -10,7 +10,7 @@ cat<<EOM
 <legend>Direkte Nachbarn</legend>
 <table>
 <tr><th colspan="2">&nbsp;</th><th colspan="2">Interface</th><th colspan="3">Linkqualit&auml;t</th></tr>
-<tr><th>Node</th><th>Ip</th><th>Device</th><th>IP</th><th>RTQ</th><th>vom Nachbarn (RQ)</th><th>zum Nachbarn (TQ)</th></tr>
+<tr><th>Knoten-Nr.</th><th>Ip</th><th>Device</th><th>IP</th><th>RTQ</th><th>vom Nachbarn (RQ)</th><th>zum Nachbarn (TQ)</th></tr>
 EOM
 
 cat $BMXD_DB_PATH/links | awk '
@@ -46,7 +46,7 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Gateways</legend>
 <table>
-<tr><th></th><th>Statistik</th><th>Node</th><th>Ip</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
+<tr><th></th><th>Statistik</th><th>Knoten-Nr.</th><th>Ip</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
 EOM
 
 cat $BMXD_DB_PATH/gateways | awk '
@@ -87,7 +87,7 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Freifunk Knoten</legend>
 <table>
-<tr><th>Node</th><th>Ip</th><th>BRC</th><th>via Routing Interface</th><th>via Router</th></tr>
+<tr><th>Knoten-Nr.</th><th>Ip</th><th>BRC</th><th>via Routing Interface</th><th>via Router</th></tr>
 EOM
 
 cat $BMXD_DB_PATH/originators | awk '
