@@ -215,7 +215,7 @@ EOM
 					cur_version="$(cat /etc/version)"
 					compare_versions "$VER"  "$cur_version" || VERSION_WARNING="<div style=\"color: red;\">Hinweis: Die Firmware-Version ist kleiner oder gleich der aktuellen Firmware (<b>$VER <= $cur_version</b>)!</div>"
 					MD5_WARNING=""
-					MD5_OK='<div style="color: green;"> MD5-Summe korrekt.</div>'
+					MD5_OK='<div style="color: green;">korrekt</div>'
 					do_update=1
 				fi
 			else
