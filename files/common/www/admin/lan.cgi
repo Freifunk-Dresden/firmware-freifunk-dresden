@@ -48,7 +48,7 @@ LAN- und WAN-IP-Adressen/-Bereiche sollten sich nicht &uuml;berschneiden!</th></
 <TD><INPUT NAME="form_dhcp_limit" SIZE="6" TYPE="TEXT" VALUE="$(uci get ddmesh.network.dhcp_lan_limit)">(DHCP-Server abschalten mit &quot;0&quot;)</TD>
 </TR>
 
-<TR TITLE="Zeit (in Stunden), nach der eine belegte IP-Adresse neu vergeben werden kann. F&uuml;r die Vorgabe von 12 Stunden (43200) das Eingabefeld leer oder auf 0 lassen.">
+<TR TITLE="Zeit (in Stunden), nach der eine zuvor belegte IP-Adresse neu vergeben werden kann. F&uuml;r die Vorgabe von 12 Stunden (43200) das Eingabefeld leer oder auf 0 lassen.">
 <TH>DHCP-Lease-Dauer:</TH>
 <TD><INPUT NAME="form_dhcp_lease" SIZE="6" TYPE="TEXT" VALUE="$(uci get ddmesh.network.dhcp_lan_lease)">(h-Stunden, s-Sekunden)</TD>
 </TR>
