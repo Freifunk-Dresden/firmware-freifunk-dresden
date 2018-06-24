@@ -1,6 +1,7 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > Bandbreiten-Einstellungen (Traffic-Shaping)"
+export TITLE="Verwaltung > Konfiguration > Bandbreiten Einstellungen (Traffic Shaping)"
+
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 

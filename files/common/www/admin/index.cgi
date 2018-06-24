@@ -14,8 +14,8 @@ cat<<EOM
 <br>
 <fieldset class="bubble">
 Willkommen zu den Verwaltungs-Seiten dieses
-Access-Points. Sende Kommentare oder Korrekturvorschl&auml;ge zu dieser
-Web-Oberfl&auml;che unter Angabe der Firmware-Version ($(cat /etc/version)) in das Dresdner Freifunk Forum.
+Access-Points. Weiterf&uuml;hrende Informationen dazu findest du im <a href="https://wiki.freifunk-dresden.de">Freifunk-Wiki</a>. Kommentare oder Korrekturvorschl&auml;ge zu dieser
+Web-Oberfl&auml;che kannst du uns gern unter Angabe der Firmware-Version ($(cat /etc/version)) im <a href="https://forum.freifunk.net/c/community/dresden">Dresdner Freifunk-Forum</a> mitteilen.
 </fieldset>
 
 <NOSCRIPT><table BORDER="0" class="note">
@@ -34,21 +34,21 @@ auf eines der Steuerungselemente, um kurze Hilfetexte einzublenden.</p>
 <tr><th width="20">Status</th><th>Einstellung</th></tr>
 <tr class="colortoggle1"><td>$(test -n "$(uci -q get ddmesh.contact.email)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: E-Mail</td></tr>
 <tr class="colortoggle2"><td>$(test -n "$(uci -q get ddmesh.contact.location)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: Standort </td></tr>
-<tr class="colortoggle1"><td>$(test -n "$(uci -q get ddmesh.gps.latitude)" && test -n "$(uci -q get ddmesh.gps.longitude)" && test -n "$(uci -q get ddmesh.gps.altitude)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: GPS Koordinaten </td></tr>
+<tr class="colortoggle1"><td>$(test -n "$(uci -q get ddmesh.gps.latitude)" && test -n "$(uci -q get ddmesh.gps.longitude)" && test -n "$(uci -q get ddmesh.gps.altitude)" && echo '<img alt="OK" src="../images/yes.png">' || echo '<img alt="Not OK" src="../images/no.png">')</td><td><a href="contact.cgi">Kontaktinfos</a>: Koordinaten </td></tr>
 
 </table>
 </fieldset>
 
 <br>
 <fieldset class="bubble">
-<legend>System Version</legend>
+<legend>System-Version</legend>
 <table>
-<tr class="colortoggle1"><th>Freifunk Version (Dresden)</th><td>$(cat /etc/version)</td></tr>
-<tr class="colortoggle2"><th>Git Firmware Rev</th><td>$git_ddmesh_rev</td></tr>
-<tr class="colortoggle1"><th>Git Firmware Branch</th><td>$git_ddmesh_branch</td></tr>
-<tr class="colortoggle2"><th>Git Lede Rev</th><td>$git_lede_rev</td></tr>
-<tr class="colortoggle1"><th>Git Lede Branch</th><td>$git_lede_branch</td></tr>
-<tr class="colortoggle2"><th>Built Datum</th><td>$(cat /etc/built_info | sed -n '/builtdate/s#[^:]*:##p')</td></tr>
+<tr class="colortoggle1"><th>Freifunk-Version (Dresden)</th><td>$(cat /etc/version)</td></tr>
+<tr class="colortoggle2"><th>Git-Firmware-Revision</th><td>$git_ddmesh_rev</td></tr>
+<tr class="colortoggle1"><th>Git-Firmware-Branch</th><td>$git_ddmesh_branch</td></tr>
+<tr class="colortoggle2"><th>Git-Lede-Revision</th><td>$git_lede_rev</td></tr>
+<tr class="colortoggle1"><th>Git-Lede-Branch</th><td>$git_lede_branch</td></tr>
+<tr class="colortoggle2"><th>Build-Datum</th><td>$(cat /etc/built_info | sed -n '/builtdate/s#[^:]*:##p')</td></tr>
 $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#')
 </table>
 </fieldset>
@@ -63,8 +63,8 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1
 <tr class="colortoggle2"><th>System:</th><td colspan="6">$(uname -m) $(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>
 <tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="6">$device_model - $(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p') [$(cat /tmp/sysinfo/board_name)]</td></tr>
 <tr class="colortoggle2"><th>Filesystem:</th><td colspan="6">$(cat /proc/cmdline | sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#')</td></tr>
-<tr class="colortoggle2"><th>SSH Fingerprint (md5)</th><td colspan="6">$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | sed -n '/Fingerprint/s#Fingerprint: md5 ##p')</td></tr>
-<tr class="colortoggle1"><th></th><th>Total</th> <th>Used</th> <th>Free</th> <th>Shared</th> <th>Buffers</th> <th>Cached</th></tr>
+<tr class="colortoggle2"><th>SSH-Fingerprint (MD5)</th><td colspan="6">$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | sed -n '/Fingerprint/s#Fingerprint: md5 ##p')</td></tr>
+<tr class="colortoggle1"><th></th><th>Total</th> <th>Used</th> <th>Free</th> <th>Shared</th> <th>Buffered</th> <th>Cached</th></tr>
 $(free | sed -n '2,${s#[ 	]*\(.*\):[ 	]*\([0-9]\+\)[ 	]*\([0-9]\+\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)#<tr class="colortoggle2"><th>\1</th><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>#g;p}' )
 </table>
 </fieldset>
@@ -73,7 +73,7 @@ EOM
 	cat<<EOM
 <br>
 <fieldset class="bubble">
-<legend>DHCP Leases (aktuelle)</legend>
+<legend>DHCP-Leases (aktuelle)</legend>
 <table>
 EOM
 
@@ -92,7 +92,7 @@ EOM
 </fieldset>
 <br>
 <fieldset class="bubble">
-<legend>Internals</legend>
+<legend>Flash</legend>
 <form name="form_overlay" action="index.cgi" method="POST">
 <input name="form_action" value="overlay" type="hidden">
 <p>Zeigt Flash&auml;nderungen, welche nur nach &Auml;nderung der Einstellungen vorhanden sein sollten.</p>

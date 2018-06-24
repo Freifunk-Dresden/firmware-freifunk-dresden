@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > WIFI"
+export TITLE="Verwaltung > Konfiguration > WIFI"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOF
