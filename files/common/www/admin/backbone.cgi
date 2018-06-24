@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > Backbone"
+export TITLE="Verwaltung > Konfiguration > Backbone"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh
@@ -28,7 +28,7 @@ function checkinput_server ()
 {
 	var v;
 	v = document.backbone_form_server.form_backbone_server_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("Server Port ist ung&uuml;ltig (1-65535)");return 0;}
+	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ung&uuml;ltig (1-65535)");return 0;}
 	return 1;
 }
 
@@ -39,7 +39,7 @@ function checkinput_outgoing ()
 	if( v==""){ alert("Hostname ist ung&uuml;ltig");return 0;}
 
 	v = document.backbone_form_connection_out.form_backbone_server_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("Server Port ist ungültig (1-65535)");return 0;}
+	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ungültig (1-65535)");return 0;}
 
 	v = document.backbone_form_connection_out.form_backbone_server_key.value;
 	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen)");return 0;}
@@ -78,14 +78,14 @@ html_msg()
 {
 	test ! "$1" = "0" && {
 		case "$1" in
-			1) msg="Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers ist nicht n&ouml;tig." ;;
-			2) msg="Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers <b>ist</b> n&ouml;tig. Oder Dr&uuml;cken Sie den Button \"Backbone Neustart\"." ;;
-			3) msg="Eintrag wurde hinzugef&uuml;gt. Ein Neustart des Routers <b>ist</b> n&ouml;tig. Oder Dr&uuml;cken Sie den Button \"Backbone Neustart\"." ;;
-			4) msg="Eintrag wurde gel&ouml;scht. Ein Neustart des Routers <b>ist</b> n&ouml;tig. Oder Dr&uuml;cken Sie den Button \"Backbone Neustart\"." ;;
+			1) msg="Die Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers ist nicht n&ouml;tig." ;;
+			2) msg="Die Einstellungen wurden &uuml;bernommen. Ein <b>Neustart</b> des Routers ist <b>n&ouml;tig</b>. Oder dr&uuml;cke den Button \"Backbone-Neustart\"." ;;
+			3) msg="Eintrag wurde hinzugef&uuml;gt. Ein <b>Neustart</b> des Routers ist <b>n&ouml;tig</b>. Oder dr&uuml;cke den Button \"Backbone-Neustart\"." ;;
+			4) msg="Eintrag wurde gel&ouml;scht. Ein <b>Neustart</b> des Routers ist <b>n&ouml;tig</b>. Oder dr&uuml;cke den Button \"Backbone-Neustart\"." ;;
 			5) msg="Eintrag wurde hinzugef&uuml;gt. Ein Neustart des Routers ist nicht n&ouml;tig." ;;
-			6) msg="Eintrag wurde <b>nicht</b> gespeichert. Maximale Anzahl von <b>$NUMBER_OF_CLIENTS</b> wurden erreicht.";;
-			7) msg="Backbone wurde neu gestartet. Nach etwa 30s diese Seite erneut aufrufen um den aktuellen Status zu sehen";;
-			8) msg="Backbone wird neu gestartet. Sollte die aktuelle Verbindung gerade &uuml;ber das Backbone laufen,<br />wird diese Verbindung f&uuml;r eine Zeit gest&ouml;rt";;
+			6) msg="Eintrag wurde <b>nicht gespeichert</b>. Maximale Anzahl von <b>$NUMBER_OF_CLIENTS</b> wurde erreicht.";;
+			7) msg="Backbone wurde neu gestartet. Rufe nach etwa 30 s diese Seite erneut auf, um den aktuellen Status zu sehen.";;
+			8) msg="Backbone wird neu gestartet. Sollte die aktuelle Verbindung gerade &uuml;ber das Backbone laufen,<br />wird diese Verbindung f&uuml;r einige Zeit gest&ouml;rt.";;
 			9) msg="Es wurden keine Einstellungen ge&auml;ndert." ;;
 			*) msg="unbekannt[$1]" ;;
 		esac
@@ -151,7 +151,7 @@ content()
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th title="TCP Port des Servers">Server TCP Port:</th><td><input name="form_backbone_server_port" type="text" size="8" value="$backbone_server_port"</td>
+<tr><th title="TCP-Port des Servers">Server-TCP-Port:</th><td><input name="form_backbone_server_port" type="text" size="8" value="$backbone_server_port"</td>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="if(checkinput_server())form_submit(document.forms.backbone_form_server,'local','none')" name="bb_btn_new" type="button">Speichern</button></td></tr>
 </table>
 </form>
@@ -160,7 +160,7 @@ content()
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><td colspan="3"><font color="red">Achtung: Wird ein neuer Schl&uuml;ssel generiert, muss dieser bei ALLEN Backbone Servern aktualisiert werden, da sonst keine Verbindung mehr von diesem Router akzeptiert wird.</font></td></tr>
+<tr><td colspan="3"><font color="red">Achtung: Wird ein neuer Schl&uuml;ssel generiert, muss dieser bei <b>allen</b> Backbone-Servern aktualisiert werden, da sonst keine Verbindung mehr von diesem Router akzeptiert wird.</font></td></tr>
 <tr><th>Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.backbone_form_keygen,'keygen','none')" name="bb_btn_new" type="button">Key Generieren</button></td></tr>
 </table>
@@ -209,7 +209,7 @@ EOM
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th>Server Hostname (Freifunk Router)</th><th>Server Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<tr><th>Server-Hostname (Freifunk-Router)</th><th>Server-Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -245,7 +245,7 @@ EOM
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <button onclick="form_submit(document.forms.backbone_form_apply,'refresh','none')" name="bb_btn_apply" title="Seite Aktualisieren" type="button">Seite Aktualisieren</button>
-<button onclick="form_submit(document.forms.backbone_form_apply,'restart','none')" name="bb_btn_apply" title="Werte werden sofort &uuml;bernommen und Backbone neu gestartet" type="button">Backbone Neustart</button>
+<button onclick="form_submit(document.forms.backbone_form_apply,'restart','none')" name="bb_btn_apply" title="Werte werden sofort &uuml;bernommen und Backbone neu gestartet" type="button">Backbone-Neustart</button>
 </form>
 EOM
 }
@@ -254,9 +254,9 @@ EOM
 if [ -z "$QUERY_STRING" ]; then
 
 cat<<EOM
-Das Backbone kann verwendet werden, um Verbindungen zu anderen Netzwerkwolken des Freifunknetzes aufzubauen.<br />Notwendig wird dies,
-wenn man keine WLAN Verbindung herstellen kann aber Stadtbereiche miteinander verbinden m&ouml;chte.<br>
-Dabei l&auml;uft der Router als Server und Client. Die Verbindung wird &uuml;ber das Internet (oder LAN) aufgebaut.<br>
+Das Backbone kann verwendet werden, um Verbindungen zu anderen Netzwerk-Wolken des Freifunknetzes aufzubauen.<br />Notwendig wird dies,
+wenn man keine WLAN-Verbindung herstellen kann, aber Stadtbereiche miteinander verbinden m&ouml;chte.<br>
+Dabei l&auml;uft der Router als Server und Client. Die Verbindung wird &uuml;ber das Internet oder LAN aufgebaut.<br>
 Der Router beschr&auml;nkt dabei die Anzahl der ausgehenden und eingehenden Verbindungen auf maximal <b>$NUMBER_OF_CLIENTS</b>, um den Router nicht zu &uuml;berlasten.
 <br><br>
 EOM

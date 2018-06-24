@@ -2,7 +2,7 @@
 
 . /lib/functions.sh
 
-export TITLE="Verwaltung > Software"
+export TITLE="Verwaltung > Wartung > Software"
 
 IPK_FILE="/tmp/paket.ipk"
 OPKG_ERROR="/tmp/opkg.error"
@@ -36,15 +36,15 @@ show_page() {
 	     <td><input name="form_ipk_filename" size="40" type="file" value="Durchsuche..."></td></tr>
 	 <tr><td colspan="2">&nbsp;</td></tr>
 	 <tr><td colspan="2"><input name="form_ipk_submit" type="submit" value="Paket laden">
-	     <input name="form_ipk_abort" type="reset" value="Abbruch"></td></tr>
+	     <input name="form_ipk_abort" type="reset" value="Abbrechen"></td></tr>
 	 </table>
 	 </fieldset>
 	</form>
 
 	<br />
 	<font size="2"><b>Verf&uuml;gbarer Speicher:</b> $avail_size Kbyte</font> <br />
-	<b>Hinweis:</b> Die Pakete k&ouml;nnen mehr Speicher im Flash belegen, als hier angegeben. Es k&ouml;nnen Abh&auml;ngigkeiten zu anderen Paketen bestehen, die ebenfalls installiert werden. Sollte der restliche freie Speicher zu klein werden, lassen sich auch keine Konfigurationen mehr speichern. Bei Ger&auml;ten mit weniger als <b>8Mbyte Flash</b>, sollten KEINE Pakete installiert werden.<br/>
-	Nur durch ein Neustart mit Werkseinstellung, werden alle &Auml;nderungen verworfen. Dabei gehen aber alle Einstellungen verloren und eine neue Knotennummer (IP Adresse) wird vergeben.
+	<b>Hinweis:</b> Die Pakete k&ouml;nnen mehr Speicher im Flash belegen als hier angegeben. Es k&ouml;nnen Abh&auml;ngigkeiten zu anderen Paketen bestehen, die ebenfalls installiert werden. Sollte der restliche freie Speicher zu klein werden, lassen sich auch keine Konfigurationen mehr speichern. Bei Ger&auml;ten mit <b>weniger als 8 MByte Flash</b> sollten <b>keine Pakete</b> installiert werden.<br/>
+	Nur durch einen Neustart mit Werkseinstellungen k&ouml;nnen alle &Auml;nderungen wieder r&uuml;ckgängig gemacht werden. Dabei gehen aber alle Einstellungen verloren und eine neue Knoten-Nr. (sowie IP-Adresse) wird vergeben.
 	<br /><br />
 	<fieldset class="bubble">
 	<legend>Verf&uuml;gbare Pakete</legend>

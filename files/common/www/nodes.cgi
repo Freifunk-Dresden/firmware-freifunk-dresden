@@ -85,7 +85,7 @@ cat<<EOM
 </fieldset>
 <br/>
 <fieldset class="bubble">
-<legend>Freifunk Knoten</legend>
+<legend>Freifunk-Knoten</legend>
 <table>
 <tr><th>Knoten-Nr.</th><th>Ip</th><th>BRC</th><th>via Routing Interface</th><th>via Router</th></tr>
 EOM
