@@ -33,11 +33,12 @@ cat <<EOM >/etc/config/ddmesh
 config system 'system'
 	option	community	'Freifunk Dresden'
 	list	communities	'Freifunk Dresden'
-	list	communities	'Freifunk Meissen'
-	list	communities	'Freifunk Radebeul'
-	list	communities	'Freifunk Pirna'
 	list	communities	'Freifunk Freiberg'
+	list	communities	'Freifunk Meissen'
 	list	communities	'Freifunk OL'
+	list	communities	'Freifunk Pirna'
+	list	communities	'Freifunk Radebeul'
+	list	communities	'Freifunk Waldheim'
 #	option 	node			0
 	option 	tmp_min_node		900
 	option	tmp_max_node		999
