@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > Privates Netzwerk"
+export TITLE="Verwaltung > Konfiguration > Privates Netzwerk"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh

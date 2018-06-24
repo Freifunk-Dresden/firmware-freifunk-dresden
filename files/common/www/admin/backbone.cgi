@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > Backbone"
+export TITLE="Verwaltung > Konfiguration > Backbone"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh
