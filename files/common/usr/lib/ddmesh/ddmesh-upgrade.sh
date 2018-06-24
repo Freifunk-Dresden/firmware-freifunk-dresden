@@ -309,6 +309,10 @@ upgrade_5_0_2() {
 	uci set dhcp.dnsmasq.logqueries=0
 }
 
+upgrade_5_0_3() {
+	uci add_list ddmesh.system.communities="Freifunk Waldheim"
+}
+
 ##################################
 
 run_upgrade

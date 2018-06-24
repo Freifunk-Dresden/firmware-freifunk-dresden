@@ -43,21 +43,21 @@ $(lang text-dsgvo)
 <td colspan="2"><input name="form_contact_location" size="48" style="width: 100%;" type="text" value="$tmp_location"></td>
 </tr>
 
-<tr title="GPS-Position,H&ouml;he &uuml;ber Boden in Meter (z.B.: 9)">
-<th>GPS Altitude:</th>
-<td><input id="geoloc_alt" name="form_gps_altitude" size="20" type="text" value="$(uci get ddmesh.gps.altitude)"> GPS-Position,H&ouml;he &uuml;ber Boden in Meter (z.B.: 9)</td>
+<tr title="GPS-Altitude, H&ouml;he &uuml;ber Boden in Meter">
+<th>H&ouml;he:</th>
+<td><input id="geoloc_alt" name="form_gps_altitude" size="20" type="text" value="$(uci get ddmesh.gps.altitude)"> (z. B.: 9)</td>
 <td></td>
 </tr>
 
-<tr title="GPS-Position,Breitengrad (z.B.: 51.05812205978327)">
-<th>GPS Latitude:</th>
-<td><input id="geoloc_lat" name="form_gps_latitude" size="20" type="text" value="$lat">(z.B.: 51.05812205978327)</td>
+<tr title="GPS-Latitude">
+<th>Breitengrad:</th>
+<td><input id="geoloc_lat" name="form_gps_latitude" size="20" type="text" value="$lat">(z. B.: 51.05812)</td>
 <td><button onclick="ajax_geoloc()" type="button" title="$(lang text-geoloc01)">$(lang text-geoloc00)</button></td>
 </tr>
 
-<tr title="GPS-Position,L&auml;ngengrad (z.B.:13.72053812812492)">
-<th>GPS Longitude:</th>
-<td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$lon">(z.B.:13.72053812812492)</td>
+<tr title="GPS-Longitude">
+<th>L&auml;ngengrad:</th>
+<td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$lon">(z. B.: 13.72053)</td>
 <td></td>
 </tr>
 
@@ -69,20 +69,20 @@ $(lang text-dsgvo)
 <tr><td colspan="3">&nbsp;</td></tr>
 
 <tr>
-<td colspan="3"><input name="form_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden sofort auf der Seite 'Status' angezeigt." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_abort" title="Abbruch dieser Dialogseite" type="submit" value="Abbruch"></td>
+<td colspan="3"><input name="form_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden sofort auf der Seite 'Status' angezeigt." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_abort" title="Abbrechen und &Auml;nderungen verwerfen." type="submit" value="Abbrechen"></td>
 </tr>
 
 </table>
 </fieldset>
 </form>
 <br>
-<p><b>Tipp</b>:<br />
+<p><b>Hinweis:</b><br />
 Diese Angaben sind auf der Seite <a href="/contact.cgi">Kontakt</a>
 f&uuml;r andere sichtbar.<br />
-Der Standort kann mit der Mouse verschoben werden.<br/>
+Der Standort kann per Drag and Drop mit dem Mauszeiger verschoben werden.<br/>
 </p>
 <fieldset class="bubble" style="width: 600px" >
-<legend>Openstreetmap</legend>
+<legend>OpenStreetMap</legend>
 <div id="nodeMap"></div>
 <style>
 @import"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css";
