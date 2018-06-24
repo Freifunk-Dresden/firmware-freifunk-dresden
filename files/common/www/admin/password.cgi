@@ -18,7 +18,7 @@ if [ -z "$QUERY_STRING" ]; then
 <legend>Kennwort</legend>
 <table>
 
-<tr title="Eingabe eines neuen Kennwortes mit bis zu 8 Buchstaben, Ziffern oder Sonderzeichen.">
+<tr title="Eingabe eines neuen Kennwortes mit bis zu 32 Buchstaben, Ziffern oder Sonderzeichen.">
 <th>Neues Kennwort:</th><td><input name="form_pw" size="32" type="PASSWORD"></td>
 </tr>
 
@@ -29,18 +29,18 @@ if [ -z "$QUERY_STRING" ]; then
 <tr><td colspan="2">&nbsp;</td></tr>
 
 <tr>
-<td colspan="2"><input name="form_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_abort" title="Abbruch dieser Dialogseite" type="submit" value="Abbruch"></td>
+<td colspan="2"><input name="form_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden sofort wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_abort" title="Abbrechen und &Auml;nderungen verwerfen." type="submit" value="Abbrechen"></td>
 </tr>
 
 </table>
 </fieldset>
 </form>
 <br>
-<p><b>Hinweis</b>: Das
+<p><b>Hinweis:</b> Das
 Funknetz ist normalerweise unverschl&uuml;sselt. Beim Abruf von
 Verwaltungsseiten wird das Kennwort bei jedem Seitenabruf <b>unverschl&uuml;sselt</b>
-&uuml;bertragen. Zur Sicherheit sollten daher die Verwaltungsseiten nur &uuml;ber
-https oder LAN bedient werden.</p>
+&uuml;bertragen. <b>Zur Sicherheit sollten daher die Verwaltungsseiten nur &uuml;ber
+HTTPS oder LAN bedient werden!</b></p>
 EOM
 
 else
