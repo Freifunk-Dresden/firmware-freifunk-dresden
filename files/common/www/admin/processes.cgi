@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Allgemein: Status"
+export TITLE="Infos: Prozesse"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 TMPFILE=/tmp/top.output
