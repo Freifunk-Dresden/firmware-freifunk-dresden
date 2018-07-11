@@ -9,7 +9,7 @@ cat <<EOF
 <h2>$TITLE</h2>
 <br>
 <fieldset class="bubble" style="width: 600px">
-<legend>Openstreetmap</legend>
+<legend>OpenStreetMap</legend>
 <div id="nodeMap"></div>
 <style>
 @import"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css";
