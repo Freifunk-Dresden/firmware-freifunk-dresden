@@ -13,7 +13,7 @@ cat<<EOM
 <h1>$TITLE</h1>
 <br>
 <fieldset class="bubble">
-Willkommen zu den Verwaltungs-Seiten dieses
+Willkommen auf den Verwaltungs-Seiten dieses
 Access-Points. Weiterf&uuml;hrende Informationen dazu findest du im <a href="https://wiki.freifunk-dresden.de">Freifunk-Wiki</a>. Kommentare oder Korrekturvorschl&auml;ge zu dieser
 Web-Oberfl&auml;che kannst du uns gern unter Angabe der Firmware-Version ($(cat /etc/version)) im <a href="https://forum.freifunk.net/c/community/dresden">Dresdner Freifunk-Forum</a> mitteilen.
 </fieldset>
