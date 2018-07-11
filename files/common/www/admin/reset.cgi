@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Update > Reset"
+export TITLE="Verwaltung > Wartung > Neustart/Reset"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 
@@ -15,7 +15,7 @@ cat<<EOM
 	<input name="form_action" value="reset" type="hidden">
 	<br/>
 	<table>
-	<tr><th style="color:red;"><input name="form_reset_factory" type="checkbox" value="1"> Werkseinstellung (setzt alle Einstellungen zur&uuml;ck und l&ouml;scht Passwort, Kontaktinfos, Portforwarding, Backbone, installierte Pakete)</th></tr>
+	<tr><th style="color:red;"><input name="form_reset_factory" type="checkbox" value="1"> Werkseinstellungen (setzt alle Einstellungen zur&uuml;ck und l&ouml;scht Passwort, Kontaktinfos, Portweiterleitungen, Backbone-Einstellungen und installierte Pakete).</th></tr>
 	<tr><th><input name="form_reset_reconfig" type="checkbox" value="1"> Konfiguration neuer Hardware</th></tr>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td><input name="form_reset_submit" type="submit" value="Neustart"></td</tr>
@@ -38,10 +38,10 @@ EOM
 			if [ -n "$form_reset_factory" ]; then
 				SECONDS=210
 				BARS=3
-				echo "Alle Einstellungen werden auf Standardwerte gesetzt (Passwort,IP Adressen,ssh-key,https Zertifikate).<br />Ebenso wird eine neue Node-Nummber erzeugt."
+				echo "Alle Einstellungen werden auf Standardwerte gesetzt (Passwort, IP-Adressen, SSH-Key, HTTPS-Zertifikate).<br />Ebenfalls wird eine neue Knoten-Nr. erzeugt."
 			else
 				if [ -n "$form_reset_reconfig" ]; then
-					echo "System passt Konfiguration an neue Hardware an.<br/>"
+					echo "Konfiguration wird an neue Hardware angepasst.<br/>"
 					uci -q set ddmesh.boot.boot_step=2
 					uci_commit.sh
 				fi
