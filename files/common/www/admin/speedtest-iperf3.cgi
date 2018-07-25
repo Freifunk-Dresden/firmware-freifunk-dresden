@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Tools > Speedtest (iPerf3)"
+export TITLE="Verwaltung > Tools: Speedtest (iPerf3)"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 
