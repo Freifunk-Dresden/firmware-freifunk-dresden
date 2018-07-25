@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Wartung > Neustart/Reset"
+export TITLE="Verwaltung > Wartung: Neustart/Reset"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 

@@ -4,7 +4,7 @@
 . /lib/upgrade/common.sh
 . /lib/upgrade/platform.sh
 
-export TITLE="Verwaltung > Wartung > Custom-Splash"
+export TITLE="Verwaltung > Wartung: Custom-Splash"
 
 CUSTOM_PATH="/www/custom"
 

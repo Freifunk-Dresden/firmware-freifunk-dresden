@@ -2,7 +2,7 @@
 
 . /lib/functions.sh
 
-export TITLE="Verwaltung > Wartung > Software"
+export TITLE="Verwaltung > Wartung: Software"
 
 IPK_FILE="/tmp/paket.ipk"
 OPKG_ERROR="/tmp/opkg.error"

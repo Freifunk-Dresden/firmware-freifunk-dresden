@@ -4,7 +4,7 @@
 . /lib/upgrade/common.sh
 . /lib/upgrade/platform.sh
 
-export TITLE="Verwaltung > Wartung > Konfiguration"
+export TITLE="Verwaltung > Wartung: Konfiguration"
 
 CONF_FILE="router-$(uci get ddmesh.system.node)-config-$(date +"%Y%b%d-%H%M%S").tgz"
 PACKAGES="/etc/installed.packages"
