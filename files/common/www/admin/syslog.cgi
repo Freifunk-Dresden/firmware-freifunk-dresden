@@ -9,7 +9,7 @@ if [ -n "$form_syslog_submit" ]; then
 	uci set system.@system[0].log_port="$form_syslog_port"
 	uci_commit.sh
 	/etc/init.d/log restart
-	notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind sofort aktiv."
+	notebox "Die Einstellungen wurden &uuml;bernommen und sind sofort aktiv."
 fi
 
 cat<<EOM
@@ -18,7 +18,7 @@ cat<<EOM
 <legend>Remote-Syslog</legend>
 <table>
 	<tr><td colspan="2">
-	Der Syslog kann via Netzwerk an einen Syslog-Server gesendet werden.<br/><br/>
+	Das Syslog kann via Netzwerk an einen Syslog-Server gesendet werden.<br/><br/>
 	Beispiel-Config-File f&uuml;r <b>rsyslogd</b>: /etc/rsyslog.d/10-freifunk.conf<br/>
 	Dieses File erzeugt f&uuml;r jeden Knoten ein eigenes Logfile unter /var/log/freifunk-router/<br/>
 <pre>
