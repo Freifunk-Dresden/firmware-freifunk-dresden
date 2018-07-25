@@ -4,7 +4,7 @@ if [ "$(uci get ddmesh.system.node)" -le "$(uci get ddmesh.system.tmp_max_node)"
 #	export NOMENU=1
 	export TITLE="Auto-Setup"
 else
-	export TITLE="Verwaltung &gt; Allgemein &gt; Auto-Setup"
+	export TITLE="Verwaltung &gt; Allgemein: Auto-Setup"
 fi
 
 . /usr/lib/www/page-pre.sh ${0%/*}
