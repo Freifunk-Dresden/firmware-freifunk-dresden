@@ -32,7 +32,7 @@ else #form_action
 			<fieldset class="bubble">
 			<legend>Neustart</legend>
 			<table>
-			<tr><td>Router wird neu gestartet</td></tr>
+			<tr><td>Router wird neu gestartet.</td></tr>
 			<tr><td>
 EOM
 			if [ -n "$form_reset_factory" ]; then
