@@ -4,7 +4,7 @@ if [ "$(uci get ddmesh.system.node)" -le "$(uci get ddmesh.system.tmp_max_node)"
 #	export NOMENU=1
 	export TITLE="Auto-Setup"
 else
-	export TITLE="Verwaltung &gt; Allgemein &gt; Automatic-Setup"
+	export TITLE="Verwaltung &gt; Allgemein: Auto-Setup"
 fi
 
 . /usr/lib/www/page-pre.sh ${0%/*}
@@ -23,15 +23,14 @@ cat<<EOM
 
 	<tr>
 	<td>
-	Die Registrierung erfolgt automatisch wenn der Router eine Verbindung zum Registrator ($FFDD)
+	Die Registrierung erfolgt automatisch, wenn der Router eine Verbindung zum Registrator ($FFDD)
 	erh&auml;lt. Dabei kann die Verbindung &uuml;ber das Freifunk-Netz oder &uuml;ber eine Internetverbindung erfolgen.<br />
-	Nach dem Autosetup, welches alle notwendigen Freifunk-Einstellungen macht, muss der WAN Anschlu&szlig; konfiguriert werden.<br />
-	Wird irgendwann der Router zur&uuml;ckgesetzt wird eine neue Registrierung durchgef&uuml;hrt. Da durch das Zur&uuml;cksetzen
-	der Registrierungs-Schl&uuml;ssel neu erzeugt werden muss und es beim Registrator bereits eine Registrierung mit der gleichen Node
-	gibt, wird dann eine neue Node-Nummer automatisch vergeben. Der Router erh&auml;lt dadurch eine neue Freifunk-IP Adresse.<br />
+	Nach dem Autosetup, welches alle notwendigen Freifunk-Einstellungen vornimmt, muss eventuell der WAN-Anschluss konfiguriert werden.<br />
+	Wird irgendwann der Router zur&uuml;ckgesetzt, wird eine neue Registrierung durchgef&uuml;hrt. Da durch das Zur&uuml;cksetzen
+	der Registrierungs-Schl&uuml;ssel neu erzeugt werden muss und es beim Registrator bereits eine Registrierung mit der gleichen Knoten-Nr.
+	gibt, wird dabei eine neue Knoten-Nr. automatisch vergeben. Der Router erh&auml;lt dadurch ebenfalls eine neue Freifunk-IP-Adresse.<br />
 	<br />
-	Hat der Router keine Verbindung zum Registrator, wird eine tempor&auml;re Node-Nummer vergeben, die dann automatisch aktualisiert wird. <br />
-
+	Hat der Router keine Verbindung zum Registrator, wird eine tempor&auml;re Knoten-Nr. vergeben, die später bei erfolgreicher Verbindung automatisch aktualisiert wird.<br />
 	</td>
 	</tr>
 
@@ -44,7 +43,7 @@ ajax_register();
 //--></SCRIPT>
 <br />
 <fieldset class="bubble">
-<legend>Access Points (automatische Aktualisierung)</legend>
+<legend>Access-Points (automatische Aktualisierung)</legend>
 <div id="ajax_wlan">Lade...</div>
 </fieldset>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
@@ -57,7 +56,7 @@ if [ "$wan_iface_present" = "1" ]; then
 
 cat<<EOM
 <fieldset class="bubble">
-<legend >WAN Anschlu&szlig; Status (automatische Aktualisierung)</legend>
+<legend >WAN-Anschluss-Status (automatische Aktualisierung)</legend>
 <div id="ajax_dhcp">Lade...</div>
 </fieldset>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--

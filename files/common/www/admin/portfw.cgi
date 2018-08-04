@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > Portweiterleitung"
+export TITLE="Verwaltung > Konfiguration: Portweiterleitung"
 . /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh
 
@@ -20,7 +20,7 @@ return x;
 <fieldset class="bubble">
 <legend>Portweiterleitungen</legend>
 <table>
-<tr><th>Rule</th><th>Name</th><th>Protokoll</th><th>Port(Bereich)</th><th>Ziel-IP</th><th>Ziel-Port</th></tr>
+<tr><th>Regel</th><th>Name</th><th>Protokoll</th><th>Port(-Bereich)</th><th>Ziel-IP</th><th>Ziel-Port</th></tr>
 EOM
 
 T=1
@@ -68,7 +68,7 @@ cat<<EOM
 </fieldset>
 <br/><br/>
 
-<b>Folgende Ports werden vom Router verwendet und k&ouml;nnen nicht verwendet werden:</b><br/>
+<b>Folgende Ports werden vom Router verwendet und k&ouml;nnen nicht f&uuml;r eigene Portweiterleitungen genutzt werden:</b><br/>
 $PORTS, $(uci get ddmesh.backbone.server_port), $(uci get ddmesh.privnet.server_port)<br/>
 <br />
 <form name="form_portfw_new" action="portfw.cgi" method="POST">
@@ -76,16 +76,16 @@ $PORTS, $(uci get ddmesh.backbone.server_port), $(uci get ddmesh.privnet.server_
 <fieldset class="bubble">
 <legend>Neue Regel</legend>
 <table>
-<tr><th>Name</th><th>Protokoll</th><th>Port(Bereich)</th><th>LAN Ziel-IP</th><th>Ziel-Port</th><th></th></tr>
-<tr class="colortoggle0"><td title="Der Name dient zur Wiedererkennung"><input name="form_rule_name" type="text" size="8"></td>
+<tr><th>Name</th><th>Protokoll</th><th>Port(-Bereich)</th><th>LAN-Ziel-IP</th><th>Ziel-Port</th><th></th></tr>
+<tr class="colortoggle0"><td title="Der Name dient lediglich der Wiedererkennung."><input name="form_rule_name" type="text" size="8"></td>
 <td> <select name="form_rule_proto" size="1">
  <option selected value="tcp">tcp</option>
  <option value="udp">udp</option>
  <option value="tcpudp">tcp+udp</option>
  </select></td>
-<td title="Port oder Portbereich. Bereich wird durch '-' angegeben.(z.B.: 7000-8000)"><input name="form_rule_src_dport" type="text" size="8"></td>
-<td title="Ziel IP aus dem LAN Bereich"><input name="form_rule_dest_ip" type="text" size="15"></td>
-<td title="Zielport (definiert den Zielport-Start wenn ein Bereich weitergeleitet wird)"><input name="form_rule_dest_port" type="text" size="8"></td>
+<td title="Port oder Port-Bereich. Bereich wird durch '-' angegeben (z. B.: 7000-8000)."><input name="form_rule_src_dport" type="text" size="8"></td>
+<td title="Ziel-IP aus dem LAN-Bereich"><input name="form_rule_dest_ip" type="text" size="15"></td>
+<td title="Ziel-Port (definiert den Ziel-Port-Start, falls ein Port-Bereich weitergeleitet wird.)"><input name="form_rule_dest_port" type="text" size="8"></td>
 <td><input type="submit" value="Speichern"></td>
 </tr>
 </table>

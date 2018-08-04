@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > Privates Netzwerk"
+export TITLE="Verwaltung > Konfiguration: Privates Netzwerk"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh
@@ -23,7 +23,7 @@ function ask (n) {
 function checkinput_server () {
 	var v;
 	v = document.privnet_form_server.form_privnet_server_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("Server Port ist ung&uuml;ltig (1-65535)");return 0;}
+	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ung&uuml;ltig (1-65535).");return 0;}
 	return 1;
 }
 function checkinput_outgoing () {
@@ -31,17 +31,17 @@ function checkinput_outgoing () {
 	var reg = new RegExp("r([0-9]+)");
 
 	v = document.privnet_form_connection_out.form_privnet_peer_node.value;
-	if( reg.test(v) == false) {alert("Node ist ung&uuml;ltig");return 0;}
+	if( reg.test(v) == false) {alert("Knoten-Nr. ist ung&uuml;ltig.");return 0;}
 
 	v = v.substr(1);
-	if( checknumber(v) || v<1 || v>$_ddmesh_max){ alert("Node ist ung&uuml;ltig");return 0;}
+	if( checknumber(v) || v<1 || v>$_ddmesh_max){ alert("Knoten-Nr. ist ung&uuml;ltig.");return 0;}
 
 	v = document.privnet_form_connection_out.form_privnet_peer_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("Server Port ist ung&uuml;ltig (1-65535)");return 0;}
+	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ung&uuml;ltig (1-65535).");return 0;}
 
 	v = document.privnet_form_connection_out.form_privnet_peer_passwd.value;
-	if( v.length<$PASSWD_LEN){ alert("Passwort ist ung&uuml;ltig (mind. $PASSWD_LEN Zeichen)");return 0;}
-	if( v.indexOf(":")>0 ){ alert("Passwort ist ung&uuml;ltig (Passwort darf kein \":\" enthalten)");return 0;}
+	if( v.length<$PASSWD_LEN){ alert("Passwort ist ung&uuml;ltig (mind. $PASSWD_LEN Zeichen).");return 0;}
+	if( v.indexOf(":")>0 ){ alert("Passwort ist ung&uuml;ltig (Passwort darf kein \":\" enthalten).");return 0;}
 
 	return 1;
 }
@@ -50,13 +50,13 @@ function checkinput_incomming () {
 	var reg = new RegExp("r([0-9]+)");
 
 	v = document.privnet_form_connection_in.form_privnet_peer_node.value;
-	if( reg.test(v) == false) {alert("Node ist ung&uuml;ltig");return 0;}
+	if( reg.test(v) == false) {alert("Knoten-Nr. ist ung&uuml;ltig.");return 0;}
 	v = v.substr(1);
-	if( checknumber(v) || v<1 || v>$_ddmesh_max){ alert("Node ist ung&uuml;ltig");return 0;}
+	if( checknumber(v) || v<1 || v>$_ddmesh_max){ alert("Knoten-Nr. ist ung&uuml;ltig.");return 0;}
 
 	v = document.privnet_form_connection_in.form_privnet_peer_passwd.value;
-	if( v.length<$PASSWD_LEN){ alert("Passwort ist ung&uuml;ltig (mind. $PASSWD_LEN Zeichen)");return 0;}
-	if( v.indexOf(":")>0 ){ alert("Passwort ist ung&uuml;ltig (Passwort darf kein \":\" enthalten)");return 0;}
+	if( v.length<$PASSWD_LEN){ alert("Passwort ist ung&uuml;ltig (mind. $PASSWD_LEN Zeichen).");return 0;}
+	if( v.indexOf(":")>0 ){ alert("Passwort ist ung&uuml;ltig (Passwort darf kein \":\" enthalten).");return 0;}
 
 	return 1;
 }
@@ -86,14 +86,14 @@ html_textarea() {
 html_msg() {
 	test ! "$1" = "0" && {
 		case "$1" in
-			1) msg="Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers ist nicht n&ouml;tig." ;;
-			2) msg="Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers <b>ist</b> n&ouml;tig. Oder Dr&uuml;cken Sie den Button \"VPN Neustart\"." ;;
-			3) msg="Eintrag wurde hinzugef&uuml;gt. Ein Neustart des Routers <b>ist</b> n&ouml;tig. Oder Dr&uuml;cken Sie den Button \"VPN Neustart\"." ;;
-			4) msg="Eintrag wurde gel&ouml;scht. Ein Neustart des Routers <b>ist</b> n&ouml;tig. Oder Dr&uuml;cken Sie den Button \"VPN Neustart\"." ;;
+			1) msg="Die Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers ist nicht n&ouml;tig." ;;
+			2) msg="Die Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers ist n&ouml;tig. Oder dr&uuml;cke den Button \"VPN Neustart\"." ;;
+			3) msg="Eintrag wurde hinzugef&uuml;gt. Ein Neustart des Routers ist n&ouml;tig. Oder dr&uuml;cke den Button \"VPN Neustart\"." ;;
+			4) msg="Eintrag wurde gel&ouml;scht. Ein Neustart des Routers ist n&ouml;tig. Oder dr&uuml;cke den Button \"VPN Neustart\"." ;;
 			5) msg="Eintrag wurde hinzugef&uuml;gt. Ein Neustart des Routers ist nicht n&ouml;tig." ;;
-			6) msg="Eintrag wurde <b>nicht</b> gespeichert. Maximale Anzahl von <b>$NUMBER_OF_CLIENTS</b> wurden erreicht.";;
-			7) msg="VPN Netzwerk wurde neu gestartet. Nach etwa 30s diese Seite erneut aufrufen um den aktuellen Status zu sehen";;
-			8) msg="VPN Netzwerk wird neu gestartet. Sollte die aktuelle Verbindung gerade &uuml;ber das VPN laufen,<br />wird diese Verbindung f&uuml;r eine Zeit gest&ouml;rt";;
+			6) msg="Eintrag wurde nicht gespeichert. Maximale Anzahl von <b>$NUMBER_OF_CLIENTS</b> wurde erreicht.";;
+			7) msg="VPN-Netzwerk wurde neu gestartet. Nach etwa 30 s diese Seite erneut aufrufen, um den aktuellen Status zu sehen.";;
+			8) msg="VPN-Netzwerk wird neu gestartet. Sollte die aktuelle Verbindung gerade &uuml;ber das VPN laufen,<br />wird diese Verbindung f&uuml;r einige Zeit gest&ouml;rt.";;
 			9) msg="Es wurden keine Einstellungen ge&auml;ndert." ;;
 			*) msg="unbekannt[$1]" ;;
 		esac
@@ -178,7 +178,7 @@ content() {
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th>Node</th><th>Passwort</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<tr><th>Knoten-Nr.</th><th>Passwort</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -211,7 +211,7 @@ EOM
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th>Node</th><th>Server Port</th><th>Passwort</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<tr><th>Knoten-Nr.</th><th>Server-Port</th><th>Passwort</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -221,8 +221,8 @@ EOM
 	if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
 		cat<<EOM
 <tr class="colortoggle$TOGGEL">
-	<td title="Zielrouter (z.B.: r200)"><input name="form_privnet_peer_node" type="text" size="5" value=""></td>
-	<td title="TCP Port des Servers"><input name="form_privnet_peer_port" type="text" size="8" value="$DEFAULT_PORT"></td>
+	<td title="Ziel-Router (z. B.: r200)"><input name="form_privnet_peer_node" type="text" size="5" value=""></td>
+	<td title="TCP-Port des Servers"><input name="form_privnet_peer_port" type="text" size="8" value="$DEFAULT_PORT"></td>
 	<td title="Passwort f&uuml;r diese Verbindung"><input name="form_privnet_peer_passwd" type="text" size="8" value="$DEFAULT_PASSWD"></td>
 	<td></td>
 	<td><button onclick="if(checkinput_outgoing())form_submit(document.forms.privnet_form_connection_out,'client_add','none')" name="bb_btn_new" title="Verbindung speichern" type="button">Neu</button></td>
@@ -243,8 +243,8 @@ EOM
 <form name="privnet_form_apply" action="privnet.cgi" method="POST">
 	<input name="form_action" value="none" type="hidden">
 	<input name="form_entry" value="none" type="hidden">
-	<button onclick="form_submit(document.forms.privnet_form_apply,'refresh','none')" name="bb_btn_apply" title="Seite Aktualisieren" type="button">Seite Aktualisieren</button>
-	<button onclick="form_submit(document.forms.privnet_form_apply,'restart','none')" name="bb_btn_apply" title="Werte werden sofort &uuml;bernommen und VPN neu gestartet" type="button">VPN Neustart</button>
+	<button onclick="form_submit(document.forms.privnet_form_apply,'refresh','none')" name="bb_btn_apply" title="Seite Aktualisieren." type="button">Seite Aktualisieren</button>
+	<button onclick="form_submit(document.forms.privnet_form_apply,'restart','none')" name="bb_btn_apply" title="Werte werden sofort &uuml;bernommen und VPN neu gestartet." type="button">VPN-Neustart</button>
 </form>
 EOM
 }
@@ -253,14 +253,14 @@ EOM
 if [ -z "$QUERY_STRING" ]; then
 
 	cat<<EOM
-Das Private Netzwerk erlaubt es die LAN Ports eines Routers mit den LAN Ports eines entfernten Routers zuverbinden und somit sein privates
+Das private Netzwerk erlaubt es, die LAN-Ports eines Routers mit den LAN-Ports eines entfernten Routers zu verbinden und somit sein privates
 Netz mit einem entfernten privaten Netz zu koppeln. Die Verbindung
 wird durch einen verschl&uuml;sselten Tunnel aufgebaut. Es lassen sich <b>$NUMBER_OF_CLIENTS</b> Verbindungen von oder zu einem Router
 aufbauen.
 <br><br>
-Bitte beachtet, dass das VPN mit dem LAN Ports gebr&uuml;ckt sind. Das kann bei ungew&ouml;hnlichen Netzwerkkonfigurationen dazu f&uuml;hren,
+Bitte beachte, dass das VPN mit den LAN-Ports gebr&uuml;ckt ist. Das kann bei ungew&ouml;hnlichen Netzwerkkonfigurationen dazu f&uuml;hren,
 dass Pakete &uuml;ber mehrere Wege zum Ziel gelangen und somit Pakete verdoppelt werden.<br>
-Dieses passiert zum Beispiel wenn zwei Router &uuml;ber LAN mit einander verbunden und beide haben eine VPN verbindung zu einem dritten Router irgendwo im Netzwerk. Das Bridge-Protokoll "STP" sollte eigentlich dieses Verhindern, aber tut es nicht stabil.
+Dies passiert zum Beispiel, wenn zwei Router &uuml;ber LAN mit einander verbunden sind und beide eine VPN verbindung zu einem dritten Router irgendwo im Netzwerk haben. Das Bridge-Protokoll "STP" sollte das eigentlich Verhindern, aber tut es nicht stabil.
 EOM
 	content
 else

@@ -14,7 +14,7 @@ for t in main local_gateway public_gateway bat_route ; do
 <fieldset class="bubble">
 <legend>Routing-Tabelle: $t</legend>
 <table>
-<tr><th>Ziel</th><th>via</th><th>Netzwerkger&auml;t</th><th>Protokoll</th><th>Scope</th><th>Metric</th><th>Quell-IP</th></tr>
+<tr><th>Ziel</th><th>via</th><th>Netzwerkger&auml;t</th><th>Protokoll</th><th>Scope</th><th>Metric</th><th>Quell-IP-Adresse</th></tr>
 EOF
 
 	ip route list table $t | sed '

@@ -15,7 +15,7 @@ compare_versions() {
 	return 0
 }
 
-export TITLE="Verwaltung > Update > Firmware"
+export TITLE="Verwaltung > Wartung: Firmware"
 
 # check before calling freifunk-upload
 if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
@@ -73,7 +73,7 @@ cat<<EOM
 	<tr><th>Ger&auml;teinfo:</th><td>$device_model;$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')</td></tr>
 	<tr><th>Filesystem:</th><td>$(cat /proc/cmdline | sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#')</td></tr>
 	<tr><th colspan="2">&nbsp;</th></tr>
-	<tr><th colspan="2">Weitere Infos sind nur verf&uuml;gbar wenn Download-Server erreichbar ist:</th></tr>
+	<tr><th colspan="2">Weitere Infos sind nur verf&uuml;gbar, wenn der Download-Server erreichbar ist:</th></tr>
 	<tr><th width="100" style="white-space: nowrap;">- Erwartete Firmware-Datei:</th><td>$firmware_release_filename</td></tr>
 	<tr><th width="100" style="white-space: nowrap;">- Kommentar:</th><td>$firmware_release_comment</td></tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
@@ -81,12 +81,12 @@ EOM
 
 	if [ "$(uci get ddmesh.system.firmware_autoupdate)" = "1" ]; then
 		echo '<tr><td colspan="2">'
-		notebox "<b>Hinweis:</b> Firmware Auto-Update ist aktiv!<br />Firmware wird automatisch &uuml;berschrieben wenn diese neuer ist. (<a href='/admin/system.cgi'>Systemeinstellungen</a>)"
+		notebox "<b>Hinweis:</b> Firmware-Auto-Update ist aktiv!<br />Firmware wird automatisch &uuml;berschrieben, wenn eine neuere existiert. (<a href='/admin/system.cgi'>Systemeinstellungen</a>)"
 		echo '</td></tr>'
 	fi
 
 cat<<EOM
-	<tr><td colspan="2"><input name="filename" size="40" type="file" value="Durchsuche..."></td></tr>
+	<tr><td colspan="2"><input name="filename" size="40" type="file" value="Durchsuchen..."></td></tr>
 	<tr><td colspan="2"><input name="form_firmware_submit" type="submit" value="Firmware laden"></td></tr>
 	</table>
 	</form>
@@ -113,7 +113,7 @@ cat<<EOM
 	<input name="form_fileinfo_url" value="$firmware_release_url" type="hidden">
 	<input name="form_fileinfo_version" value="$firmware_release_version" type="hidden">
 	<input name="form_fileinfo_md5sum" value="$firmware_release_md5sum" type="hidden">
-	<input $(test -z "$firmware_release_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download latest ($firmware_release_version) Version from Server">
+	<input $(test -z "$firmware_release_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download der 'latest'-Version ($firmware_release_version)">
 	</form>
 	</tr>
 
@@ -123,7 +123,7 @@ cat<<EOM
 	<input name="form_fileinfo_url" value="$firmware_testing_url" type="hidden">
 	<input name="form_fileinfo_version" value="$firmware_testing_version" type="hidden">
 	<input name="form_fileinfo_md5sum" value="$firmware_testing_md5sum" type="hidden">
-	<input $(test -z "$firmware_testing_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download testing ($firmware_testing_version) Version from Server">
+	<input $(test -z "$firmware_testing_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download der 'testing'-Version ($firmware_testing_version)">
 	</form>
 	</tr>
 	<tr><td>(Wenn der direkte Download nicht verf&uuml;gbar ist, konnte der Download-Server nicht erreicht werden. Bitte Seite neu laden.)</td></tr>
@@ -154,7 +154,7 @@ else #form_action
 		flash)
 			if [ -n "$form_update_abort" ]; then
 				rm -f $FIRMWARE_FILE
-				notebox 'Firmware Laden abgebrochen'
+				notebox 'Laden der Firmware abgebrochen.'
 			else
 				SECONDS=210
 				BARS=3
@@ -208,20 +208,20 @@ EOM
 
 				file_md5sum=$(md5sum $FIRMWARE_FILE | cut -d' ' -f1)
 				if [ -z "$server_md5sum" -o "$server_md5sum" != "$file_md5sum" ]; then
-					notebox "ERROR: Download <b>md5sum</b> fehlerhaft !"
+					notebox "Fehler: Download-<b>MD5-Summe</b> fehlerhaft!"
 					rm -f $FIRMWARE_FILE
 					do_update=0
 				else
 					cur_version="$(cat /etc/version)"
-					compare_versions "$VER"  "$cur_version" || VERSION_WARNING="<div style=\"color: red;\">Hinweis: Firmware version ist kleiner oder gleich der aktuellen Firmware (<b>$VER <= $cur_version</b>) !</div>"
+					compare_versions "$VER"  "$cur_version" || VERSION_WARNING="<div style=\"color: red;\">Hinweis: Die Firmware-Version ist kleiner oder gleich der aktuellen Firmware (<b>$VER <= $cur_version</b>)!</div>"
 					MD5_WARNING=""
-					MD5_OK='<div style="color: green;">Korrekt</div>'
+					MD5_OK='<div style="color: green;">korrekt</div>'
 					do_update=1
 				fi
 			else
 				mv $ffout $FIRMWARE_FILE
 				file_md5sum=$(md5sum $FIRMWARE_FILE | cut -d' ' -f1)
-				MD5_WARNING="Bitte &Uuml;berpr&uuml;fen Sie die <b>md5sum</b>, welche sicherstellt, dass die Firmware korrekt &uuml;bertragen wurde."
+				MD5_WARNING="Bitte &uuml;berpr&uuml;fe die <b>MD5-Summe</b>, welche sicherstellt, dass die Firmware korrekt &uuml;bertragen wurde."
 				do_update=1
 			fi
 
@@ -235,20 +235,20 @@ EOM
 					<form name="form_firmware_update" action="firmware.cgi" method="POST">
 		 			<input name="form_action" value="flash" type="hidden">
 					 <table>
-					 <tr><th>Firmware File</th><td>$ffout</td></tr>
-					 <tr><th>Firmware Version</th><td>$VER</td></tr>
-					 <tr><th>Firmware md5sum</th><td>$file_md5sum $MD5_OK</td></tr>
-					 <tr><th>Werkseinstellung:</th><td><input name="form_firmware_factory" type="checkbox" value="1"></td></tr>
+					 <tr><th>Firmware-File</th><td>$ffout</td></tr>
+					 <tr><th>Firmware-Version</th><td>$VER</td></tr>
+					 <tr><th>Firmware-MD5-Summe</th><td>$file_md5sum $MD5_OK</td></tr>
+					 <tr><th>Werkseinstellungen:</th><td><input name="form_firmware_factory" type="checkbox" value="1"></td></tr>
 					 <tr><td colspan="2">
 					  $MD5_WARNING</br>
-	  				  Das Speichern der Firmware dauert einige Zeit. Bitte schalten Sie das Ger&auml;t nicht aus. Es ist m&ouml;glich, dass sich der Router
-	    				  mehrfach neustarted, um alle aktualisierungen vorzunehmen.<br />
-		     			  Wird die Werkseinstellung aktiviert, erh&auml;lt der Router bei der n&auml;chsten Registrierung eine neue Node-Nummer und damit auch
+	  				  Das Speichern der Firmware dauert einige Zeit. Bitte schalte das Ger&auml;t nicht aus. Es ist m&ouml;glich, dass sich der Router
+	    				  mehrfach neustartet, um alle Aktualisierungen vorzunehmen.<br />
+		     			  Wird das Zur&uuml;cksetzen auf Werkseinstellungen aktiviert, erh&auml;lt der Router bei der n&auml;chsten Registrierung eine neue Node-Nummer und damit auch
         	     			  eine neue IP-Adresse im Freifunknetz.</td></tr>
 					 <tr><td colspan="2"> $VERSION_WARNING </td></tr>
 					 <tr><td colspan="2">
 					 <input name="form_update_submit" type="submit" value="Firmware speichern">
-					 <input name="form_update_abort" type="submit" value="Abbruch">
+					 <input name="form_update_abort" type="submit" value="Abbrechen">
 					 </td></tr>
 					 </table>
 					</form>

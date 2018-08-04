@@ -1,6 +1,7 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > WIFI"
+export TITLE="Verwaltung > Konfiguration: WIFI"
+
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOF
@@ -55,7 +56,7 @@ function checkInput()
 		if( key === undefined || ssid === undefined
 		   || key.length < 8 || !checkWifiKey(document.getElementById('id_wifi3_key').value))
 		{
-			alert("Unkültige Wifi Konfiguration!\nWifi Key/SSID zu kurz oder enthielt ungültige Zeichen.");
+			alert("Ungültige WiFi-Konfiguration!\nWiFi-Key/-SSID zu kurz oder enthält ungültige Zeichen.");
 			return false;
 		}
 	}
@@ -65,14 +66,14 @@ function checkInput()
 
 <form onsubmit="return checkInput();" name="form_wifi" action="wifi.cgi" class="form" method="POST">
 <fieldset class="bubble">
-<legend>Wifi-Einstellungen</legend>
+<legend>WiFi-Einstellungen</legend>
 <table>
 
-<tr><th>Freifunk-IP:</th>
+<tr><th>Freifunk-IP-Adresse:</th>
 <td><input name="form_wifi_ip" size="32" type="text" value="$_ddmesh_ip" disabled></td>
 </tr>
 
-<tr><th>Freifunk-Netmask:</th>
+<tr><th>Freifunk-Netzmaske:</th>
 <td><input name="form_wifi_netmask" size="32" type="text" value="$_ddmesh_netmask" disabled></td>
 </tr>
 
@@ -80,7 +81,7 @@ function checkInput()
 <td><input name="form_wifi_channel" size="32" type="text" value="$(uci get ddmesh.network.wifi_channel)" disabled></td>
 </tr>
 
-<tr><th>TX Power:</th>
+<tr><th>TX-Power:</th>
 <td><select name="form_wifi_txpower" size="1">
 $(iwinfo $wifi_ifname txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;txt=$0}else{sel="";v=$1;txt=$0}; print "<option "sel" value=\""v"\">"txt"</option>"}')
 </select> (konfiguriert: $(uci get ddmesh.network.wifi_txpower) dBm) <b>Aktuell:</b> $(iw $wifi_ifname info | awk '/txpower/{print $2,$3}')</td>
@@ -98,7 +99,7 @@ $(iwinfo $wifi_ifname txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;
 <!-- distance, beacon_int, basic_rate -->
 
 
-<tr><th>Adhoc-SSID:</th>
+<tr><th>Ad-hoc-SSID:</th>
 <td><input name="form_wifi_adhoc_ssid" size="32" type="text" value="$(uci get wireless.@wifi-iface[0].ssid)" disabled></td>
 </tr>
 
@@ -107,32 +108,32 @@ $(iwinfo $wifi_ifname txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;
 </tr>
 
 <tr><th></th><td></td></tr>
-<tr><th>Access Point-SSID:</th>
+<tr><th>Access-Point-SSID:</th>
 <TD class="nowrap"><INPUT NAME="form_wifi_ap_ssid_prefix" SIZE="16" TYPE="TEXT" VALUE="$(uci get ddmesh.system.community)" disabled>
 <INPUT onchange="enable_custom_essid();" NAME="form_wifi_custom_essid" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.network.custom_essid)" = "1" ];then echo ' checked="checked"';fi)>
 <INPUT NAME="form_wifi_ap_ssid" SIZE="23" maxlength="15" TYPE="TEXT" VALUE="$(uci get ddmesh.network.essid_ap)"> aktuell: $(uci get wireless.@wifi-iface[1].ssid)</TD>
 </tr>
-<tr><th>Reduziere WLAN Datenrate:</th><td><INPUT NAME="form_wifi_slow_rates" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" = "1" ];then echo ' checked="checked"';fi)> (Nicht empfohlen. Wenn aktiviert, kann Reichweite auf Kosten der &Uuml;bertragungsrate erh&ouml;ht werden.<br /> <b>Dieses gilt auch f&uuml;r Verbindungen zu anderen Knoten</b>)</td></tr>
+<tr><th>Reduziere WLAN-Datenrate:</th><td><INPUT NAME="form_wifi_slow_rates" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" = "1" ];then echo ' checked="checked"';fi)> (Nicht empfohlen. Wenn aktiviert, kann Reichweite auf Kosten der &Uuml;bertragungsrate erh&ouml;ht werden. Dies gilt auch f&uuml;r Verbindungen zu anderen Knoten.)</td></tr>
 
 <tr><td colspan="2"><hr size=1></td></tr>
 
-<tr><th>Aktiviere Privates Wifi:</th>
-<td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es ein Privates Wifi aufzubauen (WPA2-PSK)</td></tr>
-<tr><th>Verschl&uuml;sselung:</th>
-<td><INPUT id="id_wifi3_security_open" NAME="form_wifi3_security_open" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_security_open)" = "1" ];then echo ' checked="checked"';fi)>Offenes privates Wifi (sonst WPA2-PSK)</td></tr>
+<tr><th>Aktiviere privates WiFi:</th>
+<td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es, ein zusätzliches privates WiFi zu aktivieren.</td></tr>
+<tr><th>Verschl&uuml;sselung deaktivieren:</th>
+<td><INPUT id="id_wifi3_security_open" NAME="form_wifi3_security_open" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_security_open)" = "1" ];then echo ' checked="checked"';fi)>Offenes privates WiFi (sonst WPA2-PSK-verschl&uuml;sselt).</td></tr>
 <tr><th>SSID:</th>
 <td><input id="id_wifi3_ssid" name="form_wifi3_ssid" size="32" type="text" value="$(uci get credentials.wifi.private_ssid)"></td>
 </tr>
 <tr><th>Key (mind. 8 Zeichen):</th>
 <td><input onkeypress="return isWifiKey(event);" id="id_wifi3_key" name="form_wifi3_key" width="30" type="text"></td>
 </tr>
-<tr><th>Verbinde Wifi mit:</th><td class="nowrap">
+<tr><th>Verbinde WiFi mit:</th><td class="nowrap">
 <input name="form_wifi3_network" type="radio" value="lan" $checked_lan>LAN
 <input name="form_wifi3_network" type="radio" value="wan" $checked_wan>WAN
 </td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
-<td colspan="2"><input name="form_wifi_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_wifi_abort" title="Abbruch dieser Dialogseite" type="submit" value="Abbruch"></td>
+<td colspan="2"><input name="form_wifi_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_wifi_abort" title="Abbrechen und &Auml;nderungen verwerfen." type="submit" value="Abbrechen"></td>
 </tr>
 </table>
 </fieldset>
@@ -140,7 +141,7 @@ $(iwinfo $wifi_ifname txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;
 <br>
 
 <fieldset class="bubble">
-<legend>Info</legend>
+<legend>Kanal-Info</legend>
 <table>
 <tr><th>Frequenz</th><th>Kanal</th><th>Maximale Sendeleistung</th></tr>
 $(iw phy0 info | sed -n '/[      ]*\*[   ]*[0-9]* MHz/{s#[       *]\+\([0-9]\+\) MHz \[\([0-9]\+\)\] (\(.*\))#<tr><td>\1</td><td>\2</td><td>\3</td></tr>#;p}')
@@ -179,7 +180,7 @@ else #query string
 			uci_commit.sh
 			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 		else #empty
-			notebox "TXPower falsch"
+			notebox "TX-Power falsch."
 		fi #empty
 	else #submit
 		notebox "Es wurden keine Einstellungen ge&auml;ndert."

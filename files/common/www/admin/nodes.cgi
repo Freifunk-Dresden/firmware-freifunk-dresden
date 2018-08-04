@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Allgemein: Knoten"
+export TITLE="Infos: Knoten"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 
@@ -10,8 +10,8 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Direkte Nachbarn</legend>
 <table>
-<tr><th colspan="2">&nbsp;</th><th colspan="2">Interface</th><th colspan="3">Linkqualit&auml;t</th></tr>
-<tr><th>Node</th><th>Ip</th><th>Device</th><th>IP</th><th>RTQ</th><th>vom Nachbarn (RQ)</th><th>zum Nachbarn (TQ)</th></tr>
+<tr><th colspan="2">&nbsp;</th><th colspan="2">Interface-</th><th colspan="3">Linkqualit&auml;t</th></tr>
+<tr><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Device</th><th>IP-Adresse</th><th>RTQ</th><th>vom Nachbarn (RQ)</th><th>zum Nachbarn (TQ)</th></tr>
 EOM
 
 /usr/bin/bmxd -c --links | awk '
@@ -47,7 +47,7 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Gateways</legend>
 <table>
-<tr><th>Pref.</th><th>Aktiv</th><th>Statistik</th><th>Node</th><th>Ip</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
+<tr><th>Pr&auml;f.</th><th>Aktiv</th><th>Statistik</th><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
 EOM
 
 export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p' )"
@@ -89,9 +89,9 @@ cat<<EOM
 </fieldset>
 <br/>
 <fieldset class="bubble">
-<legend>Freifunk Knoten</legend>
+<legend>Freifunk-Knoten</legend>
 <table>
-<tr><th>Node</th><th>Ip</th><th>BRC</th><th>via Routing Interface</th><th>via Router</th></tr>
+<tr><th>Knoten-Nr.</th><th>Ip</th><th>BRC</th><th>via Routing-Interface</th><th>via Router</th></tr>
 EOM
 
 /usr/bin/bmxd -c --originators | awk '

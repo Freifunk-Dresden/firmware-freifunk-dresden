@@ -8,7 +8,7 @@ cat<<EOM
 <br>
 
 <fieldset class="bubble">
-<legend>Kernel Log: <a href="#" onclick="return fold('fs_dmesg')">Ein-/Ausblenden</a></legend>
+<legend>Kernel-Log: <a href="#" onclick="return fold('fs_dmesg')">Ein-/Ausblenden</a></legend>
 <table class="hidden" id="fs_dmesg">
 EOM
 dmesg 2>&1 | sed -n '
@@ -23,7 +23,7 @@ cat<<EOM
 </fieldset>
 <br>
 <fieldset class="bubble">
-<legend>System Log: <a href="#" onclick="return fold('fs_logread')">Ein-/Ausblenden</a></legend>
+<legend>System-Log: <a href="#" onclick="return fold('fs_logread')">Ein-/Ausblenden</a></legend>
 <table class="hidden" id="fs_logread">
 EOM
 
@@ -40,7 +40,7 @@ cat<<EOM
 </fieldset>
 <br>
 <fieldset class="bubble">
-<legend>DHCP Log: <a href="#" onclick="return fold('fs_dhcp')">Ein-/Ausblenden</a></legend>
+<legend>DHCP-Log: <a href="#" onclick="return fold('fs_dhcp')">Ein-/Ausblenden</a></legend>
 <table class="hidden" id="fs_dhcp">
 <tr><th>Date</th><th>CMD</th><th>MAC</th><th>IP</th><!--<th>Hostname</th>--></tr>
 EOM

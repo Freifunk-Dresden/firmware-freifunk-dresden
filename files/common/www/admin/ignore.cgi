@@ -2,18 +2,18 @@
 
 . /lib/functions.sh
 
-export TITLE="Verwaltung > Expert > Knoten Ignorieren"
+export TITLE="Verwaltung > Konfiguration: Knoten ignorieren"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
 <h2>$TITLE</h2>
 <br>
 
-Hier k&ouml;nnen Knoten von benachbarten Knoten gespeichert werden, die vom Routingprotokoll
-ignoriert werden. Dabei werden nur Routinginformationen ignoriert, welche via Wifi (adhoc) empfangen werden.<br>
-Sind zwei Knoten in Wifi-Reichweite und sind gleichzeitig &uuml;ber das Backbone (LAN) miteinander verbunden,
-kann hier die Verbindung via Wifi unterbunden werden.<br>
-Die Einstellungen sind erst nach Neustart aktiv.<br><br>
+Hier k&ouml;nnen benachbarte Knoten gespeichert werden, die vom Routing-Protokoll
+ignoriert werden sollen. Dabei werden nur Routing-Informationen ignoriert, welche via WiFi (Ad-hoc) empfangen werden.<br>
+Sind zwei Knoten in WiFi-Reichweite und gleichzeitig &uuml;ber das Backbone (LAN) miteinander verbunden,
+kann hiermit die zus&auml;tzliche, in der Regel unn&ouml;tige, Verbindung via WiFi unterbunden werden.<br>
+Die Einstellungen sind erst nach einem Neustart aktiv.<br><br>
 EOM
 
 display_ignored_nodes() {
@@ -79,18 +79,18 @@ if [ -n "$QUERY_STRING" ]; then
 			uci
 			uci add_list ddmesh.ignore_nodes.node="$node"
 			uci_commit.sh
-			notebox "Knoten <b>$node</b> hinzugef&uuml;gt. Neustart notwendig"
+			notebox "Knoten <b>$node</b> wurde hinzugef&uuml;gt. <a href="reset.cgi">Neustart</a> notwendig."
 			;;
 		  del)
 			node=$(uhttpd -d $form_node)
 			uci del_list ddmesh.ignore_nodes.node="$node"
 			uci_commit.sh
-			notebox "Knoten <b>$node</b> gel&ouml;scht. Neustart notwendig."
+			notebox "Knoten <b>$node</b> wurde gel&ouml;scht. <a href="reset.cgi">Neustart</a> notwendig."
 			;;
 		  delall)
 			uci delete ddmesh.ignore_nodes.node
 			uci_commit.sh
-			notebox "Alle Knoten wurden gel&ouml;scht. Neustart notwendig."
+			notebox "Alle Knoten wurden gel&ouml;scht. <a href="reset.cgi">Neustart</a> notwendig."
 			;;
 		esac
 	fi

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Tools > Speedtest-iperf3"
+export TITLE="Verwaltung > Tools: Speedtest (iPerf3)"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 
@@ -11,7 +11,7 @@ function checkInput()
 	var node = document.getElementById('id_node').value;  
 	if( node === undefined || checknumber(node) || node < 0)
 	{                                                                                    
-		alert("Falsche Knotennummer");
+		alert("Falsche Knoten-Nr.");
 		return false;                                                                                    
 	}                                                                                                        
 	return true;                                                                                                     
@@ -32,8 +32,8 @@ if [ -n "$QUERY_STRING" ]; then
 
 		cat<<EOM
 <fieldset class="bubble">
-<legend>Speedtest - $node ($_ddmesh_ip)</legend>
-starte...<br>
+<legend>Speedtest &ndash; $node ($_ddmesh_ip)</legend>
+Starte...<br>
 <pre>
 EOM
 
@@ -51,7 +51,7 @@ EOM
 	cat<<EOM
 </pre>
 <br />
-finished.
+fertig.
 </fieldset>
 EOM
 
@@ -66,7 +66,7 @@ cat<<EOF
 <legend>Speedtest</legend>
 <table>
 <tr>
-<th>Knotennummer:</th>
+<th>Knoten-Nr.:</th>
 <td><input id="id_node" name="node" size="10" type="text" onkeypress="return isNumberKey(event);"></td>
 <td><input name="post_speedtest" type="submit" value="Test"></td>
 <td style="width: 100%;"></td>

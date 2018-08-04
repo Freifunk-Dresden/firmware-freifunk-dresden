@@ -4,7 +4,7 @@
 . /lib/upgrade/common.sh
 . /lib/upgrade/platform.sh
 
-export TITLE="Verwaltung > Konfiguration"
+export TITLE="Verwaltung > Wartung: Konfiguration"
 
 CONF_FILE="router-$(uci get ddmesh.system.node)-config-$(date +"%Y%b%d-%H%M%S").tgz"
 PACKAGES="/etc/installed.packages"
@@ -92,13 +92,13 @@ else #form_action
 						cat $OPKG_ERROR
 					done
 				} || {
-					echo "Error: Keine Pakete zum Downloaden verf&uuml;gbar"
+					echo "Fehler: Keine Pakete zum Downloaden verf&uuml;gbar."
 				}
 			fi
-			echo "Installiere Konfigurations-Files"
+			echo "Installiere Konfigurations-Files."
 			sysupgrade -r $ffout
 			echo "</pre>"
-			notebox "<b>Hinweis:</b> Konfiguration wurde eingespielt. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
+			notebox "<b>Hinweis:</b> Konfiguration wurde eingespielt. Die Einstellungen sind erst nach dem n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 		fi
 	fi
 fi

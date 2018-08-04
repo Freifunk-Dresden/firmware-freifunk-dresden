@@ -2,7 +2,7 @@
 
 . /lib/functions.sh
 
-export TITLE="Verwaltung > Expert > System"
+export TITLE="Verwaltung > Konfiguration: System"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 
@@ -70,11 +70,11 @@ cat<<EOM
 <TR TITLE="Setzt die Umgebungsvariable TZ zur Korrektur von Zeitangaben.">
 <TH>Zeitzone:</TH>
 <TD colspan="2"><INPUT NAME="form_tz" SIZE="48" TYPE="TEXT" VALUE="$(uci get system.@system[0].timezone)"><br>
- (Berlin:CET-1CEST,M3.5.0,M10.5.0/3) <a href="http://wiki.openwrt.org/doc/uci/system#time.zones">Zeitzonen</a></TD>
+ (Berlin: CET-1CEST,M3.5.0,M10.5.0/3; <a href="http://wiki.openwrt.org/doc/uci/system#time.zones">Zeitzonen</a>)</TD>
 </TR>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
-<TR><TH COLSPAN="3" class="heading">Verbindungen zu diesen Router via WAN-Interface</TH></TR>
+<TR><TH COLSPAN="3" class="heading">Verbindungen zu diesem Router via WAN-Interface</TH></TR>
 
 <TR>
 <TH class="nowrap">- SSH erlauben:</TH>
@@ -103,11 +103,11 @@ cat<<EOM
 <TR>
 <TH>- Zugang zur Verwaltung erlauben:</TH>
 <TD><INPUT NAME="form_wansetup" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.wansetup)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td><font color="#ff0000">&Auml;nderung nach &Uuml;bernahme sofort aktiv. Router-Reset via Verwaltung vom WAN ist nicht erreichbar.</font></TD>
+<td><font color="#ff0000">&Auml;nderung nach &Uuml;bernahme sofort aktiv. Router-Reset via Verwaltung &uuml;ber WAN anschlie&szlig;end nicht mehr erreichbar.</font></TD>
 </TR>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
-<TR><TH COLSPAN="3" class="heading">Verbindungen zu diesen Router vom Freifunk-Netz aus</TH></TR>
+<TR><TH COLSPAN="3" class="heading">Verbindungen zu diesem Router vom Freifunk-Netz aus</TH></TR>
 
 <TR>
 <TH>- SSH erlauben:</TH>
@@ -118,7 +118,7 @@ cat<<EOM
 <TR>
 <TH>- Zugang zur Verwaltung erlauben:</TH>
 <TD><INPUT NAME="form_meshsetup" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.meshsetup)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td><font color="#ff0000">&Auml;nderung nach &Uuml;bernahme sofort aktiv. Router-Reset via Verwaltung aus dem Freifunk-Netz ist nicht erreichbar.</font></TD>
+<td><font color="#ff0000">&Auml;nderung nach &Uuml;bernahme sofort aktiv. Router-Reset via Verwaltung aus dem Freifunk-Netz anschlie&szlig;end nicht mehr erreichbar.</font></TD>
 </TR>
 
 
@@ -126,9 +126,9 @@ cat<<EOM
 <TR><TH COLSPAN="3" class="heading">Netzwerk</TH></TR>
 
 <TR>
-<TH>- Eignes Internet direkt freigeben:</TH>
+<TH>- Eigenes Internet direkt freigeben:</TH>
 <TD><INPUT NAME="form_announce_gateway" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.announce_gateway)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td>Bei Nutzung des Openvpn Paketes, muss dieser Schalter DEAKTIVIERT bleiben, sonst wird der eigene DSL/Kabel Anschluss freigegeben.</TD>
+<td>Auch bei Nutzung des OpenVPN-Paketes muss dieser Schalter <b>deaktiviert</b> bleiben, sonst wird der eigene DSL/Kabel-Anschluss freigegeben.</TD>
 </TR>
 <TR>
 <TH>- LAN verwendet Lokales Internet:</TH>
@@ -141,9 +141,9 @@ if [ "$wan_iface_present" = "1" ]; then
 cat<<EOM
 
 <TR>
-<TH>- WAN Meshing:</TH>
+<TH>- WAN-Meshing:</TH>
 <TD><INPUT NAME="form_wan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ];then echo ' checked="checked"';fi)></TD>
-<td>Wenn aktiv, wird der WAN Port zum direkten 'Meshing' genutzt. Der Router ist dann NUR noch &uuml;ber Knoten IP via WAN erreichbar.<br/>WAN Konfiguration ist deaktiviert. WAN Meshing wird 5 min nach Routerstart aktiviert.</td>
+<td>Wenn aktiv, wird der WAN-Port zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber die Knoten-IP-Adresse via WAN</b> erreichbar.<br/>WAN-Konfiguration wird deaktiviert. WAN-Meshing wird 5 min nach Routerstart aktiviert.</td>
 </TR>
 
 EOM
@@ -151,27 +151,27 @@ fi
 cat<<EOM
 
 <TR>
-<TH>- LAN Meshing:</TH>
+<TH>- LAN-Meshing:</TH>
 <TD><INPUT NAME="form_lan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ];then echo ' checked="checked"';fi)></TD>
-<td>Wenn aktiv, werden alle LAN Ports zum direkten 'Meshing' genutzt. Der Router ist dann NUR noch &uuml;ber Knoten IP via LAN erreichbar.<br/>LAN Konfiguration und Privates-Netzwerk sind deaktiviert. LAN Meshing wird 5 min nach Routerstart aktiviert.</td>
+<td>Wenn aktiv, werden alle LAN-Ports zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber Knoten-IP-Adresse via LAN</b> erreichbar.<br/>LAN-Konfiguration und privates Netzwerk werden deaktiviert. LAN-Meshing wird 5 min nach Routerstart aktiviert.</td>
 </TR>
 <TR>
 <TH>- Bevorzugtes Gateway (IP):</TH>
 <TD><INPUT NAME="form_lan_preferred_gateway" TYPE="TEXT" VALUE="$(uci -q get ddmesh.bmxd.preferred_gateway)"></TD>
-<td>Angegebenes Gateway (z.B.: 10.200.0.1) wird bei Gatewayauswahl bevorzugt. Ein leeres Feld l&ouml;scht das bevorzugte Gateway.</td>
+<td>Angegebenes Gateway (z. B.: 10.200.0.1) wird bei Gateway-Auswahl bevorzugt. Ein leeres Feld l&ouml;scht das bevorzugte Gateway.</td>
 </TR>
 <TR>
-<TH>- Freifunk DNS (IP):</TH>
+<TH>- Freifunk-DNS (IP):</TH>
 <TD><INPUT NAME="form_internal_dns" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.internal_dns)"></TD>
 <td></td>
 </TR>
 <TR>
-<TH>- Fallback DNS (IP):</TH>
+<TH>- Fallback-DNS (IP):</TH>
 <TD><INPUT NAME="form_fallback_dns" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.fallback_dns)"></TD>
-<td>DNS IP wird zus&auml;tzlich an Wifi Ger&auml;te per DHCP als alternativen Nameserver vergeben, falls DNS im Freifunk gest&ouml;rt ist. (z.B.: 8.8.8.8).</td>
+<td>DNS-IP-Adresse wird zus&auml;tzlich an Wifi-Ger&auml;te per DHCP als alternativen Nameserver mitgeteilt, falls DNS im Freifunk gest&ouml;rt ist (z. B.: 8.8.8.8).</td>
 </TR>
 <TR>
-<TH>- Netzwerk Id:</TH>
+<TH>- Netzwerk-ID:</TH>
 <TD><INPUT NAME="form_mesh_network_id" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.mesh_network_id)"></TD>
 <td></td>
 </TR>
@@ -180,20 +180,20 @@ cat<<EOM
 <TR><TH COLSPAN="3" class="heading">Cron</TH></TR>
 
 <TR>
-<TH>- Automatisches Firmware Update:</TH>
+<TH>- Automatisches Firmware-Update:</TH>
 <TD><INPUT NAME="form_firmware_autoupdate" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.firmware_autoupdate)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td>T&auml;glich 05:00 Uhr wird auf eine neue Firmwareversion getestet. Gibt es eine, so aktualisiert sich der Router selbst&auml;ndig. Nachtr&auml;glich installierted Pakete werden m&uuml;ssen erneut installiert werden.<td>
+<td>T&auml;glich um 5:00 Uhr wird auf eine neue Firmware-Version getestet. Gibt es eine, so aktualisiert sich der Router selbst&auml;ndig. Nachtr&auml;glich installierte Pakete m&uuml;ssen erneut installiert werden.<td>
 </TR>
 
 <TR>
 <TH>- Automatischer n&auml;chtlicher Neustart:</TH>
 <TD><INPUT NAME="form_nightly_reboot" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td>T&auml;glich 4:00 Uhr wird der Router neu gestartet. Das l&ouml;sst manchmal seltsame Probleme, wenn der Router nicht mehr richtig funktioniert.<td>
+<td>T&auml;glich um 4:00 Uhr wird der Router neu gestartet. Dies l&ouml;st manchmal seltsame Probleme, wenn der Router aus unbekannten Gr&uuml;nden nicht mehr richtig funktioniert.<td>
 </TR>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR>
-<TD COLSPAN="3"><INPUT NAME="form_submit" ONCLICK="return validate(systemform);" TITLE="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." TYPE="SUBMIT" VALUE="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<INPUT NAME="form_abort" TITLE="Abbruch dieser Dialogseite" TYPE="SUBMIT" VALUE="Abbruch"></TD>
+<TD COLSPAN="3"><INPUT NAME="form_submit" ONCLICK="return validate(systemform);" TITLE="Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." TYPE="SUBMIT" VALUE="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<INPUT NAME="form_abort" TITLE="Abbrechen und &Auml;nderungen verwerfen." TYPE="SUBMIT" VALUE="Abbrechen"></TD>
 </TR>
 
 </TABLE>
@@ -229,7 +229,7 @@ else
 		uci set ddmesh.network.mesh_network_id=${form_mesh_network_id:-0}
 		uci set ddmesh.boot.boot_step=2
 		uci_commit.sh
-		notebox  'Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv.'
+		notebox  'Die Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv.'
 		test -n "$prefgw" && bmxd -cp $prefgw 2>&1 >/dev/null
 	else
 		notebox  'Einstellungen wurden nicht &uuml;bernommen.'

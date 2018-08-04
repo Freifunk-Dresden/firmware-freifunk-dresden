@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Expert > Privates Netzwerk"
+export TITLE="Verwaltung > Konfiguration: Privates Netzwerk"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh
@@ -28,7 +28,7 @@ function checkinput_server ()
 {
 	var v;
 	v = document.privnet_form_server.form_privnet_server_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("Server Port ist ungültig (1-65535)");return 0;}
+	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ungültig (1-65535).");return 0;}
 	return 1;
 }
 
@@ -36,15 +36,15 @@ function checkinput_outgoing ()
 {
 	var v;
 	v = document.privnet_form_connection_out.form_privnet_peer_node.value;
-	if( v.replace(/[0-9]/g,"") != "" ){ alert("Node ist ungültig");return 0;}
-	if( checknumber(v) || v<1 || v>$_ddmesh_max){ alert("Node ist ungültig");return 0;}
+	if( v.replace(/[0-9]/g,"") != "" ){ alert("Knoten ist ungültig.");return 0;}
+	if( checknumber(v) || v<1 || v>$_ddmesh_max){ alert("Knoten ist ungültig.");return 0;}
 
 	v = document.privnet_form_connection_out.form_privnet_peer_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("Server Port ist ungültig (1-65535)");return 0;}
+	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ungültig (1-65535).");return 0;}
 
 	v = document.privnet_form_connection_out.form_privnet_peer_key.value;
-	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen)");return 0;}
-	if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
+	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen).");return 0;}
+	if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig.");return 0;}
 	return 1;
 }
 
@@ -52,8 +52,8 @@ function checkinput_incomming ()
 {
 	var v;
 	v = document.privnet_form_connection_in.form_privnet_peer_key.value;
-	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen)");return 0;}
-	if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
+	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen).");return 0;}
+	if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig.");return 0;}
 	return 1;
 }
 
@@ -80,14 +80,14 @@ html_msg()
 {
 	test ! "$1" = "0" && {
 		case "$1" in
-			1) msg="Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers ist nicht n&ouml;tig." ;;
-			2) msg="Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers <b>ist</b> n&ouml;tig. Oder Dr&uuml;cken Sie den Button \"VPN Neustart\"." ;;
-			3) msg="Eintrag wurde hinzugef&uuml;gt. Ein Neustart des Routers <b>ist</b> n&ouml;tig. Oder Dr&uuml;cken Sie den Button \"VPN Neustart\"." ;;
-			4) msg="Eintrag wurde gel&ouml;scht. Ein Neustart des Routers <b>ist</b> n&ouml;tig. Oder Dr&uuml;cken Sie den Button \"VPN Neustart\"." ;;
+			1) msg="Die Einstellungen wurden &uuml;bernommen. Ein Neustart des Routers ist nicht n&ouml;tig." ;;
+			2) msg="Die Einstellungen wurden &uuml;bernommen. Ein <b>Neustart</b> des Routers ist <b>n&ouml;tig</b>. Oder dr&uuml;cke den Button \"VPN-Neustart\"." ;;
+			3) msg="Eintrag wurde hinzugef&uuml;gt. Ein <b>Neustart</b> des Routers ist <b>n&ouml;tig</b>. Oder dr&uuml;cke den Button \"VPN-Neustart\"." ;;
+			4) msg="Eintrag wurde gel&ouml;scht. Ein <b>Neustart</b> des Routers ist <b>n&ouml;tig</b>. Oder dr&uuml;cke den Button \"VPN-Neustart\"." ;;
 			5) msg="Eintrag wurde hinzugef&uuml;gt. Ein Neustart des Routers ist nicht n&ouml;tig." ;;
-			6) msg="Eintrag wurde <b>nicht</b> gespeichert. Maximale Anzahl von <b>$NUMBER_OF_CLIENTS</b> wurden erreicht.";;
-			7) msg="VPN wurde neu gestartet. Nach etwa 30s diese Seite erneut aufrufen um den aktuellen Status zu sehen";;
-			8) msg="VPN wird neu gestartet. Sollte die aktuelle Verbindung gerade &uuml;ber das VPN laufen,<br />wird diese Verbindung f&uuml;r eine Zeit gest&ouml;rt";;
+			6) msg="Eintrag wurde <b>nicht gespeichert</b>. Maximale Anzahl von <b>$NUMBER_OF_CLIENTS</b> wurde erreicht.";;
+			7) msg="VPN wurde neu gestartet. Rufe nach etwa 30 s diese Seite erneut auf, um den aktuellen Status zu sehen.";;
+			8) msg="VPN wird neu gestartet. Sollte die aktuelle Verbindung gerade &uuml;ber das VPN laufen,<br />wird diese Verbindung f&uuml;r einige Zeit gest&ouml;rt.";;
 			9) msg="Es wurden keine Einstellungen ge&auml;ndert." ;;
 			*) msg="unbekannt[$1]" ;;
 		esac
@@ -153,7 +153,7 @@ content()
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th title="TCP Port des Servers">Server TCP Port:</th><td><input name="form_privnet_server_port" type="text" size="8" value="$privnet_server_port"</td>
+<tr><th title="TCP-Port des Servers">Server-TCP-Port:</th><td><input name="form_privnet_server_port" type="text" size="8" value="$privnet_server_port"</td>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="if(checkinput_server())form_submit(document.forms.privnet_form_server,'local','none')" name="bb_btn_new" type="button">Speichern</button></td></tr>
 </table>
 </form>
@@ -162,7 +162,7 @@ content()
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><td colspan="3"><font color="red">Achtung: Wird ein neuer Schl&uuml;ssel generiert, muss dieser bei ALLEN VPN Servern aktualisiert werden, da sonst keine Verbindung mehr von diesem Router akzeptiert wird.</font></td></tr>
+<tr><td colspan="3"><font color="red">Achtung: Wird ein neuer Schl&uuml;ssel generiert, muss dieser bei <b>allen</b> VPN-Servern aktualisiert werden, da sonst keine Verbindung mehr von diesem Router akzeptiert wird.</font></td></tr>
 <tr><th>Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-privnet.sh get_public_key)</td>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.privnet_form_keygen,'keygen','none')" name="bb_btn_new" type="button">Key Generieren</button></td></tr>
 </table>
@@ -188,7 +188,7 @@ EOM
  <td title="Public Key der Gegenstelle"><input name="form_privnet_peer_key" type="text" size="40" value=""></td>
  <td title="Kommentar"><input name="form_privnet_peer_comment" type="text" size="20" value=""></td>
  <td></td>
- <td><button onclick="if(checkinput_incomming())form_submit(document.forms.privnet_form_connection_in,'accept_add','none')" name="bb_btn_new" title="Verbindung speichern" type="button">Neu</button></td>
+ <td><button onclick="if(checkinput_incomming())form_submit(document.forms.privnet_form_connection_in,'accept_add','none')" name="bb_btn_new" title="Verbindung Speichern" type="button">Neu</button></td>
 </tr>
 EOM
 
@@ -211,7 +211,7 @@ EOM
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th>Knoten</th><th>Server Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<tr><th>Knoten</th><th>Server-Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -221,11 +221,11 @@ EOM
 	if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
 	cat<<EOM
 <tr class="colortoggle$TOGGEL">
- <td title="Knotennummer"><input name="form_privnet_peer_node" type="text" size="25" value=""></td>
- <td title="TCP Port des Servers"><input name="form_privnet_peer_port" type="text" size="8" value="$DEFAULT_PORT"></td>
- <td title="Public Key der Gegenstelle"><input name="form_privnet_peer_key" type="text" size="40" value=""></td>
+ <td title="Knoten-Nr."><input name="form_privnet_peer_node" type="text" size="25" value=""></td>
+ <td title="TCP-Port des Servers"><input name="form_privnet_peer_port" type="text" size="8" value="$DEFAULT_PORT"></td>
+ <td title="Public-Key der Gegenstelle"><input name="form_privnet_peer_key" type="text" size="40" value=""></td>
  <td></td>
- <td><button onclick="if(checkinput_outgoing())form_submit(document.forms.privnet_form_connection_out,'client_add','none')" name="bb_btn_new" title="Verbindung speichern" type="button">Neu</button></td>
+ <td><button onclick="if(checkinput_outgoing())form_submit(document.forms.privnet_form_connection_out,'client_add','none')" name="bb_btn_new" title="Verbindung Speichern" type="button">Neu</button></td>
 </tr>
 EOM
 
@@ -256,9 +256,9 @@ EOM
 if [ -z "$QUERY_STRING" ]; then
 
 	cat<<EOM
-Das Private Netzwerk erlaubt es die LAN Ports eines Routers mit den LAN Ports eines entfernten Routers zuverbinden und somit sein privates
+Das private Netzwerk erlaubt es, die LAN-Ports eines Routers mit den LAN Ports eines entfernten Routers zu verbinden und somit sein privates
 Netz mit einem entfernten privaten Netz zu koppeln. Die Verbindung
-wird durch einen verschl&uuml;sselten Tunnel aufgebaut. Es lassen sich <b>$NUMBER_OF_CLIENTS</b> Verbindungen von oder zu einem Router
+wird durch einen verschl&uuml;sselten Tunnel aufgebaut. Es lassen sich <b>$NUMBER_OF_CLIENTS Verbindungen</b> von oder zu einem Router
 aufbauen.
 <br><br>
 EOM
