@@ -13,6 +13,7 @@ if [ -n "$form_syslog_submit" ]; then
 fi
 
 cat<<EOM
+<h1>$TITLE</h1>
 <form name="form_wshaper" action="syslog.cgi" method="POST">
 <fieldset class="bubble">
 <legend>Remote-Syslog</legend>
