@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Network"
+export TITLE="Infos: Netzwerk"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
@@ -10,7 +10,7 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Bridge</legend>
 <table>
-<tr class="colortoggle1"><th>Name</th><th>Id</th><th>STP</th><th>Interface</th></tr>
+<tr class="colortoggle1"><th>Name</th><th>ID</th><th>STP</th><th>Interface</th></tr>
 EOM
 
 
