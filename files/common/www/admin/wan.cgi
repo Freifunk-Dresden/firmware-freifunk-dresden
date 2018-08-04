@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Konfiguration > WAN"
+export TITLE="Verwaltung > Konfiguration: WAN"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 if [ -x /usr/sbin/pppd ]; then
