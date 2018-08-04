@@ -15,7 +15,7 @@ compare_versions() {
 	return 0
 }
 
-export TITLE="Verwaltung > Wartung > Firmware"
+export TITLE="Verwaltung > Wartung: Firmware"
 
 # check before calling freifunk-upload
 if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then

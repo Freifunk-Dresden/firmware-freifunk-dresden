@@ -2,7 +2,7 @@
 
 . /lib/functions.sh
 
-export TITLE="Verwaltung > Wartung > Software"
+export TITLE="Verwaltung > Wartung: Software"
 
 IPK_FILE="/tmp/paket.ipk"
 OPKG_ERROR="/tmp/opkg.error"
@@ -42,7 +42,7 @@ show_page() {
 	</form>
 
 	<br />
-	<font size="2"><b>Verf&uuml;gbarer Speicher:</b> $avail_size Kbyte</font> <br />
+	<font size="2"><b>Verf&uuml;gbarer Speicher:</b> $avail_size KB</font> <br />
 	<b>Hinweis:</b> Die Pakete k&ouml;nnen mehr Speicher im Flash belegen als hier angegeben. Es k&ouml;nnen Abh&auml;ngigkeiten zu anderen Paketen bestehen, die ebenfalls installiert werden. Sollte der restliche freie Speicher zu klein werden, lassen sich auch keine Konfigurationen mehr speichern. Bei Ger&auml;ten mit <b>weniger als 8 MByte Flash</b> sollten <b>keine Pakete</b> installiert werden.<br/>
 	Nur durch einen Neustart mit Werkseinstellungen k&ouml;nnen alle &Auml;nderungen wieder r&uuml;ckgängig gemacht werden. Dabei gehen aber alle Einstellungen verloren und eine neue Knoten-Nr. (sowie IP-Adresse) wird vergeben.
 	<br /><br />

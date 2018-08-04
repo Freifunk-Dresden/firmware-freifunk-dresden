@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Wartung > Neustart/Reset"
+export TITLE="Verwaltung > Wartung: Neustart/Reset"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 
@@ -32,7 +32,7 @@ else #form_action
 			<fieldset class="bubble">
 			<legend>Neustart</legend>
 			<table>
-			<tr><td>Router wird neu gestartet</td></tr>
+			<tr><td>Router wird neu gestartet.</td></tr>
 			<tr><td>
 EOM
 			if [ -n "$form_reset_factory" ]; then
