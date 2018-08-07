@@ -6,12 +6,13 @@ Original Source / Built tree for <a href="http://www.freifunk-dresden.de" >Freif
 ACHTUNG
 =======
 Aktuell befindet sich dieser Stand in Entwicklung und sollte unbedingt als INSTABIL betrachtet werden.<br>
-Die nächste Firmware Version, welche zum Download bereitgestellt wird, wird die Version 4.3.0 tragen.
+Freigebene Firmware Versionen sind auf <a href="http://www.freifunk-dresden.de" >Freifunk Dresden</a> zu finden und werden
+Repository entsprechend getagged.<br>
 Die Firmware kann auf eingenes Risiko vewendet werden (was auch die Sicherheit des Firewalls betrifft).<br>
 Wenn Fehler in dieser Firmware gefunden werden, hinterlasst bitte hier eine Nachrricht.
 
 
-Built-Betriebsystem: Linux (e.g.Kubuntu)
+Built-Betriebsystem: Linux (e.g.Ubuntu)
 
 Ziel:
 ----
