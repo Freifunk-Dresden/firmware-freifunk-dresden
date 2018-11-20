@@ -256,5 +256,10 @@ if ! $ok; then
 	fi
 fi
 
+if [ "$(uci -q get ddmesh.network.bypass)" = '1' ] && [ "$(ip ro list ta bypass | wc -l)" -le 1 ]; then
+	logger -s -t "$LOGGER_TAG" "check bypass"
+	/usr/lib/ddmesh/ddmesh-routing.sh bypass
+fi
+
 $DEBUG && echo "end."
 exit 0

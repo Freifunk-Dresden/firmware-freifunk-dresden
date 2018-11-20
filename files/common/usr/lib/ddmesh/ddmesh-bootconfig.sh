@@ -687,6 +687,12 @@ $m 5 * * *  /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run nightly >/dev/null
 EOM
 fi
 
+if [ "$(uci -q get ddmesh.network.bypass)" = '1' ]; then
+cat<<EOM >> /var/etc/crontabs/root
+$m */12 * * *  ip route flush table bypass && /usr/lib/ddmesh/ddmesh-routing.sh bypass >/dev/null 2>/dev/null
+EOM
+fi
+
 }
 
 setup_mesh_on_wire()

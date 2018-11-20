@@ -19,6 +19,9 @@
 248     vpn
 247     unreachable
 
+# WAN bypass for Streaming IPs
+200		bypass
+
 #batman
 64      bat_route
 66      bat_default
