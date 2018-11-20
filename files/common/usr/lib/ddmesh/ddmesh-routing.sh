@@ -133,6 +133,7 @@ set_bypass() {
 		while read -r ip
 		do
 			ip route add "$ip" via "$via" dev br-wan table bypass
+			iptables -A forwarding_rule -d "$ip" -j ACCEPT
 		done < "$tmp_ipd"/final_ip-list
 	fi
 }
