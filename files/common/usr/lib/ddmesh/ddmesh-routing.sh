@@ -65,8 +65,10 @@ get_bypass_ip_list() {
 	tmp_ipd='/tmp/bypass-ips'
 	test ! -d "$tmp_ipd" && mkdir -p "$tmp_ipd"
 
-	# get IPs from BGP-AS
-	# Netflix
+	# wiki.debian.org 
+	nslookup wiki.debian.org | sed -n 's/Address 1:\s*//p' >> "$tmp_ipd"/final_ip-list
+
+	# Netflix get IPs from BGP-AS
 	for AS in 2906 55095 40027 394406 136292
 	do
 		echo '!gas'"$AS" | nc whois.radb.net 43 | sed "1 d" | sed "$ d" >> "$tmp_ipd"/tmp_list1
@@ -112,9 +114,6 @@ get_bypass_ip_list() {
 		fi
 	done < "$tmp_ipd"/tmp_list4
 
-	# wiki.debian.org 
-	nslookup wiki.debian.org | sed -n 's/Address 1:\s*//p' >> "$tmp_ipd"/final_ip-list
-
 	rm -f "$tmp_ipd"/tmp_list*
 }
 
@@ -125,15 +124,24 @@ set_bypass() {
 		network_get_device default_wan_ifname wan
 		via="$(ip route | sed -n "/default via [0-9.]\+ dev $default_wan_ifname/{s#.*via \([0-9.]\+\).*#\1#p}")"
 
-		if [ "$(ip rule | grep -co 360)" = 0 ]; then
-			ip rule add table bypass priority 360
-		fi
+		ip rule add table bypass priority 360
 
 		get_bypass_ip_list
 		while read -r ip
 		do
 			ip route add "$ip" via "$via" dev br-wan table bypass
 			iptables -A forwarding_rule -d "$ip" -j ACCEPT
+		done < "$tmp_ipd"/final_ip-list
+	fi
+}
+
+clean_bypass() {
+	ip rule del table bypass priority 360
+	ip route flush table bypass
+	if [ -f "$tmp_ipd"/final_ip-list ]; then
+		while read -r ip
+		do
+			iptables -D forwarding_rule -d "$ip" -j ACCEPT
 		done < "$tmp_ipd"/final_ip-list
 	fi
 }
@@ -147,9 +155,11 @@ case "$1" in
 
 	stop)
 		clean
+		clean_bypass
 	;;
 
 	bypass)
+		clean_bypass
 		set_bypass
 	;;
 

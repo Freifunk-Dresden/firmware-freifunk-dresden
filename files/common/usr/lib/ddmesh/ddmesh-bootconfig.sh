@@ -689,7 +689,7 @@ fi
 
 if [ "$(uci -q get ddmesh.network.bypass)" = '1' ]; then
 cat<<EOM >> /var/etc/crontabs/root
-$m */12 * * *  ip route flush table bypass && /usr/lib/ddmesh/ddmesh-routing.sh bypass >/dev/null 2>/dev/null
+$m */12 * * *  /usr/lib/ddmesh/ddmesh-routing.sh bypass >/dev/null 2>/dev/null
 EOM
 fi
 
