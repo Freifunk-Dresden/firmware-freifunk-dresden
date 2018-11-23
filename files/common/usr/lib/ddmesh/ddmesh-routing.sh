@@ -119,7 +119,8 @@ get_bypass_ip_list() {
 
 set_bypass() {
 	#bypass Streaming Traffic
-	if [ "$(uci -q get ddmesh.network.bypass)" = '1' ] && [ "$(grep -c 'tbb_fastd' /var/lib/ddmesh/bmxd/links)" -ge '1' ]; then
+	#if [ "$(uci -q get ddmesh.network.bypass)" = '1' ] && [ "$(grep -c 'tbb_fastd' /var/lib/ddmesh/bmxd/links)" -ge '1' ]; then
+	if [ "$(uci -q get ddmesh.network.bypass)" = '1' ]; then
 		. /lib/functions/network.sh
 		network_get_device default_wan_ifname wan
 		via="$(ip route | sed -n "/default via [0-9.]\+ dev $default_wan_ifname/{s#.*via \([0-9.]\+\).*#\1#p}")"
@@ -130,7 +131,7 @@ set_bypass() {
 		while read -r ip
 		do
 			ip route add "$ip" via "$via" dev br-wan table bypass
-			iptables -I forwarding_rule 1 -d "$ip" -j ACCEPT
+			#iptables -I output_rule 1 -o br-wan -d "$ip" -j ACCEPT
 		done < /tmp/bypass-ips/final_ip-list
 	fi
 }
@@ -138,12 +139,12 @@ set_bypass() {
 clean_bypass() {
 	ip rule del table bypass priority 360
 	ip route flush table bypass
-	if [ -f /tmp/bypass-ips/final_ip-list ]; then
-		while read -r ip
-		do
-			iptables -D forwarding_rule -d "$ip" -j ACCEPT >/dev/null 2>&1
-		done < /tmp/bypass-ips/final_ip-list
-	fi
+#	if [ -f /tmp/bypass-ips/final_ip-list ]; then
+#		while read -r ip
+#		do
+#			iptables -D output_rule -d "$ip" -o br-wan -j ACCEPT >/dev/null 2>&1
+#		done < /tmp/bypass-ips/final_ip-list
+#	fi
 }
 
 
