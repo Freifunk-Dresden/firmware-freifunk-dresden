@@ -130,19 +130,19 @@ set_bypass() {
 		while read -r ip
 		do
 			ip route add "$ip" via "$via" dev br-wan table bypass
-			iptables -A forwarding_rule -d "$ip" -j ACCEPT
-		done < "$tmp_ipd"/final_ip-list
+			iptables -I forwarding_rule 1 -d "$ip" -j ACCEPT
+		done < /tmp/bypass-ips/final_ip-list
 	fi
 }
 
 clean_bypass() {
 	ip rule del table bypass priority 360
 	ip route flush table bypass
-	if [ -f "$tmp_ipd"/final_ip-list ]; then
+	if [ -f /tmp/bypass-ips/final_ip-list ]; then
 		while read -r ip
 		do
-			iptables -D forwarding_rule -d "$ip" -j ACCEPT
-		done < "$tmp_ipd"/final_ip-list
+			iptables -D forwarding_rule -d "$ip" -j ACCEPT >/dev/null 2>&1
+		done < /tmp/bypass-ips/final_ip-list
 	fi
 }
 
@@ -161,6 +161,10 @@ case "$1" in
 	bypass)
 		clean_bypass
 		set_bypass
+	;;
+
+	clean_bypass)
+		clean_bypass
 	;;
 
 	*)
