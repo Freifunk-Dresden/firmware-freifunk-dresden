@@ -129,11 +129,6 @@ config backbone_client
 	option	public_key 		''
 
 config backbone_client
-	option 	host			'vpn3.freifunk-dresden.de'
-	option 	port			'5002'
-	option	public_key 		''
-
-config backbone_client
 	option 	host			'vpn6.freifunk-dresden.de'
 	option 	port			'5002'
 	option	public_key 		''
@@ -142,6 +137,12 @@ config backbone_client
 	option 	host			'vpn7.freifunk-dresden.de'
 	option 	port			'5002'
 	option	public_key 		''
+
+config backbone_client
+	option 	host			'vpn13.freifunk-dresden.de'
+	option 	port			'5002'
+	option	public_key 		''
+
 
 config privnet 'privnet'
 	option  server_port		'4000'
