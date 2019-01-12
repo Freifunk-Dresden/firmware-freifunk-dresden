@@ -25,68 +25,68 @@ config_boot_step1() {
 
 cat <<EOM >/etc/config/overlay
 config overlay 'data'
-	option	md5sum '0'
+	option	md5sum 				'0'
 EOM
 
 cat <<EOM >/etc/config/ddmesh
 #generated/overwritten by $0
 config system 'system'
-	option	community	'Freifunk Dresden'
-	list	communities	'Freifunk Dresden'
-	list	communities	'Freifunk Freiberg'
-	list	communities	'Freifunk Meissen'
-	list	communities	'Freifunk OL'
-	list	communities	'Freifunk Pirna'
-	list	communities	'Freifunk Radebeul'
-	list	communities	'Freifunk Waldheim'
-#	option 	node			0
+	option	community			'Freifunk Dresden'
+	list	communities			'Freifunk Dresden'
+	list	communities			'Freifunk Freiberg'
+	list	communities			'Freifunk Meissen'
+	list	communities			'Freifunk OL'
+	list	communities			'Freifunk Pirna'
+	list	communities			'Freifunk Radebeul'
+	list	communities			'Freifunk Waldheim'
+#	option 	node				0
 	option 	tmp_min_node		900
 	option	tmp_max_node		999
 #	option 	register_key		''
 	option	announce_gateway	0
-	option  wanssh                  1
-	option  wanhttp                 1
-	option  wanhttps                1
-	option  wanicmp                 1
-	option  wansetup                1
-	option  meshssh                 1
-	option  meshsetup               1
+	option  wanssh 				1
+	option  wanhttp 			1
+	option  wanhttps 			1
+	option  wanicmp				1
+	option  wansetup			1
+	option  meshssh				1
+	option  meshsetup			1
 	option	disable_splash		1
-	option	firmware_autoupdate     0
+	option	firmware_autoupdate	0
 	option	email_notification	0
-	option	node_type		'node'
-	list	node_types		'node'
-	list	node_types		'mobile'
-	list	node_types		'server'
+	option	node_type			'node'
+	list	node_types			'node'
+	list	node_types			'mobile'
+	list	node_types			'server'
 	option	nightly_reboot		0
 
 config boot 'boot'
-	option boot_step                0
+	option boot_step 			0
 	option upgrade_version		$(cat /etc/version)
 	option nightly_upgrade_running	0
 	option upgrade_running		0
 
 config gps 'gps'
-	option 	latitude		'51.054741'
-	option  longitude		'13.742642'
-	option  altitude		'0'
+	option 	latitude			'51.054741'
+	option  longitude			'13.742642'
+	option  altitude			'0'
 
 config contact 'contact'
-	option	name			''
-	option  email			''
-	option	location		''
-	option	note			''
+	option	name				''
+	option  email				''
+	option	location			''
+	option	note				''
 
 config network 'network'
 	list 	gateway_check_ping	''
-#	list	splash_mac		''
+#	list	splash_mac			''
 #0-disable; in minutes;
 	option	client_disconnect_timeout 0
 	option	dhcp_lan_offset		100
 	option	dhcp_lan_limit		0
 	option	dhcp_lan_lease		'12h'
-	option	essid_adhoc		'Freifunk Mesh-Net'
-#	option	essid_ap		'' #custom essid
+	option	essid_adhoc			'Freifunk Mesh-Net'
+#	option	essid_ap			'' #custom essid
 	option	wifi_country		'BO'
 	option	wifi_channel		13
 	option  wifi_txpower		18
@@ -97,83 +97,82 @@ config network 'network'
 	option	wifi2_dhcplease		'5m'
 	option	wifi2_isolate		'1'
 	option	lan_local_internet	'0'
-	option	speed_down		'200000'
-	option	speed_up		'50000'
+	option	speed_down			'200000'
+	option	speed_up			'50000'
 	option	speed_network		'lan'
 	option	speed_enabled		0
 	option	internal_dns		'10.200.0.4'
 	option	mesh_network_id		'1206'
-	option	mesh_mtu		1200
-	option	mesh_on_lan		0
+	option	mesh_mtu			1200
+	option	mesh_on_lan			0
 	option	wifi3_enabled		0
 	option	wifi3_network		'lan'
 
 config bmxd 'bmxd'
-	option  routing_class           3
-	option  gateway_class           '1024/1024'
-	option  prefered_gateway        ''
+	option  routing_class 		3
+	option  gateway_class 		'1024/1024'
+	option  prefered_gateway 	''
 
 
 config backbone 'backbone'
-	option  server_port		'5002'
+	option  server_port			'5002'
 	option  default_server_port	'5002'
 	option	number_of_clients	5
 
 #config backbone_accept
-#	option	key			''
-#	option	comment			''
+#	option	key					''
+#	option	comment				''
 
 config backbone_client
-	option 	host			'vpn1.freifunk-dresden.de'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	host				'vpn1.freifunk-dresden.de'
+	option 	port				'5002'
+	option	public_key 			''
 
 config backbone_client
-	option 	host			'vpn6.freifunk-dresden.de'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	host				'vpn2.freifunk-dresden.de'
+	option 	port				'5002'
+	option	public_key 			''
 
 config backbone_client
-	option 	host			'vpn7.freifunk-dresden.de'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	host				'vpn3.freifunk-dresden.de'
+	option 	port				'5002'
+	option	public_key 			''
 
 config backbone_client
-	option 	host			'vpn13.freifunk-dresden.de'
-	option 	port			'5002'
-	option	public_key 		''
-
+	option 	host				'vpn7.freifunk-dresden.de'
+	option 	port				'5002'
+	option	public_key 			''
 
 config privnet 'privnet'
-	option  server_port		'4000'
+	option  server_port			'4000'
 	option  default_server_port	'4000'
 	option	number_of_clients	5
 
 #config privnet_accept
-#	option	key			''
-#	option	comment			''
+#	option	key					''
+#	option	comment				''
 
 #config privnet_client
-#	option	host			''
-#	option	port			''
-#	option	public_key		''
+#	option	host				''
+#	option	port				''
+#	option	public_key			''
 
 config nodegroup 'nodegroup'
-	option  clients_enabled         1
-	option  server_enabled          0
-	option  server_port		'4000'
+	option  clients_enabled 	1
+	option  server_enabled 		0
+	option  server_port			'4000'
 	option	server_passwd		''
 	option  default_server_port	'4000'
 	option	number_of_clients	5
 
 #config nodegroup_accept
-#	option	name			''
-#	option	password		''
+#	option	name				''
+#	option	password			''
 
 #config nodegroup_client
-#	option	name			''
-#	option	port			''
-#	option	password		''
+#	option	name				''
+#	option	port				''
+#	option	password			''
 EOM
 
 	#almost disable crond logging (only errors)
@@ -599,53 +598,53 @@ EOM
 cat <<EOM >/var/etc/config/uhttpd
 #generated/overwritten by $0
 config uhttpd main
-	list listen_http	0.0.0.0:80
-	list listen_http	0.0.0.0:81
-	list listen_https	0.0.0.0:443
-	option home		/www
-	option rfc1918_filter 1
-	option max_requests	20	
+	list listen_http 		0.0.0.0:80
+	list listen_http		0.0.0.0:81
+	list listen_https		0.0.0.0:443
+	option home				/www
+	option rfc1918_filter 	1
+	option max_requests		20	
 	option max_connections	100
 	option tcp_keepalive    1
 	option http_keepalive   60
-	option cert		/etc/uhttpd.crt
-	option key		/etc/uhttpd.key
-	list interpreter	".cgi=/bin/sh"
-	list interpreter	".json=/bin/sh"
+	option cert				/etc/uhttpd.crt
+	option key				/etc/uhttpd.key
+	list interpreter		".cgi=/bin/sh"
+	list interpreter		".json=/bin/sh"
 EOM
 test -f /usr/lib/lua/uhttpd-handler.lua &&
 {
 cat <<EOM >>/var/etc/config/uhttpd
-	list interpreter	".lua=/usr/bin/lua"
-	option lua_prefix	/cgilua/
-	option lua_handler	/usr/lib/lua/uhttpd-handler.lua
+	list interpreter		".lua=/usr/bin/lua"
+	option lua_prefix		/cgilua/
+	option lua_handler		/usr/lib/lua/uhttpd-handler.lua
 EOM
 }
 cat <<EOM >>/var/etc/config/uhttpd
 	option script_timeout	600
 	option network_timeout	600
-	option realm		'$(uci get ddmesh.system.community)'
-	option index_page	index.cgi
-	option error_page	/index.cgi
+	option realm			'$(uci get ddmesh.system.community)'
+	option index_page		index.cgi
+	option error_page		/index.cgi
 
 # Certificate defaults for px5g key generator
 config cert px5g
-	option days		7300
-	option bits		1024
-	option country		DE
-	option state		Dresden
-	option location		Dresden
-	option commonname	'$(uci -q get ddmesh.system.community)'
-	option node		'Node $(uci -q get ddmesh.system.node)'
+	option days				7300
+	option bits				1024
+	option country			DE
+	option state			Dresden
+	option location			Dresden
+	option commonname		'$(uci -q get ddmesh.system.community)'
+	option node				'Node $(uci -q get ddmesh.system.node)'
 EOM
 
 #traffic shaping
 
 cat <<EOM >/var/etc/config/wshaper
 config 'wshaper' 'settings'
-  option network "$(uci get ddmesh.network.speed_network)"
-  option downlink "$(uci get ddmesh.network.speed_down)"
-  option uplink "$(uci get ddmesh.network.speed_up)"
+  option network 			"$(uci get ddmesh.network.speed_network)"
+  option downlink 			"$(uci get ddmesh.network.speed_down)"
+  option uplink 			"$(uci get ddmesh.network.speed_up)"
 EOM
 
  #setup cron.d
@@ -685,6 +684,12 @@ fi
 if [ "$(uci -q get ddmesh.system.firmware_autoupdate)" = "1" ];then
 cat<<EOM >> /var/etc/crontabs/root
 $m 5 * * *  /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run nightly >/dev/null 2>/dev/null
+EOM
+fi
+
+if [ "$(uci -q get ddmesh.network.bypass)" = '1' ]; then
+cat<<EOM >> /var/etc/crontabs/root
+$m */12 * * *  /usr/lib/ddmesh/ddmesh-routing.sh bypass >/dev/null 2>/dev/null
 EOM
 fi
 
