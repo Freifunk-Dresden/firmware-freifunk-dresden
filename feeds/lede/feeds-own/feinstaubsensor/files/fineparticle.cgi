@@ -8,13 +8,11 @@ width=380
 
 cat<<EOM
 <fieldset class="bubble">
-<legend>Feinstaubsensor Projekt</legend>
-Das Feinstaubsensor Projekt ist ein deutschlandweites Projekt um den Feinstaubgehalt in der Luft
-zu messen. Dieser Sensor kann recht einfach nach einer Anleitung
-gebaut werden.</br> Die Messwerte werden f&uuml;r weitere Forschungen verwendet.</br>
+<legend>Feinstaubsensor-Projekt</legend>
+Das Feinstaubsensor-Projekt ist, urspr&uuml;nglich in Deutschland gestartet, ein mittlerweile weltweites Projekt, um den Feinstaubgehalt in der Luft zu messen. Dieser Sensor kann recht einfach nach einer Anleitung gebaut werden.</br> Die Messwerte werden f&uuml;r weitere Forschungen verwendet.</br>
 <ul>
-<li> <a href="http://luftdaten.info/feinstaubsensor-bauen/">Anleitung</a>
-<li> <a href="http://deutschland.maps.luftdaten.info">Karte</a>.
+<li> <a href="http://luftdaten.info/feinstaubsensor-bauen/">Bau-Anleitung</a>
+<li> <a href="http://dresden.maps.luftdaten.info">Feinstaub-Karte</a>.
 </ul>
 </fieldset>
 <br>
