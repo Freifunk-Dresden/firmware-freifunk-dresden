@@ -1,6 +1,6 @@
 #!/bin/sh
 
-test -x /usr/bin/iperf3 || test -x /usr/bin/nuttcp || exit 0
+test -x /usr/bin/iperf3 || exit 0
 
 cat <<EOM
 <tr><td height="8"></td></tr>
@@ -14,8 +14,3 @@ cat <<EOM
 EOM
 fi
 
-if [ -x /usr/bin/nuttcp ]; then
-cat <<EOM
-<tr><td><div class="plugin"><a class="plugin" href="speedtest-nuttcp.cgi">Speedtest (nuttcp)</a></div></td></tr>
-EOM
-fi

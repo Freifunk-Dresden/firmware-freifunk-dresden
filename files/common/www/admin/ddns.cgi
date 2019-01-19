@@ -108,6 +108,7 @@ else #query string
 		uci set ddns.dyndns.force_interval="$form_ddns_force_interval"
 
 		uci set ddns.dyndns.domain="$form_ddns_domain"
+		uci set ddns.dyndns.lookup_host="$form_ddns_domain"
 
 		uci set ddmesh.boot.boot_step=2
 		uci_commit.sh

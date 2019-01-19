@@ -71,9 +71,15 @@ run_upgrade()
 ### keep ORDER - only change below
 ### uci_commit.sh is called after booting via ddmesh.boot_step=2
 
-
+# function for current version is needed for this algorithm
+upgrade_3_1_9() {
+ true
+}
+upgrade_4_1_7() {
+ true
+}
 upgrade_4_2_0() {
- echo dummy
+ true
 }
 
 upgrade_4_2_2() {
@@ -205,11 +211,10 @@ upgrade_4_2_5() {
 
 
 upgrade_4_2_6() {
-	echo dummy
+ true
 }
-
 upgrade_4_2_7() {
-	echo dummy
+ true
 }
 
 upgrade_4_2_8() {
@@ -252,7 +257,7 @@ upgrade_4_2_10() {
 }
 
 upgrade_4_2_11() {
-	echo "dummy"
+ true
 }
 
 upgrade_4_2_12() {
@@ -260,12 +265,12 @@ upgrade_4_2_12() {
 	uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
 }
 
-upgrade_4_2_13() {
-	echo "dummy"
+upgrade_4_2_13() { 
+ true
 }
 
 upgrade_4_2_14() {
-	echo "dummy"
+ true
 }
 
 upgrade_4_2_15() {
@@ -296,9 +301,6 @@ upgrade_4_2_19() {
 }
 
 upgrade_5_0_1() {
-	test -z "$(uci -q get ddmesh.gps.latitude)" && uci -q set ddmesh.gps.latitude='51.054741'
-	test -z "$(uci -q get ddmesh.gps.longitude)" && uci -q set ddmesh.gps.longitude='13.742642'
-	test -z "$(uci -q get ddmesh.gps.altitude)" && uci -q set ddmesh.gps.altitude='0'
 	uci -q set ddmesh.network.wifi2_dhcplease='5m'
 }
 
@@ -311,7 +313,27 @@ upgrade_5_0_2() {
 
 upgrade_5_0_3() {
 	uci add_list ddmesh.system.communities="Freifunk Waldheim"
+	# convert security
+	security=0 # default
+	if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" ]; then
+		if [ "$(uci -q get ddmesh.network.wifi3_security_open)" = "1" ]; then
+			security=0
+		else
+			security=1
+		fi
+	fi
+	uci -q set ddmesh.network.wifi3_security=$security
+	uci -q delete ddmesh.network.wifi3_security_open
 }
+
+upgrade_5_0_4() {
+ true
+}
+
+upgrade_5_0_5() {
+ true
+}
+
 
 ##################################
 

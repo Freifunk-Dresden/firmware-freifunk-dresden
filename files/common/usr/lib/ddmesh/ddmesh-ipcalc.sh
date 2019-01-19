@@ -98,7 +98,9 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	fullnet		= "10.200.0.0/15"
 	wifi2net	= "100.64.0.0/16"
 	wifi2ip		= "100.64.0.1"
-	wifi2dhcpstart	= "100.64.0.2"
+	# ipcalc.sh 100.64.0.1/16 100.64.100.1 39933
+	wifi2dhcpstart	= "100.64.100.1"
+	wifi2dhcpnum	= "39933" # ends 100.64.255.254
 	wifi2dhcpend	= "100.64.255.254"
 	wifi2broadcast	= "100.64.255.255"
 	wifi2netmask	= "255.255.0.0"
@@ -125,6 +127,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	print "export _ddmesh_wifi2net=\""wifi2net"\""
 	print "export _ddmesh_wifi2ip=\""wifi2ip"\""
 	print "export _ddmesh_wifi2dhcpstart=\""wifi2dhcpstart"\""
+	print "export _ddmesh_wifi2dhcpnum=\""wifi2dhcpnum"\""
 	print "export _ddmesh_wifi2dhcpend=\""wifi2dhcpend"\""
 	print "export _ddmesh_wifi2broadcast=\""wifi2broadcast"\""
 	print "export _ddmesh_wifi2netmask=\""wifi2netmask"\""

@@ -1,4 +1,27 @@
 
+2019-01-19 5.0.5 (release)
+--------------------------------------------------
+Repro moved from github/ddmesh to github/freifunk-dresden
+
+2018-09-19 5.0.5 (release)
+--------------------------------------------------
+statistic		- add wifi2 statistic for 1min,5min,15min,1h,6h,12h,24h,1W
+
+2018-09-19 5.0.4 (testing)
+--------------------------------------------------
+statistic		- fix counting of wifi clients
+upgrade			- add missing upgrade function for version 3.1.9
+
+2018-08-29 5.0.3 (testing)
+--------------------------------------------------
+registration		- fix adding preferred node to registration url
+GUI			- improve texts (Diego)
+wifi2			- add support for fix ip range, needed for portforwarding to wifi clients
+wifi3			- turn around configuration logic for wifi encryption
+			- fix ssid encoding
+ddns			- fix problem with default settings genererated by ddns script. This setting was not updated when domain name is changed by user
+reset			- fix reset with factory settings
+
 2018-05-13 5.0.2 (testing)
 --------------------------------------------------
 gui-map 		- set default gps coordinates

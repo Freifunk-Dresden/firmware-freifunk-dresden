@@ -110,13 +110,7 @@ echo "select $VER"
 case "$VER" in
 	lede)
 		git_url="https://github.com/lede-project/source.git"
-#later revision hat problems with TP-Link mr3020 dnsmasq. no resolve at all
-		#lede_rev="995193ccdb2adb2bfe226965589b5f3db71bdd80" #2.4.8;
-		#lede_rev="e64463ebde554071431514925825e2c30f2b6998" geht soweit 4.2.9
-		#lede_rev="lede-17.01" #98c003e3da5993779b9011a24072e2bac4492d86
-		#lede_rev="b41a2e646e71d9a483fa3d770a0f53a33eea696c" 4.2.17
-		lede_rev="b1205a921177607c572605601b6e8ca5b6816838"	# 4.2.18 (3.2.2018)
-		lede_rev="3ca1438ae0f780664e29bf0d102c1c6f9a99ece7"	# 4.2.19 (branch 17.01)
+		lede_rev="3ca1438ae0f780664e29bf0d102c1c6f9a99ece7"	# since 5.0.2 (branch 17.01)
 		VER=lede
 		;;
 	*)
@@ -148,7 +142,7 @@ log ()
  sf=$1
  shift
  echo "*************** [$*]" >> $RUN_DIR/$log_dir/$sf
- script -q -f -c "$*" | tee -a $RUN_DIR/$log_dir/$sf
+ $*  | tee -a $RUN_DIR/$log_dir/$sf
 }
 
 setup_buildroot ()
@@ -314,7 +308,7 @@ echo "********* TODO: pfad anpassen fuer DEVICE**************"
 
 	# run make command
 	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS"
-	log $log_file time make $BUILD_PARAMS
+	log $log_file time -p make $BUILD_PARAMS
 
 #$RUN_DIR/files/common/usr/lib/ddmesh/ddmesh-utils-check-firmware-size.sh bin/ar71xx/lede-ar71xx-generic-tl-mr3020-v1-squashfs-factory.bin
 

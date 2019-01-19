@@ -71,7 +71,7 @@ EOM
 			</SCRIPT>
 EOM
 			if [ -n "$form_reset_factory" ]; then
-				/sbin/firstboot
+				/sbin/firstboot -y
 			fi
 			sleep 2
 			reboot&

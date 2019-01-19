@@ -25,11 +25,6 @@ echo "<div style=\"visibility: hidden;\" id=\"wifi3_key\">$wifi3_key</div>"
 cat<<EOM
 <div id="status"></div>
 <script type="text/javascript">
-function disable_fields(s) {
-	var c=document.getElementsByName('form_wifi_diversity')[0].checked;
-	document.getElementsByName('form_wifi_rxantenna')[0].disabled=c;
-	document.getElementsByName('form_wifi_txantenna')[0].disabled=c;
-}
 function enable_custom_essid(s) {
 	var c=document.getElementsByName('form_wifi_custom_essid')[0].checked;
 	document.getElementsByName('form_wifi_ap_ssid')[0].disabled= !c;
@@ -37,8 +32,13 @@ function enable_custom_essid(s) {
 function enable_private_wifi(s) {
 	var c=document.getElementsByName('form_wifi3_enabled')[0].checked;
 	document.getElementsByName('form_wifi3_ssid')[0].disabled= !c;
-	document.getElementsByName('form_wifi3_key')[0].disabled= !c;
-	document.getElementsByName('form_wifi3_security_open')[0].disabled= !c;
+	document.getElementsByName('form_wifi3_security')[0].disabled= !c;
+	enable_wifi_security(s);
+}
+function enable_wifi_security(s) {
+	var c1=document.getElementsByName('form_wifi3_enabled')[0].checked;
+	var c2=document.getElementsByName('form_wifi3_security')[0].checked;
+	document.getElementsByName('form_wifi3_key')[0].disabled= !c1 || !c2;
 }
 function setWifi3_key()
 {
@@ -77,6 +77,12 @@ function checkInput()
 <td><input name="form_wifi_netmask" size="32" type="text" value="$_ddmesh_netmask" disabled></td>
 </tr>
 
+<tr><th>Freifunk-DHCP Bereich:</th>
+<td><input name="form_wifi_dncp" size="32" type="text" value="$_ddmesh_wifi2dhcpstart - $_ddmesh_wifi2dhcpend" disabled> <br/>
+Der Bereich <b>nach</b> $_ddmesh_wifi2ip bis <b>vor</b> $_ddmesh_wifi2dhcpstart kann an Ger&auml;te fest vergeben werden.<br/>
+Ist der Splash aktiv, m&uuml;ssen MAC Adressen manuell hinzugef&uuml;gt werden (<a href="/admin/splash.cgi">Splash</a>).</td>
+</tr>
+
 <tr><th>Kanal:</th>
 <td><input name="form_wifi_channel" size="32" type="text" value="$(uci get ddmesh.network.wifi_channel)" disabled></td>
 </tr>
@@ -87,17 +93,6 @@ $(iwinfo $wifi_ifname txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;
 </select> (konfiguriert: $(uci get ddmesh.network.wifi_txpower) dBm) <b>Aktuell:</b> $(iw $wifi_ifname info | awk '/txpower/{print $2,$3}')</td>
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
-
-<!--
-<tr><th>Antenne:</th>
-<td><input onchange="disable_fields();" name="form_wifi_diversity" type="CHECKBOX" value="1" $(if [ "$(uci get ddmesh.network.wifi_diversity)" != "0" ];then echo ' checked="checked"';fi)>Automatisch</td>
-</tr>
-<tr><th></th><td>RX Antenne (Maske): <input name="form_wifi_rxantenna" size="2" MAXLENGTH="1" type="text" value="$(uci get ddmesh.network.wifi_rxantenna )" onkeypress="return isNumberKey(event)"></td></tr>
-<tr><th></th><td>TX Antenne (Maske): <input name="form_wifi_txantenna" size="2" MAXLENGTH="1" type="text" value="$(uci get ddmesh.network.wifi_txantenna )" onkeypress="return isNumberKey(event)"></td></tr>
-<tr><th></th><td>Bit-Maske: jedes bit steht f&uuml;r eine Antenne. z.B.: 1:Antenne 1; 2:Antenne 2; 4:Antenne 3;<br /> Oder 3:Antennen 1+2; 5-Antennen 1+3; 6:Antennen 2+3; 7:Antennen 1+2+3 </td></tr>
--->
-<!-- distance, beacon_int, basic_rate -->
-
 
 <tr><th>Ad-hoc-SSID:</th>
 <td><input name="form_wifi_adhoc_ssid" size="32" type="text" value="$(uci get wireless.@wifi-iface[0].ssid)" disabled></td>
@@ -119,11 +114,11 @@ $(iwinfo $wifi_ifname txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;
 
 <tr><th>Aktiviere privates WiFi:</th>
 <td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es, ein zusätzliches privates WiFi zu aktivieren.</td></tr>
-<tr><th>Verschl&uuml;sselung deaktivieren:</th>
-<td><INPUT id="id_wifi3_security_open" NAME="form_wifi3_security_open" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_security_open)" = "1" ];then echo ' checked="checked"';fi)>Offenes privates WiFi (sonst WPA2-PSK-verschl&uuml;sselt).</td></tr>
 <tr><th>SSID:</th>
 <td><input id="id_wifi3_ssid" name="form_wifi3_ssid" size="32" type="text" value="$(uci get credentials.wifi.private_ssid)"></td>
 </tr>
+<tr><th>Verschl&uuml;sselung:</th>
+<td><INPUT onchange="enable_wifi_security();" id="id_wifi3_security" NAME="form_wifi3_security" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_security)" = "1" ];then echo ' checked="checked"';fi)>WPA2-PSK</td></tr>
 <tr><th>Key (mind. 8 Zeichen):</th>
 <td><input onkeypress="return isWifiKey(event);" id="id_wifi3_key" name="form_wifi3_key" width="30" type="text"></td>
 </tr>
@@ -171,10 +166,9 @@ else #query string
 			# avoid clearing values when disabled
 			if [ "$form_wifi3_enabled" = 1 ]; then
 				uci set ddmesh.network.wifi3_network="$form_wifi3_network"
-				uci set ddmesh.network.wifi3_security_open="$form_wifi3_security_open"
-				uci set credentials.wifi.private_ssid="$form_wifi3_ssid"
-				key=$(uhttpd -d "$form_wifi3_key")
-				uci set credentials.wifi.private_key="$key"
+				uci set ddmesh.network.wifi3_security="$form_wifi3_security"
+				uci set credentials.wifi.private_ssid="$(uhttpd -d "$form_wifi3_ssid")"
+				uci set credentials.wifi.private_key="$(uhttpd -d "$form_wifi3_key")"
 			fi
 			uci set ddmesh.boot.boot_step=2
 			uci_commit.sh

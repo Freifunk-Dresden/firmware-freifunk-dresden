@@ -63,7 +63,7 @@ if [ "$1" = "configure" ]; then
 
 	uci -q set dhcp.wifi2.interface='wifi2'		# network, not ifname
 	uci -q set dhcp.wifi2.start="$_ddmesh_wifi2dhcpstart"
-	uci -q set dhcp.wifi2.limit="65534"
+	uci -q set dhcp.wifi2.limit="$_ddmesh_wifi2dhcpnum"
 	uci -q set dhcp.wifi2.leasetime="$(uci get ddmesh.network.wifi2_dhcplease)"
 	uci -q delete dhcp.wifi2.dhcp_option
 
