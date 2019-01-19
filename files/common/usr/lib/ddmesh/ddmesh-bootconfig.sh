@@ -52,7 +52,7 @@ config system 'system'
 	option  meshssh                 1
 	option  meshsetup               1
 	option	disable_splash		1
-	option	firmware_autoupdate     0
+	option	firmware_autoupdate     1
 	option	email_notification	0
 	option	node_type		'node'
 	list	node_types		'node'
