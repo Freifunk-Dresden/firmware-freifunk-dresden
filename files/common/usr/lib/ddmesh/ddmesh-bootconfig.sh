@@ -67,8 +67,8 @@ config boot 'boot'
 	option upgrade_running		0
 
 config gps 'gps'
-	option 	latitude		'51.054741'
-	option  longitude		'13.742642'
+	option 	latitude		'0'
+	option  longitude		'0'
 	option  altitude		'0'
 
 config contact 'contact'
@@ -294,11 +294,11 @@ setup_wireless()
 		uci set wireless.@wifi-iface[2].device='radio0'
 		uci set wireless.@wifi-iface[2].network="$(uci -q get ddmesh.network.wifi3_network)"
 		uci set wireless.@wifi-iface[2].mode='ap'
-		if [ "$(uci -q get ddmesh.network.wifi3_security_open)" = "1" ]; then
-			uci set wireless.@wifi-iface[2].encryption='none'
-		else
+		if [ "$(uci -q get ddmesh.network.wifi3_security)" = "1" ]; then
 			uci set wireless.@wifi-iface[2].encryption='psk2'
 			uci set wireless.@wifi-iface[2].key="$(uci -q get credentials.wifi.private_key)"
+		else
+			uci set wireless.@wifi-iface[2].encryption='none'
 		fi
 		uci set wireless.@wifi-iface[2].isolate='0'
 		ssid="$(uci -q get credentials.wifi.private_ssid)"

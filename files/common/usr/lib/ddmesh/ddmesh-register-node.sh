@@ -30,7 +30,7 @@ test -z "$key" && {
 }
 
 echo "Try to register node [$node], key [$key]"
-n="$(uclient-fetch $CERT -O- $(uci get credentials.registration.register_service_url)$key&node=$node 2>/dev/null)"
+n="$(uclient-fetch $CERT -O- $(uci get credentials.registration.register_service_url)$key\&node=$node 2>/dev/null)"
 
 if [ -z "$n" ]; then
 	echo "connection error"

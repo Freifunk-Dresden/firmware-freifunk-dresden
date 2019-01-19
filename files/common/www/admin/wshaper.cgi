@@ -66,9 +66,9 @@ EOM
 
 cat<<EOM
 <tr><th width="120">Upload-Rate (ausgehend):</th>
-<td class="nowrap"><input name="form_wshaper_upload" size="10" type="text" value="$(uci get ddmesh.network.speed_up)"> kbits/s (z. B.: 5000)</td></tr>
+<td class="nowrap"><input name="form_wshaper_upload" size="10" type="text" value="$(uci get ddmesh.network.speed_up)"> kbits/s (Beispiel: 5000)</td></tr>
 <tr><th>Download-Rate (ankommend):</th>
-<td class="nowrap"><input name="form_wshaper_download" size="10"  type="text" value="$(uci get ddmesh.network.speed_down)"> kbits/s (z. B.: 200000)</td></tr>
+<td class="nowrap"><input name="form_wshaper_download" size="10"  type="text" value="$(uci get ddmesh.network.speed_down)"> kbits/s (Beispiel: 200000)</td></tr>
 <tr><td colspan="2">(Die Datenraten werden aus Sicht des Routers angegeben.)</td></tr>
 <tr><td width="120" colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2" class="nowrap"><input name="form_wshaper_submit" title="Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="SUBMIT" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_wshaper_abort" title="Abbrechen und &Auml;nderungen verwerfen." type="submit" value="Abbrechen"></td></tr>

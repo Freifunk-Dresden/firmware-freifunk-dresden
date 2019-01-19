@@ -727,6 +727,8 @@ int8_t validate_primary_orig( struct orig_node *orig_node, struct msg_buff *mb, 
 		if ( pip->EXT_PIP_FIELD_PIPSEQNO  &&  //remain compatible to COMPAT_VERSION 10 
 		     validate_orig_seqno( orig_node->primary_orig_node, 0, ntohs( pip->EXT_PIP_FIELD_PIPSEQNO ) ) == FAILURE )
 		{
+			dbg( DBGL_SYS, DBGT_WARN, "validation primary originator %15s failed",
+	                        ipStr(orig_node->primary_orig_node) );
 			//orig_node->primary_orig_node = NULL;
 			set_primary_orig( orig_node, 0 );
 			return FAILURE;
@@ -766,7 +768,14 @@ int8_t validate_primary_orig( struct orig_node *orig_node, struct msg_buff *mb, 
 	
 	
 	if ( (oCtx & IS_DIRECT_NEIGH)  &&  !(orig_node->primary_orig_node->id4him) )
-		return init_pifnb_node( orig_node->primary_orig_node );
+	{
+		uint8_t ret = init_pifnb_node( orig_node->primary_orig_node );
+
+		dbg( DBGL_SYS, DBGT_WARN, "validation: no id4him for primary originator %15s. init_pifnb_node() ret=%d",
+	                        ipStr(orig_node->primary_orig_node), ret );
+
+		return ret;
+	}
 	
 	
 	return SUCCESS;
@@ -1403,7 +1412,8 @@ void process_ogm( struct msg_buff *mb ) {
 		
 	
 	if ( validate_primary_orig( orig_node, mb, oCtx ) == FAILURE ) {
-		dbg( DBGL_SYS, DBGT_WARN, "drop OGM: primary originator/if conflict!" );
+		dbg( DBGL_SYS, DBGT_WARN, "drop OGM: primary originator %15s/if conflict!",
+			ipStr(ogm->orig) );
 		goto process_ogm_end;
 	}
 	

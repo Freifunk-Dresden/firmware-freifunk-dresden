@@ -128,9 +128,111 @@ EOM
 
 cat<<EOM >> $OUTPUT
 		"statistic" : {
-			"accepted_user_count" : $(/usr/lib/ddmesh/ddmesh-splash.sh get_accepted_count),
-			"dhcp_count" : $(/usr/lib/ddmesh/ddmesh-splash.sh get_dhcp_count),
-			"dhcp_lease" : "$(grep 'dhcp-range=.*wifi2' /etc/dnsmasq.conf | cut -d',' -f4)",
+EOM
+
+cat /proc/net/arp | awk '
+	function uptime()
+	{
+		cmd = "cat /proc/uptime"
+		cmd | getline line
+		split(line, arr, ".")
+		return arr[1]
+	}
+	BEGIN {
+		statfile="/var/wifi2_client.stat"
+		while(getline line < statfile > 0)
+		{
+			split(line,a," ");
+			mac[a[1]]=a[2]
+		};
+		close(statfile);
+	}
+	{
+		if(match("'$wifi2_ifname'",$6) && match("0x2",$3))
+		{
+			m=$4
+			mac[m]=systime()
+		}
+	}
+	END {
+		cur = systime()
+		up = uptime()
+
+		for(i=1;i<=8;i++)
+		{ count[i]=0 }
+
+		for(m in mac)
+		{
+			expired="-"
+			seen="+"
+			d = cur - mac[m]
+
+			# default mark all stat columns
+			s[1]=seen
+			if( up > 60) s[2]=seen
+			if( up > 300) s[3]=seen
+			if( up > 900) s[4]=seen
+			if( up > 3600) s[5]=seen
+			if( up > (3600*6)) s[6]=seen
+			if( up > (3600*12)) s[7]=seen
+			if( up > (3600*24)) s[8]=seen
+			
+			# s1 expired 1min
+			if( d > 60) s[1]=expired
+			# s2 expired 5min
+			if( d > 300) s[2]=expired
+			# s3 expired 15min
+			if( d > 900) s[3]=expired
+			# s4 expired 1h
+			if( d > 3600) s[4]=expired
+			# s5 expired 6h
+			if( d > (3600*6)) s[5]=expired
+			# s6 expired 12h
+			if( d > (3600*12)) s[6]=expired
+			# s7 expired 24h
+			if( d > (3600*24)) s[7]=expired
+	
+			# s8 expired 1w , then remove entry
+			if( d > (604800))
+			{ continue }
+
+			# write back statfile
+			printf("%s %d\n", m, mac[m]) > statfile
+
+			#printf("%s %s %s %s %s %s %s %s %s,\n", m, s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8])
+
+			# count each column
+			for(i=1;i<=8;i++)
+			{
+				if(match(s[i],seen))
+					count[i]++
+			}
+			
+		}
+		close(statfile)
+
+		# output json
+		printf("\"clients\" : [");
+		for(i=1;i<=8;i++)
+		{ 
+			if(i>1) printf(",");
+			printf("%d", count[i])
+		}
+		printf("],\n");
+
+		# deprecated
+		printf("\"accepted_user_count\" : %d,\n", count[4]);
+		printf("\"dhcp_count\" : %d,\n", count[4]);
+	}
+' >> $OUTPUT
+
+# clear all arp wifi entries, to remove dead entries.
+# this will create a very short delay when arp determins MAC for existing connection again.
+# but this is not a problem
+ip link set arp off dev $wifi2_ifname && ip link set arp on dev $wifi2_ifname
+
+cat<<EOM >> $OUTPUT
+			"dhcp_lease" : "$(grep 'dhcp-range=.*wifi2' /var/etc/dnsmasq.conf.dnsmasq | cut -d',' -f5)",
 EOM
 
 			# firewall_rule_name:sysinfo_key_name
@@ -139,8 +241,8 @@ EOM
 			do
 				first=${net%:*}
 				second=${net#*:}
-				rx=$(iptables -L statistic_input -xvn | awk '/stat_'$first'_in/{print $2}')
-				tx=$(iptables -L statistic_output -xvn | awk '/stat_'$first'_out/{print $2}')
+				rx=$(iptables -w -L statistic_input -xvn | awk '/stat_'$first'_in/{print $2}')
+				tx=$(iptables -w -L statistic_output -xvn | awk '/stat_'$first'_out/{print $2}')
 				[ -z "$rx" ] && rx=0
 				[ -z "$tx" ] && tx=0
 				echo "			\"traffic_$second\": \"$rx,$tx\"," >> $OUTPUT
@@ -149,7 +251,7 @@ EOM
 				do
 					first2=${net2%:*}
 					second2=${net2#*:}
-					x=$(iptables -L statistic_forward -xvn | awk '/stat_'$first'_'$first2'_fwd/{print $2}')
+					x=$(iptables -w -L statistic_forward -xvn | awk '/stat_'$first'_'$first2'_fwd/{print $2}')
 					[ -z "$x" ] && x=0
 					echo "			\"traffic_"$second"_"$second2"\": \"$x\"," >> $OUTPUT
 				done
@@ -228,4 +330,6 @@ cat << EOM >> $OUTPUT
 EOM
 
 mv $OUTPUT $FINAL_OUTPUT
+
+
 

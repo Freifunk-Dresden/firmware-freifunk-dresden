@@ -14,8 +14,19 @@ tmp_name=$(uhttpd -d "$(uci get ddmesh.contact.name)")
 tmp_email=$(uhttpd -d "$(uci get ddmesh.contact.email)")
 tmp_location=$(uhttpd -d "$(uci get ddmesh.contact.location)")
 tmp_note=$(uhttpd -d "$(uci get ddmesh.contact.note)")
-lat=$(uci get ddmesh.gps.latitude)
-lon=$(uci get ddmesh.gps.longitude)
+lat=$(uci -q get ddmesh.gps.latitude)
+lon=$(uci -q get ddmesh.gps.longitude)
+alt=$(uci -q get ddmesh.gps.altitude)
+alt=${alt:=0}
+
+# default koord. else leaflet will not show map
+def_lat="51.05405"
+def_lon="13.74364"
+
+leaflet_lat=$lat
+leaflet_lon=$lon
+[ -z "$leaflet_lat" -o "$leaflet_lat" = "0" ] && leaflet_lat="$def_lat"
+[ -z "$leaflet_lon" -o "$leaflet_lon" = "0" ] && leaflet_lon="$def_lon"
 
 cat<<EOF
 <form action="contact.cgi" method="POST">
@@ -45,19 +56,19 @@ $(lang text-dsgvo)
 
 <tr title="GPS-Altitude, H&ouml;he &uuml;ber Boden in Meter">
 <th>H&ouml;he:</th>
-<td><input id="geoloc_alt" name="form_gps_altitude" size="20" type="text" value="$(uci get ddmesh.gps.altitude)"> (z. B.: 9)</td>
+<td><input id="geoloc_alt" name="form_gps_altitude" size="20" type="text" value="$alt"> H&ouml;he &uuml;ber Boden in Meter (Beispiel: 9)</td>
 <td></td>
 </tr>
 
 <tr title="GPS-Latitude">
 <th>Breitengrad:</th>
-<td><input id="geoloc_lat" name="form_gps_latitude" size="20" type="text" value="$lat">(z. B.: 51.05812)</td>
+<td><input id="geoloc_lat" name="form_gps_latitude" size="20" type="text" value="$lat">(Beispiel: 51.05812)</td>
 <td><button onclick="ajax_geoloc()" type="button" title="$(lang text-geoloc01)">$(lang text-geoloc00)</button></td>
 </tr>
 
 <tr title="GPS-Longitude">
 <th>L&auml;ngengrad:</th>
-<td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$lon">(z. B.: 13.72053)</td>
+<td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$lon">(Beispiel: 13.72053)</td>
 <td></td>
 </tr>
 
@@ -90,11 +101,11 @@ Der Standort kann per Drag and Drop mit dem Mauszeiger verschoben werden.<br/>
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js"></script>
 <script>
-var map = L.map('nodeMap').setView([$lat, $lon], 18);
+var map = L.map('nodeMap').setView([$leaflet_lat, $leaflet_lon], 18);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
-var marker = L.marker([$lat, $lon]);
+var marker = L.marker([$leaflet_lat, $leaflet_lon]);
 //marker.bindPopup('$COMMUNITY [$_ddmesh_node]').openPopup();
 marker.on('moveend', onMarkerMove);
 marker.addTo(map);

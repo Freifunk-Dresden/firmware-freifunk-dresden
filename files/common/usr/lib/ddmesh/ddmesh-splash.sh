@@ -100,32 +100,9 @@ echo $start
 			done
 		fi
 	;;
-	get_accepted_count)
-		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
-		search="${_ddmesh_wifi2broadcast/255.*/}"
-		dhcp_count="$(cat /var/dhcp.leases | grep $search | wc -l)"
-		if [ "$(uci get ddmesh.system.disable_splash)" = "1" ]; then
-	        	accepted_user_count="$dhcp_count"
-		else
-			IFS='
-'
-			accepted_user_count=$(ls -1 $AD | wc -l)
-			for i in $(cat /var/dhcp.leases | cut -d' ' -f2)
-			do
-				test -f $STORED/$i && accepted_user_count=$(( $accepted_user_count + 1 ))
-			done
-		fi
-		echo $accepted_user_count
-	;;
-	get_dhcp_count)
-		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
-		search="${_ddmesh_wifi2broadcast/255.*/}"
-		dhcp_count="$(cat /var/dhcp.leases | grep $search | wc -l)"
-		echo $dhcp_count
-	;;
 	*)
-		echo "splash.sh islan ip | getmac ip | addmac mac | delmac mac | listmac | checkmac mac | loadconfig | autodisconnect | get_accepted_count | get_dhcp_count"
-		echo " Version: 4 12/2016"
+		echo "splash.sh islan ip | getmac ip | addmac mac | delmac mac | listmac | checkmac mac | loadconfig | autodisconnect"
+		echo " Version: 5 08/2018"
 		echo "  getmac         gets the mac from dhcp leases"
 		echo "  addmac         add mac to iptable SPLASH_AUTH"
 		echo "  delmac         deletes mac from iptable SPLASH_AUTH (only if not stored in config)"
@@ -133,8 +110,6 @@ echo $start
 		echo "  checkmac       checks mac if present in SPLASH_AUTH, returns 0 if yes"
 		echo "  loadconfig     loads the mac from config"
 		echo "  autodisconnect check and disconnect client after specific time"
-		echo "  get_accepted_count returns current user count"
-		echo "  get_dhcp_count returns current dhcp count"
 		exit 1
 	;;
 esac

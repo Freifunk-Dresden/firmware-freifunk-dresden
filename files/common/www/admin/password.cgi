@@ -48,6 +48,8 @@ else
 		if [ -n "$form_pw" ]; then
 			if [ "$form_pw" = "$form_confirm_pw" ]; then
 				p=$(uhttpd -d "$form_pw")
+				# delete blocking files
+				rm -f '/etc/passwd+' '/etc/shadow+'
 				echo "root:$p" | chpasswd --md5 >/dev/null
 				uhttpd_restart=1
 				notebox 'Das Kennwort wurde ge&auml;ndert.'
