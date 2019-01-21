@@ -102,6 +102,7 @@ config network 'network'
 	option	speed_network		'lan'
 	option	speed_enabled		0
 	option	internal_dns		'10.200.0.4'
+	option	fallback_dns		'10.200.200.34'
 	option	mesh_network_id		'1206'
 	option	mesh_mtu		1200
 	option	mesh_on_lan		0
