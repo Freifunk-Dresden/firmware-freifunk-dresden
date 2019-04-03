@@ -18,8 +18,7 @@ case "$platform" in
 
 	ar71xx)
 		. /etc/diag.sh
-		ar71xx_board_detect
-		boardname=$AR71XX_BOARD_NAME
+		boardname=$(board_name) # function in function.sh
 		;;
 	*)
 		echo "$(basename $0): platform '$platform' not supported"
@@ -43,7 +42,7 @@ get_wifi_led()
 	esac
 }
 
-get_status_led
+get_status_led # /etc/diag.sh
 get_wifi_led
 
 echo "status-led: $status_led"

@@ -177,6 +177,9 @@ else #form_action
 					window.setTimeout("window.location=\"/\"", t);
 				</SCRIPT>
 EOM
+
+				sleep 5	# let browser load all content before killing httpd
+
 				if [ "$form_firmware_factory" = "1" ]; then
 					rm /tmp/freifunk-running # disable cron and hotplug
 					sysupgrade -n $FIRMWARE_FILE 2>&1 >/dev/null &

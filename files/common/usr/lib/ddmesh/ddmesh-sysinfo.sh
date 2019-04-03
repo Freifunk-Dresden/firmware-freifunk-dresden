@@ -16,7 +16,7 @@ gwt=bat0
 
 eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
 eval $(cat /etc/openwrt_release)
-tunnel_info="$(/usr/lib/ddmesh/freifunk-gateway-info.sh cache)"
+
 gps_lat=$(uci -q get ddmesh.gps.latitude)
 gps_lat=${gps_lat:=0}
 gps_lon=$(uci -q get ddmesh.gps.longitude)
@@ -60,7 +60,7 @@ test -z "$cpu_info" && cpu_info="$(cat /proc/cpuinfo | grep 'model name' | cut -
 
 cat << EOM >> $OUTPUT
 {
- "version":"14",
+ "version":"15",
  "timestamp":"$(date +'%s')",
  "data":{
 
@@ -175,7 +175,11 @@ cat /proc/net/arp | awk '
 			if( up > 3600) s[5]=seen
 			if( up > (3600*6)) s[6]=seen
 			if( up > (3600*12)) s[7]=seen
-			if( up > (3600*24)) s[8]=seen
+			if( up > (86400)) s[8]=seen
+			if( up > (86400*7)) s[9]=seen
+			if( up > (86400*14)) s[10]=seen
+			if( up > (86400*30)) s[11]=seen
+			if( up > (86400*90)) s[12]=seen
 			
 			# s1 expired 1min
 			if( d > 60) s[1]=expired
@@ -189,20 +193,26 @@ cat /proc/net/arp | awk '
 			if( d > (3600*6)) s[5]=expired
 			# s6 expired 12h
 			if( d > (3600*12)) s[6]=expired
-			# s7 expired 24h
-			if( d > (3600*24)) s[7]=expired
+			# s7 expired 1d
+			if( d > (86400)) s[7]=expired
+			# s8 expired 7d
+			if( d > (86400*7)) s[8]=expired
+			# s9 expired 14d
+			if( d > (86400*14)) s[9]=expired
+			# s10 expired 30d
+			if( d > (86400*30)) s[10]=expired
+			# s11 expired 3m
+			if( d > (86400*90)) s[11]=expired
 	
-			# s8 expired 1w , then remove entry
-			if( d > (604800))
-			{ continue }
+			# s12 counts unlimited time
 
 			# write back statfile
 			printf("%s %d\n", m, mac[m]) > statfile
 
-			#printf("%s %s %s %s %s %s %s %s %s,\n", m, s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8])
+			#printf("%s %s %s %s %s %s %s %s %s %s %s %s %s,\n", m, s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10], s[11], s[12])
 
 			# count each column
-			for(i=1;i<=8;i++)
+			for(i=1;i<=12;i++)
 			{
 				if(match(s[i],seen))
 					count[i]++
@@ -213,7 +223,7 @@ cat /proc/net/arp | awk '
 
 		# output json
 		printf("\"clients\" : [");
-		for(i=1;i<=8;i++)
+		for(i=1;i<=12;i++)
 		{ 
 			if(i>1) printf(",");
 			printf("%d", count[i])
@@ -236,7 +246,7 @@ cat<<EOM >> $OUTPUT
 EOM
 
 			# firewall_rule_name:sysinfo_key_name
-			NETWORKS="wan:wan wifi:adhoc wifi2:ap vpn:ovpn bat:gwt privnet:privnet tbb_fastd:tbb_fastd mesh_lan:mesh_lan mesh_wan:mesh_wan"
+			NETWORKS="lan:lan wan:wan wifi:adhoc wifi2:ap vpn:ovpn bat:gwt privnet:privnet tbb_fastd:tbb_fastd mesh_lan:mesh_lan mesh_wan:mesh_wan"
 			for net in $NETWORKS 
 			do
 				first=${net%:*}
@@ -279,7 +289,7 @@ EOM
 						return f1+f2;
 					}
 					BEGIN {
-						# map iface to net type
+						# map iface to net type (set by ddmesh-utils-network-info.sh)
 						nettype_lookup[ENVIRON["wifi_ifname"]]="wifi";
 						nettype_lookup[ENVIRON["mesh_lan_ifname"]]="lan";
 						nettype_lookup[ENVIRON["mesh_wan_ifname"]]="lan";
@@ -317,7 +327,7 @@ EOM
 		fi
 cat<<EOM >>$OUTPUT
 		"traffic_shaping":{"enabled":$tc_enabled, "network":"$(uci -q get ddmesh.network.speed_network)", "incomming":"$(uci -q get ddmesh.network.speed_down)", "outgoing":"$(uci -q get ddmesh.network.speed_up)"},
-		"internet_tunnel":$tunnel_info
+		"network_switch":$(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh json)
 EOM
 
 

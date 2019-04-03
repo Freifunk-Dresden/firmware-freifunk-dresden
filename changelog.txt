@@ -1,4 +1,12 @@
 
+2019-02-17 6.0.7 (testing)
+--------------------------------------------------
+18.06.01	- stick to this tag as newer version do start adhoc correctly
+		- rename lede to openwrt
+gui-contact	- add way to click into the map to set marker
+gui-network	- add switch status
+wifi		- prepare 5GHz support
+
 2019-01-19 5.0.5 (release)
 --------------------------------------------------
 Repro moved from github/ddmesh to github/freifunk-dresden

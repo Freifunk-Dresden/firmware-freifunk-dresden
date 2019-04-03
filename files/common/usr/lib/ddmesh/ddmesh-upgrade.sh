@@ -334,6 +334,17 @@ upgrade_5_0_5() {
  true
 }
 
+upgrade_6_0_6() {
+ uci add_list ddmesh.system.communities="Freifunk Freital"
+ uci set ddmesh.network.wifi_country="DE"
+ uci set ddmesh.network.wifi_channel_5Ghz="44"
+ uci set ddmesh.network.wifi_txpower_5Ghz="18"
+}
+
+upgrade_6_0_7() {
+ uci -q set ddmesh.network.mesh_network_id=1206 
+}
+
 
 ##################################
 

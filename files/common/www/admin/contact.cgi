@@ -105,6 +105,8 @@ var map = L.map('nodeMap').setView([$leaflet_lat, $leaflet_lon], 18);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+map.on('click', onMapClick);
+
 var marker = L.marker([$leaflet_lat, $leaflet_lon]);
 //marker.bindPopup('$COMMUNITY [$_ddmesh_node]').openPopup();
 marker.on('moveend', onMarkerMove);

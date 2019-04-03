@@ -18,6 +18,7 @@
 249     ping
 248     vpn
 247     unreachable
+53      public_dns
 
 #batman
 64      bat_route

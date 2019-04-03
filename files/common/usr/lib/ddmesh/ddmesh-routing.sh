@@ -17,6 +17,9 @@ ip rule $1 to 169.254.0.0/16 table main priority 302
 #bypass wifi2
 ip rule $1 to 100.64.0.0/16 table main priority 350
 
+# public dns is filled by openvpn up.sh
+ip rule add lookup public_dns priority 360
+
 #route local and lan traffic through own internet gateway
 #route public traffic via second table (KEEP ORDER!)
 ip rule $1 iif $(uci get network.loopback.ifname) table local_gateway priority 400

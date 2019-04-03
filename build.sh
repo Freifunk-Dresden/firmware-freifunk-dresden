@@ -1,18 +1,18 @@
 #!/bin/bash
 
 #usage: see below
-
+SCRIPT_VERSION="4"
 
 # target file
 PLATFORMS="build.targets"
 
 DL_DIR=dl
 WORK_DIR=workdir
-CONFIG_DIR=lede-configs
-LEDE_PATCHES_DIR=lede-patches
+CONFIG_DIR=openwrt-configs
+OPENWRT_PATCHES_DIR=openwrt-patches
 
 #define a list of supported versions
-VERSIONS="lede"
+VERSIONS="openwrt lede"
 
 # -------------------------------------------------------------------
 
@@ -37,9 +37,9 @@ C_ORANGE='\033[0;33m'
 #save current directory, used by log and when copying config file
 RUN_DIR=$(pwd)
 
-getTargets()
+listTargets()
 {
-cat $RUN_DIR/$PLATFORMS | sed '
+cat $RUN_DIR/$PLATFORMS | sed -n "
 #delete comments
 s/#.*//
 
@@ -52,16 +52,62 @@ s/[ 	]*$//
 # replace spaces with new lines, in case more targets are specified
 # in one line
 s/[ 	]\+/\n/g
-'
+
+p
+"
 }
 
-# process argument
+getTargets()
+{
+# $1 - os version (lede/openwrt/trunk) which should be filterred
+# $2 - optional: regex (grep) to filter more
+os="$1"
+os="${os:=.*}"		# if os is empty, then display all
+regex="$2"
+regex="${regex:=.*}" 	# when 'openwrt:' was given, then $2 would be empty.
+			# to default assign, I need a variable
+# echo "#### REGEX [$regex]"
+
+cat $RUN_DIR/$PLATFORMS | sed -n "
+#delete comments
+s/#.*//
+
+# delete empty lines
+# delete leading and tailing spaces
+s/^[ 	]*//
+s/[ 	]*$//
+/^$/d
+
+# replace spaces with new lines, in case more targets are specified
+# in one line
+s/[ 	]\+/\n/g
+
+# only consider os
+s/^$os:\(.*\)/\1/p
+" | sed -n "/$regex/p"
+}
+
+#----------------- process argument ----------------------------------
+#check if next argument is "menuconfig"
+if [ "$1" = "list" ]; then
+	listTargets
+	exit 0
+fi
+
 # check for correct argument (addtional arguments are passt to command line make) 
 # last value will become DEFAULT
+_os="${1%%:*}"
+FILTER="${1#*:}" #if no filter then this will also contain 'openwrt'
+		 #then I need to filter all
+test "$_os" = "$FILTER" && FILTER=".*"
+echo "### $_os filter:[$FILTER]"
+#echo $(getTargets $_os "$FILTER")
+#exit 0
+
 for v in $VERSIONS
 do
-	if [ "$1" = "$v" ]; then
-		VER="$1"
+	if [ "$_os" = "$v" ]; then
+		VER="$_os"
 		shift
 		break;
 	fi
@@ -73,41 +119,45 @@ if [ "$1" = "menuconfig" ]; then
 	shift;
 fi
 
+#check if next argument is "clean"
+#it only cleans /bin and /build_dir of openwrt directory. toolchains and staging_dir ar kept
+if [ "$1" = "clean" ]; then
+	MAKE_CLEAN=1
+	shift;
+fi
+
 BUILD_PARAMS=$*
 
 if [ -z "$VER" ]; then
 	# create a simple menu
+	echo "Version: $SCRIPT_VERSION"
+	echo "usage: $(basename $0) [list] | openwrt-version [menuconfig | clean | <make params ...> ]"
+	echo " list             - lists all available targets"
+	echo " openwrt-version  - builds for specific openwrt version ($VERSIONS)"
+	echo "                  - filters can be added to only process subset of targets"
+	echo "                    that are defined by build.targets"
+	echo "                    e.g.: 'openwrt' - all targets for this os"
+	echo "                    'openwrt:ramips.rt305x.generic' - exact this target"
+	echo "                    'openwrt:^rt30.*' - filter all that start with rt30"
+	echo " menuconfig       - displays configuration menu before building images"
+	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
+	echo " make params      - all paramerters that follows are passed to make command"
 	echo ""
-	echo "usage: $(basename $0) [lede-version] [menuconfig] [[make params] ...]"
-	echo " lede-version 	- builds for specific lede version ($VERSIONS)"
-	echo " menuconfig	- displays configuration menu before building images"
-	echo " make params	- all paramerters that follows are passed to make command"
-	echo ""
-	echo "================================"
-	echo " Additional make parameters: $* "
-	echo " Select lede version "
-	echo "================================"
-	c=1
-	for VER in $VERSIONS
-	do
-		LOOKUP_VERSION[$c]="$VER"
-		echo "$c lede $VER"
-		c=$((c+1))
-	done	
-	echo -n " Select > "
-	read answer
-
-	# get the version from VERSIONS
-	VER=${LOOKUP_VERSION[$answer]}
-
-	echo "================================"
+	exit 1
 fi
 
 
 echo "select $VER"
 
-#lede
+#openwrt
 case "$VER" in
+	openwrt)
+		git_url="https://git.openwrt.org/openwrt/openwrt.git"
+		#openwrt_rev="19a6c4b2b3df775b3e57fa3a6f790cd08b17955e"	# branch v18.06 / Mon Feb 11 11:25:54 2019 
+		openwrt_rev="70255e3d624cd393612069aae0a859d1acbbeeae"	# tag 18.6.1
+		#openwrt_rev="a02809f61bf9fda0387d37bd05d0bcfe8397e25d"	# tag 18.6.2
+		VER=openwrt
+		;;
 	lede)
 		git_url="https://github.com/lede-project/source.git"
 		lede_rev="3ca1438ae0f780664e29bf0d102c1c6f9a99ece7"	# since 5.0.2 (branch 17.01)
@@ -121,9 +171,9 @@ esac
 
 #--------------------------------------------------------
 
-lede_dl_dir="$DL_DIR/$VER"
-lede_dl_tgz="$lede_dl_dir/lede-$lede_rev.tgz"
-lede_patches_dir="$LEDE_PATCHES_DIR/$VER"
+openwrt_dl_dir="$DL_DIR/$VER"
+openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
+openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$VER"
 
 buildroot="$WORK_DIR/$VER/buildroot"
 
@@ -153,31 +203,31 @@ setup_buildroot ()
 		log $log_file echo "directory [$buildroot] not present"
 
 		log $log_file mkdir -p $buildroot
-		log $log_file mkdir -p $lede_dl_dir
+		log $log_file mkdir -p $openwrt_dl_dir
 
-		#check if we have already downloaded the lede revision
-		if [ -f $lede_dl_tgz ]
+		#check if we have already downloaded the openwrt revision
+		if [ -f $openwrt_dl_tgz ]
 		then
 			#extract into buildroot dir
-			log $log_file echo "using already downloaded $lede_dl_tgz"
-			log $log_file tar xzf $lede_dl_tgz 
+			log $log_file echo "using already downloaded $openwrt_dl_tgz"
+			log $log_file tar xzf $openwrt_dl_tgz 
 		else
-			#clone from lede
-			log $log_file echo "cloning lede "
+			#clone from openwrt
+			log $log_file echo "cloning openwrt "
 			log $log_file git clone $git_url $buildroot
 			log $log_file echo "switch to specific revision"
 			cd $buildroot
-			log $log_file git checkout $lede_rev >/dev/null
+			log $log_file git checkout $openwrt_rev >/dev/null
 			cd $RUN_DIR
-			log $log_file echo "create lede tgz"
-			log $log_file tar czf $lede_dl_tgz $buildroot 
+			log $log_file echo "create openwrt tgz"
+			log $log_file tar czf $openwrt_dl_tgz $buildroot 
 		fi
 
-		#apply lede patches
-		if [ -d $lede_patches_dir ]; then
-			for i in $lede_patches_dir/*
+		#apply openwrt patches
+		if [ -d $openwrt_patches_dir ]; then
+			for i in $openwrt_patches_dir/*
 			do
-				echo "apply lede patch: $i"
+				echo "apply openwrt patch: $i"
 				#nicht mit "log" laufen lassen. umleitung geht nicht
 				patch --directory=$buildroot -p1 < $i
 			done 
@@ -190,11 +240,11 @@ setup_buildroot ()
 	log $log_file rm -f $buildroot/feeds.conf
 	log $log_file ln -s ../../../feeds/feeds-$VER.conf $buildroot/feeds.conf
 	log $log_file rm -f $buildroot/dl
-	log $log_file ln -s ../../../$lede_dl_dir $buildroot/dl
+	log $log_file ln -s ../../../$openwrt_dl_dir $buildroot/dl
 
 	#if feeds_copied directory contains same packages as delivered with
-	#lede, then assume that the packages came with lede git clone are
-	#older. delete those old packages to force lede make system to use the
+	#openwrt, then assume that the packages came with openwrt git clone are
+	#older. delete those old packages to force openwrt make system to use the
 	#new versions of packages from feeds-copied directory
 
 	echo -e $C_PURPLE "delete old packages from buildroot/package"$C_NONE
@@ -222,10 +272,10 @@ setup_buildroot ()
 	> $buildroot/files/etc/built_info
 
 	echo "----- generate built_info ----"
-	git_lede_rev=$(cd $buildroot && git log -1 --format=%H)
-	git_lede_branch=$(cd $buildroot && git name-rev --name-only $git_lede_rev | sed 's#.*/##')
-	echo "git_lede_rev:$git_lede_rev" >> $buildroot/files/etc/built_info
-	echo "git_lede_branch:$git_lede_branch" >> $buildroot/files/etc/built_info
+	git_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
+	git_openwrt_branch=$(cd $buildroot && git name-rev --name-only $git_openwrt_rev | sed 's#.*/##')
+	echo "git_openwrt_rev:$git_openwrt_rev" >> $buildroot/files/etc/built_info
+	echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
 	
 	git_ddmesh_rev=$(git log -1 --format=%H)
 	git_ddmesh_branch=$(git name-rev --name-only $git_ddmesh_rev | sed 's#.*/##')
@@ -253,10 +303,10 @@ log $log_file scripts/feeds update ddmesh_copied
 log $log_file scripts/feeds install -a -p ddmesh_own 
 log $log_file scripts/feeds install -a -p ddmesh_copied 
 
-for p in $(getTargets)
+for p in $(getTargets $VER $FILTER)
 do
 	IFS='.'
-	set $p
+	set $p		# split name
 	PLATFORM=$1
 	VARIANT=$2
 	DEVICE=$3	# this is optional
@@ -274,10 +324,10 @@ do
 	# check for optional parameter "DEVICE"
 	# platform specific
 	if [ -n "$DEVICE" ]; then
-		config_file="$CONFIG_DIR/config.$PLATFORM.$VARIANT.$DEVICE.$VER"
+		config_file="$CONFIG_DIR/$VER/config.$PLATFORM.$VARIANT.$DEVICE"
 		log_file="build.$PLATFORM.$VARIANT.$DEVICE.$VER.log"
 	else
-		config_file="$CONFIG_DIR/config.$PLATFORM.$VARIANT.$VER"
+		config_file="$CONFIG_DIR/$VER/config.$PLATFORM.$VARIANT"
 		log_file="build.$PLATFORM.$VARIANT.$VER.log"
 	fi
 
@@ -306,11 +356,17 @@ echo "********* TODO: pfad anpassen fuer DEVICE**************"
 		exit 0
 	fi
 
-	# run make command
-	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS"
-	log $log_file time -p make $BUILD_PARAMS
+	if [ "$MAKE_CLEAN" = "1" ]; then
+		echo -e $C_PURPLE"run clean"$C_NONE
+		log $log_file make clean
+		# continue with next target in build.targets	
+	else
 
-#$RUN_DIR/files/common/usr/lib/ddmesh/ddmesh-utils-check-firmware-size.sh bin/ar71xx/lede-ar71xx-generic-tl-mr3020-v1-squashfs-factory.bin
+		# run make command
+		echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS"
+		log $log_file time -p make $BUILD_PARAMS
+		# continue with next target in build.targets	
+	fi
 
 echo "********* TODO: pfad anpassen fuer DEVICE**************"
 	echo -e $C_PURPLE"images created in$C_NONE $C_GREEN$buildroot/bin/targets/$PLATFORM/$VARIANT/..."$C_NONE

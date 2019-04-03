@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# ddmesh-geoloc.sh [scan]
+# ddmesh-geoloc.sh [scan | update]
 # scan - only scan for access points
+# update - stores new values
 
 OUTPUT=/tmp/geoloc.json.tmp
 FINAL_OUTPUT=/tmp/geoloc.json
@@ -69,6 +70,20 @@ EOM
 	# send data
 	echo "$DATA" >> $FINAL_OUTPUT.req
 
-	cat $FINAL_OUTPUT.req | nc $host $port | sed 's#\r##' | awk 'BEGIN{s=0} /^$/{ if(s==0){s=1; getline;getline}else{s=0}} {if(s)print $0}'
-
+	j_response=$(cat $FINAL_OUTPUT.req | nc $host $port | sed 's#\r##' | awk 'BEGIN{s=0} /^$/{ if(s==0){s=1; getline;getline}else{s=0}} {if(s)print $0}')
+	
+	if [ "$1" = "update" -a -n "$j_response" ]; then
+		eval $(echo "$j_response" | jsonfilter \
+			-e j_lat='@.location.lat' \
+			-e j_lng='@.location.lng' )
+		echo $j_lat,$j_lng
+		uci set ddmesh.gps.latitude="$j_lat"
+		uci set ddmesh.gps.longitude="$j_lng"
+		uci set ddmesh.gps.altitude="0"
+		uci_commit.sh
+	else
+		echo $j_response
+	fi
+else
+	cat $FINAL_OUTPUT
 fi

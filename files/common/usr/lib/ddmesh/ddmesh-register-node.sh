@@ -44,9 +44,11 @@ eval $(echo "$json" | jsonfilter \
 	-e j_status='@.registration.status' \
 	-e j_error='@.registration.error' \
 	-e j_node='@.registration.node' \
-	-e j_gateway='@.control.gateway' \
 	-e j_netid='@.control.netid' \
-	-e j_dns='@.control.dns' \
+	-e j_gateway='@.control.trigger.gateway' \
+	-e j_dns='@.control.trigger.dns' \
+	-e j_reboot='@.control.trigger.reboot' \
+	-e j_geoloc='@.control.trigger.geoloc' \
 )
 
 #echo "j_version:$j_version"
@@ -56,6 +58,8 @@ eval $(echo "$json" | jsonfilter \
 #echo "j_gateway:$j_gateway"
 #echo "j_netid:$j_netid"
 #echo "j_dns:$j_dns"
+#echo "j_reboot:$j_reboot"
+#echo "j_geoloc:$j_geoloc"
 
 case "$j_status" in
 	ok)
@@ -63,6 +67,14 @@ case "$j_status" in
 
 			node=$j_node
 			logger -s -t $LOGGER_TAG "SUCCESS: node=[$node]; key=[$key] registered."
+
+			if [ "$j_reboot" = "1" ]; then
+				rebooting=1
+			fi
+
+			if [ "$j_geoloc" = "1" ]; then
+				/usr/lib/ddmesh/ddmesh-geoloc.sh update
+			fi
 
 			#update dns 
 			dns="$(uci -q get ddmesh.network.internal_dns)"
@@ -73,9 +85,9 @@ case "$j_status" in
 				rebooting=1
 			fi
 
-			#update netid
+			#update netid if >0
 			netid="$(uci -q get ddmesh.network.mesh_network_id)"
-			if [ -n "$j_netid" -a "$j_netid" != "$netid" ]; then
+			if [ -n "$j_netid" -a "$j_netid" != "0" -a "$j_netid" != "$netid" ]; then
 				uci set ddmesh.network.mesh_network_id="$j_netid"
 				logger -s -t $LOGGER_TAG "update netid to $j_netid."
 				uci_commit=1
@@ -115,7 +127,7 @@ case "$j_status" in
 				rebooting=1
 			}
 
-			echo "updated."
+			echo "updated (reboot:$rebooting)."
 
 			test "$rebooting" = 1 && sleep 5 && echo "rebooting..." && reboot
 
@@ -126,6 +138,5 @@ case "$j_status" in
 		;;
 esac
 
-
-
+#echo "$n"
 

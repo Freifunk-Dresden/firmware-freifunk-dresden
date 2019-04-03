@@ -41,14 +41,15 @@ test -z "$1" && {
 		-e net_dns='@.dns_server[0]' \
 		-e net_ipaddr='@.ipv4_address[0].address' \
 		-e net_mask='@.ipv4_address[0].mask' \
-		-e net_gateway='@.route[0].target' \
+		-e net_gateway='@.route[0].nexthop' \
 	)
 
 	#if net_name matches requested network, stay in this entry
 	if [ "$net_name" = "$1" -o "$1" = "list" -o "$1" = "all" ]; then
 
 		if [ "$1" = "list" ]; then
-			echo "$net_name:$net_ifname"
+			echo "net_$net_name=$net_ifname"
+			idx=$(( idx + 1 ))
 			continue
 		fi	
 

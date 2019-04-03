@@ -11,6 +11,7 @@ test "$1" = "old" && exit 0
 F=/var/log/dnsmasq.log
 
 #truncate log
+touch $F
 cp $F $F.tmp
 tail -500 $F.tmp >$F
 rm -f $F.tmp

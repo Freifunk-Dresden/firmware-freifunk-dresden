@@ -151,7 +151,7 @@ content()
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th title="UDP-Port des Servers">Server-UDP-Port:</th><td><input name="form_backbone_server_port" type="text" size="8" value="$backbone_server_port"</td>
+<tr><th title="Port des Servers">Server-Port:</th><td><input name="form_backbone_server_port" type="text" size="8" value="$backbone_server_port"</td>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="if(checkinput_server())form_submit(document.forms.backbone_form_server,'local','none')" name="bb_btn_new" type="button">Speichern</button></td></tr>
 </table>
 </form>
@@ -220,7 +220,7 @@ EOM
 	cat<<EOM
 <tr class="colortoggle$TOGGEL">
  <td title="Hostname oder IP Adresse &uuml;ber den ein anderer Freifunk Router erreichbar ist (z.b. xxx.dyndns.org). Kann eine IP im LAN oder IP/Hostname im Internet sein."><input name="form_backbone_server_hostname" type="text" size="25" value=""></td>
- <td title="UDP Port des Servers"><input name="form_backbone_server_port" type="text" size="8" value="$DEFAULT_PORT"></td>
+ <td title="Port des Servers"><input name="form_backbone_server_port" type="text" size="8" value="$DEFAULT_PORT"></td>
  <td title="Public Key der Gegenstelle"><input name="form_backbone_server_key" type="text" size="40" value="$DEFAULT_KEY"></td>
  <td></td>
  <td><button onclick="if(checkinput_outgoing())form_submit(document.forms.backbone_form_connection_out,'client_add','none')" name="bb_btn_new" title="Verbindung speichern" type="button">Neu</button></td>
