@@ -51,7 +51,7 @@ run_upgrade()
 	echo " upgrade to $v"
 	upgrade_$function_suffix;
 
- 	# force config update after next boot 
+ 	# force config update after next boot
 	# in case this script is called from terminal (manually)
  	uci set ddmesh.boot.boot_step=2
 
@@ -165,7 +165,7 @@ upgrade_4_2_3() {
  uci add_list ddmesh.system.communities="Freifunk Meissen"
  #traffic shaping for upgrade only
  uci set ddmesh.network.speed_enabled=1
- uci set ddmesh.network.wifi_country="BO"
+ uci set ddmesh.network.wifi_country="DE"
  for nt in node mobile server
  do
 	uci del_list ddmesh.system.node_types=$nt
@@ -265,7 +265,7 @@ upgrade_4_2_12() {
 	uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
 }
 
-upgrade_4_2_13() { 
+upgrade_4_2_13() {
  true
 }
 

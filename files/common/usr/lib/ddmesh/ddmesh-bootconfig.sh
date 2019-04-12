@@ -7,7 +7,7 @@
 # boot2	-> openwrt creates initial configs
 #	-> ddmesh-bootconfig.sh: check if ddmesh config is already there
 #		-> yes -> firmware running
-#		-> no -> delete all config to clear firmware settings in 
+#		-> no -> delete all config to clear firmware settings in
 #			case other firmware was replaced, create /etc/config/ddmesh -> reboot
 # boot3 -> ddmesh_bootconfig.sh: create rest ddmesh config with temp node number -> reboot
 # boot4 -> ddmesh-bootconfig.sh: update ddmesh config -> firmware running
@@ -87,7 +87,7 @@ config network 'network'
 	option	dhcp_lan_lease		'12h'
 	option	essid_adhoc		'Freifunk Mesh-Net'
 #	option	essid_ap		'' #custom essid
-	option	wifi_country		'BO'
+	option	wifi_country		'DE'
 	option	wifi_channel		13
 	option  wifi_txpower		18
 #	option	wifi_diversity		1
@@ -220,7 +220,7 @@ setup_wireless()
  uci set wireless.@wifi-device[0].channel="$(uci get ddmesh.network.wifi_channel)"
 
  #ensure we have valid country,with supportet channel and txpower
- test -z "$(uci -q get ddmesh.network.wifi_country)" && uci set ddmesh.network.wifi_country="BO"
+ test -z "$(uci -q get ddmesh.network.wifi_country)" && uci set ddmesh.network.wifi_country="DE"
  uci set wireless.@wifi-device[0].country="$(uci get ddmesh.network.wifi_country)"
 
  #setup wifi rates
