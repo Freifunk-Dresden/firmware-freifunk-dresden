@@ -1,5 +1,5 @@
 
-2019-02-17 6.0.7 (testing)
+2019-04-13 6.0.7 (testing)
 --------------------------------------------------
 18.06.01	- stick to this tag as newer version do start adhoc correctly
 		- rename lede to openwrt
