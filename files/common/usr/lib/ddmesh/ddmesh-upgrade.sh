@@ -342,7 +342,12 @@ upgrade_6_0_6() {
 }
 
 upgrade_6_0_7() {
- uci -q set ddmesh.network.mesh_network_id=1206 
+ uci -q set ddmesh.network.mesh_network_id=1206
+ uci -q delete system.ntp.server
+ uci -q add_list system.ntp.server=0.openwrt.pool.ntp.org
+ uci -q add_list system.ntp.server=1.openwrt.pool.ntp.org
+ uci -q add_list system.ntp.server=2.openwrt.pool.ntp.org
+ uci -q add_list system.ntp.server=3.openwrt.pool.ntp.org
 }
 
 
