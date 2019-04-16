@@ -92,6 +92,7 @@ $(cat /tmp/resolv.conf.auto| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver
 			"model":"$model",
 			"model2":"$model2",
 			"cpuinfo":"$cpu_info",
+			"cpucount":"$(grep -c ^processor /proc/cpuinfo)",
 			"bmxd" : "$(cat $BMXD_DB_PATH/status)",
 			"essid":"$(uci get wireless.@wifi-iface[1].ssid)",
 			"node_type":"$node_type",
