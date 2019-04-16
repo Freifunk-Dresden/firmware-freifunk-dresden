@@ -181,6 +181,13 @@ EOM
 	#almost disable crond logging (only errors)
 	uci set system.@system[0].cronloglevel=9
 
+	#  initial correct ntp
+	uci -q delete system.ntp.server
+	uci -q add_list system.ntp.server=0.de.pool.ntp.org
+	uci -q add_list system.ntp.server=1.de.pool.ntp.org
+	uci -q add_list system.ntp.server=2.de.pool.ntp.org
+	uci -q add_list system.ntp.server=3.de.pool.ntp.org
+
 	#no key -> generate key
 	test  -z "$(uci -q get ddmesh.system.register_key)" && {
 		key1=$(dd if=/dev/urandom bs=16 count=1 2>/dev/null | hexdump -e '16/1 "%02x:"' | sed 's#:$##')
