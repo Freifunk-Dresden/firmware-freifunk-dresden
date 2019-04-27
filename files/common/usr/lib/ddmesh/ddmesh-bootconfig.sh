@@ -39,6 +39,7 @@ config system 'system'
 	list	communities	'Freifunk OL'
 	list	communities	'Freifunk Pirna'
 	list	communities	'Freifunk Radebeul'
+	list	communities	'Freifunk Tharandt'
 	list	communities	'Freifunk Waldheim'
 #	option 	node			0
 	option 	tmp_min_node		900
