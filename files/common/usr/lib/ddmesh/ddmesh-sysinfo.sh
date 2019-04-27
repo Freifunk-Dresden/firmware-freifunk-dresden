@@ -18,11 +18,12 @@ eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
 eval $(cat /etc/openwrt_release)
 
 gps_lat=$(uci -q get ddmesh.gps.latitude)
-gps_lat=${gps_lat:=0}
+gps_lat=$(printf '%f' ${gps_lat:=0} 2>/dev/null)
 gps_lon=$(uci -q get ddmesh.gps.longitude)
-gps_lon=${gps_lon:=0}
+gps_lon=$(printf '%f' ${gps_lon:=0} 2>/dev/null)
 gps_alt=$(uci -q get ddmesh.gps.altitude)
-gps_alt=${gps_alt:=0}
+gps_alt=$(printf '%d' ${gps_alt:=0} 2>/dev/null)
+
 avail_flash_size=$(df -k -h /overlay | sed -n '2,1{s# \+# #g; s#[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\) .*#\1#;p}')
 
 if [ "$(uci -q get ddmesh.system.disable_splash)" = "1" ]; then
