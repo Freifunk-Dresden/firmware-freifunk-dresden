@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #usage: see below
-SCRIPT_VERSION="4"
+SCRIPT_VERSION="5"
 
 # target file
 PLATFORMS="build.targets"
@@ -86,6 +86,18 @@ s/[ 	]\+/\n/g
 s/^$os:\(.*\)/\1/p
 " | sed -n "/$regex/p"
 }
+
+
+setup_dynamic_firmware_config()
+{
+	FILES=./files/common/
+
+	# modify registration credentials from envronment variable passed in by gitlabs
+	# FF_REGISTERKEY_PREFIX is set in gitlab UI of freifunk-dresden-firmware: settings->CI/CD->Environment
+	sed -i "/register_service_url/s#registerkey='#registerkey=${FF_REGISTERKEY_PREFIX//_/:}'#" $FILES/etc/config/credentials
+}
+
+
 
 #----------------- process argument ----------------------------------
 #check if next argument is "menuconfig"
@@ -242,7 +254,7 @@ setup_buildroot ()
 	log $log_file rm -f $buildroot/dl
 	log $log_file ln -s ../../../$openwrt_dl_dir $buildroot/dl
 
-	#if feeds_copied directory contains same packages as delivered with
+	#if feeds_copied/feeds_own directory contains same packages as delivered with
 	#openwrt, then assume that the packages came with openwrt git clone are
 	#older. delete those old packages to force openwrt make system to use the
 	#new versions of packages from feeds-copied directory
@@ -286,6 +298,9 @@ setup_buildroot ()
 
 	cat $buildroot/files/etc/built_info
 
+	# more dynamic changes
+	setup_dynamic_firmware_config
+
 } # setup_buildroot
 
 
@@ -294,14 +309,15 @@ setup_buildroot
 
 
 echo "------------------------------"
-echo -e $C_PURPLE"install feeds"$C_NONE
 echo "change to buildroot [$buildroot]"
 cd $buildroot
+
+echo -e $C_PURPLE"install feeds"$C_NONE
 #log scripts/feeds clean 
-log $log_file scripts/feeds update ddmesh_own 
 log $log_file scripts/feeds update ddmesh_copied 
-log $log_file scripts/feeds install -a -p ddmesh_own 
+log $log_file scripts/feeds update ddmesh_own 
 log $log_file scripts/feeds install -a -p ddmesh_copied 
+log $log_file scripts/feeds install -a -p ddmesh_own 
 
 for p in $(getTargets $VER $FILTER)
 do
