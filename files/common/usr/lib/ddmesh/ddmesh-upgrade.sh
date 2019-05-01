@@ -171,6 +171,8 @@ upgrade_4_2_3() {
 	uci del_list ddmesh.system.node_types=$nt
 	uci add_list ddmesh.system.node_types=$nt
  done
+ 
+ uci set ddmesh.system.firmware_autoupdate=1
 }
 
 upgrade_4_2_4() {
