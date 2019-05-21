@@ -227,7 +227,7 @@ setup_buildroot ()
 	# extract feeds directory from feeds-xxxxxx.conf , and list the content of 
 	# feed directories
 	pwd
-	for d in $(cat feeds/feeds-$selector.conf  | awk '/src-link/{print substr($3,13)}')
+	for d in $(cat feeds/feeds-$selector.conf  | awk '/src-link/{print substr($3,7)}')
 	do
 		for i in eval $(ls -1 $d)
 		do
