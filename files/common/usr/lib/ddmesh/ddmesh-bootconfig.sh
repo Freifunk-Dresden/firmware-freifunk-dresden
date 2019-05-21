@@ -87,7 +87,7 @@ config network 'network'
 	option	dhcp_lan_offset		100
 	option	dhcp_lan_limit		0
 	option	dhcp_lan_lease		'12h'
-	option	essid_adhoc		'Freifunk Mesh-Net'
+	option	essid_adhoc		'Freifunk-Mesh-Net'
 #	option	essid_ap		'' #custom essid
 	option	wifi_country		'DE'
 	option	wifi_channel		13
@@ -274,7 +274,7 @@ setup_wireless()
  test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
 
  essid="$(uci -q get ddmesh.network.essid_adhoc)"
- essid="${essid:-Freifunk Mesh-Net}"
+ essid="${essid:-Freifunk-Mesh-Net}"
  uci set wireless.@wifi-iface[$iface].ssid="${essid:0:32}"
  iface=$((iface + 1))
 

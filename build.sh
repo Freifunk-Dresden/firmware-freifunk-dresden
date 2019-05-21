@@ -4,15 +4,12 @@
 SCRIPT_VERSION="5"
 
 # target file
-PLATFORMS="build.targets"
+PLATFORMS_JSON="build.json"
 
 DL_DIR=dl
 WORK_DIR=workdir
 CONFIG_DIR=openwrt-configs
 OPENWRT_PATCHES_DIR=openwrt-patches
-
-#define a list of supported versions
-VERSIONS="openwrt lede"
 
 # -------------------------------------------------------------------
 
@@ -37,9 +34,16 @@ C_ORANGE='\033[0;33m'
 #save current directory, used by log and when copying config file
 RUN_DIR=$(pwd)
 
-listTargets()
+# jq: first selects the array with all entries and every entry is pass it to select().
+#       select() checks a condition and returns the input data (current array entry)
+#       if condition is true
+# Die eckigen klammern aussenherum erzeugt ein array, in welches alle gefundenen objekte gesammelt werden.
+# Fuer die meisten filenamen ist das array 1 gross. aber fuer files die fuer verschiedene router
+# verwendet werden, koennen mehrere eintraege sein.
+
+getTargetsJson()
 {
-cat $RUN_DIR/$PLATFORMS | sed -n "
+cat $RUN_DIR/$PLATFORMS_JSON | sed -n "
 #delete comments
 s/#.*//
 
@@ -48,43 +52,34 @@ s/#.*//
 s/^[ 	]*//
 s/[ 	]*$//
 /^$/d
-
-# replace spaces with new lines, in case more targets are specified
-# in one line
-s/[ 	]\+/\n/g
-
 p
-"
+" | jq "[ .targets[] ]" 
 }
 
-getTargets()
+
+listTargets()
 {
-# $1 - os version (lede/openwrt/trunk) which should be filterred
-# $2 - optional: regex (grep) to filter more
-os="$1"
-os="${os:=.*}"		# if os is empty, then display all
-regex="$2"
-regex="${regex:=.*}" 	# when 'openwrt:' was given, then $2 would be empty.
-			# to default assign, I need a variable
-# echo "#### REGEX [$regex]"
+ OPT="--raw-output" # do not excape values
 
-cat $RUN_DIR/$PLATFORMS | sed -n "
-#delete comments
-s/#.*//
+ cleanJson=$(getTargetsJson)
+ targetIdx=0
+ while true
+ do
+ 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+	if [ "$entry" = "null" ]; then
+ 		target=""
+	else
+		_target=$(echo $entry | jq $OPT '.target')
+		_subtarget=$(echo $entry | jq $OPT '.subtarget')
+		_variant=$(echo $entry | jq $OPT '.variant')
 
-# delete empty lines
-# delete leading and tailing spaces
-s/^[ 	]*//
-s/[ 	]*$//
-/^$/d
-
-# replace spaces with new lines, in case more targets are specified
-# in one line
-s/[ 	]\+/\n/g
-
-# only consider os
-s/^$os:\(.*\)/\1/p
-" | sed -n "/$regex/p"
+		target=$_target.$_subtarget
+		test -n "$_variant" && target="$target.$_variant"
+	fi 
+	test -z "$target" && break
+	echo "$target"
+	targetIdx=$(( targetIdx + 1 ))
+ done
 }
 
 
@@ -106,24 +101,12 @@ if [ "$1" = "list" ]; then
 	exit 0
 fi
 
-# check for correct argument (addtional arguments are passt to command line make) 
+# get target (addtional arguments are passt to command line make) 
 # last value will become DEFAULT
-_os="${1%%:*}"
-FILTER="${1#*:}" #if no filter then this will also contain 'openwrt'
-		 #then I need to filter all
-test "$_os" = "$FILTER" && FILTER=".*"
-echo "### $_os filter:[$FILTER]"
-#echo $(getTargets $_os "$FILTER")
-#exit 0
-
-for v in $VERSIONS
-do
-	if [ "$_os" = "$v" ]; then
-		VER="$_os"
-		shift
-		break;
-	fi
-done
+regex="$1"
+regex="${regex:=.*}" 
+echo "### regex:[$regex]"
+shift
 
 #check if next argument is "menuconfig"
 if [ "$1" = "menuconfig" ]; then
@@ -140,17 +123,16 @@ fi
 
 BUILD_PARAMS=$*
 
-if [ -z "$VER" ]; then
+if [ -z "$regex" ]; then
 	# create a simple menu
 	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) [list] | openwrt-version [menuconfig | clean | <make params ...> ]"
+	echo "usage: $(basename $0) [list] | target [menuconfig | clean | <make params ...> ]"
 	echo " list             - lists all available targets"
-	echo " openwrt-version  - builds for specific openwrt version ($VERSIONS)"
-	echo "                  - filters can be added to only process subset of targets"
-	echo "                    that are defined by build.targets"
-	echo "                    e.g.: 'openwrt' - all targets for this os"
-	echo "                    'openwrt:ramips.rt305x.generic' - exact this target"
-	echo "                    'openwrt:^rt30.*' - filter all that start with rt30"
+	echo " target           - target to build (can have regex)"
+	echo "                    that are defined by build.json"
+	echo "                    e.g.: 'ramips.*'"
+	echo "                    'ramips.rt305x.generic' - exact this target"
+	echo "                    '^rt30.*' - filter all that start with rt30"
 	echo " menuconfig       - displays configuration menu before building images"
 	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
 	echo " make params      - all paramerters that follows are passed to make command"
@@ -159,35 +141,7 @@ if [ -z "$VER" ]; then
 fi
 
 
-echo "select $VER"
 
-#openwrt
-case "$VER" in
-	openwrt)
-		git_url="https://git.openwrt.org/openwrt/openwrt.git"
-		#openwrt_rev="19a6c4b2b3df775b3e57fa3a6f790cd08b17955e"	# branch v18.06 / Mon Feb 11 11:25:54 2019 
-		openwrt_rev="70255e3d624cd393612069aae0a859d1acbbeeae"	# tag 18.6.1
-		#openwrt_rev="a02809f61bf9fda0387d37bd05d0bcfe8397e25d"	# tag 18.6.2
-		VER=openwrt
-		;;
-	lede)
-		git_url="https://github.com/lede-project/source.git"
-		lede_rev="3ca1438ae0f780664e29bf0d102c1c6f9a99ece7"	# since 5.0.2 (branch 17.01)
-		VER=lede
-		;;
-	*)
-		echo "[ERROR: VERSION $VER, not defined: no git url and revision] - exit"
-		exit 1
-		;;
-esac
-
-#--------------------------------------------------------
-
-openwrt_dl_dir="$DL_DIR/$VER"
-openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
-openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$VER"
-
-buildroot="$WORK_DIR/$VER/buildroot"
 
 log_dir="logs"
 log_file="build.common.log"   # when compiling targets, this is overwritten
@@ -209,6 +163,16 @@ log ()
 
 setup_buildroot ()
 {
+ buildroot=$1
+ openwrt_rev=$2
+ openwrt_dl_dir=$3
+ openwrt_patches_dir=$4
+ selector=$5
+ 
+ openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
+
+ git_url="https://git.openwrt.org/openwrt/openwrt.git"
+
 	#check if directory exists
 	if [ ! -d $buildroot ]
 	then
@@ -225,7 +189,7 @@ setup_buildroot ()
 			log $log_file tar xzf $openwrt_dl_tgz 
 		else
 			#clone from openwrt
-			log $log_file echo "cloning openwrt "
+			log $log_file echo "cloning openwrt"
 			log $log_file git clone $git_url $buildroot
 			log $log_file echo "switch to specific revision"
 			cd $buildroot
@@ -250,9 +214,9 @@ setup_buildroot ()
 
 	echo -e $C_PURPLE"create dl directory/links and feed links"$C_NONE
 	log $log_file rm -f $buildroot/feeds.conf
-	log $log_file ln -s ../../../feeds/feeds-$VER.conf $buildroot/feeds.conf
+	log $log_file ln -s ../../feeds/feeds-$selector.conf $buildroot/feeds.conf
 	log $log_file rm -f $buildroot/dl
-	log $log_file ln -s ../../../$openwrt_dl_dir $buildroot/dl
+	log $log_file ln -s ../../$openwrt_dl_dir $buildroot/dl
 
 	#if feeds_copied/feeds_own directory contains same packages as delivered with
 	#openwrt, then assume that the packages came with openwrt git clone are
@@ -260,12 +224,18 @@ setup_buildroot ()
 	#new versions of packages from feeds-copied directory
 
 	echo -e $C_PURPLE "delete old packages from buildroot/package"$C_NONE
-	for i in $(ls -1 feeds/$VER/feeds-copied) $(ls -1 feeds/$VER/feeds-own)
+	# extract feeds directory from feeds-xxxxxx.conf , and list the content of 
+	# feed directories
+	pwd
+	for d in $(cat feeds/feeds-$selector.conf  | awk '/src-link/{print substr($3,13)}')
 	do
-		base=$(basename $i)
-		echo -e "$C_PURPLE""check$C_NONE: [$C_GREEN$base$C_NONE]"
-		#	test -x $buildroot/package/$base && log $log_file echo "rm -rf $buildroot/package/$base" && rm -rf $buildroot/package/$base
-		find $buildroot/package -type d -wholename "*/$base" -exec rm -rf {} \; -exec echo "  -> rm {} " \;  2>/dev/null
+		for i in eval $(ls -1 $d)
+		do
+			base=$(basename $i)
+			echo -e "$C_PURPLE""check$C_NONE: [$C_GREEN$base$C_NONE]"
+			#	test -x $buildroot/package/$base && log $log_file echo "rm -rf $buildroot/package/$base" && rm -rf $buildroot/package/$base
+			find $buildroot/package -type d -wholename "*/$base" -exec rm -rf {} \; -exec echo "  -> rm {} " \;  2>/dev/null
+		done
 	done
 
 	# copy common files first
@@ -275,9 +245,9 @@ setup_buildroot ()
 	log $log_file cp -a $RUN_DIR/files/common/* $buildroot/files/
 	
 	# copy specific files over (may overwrite common)
-	echo -e $C_PURPLE"copy rootfs$C_NONE: $C_GREEN$VER"$C_NONE
-	mkdir -p $RUN_DIR/files/$VER
-	test -n "$(ls $RUN_DIR/files/$VER/)" && log $log_file cp -a $RUN_DIR/files/$VER/* $buildroot/files/
+	echo -e $C_PURPLE"copy rootfs"$C_NONE
+	mkdir -p $RUN_DIR/files/$openwrt_rev
+	test -n "$(ls $RUN_DIR/files/$selector/)" && log $log_file cp -a $RUN_DIR/files/$selector/* $buildroot/files/
 
 	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
 	mkdir -p $buildroot/files/etc
@@ -304,59 +274,69 @@ setup_buildroot ()
 } # setup_buildroot
 
 
-
-setup_buildroot
-
-
-echo "------------------------------"
-echo "change to buildroot [$buildroot]"
-cd $buildroot
-
-echo -e $C_PURPLE"install feeds"$C_NONE
-#log scripts/feeds clean 
-log $log_file scripts/feeds update ddmesh_copied 
-log $log_file scripts/feeds update ddmesh_own 
-log $log_file scripts/feeds install -a -p ddmesh_copied 
-log $log_file scripts/feeds install -a -p ddmesh_own 
-
-for p in $(getTargets $VER $FILTER)
+# process all targets
+OPT="--raw-output" # do not excape values
+targetIdx=0
+while true
 do
-	IFS='.'
-	set $p		# split name
-	PLATFORM=$1
-	VARIANT=$2
-	DEVICE=$3	# this is optional
-	unset IFS
-
-	echo -e $C_GREY"--------------------"$C_NONE
-	echo -e $C_YELLOW"Platform$C_NONE: $C_BLUE$PLATFORM"$C_NONE
-	echo -e $C_YELLOW"Variant$C_NONE:  $C_BLUE$VARIANT"$C_NONE
-	echo -e $C_YELLOW"Device$C_NONE:   $C_BLUE$DEVICE"$C_NONE
-	echo -e $C_GREY"--------------------"$C_NONE	
-
-	# reset to inital directory
 	cd $RUN_DIR
 
-	# check for optional parameter "DEVICE"
-	# platform specific
-	if [ -n "$DEVICE" ]; then
-		config_file="$CONFIG_DIR/$VER/config.$PLATFORM.$VARIANT.$DEVICE"
-		log_file="build.$PLATFORM.$VARIANT.$DEVICE.$VER.log"
-	else
-		config_file="$CONFIG_DIR/$VER/config.$PLATFORM.$VARIANT"
-		log_file="build.$PLATFORM.$VARIANT.$VER.log"
-	fi
+	# get next potential target
+ 	entry=$(getTargetsJson | jq ".[$targetIdx]")
+	targetIdx=$(( targetIdx + 1 ))
+	test "$entry" = "null" && break
+ 
+	_target=$(echo $entry | jq $OPT '.target')
+	_subtarget=$(echo $entry | jq $OPT '.subtarget')
+	_variant=$(echo $entry | jq $OPT '.variant')
+	_name=$(echo $entry | jq $OPT '.name')
+	_selector=$(echo $entry | jq $OPT '.selector')
+	_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
+	_packages=$(echo $entry | jq '.packages')
 
 
+	#build target name to filter on
+	target=$_target.$_subtarget
+	test -n "$_variant" && target="$target.$_variant"
+
+	filterred=$(echo $target | sed -n "/$regex/p")
+	test -z "$filterred" && continue
+
+	echo -e $C_GREY"--------------------"$C_NONE
+	echo -e $C_YELLOW"Name$C_NONE      : $C_BLUE$_name"$C_NONE
+	echo -e $C_YELLOW"Target$C_NONE    : $C_BLUE$_target"$C_NONE
+	echo -e $C_YELLOW"Sub-Target$C_NONE: $C_BLUE$_subtarget"$C_NONE
+	echo -e $C_YELLOW"Variant$C_NONE   : $C_BLUE$_variant"$C_NONE
+	echo -e $C_GREY"--------------------"$C_NONE	
+
+
+	config_file="$CONFIG_DIR/$_selector/config.$target"
+	log_file="build.$target.log"
+	buildroot="$WORK_DIR/$_openwrt_rev"
+	openwrt_dl_dir="$DL_DIR"
+	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector"
+
+	setup_buildroot $buildroot $_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_selector 
+
+	echo "------------------------------"
 	echo "change to buildroot [$buildroot]"
 	cd $buildroot
-echo "********* TODO: pfad anpassen fuer DEVICE**************"
-	# only delete when no specific device is built
-	if [ -z "$DEVICE" ]; then
-		echo -e $C_PURPLE"delete previous firmware$C_NONE: $C_GREEN""bin/targets/$PLATFORM/$VARIANT"
-		log $log_file rm -rf bin/targets/$PLATFORM/$VARIANT
+
+	echo -e $C_PURPLE"install feeds"$C_NONE
+	#log scripts/feeds clean 
+	log $log_file scripts/feeds update ddmesh_copied 
+	log $log_file scripts/feeds update ddmesh_own 
+	log $log_file scripts/feeds install -a -p ddmesh_copied 
+	log $log_file scripts/feeds install -a -p ddmesh_own 
+
+
+	# delete target dir, but only delete when no specific device/variant is built.
+	# generic targets (that contains all devices) must come before specific targets.
+	if [ -z "$_variant" ]; then
+		echo -e $C_PURPLE"delete previous firmware$C_NONE: $C_GREEN""bin/targets/$_target/$_subtarget"
+		log $log_file rm -rf bin/targets/$_target/$_subtarget
 	else
-		echo -e $C_PURPLE"DO NOT delete previous firmware$C_NONE: $C_GREEN""bin/targets/$PLATFORM/$VARIANT"
+		echo -e $C_PURPLE"DO NOT delete previous firmware$C_NONE: $C_GREEN""bin/targets/$_target/$_subtarget"
 	fi
 
 	#copy after installing feeds, because .config will be overwritten by default config
@@ -368,7 +348,6 @@ echo "********* TODO: pfad anpassen fuer DEVICE**************"
 	if [ "$MENUCONFIG" = "1" ]; then
 		echo -e $C_PURPLE"run menuconfig"$C_NONE
 		log $log_file make menuconfig
-		echo -e "Please call '$C_GREEN./$(basename $0) $VER'$C_NONE to build firmware."
 		exit 0
 	fi
 
@@ -378,14 +357,22 @@ echo "********* TODO: pfad anpassen fuer DEVICE**************"
 		# continue with next target in build.targets	
 	else
 
+		# run defconfig to correct config dependencies if those have changed.
+
+		echo -e $C_PURPLE"run defconfig"$C_NONE
+		log $log_file make defconfig
+
+		echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
+		log $log_file cp .config $RUN_DIR/$config_file
+
+		
 		# run make command
 		echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS"
 		log $log_file time -p make $BUILD_PARAMS
 		# continue with next target in build.targets	
 	fi
 
-echo "********* TODO: pfad anpassen fuer DEVICE**************"
-	echo -e $C_PURPLE"images created in$C_NONE $C_GREEN$buildroot/bin/targets/$PLATFORM/$VARIANT/..."$C_NONE
+	echo -e $C_PURPLE"images created in$C_NONE $C_GREEN$buildroot/bin/targets/$_target/$_subtarget/..."$C_NONE
 
 done
 

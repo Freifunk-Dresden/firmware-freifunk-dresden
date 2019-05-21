@@ -77,8 +77,8 @@ cat << EOM >> $OUTPUT
 			"DISTRIB_CODENAME":"$DISTRIB_CODENAME",
 			"DISTRIB_TARGET":"$DISTRIB_TARGET",
 			"DISTRIB_DESCRIPTION":"$DISTRIB_DESCRIPTION",
-			"git-lede-rev":"$git_lede_rev",
-			"git-lede-branch":"$git_lede_branch",
+			"git-openwrt-rev":"$git_openwrt_rev",
+			"git-openwrt-branch":"$git_openwrt_branch",
 			"git-ddmesh-rev":"$git_ddmesh_rev",
 			"git-ddmesh-branch":"$git_ddmesh_branch"
 		},
