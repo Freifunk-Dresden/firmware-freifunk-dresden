@@ -1,0 +1,119 @@
+######################################################################
+# This file lists one target in each line that should be built
+# in one run.
+#
+#   The order is important for device specific builds.
+#   In this case output directory is not deleted and device specific
+#   files are placed in exisiting directory.
+#
+#       Example for device specific:
+#               ramips.mt7621.ubiquiti-edgerouter-x
+#
+#   If no specific device builds are created, then platform directory
+#   is deleted before.
+#   So consider order when specifying targets!
+#
+#   Excample:
+#   	openwrt:ramips.mt7621
+#	openwrt:ramips.mt7621.ubiquiti-edgerouter-x"
+#   This would first build all targets that can be built, and then device specific
+#   builds are generated and copied
+#
+# target name has specific format:
+#   os:platform.subplatform
+# or
+#   os:platform.subplatform.device
+#
+# Each line starts with a "selector" (os)
+# When calling build.sh you select one of the os versions (openwrt or trunk...)
+# build.sh then only selects those targets which match the os version
+
+#########################################################################
+
+{
+ "targets": [
+	{	
+		"name":"openwrt:ar71xx.tiny",	# can be any name
+		"target":"ar71xx",
+		"subtarget":"tiny",
+		"variant":"",				# used to distinguish different configs
+							# e.g. 	could be name of a router or
+							#      	a set of routers when selecting "multiple devices"
+							#	via "make menuconfig"
+		"selector":"openwrt",			# used to select feeds,files,config,patches
+		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"packages":[
+		]
+	},
+	{	
+		"name":"openwrt:ar71xx.generic",
+		"target":"ar71xx",
+		"subtarget":"generic",
+		"variant":"",
+		"selector":"openwrt",
+		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"packages":[
+		]
+	},
+	{	
+		"name":"openwrt:x86.generic",
+		"target":"x86",
+		"subtarget":"generic",
+		"variant":"",
+		"selector":"openwrt",
+		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"packages":[
+		]
+	},
+	{	
+		"name":"openwrt:ramips.mt7621.generic",
+		"target":"ramips",
+		"subtarget":"mt7621",
+		"variant":"",
+		"selector":"openwrt",
+		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"packages":[
+		]
+	},
+	{	
+		"name":"openwrt:ramips.mt7621.ubiquiti-edgerouter-x",
+		"target":"ramips",
+		"subtarget":"mt7621",
+		"variant":"ubiquiti-edgerouter-x", # specific target (overwrites previous generic only for this device)
+		"selector":"openwrt",
+		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"packages":[
+		]
+	},
+	{	
+		"name":"openwrt:ramips.rt305x.generic",
+		"target":"ramips",
+		"subtarget":"rt305x",
+		"variant":"",
+		"selector":"openwrt",
+		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"packages":[
+		]
+	},
+	{	
+		"name":"openwrt:ramips.lantiq.generic",
+		"target":"lantiq",
+		"subtarget":"generic",
+		"selector":"openwrt",
+		"variant":"",
+		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"packages":[
+		]
+	},
+	{	
+		"name":"AVM Fritzbox 4040",
+		"target":"ipq40xx",
+		"subtarget":"generic",
+		"variant":"",
+		"selector":"openwrt",
+		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"packages":[
+		]
+	}
+ ]
+}

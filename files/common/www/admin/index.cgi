@@ -46,8 +46,9 @@ auf eines der Steuerungselemente, um kurze Hilfetexte einzublenden.</p>
 <tr class="colortoggle1"><th>Freifunk-Version (Dresden)</th><td>$(cat /etc/version)</td></tr>
 <tr class="colortoggle2"><th>Git-Firmware-Revision</th><td>$git_ddmesh_rev</td></tr>
 <tr class="colortoggle1"><th>Git-Firmware-Branch</th><td>$git_ddmesh_branch</td></tr>
-<tr class="colortoggle2"><th>Git-Lede-Revision</th><td>$git_lede_rev</td></tr>
-<tr class="colortoggle1"><th>Git-Lede-Branch</th><td>$git_lede_branch</td></tr>
+<tr class="colortoggle2"><th>Git-Openwrt-Revision</th><td>$git_openwrt_rev</td></tr>
+<tr class="colortoggle1"><th>Git-Openwrt-Branch</th><td>$git_openwrt_branch</td></tr>
+
 <tr class="colortoggle2"><th>Build-Datum</th><td>$(cat /etc/built_info | sed -n '/builtdate/s#[^:]*:##p')</td></tr>
 $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#')
 </table>

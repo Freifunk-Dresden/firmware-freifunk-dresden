@@ -170,7 +170,7 @@ upgrade_4_2_3() {
  do
 	uci del_list ddmesh.system.node_types=$nt
 	uci add_list ddmesh.system.node_types=$nt
- done 
+ done
 }
 
 upgrade_4_2_4() {
@@ -348,6 +348,7 @@ upgrade_6_0_7() {
  uci -q add_list system.ntp.server=1.de.pool.ntp.org
  uci -q add_list system.ntp.server=2.de.pool.ntp.org
  uci -q add_list system.ntp.server=3.de.pool.ntp.org
+ uci -q set ddmesh.network.essid_adhoc='Freifunk-Mesh-Net'
 }
 
 
