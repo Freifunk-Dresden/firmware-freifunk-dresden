@@ -1,4 +1,5 @@
 #!/bin/ash
+# https://openwrt.org/docs/guide-user/base-system/led_configuration
 
 if [ -z "$1" ]; then
 	echo "ddmesh-led.sh <type> <value>"

@@ -111,6 +111,8 @@ config network 'network'
 	option	mesh_on_lan		0
 	option	wifi3_enabled		0
 	option	wifi3_network		'lan'
+	option	wwan_apn		'internet'
+	option	wwan_pincode		''
 
 config bmxd 'bmxd'
 	option  routing_class           3
@@ -430,6 +432,21 @@ done
  uci set network.mesh_wan.proto='static'
  uci set network.mesh_wan.type='bridge'
  uci set network.mesh_wan.stp=1
+
+ # add network modem with qmi protocol
+ test -z "$(uci -q get network.wwan)" && {
+	uci add network interface
+	uci rename network.@interface[-1]='wwan'
+ }
+ # must be wwan0
+ uci set network.wwan.ifname='wwan0'
+ uci set network.wwan.proto='qmi'
+ uci set network.wwan.apn="$(uci -q get ddmesh.network.wwan_apn)"
+ uci set network.wwan.pincode="$(uci -q get ddmesh.network.wwan_pincode)"
+ uci set network.wwan.device='/dev/cdc-wdm0'
+ uci set network.wwan.autoconnect='1'
+ uci set network.wwan.pdptype='IP'	# IPv4 only
+ uci -q set firewall.zone_wan.network="wan wwan"
 
  #############################################################################
  # setup wifi

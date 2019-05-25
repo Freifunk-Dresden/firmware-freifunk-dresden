@@ -229,18 +229,18 @@ setup_buildroot ()
 	log $log_file rm -f $buildroot/dl
 	log $log_file ln -s ../../$openwrt_dl_dir $buildroot/dl
 
-	#if feeds_copied/feeds_own directory contains same packages as delivered with
+	#if feedsfeeds_own directory contains same packages as delivered with
 	#openwrt, then assume that the packages came with openwrt git clone are
 	#older. delete those old packages to force openwrt make system to use the
-	#new versions of packages from feeds-copied directory
 
 	echo -e $C_PURPLE "delete old packages from buildroot/package"$C_NONE
 	# extract feeds directory from feeds-xxxxxx.conf , and list the content of 
 	# feed directories
-	pwd
-	for d in $(cat feeds/feeds-$selector.conf  | awk '/src-link/{print substr($3,7)}')
+	
+	for d in $(cat feeds/feeds-$selector.conf  | awk '/src-link/{print substr($3,10)}')
 	do
-		for i in eval $(ls -1 $d)
+		echo -e $C_YELLOW"feed:"$C_NONE"[$d]"
+		for i in $(ls -1 $d)
 		do
 			base=$(basename $i)
 			echo -e "$C_PURPLE""check$C_NONE: [$C_GREEN$base$C_NONE]"
@@ -257,7 +257,7 @@ setup_buildroot ()
 	
 	# copy specific files over (may overwrite common)
 	echo -e $C_PURPLE"copy rootfs"$C_NONE
-	test -n "$(ls $RUN_DIR/files/$selector/)" && log $log_file cp -a $RUN_DIR/files/$selector/* $buildroot/files/
+	test -d "$RUN_DIR/files/$selector)" && log $log_file cp -a $RUN_DIR/files/$selector/* $buildroot/files/
 
 	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
 	mkdir -p $buildroot/files/etc
@@ -302,7 +302,7 @@ do
 	_name=$(echo $entry | jq $OPT '.name')
 	_selector=$(echo $entry | jq $OPT '.selector')
 	_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
-	_packages=$(echo $entry | jq '.packages')
+	_packages=$(echo $entry | jq $OPT '.packages')
 
 
 	#build target name to filter on
@@ -332,12 +332,36 @@ do
 	echo "change to buildroot [$buildroot]"
 	cd $buildroot
 
-	echo -e $C_PURPLE"install feeds"$C_NONE
-	#log scripts/feeds clean 
-	log $log_file scripts/feeds update ddmesh_copied 
-	log $log_file scripts/feeds update ddmesh_own 
-	log $log_file scripts/feeds install -a -p ddmesh_copied 
-	log $log_file scripts/feeds install -a -p ddmesh_own 
+	echo -e $C_PURPLE"update feeds"$C_NONE
+	# update all feeds from feeds.conf (feed info)
+	log $log_file ./scripts/feeds update -a 
+#	log $log_file ./scripts/feeds update ddmesh_own 
+
+	echo -e $C_PURPLE"BUGFIX: install missing dependencies"$C_NONE
+	for p in libpam libgnutls libopenldap libidn2 libssh2 liblzma libnetsnmp kmod-cryptodev
+	do
+		echo -e "$C_GREEN$p$C_NONE"
+		log $log_file ./scripts/feeds install $p 2>&1 2>/dev/null
+	done
+
+	echo -e $C_PURPLE"install own feeds"$C_NONE
+	#log ./scripts/feeds clean 
+
+	# install all packages from my own local feeds
+	log $log_file ./scripts/feeds install -a -p ddmesh_own 
+
+	# install additional packages (can be selected via "menuconfig")
+	idx=0
+	while true
+	do
+	  	# use OPT to prevent jq from adding ""
+		entry="$(echo $_packages | jq $OPT .[$idx])"
+		test "$entry" = "null" && break
+		idx=$(( idx + 1 ))
+		
+		echo -e "[$idx] $C_GREEN$entry$C_NONE"
+		log $log_file ./scripts/feeds install $entry
+	done
 
 
 	# delete target dir, but only delete when no specific device/variant is built.
@@ -379,7 +403,7 @@ do
 	log $log_file cp .config $RUN_DIR/$config_file
 
 	# run make command
-	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS"
+	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
 	log $log_file time -p make $BUILD_PARAMS
 	# continue with next target in build.targets	
 
