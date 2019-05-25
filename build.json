@@ -51,7 +51,17 @@
 		"subtarget":"generic",
 		"variant":"",
 		"selector":"openwrt",
-		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"openwrt_rev":"a02809f61bf9fda0387d37bd05d0bcfe8397e25d", # tag 18.06.2
+		"packages":[
+		]
+	},
+	{	
+		"name":"GL.iNet GL-MiFi (LTE Router)",
+		"target":"ar71xx",
+		"subtarget":"generic",
+		"variant":"gl-mifi",
+		"selector":"openwrt",
+		"openwrt_rev":"a02809f61bf9fda0387d37bd05d0bcfe8397e25d", # tag 18.06.2
 		"packages":[
 		]
 	},
@@ -61,7 +71,7 @@
 		"subtarget":"generic",
 		"variant":"",
 		"selector":"openwrt",
-		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"openwrt_rev":"a02809f61bf9fda0387d37bd05d0bcfe8397e25d", # tag 18.06.2
 		"packages":[
 		]
 	},
@@ -81,7 +91,7 @@
 		"subtarget":"mt7621",
 		"variant":"ubiquiti-edgerouter-x", # specific target (overwrites previous generic only for this device)
 		"selector":"openwrt",
-		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"openwrt_rev":"a02809f61bf9fda0387d37bd05d0bcfe8397e25d", # tag 18.06.2
 		"packages":[
 		]
 	},
@@ -101,7 +111,7 @@
 		"subtarget":"generic",
 		"selector":"openwrt",
 		"variant":"",
-		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"openwrt_rev":"a02809f61bf9fda0387d37bd05d0bcfe8397e25d", # tag 18.06.2
 		"packages":[
 		]
 	},
@@ -111,7 +121,7 @@
 		"subtarget":"generic",
 		"variant":"",
 		"selector":"openwrt",
-		"openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+		"openwrt_rev":"a02809f61bf9fda0387d37bd05d0bcfe8397e25d", # tag 18.06.2
 		"packages":[
 		]
 	}

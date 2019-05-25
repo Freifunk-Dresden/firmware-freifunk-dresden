@@ -1,4 +1,5 @@
 #!/bin/bash
+tabs 4
 
 #usage: see below
 SCRIPT_VERSION="5"
@@ -22,14 +23,21 @@ OPENWRT_PATCHES_DIR=openwrt-patches
 #Cyan         0;36     Light Cyan    1;36
 #Light Gray   0;37     White         1;37
 C_NONE='\033[0m' # No Color
-C_RED='\033[0;31m'
-C_GREEN='\033[0;32m'
 C_GREY='\033[1;30m'
-C_LGREY='\033[0;37m'
-C_YELLOW='\033[1;33m'
-C_PURPLE='\033[0;35m'
-C_BLUE='\033[0;32m'
+C_RED='\033[0;31m'
+C_LRED='\033[1;31m'
+C_GREEN='\033[0;32m'
+C_LGREEN='\033[1;32m'
 C_ORANGE='\033[0;33m'
+C_YELLOW='\033[1;33m'
+C_BLUE='\033[0;34m'
+C_LBLUE='\033[1;34m'
+C_PURPLE='\033[0;35m'
+C_LPURPLE='\033[1;35m'
+C_CYAN='\033[0;36m'
+C_LCYAN='\033[1;36m'
+C_GREY='\033[0;37m'
+C_LGREY='\033[1;37m'
 
 #save current directory, used by log and when copying config file
 RUN_DIR=$(pwd)
@@ -95,6 +103,24 @@ setup_dynamic_firmware_config()
 
 
 #----------------- process argument ----------------------------------
+if [ -z "$1" ]; then
+	# create a simple menu
+	echo "Version: $SCRIPT_VERSION"
+	echo "usage: $(basename $0) [list] | [target | all ] [ menuconfig | clean | <make params ...> ]"
+	echo " list		- lists all available targets"
+	echo " target		- target to build (can have regex)"
+	echo "		that are defined by build.json. use 'list' for supported targets."
+	echo "		'all'			- builds all targets"
+	echo "		'ramips.*'		- builds all ramips targets only"
+	echo "		'ramips.rt305x.generic'	- builds exact this target"
+	echo "		'^rt30.*'		- builds all that start with 'rt30'"
+	echo " menuconfig	- displays configuration menu"
+	echo " clean		- cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
+	echo " make params	- all paramerters that follows are passed to make command"
+	echo ""
+	exit 1
+fi
+
 #check if next argument is "menuconfig"
 if [ "$1" = "list" ]; then
 	listTargets
@@ -104,8 +130,6 @@ fi
 # get target (addtional arguments are passt to command line make) 
 # last value will become DEFAULT
 regex="$1"
-regex="${regex:=.*}" 
-echo "### regex:[$regex]"
 shift
 
 #check if next argument is "menuconfig"
@@ -121,26 +145,13 @@ if [ "$1" = "clean" ]; then
 	shift;
 fi
 
-BUILD_PARAMS=$*
-
-if [ -z "$regex" ]; then
-	# create a simple menu
-	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) [list] | target [menuconfig | clean | <make params ...> ]"
-	echo " list             - lists all available targets"
-	echo " target           - target to build (can have regex)"
-	echo "                    that are defined by build.json"
-	echo "                    e.g.: 'ramips.*'"
-	echo "                    'ramips.rt305x.generic' - exact this target"
-	echo "                    '^rt30.*' - filter all that start with rt30"
-	echo " menuconfig       - displays configuration menu before building images"
-	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
-	echo " make params      - all paramerters that follows are passed to make command"
-	echo ""
-	exit 1
+# correct regex
+if [ "$regex" = "all" ]; then
+	regex=".*" 
 fi
+echo "### target:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN"
 
-
+BUILD_PARAMS=$*
 
 
 log_dir="logs"
@@ -246,7 +257,6 @@ setup_buildroot ()
 	
 	# copy specific files over (may overwrite common)
 	echo -e $C_PURPLE"copy rootfs"$C_NONE
-	mkdir -p $RUN_DIR/files/$openwrt_rev
 	test -n "$(ls $RUN_DIR/files/$selector/)" && log $log_file cp -a $RUN_DIR/files/$selector/* $buildroot/files/
 
 	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
@@ -345,32 +355,33 @@ do
 				# create a new config
 	log $log_file cp $RUN_DIR/$config_file .config 
 
+
 	if [ "$MENUCONFIG" = "1" ]; then
 		echo -e $C_PURPLE"run menuconfig"$C_NONE
 		log $log_file make menuconfig
+		echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
+		log $log_file cp .config $RUN_DIR/$config_file
 		exit 0
 	fi
 
 	if [ "$MAKE_CLEAN" = "1" ]; then
 		echo -e $C_PURPLE"run clean"$C_NONE
 		log $log_file make clean
-		# continue with next target in build.targets	
-	else
-
-		# run defconfig to correct config dependencies if those have changed.
-
-		echo -e $C_PURPLE"run defconfig"$C_NONE
-		log $log_file make defconfig
-
-		echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
-		log $log_file cp .config $RUN_DIR/$config_file
-
-		
-		# run make command
-		echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS"
-		log $log_file time -p make $BUILD_PARAMS
-		# continue with next target in build.targets	
+		continue # clean next target
 	fi
+	
+	# run defconfig to correct config dependencies if those have changed.
+
+	echo -e $C_PURPLE"run defconfig"$C_NONE
+	log $log_file make defconfig
+
+	echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
+	log $log_file cp .config $RUN_DIR/$config_file
+
+	# run make command
+	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS"
+	log $log_file time -p make $BUILD_PARAMS
+	# continue with next target in build.targets	
 
 	echo -e $C_PURPLE"images created in$C_NONE $C_GREEN$buildroot/bin/targets/$_target/$_subtarget/..."$C_NONE
 
