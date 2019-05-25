@@ -124,9 +124,10 @@ echo "VPN:$default_vpn_ifname via $default_vpn_gateway"
 #try each gateway
 ok=false
 IFS=' '
-#start with vpn, because this is prefered gateway, then WAN and lates LAN
-#(there is no forwarding to lan allowed by firewall)
-for g in $vpn_default_route $wwan_default_route $wan_default_route $lan_default_route
+# start with vpn, because this is prefered gateway, then WAN and lates LAN
+# (there is no forwarding to lan allowed by firewall)
+# wwan after wan: assume wan is faster than wwan
+for g in $vpn_default_route $wan_default_route $wwan_default_route $lan_default_route
 do
 	echo "==========="
 	echo "try: $g"
