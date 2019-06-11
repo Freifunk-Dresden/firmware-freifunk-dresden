@@ -28,7 +28,7 @@ cat<<EOM
 <table>
 EOM
 
-$ipt -t $table -L $chain -vn 2>&1 | awk '
+$ipt -w -t $table -L $chain -vn 2>&1 | awk '
 	function join(array, start, end, separator)
 	{
 		result=""

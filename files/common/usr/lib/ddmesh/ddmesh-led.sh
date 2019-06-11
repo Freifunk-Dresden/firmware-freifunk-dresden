@@ -4,8 +4,10 @@
 if [ -z "$1" ]; then
 	echo "ddmesh-led.sh <type> <value>"
 	echo "	type: wifi | status"
-	echo "	value	wifi: off|alive|freifunk|gateway"
-	echo "	status: boot1|boot2|boot3|done"
+	echo "	value:"
+	echo "		wifi:	off|alive|freifunk|gateway"
+	echo "		status: boot1|boot2|boot3|done"
+	echo "		wwan:	off|2g|3g|4g"
 	exit 0
 fi
 
@@ -26,28 +28,41 @@ case "$platform" in
 		exit 1
 esac
 
-echo "platform: $platform"
-echo "board: $boardname"
+#echo "platform: $platform"
+#echo "board: $boardname"
 
 get_wifi_led()
 {
 	case  "$boardname" in
 		unifi)
-			wifi_led=ubnt:orange:dome
+			wifi_led="ubnt:orange:dome"
 			;;
 		*)
-			led="$(uci show system 2>/dev/null | sed -n '/system.led_wlan.*\.sysfs=/s#.*=\(.*\)$#\1#p')"
-			test -z "$led" && led="$(uci show system 2>/dev/null | sed -n '/system.led_rssimediumlow.*\.sysfs=/s#.*=\(.*\)$#\1#p')"
-			wifi_led=$(echo $led | sed s#\'##g)
+			wifi_led="$(uci -q get system.led_wlan.sysfs)"
+			test -z "$wifi_led" && wifi_led="$(uci -q get system.led_rssimediumlow.sysfs)" 
 			;;
 	esac
 }
 
+get_wwan_led()
+{
+	case  "$boardname" in
+		gl-mifi)
+			wwan_led="$(uci -q get system.led_wwan.sysfs)"
+			test -z "$wwan_led" && wwan_led="gl-mifi:green:net" 
+			;;
+		*)
+			wwan_led=""
+			;;
+	esac
+}
 get_status_led # /etc/diag.sh
 get_wifi_led
+get_wwan_led
 
-echo "status-led: $status_led"
-echo "wifi-led: $wifi_led"
+#echo "status-led: $status_led"
+#echo "wifi-led: $wifi_led"
+#echo "wwan-led: $wwan_led"
 
 case $1 in
 	wifi)
@@ -84,6 +99,22 @@ case $1 in
 						led_on $status_led
 						;;
 				esac
+				;;
+		esac
+		;;
+	wwan)
+		case $2 in
+			off)
+				led_off $wwan_led
+				;;
+			2g)
+				led_timer $wwan_led 50 500
+				;;
+			3g)
+				led_timer $wwan_led 200 200
+				;;
+			4g)
+				led_timer $wwan_led 60 60
 				;;
 		esac
 		;;

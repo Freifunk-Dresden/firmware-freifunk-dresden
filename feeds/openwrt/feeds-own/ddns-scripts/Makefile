@@ -23,7 +23,6 @@ include $(INCLUDE_DIR)/package.mk
 PKG_DEFAULT_DEPENDS=
 
 define Package/ddns-scripts/Default
-    SECTION:=base
     CATEGORY:=ddmesh
     PKGARCH:=all
     SUBMENU:=Packages

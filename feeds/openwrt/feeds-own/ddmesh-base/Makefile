@@ -10,7 +10,6 @@ include $(INCLUDE_DIR)/package.mk
 
 ##########################################################
 define Package/$(PKG_NAME)-base
-  SECTION:=base
   CATEGORY:=ddmesh
   DEFAULT:=y
   DEPENDS:=	+kmod-ledtrig-timer +kmod-tun +libmbedtls +libustream-mbedtls \
@@ -28,10 +27,61 @@ define Package/$(PKG_NAME)-base/description
 	Meta package to select all needed basic packages
 endef
 
+# This section holds only package configurations (compile switches).
+# Each config may depend on some packages and is displayed if this 
+# packages was selected
+define Package/$(PKG_NAME)-base/config
+
+	# menu is optional. It is directly inserted below current package menu entry (same window)
+	#menu "Modules"
+		# menu point is displayed when dependings are set
+		#depends on PACKAGE_ddmesh-base
+
+		# use SYMBOL of package that should be selected
+		config PACKAGE_fastd
+			# menu point is displayed when dependings are set
+			depends on PACKAGE_ddmesh-base
+			tristate "fastd"
+			help
+				required by firmware
+
+		# use SYMBOL of package that should be selected
+		config PACKAGE_bmxd
+			# menu point is displayed when dependings are set
+			depends on PACKAGE_ddmesh-base
+			tristate "bmxd"
+			help
+				required by firmware
+
+		# use SYMBOL of package that should be selected
+		config PACKAGE_ddns-scripts
+			# menu point is displayed when dependings are set
+			depends on PACKAGE_ddmesh-base
+			tristate "ddns-scripts"
+			help
+				required by firmware
+
+		# use SYMBOL of package that should be selected
+		config PACKAGE_freifunk-upload
+			# menu point is displayed when dependings are set
+			depends on PACKAGE_ddmesh-base
+			tristate "ddns-scripts"
+			help
+				required by firmware
+
+		# use SYMBOL of package that should be selected
+		config PACKAGE_wshaper
+			# menu point is displayed when dependings are set
+			depends on PACKAGE_ddmesh-base
+			tristate "wshaper"
+			help
+				required by firmware
+	#endmenu
+
+endef
 ##########################################################
 
 define Package/$(PKG_NAME)-wifi
-  SECTION:=base
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
@@ -57,7 +107,6 @@ endef
 ##########################################################
 
 define Package/$(PKG_NAME)-usb-storage
-  SECTION:=base
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
@@ -74,7 +123,6 @@ endef
 ##########################################################
 
 define Package/$(PKG_NAME)-usb-lte
-  SECTION:=base
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
@@ -146,7 +194,6 @@ endef
 ##########################################################
 
 define Package/$(PKG_NAME)-wifi-extra
-  SECTION:=base
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
@@ -164,13 +211,12 @@ define Package/$(PKG_NAME)-wifi-extra
 endef
 
 define Package/$(PKG_NAME)-wifi-extra/description
-        Meta package to select extra wifi drivers.
+        Meta package to select extra wifi drivers for usb sticks.
 	This is useful for Futro with usb stick wifi support
 endef
 
 ##########################################################
 define Package/$(PKG_NAME)-extra-modules
-  SECTION:=base
   CATEGORY:=ddmesh
 	
   # when this module is selected, it also selects all depending modules as module.
@@ -183,7 +229,7 @@ define Package/$(PKG_NAME)-extra-modules
   DEFAULT:=m
   # I do not select all possible modules, so I can disable them
   #DEPENDS:= +tcpdump +OVPNCerts +feinstaubsensor
-  DEPENDS:= +tcpdump +OVPNCerts
+  #DEPENDS:= +tcpdump +OVPNCerts
 
   TITLE:=Meta package to select extra packages
   # when MENU:=1 than this package also has a submenu.
@@ -197,15 +243,10 @@ endef
 
 define Package/$(PKG_NAME)-extra-modules/config
 
-	# Because "config PACKAGE_tcpdump" has same name as the normal menu location,
-	# both menu places (orignal and ours) can switch on/off package and the other one is updated
-	# correspontely
-
-
 	# menu is optional. It is directly inserted below current package menu entry (same window)
-	menu "Modules"
-	# menu point is displayed when dependings are set
-	depends on PACKAGE_ddmesh-extra-modules
+	# menu "Modules"
+		# menu point is displayed when dependings are set
+		# depends on PACKAGE_ddmesh-extra-modules
 
 		# use SYMBOL of package that should be selected
 		config PACKAGE_tcpdump
@@ -216,9 +257,16 @@ define Package/$(PKG_NAME)-extra-modules/config
 		config PACKAGE_OVPNCerts
 			# menu point is displayed when dependings are set
 			depends on PACKAGE_ddmesh-extra-modules
-			tristate "Openvpn (used by OVPNCerts)"
+			tristate "OVPNCerts"
 			help
-				Create openvpn tunel used by router as public gateway.
+				Create openvpn tunnel used by router as public gateway.
+
+		config PACKAGE_wireguard
+			# menu point is displayed when dependings are set
+			depends on PACKAGE_ddmesh-extra-modules
+			tristate "wireguard"
+			help
+				Create wireguard tunnel used by router as public gateway.
 
 		config PACKAGE_feinstaubsensor
 			# menu point is displayed when dependings are set
@@ -230,7 +278,7 @@ define Package/$(PKG_NAME)-extra-modules/config
 				Image link must be modified to display graphic for
 				your own sensor.
 				See http://luftdaten.info/
-	endmenu
+#	endmenu
 
 endef
 

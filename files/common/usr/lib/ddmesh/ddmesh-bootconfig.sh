@@ -113,6 +113,7 @@ config network 'network'
 	option	wifi3_network		'lan'
 	option	wwan_apn		'internet'
 	option	wwan_pincode		''
+	option	wwan_syslog		0
 
 config bmxd 'bmxd'
 	option  routing_class           3
@@ -446,7 +447,11 @@ done
  uci set network.wwan.device='/dev/cdc-wdm0'
  uci set network.wwan.autoconnect='1'
  uci set network.wwan.pdptype='IP'	# IPv4 only
- uci -q set firewall.zone_wan.network="wan wwan"
+ uci set network.wwan.delay='30' 	# wait for SIMCard being ready
+ uci set network.wwan.metric='50'	# avoids overwriting WAN default route
+ uci -q del firewall.zone_wan.network	# delete "option"
+ uci -q add_list firewall.zone_wan.network='wan'
+ uci -q add_list firewall.zone_wan.network='wwan'
 
  #############################################################################
  # setup wifi

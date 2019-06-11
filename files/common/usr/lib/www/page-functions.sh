@@ -31,7 +31,7 @@ lang ()
  fi
 }
 
-show_set ()
+env()
 {
 echo "<pre>"
 set

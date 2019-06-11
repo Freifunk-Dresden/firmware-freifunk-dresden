@@ -11,6 +11,32 @@ test -z "$1" && {
  #get network info as json struct and rename key (workaround for jsonfilter)
  json="$(ubus call network.interface dump | sed 's#ipv\([46]\)-address#ipv\1_address#g;s#dns-server#dns_server#g')"
 
+ # check if we have wwan_4 or only wwan
+ idx=0
+ wwan_4=0
+ while true
+ do
+
+	ifdata=$(echo "$json" | jsonfilter  -e "@.interface[$idx]")
+	if [ -z "$ifdata" ]; then
+		break
+	fi
+
+	unset net_name
+	unset net_error
+
+	eval $(echo "$ifdata" | jsonfilter -e net_name='@.interface' -e net_error='@.errors[0].code')
+
+	if [ "$net_name" = "wwan" ]; then
+		wwan_error="$net_error" # remember error if no wwan_4 is present
+	fi
+	if [ "$net_name" = "wwan_4" ]; then
+		wwan_4=1
+	fi
+	idx=$(( idx + 1 ))
+ done 
+
+ # retrieve all data
  idx=0
  while true
  do
@@ -32,6 +58,7 @@ test -z "$1" && {
 	unset net_ifname
 	unset net_up
 	unset net_network
+	unset net_error
 
 	eval $(echo "$ifdata" | jsonfilter \
 		-e net_name='@.interface' \
@@ -42,7 +69,22 @@ test -z "$1" && {
 		-e net_ipaddr='@.ipv4_address[0].address' \
 		-e net_mask='@.ipv4_address[0].mask' \
 		-e net_gateway='@.route[0].nexthop' \
+		-e net_available='@.available' \
+		-e net_error='@.errors[0].code' \
 	)
+
+	# when we have wwan_4 ignore "wwan" because there is a "wwan_4" created by
+	# qmi.sh (lte modem) that has the valid data
+	if [ "$wwan_4" = 1 -a "$net_name" = "wwan" ]; then
+		idx=$(( idx + 1 ))
+		continue
+	fi
+
+	# if present then rename wwan_4 to generic name "wwan"
+	if [ "$net_name" = "wwan_4" ]; then
+		net_name="wwan"
+		net_error="$wwan_error" # 
+	fi
 
 	#if net_name matches requested network, stay in this entry
 	if [ "$net_name" = "$1" -o "$1" = "list" -o "$1" = "all" ]; then
@@ -53,11 +95,13 @@ test -z "$1" && {
 			continue
 		fi	
 
-		if [ -n "$net_ifname" ]; then
-			if [ -n "$(cat /proc/net/dev | grep $net_ifname)" ]; then
-				net_iface_present=1
-			fi
-		fi
+#		if [ -n "$net_ifname" ]; then
+#			if [ -n "$(cat /proc/net/dev | grep $net_ifname)" ]; then
+#				net_iface_present=1
+#			fi
+#		fi
+
+		[ "$net_available" = 1 ] && net_iface_present=1
 
 		#calculate rest
 		[ "$net_up" = "1" ] &&  [ -n "$net_ipaddr" ] && {
@@ -88,6 +132,7 @@ test -z "$1" && {
 		echo export $prefix"_ifname=$net_ifname"
 		echo export $prefix"_up=$net_up"
 		echo export $prefix"_network=$net_network"
+		echo export $prefix"_error=$net_error"
 #geht nicht mit allen
 #		echo export $prefix"_device=$(uci -P /var/state get network.$1.device)"
 
