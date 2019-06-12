@@ -71,7 +71,7 @@ done
 $DEBUG && echo "start"
 
 #dont use vpn server (or any openvpn server), it could interrupt connection
-ping_vpn_hosts="85.114.135.114 178.254.18.30 85.14.253.99 46.38.243.230 5.45.106.241 84.200.50.17 46.105.31.203 84.200.85.38 109.73.51.35 178.63.61.147"
+ping_vpn_hosts="85.114.135.114 178.254.18.30 5.45.106.241 178.63.61.147 82.165.230.17 1.1.1.1 8.8.4.4 8.8.8.8 178.63.61.147"
 #ping_vpn_hosts="85.14.253.99 46.38.243.230 5.45.106.241 84.200.50.17 46.105.31.203 84.200.85.38 109.73.51.35 178.63.61.147"
 ping_hosts="$ping_vpn_hosts 8.8.8.8"
 #process max 3 user ping
@@ -160,7 +160,7 @@ do
 		$DEBUG && echo ip route add $ip via $via dev $dev table ping
 
 		# mark only tested ip addresses
-		iptables -t mangle -A output_gateway_check -p icmp -d $ip -j MARK --set-mark $ip_fwmark
+		iptables -w -t mangle -A output_gateway_check -p icmp -d $ip -j MARK --set-mark $ip_fwmark
 		numIPs=$((numIPs+1))
 	done
 	echo "number IPs: $numIPs"
@@ -247,7 +247,7 @@ ip route flush table ping
 ip rule del iif lo fwmark $ip_fwmark priority $ip_rule_priority table ping >/dev/null
 
 # clear iptables used to mark icmp packets
-iptables -t mangle -F output_gateway_check
+iptables -w -t mangle -F output_gateway_check
 
 #in case no single gateway was working but gateway was announced, clear gateways
 if ! $ok; then

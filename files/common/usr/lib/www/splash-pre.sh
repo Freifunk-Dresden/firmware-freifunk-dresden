@@ -68,4 +68,4 @@ cat<<EOM
  	<tr><td height="100%">
 	<div>
 EOM
-#show_set
+

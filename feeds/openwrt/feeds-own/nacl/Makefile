@@ -23,7 +23,6 @@ PKG_USE_MIPS16:=0
 include $(INCLUDE_DIR)/package.mk
 
 define Package/nacl
-  SECTION:=base
   CATEGORY:=ddmesh
   TITLE:=NaCl Networking and Cryptography library
   URL:=http://nacl.cace-project.eu/

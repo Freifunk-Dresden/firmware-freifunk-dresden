@@ -64,28 +64,52 @@ p
 " | jq "[ .targets[] ]" 
 }
 
-
 listTargets()
 {
+
  OPT="--raw-output" # do not excape values
 
  cleanJson=$(getTargetsJson)
+
+#echo $cleanJson
+#exit
+
+ # first read default
  targetIdx=0
+ entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+ targetIdx=$(( targetIdx + 1 ))
+ if [ -n "$entry" ]; then
+	_def_target=$(echo $entry | jq $OPT '.target')
+	_def_subtarget=$(echo $entry | jq $OPT '.subtarget')
+	_def_variant=$(echo $entry | jq $OPT '.variant')
+	_def_name=$(echo $entry | jq $OPT '.name')
+	_def_selector=$(echo $entry | jq $OPT '.selector')
+	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
+	_def_feeds=$(echo $entry | jq $OPT '.feeds')
+	_def_packages=$(echo $entry | jq $OPT '.packages')
+ fi
+
+ # run through rest of json
  while true
  do
  	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+
 	if [ "$entry" = "null" ]; then
  		target=""
 	else
 		_target=$(echo $entry | jq $OPT '.target')
 		_subtarget=$(echo $entry | jq $OPT '.subtarget')
 		_variant=$(echo $entry | jq $OPT '.variant')
+		test "$_variant" = "null"  && _variant=""
+		openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
+		test "$openwrt_rev" = "null"  && openwrt_rev="$_def_openwrt_rev"
 
 		target=$_target.$_subtarget
+		# add variant (if any)
 		test -n "$_variant" && target="$target.$_variant"
 	fi 
 	test -z "$target" && break
-	echo "$target"
+	printf  "%-40s - openwrt_rev: %s\n" $target $openwrt_rev
 	targetIdx=$(( targetIdx + 1 ))
  done
 }
@@ -106,7 +130,7 @@ setup_dynamic_firmware_config()
 if [ -z "$1" ]; then
 	# create a simple menu
 	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) [list] | [target | all ] [ menuconfig | clean | <make params ...> ]"
+	echo "usage: $(basename $0) [list] [feed-revisions] | [target | all ] [ menuconfig | clean | <make params ...> ]"
 	echo " list		- lists all available targets"
 	echo " target		- target to build (can have regex)"
 	echo "		that are defined by build.json. use 'list' for supported targets."
@@ -114,9 +138,12 @@ if [ -z "$1" ]; then
 	echo "		'ramips.*'		- builds all ramips targets only"
 	echo "		'ramips.rt305x.generic'	- builds exact this target"
 	echo "		'^rt30.*'		- builds all that start with 'rt30'"
+	echo ""
 	echo " menuconfig	- displays configuration menu"
 	echo " clean		- cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
 	echo " make params	- all paramerters that follows are passed to make command"
+	echo " feed-revisions	- displays the revision hash for current date."
+	echo "			  The revisions then could be set in build.json"
 	echo ""
 	exit 1
 fi
@@ -124,6 +151,30 @@ fi
 #check if next argument is "menuconfig"
 if [ "$1" = "list" ]; then
 	listTargets
+	exit 0
+fi
+
+if [ "$1" = "feed-revisions" ]; then
+
+	REPOS="https://git.openwrt.org/feed/packages.git"
+	REPOS="$REPOS https://git.openwrt.org/project/luci.git"
+	REPOS="$REPOS https://git.openwrt.org/feed/routing.git"
+	REPOS="$REPOS https://git.openwrt.org/feed/telephony.git"
+
+	_date=$(date +"%b %d %Y")
+	p=$(pwd)	
+	for r in $REPOS
+	do 
+		name=${r##*/}
+		d=/tmp/ffbuild_$name
+		rm -rf $d
+		git clone $r $d 2>/dev/null
+		cd $d
+		echo "[$name] "
+		git log -1 --oneline --until="$_date"
+		cd $p
+	done
+	
 	exit 0
 fi
 
@@ -224,8 +275,8 @@ setup_buildroot ()
 	fi
 
 	echo -e $C_PURPLE"create dl directory/links and feed links"$C_NONE
-	log $log_file rm -f $buildroot/feeds.conf
-	log $log_file ln -s ../../feeds/feeds-$selector.conf $buildroot/feeds.conf
+#	log $log_file rm -f $buildroot/feeds.conf
+#	log $log_file ln -s ../../feeds/feeds-$selector.conf $buildroot/feeds.conf
 	log $log_file rm -f $buildroot/dl
 	log $log_file ln -s ../../$openwrt_dl_dir $buildroot/dl
 
@@ -237,7 +288,7 @@ setup_buildroot ()
 	# extract feeds directory from feeds-xxxxxx.conf , and list the content of 
 	# feed directories
 	
-	for d in $(cat feeds/feeds-$selector.conf  | awk '/src-link/{print substr($3,10)}')
+	for d in $(cat $buildroot/feeds.conf  | awk '/src-link/{print substr($3,10)}')
 	do
 		echo -e $C_YELLOW"feed:"$C_NONE"[$d]"
 		for i in $(ls -1 $d)
@@ -283,10 +334,33 @@ setup_buildroot ()
 
 } # setup_buildroot
 
-
-# process all targets
+# ---------- process all targets ------------
 OPT="--raw-output" # do not excape values
+
 targetIdx=0
+
+# first read default values
+entry=$(getTargetsJson | jq ".[$targetIdx]")
+targetIdx=$(( targetIdx + 1 ))
+if [ -n "$entry" ]; then
+	_def_target=$(echo $entry | jq $OPT '.target')
+	_def_subtarget=$(echo $entry | jq $OPT '.subtarget')
+	_def_variant=$(echo $entry | jq $OPT '.variant')
+	_def_name=$(echo $entry | jq $OPT '.name')
+	_def_selector=$(echo $entry | jq $OPT '.selector')
+	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
+	_def_feeds=$(echo $entry | jq $OPT '.feeds')
+	_def_packages=$(echo $entry | jq $OPT '.packages')
+#echo $_def_target
+#echo $_def_subtarget
+#echo $_def_variant
+#echo $_def_name
+#echo $_def_openwrt_rev
+#echo $_def_selector
+#echo $_def_feeds
+#echo $_def_packages
+fi
+
 while true
 do
 	cd $RUN_DIR
@@ -296,13 +370,39 @@ do
 	targetIdx=$(( targetIdx + 1 ))
 	test "$entry" = "null" && break
  
+	# test "$_" = "null" && _="$_def_"
+
 	_target=$(echo $entry | jq $OPT '.target')
+	test "$_target" = "null" && _target="$_def_target"
+
 	_subtarget=$(echo $entry | jq $OPT '.subtarget')
+	test "$_subtarget" = "null" && _subtarget="$_def_subtarget"
+
 	_variant=$(echo $entry | jq $OPT '.variant')
+	test "$_variant" = "null" && _variant="$_def_variant"
+
 	_name=$(echo $entry | jq $OPT '.name')
-	_selector=$(echo $entry | jq $OPT '.selector')
+	test "$_name" = "null" && _name="$_def_name"
+
 	_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
+	test "$_openwrt_rev" = "null" && _openwrt_rev="$_def_openwrt_rev"
+
+	_selector=$(echo $entry | jq $OPT '.selector')
+	test "$_selector" = "null" && _selector="$_def_selector"
+
+	_feeds=$(echo $entry | jq $OPT '.feeds')
+	test "$_feeds" = "null" && _feeds="$_def_feeds"
+
 	_packages=$(echo $entry | jq $OPT '.packages')
+	test "$_packages" = "null" && _packages="$_def_packages"
+#echo $_target
+#echo $_subtarget
+#echo $_variant
+#echo $_name
+#echo $_openwrt_rev
+#echo $_selector
+#echo $_feeds
+#echo $_packages
 
 
 	#build target name to filter on
@@ -319,21 +419,61 @@ do
 	echo -e $C_YELLOW"Variant$C_NONE   : $C_BLUE$_variant"$C_NONE
 	echo -e $C_GREY"--------------------"$C_NONE	
 
-
 	config_file="$CONFIG_DIR/$_selector/config.$target"
 	log_file="build.$target.log"
 	buildroot="$WORK_DIR/$_openwrt_rev"
 	openwrt_dl_dir="$DL_DIR"
 	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector"
 
+	# --------- setup build root ------------------
+
 	setup_buildroot $buildroot $_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_selector 
+
+	# --------  generate feeds -----------
+	echo -e $C_PURPLE"generate feed config"$C_NONE
+
+	# create feed config from build.json
+	if [ "$_feeds" = "null" ]; then
+	 	echo -e $C_RED"Error: no feeds specified"$C_NONE
+		exit 1
+	fi
+
+	feedConfFileName="$buildroot/feeds.conf"
+	cat<<EOM > $feedConfFileName
+# This file is generated by build.sh from build.json
+# see: https://git.openwrt.org/feed/packages.git and others
+
+EOM
+
+	feedIdx=0
+	while true
+	do
+ 		feed=$(echo "$_feeds" | jq ".[$feedIdx]")
+		feedIdx=$(( feedIdx + 1 ))
+		test "$feed" = "null" && break
+
+		_feed_type=$(echo $feed | jq $OPT '.type')
+		_feed_name=$(echo $feed | jq $OPT '.name')
+		_feed_src=$(echo $feed | jq $OPT '.src')
+		_feed_rev=$(echo $feed | jq $OPT '.rev')
+		
+		# if we have a feed revision, then add it. "^° is a special character
+		# followed by a "commit" (hash). openwrt then checks out this revision
+		test "$_feed_rev" = "null" && _feed_rev=""
+		test -n "$_feed_rev" && _feed_rev="^$_feed_rev"
+
+		printf "%s %s %s\n" $_feed_type $_feed_name $_feed_src$_feed_rev  >>$feedConfFileName
+
+	done
+
+
 
 	echo "------------------------------"
 	echo "change to buildroot [$buildroot]"
 	cd $buildroot
 
+	# --------- update all feeds from feeds.conf (feed info) ----
 	echo -e $C_PURPLE"update feeds"$C_NONE
-	# update all feeds from feeds.conf (feed info)
 	log $log_file ./scripts/feeds update -a 
 #	log $log_file ./scripts/feeds update ddmesh_own 
 

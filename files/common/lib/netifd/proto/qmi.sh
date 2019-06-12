@@ -79,7 +79,7 @@ proto_qmi_setup() {
 			echo "SIM not initialized"
 			proto_notify_error "$interface" SIM_NOT_INITIALIZED
 			proto_block_restart "$interface"
-			return 1
+	#		return 1
 		fi
 	done
 
@@ -89,7 +89,7 @@ proto_qmi_setup() {
 				echo "Unable to verify PIN"
 				proto_notify_error "$interface" PIN_FAILED
 				proto_block_restart "$interface"
-				return 1
+	#			return 1
 			}
 		}
 	else

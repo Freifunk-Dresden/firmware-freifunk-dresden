@@ -52,10 +52,9 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 define Package/fastd
-  SECTION:=base
   CATEGORY:=ddmesh
 #  no dependencies to +libuecc +nacl (they are linked, not installed)
-  DEPENDS:=+kmod-tun +librt +libpthread +libjson-c 
+  DEPENDS:= +kmod-tun +librt +libpthread +libjson-c 
   TITLE:=Fast and Secure Tunneling Daemon
   URL:=https://projects.universe-factory.net/projects/fastd
   SUBMENU:=Packages

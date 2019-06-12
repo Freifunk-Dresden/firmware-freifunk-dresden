@@ -29,7 +29,6 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 define Package/libuecc
-  SECTION:=base
   CATEGORY:=ddmesh
   TITLE:=Very small Elliptic Curve Cryptography library
   URL:=http://git.universe-factory.net/libuecc/
