@@ -15,3 +15,8 @@ done
 
 # then commit all others to flash
 /sbin/uci -q commit
+
+# sync file systems (ext4)
+sync
+
+

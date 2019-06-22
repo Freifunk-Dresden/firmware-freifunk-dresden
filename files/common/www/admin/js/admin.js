@@ -45,6 +45,19 @@ function onMarkerMove(event)
 //	marker.setIcon(icon);
 	marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
 }
+
+function onMapClick(event)                                                       
+{                                                                                
+        lat=event.latlng.lat.toFixed(5)                                          
+        lng=event.latlng.lng.toFixed(5)                                          
+        $("#geoloc_lat").val(lat);                                               
+        $("#geoloc_lng").val(lng);                                               
+        marker.setLatLng([lat, lng]);                                            
+//      var icon = L.icon({iconUrl:"https://leafletjs.com/examples/custom-icons/l
+//      marker.setIcon(icon);                                                    
+	marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
+}
+
 function geoloc_callback(data)
 {
 	try {

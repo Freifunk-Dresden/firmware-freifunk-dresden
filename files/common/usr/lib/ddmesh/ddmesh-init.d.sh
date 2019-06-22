@@ -69,8 +69,11 @@ start() {
 	logger -s -t $LOGGER_TAG "register node"
 	/usr/lib/ddmesh/ddmesh-register-node.sh
 
-	logger -s -t $LOGGER_TAG "start cron."
+	logger -s -t $LOGGER_TAG "start cron"
 	/etc/init.d/cron start
+
+	logger -s -t $LOGGER_TAG "start lte monitor"
+	/usr/lib/ddmesh/ddmesh-lte-monitor.sh &
 
 	logger -s -t $LOGGER_TAG "finished."
 	/usr/lib/ddmesh/ddmesh-led.sh status done

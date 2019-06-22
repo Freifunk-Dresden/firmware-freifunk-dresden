@@ -1,12 +1,12 @@
 Freifunk Dresden: Router Firmware
 =================================
 
-Original Source / Built tree for <a href="http://www.freifunk-dresden.de" >Freifunk Dresden</a> Firmware<br>
+Original Source / Built tree for <a href="https://www.freifunk-dresden.de">Freifunk Dresden</a> Firmware<br>
 
 ACHTUNG
 =======
 Aktuell befindet sich dieser Stand in Entwicklung und sollte unbedingt als INSTABIL betrachtet werden.<br>
-Freigebene Firmware Versionen sind auf <a href="http://www.freifunk-dresden.de" >Freifunk Dresden</a> zu finden und werden
+Freigebene Firmware Versionen sind auf <a href="https://www.freifunk-dresden.de">Freifunk Dresden</a> zu finden und werden
 Repository entsprechend getagged.<br>
 Die Firmware kann auf eingenes Risiko vewendet werden (was auch die Sicherheit des Firewalls betrifft).<br>
 Wenn Fehler in dieser Firmware gefunden werden, hinterlasst bitte hier eine Nachrricht.
@@ -16,7 +16,7 @@ Built-Betriebsystem: Linux (e.g.Ubuntu)
 
 Ziel:
 ----
-Freifunk hat es sich zum Ziel gesetzt, Menschen möglichst flächendeckend mit freiem WLAN zu versorgen. Freier Zugang zu Informationen ist nicht nur eine Quelle für Wissen, sondern kann sich auch positiv auf die wirtschaftliche und kulturelle Entwicklung einer Stadt, Region und Land auswirken, da das Internet in der heutigen Zeit sicher ein fester Bestandteil des täglichen Lebens geworden ist. Freifunk bietet die Möglichkeit, Internet per WLAN frei zu nutzen - ohne Zugangssperren und sicher, da der Internettraffic via verschlüsselten Internettunnel (VPN) ins Ausland geroutet wird. 
+Freifunk hat es sich zum Ziel gesetzt, Menschen möglichst flächendeckend mit freiem WLAN zu versorgen. Freier Zugang zu Informationen ist nicht nur eine Quelle für Wissen, sondern kann sich auch positiv auf die wirtschaftliche und kulturelle Entwicklung einer Stadt, Region und Land auswirken, da das Internet in der heutigen Zeit sicher ein fester Bestandteil des täglichen Lebens geworden ist. Freifunk bietet die Möglichkeit, Internet per WLAN frei zu nutzen - ohne Zugangssperren und sicher, da der Internettraffic via verschlüsselten Internettunnel (VPN) ins Ausland geroutet wird.
 
 Diese Firmware ist für verschiedene Router gedacht.
 
@@ -28,11 +28,8 @@ Siehe dazu Knotenspezifikationen im Wiki!
 
 Links:
 ------
-<a href="http://www.freifunk-dresden.de" >Freifunk Dresden</a><br>
-<a href="http://wiki.freifunk-dresden.de" >Wiki: Freifunk Dresden</a><br>
-<a href="http://bt.freifunk-dresden.de" >Bugtracker</a><br>
-<a href="http://google.com/+FreifunkDresden%EF%BB%BF/about"> Google+</a><br>
-<a href="https://plus.google.com/communities/108088672678522515509"> Google+ Community</a><br>
-<a href="https://www.facebook.com/FreifunkDresden"> Facebook</a>
-
-
+[Freifunk Dresden](https://www.freifunk-dresden.de)<br/>
+[Wiki: Freifunk Dresden](https://wiki.freifunk-dresden.de)<br/>
+[Bugtracker](https://bt.freifunk-dresden.de/index.php?do=tasklist&project=3)<br/>
+[Twitter](https://twitter.com/ddmesh)<br/>
+[Facebook](https://www.facebook.com/FreifunkDresden)

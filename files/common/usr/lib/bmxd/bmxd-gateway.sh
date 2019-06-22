@@ -44,8 +44,11 @@ case $1 in
 		toggle_ssid true
 	;;
 	del|init)
+		# check if this router is a gateway
+		gw="$(ip ro li ta public_gateway | grep default)"
+		
 		# set when "del" or if empty
-		if [ "$1" = "del" -o -z "$(grep nameserver $RESOLV_CONF_FINAL)" ]; then
+		if [ -z "$gw" -a "$1" = "del" -o -z "$(grep nameserver $RESOLV_CONF_FINAL)" ]; then
 			logger -s -t $TAG "remove GATEWAY (del)"
 			cp $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
 			/usr/lib/ddmesh/ddmesh-led.sh wifi alive

@@ -1,4 +1,15 @@
 
+2019-05-26 6.0.7 (testing)
+--------------------------------------------------
+18.06.1/2	- update openwrt
+		- rename lede to openwrt
+gui-contact	- add way to click into the map to set marker
+gui-network	- add switch status
+wifi		- prepare 5GHz support
+build scripts	- improve build script, add build.json for configuration
+upload scripts 	- integrate upload scripts to generate directory structure for download server
+lte		- add target GL.iNet gl-mifi (lte router), without gui at moment (unstable)
+
 2019-01-19 5.0.5 (release)
 --------------------------------------------------
 Repro moved from github/ddmesh to github/freifunk-dresden

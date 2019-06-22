@@ -23,7 +23,7 @@ cat<<EOM
 	Beispiel-Config-File f&uuml;r <b>rsyslogd</b>: /etc/rsyslog.d/10-freifunk.conf<br/>
 	Dieses File erzeugt f&uuml;r jeden Knoten ein eigenes Logfile unter /var/log/freifunk-router/<br/>
 <pre>
-template(name="myfile" type="string" string="/var/log/freifunk-router/node.%syslogtag:R,ERE,1,FIELD:([0-9]+):--end%")
+template(name="myfile" type="string" string="/var/log/freifunk-router/%syslogtag:R,ERE,1,FIELD:([0-9]+):--end%")
 :syslogtag, startswith, "freifunk." /var/log/freifunk-router/all.log
 :syslogtag, startswith, "freifunk." { action(type="omfile" DynaFile="myfile") stop }
 </pre>

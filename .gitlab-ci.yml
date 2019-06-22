@@ -1,0 +1,8 @@
+#before_script:
+#   - touch touch-before-script
+
+build-firmware:
+  script:
+    - ./build.sh openwrt:ar71xx.tiny 
+
+

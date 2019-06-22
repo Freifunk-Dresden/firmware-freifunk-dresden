@@ -1,0 +1,201 @@
+<html>
+<head>
+</head>
+<body>
+
+<!--
+ IMPORTANT: it is important to load javascript data before loading jQuery.
+ Because when jQuery is loaded it starts running and as soon as DOM is read, "handler" is
+ called. When loading data file after jQuery, then jQuery may be faster to call handler, but
+ without any data.
+-->
+<script type="text/javascript" src="download.json.js"></script>
+
+<!-- now load jQuery (before datatables. datatable initialisation depend on jQuery -->
+<script type="text/javascript" src="_res/jquery/jquery.js"></script>
+<script type="text/javascript" src="_res/jquery/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="_res/jquery/jquery-ui.min.css"/>
+
+<link rel="stylesheet" type="text/css" href="_res/datatables/datatables.min.css"/>
+<script type="text/javascript" src="_res/datatables/datatables.min.js"></script>	
+
+<style>
+.stats {
+   background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAOCSURBVEiJ5ZfLbxtVGMV/c2fcelon9diOG1dGNN4QYiJYsGGBQGp4qkiwQbBBleiGP6AS/AM8VB5LNoAilmzKhrJBQgoIdYVAbVVqSBrn4feMX01dxzO+LBzfempHrcGhC87mes74+879zpwZzcADggbw3idfnTaE/mXH7cQPSigQMIpex337/XNnvwMwAHQhll99+dloLGJxdW2LdCrpK5oEV7arx7/9/sdlYAZAALiuG41FrEkOOISZqIXrurH+sTG4s1G/D4pTwn2L7mVht1FHTB/7R/avrNzhxdBW7oHdzPVxS0ZifOHVvx6McGftz4kIjxcuKQlnrqvz/1m4us0mhVaLR+NhrpVqvv955RJ/NHcPJlxe1fatg7j926/jtNpf2CuXRghXfesg2lcuT0a4demXIa5rV3yrgpTsXvkdTcr7Ft43XFM//0Q2/aSPC66tYwKF1XV4eF7ViEaNYzs7cLPx78K1kIiS37jBQiKKZpoqILUfOrRn4kRkh+2Bmva1OjagV8o88nh6SPS+w+XmcyBlbx2AV3UIzKXoVh0/Xyz0mjn+S9Dd2UFrtUZJ7CO83bPGzW37GzkOh+ZSeI4/1W6xiAiFEHel3d3Mopfy4wmLUEht4I6wTeBkCs/xT9wtFTi8+AT6XaHrbGTRC37X+hgZLieTQc4v0s5k2Og/pTI3sG42WTWOEm42wHVVzXQ2S/upZzh8acXX58jlqxja6HCpidOppAqBWbNJLC1h1mzFzVtH0YJBFhbn0YJBRLOuagL1GnPPLyEcW3HpVJKpegVRzPt6D02s4Hl4VYdDjy3iOTbS83q0Y6NbEQD0sIWo1wCQt26hGQb61DRSCGSrhWaaICWdrU30rgQpQdNGT9yH7lQwjs+iGQGM+KxKrOfYiD1hYUUQzQYAbrGAMZsAoBuL4xZ7YfLKJURoCmkewauU97daEaUCRvKhnh3JJO7W5p6wgx4O93jLQtSre8J59MSJnnB0Rm20s5ElcHIO70SSTnZ9SFhZnXvjNQBCgPPcaXJrW5jmNK1PP8ICGsDtp0/1eC2AefECuYsXAGi98Arba1sEIzGcz86r5q1TL6FNRXA+/qBHvPimOqcBvHv+C/nOmdeBybzK7sd9vvwNH547q8Ge1bqhV4tl/705aRRLNoZhqCeM+pLQhfa163oH9nJt6LrT9by3+l8S/z/8Dfo07AAuLNF8AAAAAElFTkSuQmCC');
+
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+    width: 30px;
+    height: 30px;
+    text-decoration: none;
+    cursor: pointer;
+    overflow: hidden;
+    text-indent: 100%;
+    white-space:nowrap;
+}
+</style>	
+
+
+<div>
+<b>Spalten anzeigen:</b> 
+ <a class="toggle-vis" data-column="3">Model</a>
+</div>
+
+<table id="table" class="display cell-border compact" style="width:100%;">
+        <thead>
+            <tr style="background-color:#434244;color:#cccccc;">
+                <th>Ger&auml;t</th>
+                <th>Firmware</th>
+                <th>md5sum</th>
+                <th>Model</th>
+                <th>Kommentar</th>
+            </tr>
+        </thead>
+<!--        
+	  <tfoot>
+            <tr style="background-color:#434244;color:#cccccc;">
+	  <th colspan="5" ></th>
+            </tr>
+        </tfoot>
+-->
+ </table>
+
+
+<script type="text/javascript">
+
+/*
+https://api.jquery.com/jquery.noconflict/
+
+If for some reason two versions of jQuery are loaded (which is not recommended), 
+calling $.noConflict(true) from the second version will return the globally 
+scoped jQuery variables to those of the first version.
+Some times it could be issue with older version (or not stable) of JQuery files.
+
+Solution: move new jQuery completely in new object and use this.
+*/
+
+var my = {};
+my.query = jQuery.noConflict( true );
+//my.query = jQuery;
+
+// use new way to call function when DOM is ready. old way was $(document).ready(handler)
+my.query(function() {
+  // remember Table, to later access it via event function when a link is clicked with
+  // specific class name to make columns visible
+  var myTable = my.query('#table').DataTable( {
+	"processing": true,
+
+	//"pageLength" : 25,
+	//"lengthMenu": [[ 25, 50, 100, 200, -1 ], [25,50,100,200,"All"]],
+	paging: false,
+
+	// sort after filename
+	"order" : [[1,'asc']],
+
+	// extensions
+	"fixedHeader": true,
+
+	//"responsive": true,
+
+	// define nowrap for specific columns
+	"columnDefs": [
+		{ className: "dt-nowrap", "targets": [0,1,2,3,4] },
+		// default: visible
+		{ visible: false, "targets": [ 3 ] }
+
+	],
+        "data": data.fileinfo,
+
+//        // https://datatables.net/reference/option/rowCallback
+//	"rowCallback": function( row, data ) {
+//		
+//		if ( data.id < 1000 )
+//		{
+//			row.style.backgroundColor= (row.className=="odd") ? "#bbddbb" : "#cceecc";
+//			//row.firstChild.style.backgroundColor = row.style.backgroundColor;
+//		}
+//
+//		if ( data.status.offline_since > 2 )
+//		{	
+//			//row.style.backgroundColor= (row.className=="odd") ? "#cccccc" : "#dddddd";
+//			row.style.backgroundColor= "#cccccc";
+//			//row.firstChild.style.backgroundColor = row.style.backgroundColor;
+//		}
+//	},
+
+        // see: https://datatables.net/manual/data/orthogonal-data
+        "columns": [
+		{ "data":	function(row, type, set, meta) { return row; },
+		  "render" : 	function (data, type, row) {
+					var n = data.name;
+                                        if(n == '') n = data.model2;
+                                        if(n == '') n = data.model1;
+                                        if(n == '') n = '-';
+                                        if(n == undefined) n = '-';
+                                        return n;
+				}
+		},
+		{ "data":	function(row, type, set, meta) { return row; },
+		  "render" : 	function (data, type, row) {
+					if ( type === 'display' || type === 'filter' ) {
+						return '<a href="' + data.path + '/' + data.filename + '">' + data.filename + '</a>';
+					}
+					//else return some that is used when sorting this column
+					return data.filename;
+				}
+		},
+		{ "data":	function(row, type, set, meta) { return row; },
+		  "render" : 	function (data, type, row) {
+					if ( type === 'display' || type === 'filter' ) {
+						return data.md5sum;
+					}
+					//else return some that is used when sorting this column
+					return data.md5sum;
+				}
+		},
+		{ "data":	function(row, type, set, meta) { return row; },
+		  "render" : 	function (data, type, row) {
+					m1 = data.model;
+					m2 = data.model2;
+					if (m1 == undefined) m1 = '-';
+					if (m2 == undefined) m2 = '-';
+					return m1 + '/' + m2;
+				}
+		},
+		{ "data":	function(row, type, set, meta) { return row; },
+		  "render" : 	function (data, type, row) {
+					if ( type === 'display' || type === 'filter' ) {
+						return data.comment;
+					}
+					//else return some that is used when sorting this column
+					return data;
+				}
+		},
+        ]
+    } );
+
+    //function that is called each time a link with class "toggle-vis" is clicked.
+    //Then corresponding column visibility toggles
+    my.query('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+
+        var col = this.attributes['data-column'].value; 
+
+        // Get the column API object
+        var column = myTable.column( col );
+ 
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+
+
+
+ } );
+
+
+</script>
+</body>
+</html>
+

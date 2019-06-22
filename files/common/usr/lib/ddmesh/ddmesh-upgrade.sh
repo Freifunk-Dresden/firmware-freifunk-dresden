@@ -51,7 +51,7 @@ run_upgrade()
 	echo " upgrade to $v"
 	upgrade_$function_suffix;
 
- 	# force config update after next boot 
+ 	# force config update after next boot
 	# in case this script is called from terminal (manually)
  	uci set ddmesh.boot.boot_step=2
 
@@ -165,7 +165,7 @@ upgrade_4_2_3() {
  uci add_list ddmesh.system.communities="Freifunk Meissen"
  #traffic shaping for upgrade only
  uci set ddmesh.network.speed_enabled=1
- uci set ddmesh.network.wifi_country="BO"
+ uci set ddmesh.network.wifi_country="DE"
  for nt in node mobile server
  do
 	uci del_list ddmesh.system.node_types=$nt
@@ -265,7 +265,7 @@ upgrade_4_2_12() {
 	uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
 }
 
-upgrade_4_2_13() { 
+upgrade_4_2_13() {
  true
 }
 
@@ -327,11 +327,28 @@ upgrade_5_0_3() {
 }
 
 upgrade_5_0_4() {
- true
+ uci set ddmesh.system.firmware_autoupdate=1
 }
 
 upgrade_5_0_5() {
  true
+}
+
+upgrade_6_0_6() {
+ uci add_list ddmesh.system.communities="Freifunk Freital"
+ uci set ddmesh.network.wifi_country="DE"
+ uci set ddmesh.network.wifi_channel_5Ghz="44"
+ uci set ddmesh.network.wifi_txpower_5Ghz="18"
+}
+
+upgrade_6_0_7() {
+ uci -q set ddmesh.network.mesh_network_id=1206
+ uci -q delete system.ntp.server
+ uci -q add_list system.ntp.server=0.de.pool.ntp.org
+ uci -q add_list system.ntp.server=1.de.pool.ntp.org
+ uci -q add_list system.ntp.server=2.de.pool.ntp.org
+ uci -q add_list system.ntp.server=3.de.pool.ntp.org
+ uci -q set ddmesh.network.essid_adhoc='Freifunk-Mesh-Net'
 }
 
 

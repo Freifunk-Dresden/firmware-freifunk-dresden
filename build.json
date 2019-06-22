@@ -1,0 +1,112 @@
+######################################################################
+# This file lists one target in each line that should be built
+# in one run.
+#
+#   The order is important for device specific builds.
+#   In this case output directory is not deleted and device specific
+#   files are placed in exisiting directory.
+#
+#       Example for device specific:
+#               ramips.mt7621.ubiquiti-edgerouter-x
+#
+#   If no specific device builds are created, then platform directory
+#   is deleted before.
+#   So consider order when specifying targets!
+#
+#   Excample:
+#   	openwrt:ramips.mt7621
+#	openwrt:ramips.mt7621.ubiquiti-edgerouter-x"
+#   This would first build all targets that can be built, and then device specific
+#   builds are generated and copied
+#
+# target name has specific format:
+#   os:platform.subplatform
+# or
+#   os:platform.subplatform.device
+#
+# Each line starts with a "selector" (os)
+# When calling build.sh you select one of the os versions (openwrt or trunk...)
+# build.sh then only selects those targets which match the os version
+
+#########################################################################
+
+# "openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
+# "openwrt_rev":"a02809f61bf9fda0387d37bd05d0bcfe8397e25d", # tag 18.06.2
+
+{
+ "targets": [
+	{	
+		"name":"default",			# must be "default", this block defines default values that are used
+							# if following blocks do not specifiy there own value
+		"target":"ar71xx",
+		"subtarget":"generic",
+		"variant":"",				# used to distinguish different configs
+							# e.g. 	could be name of a router or
+							#      	a set of routers when selecting "multiple devices"
+							#	via "make menuconfig"
+		"openwrt_rev":"a02809f61bf9fda0387d37bd05d0bcfe8397e25d", # tag 18.06.2
+
+		"selector":"openwrt",			# used to select feeds,files,config,patches
+
+		# generates the feeds/feeds-[selector].conf
+		"feeds" : [
+				{"type":"src-link", 	"name":"ddmesh_own",	"src":"../../../feeds/openwrt/feeds-own" },
+				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"5d34dd284"},
+				{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"b93d66d80"},
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"35b8866"},
+				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"fdd274e"}
+			  ],
+
+		# install addional packages from feeds (see feeds.conf)
+		"packages":[ "" ]
+	},
+	{	
+		"name":"openwrt:ar71xx.tiny",	# can be any name
+		"target":"ar71xx",
+		"subtarget":"tiny"
+	},
+	{	
+		"name":"openwrt:ar71xx.generic",
+		"target":"ar71xx",
+		"subtarget":"generic"
+	},
+#	{	
+#		"name":"GL.iNet GL-MiFi (LTE Router)",
+#		"target":"ar71xx",
+#		"subtarget":"generic",
+#		"variant":"gl-mifi"
+#	},
+	{	
+		"name":"openwrt:x86.generic",
+		"target":"x86",
+		"subtarget":"generic"
+	},
+#	{	
+#		"name":"openwrt:ramips.mt7621.generic",
+#		"target":"ramips",
+#		"subtarget":"mt7621",
+#		"variant":"generic"
+#	},
+	{	
+		"name":"openwrt:ramips.mt7621.ubiquiti-edgerouter-x",
+		"target":"ramips",
+		"subtarget":"mt7621",
+		"variant":"ubiquiti-edgerouter-x"	# specific target (overwrites previous generic only for this device)
+	},
+#	{	
+#		"name":"openwrt:ramips.rt305x.generic",
+#		"target":"ramips",
+#		"subtarget":"rt305x"
+#	},
+#	{	
+#		"name":"openwrt:ramips.lantiq.generic",
+#		"target":"lantiq",
+#		"subtarget":"generic"
+#	},
+	{	
+		"name":"AVM Fritzbox 4040",
+		"target":"ipq40xx",
+		"subtarget":"generic"
+	}
+ ]
+}

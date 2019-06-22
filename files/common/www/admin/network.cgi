@@ -28,6 +28,30 @@ cat<<EOM
 <br>
 
 <fieldset class="bubble">
+<legend>Switch</legend>
+<table>
+EOM
+
+IFS='
+'
+for dev in $(swconfig list | awk '{print $2}')
+do
+	echo "<tr class="colortoggle1"><th colspan=2>$dev</th></tr>"
+	for entry in $(swconfig dev $dev show | sed -n 's#link: port:\([0-9]\+\) link:\(.*\+\)#\1=\2#p')
+	do
+		port=${entry%%=*}
+		state=${entry#*=}
+		echo "<tr class="colortoggle2"><th>Port $port</th><td>$state</td></tr>"
+	done
+done
+
+cat<<EOM
+</table>
+</fieldset>
+
+<br>
+
+<fieldset class="bubble">
 <legend>Netzwerk-Schnittstellen</legend>
 <table>
 EOM

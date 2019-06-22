@@ -71,7 +71,7 @@ done
 $DEBUG && echo "start"
 
 #dont use vpn server (or any openvpn server), it could interrupt connection
-ping_vpn_hosts="85.114.135.114 178.254.18.30 85.14.253.99 46.38.243.230 5.45.106.241 84.200.50.17 46.105.31.203 84.200.85.38 109.73.51.35 178.63.61.147"
+ping_vpn_hosts="85.114.135.114 178.254.18.30 5.45.106.241 178.63.61.147 82.165.230.17 1.1.1.1 8.8.4.4 8.8.8.8 178.63.61.147"
 #ping_vpn_hosts="85.14.253.99 46.38.243.230 5.45.106.241 84.200.50.17 46.105.31.203 84.200.85.38 109.73.51.35 178.63.61.147"
 ping_hosts="$ping_vpn_hosts 8.8.8.8"
 #process max 3 user ping
@@ -80,6 +80,15 @@ gw_ping="$(echo "$cfg_ping" | sed 's#[ ,;/	]\+# #g' | cut -d' ' -f1-3 ) $ping_ho
 $DEBUG && echo "hosts:[$gw_ping]"
 
 #determine all possible gateways
+network_is_up wwan  && {
+	#get network infos using /lib/functions/network.sh
+	network_get_device default_wwan_ifname wwan
+	default_wwan_gateway=$(ip route | sed -n "/default via [0-9.]\+ dev $default_wwan_ifname/{s#.*via \([0-9.]\+\).*#\1#p}")
+	if [ -n "$default_wwan_gateway" -a -n "$default_wwan_ifname" ]; then
+		wwan_default_route="$default_wwan_gateway:$default_wwan_ifname"
+	fi
+}
+echo "WWAN:$default_wwan_ifname via $default_wwan_gateway"
 
 network_is_up wan  && {
 	#get network infos using /lib/functions/network.sh
@@ -115,9 +124,10 @@ echo "VPN:$default_vpn_ifname via $default_vpn_gateway"
 #try each gateway
 ok=false
 IFS=' '
-#start with vpn, because this is prefered gateway, then WAN and lates LAN
-#(there is no forwarding to lan allowed by firewall)
-for g in $vpn_default_route $wan_default_route $lan_default_route
+# start with vpn, because this is prefered gateway, then WAN and lates LAN
+# (there is no forwarding to lan allowed by firewall)
+# wwan after wan: assume wan is faster than wwan
+for g in $vpn_default_route $wan_default_route $wwan_default_route $lan_default_route
 do
 	echo "==========="
 	echo "try: $g"
@@ -147,11 +157,10 @@ do
 	do
 		$DEBUG && echo "add ping route ip:$ip"
 		ip route add $ip via $via dev $dev table ping
-		$DEBUG && echo "route:$(ip route get $ip)"
-		$DEBUG && echo "route via:$(ip route get $via)"
+		$DEBUG && echo ip route add $ip via $via dev $dev table ping
 
 		# mark only tested ip addresses
-		iptables -t mangle -A output_gateway_check -p icmp -d $ip -j MARK --set-mark $ip_fwmark
+		iptables -w -t mangle -A output_gateway_check -p icmp -d $ip -j MARK --set-mark $ip_fwmark
 		numIPs=$((numIPs+1))
 	done
 	echo "number IPs: $numIPs"
@@ -184,10 +193,11 @@ do
 		fi
 	done
 	if $ok; then
-		$DEBUG && echo "gateway found: via [$via] dev [$dev] (landev: [$default_lan_ifname], wandev=[$default_wan_ifname, vpndev=[$default_vpn_ifname]])"
+		$DEBUG && echo "gateway found: via [$via] dev [$dev]"
+		$DEBUG && echo "landev: [$default_lan_ifname], wandev=[$default_wan_ifname], vpndev=[$default_vpn_ifname], wwan=[$default_wwan_ifname]"
 
 		#always add wan or lan to local gateway
-		if [ "$dev" = "$default_lan_ifname" -o "$dev" = "$default_wan_ifname" ]; then
+		if [ "$dev" = "$default_lan_ifname" -o "$dev" = "$default_wan_ifname" -o "$dev" = "$default_wwan_ifname" ]; then
 			#logger -s -t "$LOGGER_TAG" "Set local gateway: dev:$dev, ip:$via"
 			setup_gateway_table $dev $via local_gateway
 			#if lan/wan is tested, then we have no vpn which is working. so clear public gateway
@@ -217,7 +227,8 @@ do
 		#lan/wan local_gateway
 		break;
 	else
-		$DEBUG && echo "gateway not found: via $via dev $dev (landev:$default_lan_ifname, wandev=$default_wan_ifname)"
+		$DEBUG && echo "gateway NOT found: via [$via] dev [$dev]"
+		$DEBUG && echo "landev: [$default_lan_ifname], wandev=[$default_wan_ifname], vpndev=[$default_vpn_ifname], wwan=[$default_wwan_ifname]"
 
 		#logger -s -t "$LOGGER_TAG" "remove local/public gateway: dev:$dev, ip:$via"
 		# remove default route only for interface that was tested! if wan and lan is set
@@ -236,7 +247,7 @@ ip route flush table ping
 ip rule del iif lo fwmark $ip_fwmark priority $ip_rule_priority table ping >/dev/null
 
 # clear iptables used to mark icmp packets
-iptables -t mangle -F output_gateway_check
+iptables -w -t mangle -F output_gateway_check
 
 #in case no single gateway was working but gateway was announced, clear gateways
 if ! $ok; then

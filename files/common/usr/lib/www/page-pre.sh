@@ -159,4 +159,4 @@ cat<<EOF
 		<tr><td valign="top" height="100%" width="100%">
 <!-- page-pre -->
 EOF
-#show_set
+
