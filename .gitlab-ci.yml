@@ -1,8 +1,17 @@
-#before_script:
-#   - touch touch-before-script
+stages:
+- build
 
-build-firmware:
+build:firmware:
+  image: openwrt-docker-build:latest
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-master
+    paths:
+    - dl/*
   script:
-    - ./build.sh openwrt:ar71xx.tiny 
-
-
+    - bash build.sh openwrt:ar71xx.tiny 
+  artifacts:
+    paths:
+    - workdir/*/bin/targets/*
+  tags:
+  - docker
