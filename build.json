@@ -81,12 +81,18 @@
 		"target":"x86",
 		"subtarget":"generic"
 	},
-#	{	
-#		"name":"openwrt:ramips.mt7621.generic",
-#		"target":"ramips",
-#		"subtarget":"mt7621",
-#		"variant":"generic"
-#	},
+	{	
+		"name":"openwrt:ramips.mt7621.generic",
+		"target":"ramips",
+		"subtarget":"mt7621",
+		"variant":"generic"
+	},
+	{	
+		"name":"openwrt:ramips.mt7621.wr1200js",
+		"target":"ramips",
+		"subtarget":"mt7621",
+		"variant":"wr1200js"
+	},
 	{	
 		"name":"openwrt:ramips.mt7621.ubiquiti-edgerouter-x",
 		"target":"ramips",
