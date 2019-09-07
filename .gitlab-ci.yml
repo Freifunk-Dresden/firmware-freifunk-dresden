@@ -15,6 +15,7 @@ build:ar71xx.tiny:
     - workdir/*/bin/targets/*
   tags:
   - docker
+  - m2runner
 
 build:ar71xx.generic:
   image: openwrt-docker-build:latest
@@ -30,6 +31,7 @@ build:ar71xx.generic:
     - workdir/*/bin/targets/*
   tags:
   - docker
+  - m2runner
 
 build:x86.generic:
   image: openwrt-docker-build:latest
@@ -45,6 +47,7 @@ build:x86.generic:
     - workdir/*/bin/targets/*
   tags:
   - docker
+  - m2runner
 
 build:ramips.mt7621.ubiquiti-edgerouter-x:
   image: openwrt-docker-build:latest
@@ -60,4 +63,5 @@ build:ramips.mt7621.ubiquiti-edgerouter-x:
     - workdir/*/bin/targets/*
   tags:
   - docker
+  - m2runner
 
