@@ -103,7 +103,7 @@ cat<<EOM
 <TR>
 <TH>- Zugang zur Verwaltung erlauben:</TH>
 <TD><INPUT NAME="form_wansetup" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.wansetup)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td><font color="#ff0000">&Auml;nderung nach &Uuml;bernahme sofort aktiv. Router-Reset via Verwaltung &uuml;ber WAN anschlie&szlig;end nicht mehr erreichbar.</font></TD>
+<td><font color="#ff0000"><b>Achtung:</b><br/>&Auml;nderung nach &Uuml;bernahme sofort aktiv. Router-Reset via Verwaltung &uuml;ber WAN anschlie&szlig;end nicht mehr erreichbar.</font></TD>
 </TR>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
@@ -118,7 +118,7 @@ cat<<EOM
 <TR>
 <TH>- Zugang zur Verwaltung erlauben:</TH>
 <TD><INPUT NAME="form_meshsetup" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.meshsetup)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td><font color="#ff0000">&Auml;nderung nach &Uuml;bernahme sofort aktiv. Router-Reset via Verwaltung aus dem Freifunk-Netz anschlie&szlig;end nicht mehr erreichbar.</font></TD>
+<td><font color="#ff0000"><b>Achtung:</b><br/>&Auml;nderung nach &Uuml;bernahme sofort aktiv. Router-Reset via Verwaltung aus dem Freifunk-Netz anschlie&szlig;end nicht mehr erreichbar.</font></TD>
 </TR>
 
 
@@ -128,7 +128,7 @@ cat<<EOM
 <TR>
 <TH>- Eigenes Internet direkt freigeben:</TH>
 <TD><INPUT NAME="form_announce_gateway" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.announce_gateway)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td>Auch bei Nutzung des OpenVPN-Paketes muss dieser Schalter <b>deaktiviert</b> bleiben, sonst wird der eigene DSL/Kabel-Anschluss freigegeben.</TD>
+<td><font color="#ff0000"><b>Achtung:</b><br/>Auch bei Nutzung des OpenVPN-Paketes muss dieser Schalter <b>deaktiviert</b> bleiben, sonst wird der eigene DSL/Kabel-Anschluss freigegeben.</font></TD>
 </TR>
 <TR>
 <TH>- LAN verwendet Lokales Internet:</TH>

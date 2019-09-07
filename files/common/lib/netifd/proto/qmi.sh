@@ -17,6 +17,7 @@ proto_qmi_init_config() {
 	proto_config_add_string pincode
 	proto_config_add_int delay
 	proto_config_add_string modes
+	proto_config_add_string preference
 	proto_config_add_string pdptype
 	proto_config_add_int profile
 	proto_config_add_boolean dhcpv6
@@ -29,11 +30,11 @@ proto_qmi_init_config() {
 proto_qmi_setup() {
 	local interface="$1"
 	local dataformat connstat
-	local device apn auth username password pincode delay modes pdptype profile dhcpv6 autoconnect plmn timeout $PROTO_DEFAULT_OPTIONS
+	local device apn auth username password pincode delay modes preference pdptype profile dhcpv6 autoconnect plmn timeout $PROTO_DEFAULT_OPTIONS
 	local ip4table ip6table
 	local cid_4 pdh_4 cid_6 pdh_6
 	local ip_6 ip_prefix_length gateway_6 dns1_6 dns2_6
-	json_get_vars device apn auth username password pincode delay modes pdptype profile dhcpv6 autoconnect plmn ip4table ip6table timeout $PROTO_DEFAULT_OPTIONS
+	json_get_vars device apn auth username password pincode delay modes preference pdptype profile dhcpv6 autoconnect plmn ip4table ip6table timeout $PROTO_DEFAULT_OPTIONS
 
 	[ "$timeout" = "" ] && timeout="10"
 
@@ -197,6 +198,7 @@ proto_qmi_setup() {
 	done
 
 	[ -n "$modes" ] && uqmi -s -d "$device" --set-network-modes "$modes" > /dev/null 2>&1
+	[ -n "$preference" ] && uqmi -s -d "$device" --set-network-preference "$preference" > /dev/null 2>&1
 
 	echo "Starting network $interface"
 

@@ -11,6 +11,32 @@ OVPN=/etc/init.d/openvpn
 
 . /lib/functions/network.sh
 
+setup_fallback_gateway()
+{
+	gateway_table=fallback_gateway
+
+	#clear table
+	ip route flush table $gateway_table 2>/dev/null
+
+	#jump over freifunk/private ranges
+	ip route add throw 10.0.0.0/8 table $gateway_table 2>/dev/null
+	ip route add throw 172.16.0.0/12 table $gateway_table 2>/dev/null
+	ip route add throw 192.168.0.0/16 table $gateway_table 2>/dev/null
+
+	IFS='
+'
+	for gw in $(ip route | grep default)
+	do
+		eval ip route add $gw table $gateway_table
+
+		# extract via and dev
+		eval $(echo $gw | awk '/default/ {print "dev="$5";via="$3}')
+		# add route to gateway for DNS requests
+		ip route add $via/32 dev $dev table $gateway_table 2>/dev/null
+	done
+	unset IFS
+}
+
 setup_gateway_table ()
 {
 	dev=$1
@@ -20,7 +46,7 @@ setup_gateway_table ()
 	#check if changed
 	unset d
 	unset v
-	eval $(ip ro lis ta $gateway_table | awk ' /default/ {print "d="$5";v="$3} ')
+	eval $(ip ro lis ta $gateway_table | awk '/default/ {print "d="$5";v="$3}')
 	echo "old: dev=$d, via=$v"
 	if [ "$dev" = "$d" -a "$via" = "$v" ]; then
 		return
@@ -29,14 +55,13 @@ setup_gateway_table ()
 	#clear table
 	ip route flush table $gateway_table 2>/dev/null
 
-	#redirect gateway ip directly to gateway interface
+	# add route to gateway for DNS requests
 	ip route add $via/32 dev $dev table $gateway_table 2>/dev/null
 
-	#jump over freifunk ranges
+
+	#jump over freifunk/private ranges
 	ip route add throw 10.0.0.0/8 table $gateway_table 2>/dev/null
 	ip route add throw 172.16.0.0/12 table $gateway_table 2>/dev/null
-
-	#jump over private ranges
 	ip route add throw 192.168.0.0/16 table $gateway_table 2>/dev/null
 
 	#add default route (which has wider range than throw, so it is processed after throw)
@@ -46,10 +71,11 @@ setup_gateway_table ()
 start_openvpn()
 {
 	local_gateway_present="$(ip ro li ta local_gateway)"
+
 	#only start openvpn when we have
 	if [ -n "$local_gateway_present" -a -x $OVPN ]; then
 		#logger -s -t "$LOGGER_TAG" "restart openvpn"
-		$OVPN restart
+		test -x $OVPN && $OVPN restart 2>/dev/null
 	fi
 }
 
@@ -62,18 +88,16 @@ stop_openvpn()
 mypid=$$
 pname=${0##*/}
 IFS=' '
-echo	$pname,$mypid
 for i in $(pidof $pname)
 do
   test "$i" != "$mypid" && echo kill $i && kill -9 $i
 done
 
-$DEBUG && echo "start"
+setup_fallback_gateway 	# for safety reasons always store updated gw
 
 #dont use vpn server (or any openvpn server), it could interrupt connection
-ping_vpn_hosts="85.114.135.114 178.254.18.30 5.45.106.241 178.63.61.147 82.165.230.17 1.1.1.1 8.8.4.4 8.8.8.8 178.63.61.147"
-#ping_vpn_hosts="85.14.253.99 46.38.243.230 5.45.106.241 84.200.50.17 46.105.31.203 84.200.85.38 109.73.51.35 178.63.61.147"
-ping_hosts="$ping_vpn_hosts 8.8.8.8"
+ping_vpn_hosts="85.114.135.114 89.163.140.199 82.165.229.138 178.254.18.30 5.45.106.241 178.63.61.147 82.165.230.17"
+ping_hosts="$ping_vpn_hosts 9.9.9.9 8.8.8.8 1.1.1.1"
 #process max 3 user ping
 cfg_ping="$(uci -q get ddmesh.network.gateway_check_ping)"
 gw_ping="$(echo "$cfg_ping" | sed 's#[ ,;/	]\+# #g' | cut -d' ' -f1-3 ) $ping_hosts"
@@ -175,9 +199,7 @@ do
 	#run check
 	ok=false
 	countSuccessful=0
-	minSuccessful=$(( (numIPs+1)/2 ))
-	if [ $minSuccessful -lt 4 ]; then minSuccessful=4; fi
-	echo "minSuccessful: $minSuccessful"
+	minSuccessful=1
 
 	IFS=' '
 	for ip in $gw_ping
@@ -193,17 +215,19 @@ do
 		fi
 	done
 	if $ok; then
-		$DEBUG && echo "gateway found: via [$via] dev [$dev]"
-		$DEBUG && echo "landev: [$default_lan_ifname], wandev=[$default_wan_ifname], vpndev=[$default_vpn_ifname], wwan=[$default_wwan_ifname]"
+		echo "gateway found: via [$via] dev [$dev]"
+		echo "landev: [$default_lan_ifname], wandev=[$default_wan_ifname], vpndev=[$default_vpn_ifname], wwan=[$default_wwan_ifname]"
 
-		#always add wan or lan to local gateway
+		#always add wan/wwan or lan to local gateway
 		if [ "$dev" = "$default_lan_ifname" -o "$dev" = "$default_wan_ifname" -o "$dev" = "$default_wwan_ifname" ]; then
-			#logger -s -t "$LOGGER_TAG" "Set local gateway: dev:$dev, ip:$via"
+			echo "Set local gateway: dev:$dev, ip:$via"
 			setup_gateway_table $dev $via local_gateway
 			#if lan/wan is tested, then we have no vpn which is working. so clear public gateway
 			#if not announced
 			if [ ! "$(uci -q get ddmesh.system.announce_gateway)" = "1" ]; then
-				#logger -s -t "$LOGGER_TAG" "remove public gateway: dev:$dev, ip:$via"
+
+				$DEBUG && echo "remove public gateway: dev:$dev, ip:$via"
+
 				ip route flush table public_gateway 2>/dev/null
 				/usr/lib/ddmesh/ddmesh-bmxd.sh no_gateway
 
@@ -227,8 +251,8 @@ do
 		#lan/wan local_gateway
 		break;
 	else
-		$DEBUG && echo "gateway NOT found: via [$via] dev [$dev]"
-		$DEBUG && echo "landev: [$default_lan_ifname], wandev=[$default_wan_ifname], vpndev=[$default_vpn_ifname], wwan=[$default_wwan_ifname]"
+		echo "gateway NOT found: via [$via] dev [$dev]"
+		echo "landev: [$default_lan_ifname], wandev=[$default_wan_ifname], vpndev=[$default_vpn_ifname], wwan=[$default_wwan_ifname]"
 
 		#logger -s -t "$LOGGER_TAG" "remove local/public gateway: dev:$dev, ip:$via"
 		# remove default route only for interface that was tested! if wan and lan is set
@@ -252,7 +276,7 @@ iptables -w -t mangle -F output_gateway_check
 #in case no single gateway was working but gateway was announced, clear gateways
 if ! $ok; then
 	#remove all in default route from public_gateway table
-	$DEBUG && echo "no gateway found"
+	echo "no gateway found"
 	ip route flush table local_gateway 2>/dev/null
 	ip route flush table public_gateway 2>/dev/null
 	/usr/lib/ddmesh/ddmesh-bmxd.sh no_gateway
@@ -267,5 +291,4 @@ if ! $ok; then
 	fi
 fi
 
-$DEBUG && echo "end."
 exit 0

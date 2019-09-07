@@ -111,7 +111,9 @@ define Package/$(PKG_NAME)-usb-storage
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
   DEPENDS:= $(PKG_NAME)-base \
-		+kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage 
+		+kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
+		+kmod-fs-vfat \
+		+block-mount 
 
   TITLE:=Meta package to enable usb storage
 endef

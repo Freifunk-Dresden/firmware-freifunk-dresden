@@ -4,7 +4,7 @@ test -f /tmp/freifunk-running || exit 0
 
 # update resolv.conf.final if wan cable is inserted after bmxd has started
 
-if [ "$INTERFACE" = "wan" ]; then 
+if [ "$INTERFACE" = "wan" -o "$INTERFACE" = "wwan" ]; then 
 
 	if [ "$ACTION" = "ifup" ]; then
 		logger -t ddmesh "network-hotplug iface: update resolv.conf.final"

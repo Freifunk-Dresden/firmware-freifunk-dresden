@@ -72,17 +72,17 @@ run_upgrade()
 ### uci_commit.sh is called after booting via ddmesh.boot_step=2
 
 # function for current version is needed for this algorithm
-upgrade_3_1_9() {
- true
-}
-upgrade_4_1_7() {
- true
-}
-upgrade_4_2_0() {
- true
-}
+upgrade_3_1_9()
+{ true }
 
-upgrade_4_2_2() {
+upgrade_4_1_7()
+{ true }
+
+upgrade_4_2_0()
+{ true }
+
+upgrade_4_2_2()
+{
  uci set ddmesh.network.speed_network='lan'
  uci rename ddmesh.network.wan_speed_down='speed_down'
  uci rename ddmesh.network.wan_speed_up='speed_up'
@@ -129,7 +129,8 @@ upgrade_4_2_2() {
  uci -q set ddmesh.network.mesh_network_id=1206
 }
 
-upgrade_4_2_3() {
+upgrade_4_2_3()
+{
  # unsicher ob fruehere Konvertierung funktioniert hatte
  uci set credentials.registration.register_service_url="$(uci get credentials.registration.register_service_url | sed 's#ddmesh.de#freifunk-dresden.de#')"
  uci delete ddmesh.network.wifi2_ip
@@ -173,7 +174,8 @@ upgrade_4_2_3() {
  done
 }
 
-upgrade_4_2_4() {
+upgrade_4_2_4()
+{
  for n in wifi tbb bat; do
    for p in tcp udp; do
 	if [ -z "$(uci -q get firewall.iperf3_"$n"_"$p")" ]; then
@@ -201,7 +203,8 @@ upgrade_4_2_4() {
 }
 
 
-upgrade_4_2_5() {
+upgrade_4_2_5()
+{
 	#add network to fw zone tbb, to create rules with br-tbb_lan
 	uci delete firewall.zone_tbb.network
         uci add_list firewall.zone_tbb.network='tbb'
@@ -210,24 +213,26 @@ upgrade_4_2_5() {
 }
 
 
-upgrade_4_2_6() {
- true
-}
-upgrade_4_2_7() {
- true
-}
+upgrade_4_2_6()
+{ true }
 
-upgrade_4_2_8() {
+upgrade_4_2_7()
+{ true }
+
+upgrade_4_2_8()
+{
 	echo dummy
 	uci delete ddmesh.system.bmxd_nightly_restart
 	cp /rom/etc/config/dhcp /etc/config/
 }
 
-upgrade_4_2_9() {
+upgrade_4_2_9()
+{
 	uci rename overlay.@overlay[0]='data'
 }
 
-upgrade_4_2_10() {
+upgrade_4_2_10()
+{
 	if [ -z "$(uci -q get credentials.backbone_secret)" ]; then
 		uci -q add credentials backbone_secret
 		uci -q rename credentials.@backbone_secret[-1]='backbone_secret'
@@ -256,62 +261,68 @@ upgrade_4_2_10() {
 	cp /rom/etc/config/firewall /etc/config/firewall
 }
 
-upgrade_4_2_11() {
- true
-}
+upgrade_4_2_11()
+{ true }
 
-upgrade_4_2_12() {
+upgrade_4_2_12()
+{
 	cp /rom/etc/config/firewall /etc/config/firewall
 	uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
 }
 
-upgrade_4_2_13() {
- true
-}
+upgrade_4_2_13()
+{ true }
 
-upgrade_4_2_14() {
- true
-}
+upgrade_4_2_14()
+{ true }
 
-upgrade_4_2_15() {
+upgrade_4_2_15()
+{
 	rm /etc/config/wireless
 	ln -s /var/etc/config/wireless /etc/config/wireless
 	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
 }
 
-upgrade_4_2_16() {
+upgrade_4_2_16()
+{
 	uci -q delete credentials.url.firmware_download_server
 }
 
-upgrade_4_2_17() {
+upgrade_4_2_17()
+{
  	uci set network.wan.stp=1
 	cp /rom/etc/config/firewall /etc/config/firewall
 }
 
 
-upgrade_4_2_18() {
+upgrade_4_2_18()
+{
 	uci set dhcp.dnsmasq.quietdhcp=1
 }
 
-upgrade_4_2_19() {
+upgrade_4_2_19()
+{
 	uci -q delete network.meshwire # mesh_lan/wan will be created on next boot
 	uci set network.tbb_fastd.ifname='tbb_fastd'
 	cp /rom/etc/config/firewall /etc/config/firewall
 	uci set dhcp.dnsmasq.logqueries=0
 }
 
-upgrade_5_0_1() {
+upgrade_5_0_1()
+{
 	uci -q set ddmesh.network.wifi2_dhcplease='5m'
 }
 
-upgrade_5_0_2() {
+upgrade_5_0_2()
+{
 	uci -q delete network.meshwire # mesh_lan/wan will be created on next boot
 	uci set network.tbb_fastd.ifname='tbb_fastd'
 	cp /rom/etc/config/firewall /etc/config/firewall
 	uci set dhcp.dnsmasq.logqueries=0
 }
 
-upgrade_5_0_3() {
+upgrade_5_0_3()
+{
 	uci add_list ddmesh.system.communities="Freifunk Waldheim"
 	# convert security
 	security=0 # default
@@ -326,22 +337,24 @@ upgrade_5_0_3() {
 	uci -q delete ddmesh.network.wifi3_security_open
 }
 
-upgrade_5_0_4() {
+upgrade_5_0_4()
+{
  uci set ddmesh.system.firmware_autoupdate=1
 }
 
-upgrade_5_0_5() {
- true
-}
+upgrade_5_0_5()
+{ true }
 
-upgrade_6_0_6() {
+upgrade_6_0_6()
+{
  uci add_list ddmesh.system.communities="Freifunk Freital"
  uci set ddmesh.network.wifi_country="DE"
  uci set ddmesh.network.wifi_channel_5Ghz="44"
  uci set ddmesh.network.wifi_txpower_5Ghz="18"
 }
 
-upgrade_6_0_7() {
+upgrade_6_0_7()
+{
  uci -q set ddmesh.network.mesh_network_id=1206
  uci -q delete system.ntp.server
  uci -q add_list system.ntp.server=0.de.pool.ntp.org
@@ -349,6 +362,18 @@ upgrade_6_0_7() {
  uci -q add_list system.ntp.server=2.de.pool.ntp.org
  uci -q add_list system.ntp.server=3.de.pool.ntp.org
  uci -q set ddmesh.network.essid_adhoc='Freifunk-Mesh-Net'
+}
+
+upgrade_6_0_8()
+{ true }
+
+upgrade_6_0_9()
+{ true }
+
+upgrade_6_0_10()
+{
+ cp /rom/etc/iproute2/rt_tables /etc/iproute2/rt_tables 
+ rm /etc/config/wireless # delete symlink
 }
 
 

@@ -46,8 +46,8 @@ EOM
 
 	if [ "$m_conn" = "connected" -a "$registration" = "registered" ]; then
 		case "$m_type" in
-			2g) /usr/lib/ddmesh/ddmesh-led.sh wwan 2g ;;
-			3g) /usr/lib/ddmesh/ddmesh-led.sh wwan 3g ;;
+			gsm) /usr/lib/ddmesh/ddmesh-led.sh wwan 2g ;;
+			wcdma) /usr/lib/ddmesh/ddmesh-led.sh wwan 3g ;;
 			lte) /usr/lib/ddmesh/ddmesh-led.sh wwan 4g ;;
 			*) /usr/lib/ddmesh/ddmesh-led.sh wwan off ;;
 		esac

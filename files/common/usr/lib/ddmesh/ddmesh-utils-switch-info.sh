@@ -19,8 +19,8 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh list)
 eval $(ip link | awk '
 	BEGIN{ FS="[ :]" }
 	/^[0-9]:/{
-		carrier=0
-		if(gsub("NO-CARRIER",$5)) carrier=1
+		carrier=1
+		if(gsub("NO-CARRIER",$5)) carrier=0
 		
 		if($3=="'$net_lan'") { print "carrier_lan="carrier }
 		if($3=="'$net_wan'") { print "carrier_wan="carrier }
@@ -36,20 +36,38 @@ status_wan="down"
 
 if $json; then
 	echo -n "{"
-	echo -n "\"wan\":\"$status_wan\","
+	echo -n "\"wan\":\"$status_wan\""
 else
 	echo "sw_status_wan=$status_wan"
+fi
+
+# check for switch
+if [ -x /sbin/swconfig ]; then
+	switch_present=1
+	switch_if_list=$(swconfig list | awk '{print $2}')
+fi
+
+# if no switch use lan ifname
+if [ -z "$switch_if_list" ]; then
+	switch_present=0 #reset switch,not used
+	switch_if_list=$(uci -q get network.lan.ifname)
 fi
 
 # get switch status
 IFS='
 '
-for dev in $(swconfig list | awk '{print $2}')
+for dev in $switch_if_list
 do
-	$json && echo -n "\"lan\" : ["
+	$json && echo -n ",\"lan\" : ["
 
 	#check for switch
-	if [ -n "$(swconfig dev $dev show | sed -n '/enable_vlan:[ 	]*1/p' )" ]; then
+	if [ "$switch_present" = "1" ]; then
+		sw="$(swconfig dev $dev show | sed -n '/enable_vlan:[ 	]*1/p' )"
+	else
+		sw=""
+	fi
+
+	if [ -n "$sw" ]; then
 		comma=0
 		for entry in $(swconfig dev $dev show | sed -n 's#.*link: port:\([0-9]\+\) link:\(.*\+\)[ ]*$#\1=\2#p')
 		do

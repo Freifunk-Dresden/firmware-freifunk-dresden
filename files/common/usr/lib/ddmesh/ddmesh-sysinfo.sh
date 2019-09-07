@@ -1,7 +1,8 @@
 #!/bin/sh
 
-OUTPUT=/tmp/sysinfo.json.tmp
-FINAL_OUTPUT=/tmp/sysinfo.json
+OUTPUT=/var/sysinfo.json.tmp
+FINAL_OUTPUT=/var/sysinfo.json
+SYSINFO_MOBILE_GEOLOC=/var/geoloc-mobile.json
 
 #empty
 > $OUTPUT
@@ -16,13 +17,6 @@ gwt=bat0
 
 eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
 eval $(cat /etc/openwrt_release)
-
-gps_lat=$(uci -q get ddmesh.gps.latitude)
-gps_lat=$(printf '%f' ${gps_lat:=0} 2>/dev/null)
-gps_lon=$(uci -q get ddmesh.gps.longitude)
-gps_lon=$(printf '%f' ${gps_lon:=0} 2>/dev/null)
-gps_alt=$(uci -q get ddmesh.gps.altitude)
-gps_alt=$(printf '%d' ${gps_alt:=0} 2>/dev/null)
 
 avail_flash_size=$(df -k -h /overlay | sed -n '2,1{s# \+# #g; s#[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\) .*#\1#;p}')
 
@@ -50,6 +44,20 @@ case "$(uci -q get ddmesh.system.node_type)" in
 	mobile)	node_type="mobile" ;;
 	*) node_type="node";;
 esac
+
+if [ $node_type = "mobile" ]; then
+	eval $(cat $SYSINFO_MOBILE_GEOLOC | jsonfilter \
+		-e gps_lat='@.location.lat' \
+		-e gps_lng='@.location.lng' )
+	gps_alt=0
+else
+	gps_lat=$(uci -q get ddmesh.gps.latitude)
+	gps_lng=$(uci -q get ddmesh.gps.longitude)
+	gps_alt=$(uci -q get ddmesh.gps.altitude)
+fi
+gps_lat=$(printf '%f' ${gps_lat:=0} 2>/dev/null)
+gps_lng=$(printf '%f' ${gps_lng:=0} 2>/dev/null)
+gps_alt=$(printf '%d' ${gps_alt:=0} 2>/dev/null)
 
 # get model
 eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
@@ -86,7 +94,7 @@ cat << EOM >> $OUTPUT
 			"uptime":"$(cat /proc/uptime)",
 			"uname":"$(uname -a)",
 			"nameserver": [
-$(cat /tmp/resolv.conf.auto| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*\(.*\)#\t\t\t\t"\1",#;p}' | sed '$s#,[ 	]*$##')
+$(cat /var/resolv.conf.final| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*\(.*\)#\t\t\t\t"\1",#;p}' | sed '$s#,[ 	]*$##')
 			],
 			"date":"$(date)",
 			"board":"$(cat /var/sysinfo/board_name 2>/dev/null)",
@@ -117,7 +125,7 @@ $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 		},
 		"gps":{
 			"latitude":$gps_lat,
-			"longitude":$gps_lon,
+			"longitude":$gps_lng,
 			"altitude":$gps_alt
 		},
 		"contact":{

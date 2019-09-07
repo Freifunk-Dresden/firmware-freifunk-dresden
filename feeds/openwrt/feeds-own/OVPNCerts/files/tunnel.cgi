@@ -98,14 +98,14 @@ EOM
 			mkdir -p /tmp/openvpn
 			cd /tmp/openvpn
 			tar xzf $OVPN_FILE
-			conf="$(ls *.ovpn *.conf)"
-			login="$(ls *.login)"
+			conf="$(ls *.ovpn *.conf 2>/dev/null)"
+			login="$(ls *.login 2>/dev/null)"
 
 			#prepare conf dir	
 			mkdir -p /etc/openvpn
 			cd /etc/openvpn/
 			cp -a /tmp/openvpn/* /etc/openvpn/
-			rm *.conf *.ovpn *.login
+			rm *.conf *.ovpn *.login 2>/dev/null
 			test -f "/tmp/openvpn/$login" && cp "/tmp/openvpn/$login" /etc/openvpn/openvpn.login
 			/etc/openvpn/gen-config.sh "/tmp/openvpn/$conf"
 			chown -R root:root /etc/openvpn

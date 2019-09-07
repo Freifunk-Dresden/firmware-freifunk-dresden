@@ -19,12 +19,13 @@ config zone 'zone_lan'
 #mask: any->wan
 config zone 'zone_wan'
 	option name 'wan'
-	list network 'wan'
 	option input 'REJECT'
 	option output 'ACCEPT'
 	option forward 'REJECT'
 	option masq '1'
 	option mtu_fix '1'
+	list network 'wan'
+	list network 'wwan_helper'
 
 config zone 'zone_wifi2'
 	option name 'wifi2'
@@ -521,7 +522,49 @@ config rule 'iperf3_bat_udp'
 	option target 'ACCEPT'
 	option family 'ipv4'
 
-# include a file with users custom iptables rules
+config rule 'wanssh'
+	option name 'Allow-wan-ssh'
+	option src 'wan'
+	option proto 'tcp'
+	option dest_port '22'
+	option target 'ACCEPT'
+
+config rule 'meshssh'
+	option name 'Allow-mesh-ssh'
+	option src 'mesh'
+	option proto 'tcp'
+	option dest_port '22'
+	option target 'ACCEPT'
+
+config rule 'wifi2ssh'
+	option name 'Allow-wifi2-ssh'
+	option src 'wifi2'
+	option proto 'tcp'
+	option dest_port '22'
+	option target 'ACCEPT'
+
+config rule 'wanhttp'
+	option name 'Allow-wan-http'
+	option src 'wan'
+	option proto 'tcp'
+	option dest_port '80'
+	option target 'ACCEPT'
+
+config rule 'wanhttps'
+	option name 'Allow-wan-https'
+	option src 'wan'
+	option proto 'tcp'
+	option dest_port '443'
+	option target 'ACCEPT'
+
+config rule 'wanicmp'
+	option name 'Allow-wan-icmp'
+	option src 'wan'
+	option proto 'icmp'
+	option target 'ACCEPT'
+
+
 config include
-	option path /etc/firewall.user
+	option path '/etc/firewall.user'
+
 

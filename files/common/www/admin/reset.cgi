@@ -36,7 +36,7 @@ else #form_action
 			<tr><td>
 EOM
 			if [ -n "$form_reset_factory" ]; then
-				SECONDS=210
+				SECONDS=260
 				BARS=3
 				echo "Alle Einstellungen werden auf Standardwerte gesetzt (Passwort, IP-Adressen, SSH-Key, HTTPS-Zertifikate).<br />Ebenfalls wird eine neue Knoten-Nr. erzeugt."
 			else
@@ -47,10 +47,10 @@ EOM
 				fi
 
 				if [ "$(uci -q get ddmesh.boot.boot_step)" = "3" ]; then
-					SECONDS=70
+					SECONDS=90
 					BARS=1
 				else
-					SECONDS=120
+					SECONDS=180
 					BARS=2
 				fi
 

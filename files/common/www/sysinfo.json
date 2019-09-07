@@ -4,4 +4,9 @@ echo 'Content-Type: application/json;charset=UTF-8'
 echo ''
 
 JSON=/tmp/sysinfo.json
-cat $JSON
+if [ -f $JSON ]; then
+ cat $JSON
+else
+ echo "{}"
+fi
+

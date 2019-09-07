@@ -1,15 +1,15 @@
---- buildroot/package/base-files/image-config.in	2018-04-01 16:49:08.940983457 +0200
-+++ buildroot/package/base-files/image-config.in	2018-04-01 16:59:04.128773413 +0200
-@@ -190,7 +190,7 @@
+--- buildroot/package/base-files/image-config.in.orig	2019-09-07 13:07:50.762744079 +0200
++++ buildroot/package/base-files/image-config.in	2019-09-07 13:47:49.141206674 +0200
+@@ -183,7 +183,7 @@
  	config VERSION_REPO
  		string
  		prompt "Release repository"
--		default "http://downloads.lede-project.org/releases/17.01-SNAPSHOT"
-+		default "https://github.com/ddmesh/firmware-freifunk-dresden.git"
+-		default "http://downloads.openwrt.org/releases/19.07-SNAPSHOT"
++		default "https://github.com/freifunk-dresden/firmware-freifunk-dresden.git"
  		help
  			This is the repository address embedded in the image, it defaults
  			to the trunk snapshot repo; the url may contain the following placeholders:
-@@ -213,6 +213,7 @@
+@@ -210,6 +210,7 @@
 
  	config VERSION_MANUFACTURER
  		string
@@ -17,7 +17,7 @@
  		prompt "Manufacturer name"
  		help
  			This is the manufacturer name embedded in /etc/device_info
-@@ -254,7 +255,7 @@
+@@ -251,7 +252,7 @@
  	config VERSION_FILENAMES
  		bool
  		prompt "Version number in filenames"
@@ -26,7 +26,7 @@
  		help
  			Enable this to include the version number in firmware image, SDK-
  			and Image Builder archive file names
-@@ -262,7 +263,7 @@
+@@ -259,7 +260,7 @@
  	config VERSION_CODE_FILENAMES
  		bool
  		prompt "Revision code in filenames"

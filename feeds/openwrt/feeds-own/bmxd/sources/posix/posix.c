@@ -73,18 +73,18 @@ void update_batman_time( struct timeval *precise_tv ) {
 		timersub( &new_tv, &acceptable_p_tv, &diff_tv );
 		timeradd( &start_time_tv, &diff_tv, &start_time_tv );
 		
-		dbg( DBGL_SYS, DBGT_WARN, 
-		     "critical system time drift detected: ++ca %ld s, %ld us! Correcting reference!",
-		     diff_tv.tv_sec, diff_tv.tv_usec );
+//		dbg( DBGL_SYS, DBGT_WARN, 
+//		     "critical system time drift detected: ++ca %ld s, %ld us! Correcting reference!",
+//		     diff_tv.tv_sec, diff_tv.tv_usec );
 		
 	} else 	if ( timercmp( &new_tv, &acceptable_m_tv, < ) ) {
 		
 		timersub( &acceptable_m_tv, &new_tv, &diff_tv );
 		timersub( &start_time_tv, &diff_tv, &start_time_tv );
 		
-		dbg( DBGL_SYS, DBGT_WARN, 
-		     "critical system time drift detected: --ca %ld s, %ld us! Correcting reference!",
-		     diff_tv.tv_sec, diff_tv.tv_usec );
+//		dbg( DBGL_SYS, DBGT_WARN, 
+//		     "critical system time drift detected: --ca %ld s, %ld us! Correcting reference!",
+//		     diff_tv.tv_sec, diff_tv.tv_usec );
 
 	}
 	
