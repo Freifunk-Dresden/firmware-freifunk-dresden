@@ -20,6 +20,10 @@ start() {
 	#check if boot process should be stopped
 	/usr/lib/ddmesh/ddmesh-bootconfig.sh || exit
 
+	logger -s -t $LOGGER_TAG "restart firewall+addon"
+	fw3 restart 
+	/usr/lib/ddmesh/ddmesh-firewall-addons.sh init
+
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
@@ -49,15 +53,7 @@ start() {
 	/usr/lib/ddmesh/ddmesh-privnet.sh start
 
 	logger -s -t $LOGGER_TAG "start service openvpn"
-	if [ "$DISTRIB_CODENAME" = "attitude_adjustment" ]; then
-		cd /etc/openvpn
-		for i in /etc/openvpn/*.conf
-		do
-			test -x /usr/sbin/openvpn && /usr/sbin/openvpn --config $i &
-		done
-	else
-		test -x /etc/init.d/openvpn && /etc/init.d/openvpn start
-	fi
+	test -x /etc/init.d/openvpn && /etc/init.d/openvpn start
 
 	if [ -x /usr/bin/iperf3 ]; then
 		logger -s -t $LOGGER_TAG "start service iperf3"
@@ -66,20 +62,28 @@ start() {
 		logger -s -t $LOGGER_TAG "service iperf3 not installed"
 	fi
 
+	if [ -x /sbin/uqmi ]; then
+		logger -s -t $LOGGER_TAG "start lte monitor"
+		/usr/lib/ddmesh/ddmesh-lte-monitor.sh &
+	fi
+
+	if [ "$(uci -q get ddmesh.system.node_type)" = "mobile" ]; then
+		/usr/lib/ddmesh/ddmesh-geoloc.sh mobile &
+	fi
+
 	logger -s -t $LOGGER_TAG "register node"
 	/usr/lib/ddmesh/ddmesh-register-node.sh
 
 	logger -s -t $LOGGER_TAG "start cron"
 	/etc/init.d/cron start
 
-	logger -s -t $LOGGER_TAG "start lte monitor"
-	/usr/lib/ddmesh/ddmesh-lte-monitor.sh &
-
 	logger -s -t $LOGGER_TAG "finished."
 	/usr/lib/ddmesh/ddmesh-led.sh status done
 
 	# enable hotplug events
 	touch /tmp/freifunk-running
+
+	logger -s -t $LOGGER_TAG "finished."
 }
 
 stop() {

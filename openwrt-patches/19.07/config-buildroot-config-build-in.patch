@@ -1,0 +1,63 @@
+--- buildroot/config/Config-build.in.orig	2019-09-07 13:07:50.134741275 +0200
++++ buildroot/config/Config-build.in	2019-09-07 13:07:56.614770206 +0200
+@@ -123,7 +123,7 @@
+ 	config IPV6
+ 		bool
+ 		prompt "Enable IPv6 support in packages"
+-		default y
++		default n
+ 		help
+ 		  Enables IPv6 support in kernel (builtin) and packages.
+
+@@ -167,6 +167,7 @@
+
+ 	config STRIP_KERNEL_EXPORTS
+ 		bool "Strip unnecessary exports from the kernel image"
++		default y
+ 		help
+ 		  Reduces kernel size by stripping unused kernel exports from the kernel
+ 		  image.  Note that this might make the kernel incompatible with any kernel
+@@ -174,6 +175,7 @@
+
+ 	config USE_MKLIBS
+ 		bool "Strip unnecessary functions from libraries"
++		default y
+ 		help
+ 		  Reduces libraries to only those functions that are necessary for using all
+ 		  selected packages (including those selected as <M>).  Note that this will
+@@ -224,7 +226,7 @@
+ 	choice
+ 		prompt "User space Stack-Smashing Protection"
+ 		depends on USE_MUSL
+-		default PKG_CC_STACKPROTECTOR_REGULAR
++		default PKG_CC_STACKPROTECTOR_NONE
+ 		help
+ 		  Enable GCC Stack Smashing Protection (SSP) for userspace applications
+ 		config PKG_CC_STACKPROTECTOR_NONE
+@@ -242,7 +244,7 @@
+
+ 	choice
+ 		prompt "Kernel space Stack-Smashing Protection"
+-		default KERNEL_CC_STACKPROTECTOR_REGULAR
++		default KERNEL_CC_STACKPROTECTOR_NONE
+ 		depends on USE_MUSL || !(x86_64 || i386)
+ 		help
+ 		  Enable GCC Stack-Smashing Protection (SSP) for the kernel
+@@ -265,7 +267,7 @@
+
+ 	choice
+ 		prompt "Enable buffer-overflows detection (FORTIFY_SOURCE)"
+-		default PKG_FORTIFY_SOURCE_1
++		default PKG_FORTIFY_SOURCE_NONE
+ 		help
+ 		  Enable the _FORTIFY_SOURCE macro which introduces additional
+ 		  checks to detect buffer-overflows in the following standard library
+@@ -285,7 +287,7 @@
+
+ 	choice
+ 		prompt "Enable RELRO protection"
+-		default PKG_RELRO_FULL
++		default PKG_RELRO_NONE
+ 		help
+ 		  Enable a link-time protection known as RELRO (Relocation Read Only)
+ 		  which helps to protect from certain type of exploitation techniques

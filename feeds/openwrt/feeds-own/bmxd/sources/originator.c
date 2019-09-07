@@ -771,8 +771,8 @@ int8_t validate_primary_orig( struct orig_node *orig_node, struct msg_buff *mb, 
 	{
 		uint8_t ret = init_pifnb_node( orig_node->primary_orig_node );
 
-		dbg( DBGL_SYS, DBGT_WARN, "validation: no id4him for primary originator %15s. init_pifnb_node() ret=%d",
-	                        ipStr(orig_node->primary_orig_node->orig), ret );
+//		dbg( DBGL_SYS, DBGT_WARN, "validation: no id4him for primary originator %15s. init_pifnb_node() ret=%d",
+//	                        ipStr(orig_node->primary_orig_node->orig), ret );
 
 		return ret;
 	}
@@ -1527,8 +1527,8 @@ void process_ogm( struct msg_buff *mb ) {
 	//paranoia( -5000151, (!orig_node_neigh->primary_orig_node->id4him) );	
 	if ( !orig_node_neigh->primary_orig_node->id4him ) {
 
-                dbgf( DBGL_SYS, DBGT_WARN, "invalid id4him for orig %s via %s",
-                        orig_node->orig_str, mb->neigh_str );
+              //  dbgf( DBGL_SYS, DBGT_WARN, "invalid id4him for orig %s via %s",
+              //          orig_node->orig_str, mb->neigh_str );
 
 		goto process_ogm_end;
 	}

@@ -108,13 +108,13 @@ case $1 in
 				led_off $wwan_led
 				;;
 			2g)
-				led_timer $wwan_led 50 500
+				led_timer $wwan_led 1000 1000
 				;;
 			3g)
-				led_timer $wwan_led 200 200
+				led_timer $wwan_led 300 200
 				;;
 			4g)
-				led_timer $wwan_led 60 60
+				led_timer $wwan_led 40 40
 				;;
 		esac
 		;;

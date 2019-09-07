@@ -1,6 +1,6 @@
---- buildroot/config/Config-build.in	2018-04-01 16:49:08.940983457 +0200
-+++ buildroot/config/Config-build.in	2018-04-01 16:57:20.388807784 +0200
-@@ -94,7 +94,7 @@
+--- buildroot/config/Config-build.in.orig	2019-09-07 16:01:13.000000000 +0200
++++ buildroot/config/Config-build.in	2019-09-07 16:03:05.325809598 +0200
+@@ -106,7 +106,7 @@
  	config IPV6
  		bool
  		prompt "Enable IPv6 support in packages"
@@ -9,7 +9,7 @@
  		help
  		  Enables IPv6 support in kernel (builtin) and packages.
 
-@@ -138,6 +138,7 @@
+@@ -150,6 +150,7 @@
 
  	config STRIP_KERNEL_EXPORTS
  		bool "Strip unnecessary exports from the kernel image"
@@ -17,7 +17,7 @@
  		help
  		  Reduces kernel size by stripping unused kernel exports from the kernel
  		  image.  Note that this might make the kernel incompatible with any kernel
-@@ -145,6 +146,7 @@
+@@ -157,6 +158,7 @@
 
  	config USE_MKLIBS
  		bool "Strip unnecessary functions from libraries"
@@ -25,7 +25,7 @@
  		help
  		  Reduces libraries to only those functions that are necessary for using all
  		  selected packages (including those selected as <M>).  Note that this will
-@@ -179,7 +181,7 @@
+@@ -207,7 +209,7 @@
  	choice
  		prompt "User space Stack-Smashing Protection"
  		depends on USE_MUSL
@@ -34,7 +34,7 @@
  		help
  		  Enable GCC Stack Smashing Protection (SSP) for userspace applications
  		config PKG_CC_STACKPROTECTOR_NONE
-@@ -197,7 +199,7 @@
+@@ -225,7 +227,7 @@
 
  	choice
  		prompt "Kernel space Stack-Smashing Protection"
@@ -43,7 +43,7 @@
  		depends on USE_MUSL || !(x86_64 || i386)
  		help
  		  Enable GCC Stack-Smashing Protection (SSP) for the kernel
-@@ -212,7 +214,7 @@
+@@ -240,7 +242,7 @@
 
  	choice
  		prompt "Enable buffer-overflows detection (FORTIFY_SOURCE)"
@@ -52,7 +52,7 @@
  		help
  		  Enable the _FORTIFY_SOURCE macro which introduces additional
  		  checks to detect buffer-overflows in the following standard library
-@@ -232,7 +234,7 @@
+@@ -260,7 +262,7 @@
 
  	choice
  		prompt "Enable RELRO protection"

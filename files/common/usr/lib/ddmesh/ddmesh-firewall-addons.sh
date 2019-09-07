@@ -6,9 +6,11 @@
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
+TAG="ddmesh-firewall-addons"
+
 fwprint()
 {
- # logger -s -t "addon" "iptables $*"
+# logger -s -t "addon" "iptables $*"
  iptables -w $*
 }
 
@@ -17,6 +19,7 @@ export IPT=fwprint
 
 setup_splash() {
 	# prepare splash
+	logger -s -t $TAG "setup_splash"
 
 	WIFIADR=$_ddmesh_wifi2ip
 	eval $(ipcalc.sh $WIFIADR $_ddmesh_wifi2netmask)
@@ -54,6 +57,7 @@ setup_splash() {
 
 setup_custom_rules() {
 # temp firewall rules (fw uci can not add custom chains)
+	logger -s -t $TAG "setup_custom_rules"
 
 	# gateway check
 	$IPT -t mangle -N output_gateway_check
@@ -77,7 +81,7 @@ setup_custom_rules() {
 	$IPT -A output_bat_rule -j output_backbone_reject
 	$IPT -A output_wifi2_rule -j output_backbone_reject
 
-	#input rules for privnet/ifirewall ( to restrict tunnel pakets only via allowed interfaces )
+	#input rules for privnet/firewall ( to restrict tunnel pakets only via allowed interfaces )
 	#private data traffic is controlled by zone rules lan (br-lan)
 	$IPT -N input_privnet_accept
 	$IPT -N input_privnet_reject
@@ -120,7 +124,7 @@ setup_custom_rules() {
 }
 
 setup_openvpn_rules() {
-
+	logger -s -t $TAG "setup_openvpn_rules"
 	CONF=/etc/openvpn/openvpn.conf
 	$IPT -N output_openvpn_reject
 	$IPT -A output_mesh_rule -j output_openvpn_reject
@@ -142,6 +146,7 @@ setup_openvpn_rules() {
 }
 
 setup_statistic_rules() {
+	logger -s -t $TAG "setup_statistic_rules"
 	$IPT -N statistic_input	2>/dev/null
 	$IPT -N statistic_forward 2>/dev/null
 	$IPT -N statistic_output 2>/dev/null
@@ -156,24 +161,27 @@ setup_statistic_rules() {
 	$IPT -A forwarding_rule -j statistic_forward
 	$IPT -A output_rule -j statistic_output
 
-	NETWORKS="bat wan lan wifi wifi2 vpn tbb_fastd mesh_lan mesh_wan privnet"
+	NETWORKS="bat wan wwan lan wifi wifi2 vpn tbb_fastd mesh_lan mesh_wan privnet"
 	for net in $NETWORKS
 	do
 		ifname=$(eval echo \$$net"_ifname")
-		$IPT -N stat_"$net"_in 2>/dev/null
-		$IPT -D statistic_input -i $ifname -j stat_"$net"_in 2>/dev/null
-		$IPT -A statistic_input -i $ifname -j stat_"$net"_in
+		target_in=stat_"$net"_in
+		$IPT -N $target_in 2>/dev/null
+		$IPT -D statistic_input -i $ifname -j $target_in 2>/dev/null
+		$IPT -A statistic_input -i $ifname -j $target_in
 
-		$IPT -N stat_"$net"_out 2>/dev/null
-		$IPT -D statistic_output -o $ifname -j stat_"$net"_out 2>/dev/null
-		$IPT -A statistic_output -o $ifname -j stat_"$net"_out
+		target_out=stat_"$net"_out
+		$IPT -N $target_out 2>/dev/null
+		$IPT -D statistic_output -o $ifname -j $target_out 2>/dev/null
+		$IPT -A statistic_output -o $ifname -j $target_out
 
 		for net2 in $NETWORKS
 		do
 			ifname2=$(eval echo \$$net2"_ifname")
-			$IPT -N stat_"$net"_"$net2"_fwd 2>/dev/null
-			$IPT -D statistic_forward -i $ifname -o $ifname2 -j stat_"$net"_"$net2"_fwd 2>/dev/null
-			$IPT -A statistic_forward -i $ifname -o $ifname2 -j stat_"$net"_"$net2"_fwd
+			target_fwd=stat_"$net"_"$net2"_fwd
+			$IPT -N $target_fwd 2>/dev/null
+			$IPT -D statistic_forward -i $ifname -o $ifname2 -j $target_fwd 2>/dev/null
+			$IPT -A statistic_forward -i $ifname -o $ifname2 -j $target_fwd
 		done
 	done
 }
@@ -184,7 +192,7 @@ callback_add_ignored_nodes() {
 }
 
 setup_ignored_nodes() {
-
+	logger -s -t $TAG "setup_ignored_nodes"
 	if [ -n "$wifi_ifname" ]; then
 		#add rules to deny some nodes to prefer backbone connections
 		$IPT -N input_ignore_nodes
@@ -196,47 +204,56 @@ setup_ignored_nodes() {
 }
 
 
+_init()
+{
+	#init all rules that can not be set by openwrt-firewall
+	test "$(uci get ddmesh.system.disable_splash 2>/dev/null)" != "1" && setup_splash
+	setup_custom_rules
+	setup_statistic_rules
+	setup_ignored_nodes
+	setup_openvpn_rules
+}
+
+_update()
+{
+	# ips are not valid if iface went down -> clear tables
+	# use reject instead of DROP, else it is possible to scan for ip timeout
+	$IPT -F input_wan_deny
+	$IPT -F input_lan_deny
+	$IPT -F input_mesh_deny
+	$IPT -F input_wifi2_deny
+	$IPT -F input_bat_deny
+	$IPT -F input_vpn_deny
+
+	if [ "$lan_up" = "1" ]; then
+		for n in wan mesh wifi2 bat vpn
+		do
+			$IPT -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
+			$IPT -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
+		done
+	fi
+
+	if [ "$wan_up" = "1" ]; then
+		for n in lan mesh wifi2 bat vpn
+		do
+			$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
+			$IPT -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject
+		done
+	fi
+
+	#update port forwarding on hotplug.d/iface (wan rules)
+	/usr/lib/ddmesh/ddmesh-portfw.sh init
+}
+
+logger -s -t $TAG "called with $1"
 case "$1" in
-	once)
-		#init all rules that can not be set by openwrt-firewall
-		test "$(uci get ddmesh.system.disable_splash 2>/dev/null)" != "1" && setup_splash
-		;;
-	post)
-		setup_custom_rules
-		setup_statistic_rules
-		setup_ignored_nodes
-		setup_openvpn_rules
+	init)
+		_init
+		_update
 		;;
 
-	#hotplug.d event after which wan/lan have ip addresses assigned
 	update)
-		# ips are not valid if iface went down -> clear tables
-		# use reject instead of DROP, else it is possible to scan for ip timeout
-		$IPT -F input_wan_deny
-		$IPT -F input_lan_deny
-		$IPT -F input_mesh_deny
-		$IPT -F input_wifi2_deny
-		$IPT -F input_bat_deny
-		$IPT -F input_vpn_deny
-
-		if [ "$lan_up" = "1" ]; then
-			for n in wan mesh wifi2 bat vpn
-			do
-				$IPT -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
-				$IPT -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
-			done
-		fi
-
-		if [ "$wan_up" = "1" ]; then
-			for n in lan mesh wifi2 bat vpn
-			do
-				$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
-				$IPT -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject
-			done
-		fi
-
-		#update port forwarding on hotplug.d/iface (wan rules)
-		/usr/lib/ddmesh/ddmesh-portfw.sh init
+		_update
 		;;
 
 esac

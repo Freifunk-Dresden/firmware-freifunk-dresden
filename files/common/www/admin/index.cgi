@@ -9,6 +9,18 @@ fi
 
 eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
 
+case  "$git_ddmesh_branch" in
+	undefined)
+		html_git_ddmesh_branch="<font color=\"red\">$git_ddmesh_branch</font>"
+		;;
+	T_*)
+		html_git_ddmesh_branch="<font color=\"green\">$git_ddmesh_branch</font>"
+		;;
+	*)
+		html_git_ddmesh_branch="<font color=\"blue\">$git_ddmesh_branch</font>"
+		;;
+esac
+
 cat<<EOM
 <h1>$TITLE</h1>
 <br>
@@ -45,9 +57,9 @@ auf eines der Steuerungselemente, um kurze Hilfetexte einzublenden.</p>
 <table>
 <tr class="colortoggle1"><th>Freifunk-Version (Dresden)</th><td>$(cat /etc/version)</td></tr>
 <tr class="colortoggle2"><th>Git-Firmware-Revision</th><td>$git_ddmesh_rev</td></tr>
-<tr class="colortoggle1"><th>Git-Firmware-Branch</th><td>$git_ddmesh_branch</td></tr>
+<tr class="colortoggle1"><th>Git-Firmware-Branch/Tag</th><td>$html_git_ddmesh_branch</td></tr>
 <tr class="colortoggle2"><th>Git-Openwrt-Revision</th><td>$git_openwrt_rev</td></tr>
-<tr class="colortoggle1"><th>Git-Openwrt-Branch</th><td>$git_openwrt_branch</td></tr>
+<tr class="colortoggle1"><th>Git-Openwrt-Branch/Tag</th><td>$git_openwrt_branch</td></tr>
 
 <tr class="colortoggle2"><th>Build-Datum</th><td>$(cat /etc/built_info | sed -n '/builtdate/s#[^:]*:##p')</td></tr>
 $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#')

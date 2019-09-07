@@ -77,18 +77,24 @@ listTargets()
  # first read default
  targetIdx=0
  entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
- targetIdx=$(( targetIdx + 1 ))
  if [ -n "$entry" ]; then
 	_def_target=$(echo $entry | jq $OPT '.target')
 	_def_subtarget=$(echo $entry | jq $OPT '.subtarget')
 	_def_variant=$(echo $entry | jq $OPT '.variant')
 	_def_name=$(echo $entry | jq $OPT '.name')
-	_def_selector=$(echo $entry | jq $OPT '.selector')
+	_def_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
+	_def_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
+	_def_selector_feeds=$(echo $entry | jq $OPT '.["selector-feeds"]')
+	_def_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
 	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
 	_def_feeds=$(echo $entry | jq $OPT '.feeds')
 	_def_packages=$(echo $entry | jq $OPT '.packages')
  fi
+ targetIdx=$(( targetIdx + 1 ))
 
+ printf -- '----------------------------------------------------------------------------------------------------------------------------\n'
+ printf  " %-40s | %-40s | %-7s | %-7s | %-7s | %-s \n" target openwrt_rev config feeds files patches
+ printf -- '------------------------------------------+------------------------------------------+---------+---------+---------+--------\n'
  # run through rest of json
  while true
  do
@@ -99,25 +105,40 @@ listTargets()
 	else
 		_target=$(echo $entry | jq $OPT '.target')
 		_subtarget=$(echo $entry | jq $OPT '.subtarget')
+
 		_variant=$(echo $entry | jq $OPT '.variant')
 		test "$_variant" = "null"  && _variant=""
+
 		openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
 		test "$openwrt_rev" = "null"  && openwrt_rev="$_def_openwrt_rev"
+
+		_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
+		test "$_selector_config" = "null" && _selector_config="$_def_selector_config"
+
+		_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
+		test "$_selector_files" = "null" && _selector_files="$_def_selector_files"
+
+		_selector_feeds=$(echo $entry | jq $OPT '.["selector-feeds"]')
+		test "$_selector_feeds" = "null" && _selector_feeds="$_def_selector_feeds"
+
+		_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
+		test "$_selector_patches" = "null" && _selector_patches="$_def_selector_patches"
 
 		target=$_target.$_subtarget
 		# add variant (if any)
 		test -n "$_variant" && target="$target.$_variant"
 	fi 
 	test -z "$target" && break
-	printf  "%-40s - openwrt_rev: %s\n" $target $openwrt_rev
+ 	printf  " %-40s | %-40s | %-7s | %-7s | %-7s | %-7s \n" $target $openwrt_rev $_selector_config $_selector_feeds $_selector_files $_selector_patches
 	targetIdx=$(( targetIdx + 1 ))
  done
+ printf -- '----------------------------------------------------------------------------------------------------------------------------\n'
 }
 
 
 setup_dynamic_firmware_config()
 {
-	FILES=./files/common/
+	FILES="$1"
 
 	# modify registration credentials from envronment variable passed in by gitlabs
 	# FF_REGISTERKEY_PREFIX is set in gitlab UI of freifunk-dresden-firmware: settings->CI/CD->Environment
@@ -130,7 +151,7 @@ setup_dynamic_firmware_config()
 if [ -z "$1" ]; then
 	# create a simple menu
 	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) [list] [feed-revisions] | [target | all ] [ menuconfig | clean | <make params ...> ]"
+	echo "usage: $(basename $0) [list] [feed-revisions] | [target | all ] menuconfig | clean [ <make params ...> ]"
 	echo " list		- lists all available targets"
 	echo " target		- target to build (can have regex)"
 	echo "		that are defined by build.json. use 'list' for supported targets."
@@ -229,7 +250,7 @@ setup_buildroot ()
  openwrt_rev=$2
  openwrt_dl_dir=$3
  openwrt_patches_dir=$4
- selector=$5
+ firmware_files=$5
  
  openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
 
@@ -274,31 +295,9 @@ setup_buildroot ()
 		echo -e $C_PURPLE"Buildroot [$buildroot] already present"$C_NONE
 	fi
 
-	echo -e $C_PURPLE"create dl directory/links and feed links"$C_NONE
-#	log $log_file rm -f $buildroot/feeds.conf
-#	log $log_file ln -s ../../feeds/feeds-$selector.conf $buildroot/feeds.conf
+	echo -e $C_PURPLE"create dl directory/links"$C_NONE
 	log $log_file rm -f $buildroot/dl
 	log $log_file ln -s ../../$openwrt_dl_dir $buildroot/dl
-
-	#if feedsfeeds_own directory contains same packages as delivered with
-	#openwrt, then assume that the packages came with openwrt git clone are
-	#older. delete those old packages to force openwrt make system to use the
-
-	echo -e $C_PURPLE "delete old packages from buildroot/package"$C_NONE
-	# extract feeds directory from feeds-xxxxxx.conf , and list the content of 
-	# feed directories
-	
-	for d in $(cat $buildroot/feeds.conf  | awk '/src-link/{print substr($3,10)}')
-	do
-		echo -e $C_YELLOW"feed:"$C_NONE"[$d]"
-		for i in $(ls -1 $d)
-		do
-			base=$(basename $i)
-			echo -e "$C_PURPLE""check$C_NONE: [$C_GREEN$base$C_NONE]"
-			#	test -x $buildroot/package/$base && log $log_file echo "rm -rf $buildroot/package/$base" && rm -rf $buildroot/package/$base
-			find $buildroot/package -type d -wholename "*/$base" -exec rm -rf {} \; -exec echo "  -> rm {} " \;  2>/dev/null
-		done
-	done
 
 	# copy common files first
 	echo -e $C_PURPLE"copy rootfs$C_NONE: $C_GREEN""common"$C_NONE
@@ -308,11 +307,14 @@ setup_buildroot ()
 	
 	# copy specific files over (may overwrite common)
 	echo -e $C_PURPLE"copy rootfs"$C_NONE
-	test -d "$RUN_DIR/files/$selector)" && log $log_file cp -a $RUN_DIR/files/$selector/* $buildroot/files/
+	test -d "$RUN_DIR/files/$firmware_files)" && log $log_file cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
 
 	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
 	mkdir -p $buildroot/files/etc
 	> $buildroot/files/etc/built_info
+
+	# more dynamic changes
+	setup_dynamic_firmware_config "$buildroot/files"
 
 	echo "----- generate built_info ----"
 	git_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
@@ -321,7 +323,13 @@ setup_buildroot ()
 	echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
 	
 	git_ddmesh_rev=$(git log -1 --format=%H)
-	git_ddmesh_branch=$(git name-rev --name-only $git_ddmesh_rev | sed 's#.*/##')
+	git_ddmesh_branch=$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')
+	if [ "$git_ddmesh_branch" = "undefined" ]; then
+		echo ""
+		echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"
+		echo ""
+		sleep 5
+	fi
 	echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
 	echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
 	
@@ -329,8 +337,6 @@ setup_buildroot ()
 
 	cat $buildroot/files/etc/built_info
 
-	# more dynamic changes
-	setup_dynamic_firmware_config
 
 } # setup_buildroot
 
@@ -347,7 +353,10 @@ if [ -n "$entry" ]; then
 	_def_subtarget=$(echo $entry | jq $OPT '.subtarget')
 	_def_variant=$(echo $entry | jq $OPT '.variant')
 	_def_name=$(echo $entry | jq $OPT '.name')
-	_def_selector=$(echo $entry | jq $OPT '.selector')
+	_def_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
+	_def_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
+	_def_selector_feeds=$(echo $entry | jq $OPT '.["selector-feeds"]')
+	_def_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
 	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
 	_def_feeds=$(echo $entry | jq $OPT '.feeds')
 	_def_packages=$(echo $entry | jq $OPT '.packages')
@@ -356,7 +365,7 @@ if [ -n "$entry" ]; then
 #echo $_def_variant
 #echo $_def_name
 #echo $_def_openwrt_rev
-#echo $_def_selector
+#echo $_selector_config, $_selector_feeds, $_selector_files, $_selector_patches
 #echo $_def_feeds
 #echo $_def_packages
 fi
@@ -387,8 +396,17 @@ do
 	_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
 	test "$_openwrt_rev" = "null" && _openwrt_rev="$_def_openwrt_rev"
 
-	_selector=$(echo $entry | jq $OPT '.selector')
-	test "$_selector" = "null" && _selector="$_def_selector"
+	_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
+	test "$_selector_config" = "null" && _selector_config="$_def_selector_config"
+
+	_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
+	test "$_selector_files" = "null" && _selector_files="$_def_selector_files"
+
+	_selector_feeds=$(echo $entry | jq $OPT '.["selector-feeds"]')
+	test "$_selector_feeds" = "null" && _selector_feeds="$_def_selector_feeds"
+
+	_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
+	test "$_selector_patches" = "null" && _selector_patches="$_def_selector_patches"
 
 	_feeds=$(echo $entry | jq $OPT '.feeds')
 	test "$_feeds" = "null" && _feeds="$_def_feeds"
@@ -400,7 +418,7 @@ do
 #echo $_variant
 #echo $_name
 #echo $_openwrt_rev
-#echo $_selector
+#echo $_selector_config, $_selector_feeds, $_selector_files, $_selector_patches
 #echo $_feeds
 #echo $_packages
 
@@ -419,15 +437,15 @@ do
 	echo -e $C_YELLOW"Variant$C_NONE   : $C_BLUE$_variant"$C_NONE
 	echo -e $C_GREY"--------------------"$C_NONE	
 
-	config_file="$CONFIG_DIR/$_selector/config.$target"
+	config_file="$CONFIG_DIR/$_selector_config/config.$target"
 	log_file="build.$target.log"
 	buildroot="$WORK_DIR/$_openwrt_rev"
 	openwrt_dl_dir="$DL_DIR"
-	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector"
+	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector_patches"
 
 	# --------- setup build root ------------------
 
-	setup_buildroot $buildroot $_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_selector 
+	setup_buildroot $buildroot $_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_selector_files 
 
 	# --------  generate feeds -----------
 	echo -e $C_PURPLE"generate feed config"$C_NONE

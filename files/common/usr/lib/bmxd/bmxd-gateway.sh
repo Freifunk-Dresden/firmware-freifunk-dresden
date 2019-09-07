@@ -39,7 +39,9 @@ toggle_ssid()
 case $1 in
 	gateway)
 		logger -s -t $TAG "GATEWAY"
-		cp $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
+		# use symlink. because resolv.conf.auto can be set later by wwan
+		rm $RESOLV_CONF_FINAL
+		ln -s $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
 		/usr/lib/ddmesh/ddmesh-led.sh wifi gateway
 		toggle_ssid true
 	;;
@@ -50,7 +52,9 @@ case $1 in
 		# set when "del" or if empty
 		if [ -z "$gw" -a "$1" = "del" -o -z "$(grep nameserver $RESOLV_CONF_FINAL)" ]; then
 			logger -s -t $TAG "remove GATEWAY (del)"
-			cp $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
+			# use symlink. because resolv.conf.auto can be set later by wwan
+			rm $RESOLV_CONF_FINAL
+			ln -s $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
 			/usr/lib/ddmesh/ddmesh-led.sh wifi alive
 			toggle_ssid false 
 		fi

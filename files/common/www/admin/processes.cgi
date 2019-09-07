@@ -30,6 +30,13 @@ p
 cat<<EOF
 </table>
 </fieldset>
+<br/>
+<fieldset class="bubble">
+<legend>Process-Tree</legend>
+<pre>
+$(pstree)
+</pre>
+</fieldset>
 EOF
 
 

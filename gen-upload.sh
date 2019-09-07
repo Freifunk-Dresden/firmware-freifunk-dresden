@@ -120,6 +120,14 @@ gen_download_json_start()
 	printf " \"fileinfo\": [\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 }
 
+# used to add a single entry
+#gen_download_json_add_single_link()
+#{
+#  name=$1
+#  file=$2
+#  output_path=$3
+#  printf "{ \"name\":\"$name\", \"path\":\".\", \"filename\":\"$file\", \"md5sum\":\"\",\"comment\":\"\"},\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+#}
 
 # isFirstFile must be global, else calling this function for different
 # platforms won't insert "," after each record
@@ -129,7 +137,7 @@ gen_download_json_add_data()
   output_path=$1 	# output path "firmware/4.2.15"
   subpath=$2 		# relativ path to firmware "ar71xx/generic" 
   file_filter=$3 	# file filter "*.{bin,trx,img,dlf,gz}"
- 
+
 	printf "add files to download.json\n"
 	# progress info
 	printf $C_LBLUE"# info complete"$C_ORANGE"	+ some info missing"$C_LRED"	- NO info"$C_NONE"\n"
@@ -279,11 +287,18 @@ mkdir -p $target_dir/downloaded_packages
 printf "$fwversion\n" >$target_dir/version
 
 #################################################################################################
+# start json
+#################################################################################################
+gen_download_json_start $target_dir $fwversion
+
+
+#################################################################################################
 # copy build dl  
 #################################################################################################
 $ENABLE_COPY && {
 	printf $C_YELLOW"copy downloaded packages"$C_NONE"\n"
 	cp -a $firmwareroot/dl/* $target_dir/downloaded_packages/
+#	gen_download_json_add_single_link '[downloaded_packages]' 'downloaded_packages' $target_dir
 }
 
 #################################################################################################
@@ -294,12 +309,14 @@ $ENABLE_COPY && {
 $ENABLE_COPY && {
 	printf $C_YELLOW"copy changelog"$C_NONE"\n"
 	cp -a $firmwareroot/changelog.txt $target_dir/
+#	gen_download_json_add_single_link 'changelog.txt' 'changelog.txt' $target_dir
 }
 
 #licenses
 $ENABLE_COPY && {
 	printf $C_YELLOW"copy licenses"$C_NONE"\n"
-	cp -a $firmwareroot/license/* $target_dir/
+	cp -a $firmwareroot/license $target_dir/
+#	gen_download_json_add_single_link '[license]' 'license' $target_dir
 }
 
 $ENABLE_COPY && {
@@ -314,7 +331,6 @@ printf "finished.\n"
 #################################################################################################
 
 
-gen_download_json_start $target_dir $fwversion
 
 # run through all openwrt version (targets may be created for different openwrt versions)
 for _buildroot in $(ls -1 $firmwareroot/workdir/)
@@ -328,6 +344,12 @@ do
 	export PATH=$SAVED_SYSTEM_PATH:$buildroot/staging_dir/host/bin/
 
 	_platforms=$buildroot/bin/targets
+
+#	# add directory entry into download json, so it can be displayed in dataTable (index.html)
+#	for platform in $(ls $_platforms)
+#	do
+#		gen_download_json_add_single_link "[$platform]" "$platform" $target_dir
+#	done
 
 	for platform in $(ls $_platforms)
 	do

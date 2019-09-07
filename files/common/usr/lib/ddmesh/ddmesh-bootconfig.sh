@@ -221,12 +221,17 @@ EOM
 	# dropbear ssh
 	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
 
+	# set own freifunk default ip
+	uci set network.lan.ipaddr='192.168.222.1'
+
 } # config_boot_step1
 
 setup_wireless()
 {
  #wireless, regenerate config in case wifi usb stick plugged into different usb port
- rm /var/etc/config/wireless
+ # temp wifi config
+ #rm /var/etc/config/wireless
+ 
  wifi config
 
  #ensure we have valid country,with supportet channel and txpower
@@ -449,9 +454,30 @@ done
  uci set network.wwan.pdptype='IP'	# IPv4 only
  uci set network.wwan.delay='30' 	# wait for SIMCard being ready
  uci set network.wwan.metric='50'	# avoids overwriting WAN default route
+
+ wwan_modes=""
+ test "$(uci -q get ddmesh.network.wwan_4g)" = "1" && wwan_modes="$wwan_modes,lte"
+ test "$(uci -q get ddmesh.network.wwan_3g)" = "1" && wwan_modes="$wwan_modes,umts"
+ test "$(uci -q get ddmesh.network.wwan_2g)" = "1" && wwan_modes="$wwan_modes,gsm"
+ wwan_modes="${wwan_modes#,}"
+ wwan_modes="${wwan_modes:-lte,umts}"
+ uci set network.wwan.modes="$wwan_modes"
+
+ wwan_mode_preferred="$(uci -q get ddmesh.network.wwan_mode_preferred)"
+ uci set network.wwan.preference="$wwan_mode_preferred"
+
  uci -q del firewall.zone_wan.network	# delete "option"
  uci -q add_list firewall.zone_wan.network='wan'
- uci -q add_list firewall.zone_wan.network='wwan'
+ # helper network, to setup firewall rules for wwan network.
+ # openwrt is not relible to setup wwan0 rules in fw
+ test -z "$(uci -q get network.wwan_helper)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='wwan_helper'
+ }
+ uci set network.wwan_helper.ifname="wwan+"
+ uci set network.wwan_helper.proto='static'
+ uci -q add_list firewall.zone_wan.network='wwan_helper'
+
 
  #############################################################################
  # setup wifi
@@ -479,9 +505,12 @@ done
  uci set network.wifi2.stp=1
  #don't store dns for wifi2 to avoid adding it to resolv.conf
 
+ setup_wireless
+
  #############################################################################
- # setup tbb_fastd network assigned to a firewall zone (mesh) for a interface that is not controlled
- # by openwrt. Bringing up tbb+ failes, but firewall rules are created anyway
+ # setup tbb_fastd network assigned to a firewall zone (mesh) for a interface 
+ # that is not controlled by openwrt.
+ # Bringing up tbb+ failes, but firewall rules are created anyway
  # got this information by testing, because openwrt feature to add non-controlled
  # interfaces (via netifd) was not working.
  #############################################################################
@@ -631,7 +660,7 @@ config_temp_configs() {
 	mkdir -p /tmp/hosts
 	mkdir -p /var/etc
 
-	setup_wireless
+	#setup_wireless
 	
 	cat<<EOM >/var/etc/dnsmasq.hosts
 127.0.0.1 localhost
@@ -717,8 +746,8 @@ cat<<EOM > /var/etc/crontabs/root
 #every 3 minutes start (after killing)
 */3 * * * *  /usr/lib/ddmesh/ddmesh-gateway-check.sh >/dev/null 2>/dev/null &
 
-#every 2h
-$m */2 * * *  /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
+#every 1h
+$m */1 * * *  /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
 
 #forced user disconnection
 */5 * * * *  /usr/lib/ddmesh/ddmesh-splash.sh autodisconnect >/dev/null 2>/dev/null
@@ -780,7 +809,7 @@ wait_for_wifi()
 	fi
 
 	c=0
-	max=30
+	max=60
 	while [ $c -lt $max ]
 	do
 		# use /tmp/state  instead of ubus because up-state is wrong.
@@ -879,28 +908,14 @@ case "$boot_step" in
                 else 
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
-			# only for devel
-			if [ "$1" = "wifi" ]; then
-				setup_wireless
-				# wifi
-				exit 0
-			fi
+			config_temp_configs
+			/etc/init.d/uhttpd restart
+			/etc/init.d/wshaper restart
+			# cron job is started from ddmesh-init.sh after bmxd
 
-			if [ "$1"  != "firewall" ]; then
-				config_temp_configs
-				logger -s -t "$LOGGER_TAG" "start wifi"
-				wifi &
-				#restart fw, because sometimes fw was not setup correctly by openwrt
-				wait_for_wifi
-				fw3 restart
-				/usr/lib/ddmesh/ddmesh-firewall-addons.sh once
-				/etc/init.d/uhttpd restart
-				/etc/init.d/wshaper restart
-				# cron job is started from ddmesh-init.sh after bmxd
-			fi
-			/usr/lib/ddmesh/ddmesh-firewall-addons.sh post
-			/usr/lib/ddmesh/ddmesh-firewall-addons.sh update
-			# delay start mesh_on_wire, to allow access routeri config via lan/wan ip
+			wait_for_wifi
+
+			# delay start mesh_on_wire, to allow access router config via lan/wan ip
 			setup_mesh_on_wire &
 		fi
 esac
