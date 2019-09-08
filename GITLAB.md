@@ -65,5 +65,6 @@ build:ar71xx.tiny:
 - https://docs.gitlab.com/ce/ci/yaml/
 - https://gitlab.freifunk-dresden.de/help/ci/pipelines.md
 - https://gitlab.freifunk-dresden.de/help/ci/environments
+- https://docs.gitlab.com/ee/ci/yaml/#skipping-jobs
 
 
