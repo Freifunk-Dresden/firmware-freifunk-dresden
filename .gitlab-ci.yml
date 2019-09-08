@@ -1,6 +1,8 @@
 stages:
 - build
 
+
+####### docker ############
 build:ar71xx.tiny:
   image: openwrt-docker-build:latest
   stage: build
@@ -16,22 +18,6 @@ build:ar71xx.tiny:
   tags:
   - docker
 
-build:ar71xx.tiny:
-  stage: build
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - dl/*
-  script:
-    - ./build.sh ar71xx.tiny -j8
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-    - workdir/*/bin/targets/*
-    - dl
-  tags:
-  - m2runner
-
 build:ar71xx.generic:
   image: openwrt-docker-build:latest
   stage: build
@@ -43,9 +29,10 @@ build:ar71xx.generic:
     - ./build.sh ar71xx.generic
   artifacts:
     paths:
-    - workdir/*/bin/targets/*
+    - workdir/*/bin/targets/
   tags:
   - docker
+
 
 build:x86.generic:
   image: openwrt-docker-build:latest
@@ -76,4 +63,86 @@ build:ramips.mt7621.ubiquiti-edgerouter-x:
     - workdir/*/bin/targets/*
   tags:
   - docker
+
+######## m2runner ################
+build:ar71xx.tiny:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl/*
+  script:
+    - ./build.sh ar71xx.tiny -j4
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/ar71xx/tiny
+#    - dl
+  tags:
+  - m2runner
+
+build:ar71xx.generic:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl/*
+  script:
+    - ./build.sh ar71xx.generic -j4
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/ar71xx/generic
+#    - dl
+  tags:
+  - m2runner
+
+build:x86.generic:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl/*
+  script:
+    - ./build.sh x86.generic -j4
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/x86/generic
+#    - dl
+  tags:
+  - m2runner
+
+build:ramips.mt7621:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl/*
+  script:
+    - ./build.sh ramips.mt7621 -j4
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/ramips
+#    - dl
+  tags:
+  - m2runner
+
+build:ipq40xx.generic:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl/*
+  script:
+    - ./build.sh ipq40xx.generic -j4
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/ipq40xx.generic
+#    - dl
+  tags:
+  - m2runner
+
 
