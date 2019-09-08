@@ -15,6 +15,21 @@ build:ar71xx.tiny:
     - workdir/*/bin/targets/*
   tags:
   - docker
+
+build:ar71xx.tiny:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl/*
+  script:
+    - ./build.sh ar71xx.tiny -j8
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/*
+    - dl
+  tags:
   - m2runner
 
 build:ar71xx.generic:
@@ -31,7 +46,6 @@ build:ar71xx.generic:
     - workdir/*/bin/targets/*
   tags:
   - docker
-  - m2runner
 
 build:x86.generic:
   image: openwrt-docker-build:latest
@@ -47,7 +61,6 @@ build:x86.generic:
     - workdir/*/bin/targets/*
   tags:
   - docker
-  - m2runner
 
 build:ramips.mt7621.ubiquiti-edgerouter-x:
   image: openwrt-docker-build:latest
@@ -63,5 +76,4 @@ build:ramips.mt7621.ubiquiti-edgerouter-x:
     - workdir/*/bin/targets/*
   tags:
   - docker
-  - m2runner
 
