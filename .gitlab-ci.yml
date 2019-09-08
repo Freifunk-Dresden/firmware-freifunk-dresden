@@ -74,10 +74,10 @@ build:ar71xx.tiny:
     - dl/*
   script:
     - ./build.sh ar71xx.tiny -j4
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-    - workdir/*/bin/targets/ar71xx/tiny
+#  artifacts:
+#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#    paths:
+#    - workdir/*/bin/targets/ar71xx/tiny
 #    - dl
   tags:
   - m2runner
@@ -90,10 +90,10 @@ build:ar71xx.generic:
     - dl/*
   script:
     - ./build.sh ar71xx.generic -j4
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-    - workdir/*/bin/targets/ar71xx/generic
+#  artifacts:
+#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#    paths:
+#    - workdir/*/bin/targets/ar71xx/generic
 #    - dl
   tags:
   - m2runner
@@ -106,10 +106,10 @@ build:x86.generic:
     - dl/*
   script:
     - ./build.sh x86.generic -j4
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-    - workdir/*/bin/targets/x86/generic
+#  artifacts:
+#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#    paths:
+#    - workdir/*/bin/targets/x86/generic
 #    - dl
   tags:
   - m2runner
@@ -122,10 +122,10 @@ build:ramips.mt7621:
     - dl/*
   script:
     - ./build.sh ramips.mt7621 -j4
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-    - workdir/*/bin/targets/ramips
+#  artifacts:
+#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#    paths:
+#    - workdir/*/bin/targets/ramips
 #    - dl
   tags:
   - m2runner
@@ -138,10 +138,10 @@ build:ipq40xx.generic:
     - dl/*
   script:
     - ./build.sh ipq40xx.generic -j4
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    paths:
-    - workdir/*/bin/targets/ipq40xx.generic
+#  artifacts:
+#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#    paths:
+#    - workdir/*/bin/targets/ipq40xx.generic
 #    - dl
   tags:
   - m2runner
