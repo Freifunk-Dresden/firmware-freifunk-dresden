@@ -6,7 +6,7 @@ RUN apt-get update && \
 	apt-get install -y nodejs git build-essential devscripts debhelper \
 		dh-systemd python dh-python libssl-dev libncurses5-dev unzip \
 		gawk zlib1g-dev subversion gcc-multilib flex gettext \
-		libssl-dev unzip wget time rsync jq && \
+		wget time rsync jq && \
 	apt-get clean
 
 RUN useradd -m builder && \
