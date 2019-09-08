@@ -66,14 +66,37 @@ stages:
 #
 
 ######## m2runner ################
+# there are two jobs, one for each commit and one for nightly scheduled job
+# nightly is the one that keeps artifacts (result of built) and which
+# then deployed later (see option "only").
+# deploy stage should be added.
 build:ar71xx.tiny:
+  except:
+    - schedules
   stage: build
   cache:
+    untracked: true
     key: ${CI_COMMIT_REF_SLUG}
     paths:
-    - dl/*
+    - dl
+    - workdir
   script:
-    - ./build.sh ar71xx.tiny -j4
+    - ./build.sh ar71xx.tiny -j2
+  tags:
+  - m2runner
+
+nightly_build:ar71xx.tiny:
+  only:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+# don't keep workdir
+  script:
+    - ./build.sh ar71xx.tiny -j8
 #  artifacts:
 #    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
 #    paths:
@@ -83,13 +106,32 @@ build:ar71xx.tiny:
   - m2runner
 
 build:ar71xx.generic:
+  except:
+    - schedules
   stage: build
   cache:
+    untracked: true
     key: ${CI_COMMIT_REF_SLUG}
     paths:
-    - dl/*
+    - dl
+    - workdir
   script:
-    - ./build.sh ar71xx.generic -j4
+    - ./build.sh ar71xx.generic -j2
+  tags:
+  - m2runner
+
+nightly_build:ar71xx.generic:
+  only:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+# don't keep workdir
+  script:
+    - ./build.sh ar71xx.generic -j8
 #  artifacts:
 #    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
 #    paths:
@@ -99,13 +141,32 @@ build:ar71xx.generic:
   - m2runner
 
 build:x86.generic:
+  except:
+    - schedules
   stage: build
   cache:
+    untracked: true
     key: ${CI_COMMIT_REF_SLUG}
     paths:
-    - dl/*
+    - dl
+    - workdir
   script:
-    - ./build.sh x86.generic -j4
+    - ./build.sh x86.generic -j2
+  tags:
+  - m2runner
+
+nightly_build:x86.generic:
+  only:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+# don't keep workdir
+  script:
+    - ./build.sh x86.generic -j8
 #  artifacts:
 #    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
 #    paths:
@@ -115,13 +176,32 @@ build:x86.generic:
   - m2runner
 
 build:ramips.mt7621:
+  except:
+    - schedules
   stage: build
   cache:
+    untracked: true
     key: ${CI_COMMIT_REF_SLUG}
     paths:
-    - dl/*
+    - dl
+    - workdir
   script:
-    - ./build.sh ramips.mt7621 -j4
+    - ./build.sh ramips.mt7621 -j2
+  tags:
+  - m2runner
+
+nightly_build:ramips.mt7621:
+  only:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+# don't keep workdir
+  script:
+    - ./build.sh ramips.mt7621 -j8
 #  artifacts:
 #    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
 #    paths:
@@ -131,13 +211,32 @@ build:ramips.mt7621:
   - m2runner
 
 build:ipq40xx.generic:
+  except:
+    - schedules
   stage: build
   cache:
+    untracked: true
     key: ${CI_COMMIT_REF_SLUG}
     paths:
-    - dl/*
+    - dl
+    - workdir
   script:
-    - ./build.sh ipq40xx.generic -j4
+    - ./build.sh ipq40xx.generic -j2
+  tags:
+  - m2runner
+
+nightly_build:ipq40xx.generic:
+  only:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+# don't keep workdir
+  script:
+    - ./build.sh ipq40xx.generic -j8
 #  artifacts:
 #    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
 #    paths:
@@ -145,5 +244,4 @@ build:ipq40xx.generic:
 #    - dl
   tags:
   - m2runner
-
 
