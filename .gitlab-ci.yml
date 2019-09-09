@@ -79,7 +79,7 @@ build:ar71xx.tiny:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - dl
-    - workdir
+    - workdir/*
   script:
     - ./build.sh ar71xx.tiny -j2
   tags:
@@ -114,7 +114,7 @@ build:ar71xx.generic:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - dl
-    - workdir
+    - workdir/*
   script:
     - ./build.sh ar71xx.generic -j2
   tags:
@@ -149,7 +149,7 @@ build:x86.generic:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - dl
-    - workdir
+    - workdir/*
   script:
     - ./build.sh x86.generic -j2
   tags:
@@ -184,7 +184,7 @@ build:ramips.mt7621:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - dl
-    - workdir
+    - workdir/*
   script:
     - ./build.sh ramips.mt7621 -j2
   tags:
@@ -219,7 +219,7 @@ build:ipq40xx.generic:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - dl
-    - workdir
+    - workdir/*
   script:
     - ./build.sh ipq40xx.generic -j2
   tags:
