@@ -1,0 +1,78 @@
+######## m2runner ################
+# there are two jobs, one for each commit and one for nightly scheduled job
+
+ar71xx.tiny:
+  except:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+    - workdir/*
+  script:
+    - ./build.sh ar71xx.tiny -j2
+  tags:
+  - m2runner
+
+ar71xx.generic:
+  except:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+    - workdir/*
+  script:
+    - ./build.sh ar71xx.generic -j2
+  tags:
+  - m2runner
+
+x86.generic:
+  except:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+    - workdir/*
+  script:
+    - ./build.sh x86.generic -j2
+  tags:
+  - m2runner
+
+ramips.mt7621:
+  except:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+    - workdir/*
+  script:
+    - ./build.sh ramips.mt7621 -j2
+  tags:
+  - m2runner
+
+ipq40xx.generic:
+  except:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+    - workdir/*
+  script:
+    - ./build.sh ipq40xx.generic -j2
+  tags:
+  - m2runner
+

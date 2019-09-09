@@ -1,0 +1,63 @@
+####### docker ############
+
+build:ar71xx.tiny:
+  image: openwrt-docker-build:latest
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-master
+    paths:
+    - dl/*
+  script:
+    - ./build.sh ar71xx.tiny
+  artifacts:
+    paths:
+    - workdir/*/bin/targets/*
+  tags:
+  - docker
+
+build:ar71xx.generic:
+  image: openwrt-docker-build:latest
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-master
+    paths:
+    - dl/*
+  script:
+    - ./build.sh ar71xx.generic
+  artifacts:
+    paths:
+    - workdir/*/bin/targets/
+  tags:
+  - docker
+
+
+build:x86.generic:
+  image: openwrt-docker-build:latest
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-master
+    paths:
+    - dl/*
+  script:
+    - ./build.sh x86.generic
+  artifacts:
+    paths:
+    - workdir/*/bin/targets/*
+  tags:
+  - docker
+
+build:ramips.mt7621.ubiquiti-edgerouter-x:
+  image: openwrt-docker-build:latest
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-master
+    paths:
+    - dl/*
+  script:
+    - ./build.sh ramips.mt7621.ubiquiti-edgerouter-x
+  artifacts:
+    paths:
+    - workdir/*/bin/targets/*
+  tags:
+  - docker
+
