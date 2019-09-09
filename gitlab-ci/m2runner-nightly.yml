@@ -16,11 +16,11 @@ nightly:ar71xx.tiny:
 # don't keep workdir
   script:
     - ./build.sh ar71xx.tiny -j8
-#  artifacts:
-#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-#    paths:
-#    - workdir/*/bin/targets/ar71xx/tiny
-#    - dl
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+     - workdir/*/bin/targets/ar71xx/tiny
+#     - dl
   tags:
   - m2runner
 
@@ -36,10 +36,10 @@ nightly:ar71xx.generic:
 # don't keep workdir
   script:
     - ./build.sh ar71xx.generic -j8
-#  artifacts:
-#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-#    paths:
-#    - workdir/*/bin/targets/ar71xx/generic
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/ar71xx/generic
 #    - dl
   tags:
   - m2runner
@@ -56,10 +56,10 @@ nightly:x86.generic:
 # don't keep workdir
   script:
     - ./build.sh x86.generic -j8
-#  artifacts:
-#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-#    paths:
-#    - workdir/*/bin/targets/x86/generic
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/x86/generic
 #    - dl
   tags:
   - m2runner
@@ -76,10 +76,10 @@ nightly:ramips.mt7621:
 # don't keep workdir
   script:
     - ./build.sh ramips.mt7621 -j8
-#  artifacts:
-#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-#    paths:
-#    - workdir/*/bin/targets/ramips
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/ramips
 #    - dl
   tags:
   - m2runner
@@ -96,11 +96,41 @@ nightly:ipq40xx.generic:
 # don't keep workdir
   script:
     - ./build.sh ipq40xx.generic -j8
-#  artifacts:
-#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-#    paths:
-#    - workdir/*/bin/targets/ipq40xx.generic
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - workdir/*/bin/targets/ipq40xx.generic
 #    - dl
   tags:
   - m2runner
+
+
+# this build job will wait for all other jobs to ensure
+# that all downloaded packages are stored. 
+# beause jobs are run parallel (no specific order) I have
+# to use a separae stage. 
+# all artifacts are passed to higher stage.
+# because I use the same cache, I can simply pass the "dl" as
+# artifact to next stage.
+#
+# check: if in next stage all artifacts from lower stages are also
+# present. if not, I have to pass them here too
+nightly:dl:
+  only:
+    - schedules
+  stage: dl_stage
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}-nightly
+    paths:
+    - dl
+  script: 
+    - 'true'
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - dl
+  tags:
+  - m2runner
+
 
