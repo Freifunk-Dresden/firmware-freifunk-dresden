@@ -256,10 +256,15 @@ setup_buildroot ()
 
  git_url="https://git.openwrt.org/openwrt/openwrt.git"
 
-	#check if directory exists
-	if [ ! -d $buildroot ]
+	#check if directory exists. I'm not just checking
+	#  the build root itself, because gitlab left a working directory 
+	# only with freifunk files, but without all other openwrt files
+	if [ ! -d $buildroot/toolchain ]
 	then
 		log $log_file echo "directory [$buildroot] not present"
+		# ensure we have a clean workdir, after gitlab runner had removed 
+		# openwrt.org files (e.g. toolchain)
+		log $log_file rm -rf $buildroot
 
 		log $log_file mkdir -p $buildroot
 		log $log_file mkdir -p $openwrt_dl_dir
@@ -564,6 +569,13 @@ EOM
 	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
 	log $log_file time -p make $BUILD_PARAMS
 	# continue with next target in build.targets	
+
+	# check if we have file 
+	if [ ! -d "$RUN_DIR/$buildroot/bin/targets/$_target/$_subtarget" ]; then
+		echo -e $C_RED"Error: build error - generated directory not found"$C_NONE
+		echo "     $buildroot/bin/targets/$_target/$_subtarget/"
+		exit 1
+	fi
 
 	echo -e $C_PURPLE"images created in$C_NONE $C_GREEN$buildroot/bin/targets/$_target/$_subtarget/..."$C_NONE
 
