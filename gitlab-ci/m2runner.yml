@@ -1,5 +1,4 @@
 ######## m2runner ################
-# there are two jobs, one for each commit and one for nightly scheduled job
 
 ar71xx.tiny:
   except:

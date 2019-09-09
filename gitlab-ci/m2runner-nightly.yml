@@ -10,7 +10,7 @@ nightly:ar71xx.tiny:
   stage: build
   cache:
     untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
+    key: ${CI_COMMIT_REF_SLUG}-nightly
     paths:
     - dl
 # don't keep workdir
@@ -30,7 +30,7 @@ nightly:ar71xx.generic:
   stage: build
   cache:
     untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
+    key: ${CI_COMMIT_REF_SLUG}-nightly
     paths:
     - dl
 # don't keep workdir
@@ -50,7 +50,7 @@ nightly:x86.generic:
   stage: build
   cache:
     untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
+    key: ${CI_COMMIT_REF_SLUG}-nightly
     paths:
     - dl
 # don't keep workdir
@@ -70,7 +70,7 @@ nightly:ramips.mt7621:
   stage: build
   cache:
     untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
+    key: ${CI_COMMIT_REF_SLUG}-nightly
     paths:
     - dl
 # don't keep workdir
@@ -90,7 +90,7 @@ nightly:ipq40xx.generic:
   stage: build
   cache:
     untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
+    key: ${CI_COMMIT_REF_SLUG}-nightly
     paths:
     - dl
 # don't keep workdir
