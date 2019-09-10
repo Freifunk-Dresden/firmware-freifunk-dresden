@@ -1,5 +1,5 @@
 --- buildroot/package/boot/uboot-envtools/files/ar71xx
-+++ buildrootuildroot/package/boot/uboot-envtools/files/ar71xx
++++ buildroot/package/boot/uboot-envtools/files/ar71xx
 @@ -37,6 +37,7 @@ gl-ar300m|\
  gl-ar750|\
  hornet-ub|\
@@ -11,7 +11,7 @@
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
 index 23f3d23bf53883fb08944bc65b98cac06a16c0a5..c5f863765a01e4595c535615dd8fc2f124f02cb0 100755
 --- buildroot/target/linux/ar71xx/base-files/etc/board.d/01_leds
-+++ buildrootuildroot/target/linux/ar71xx/base-files/etc/board.d/01_leds
++++ buildroot/target/linux/ar71xx/base-files/etc/board.d/01_leds
 @@ -111,14 +111,20 @@ n5q)
  		;;
  	esac
@@ -40,19 +40,23 @@ index 23f3d23bf53883fb08944bc65b98cac06a16c0a5..c5f863765a01e4595c535615dd8fc2f1
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
 index e9522252a2b8ba7de1c8ca7d070ff7f2897aade9..c4838e8ec593f1fb166602e012e43a24443e47a2 100755
 --- buildroot/target/linux/ar71xx/base-files/etc/board.d/02_network
-+++ buildrootuildroot/target/linux/ar71xx/base-files/etc/board.d/02_network
-@@ -459,6 +459,7 @@ ar71xx_setup_interfaces()
++++ buildroot/target/linux/ar71xx/base-files/etc/board.d/02_network
+@@ -475,6 +475,11 @@
  		ucidef_add_switch "switch0" \
  			"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "5@eth1"
  		;;
-+	jt-or750i|\
++	jt-or750i)
++		ucidef_set_interfaces_lan_wan "eth1" "eth0"
++		ucidef_add_switch "switch0" \
++			"0@eth1" "2:lan:3" "3:lan:2" "4:lan:1"
++		;;
  	routerstation-pro)
  		ucidef_set_interfaces_lan_wan "eth1.1" "eth0"
  		ucidef_add_switch "switch0" \
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
 index 4eb2abb26ca2676576babb14eb1baa38a2f0de2b..7a52bcac305d635eb22db409fce1a73242ec64d5 100644
 --- buildroot/target/linux/ar71xx/base-files/etc/diag.sh
-+++ buildrootuildroot/target/linux/ar71xx/base-files/etc/diag.sh
++++ buildroot/target/linux/ar71xx/base-files/etc/diag.sh
 @@ -263,6 +263,9 @@ get_status_led() {
  	ja76pf2)
  		status_led="jjplus:green:led1"
@@ -66,7 +70,7 @@ index 4eb2abb26ca2676576babb14eb1baa38a2f0de2b..7a52bcac305d635eb22db409fce1a732
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 index 2ba8de4783..077f28768f 100644
 --- buildroot/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-+++ buildrootuildroot/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ buildroot/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 @@ -76,6 +76,7 @@ case "$FIRMWARE" in
  	dlan-pro-1200-ac|\
  	e1700ac-v2|\
@@ -78,7 +82,7 @@ index 2ba8de4783..077f28768f 100644
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 index ccbd4e77c324a36e7fba6e6dccad59d8f94a3921..5b5130e97dd61b20e1566d1e196f164af33b3467 100755
 --- buildroot/target/linux/ar71xx/base-files/lib/ar71xx.sh
-+++ buildrootuildroot/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ buildroot/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -792,6 +792,9 @@ ar71xx_board_detect() {
  	*"JA76PF2")
  		name="ja76pf2"
@@ -92,7 +96,7 @@ index ccbd4e77c324a36e7fba6e6dccad59d8f94a3921..5b5130e97dd61b20e1566d1e196f164a
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 index ca1270b7fdc84c53f8417c226f18ca4fff1f27d8..65ed1d8b7ada9cfba4b7d1e8b72d17594aa5e1b6 100755
 --- buildroot/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-+++ buildrootuildroot/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ buildroot/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -272,6 +272,7 @@ platform_check_image() {
  	gl-usb150|\
  	hiwifi-hc6361|\

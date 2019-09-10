@@ -31,11 +31,16 @@ esac
 #echo "platform: $platform"
 #echo "board: $boardname"
 
+wifi_led_inverted=0
 get_wifi_led()
 {
 	case  "$boardname" in
 		unifi)
 			wifi_led="ubnt:orange:dome"
+			;;
+		jt-or750i)
+			wifi_led=$status_led
+			wifi_led_inverted=1
 			;;
 		*)
 			wifi_led="$(uci -q get system.led_wlan.sysfs)"
@@ -65,21 +70,38 @@ get_wwan_led
 #echo "wwan-led: $wwan_led"
 
 case $1 in
-	wifi)
-		case $2 in
-			off)
-				led_off $wifi_led
-				;;
-			alive)
-				led_timer $wifi_led 30 1000
-				;;
-			freifunk)
-				led_timer $wifi_led 200 200
-				;;
-			gateway)
-				led_timer $wifi_led 60 60
-				;;
-		esac
+	wifi)	# direct
+		if [ "$wifi_led_inverted" = 0 ]; then
+			case $2 in
+				off)
+					led_off $wifi_led
+					;;
+				alive)
+					led_timer $wifi_led 30 1000
+					;;
+				freifunk)
+					led_timer $wifi_led 200 200
+					;;
+				gateway)
+					led_timer $wifi_led 60 60
+					;;
+			esac
+		else
+			case $2 in
+				off)
+					led_on $wifi_led
+					;;
+				alive)
+					led_timer $wifi_led 1000 30
+					;;
+				freifunk)
+					led_timer $wifi_led 200 200
+					;;
+				gateway)
+					led_timer $wifi_led 60 60
+					;;
+			esac
+		fi
 		;;
 	status)
 		case $2 in
