@@ -577,12 +577,12 @@ EOM
 	log $log_file time -p make $BUILD_PARAMS
 
 	# continue with next target in build.targets	
-	if [ $? -eq 0 ]; then
+	if [ $? -ne 0 ]; then
 		echo -e $C_RED"Error: build error - make reported an error"$C_NONE
 		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
 			echo -e $C_PURPLE".......... rerun build with V=s ........................"$C_NONE
 			log $log_file time -p make $BUILD_PARAMS V=s -j1
-			if [ $? -eq 0 ]; then
+			if [ $? -ne 0 ]; then
 				echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
 				exit 1
 			fi
