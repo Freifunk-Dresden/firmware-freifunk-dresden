@@ -2,7 +2,7 @@
 tabs 4
 
 #usage: see below
-SCRIPT_VERSION="5"
+SCRIPT_VERSION="6"
 
 # target file
 PLATFORMS_JSON="build.json"
@@ -151,8 +151,11 @@ setup_dynamic_firmware_config()
 if [ -z "$1" ]; then
 	# create a simple menu
 	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) [list] | [feed-revisions] | [target | all ] menuconfig | clean [ <make params ...> ]"
+	echo "usage: $(basename $0) list | clean | feed-revisions | (target | all  [menuconfig ] [rerun] [ <make params ...> ])"
 	echo " list             - lists all available targets"
+	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
+	echo " feed-revisions   - returns the git HEAD revision hash for current date (now)."
+	echo "                    The revisions then could be set in build.json"
 	echo " target           - target to build (can have regex)"
 	echo "          that are defined by build.json. use 'list' for supported targets."
 	echo "          'all'                   - builds all targets"
@@ -161,10 +164,9 @@ if [ -z "$1" ]; then
 	echo "          '^rt30.*'               - builds all that start with 'rt30'"
 	echo ""
 	echo " menuconfig       - displays configuration menu"
-	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
+	echo " rerun            - enables a second compilation with make option 'V=s'"
+	echo "                    If first make failes a second make is tried with this option"
 	echo " make params      - all paramerters that follows are passed to make command"
-	echo " feed-revisions   - returns the git HEAD revision hash for current date (now)."
-	echo "                    The revisions then could be set in build.json"
 	echo ""
 	exit 1
 fi
@@ -210,6 +212,11 @@ if [ "$1" = "menuconfig" ]; then
 	shift;
 fi
 
+#check if next argument is "rerun"
+if [ "$1" = "rerun" ]; then
+	REBUILD_ON_FAILURE=1
+	shift;
+fi
 #check if next argument is "clean"
 #it only cleans /bin and /build_dir of openwrt directory. toolchains and staging_dir ar kept
 if [ "$1" = "clean" ]; then
@@ -221,7 +228,7 @@ fi
 if [ "$regex" = "all" ]; then
 	regex=".*" 
 fi
-echo "### target:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN"
+echo "### target:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
 
 BUILD_PARAMS=$*
 
@@ -568,7 +575,21 @@ EOM
 	# run make command
 	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
 	log $log_file time -p make $BUILD_PARAMS
+
 	# continue with next target in build.targets	
+	if [ $? -eq 0 ]; then
+		echo -e $C_RED"Error: build error - make reported an error"$C_NONE
+		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
+			echo -e $C_PURPLE".......... rerun build with V=s ........................"$C_NONE
+			log $log_file time -p make $BUILD_PARAMS V=s -j1
+			if [ $? -eq 0 ]; then
+				echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
+				exit 1
+			fi
+		else
+			exit 1
+		fi
+	fi
 
 	# check if we have file 
 	if [ ! -d "$RUN_DIR/$buildroot/bin/targets/$_target/$_subtarget" ]; then
