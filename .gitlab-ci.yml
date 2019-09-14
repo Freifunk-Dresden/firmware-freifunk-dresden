@@ -1,6 +1,8 @@
 stages:
 - build
 - dl_stage
+- test
+- deploy
 
 include:
   - local: '/gitlab-ci/m2runner.yml'
