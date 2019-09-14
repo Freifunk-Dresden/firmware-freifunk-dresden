@@ -112,9 +112,6 @@ nightly:ipq40xx.generic:
 # all artifacts are passed to higher stage.
 # because I use the same cache, I can simply pass the "dl" as
 # artifact to next stage.
-#
-# check: if in next stage all artifacts from lower stages are also
-# present. if not, I have to pass them here too
 nightly:dl:
   only:
     - schedules
@@ -130,7 +127,22 @@ nightly:dl:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
     - dl
+    - workdir/*/bin/targets
   tags:
   - m2runner
 
+nightly:upload:
+  only:
+    - schedules
+  stage: nightly_upload
+  script: 
+    - ./gen-upload.sh all
+    - rsync --dry-run -avz --info=all1 -e "ssh -p 2202" --delete -EH --progress $output_dir/* stephan@download.lxc:/var/www/files/nightlybuilt/
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    paths:
+    - dl
+    - workdir/*/bin/targets
+  tags:
+  - m2runner
 
