@@ -139,7 +139,7 @@ nightly:deploy:
     - ./gen-upload.sh all
     # runner must have ssh key that are added to download server. on download server there is a user "stephan" who owns the download directories
     # add the runners public key to user stephan authorized_keys file
-    - rsync --dry-run -avz --info=all1 -e "ssh -p 2202" --delete -EH --progress final_output/* stephan@download.lxc:/var/www/files/nightlybuilt/
+    - rsync -avz --info=all1 --delete -EH --progress final_output/* stephan@download.lxc:/var/www/files/nightlybuilt/
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
