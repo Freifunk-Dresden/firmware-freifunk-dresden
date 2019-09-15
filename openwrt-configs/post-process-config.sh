@@ -86,6 +86,11 @@ sed -i '
   s/.*\(CONFIG_PACKAGE_odhcpd-ipv6only\)[ =].*/# \1 is not set/
   s/.*\(CONFIG_PACKAGE_ppp\)[ =].*/# \1 is not set/
 
+ # wpad-basic is used for some targets, but in ff firmware 
+ # I specifiy which version should be used.
+ # so disable 
+  s/.*\(CONFIG_PACKAGE_wpad-basic\)[ =].*/# \1 is not set/
+
 ' $1
 
 

@@ -39,7 +39,7 @@ C_LCYAN='\033[1;36m'
 C_GREY='\033[0;37m'
 C_LGREY='\033[1;37m'
 
-#save current directory, used by log and when copying config file
+#save current directory when copying config file
 RUN_DIR=$(pwd)
 
 # jq: first selects the array with all entries and every entry is pass it to select().
@@ -232,25 +232,6 @@ echo "### target:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FA
 
 BUILD_PARAMS=$*
 
-
-log_dir="logs"
-log_file="build.common.log"   # when compiling targets, this is overwritten
-
-#delete old log file
-mkdir -p $log_dir
-rm -rf $log_dir/*
-
-#each command appends its output to the script file.
-#the command is passed as argument to script-tool
-#"script $log_file -a -c"
-log ()
-{
- sf=$1
- shift
- echo "*************** [$*]" >> $RUN_DIR/$log_dir/$sf
- $*  | tee -a $RUN_DIR/$log_dir/$sf
-}
-
 setup_buildroot ()
 {
  buildroot=$1
@@ -268,30 +249,30 @@ setup_buildroot ()
 	# only with freifunk files, but without all other openwrt files
 	if [ ! -d $buildroot/toolchain ]
 	then
-		log $log_file echo "directory [$buildroot] not present"
+		echo "directory [$buildroot] not present"
 		# ensure we have a clean workdir, after gitlab runner had removed 
 		# openwrt.org files (e.g. toolchain)
-		log $log_file rm -rf $buildroot
+		rm -rf $buildroot
 
-		log $log_file mkdir -p $buildroot
-		log $log_file mkdir -p $openwrt_dl_dir
+		mkdir -p $buildroot
+		mkdir -p $openwrt_dl_dir
 
 		#check if we have already downloaded the openwrt revision
 		if [ -f $openwrt_dl_tgz ]
 		then
 			#extract into buildroot dir
-			log $log_file echo "using already downloaded $openwrt_dl_tgz"
-			log $log_file tar xzf $openwrt_dl_tgz 
+			echo "using already downloaded $openwrt_dl_tgz"
+			tar xzf $openwrt_dl_tgz 
 		else
 			#clone from openwrt
-			log $log_file echo "cloning openwrt"
-			log $log_file git clone $git_url $buildroot
-			log $log_file echo "switch to specific revision"
+			echo "cloning openwrt"
+			git clone $git_url $buildroot
+			echo "switch to specific revision"
 			cd $buildroot
-			log $log_file git checkout $openwrt_rev >/dev/null
+			git checkout $openwrt_rev >/dev/null
 			cd $RUN_DIR
-			log $log_file echo "create openwrt tgz"
-			log $log_file tar czf $openwrt_dl_tgz $buildroot 
+			echo "create openwrt tgz"
+			tar czf $openwrt_dl_tgz $buildroot 
 		fi
 
 		#apply openwrt patches
@@ -299,7 +280,6 @@ setup_buildroot ()
 			for i in $openwrt_patches_dir/*
 			do
 				echo "apply openwrt patch: $i"
-				#nicht mit "log" laufen lassen. umleitung geht nicht
 				patch --directory=$buildroot -p1 < $i
 			done 
 		fi
@@ -308,18 +288,18 @@ setup_buildroot ()
 	fi
 
 	echo -e $C_PURPLE"create dl directory/links"$C_NONE
-	log $log_file rm -f $buildroot/dl
-	log $log_file ln -s ../../$openwrt_dl_dir $buildroot/dl
+	rm -f $buildroot/dl
+	ln -s ../../$openwrt_dl_dir $buildroot/dl
 
 	# copy common files first
 	echo -e $C_PURPLE"copy rootfs$C_NONE: $C_GREEN""common"$C_NONE
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
-	log $log_file cp -a $RUN_DIR/files/common/* $buildroot/files/
+	cp -a $RUN_DIR/files/common/* $buildroot/files/
 	
 	# copy specific files over (may overwrite common)
 	echo -e $C_PURPLE"copy rootfs"$C_NONE
-	test -d "$RUN_DIR/files/$firmware_files)" && log $log_file cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
+	test -d "$RUN_DIR/files/$firmware_files)" && cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
 
 	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
 	mkdir -p $buildroot/files/etc
@@ -450,7 +430,6 @@ do
 	echo -e $C_GREY"--------------------"$C_NONE	
 
 	config_file="$CONFIG_DIR/$_selector_config/config.$target"
-	log_file="build.$target.log"
 	buildroot="$WORK_DIR/$_openwrt_rev"
 	openwrt_dl_dir="$DL_DIR"
 	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector_patches"
@@ -504,21 +483,21 @@ EOM
 
 	# --------- update all feeds from feeds.conf (feed info) ----
 	echo -e $C_PURPLE"update feeds"$C_NONE
-	log $log_file ./scripts/feeds update -a 
-#	log $log_file ./scripts/feeds update ddmesh_own 
+	./scripts/feeds update -a 
+#	./scripts/feeds update ddmesh_own 
 
 	echo -e $C_PURPLE"BUGFIX: install missing dependencies"$C_NONE
 	for p in libpam libgnutls libopenldap libidn2 libssh2 liblzma libnetsnmp kmod-cryptodev
 	do
 		echo -e "$C_GREEN$p$C_NONE"
-		log $log_file ./scripts/feeds install $p 2>&1 2>/dev/null
+		./scripts/feeds install $p 2>&1 2>/dev/null
 	done
 
 	echo -e $C_PURPLE"install own feeds"$C_NONE
-	#log ./scripts/feeds clean 
+	#./scripts/feeds clean 
 
 	# install all packages from my own local feeds
-	log $log_file ./scripts/feeds install -a -p ddmesh_own 
+	./scripts/feeds install -a -p ddmesh_own 
 
 	# install additional packages (can be selected via "menuconfig")
 	idx=0
@@ -530,7 +509,7 @@ EOM
 		idx=$(( idx + 1 ))
 		
 		echo -e "[$idx] $C_GREEN$entry$C_NONE"
-		log $log_file ./scripts/feeds install $entry
+		./scripts/feeds install $entry
 	done
 
 
@@ -538,7 +517,7 @@ EOM
 	# generic targets (that contains all devices) must come before specific targets.
 	if [ -z "$_variant" ]; then
 		echo -e $C_PURPLE"delete previous firmware$C_NONE: $C_GREEN""bin/targets/$_target/$_subtarget"
-		log $log_file rm -rf bin/targets/$_target/$_subtarget
+		rm -rf bin/targets/$_target/$_subtarget
 	else
 		echo -e $C_PURPLE"DO NOT delete previous firmware$C_NONE: $C_GREEN""bin/targets/$_target/$_subtarget"
 	fi
@@ -547,42 +526,45 @@ EOM
 	echo -e $C_PURPLE"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
 				# create a new config
-	log $log_file cp $RUN_DIR/$config_file .config 
+	cp $RUN_DIR/$config_file .config 
 
 
 	if [ "$MENUCONFIG" = "1" ]; then
 		echo -e $C_PURPLE"run menuconfig"$C_NONE
-		log $log_file make menuconfig
+		make menuconfig
 		echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
-		log $log_file cp .config $RUN_DIR/$config_file
+		cp .config $RUN_DIR/$config_file
 		exit 0
 	fi
 
 	if [ "$MAKE_CLEAN" = "1" ]; then
 		echo -e $C_PURPLE"run clean"$C_NONE
-		log $log_file make clean
+		make clean
 		continue # clean next target
 	fi
 	
 	# run defconfig to correct config dependencies if those have changed.
 
 	echo -e $C_PURPLE"run defconfig"$C_NONE
-	log $log_file make defconfig
+	make defconfig
 
 	echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
-	log $log_file cp .config $RUN_DIR/$config_file
+	cp .config $RUN_DIR/$config_file
 
 	# run make command
 	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
-	log $log_file time -p make $BUILD_PARAMS
+	time -p make $BUILD_PARAMS
+	error=$?
+	echo "make ret: $error"
 
 	# continue with next target in build.targets	
-	if [ $? -ne 0 ]; then
+	if [ $error -ne 0 ]; then
 		echo -e $C_RED"Error: build error - make reported an error"$C_NONE
 		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
 			echo -e $C_PURPLE".......... rerun build with V=s ........................"$C_NONE
-			log $log_file time -p make $BUILD_PARAMS V=s -j1
-			if [ $? -ne 0 ]; then
+			time -p make $BUILD_PARAMS V=s -j1
+			error=$?
+			if [ $error -ne 0 ]; then
 				echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
 				exit 1
 			fi
