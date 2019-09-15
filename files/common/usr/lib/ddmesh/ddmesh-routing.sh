@@ -28,7 +28,6 @@ ip rule $1 lookup public_dns priority 360
 #route public traffic via second table (KEEP ORDER!)
 ip rule $1 iif $(uci get network.loopback.ifname) table local_gateway priority 400
 test "$(uci -q get ddmesh.network.lan_local_internet)" = "1" && ip rule $1 iif br-lan table local_gateway priority 401
-ip rule $1 iif $(uci get network.loopback.ifname) table fallback_gateway priority 402
 ip rule $1 table public_gateway priority 410
 
 # avoid fastd going through mesh/bat (in case WAN dhcp did not get ip)
@@ -42,6 +41,10 @@ ip rule $1 to $_ddmesh_fullnet table bat_route priority 500
 ip rule $1 to 10.0.0.0/8 table unreachable priority 503
 
 ip rule $1 table bat_default priority 505
+# put fallback after bat_default. If lan was configured and mesh-on-lan is active
+# local_gateway would be empty and any local internet communication (registration)
+# will be routed to dead ip
+ip rule $1 iif $(uci get network.loopback.ifname) table fallback_gateway priority 506 
 
 #stop any routing here, to avoid using default gatways in default routing table
 #those gateways are checked and added to gateway table if valid
