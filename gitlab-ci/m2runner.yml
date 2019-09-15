@@ -75,3 +75,18 @@ ipq40xx.generic:
   tags:
   - m2runner
 
+lantiq.xrx200:
+  except:
+    - schedules
+  stage: build
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - dl
+    - workdir/*
+  script:
+    - ./build.sh lantiq.xrx200 -j2
+  tags:
+  - m2runner
+
