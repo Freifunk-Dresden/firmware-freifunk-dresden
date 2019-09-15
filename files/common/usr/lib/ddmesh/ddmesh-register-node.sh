@@ -73,7 +73,7 @@ case "$j_status" in
 			fi
 
 			if [ "$j_geoloc" = "1" ]; then
-				/usr/lib/ddmesh/ddmesh-geoloc.sh update
+				/usr/lib/ddmesh/ddmesh-geoloc.sh update-config 
 			fi
 
 			#update dns 
