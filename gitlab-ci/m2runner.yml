@@ -11,7 +11,7 @@ ar71xx.tiny:
     - dl
     - workdir/*
   script:
-    - ./build.sh ar71xx.tiny -j2
+    - ./build.sh ar71xx.tiny rerun -j2
   tags:
   - m2runner
 
@@ -26,7 +26,7 @@ ar71xx.generic:
     - dl
     - workdir/*
   script:
-    - ./build.sh ar71xx.generic -j2
+    - ./build.sh ar71xx.generic rerun -j2
   tags:
   - m2runner
 
@@ -41,7 +41,7 @@ x86.generic:
     - dl
     - workdir/*
   script:
-    - ./build.sh x86.generic -j2
+    - ./build.sh x86.generic rerun -j2
   tags:
   - m2runner
 
@@ -56,7 +56,7 @@ ramips.mt7621:
     - dl
     - workdir/*
   script:
-    - ./build.sh ramips.mt7621 -j2
+    - ./build.sh ramips.mt7621 rerun -j2
   tags:
   - m2runner
 
@@ -71,7 +71,7 @@ ipq40xx.generic:
     - dl
     - workdir/*
   script:
-    - ./build.sh ipq40xx.generic -j2
+    - ./build.sh ipq40xx.generic rerun -j2
   tags:
   - m2runner
 
@@ -86,7 +86,7 @@ lantiq.xrx200:
     - dl
     - workdir/*
   script:
-    - ./build.sh lantiq.xrx200 -j2
+    - ./build.sh lantiq.xrx200 rerun -j2
   tags:
   - m2runner
 
