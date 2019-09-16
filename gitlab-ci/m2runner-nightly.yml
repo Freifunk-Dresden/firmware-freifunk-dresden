@@ -15,7 +15,7 @@ nightly:ar71xx.tiny:
     - dl
 # don't keep workdir
   script:
-    - ./build.sh ar71xx.tiny -j8
+    - ./build.sh ar71xx.tiny rerun -j8
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
@@ -35,7 +35,7 @@ nightly:ar71xx.generic:
     - dl
 # don't keep workdir
   script:
-    - ./build.sh ar71xx.generic -j8
+    - ./build.sh ar71xx.generic rerun -j8
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
@@ -55,7 +55,7 @@ nightly:x86.generic:
     - dl
 # don't keep workdir
   script:
-    - ./build.sh x86.generic -j8
+    - ./build.sh x86.generic rerun -j8
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
@@ -75,7 +75,7 @@ nightly:ramips.mt7621:
     - dl
 # don't keep workdir
   script:
-    - ./build.sh ramips.mt7621 -j8
+    - ./build.sh ramips.mt7621 rerun -j8
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
@@ -95,7 +95,7 @@ nightly:ipq40xx.generic:
     - dl
 # don't keep workdir
   script:
-    - ./build.sh ipq40xx.generic -j8
+    - ./build.sh ipq40xx.generic rerun -j8
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
@@ -115,7 +115,7 @@ nightly:lantiq.xrx200:
     - dl
 # don't keep workdir
   script:
-    - ./build.sh lantiq.xrx200 -j8
+    - ./build.sh lantiq.xrx200 rerun -j8
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     paths:
