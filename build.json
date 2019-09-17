@@ -104,25 +104,6 @@
 		"variant":"generic"
 	},
 	{	
-		"name":"openwrt:ramips.mt7621.wr1200js",
-		"target":"ramips",
-		"subtarget":"mt7621",
-		"variant":"wr1200js"
-	},
-        {       
-                "name":"openwrt:ramips.mt7621.r6220",
-                "target":"ramips",
-                "subtarget":"mt7621",
-                "variant":"r6220",
-                "openwrt_rev":"9ba9a9134371845f97569a032d93c338d96f8f40", # 19.07 mit NAND patch
-                "selector-config":"19.07",
-                "feeds" : [
-			{"type":"src-link",     "name":"ddmesh_own",    "src":"../../../feeds/openwrt/feeds-own" },
-			{"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git",      "rev":"1ad19c6bfab29c72147230db78cabd4c97923164"}
-		],
-		"packages":[ "jansson libcap" ]
-        },
-	{	
 		"name":"openwrt:ramips.mt7621.ubiquiti-edgerouter-x",
 		"target":"ramips",
 		"subtarget":"mt7621",
