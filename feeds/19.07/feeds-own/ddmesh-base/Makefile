@@ -201,7 +201,7 @@ define Package/$(PKG_NAME)-wifi-extra
   DEFAULT:=n
   DEPENDS:= $(PKG_NAME)-wifi \
 		+kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
-		+kmod-ath10k +kmod-ath5k +kmod-ath9k \
+		+kmod-ath10k-ct +kmod-ath5k +kmod-ath9k \
 		+kmod-p54-usb \
 		+kmod-rt2500-usb \
 		+kmod-rt2800-usb \
