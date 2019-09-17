@@ -49,19 +49,19 @@
 		"openwrt_rev":"0e0f9ff93c4a6088641555d21b7d3143c5dbe945", # 19.07 Sat Sep 7 00:43:19 2019
 		"selector-config":"19.07",		# used to select config
 		"selector-files":"dummy",		# used to select files
-		"selector-feeds":"openwrt",		# used to select feeds
+		"selector-feeds":"19.07",		# used to select feeds
 		"selector-patches":"19.07",		# used to select patches
 		
 		#"openwrt_rev":"f6de1fa6c6b69ac6282f453f61c894695d11f433", # 18.06 01-09-2019
 		#"selector-config":"18.06",		# used to select config
 		#"selector-files":"dummy",		# used to select files
-		#"selector-feeds":"openwrt",		# used to select feeds
+		#"selector-feeds":"18.06",		# used to select feeds
 		#"selector-patches":"18.06",		# used to select patches
 
 		# generates the feeds/feeds-[selector].conf
 		# for short commit value use: git log --abbrev-commit
 		"feeds" : [
-				{"type":"src-link", 	"name":"ddmesh_own",	"src":"../../../feeds/openwrt/feeds-own" },
+				{"type":"src-link", 	"name":"ddmesh_own",	"src":"../../../feeds/19.07/feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"204293a76"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"},
@@ -78,8 +78,15 @@
 		"openwrt_rev":"f6de1fa6c6b69ac6282f453f61c894695d11f433", # 18.06 01-09-2019
 		"selector-config":"18.06",		# used to select config
 		"selector-files":"dummy",		# used to select files
-		"selector-feeds":"openwrt",		# used to select feeds
-		"selector-patches":"18.06"		# used to select patches
+		"selector-feeds":"18.06",		# used to select feeds
+		"selector-patches":"18.06",		# used to select patches
+		"feeds" : [
+				{"type":"src-link", 	"name":"ddmesh_own",	"src":"../../../feeds/18.06/feeds-own" },
+				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
+				{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"204293a76"},
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"},
+				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"9167e30"}
+			  ]
 	},
 	{	
 		"name":"openwrt:ar71xx.generic",

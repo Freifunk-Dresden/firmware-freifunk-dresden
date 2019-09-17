@@ -1,0 +1,119 @@
+For a more detailed and up-to-date CHANGELOG visit:
+http://open-mesh.net/log/trunk/batman-experimental
+
+Important changes should be listed in the following, most recent changes on top:
+
+---------------------------------------------------------------------------------------------------
+2010-04-15 -
+
+ - debug sorted originator lists (using a binary avl-tree instead of hash)
+
+ - ogi_power_save (mode) for energy-restriced devices
+
+ - many 64-bit fixes
+
+ - harded ogm-aggregation and more tolerant acceptance of late OGMs (old SQNs) with --path_lounge_size
+
+ - dead-path detection by concurrent path-quality observation using a  long-term and short-term observation window
+
+
+---------------------------------------------------------------------------------------------------
+2009-08-18 - bmx_http_info and bmx_gsf_map plugin, ...
+
+- simple http_info plugin. See lib/bmx_http_info/HOWTO
+
+- decentral-openstreetmap-json-based map plugin from http://graciasensefils.net (GSF) folks
+
+- add symbolic links from lib/bmx_*.so to lib/bmx_*/bmx_*.so.1 to 
+  facilitate execution and debugging of local bmx libraries by 
+  overwriting bmx plugin-library path. E.g.:
+  BMX_LIB_PATH=$(pwd)/lib ./bmxd -d3
+
+- Antenna-diversity support for bmxd seems working but unfortunately there are few wireless drivers which support 
+  my understanding of the typical antenna-diversity implementation. This is what I hoped (maybe I am wrong): 
+  - The RX-antenna is detected on-the-fly on a per-packet basis by comparing 
+    the rcvd signal-strength via each antenna during reception of the phy-preamble.
+  - The TX-antenna is determined per MAC-address based on the last detected best RX-antenna for this MAC.
+  - Broadcast packets should be send round-robin like via each enabled TX-antenna (e.g. alternating via ant1 and ant2). 
+
+
+---------------------------------------------------------------------------------------------------
+2009-08-10 - bmx_uci_config plugin for openWrt universial configuraton interface (UCI)
+
+- plugin for dynamic interaction with uci http://downloads.openwrt.org/sources/uci-0.7.3.tar.gz
+- to compile first install uci: 
+	wget http://downloads.openwrt.org/sources/uci-0.7.3.tar.gz
+	tar xzvf uci-0.7.3.tar.gz; cd uci-0.7.3; make; sudo make install
+- default configuration backend is: /etc/config/bmx
+- see lib/bmx_uci_config/etc_config for a simple (bmx) and an advanced (bmx-advanced) example
+
+
+---------------------------------------------------------------------------------------------------
+2009-08-10 - refactoring scheduling, debugging, controlling,... introduce plugin framework, cleanup...
+
+- new bmx help with -v / -h / -H / -x / -X
+
+- new configuration features
+	- generalize resetting of configured functions using "-", e.g.: -co- or -c dev -ath0
+	--test to test remaining args without applying them
+	--runtime-dir /var/run/bmx to store unix-socket and pid files
+	--loop_mode / -l , make batch_mode default, -b deprecated, introduce -l for loop instead
+	--throw ( was --no-tunnel-rule )
+	--originators, --links, --hnas, --interfaces
+	--purge_timeout 
+	--dad_timeout
+	--dev=ath0 and --dev=-ath0 (dynamically add and remove interfaces)
+	-X show BatMan-eXperimental help, short description and configurable values
+	--plugin bmx_plugin.so to load extended plugin functionality
+	--plugin bmx_plugin.so -X or -cX to show available options including extended plugin functionality
+
+- introduce section-like options
+	--service=1.2.3.4:5 /seqno=1
+	--dev=eth0 /ttl=4
+	--unicast_hna=dhcp-clients /network=1.2.3.0 /netmask=24
+	--throw=my-vpn /network=192.168.178.0 /netmask=24
+
+- allow loopback interfaces as primary interfaces, e.g.: --dev lo:bmx
+
+- new compile-time defines:
+	-DNOTRAILER						- ~3K
+	-DNODEBUGALL						- ~13k
+	-DNOTUNNEL  	(only affects this node)		- ~23k
+	-DNOSRV  	(only affects this node)		- ~3k
+	-DNOVIS  	(only affects this node)		- ~2k
+	-DNODEPRECATED	(for backward compatibility)		- ~2k
+
+- new advanced compile-time defines (please dont touch):
+	-DNOHNA		(affects all nodes in network)		- ~6k
+	-DNOPARANOIA	(makes bug-hunting impossible)		- ~2k
+	-DEXTDEBUG	(this eats your cpu)			+ ~0k
+	-DTESTDEBUG	(testing syntax of __VA_ARGS__ dbg...() macros)
+	-DWITHUNUSED	(includes yet unused stuff)
+
+
+- allow full-broadcast destination addresses to facilitate IP renumbering
+
+- track configured ip-rules and ip-routes and dont configure things twice
+
+- better conform to common coding-styles: -pedantic -Wall -W -Wno-unused-parameter -std=gnu99
+
+- check for duplicate ip configuration on local node
+
+- remove lots of global variables
+
+- plugin framework allowing registration of:
+	- parameters
+	- data-structures
+	- scheduled functions
+	- ...
+	
+
+- support muting of selected debug messages
+
+- new bit-array processing funtions 
+
+- remove usage of libpthread
+
+- use ip address of primary interface as preferred src for all interfaces
+
+- periodically check for changed ip_forward and other kernel configs
