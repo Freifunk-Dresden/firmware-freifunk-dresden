@@ -484,21 +484,8 @@ EOM
 	# --------- update all feeds from feeds.conf (feed info) ----
 	echo -e $C_PURPLE"update feeds"$C_NONE
 	./scripts/feeds update -a 
-#	./scripts/feeds update ddmesh_own 
 
-	echo -e $C_PURPLE"BUGFIX: install missing dependencies"$C_NONE
-	for p in libpam libgnutls libopenldap libidn2 libssh2 liblzma libnetsnmp kmod-cryptodev
-	do
-		echo -e "$C_GREEN$p$C_NONE"
-		./scripts/feeds install $p 2>&1 2>/dev/null
-	done
-
-	echo -e $C_PURPLE"install own feeds"$C_NONE
-	#./scripts/feeds clean 
-
-	# install all packages from my own local feeds
-	./scripts/feeds install -a -p ddmesh_own 
-
+	echo -e $C_PURPLE"install missing packages from feeds"$C_NONE
 	# install additional packages (can be selected via "menuconfig")
 	idx=0
 	while true
@@ -511,6 +498,9 @@ EOM
 		echo -e "[$idx] $C_GREEN$entry$C_NONE"
 		./scripts/feeds install $entry
 	done
+
+	echo -e $C_PURPLE"install all packages from own local feed directory (ddmesh_own)"$C_NONE
+	./scripts/feeds install -a -p ddmesh_own 
 
 
 	# delete target dir, but only delete when no specific device/variant is built.

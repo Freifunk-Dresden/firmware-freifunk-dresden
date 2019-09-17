@@ -69,7 +69,9 @@
 			  ],
 
 		# install addional packages from feeds (see feeds.conf)
-		"packages":[ "" ]
+		"packages":["libpam","libcap","libgnutls","libopenldap",
+				"libidn2","libssh2","libssh2","libnetsnmp",
+				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
 	{	
 		"name":"openwrt:ar71xx.tiny",	# can be any name
@@ -126,8 +128,8 @@
 		"target":"lantiq",
 		"subtarget":"xrx200"
 	},
-	{	
-		"name":"AVM Fritzbox 4040",
+	{	# created for fritzbox 4040
+		"name":"openwrt:ipq40xx.generic",
 		"target":"ipq40xx",
 		"subtarget":"generic"
 	}
