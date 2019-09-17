@@ -70,7 +70,7 @@
 
 		# install addional packages from feeds (see feeds.conf)
 		"packages":["libpam","libcap","libgnutls","libopenldap",
-				"libidn2","libssh2","libssh2","libnetsnmp",
+				"libidn2","libssh2","libnetsnmp",
 				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
 	{	
