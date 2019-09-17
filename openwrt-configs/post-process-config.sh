@@ -59,6 +59,13 @@ sed -i '
   s/.*CONFIG_CCACHE[ =].*/CONFIG_CCACHE=y/
   s/.*CONFIG_TARGET_ROOTFS_TARGZ[ =].*/CONFIG_TARGET_ROOTFS_TARGZ=y/
 
+  # this setting creates for each device its own set packages. if not selected
+  # (was default) all images contain all packages, also if not used.
+  # This setting must be done BEFORE calling menuconfig, as per default
+  # all packages are set. later change to this option will then have no effect.
+  # see "help" of this option when calling menuconfig
+  s/.*CONFIG_TARGET_PER_DEVICE_ROOTFS[ =].*/CONFIG_TARGET_PER_DEVICE_ROOTFS=y/
+
   # - increment squashfs block size from 256 to 512kbyte to get a better compression.
   # - this gives me one flash sector more for rootfs
   # - value must be muliple of power 2
