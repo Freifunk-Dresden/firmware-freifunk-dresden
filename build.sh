@@ -262,7 +262,8 @@ setup_buildroot ()
 		then
 			#extract into buildroot dir
 			echo "using already downloaded $openwrt_dl_tgz"
-			tar xzf $openwrt_dl_tgz 
+			cd $buildroot
+			tar xzf $RUN_DIR/$openwrt_dl_tgz 
 		else
 			#clone from openwrt
 			echo "cloning openwrt"
@@ -270,16 +271,16 @@ setup_buildroot ()
 			echo "switch to specific revision"
 			cd $buildroot
 			git checkout $openwrt_rev >/dev/null
-			cd $RUN_DIR
 			echo "create openwrt tgz"
-			tar czf $openwrt_dl_tgz $buildroot 
+			tar czf $RUN_DIR/$openwrt_dl_tgz . 
 		fi
+		cd $RUN_DIR
 
 		#apply openwrt patches
 		if [ -d $openwrt_patches_dir ]; then
 			for i in $openwrt_patches_dir/*
 			do
-				echo "apply openwrt patch: $i"
+				echo "apply openwrt patch: $i to buildroot:$buildroot"
 				patch --directory=$buildroot -p1 < $i
 			done 
 		fi
@@ -430,7 +431,10 @@ do
 	echo -e $C_GREY"--------------------"$C_NONE	
 
 	config_file="$CONFIG_DIR/$_selector_config/config.$target"
-	buildroot="$WORK_DIR/$_openwrt_rev"
+	# use short revision because openwrt build path gets too long and
+	# make for ipq40xx.generic (fritzbox 4040) will fail
+	# (see git log --abbrev-commit)
+	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
 	openwrt_dl_dir="$DL_DIR"
 	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector_patches"
 
