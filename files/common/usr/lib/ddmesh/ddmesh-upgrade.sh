@@ -73,13 +73,19 @@ run_upgrade()
 
 # function for current version is needed for this algorithm
 upgrade_3_1_9()
-{ true }
+{
+ true
+}
 
 upgrade_4_1_7()
-{ true }
+{
+ true
+}
 
 upgrade_4_2_0()
-{ true }
+{
+ true
+}
 
 upgrade_4_2_2()
 {
@@ -214,10 +220,14 @@ upgrade_4_2_5()
 
 
 upgrade_4_2_6()
-{ true }
+{
+ true
+}
 
 upgrade_4_2_7()
-{ true }
+{
+ true
+}
 
 upgrade_4_2_8()
 {
@@ -262,7 +272,9 @@ upgrade_4_2_10()
 }
 
 upgrade_4_2_11()
-{ true }
+{
+ true
+}
 
 upgrade_4_2_12()
 {
@@ -271,10 +283,14 @@ upgrade_4_2_12()
 }
 
 upgrade_4_2_13()
-{ true }
+{
+ true
+}
 
 upgrade_4_2_14()
-{ true }
+{
+ true
+}
 
 upgrade_4_2_15()
 {
@@ -343,7 +359,9 @@ upgrade_5_0_4()
 }
 
 upgrade_5_0_5()
-{ true }
+{
+ true
+}
 
 upgrade_6_0_6()
 {
@@ -365,10 +383,14 @@ upgrade_6_0_7()
 }
 
 upgrade_6_0_8()
-{ true }
+{
+ true
+}
 
 upgrade_6_0_9()
-{ true }
+{
+ true
+}
 
 upgrade_6_0_10()
 {
