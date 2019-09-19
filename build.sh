@@ -1,6 +1,9 @@
 #!/bin/bash
 tabs 4
 
+echo "ACHTUNG: aktuell stuerst firmware auf ubnt geraeten ab. Daher habe ich erstmal das bauen hier deaktiviert."
+exit 1
+
 #usage: see below
 SCRIPT_VERSION="6"
 
