@@ -488,6 +488,12 @@ EOM
 	echo "change to buildroot [$buildroot]"
 	cd $buildroot
 
+	if [ "$MAKE_CLEAN" = "1" ]; then
+		echo -e $C_PURPLE"run clean"$C_NONE
+		make clean
+		continue # clean next target
+	fi
+	
 	# --------- update all feeds from feeds.conf (feed info) ----
 	echo -e $C_PURPLE"update feeds"$C_NONE
 	./scripts/feeds update -a 
@@ -534,12 +540,6 @@ EOM
 		exit 0
 	fi
 
-	if [ "$MAKE_CLEAN" = "1" ]; then
-		echo -e $C_PURPLE"run clean"$C_NONE
-		make clean
-		continue # clean next target
-	fi
-	
 	# run defconfig to correct config dependencies if those have changed.
 
 	echo -e $C_PURPLE"run defconfig"$C_NONE
