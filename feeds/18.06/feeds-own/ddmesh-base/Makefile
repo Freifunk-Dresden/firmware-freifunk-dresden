@@ -65,7 +65,7 @@ define Package/$(PKG_NAME)-base/config
 		config PACKAGE_freifunk-upload
 			# menu point is displayed when dependings are set
 			depends on PACKAGE_ddmesh-base
-			tristate "ddns-scripts"
+			tristate "freifunk-upload"
 			help
 				required by firmware
 
