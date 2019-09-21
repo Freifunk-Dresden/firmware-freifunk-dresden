@@ -17,6 +17,7 @@ define Package/$(PKG_NAME)-base
 		+bmxd +freifunk-upload \
 		+fastd +@FASTD_ENABLE_METHOD_NULL +@FASTD_ENABLE_CIPHER_NULL +@FASTD_ENABLE_CIPHER_SALSA2012 \
 		+libuecc +nacl +ddns-scripts +ddns-scripts_no-ip_com \
+		+iptables \
 		+px5g-mbedtls \
 		+iperf3
 
