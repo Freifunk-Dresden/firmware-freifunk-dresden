@@ -53,7 +53,7 @@ if [ -z "$1" ]; then
 fi
 
 sed -i '
-  s/.*CONFIG_IMAGEOPT[ =].*/CONFIG_IMAGEOPT=y/
+  #s/.*CONFIG_IMAGEOPT[ =].*/CONFIG_IMAGEOPT=y/
   s/.*\(CONFIG_PER_FEED_REPO\)[ =].*/# CONFIG_PER_FEED_REPO is not set/
   s/.*CONFIG_DEVEL[ =].*/CONFIG_DEVEL=y/
   s/.*CONFIG_CCACHE[ =].*/CONFIG_CCACHE=y/
