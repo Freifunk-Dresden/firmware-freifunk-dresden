@@ -398,6 +398,11 @@ upgrade_6_0_10()
  rm /etc/config/wireless # delete symlink
 }
 
+upgrade_6_0_11()
+{
+ cp /rom/etc/iproute2/rt_tables /etc/iproute2/rt_tables 
+ rm /etc/config/wireless # delete symlink
+}
 
 ##################################
 

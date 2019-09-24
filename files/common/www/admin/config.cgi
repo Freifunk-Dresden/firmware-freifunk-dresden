@@ -6,7 +6,8 @@
 
 export TITLE="Verwaltung > Wartung: Konfiguration"
 
-CONF_FILE="router-$(uci get ddmesh.system.node)-config-$(date +"%Y%b%d-%H%M%S").tgz"
+ver=$(uci get ddmesh.boot.upgrade_version)
+CONF_FILE="router-$(uci get ddmesh.system.node)-config-fw$ver-$(date +"%Y%b%d-%H%M%S").tgz"
 PACKAGES="/etc/installed.packages"
 OPKG_ERROR="/tmp/opkg.error"
 
