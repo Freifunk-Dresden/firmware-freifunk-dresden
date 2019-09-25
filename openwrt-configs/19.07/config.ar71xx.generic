@@ -486,16 +486,16 @@ CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_wlr8100=y
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_bsb=y
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tellstick-znet-lite=y
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_rut900=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c25-v1=y
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c25-v1 is not set
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c5-v1=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c58-v1=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c59-v1=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c59-v2=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c60-v1=y
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c58-v1 is not set
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c59-v1 is not set
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c59-v2 is not set
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c60-v1 is not set
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c60-v2=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v1=y
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v1 is not set
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v2=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v2-il=y
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v2-il is not set
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wdr7500-v3=y
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v4=y
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v5=y

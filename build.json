@@ -36,6 +36,7 @@
 
 {
  "targets": [
+# ------------- default values ------------------------------
 	{	
 		"name":"default",			# must be "default", this block defines default values that are used
 							# if following blocks do not specifiy there own value
@@ -73,6 +74,7 @@
 				"libidn2","libssh2","libnetsnmp",
 				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
+# ------------- specific targets ------------------------------
 	{	
 		"name":"openwrt:ar71xx.tiny",	# can be any name
 		"target":"ar71xx",
@@ -95,12 +97,6 @@
 		"target":"ar71xx",
 		"subtarget":"generic"
 	},
-#	{	
-#		"name":"GL.iNet GL-MiFi (LTE Router)",
-#		"target":"ar71xx",
-#		"subtarget":"generic",
-#		"variant":"gl-mifi"
-#	},
 	{	
 		"name":"openwrt:x86.generic",
 		"target":"x86",
