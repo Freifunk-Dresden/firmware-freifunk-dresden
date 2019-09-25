@@ -1,5 +1,4 @@
-
-2019-09-07 6.0.10 (devel)
+2019-09-25 6.0.11 (devel)
 --------------------------------------------------
 build.sh		- more improvments 
 openwrt			- update 18.06 and 19.07 (different targets)
