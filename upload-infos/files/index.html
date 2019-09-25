@@ -14,9 +14,9 @@
 <!-- now load jQuery (before datatables. datatable initialisation depend on jQuery -->
 <script type="text/javascript" src="_res/jquery/jquery.js"></script>
 <script type="text/javascript" src="_res/jquery/jquery-ui.min.js"></script>
-<link rel="stylesheet" type="text/css" href="_res/jquery/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="_res/jquery/jquery-ui.min.css">
 
-<link rel="stylesheet" type="text/css" href="_res/datatables/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="_res/datatables/datatables.min.css">
 <script type="text/javascript" src="_res/datatables/datatables.min.js"></script>	
 
 <style>
@@ -37,6 +37,9 @@
 }
 </style>	
 
+<h2> Freifunk Dresden - Firmware </h2>
+<div id="version"></div>
+<br>
 
 <div>
 <b>Spalten anzeigen:</b> 
@@ -82,6 +85,11 @@ my.query = jQuery.noConflict( true );
 
 // use new way to call function when DOM is ready. old way was $(document).ready(handler)
 my.query(function() {
+
+
+  my.query('#version').html("<b>Software Version</b>: " + data.firmware_version);
+
+
   // remember Table, to later access it via event function when a link is clicked with
   // specific class name to make columns visible
   var myTable = my.query('#table').DataTable( {
