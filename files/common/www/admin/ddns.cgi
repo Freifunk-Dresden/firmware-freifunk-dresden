@@ -44,7 +44,8 @@ cat<<EOM
 </tr>
 
 <tr><th>Update-URL:</th>
-<td><INPUT NAME="form_ddns_use_https" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddns.dyndns.use_https)" = "1" ];then echo ' checked="checked"';fi)<input name="form_ddns_update_url" size="32" type="text" value="$(uci get ddns.dyndns.update_url)">Zu verwendende URL, wenn DynDNS-Dienst auf <i>manuelle DynDNS-URL</i> gestellt ist. Siehe <a href="https://openwrt.org/docs/guide-user/base-system/ddns">openwrt.org: ddns</a></td>
+<td><INPUT NAME="form_ddns_use_https" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddns.dyndns.use_https)" = "1" ];then echo ' checked="checked"';fi)>
+    <input name="form_ddns_update_url" size="32" type="text" value="$(uci get ddns.dyndns.update_url)"> <br/>Zu verwendende URL, wenn DynDNS-Dienst auf <i>manuelle DynDNS-URL</i> gestellt ist. Siehe <a href="https://openwrt.org/docs/guide-user/base-system/ddns">openwrt.org: ddns</a></td>
 </tr>
 
 <tr><th>Domain:</th>
