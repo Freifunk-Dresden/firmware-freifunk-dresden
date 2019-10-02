@@ -1,21 +1,22 @@
-lxd gitlab-runner on main server
+# lxd gitlab-runner on main server
 =================================
 
-Create a linux container (lxd) with ubuntu
----------
+Step by step guide
 
+## 1. Create a linux container (lxd) with ubuntu
 
+## 2. Install all required dependencies to build firmware
 
-Install all required dependencies to build firmware
-------------
 ```
 apt-get install unzip wget time rsync jq gawk gettext
 apt-get install git subversion build-essential flex python
 apt-get install libssl-dev libncurses5-dev zlib1g-dev zlib1g-dev gcc-multilib
 ```
 
-Install letsencrypt certificates, so gitlab-runner can clone from gitlab repository
---------
+## 3. Configure SSL certificates (additional hosts)
+
+### 3a. Install letsencrypt certificates, so gitlab-runner can clone from gitlab repository
+
 Download and copy let's encrypt root certificates
 
 ```
@@ -30,12 +31,40 @@ Download and copy let's encrypt root certificates
  wget -O - https://gitlab.freifunk-dresden.de/
 ```
 
-Install gitlab-runner and assing a tag to it. so it can be selected by gitlab
----------
+### 3b. Or allow *ANY* SSL cerificates and add user defined domain name (example with docker executor and local cache)
+
+Add enviroment variable "GIT_SSL_NO_VERIFY" and "tls_verify = false" in /etc/gitlab-runner/config.toml
 
 
-.gitlab-ci.yml
---------------
+```
+[[runners]]
+  name = "gitlab-docker"
+  url = "https://gitlab.freifunk-dresden.de/"
+  token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  executor = "docker"
+  environment = ["LC_ALL=en_US.UTF-8", "GIT_SSL_NO_VERIFY=true"]
+  [runners.docker]
+    tls_verify = false
+    image = "ubuntu:18.04"
+    memory = "4096m"
+    memory_swap = "2048m"
+    memory_reservation = "1024m"
+    privileged = false
+    disable_cache = false
+    volumes = ["/cache"]
+    cache_dir = "/cache"
+    extra_hosts = ["myhost1.intern.lan:192.168.30.1","myhost2.intern.lan:192.168.40.1"]
+    environment = ["LC_ALL=en_US.UTF-8", "GIT_SSL_NO_VERIFY=true"]
+    pull_policy = "if-not-present"
+    shm_size = 0
+  [runners.cache]
+    Insecure = false
+```
+
+## 4. Install gitlab-runner and assing a tag to it. so it can be selected by gitlab
+
+## 5. Add .gitlab-ci.yml in your git repository
+
 *.gitlab-ci.yml* define stages. Start with one stage, in our case with "*build*".<br>
 Each runner type (here gitlab-runner without docker) should have its own job definition.
 The job is selected by gitlab by checking for matching *tags*.
@@ -67,4 +96,5 @@ build:ar71xx.tiny:
 - https://gitlab.freifunk-dresden.de/help/ci/environments
 - https://docs.gitlab.com/ee/ci/yaml/#skipping-jobs
 - https://docs.gitlab.com/ce/ci/caching/
+- https://docs.gitlab.com/runner/configuration/advanced-configuration.html
 
