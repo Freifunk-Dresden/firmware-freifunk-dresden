@@ -79,11 +79,11 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ALL_PROFILES is not set
 # CONFIG_TARGET_PER_DEVICE_ROOTFS is not set
 # CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz3370-rev2-hynix is not set
-# CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz3370-rev2-micron is not set
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz3370-rev2-micron=y
 CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz7360sl=y
 CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz7362sl=y
-# CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz7412 is not set
-# CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_bt_homehub-v5a is not set
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz7412=y
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_bt_homehub-v5a=y
 # CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_alphanetworks_asl56026 is not set
 # CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_arcadyan_vg3503j is not set
 # CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_buffalo_wbmr-300hpd is not set
@@ -109,6 +109,7 @@ CONFIG_TARGET_ARCH_PACKAGES="mips_24kc"
 CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mno-branch-likely -mips32r2 -mtune=24kc"
 CONFIG_CPU_TYPE="24kc"
 CONFIG_LINUX_4_14=y
+CONFIG_DEFAULT_ath10k-firmware-qca988x-ct=y
 CONFIG_DEFAULT_base-files=y
 CONFIG_DEFAULT_busybox=y
 CONFIG_DEFAULT_dnsmasq=y
@@ -116,10 +117,13 @@ CONFIG_DEFAULT_dropbear=y
 CONFIG_DEFAULT_dsl-vrx200-firmware-xdsl-a=y
 CONFIG_DEFAULT_dsl-vrx200-firmware-xdsl-b-patch=y
 CONFIG_DEFAULT_firewall=y
+CONFIG_DEFAULT_fritz-caldata=y
 CONFIG_DEFAULT_fritz-tffs=y
+CONFIG_DEFAULT_fritz-tffs-nand=y
 CONFIG_DEFAULT_fstools=y
 CONFIG_DEFAULT_iptables=y
 CONFIG_DEFAULT_iwinfo=y
+CONFIG_DEFAULT_kmod-ath10k-ct=y
 CONFIG_DEFAULT_kmod-ath9k=y
 CONFIG_DEFAULT_kmod-gpio-button-hotplug=y
 CONFIG_DEFAULT_kmod-leds-gpio=y
