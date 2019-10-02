@@ -14,6 +14,7 @@ DL_DIR=dl
 WORK_DIR=workdir
 CONFIG_DIR=openwrt-configs
 OPENWRT_PATCHES_DIR=openwrt-patches
+OPENWRT_PATCHES_TARGET_DIR=openwrt-patches-target
 
 # -------------------------------------------------------------------
 
@@ -89,6 +90,7 @@ listTargets()
 	_def_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
 	_def_selector_feeds=$(echo $entry | jq $OPT '.["selector-feeds"]')
 	_def_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
+        _def_target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
 	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
 	_def_feeds=$(echo $entry | jq $OPT '.feeds')
 	_def_packages=$(echo $entry | jq $OPT '.packages')
@@ -126,6 +128,9 @@ listTargets()
 
 		_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
 		test "$_selector_patches" = "null" && _selector_patches="$_def_selector_patches"
+
+                _target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
+                test "$_target_patches" = "null" && _target_patches="$_def_target_patches"
 
 		target=$_target.$_subtarget
 		# add variant (if any)
@@ -353,6 +358,7 @@ if [ -n "$entry" ]; then
 	_def_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
 	_def_selector_feeds=$(echo $entry | jq $OPT '.["selector-feeds"]')
 	_def_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
+        _def_target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
 	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
 	_def_feeds=$(echo $entry | jq $OPT '.feeds')
 	_def_packages=$(echo $entry | jq $OPT '.packages')
@@ -403,6 +409,9 @@ do
 
 	_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
 	test "$_selector_patches" = "null" && _selector_patches="$_def_selector_patches"
+
+        _target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
+        test "$_target_patches" = "null" && _target_patches="$_def_target_patches"
 
 	_feeds=$(echo $entry | jq $OPT '.feeds')
 	test "$_feeds" = "null" && _feeds="$_def_feeds"
@@ -524,6 +533,28 @@ EOM
 	else
 		echo -e $C_PURPLE"DO NOT delete previous firmware$C_NONE: $C_GREEN""bin/targets/$_target/$_subtarget"
 	fi
+
+	#try to apply target patches
+        echo -e $C_PURPLE"apply target patches"$C_GREEN
+        idx=0
+        while true
+        do
+                # use OPT to prevent jq from adding ""
+                entry="$(echo $_target_patches | jq $OPT .[$idx])"
+                test "$entry" = "null" && break
+                idx=$(( idx + 1 ))
+
+		# check patch
+
+		[ -f $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_config/$entry ] && echo -e "[$idx] $C_GREEN$entry$C_NONE" || break
+
+                if patch --dry-run -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_config/$entry ; then
+			patch -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_config/$entry
+		else
+			echo -e $C_RED"cannot apply last patch"$C_NONE
+			exit 1
+		fi
+        done
 
 	#copy after installing feeds, because .config will be overwritten by default config
 	echo -e $C_PURPLE"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"

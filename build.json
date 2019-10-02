@@ -72,7 +72,9 @@
 		# install addional packages from feeds (see feeds.conf)
 		"packages":["libpam","libcap","libgnutls","libopenldap",
 				"libidn2","libssh2","libnetsnmp",
-				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
+				"libcap", "jansson", "kmod-cryptodev", "liblzma" ],
+		# apply additional target patches
+		"target-patches":[""]
 	},
 # ------------- specific targets ------------------------------
 	{	
@@ -101,6 +103,13 @@
 		"name":"openwrt:x86.generic",
 		"target":"x86",
 		"subtarget":"generic"
+	},
+	{	
+		"name":"openwrt:x64.generic",
+		"target":"x86",
+		"subtarget":"64",
+		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson" ],
+		"target-patches":["package-qemu-ga-buildfix.patch"]
 	},
 	{	
 		"name":"openwrt:ramips.mt7621.generic",
