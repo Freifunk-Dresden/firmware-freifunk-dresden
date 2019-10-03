@@ -1,6 +1,5 @@
 stages:
 - build
-- dl_stage
 - test
 - deploy
 
