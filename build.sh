@@ -97,9 +97,9 @@ listTargets()
  fi
  targetIdx=$(( targetIdx + 1 ))
 
- printf -- '----------------------------------------------------------------------------------------------------------------------------\n'
- printf  " %-40s | %-40s | %-7s | %-7s | %-7s | %-s \n" target openwrt_rev config feeds files patches
- printf -- '------------------------------------------+------------------------------------------+---------+---------+---------+--------\n'
+ printf -- '-------------------------------------------------------------------------------------------------\n'
+ printf  " %-40s | %-13s | %-7s | %-7s | %-7s | %-s \n" target openwrt_rev config feeds files patches
+ printf -- '------------------------------------------+---------------+---------+---------+---------+--------\n'
  # run through rest of json
  while true
  do
@@ -137,10 +137,10 @@ listTargets()
 		test -n "$_variant" && target="$target.$_variant"
 	fi 
 	test -z "$target" && break
- 	printf  " %-40s | %-40s | %-7s | %-7s | %-7s | %-7s \n" $target $openwrt_rev $_selector_config $_selector_feeds $_selector_files $_selector_patches
+ 	printf  " %-40s | %-13s | %-7s | %-7s | %-7s | %-7s \n" $target "${openwrt_rev:0:10}..." $_selector_config $_selector_feeds $_selector_files $_selector_patches
 	targetIdx=$(( targetIdx + 1 ))
  done
- printf -- '----------------------------------------------------------------------------------------------------------------------------\n'
+ printf -- '-------------------------------------------------------------------------------------------------\n'
 }
 
 
@@ -263,7 +263,6 @@ setup_buildroot ()
 		rm -rf $buildroot
 
 		mkdir -p $buildroot
-		mkdir -p $openwrt_dl_dir
 
 		#check if we have already downloaded the openwrt revision
 		if [ -f $openwrt_dl_tgz ]
@@ -340,6 +339,21 @@ setup_buildroot ()
 
 
 } # setup_buildroot
+
+# ---------- create directories: dl/workdir -----------
+# only create top-level directories if thoses do not not
+# exisist. I do not simply call 'mkdir -p'. This is because
+# gitlab runner may store the content somewhere else to
+# and creates a symlink to this location.
+# This avoids using caching and artifacts copying between
+# jobs and stages. cache and workdir are only stored on
+# server where the runner is running.
+# If owner of the runner doesn't setup a symlink then
+# all files are stored within current directory (where build.sh
+# is located)
+
+test -L $DL_DIR || mkdir -p $DL_DIR
+test -L $WORK_DIR || mkdir -p $WORK_DIR
 
 # ---------- process all targets ------------
 OPT="--raw-output" # do not excape values
