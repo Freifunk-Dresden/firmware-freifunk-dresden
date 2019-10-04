@@ -1,15 +1,13 @@
 ######## m2runner ################
 
+before_script:
+  - ln -s ~/mycache/dl
+  - ln -s ~/mycache/workdir
+
 ar71xx.tiny:
   except:
     - schedules
   stage: build
-  cache:
-    untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - dl
-    - workdir/*
   script:
     - ./build.sh ar71xx.tiny rerun -j2
   tags:
@@ -19,12 +17,6 @@ ar71xx.generic:
   except:
     - schedules
   stage: build
-  cache:
-    untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - dl
-    - workdir/*
   script:
     - ./build.sh ar71xx.generic rerun -j2
   tags:
@@ -34,12 +26,6 @@ x86.generic:
   except:
     - schedules
   stage: build
-  cache:
-    untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - dl
-    - workdir/*
   script:
     - ./build.sh x86.generic rerun -j2
   tags:
@@ -49,12 +35,6 @@ ramips.mt7621:
   except:
     - schedules
   stage: build
-  cache:
-    untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - dl
-    - workdir/*
   script:
     - ./build.sh ramips.mt7621 rerun -j2
   tags:
@@ -64,12 +44,6 @@ ipq40xx.generic:
   except:
     - schedules
   stage: build
-  cache:
-    untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - dl
-    - workdir/*
   script:
     - ./build.sh ipq40xx.generic rerun -j2
   tags:
@@ -79,12 +53,6 @@ lantiq.xrx200:
   except:
     - schedules
   stage: build
-  cache:
-    untracked: true
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - dl
-    - workdir/*
   script:
     - ./build.sh lantiq.xrx200 rerun -j2
   tags:
