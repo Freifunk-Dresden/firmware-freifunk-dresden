@@ -388,7 +388,7 @@ config_update() {
 		uci -q del ddmesh.@backbone_client[$i].password
 		uci -q set ddmesh.@backbone_client[$i].port="5002"
 		#lookup key
-		for k in $(seq 1 10)
+		for k in $(seq 1 30)
 		do
 			kk=$(( $k - 1))
 			h=$(uci -q get credentials.@backbone[$kk].host)
