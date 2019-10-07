@@ -87,7 +87,7 @@
 		"selector-feeds":"18.06",		# used to select feeds
 		"selector-patches":"18.06",		# used to select patches
 		"feeds" : [
-				{"type":"src-link", 	"name":"ddmesh_own",	"src":"../../../feeds/18.06/feeds-own" },
+				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"204293a76"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"},
