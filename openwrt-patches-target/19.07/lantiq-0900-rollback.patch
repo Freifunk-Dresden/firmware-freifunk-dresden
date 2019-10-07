@@ -1,4 +1,4 @@
---- 1	2019-10-02 22:12:39.998865879 +0200
+--- target/linux/lantiq/patches-4.14/0900-rollback.patch	2019-08-22 09:04:06.275497231 +0200
 +++ target/linux/lantiq/patches-4.14/0900-rollback.patch	2019-08-22 09:04:06.275497231 +0200
 @@ -0,0 +1,14 @@
 +--- a/arch/mips/lantiq/irq.c	2019-08-09 17:53:37.000000000 +0200

@@ -1,4 +1,4 @@
---- 1	2019-10-02 22:12:39.998865879 +0200
+--- target/linux/lantiq/patches-4.14/0901-add-icu-smp-support.patch	2019-08-01 13:38:23.386092302 +0200
 +++ target/linux/lantiq/patches-4.14/0901-add-icu-smp-support.patch	2019-08-01 13:38:23.386092302 +0200
 @@ -0,0 +1,436 @@
 +--- a/arch/mips/lantiq/irq.c	2019-03-10 20:44:58.755134326 +0100

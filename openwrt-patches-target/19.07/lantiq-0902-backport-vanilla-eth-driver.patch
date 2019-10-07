@@ -1,4 +1,4 @@
---- 1	2019-10-02 22:12:39.998865879 +0200
+--- target/linux/lantiq/patches-4.14/0902-backport-vanilla-eth-driver.patch	2019-08-01 13:38:55.750166125 +0200
 +++ target/linux/lantiq/patches-4.14/0902-backport-vanilla-eth-driver.patch	2019-08-01 13:38:55.750166125 +0200
 @@ -0,0 +1,1688 @@
 +--- a/drivers/net/ethernet/lantiq_xrx200.c	2019-03-10 20:44:58.797133801 +0100
