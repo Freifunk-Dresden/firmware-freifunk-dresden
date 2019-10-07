@@ -495,11 +495,18 @@ EOM
 		_feed_name=$(echo $feed | jq $OPT '.name')
 		_feed_src=$(echo $feed | jq $OPT '.src')
 		_feed_rev=$(echo $feed | jq $OPT '.rev')
-		
-		# if we have a feed revision, then add it. "^° is a special character
-		# followed by a "commit" (hash). openwrt then checks out this revision
-		test "$_feed_rev" = "null" && _feed_rev=""
-		test -n "$_feed_rev" && _feed_rev="^$_feed_rev"
+
+		# for local feeds set correct absolute filename because when workdir is a symlink, relative
+		# path are note resolved correctly. Also we need to use $_selector_feeds 
+		if [ "$_feed_type" = "src-link" ]; then
+			_feed_src="$RUN_DIR/feeds/$_selector_feeds/$_feed_src"
+			_feed_rev=""	# src-link does not have a rev, because it is already in current git repo
+		else	
+			# if we have a feed revision, then add it. "^° is a special character
+			# followed by a "commit" (hash). openwrt then checks out this revision
+			test "$_feed_rev" = "null" && _feed_rev=""
+			test -n "$_feed_rev" && _feed_rev="^$_feed_rev"
+		fi
 
 		printf "%s %s %s\n" $_feed_type $_feed_name $_feed_src$_feed_rev  >>$feedConfFileName
 

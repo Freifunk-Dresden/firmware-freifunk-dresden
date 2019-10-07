@@ -62,7 +62,7 @@
 		# generates the feeds/feeds-[selector].conf
 		# for short commit value use: git log --abbrev-commit
 		"feeds" : [
-				{"type":"src-link", 	"name":"ddmesh_own",	"src":"../../../feeds/19.07/feeds-own" },
+				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"4f717a6"},
 			#	{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"204293a76"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"def3cd5"},
