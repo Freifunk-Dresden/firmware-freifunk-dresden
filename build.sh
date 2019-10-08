@@ -567,13 +567,17 @@ EOM
 
 		# check patch
 
-		[ -f $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ] && echo -e "[$idx] $C_GREEN$entry$C_NONE" || break
+		if [ -f $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ]; then
+			echo -e "[$idx] $C_GREEN$entry$C_NONE"
 
-                if patch --dry-run -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ; then
-			patch -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry
+	                if patch --dry-run -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ; then
+				patch -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry
+			else
+				echo -e $C_RED"cannot apply last patch [$_selector_patches/$entry]"$C_NONE
+				exit 1
+			fi
 		else
-			echo -e $C_RED"cannot apply last patch [$_selector_patches/$entry]"$C_NONE
-			exit 1
+			echo -e $C_RED"Warning: patch [$_selector_patches/$entry] not found!"$C_NONE
 		fi
         done
 
