@@ -37,8 +37,10 @@
 {
  "targets": [
 # ------------- default values ------------------------------
+# this block must come always first, because the first block is used
+# as default
 	{	
-		"name":"default",			# must be "default", this block defines default values that are used
+		"name":"default",			# currently just an unused name (only displayed) 
 							# if following blocks do not specifiy there own value
 		"target":"ar71xx",
 		"subtarget":"generic",
@@ -138,6 +140,11 @@
 		"name":"openwrt:ipq40xx.generic",
 		"target":"ipq40xx",
 		"subtarget":"generic"
+	},
+	{	
+		"name":"openwrt:ath79.nand",
+		"target":"ath79",
+		"subtarget":"nand"
 	}
  ]
 }
