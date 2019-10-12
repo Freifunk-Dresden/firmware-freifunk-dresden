@@ -58,3 +58,12 @@ lantiq.xrx200:
   tags:
   - m2runner
 
+ath79.nand:
+  except:
+    - schedules
+  stage: build
+  script:
+    - ./build.sh ath79.nand rerun -j2
+  tags:
+  - m2runner
+
