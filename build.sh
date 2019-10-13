@@ -15,6 +15,9 @@ WORK_DIR=workdir
 CONFIG_DIR=openwrt-configs
 OPENWRT_PATCHES_DIR=openwrt-patches
 OPENWRT_PATCHES_TARGET_DIR=openwrt-patches-target
+DDMESH_STATUS_DIR=".ddmesh"	# used to store build infos like openwrt_patches_target states
+DDMESH_PATCH_STATUS_DIR="$DDMESH_STATUS_DIR/patches-applied"
+
 
 # -------------------------------------------------------------------
 
@@ -556,7 +559,8 @@ EOM
 	fi
 
 	#try to apply target patches
-        echo -e $C_PURPLE"apply target patches"$C_GREEN
+	mkdir -p $DDMESH_PATCH_STATUS_DIR
+        echo -e $C_PURPLE"apply target patches"$C_NONE
         idx=0
         while true
         do
@@ -568,13 +572,19 @@ EOM
 		# check patch
 
 		if [ -f $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ]; then
-			echo -e "[$idx] $C_GREEN$entry$C_NONE"
+			printf "[$idx] $C_GREEN$entry$C_NONE"
 
-	                if patch --dry-run -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ; then
-				patch -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry
+			# if patch is not applied yet
+			if [ ! -f $DDMESH_PATCH_STATUS_DIR/$entry ]; then
+		                if patch -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry >/dev/null; then
+					printf " -> $C_GREEN%s$C_NONE\n" "ok"
+					touch $DDMESH_PATCH_STATUS_DIR/$entry
+				else
+					printf " -> "$C_RED"failed"$C_NONE"\n"
+					exit 1
+				fi
 			else
-				echo -e $C_RED"cannot apply last patch [$_selector_patches/$entry]"$C_NONE
-				exit 1
+					printf " -> already applied\n"
 			fi
 		else
 			echo -e $C_RED"Warning: patch [$_selector_patches/$entry] not found!"$C_NONE
@@ -612,7 +622,7 @@ EOM
 
 	# continue with next target in build.targets	
 	if [ $error -ne 0 ]; then
-		echo -e $C_RED"Error: build error - make reported an error"$C_NONE
+		echo -e $C_RED"Error: build error"$C_NONE
 		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
 			echo -e $C_PURPLE".......... rerun build with V=s ........................"$C_NONE
 			time -p make $BUILD_PARAMS V=s -j1
