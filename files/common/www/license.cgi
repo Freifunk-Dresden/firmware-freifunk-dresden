@@ -69,6 +69,3 @@ esac
 
 . /usr/lib/www/page-post.sh
 
-fi #autosetup
-
-
