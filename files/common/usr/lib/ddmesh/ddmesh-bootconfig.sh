@@ -789,11 +789,13 @@ setup_mesh_on_wire()
 	 wan_phy="$(uci -q get network.wan.ifname)"
 
 	 if [ "$mesh_on_lan" = "1" ]; then
+		logger -s -t "$LOGGER_TAG" "activate mesh-on-lan for $lan_phy"
  		brctl delif $lan_ifname $lan_phy
 	 	brctl addif $mesh_lan_ifname $lan_phy
 	 fi
 
 	 if [ "$mesh_on_wan" = "1" -a "$wan_iface_present" = "1" ]; then
+		logger -s -t "$LOGGER_TAG" "activate mesh-on-wan for $wan_phy"
  		brctl delif $wan_ifname $wan_phy
 	 	brctl addif $mesh_wan_ifname $wan_phy
 	 fi
