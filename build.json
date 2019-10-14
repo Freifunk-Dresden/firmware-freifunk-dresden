@@ -136,6 +136,13 @@
 		"subtarget":"xrx200",
 		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
 	},
+	{	
+		"name":"openwrt:ramips.lantiq.xrx200.fritz7412",
+		"target":"lantiq",
+		"subtarget":"xrx200",
+		"variant" : "fritz7412",
+		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
+	},
 	{	# created for fritzbox 4040
 		"name":"openwrt:ipq40xx.generic",
 		"target":"ipq40xx",
