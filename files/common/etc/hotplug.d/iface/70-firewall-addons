@@ -1,7 +1,7 @@
 
 test -f /tmp/freifunk-running || exit 0
 
-logger -t "hotplug 70-iface" "$INTERFACE - action:$ACTION"
+logger -t "hotplug 70-firewall-addons" "$INTERFACE - action:$ACTION"
 [ ifup = "$ACTION" -o ifdown = "$ACTION" ] && {
 	[ wan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-firewall-addons.sh update
 	[ lan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-firewall-addons.sh update
