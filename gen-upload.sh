@@ -72,7 +72,8 @@ directory_suffix=$2
 SAVED_SYSTEM_PATH=$PATH
 
 #extract version files to extract directory components
-fwversion=$(cat $firmwareroot/files/common/etc/version)
+fwversion="$(cat $firmwareroot/files/common/etc/version)"
+fwdate="$(date)"
 
 if [ -z "$fwversion" ]; then
 	printf "ERROR: firmware version not detected (invalid path)\n"
@@ -100,8 +101,9 @@ target_dir=$output_dir/$fwversion
 
 gen_download_json_start()
 {
-  output_path=$1 # output path "firmware/4.2.15"
-  fw_version=$2 # firmware version
+  output_path="$1" # output path "firmware/4.2.15"
+  fw_version="$2" # firmware version
+  fw_date="$3" # build date
 
 	printf $C_YELLOW"create download.json"$C_NONE"\n"
 
@@ -110,6 +112,7 @@ gen_download_json_start()
 	printf "{\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"json_version\":\"1\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"firmware_version\":\"$fw_version\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf " \"firmware_date\":\"$fw_date\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"fileinfo\": [\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 
 	# generate new input file
@@ -289,7 +292,7 @@ printf "$fwversion\n" >$target_dir/version
 #################################################################################################
 # start json
 #################################################################################################
-gen_download_json_start $target_dir $fwversion
+gen_download_json_start "$target_dir" "$fwversion" "$fwdate"
 
 
 #################################################################################################

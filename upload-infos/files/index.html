@@ -39,6 +39,7 @@
 
 <h2> Freifunk Dresden - Firmware </h2>
 <div id="version"></div>
+<div id="build_date"></div>
 <br>
 
 <div>
@@ -88,6 +89,7 @@ my.query(function() {
 
 
   my.query('#version').html("<b>Software Version</b>: " + data.firmware_version);
+  my.query('#build_date').html("<b>Software Version</b>: " + data.firmware_date);
 
 
   // remember Table, to later access it via event function when a link is clicked with
