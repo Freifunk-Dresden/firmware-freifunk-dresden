@@ -2784,9 +2784,9 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_dmesg is not set
 # CONFIG_PACKAGE_dropbearconvert is not set
 # CONFIG_PACKAGE_flock is not set
-CONFIG_PACKAGE_fritz-caldata=m
-CONFIG_PACKAGE_fritz-tffs=m
-# CONFIG_PACKAGE_fritz-tffs-nand is not set
+CONFIG_PACKAGE_fritz-caldata=y
+CONFIG_PACKAGE_fritz-tffs=y
+CONFIG_PACKAGE_fritz-tffs-nand=y
 # CONFIG_PACKAGE_getopt is not set
 # CONFIG_PACKAGE_hwclock is not set
 # CONFIG_PACKAGE_iconv is not set
