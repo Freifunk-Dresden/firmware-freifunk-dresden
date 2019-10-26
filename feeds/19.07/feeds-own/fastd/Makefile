@@ -18,7 +18,7 @@ PKG_NAME:=fastd
 #git
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=git://git.universe-factory.net/fastd
-PKG_REV:=5cb3bf654a762d797f94d9aca2d56484b3b0ed75
+PKG_REV:=7d9f90ebe9dd3a7f6af1fbb97d8cc228fb0fded4
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_REV)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
