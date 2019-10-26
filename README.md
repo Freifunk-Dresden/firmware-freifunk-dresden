@@ -1,7 +1,9 @@
 Freifunk Dresden: Router Firmware
 =================================
 
-Original Source / Built tree for <a href="https://www.freifunk-dresden.de">Freifunk Dresden</a> Firmware<br>
+Original Source / Built tree for <a href="https://www.freifunk-dresden.de">Freifunk Dresden</a> Firmware.<br>
+
+[Wiki Documentation (German)](https://wiki.freifunk-dresden.de/index.php/Dokumentation) | [Issues](https://gitlab.freifunk-dresden.de/firmware-developer/firmware/issues)
 
 ACHTUNG
 =======
@@ -30,6 +32,6 @@ Links:
 ------
 [Freifunk Dresden](https://www.freifunk-dresden.de)<br/>
 [Wiki: Freifunk Dresden](https://wiki.freifunk-dresden.de)<br/>
-[Bugtracker](https://bt.freifunk-dresden.de/index.php?do=tasklist&project=3)<br/>
+[Issues](https://gitlab.freifunk-dresden.de/firmware-developer/firmware/issues)<br/>
 [Twitter](https://twitter.com/ddmesh)<br/>
 [Facebook](https://www.facebook.com/FreifunkDresden)
