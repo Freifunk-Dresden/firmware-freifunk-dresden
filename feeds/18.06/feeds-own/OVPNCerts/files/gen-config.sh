@@ -31,7 +31,6 @@ s#[ 	]*$##
 /^float/d
 /^dhcp-renew/d
 /^dhcp-release/d
-/^explicit-exit-notify/d
 /^ping/d
 /^pull-filter/d
 s#^auth-user-pass.*#auth-user-pass openvpn.login#
@@ -43,7 +42,7 @@ cat<<EOM >> $CONF
 dev vpn0
 dev-type tun
 resolv-retry infinite
-keepalive 10 30
+# dont use keepalive, airvpn connections would fail
 script-security 2
 float
 route-noexec
