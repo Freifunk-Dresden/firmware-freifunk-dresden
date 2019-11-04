@@ -1,5 +1,5 @@
 #!/bin/ash
-set >/tmp/set
+
 #make a point-to-point connection with "route_vpn_gateway" because this was working for
 #ovpn.to; Freie Netze e.V.;CyberGhost
 ifconfig $dev $ifconfig_local dstaddr $route_vpn_gateway
