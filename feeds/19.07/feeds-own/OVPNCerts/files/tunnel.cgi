@@ -29,7 +29,7 @@ show_page() {
 	 <fieldset class="bubble">
 	 <legend>Openvpn Zertifikat-Installation</legend>
 	 <table>
-	 <tr><th width="100">Certifikate&nbsp;(*.tgz&nbsp;oder&nbsp;*.tar.gz):</th>
+	 <tr><th width="100">Certifikate&nbsp;(*.tgz,&nbsp;*.tar.gz,&nbsp;*.ovpn,&nbsp;*.conf):</th>
 	     <td><input name="form_filename" size="40" type="file" value="Durchsuche..."></td></tr>	
 	 <tr><td colspan="2">&nbsp;</td></tr>
 	 <tr><td colspan="2"><input name="form_submit" type="submit" value="Zertifikate laden">
@@ -40,6 +40,8 @@ show_page() {
 	<br />
 	<fieldset class="bubble">
 	<legend>Hinweise</legend>
+	Wenn die Openvpn Config bereits alle Zertifikate enth&auml;lt, kann das File direkt verwendet werden.<br/>
+	Besteht jedoch das Zertifikat/Konfiguration aus mehreren Files, so muss ein tgz-File angelegt werden.
 	<ul>
 	<li> Das tgz-file sollte alle Openvpn-Zertifikate und das Config-File enthalten.</li>
 	<li> Das Config-File muss auf <b>.conf</b> oder <b>.ovpn</b> enden.</li>
@@ -97,9 +99,10 @@ EOM
 			rm -rf /tmp/openvpn
 			mkdir -p /tmp/openvpn
 			cd /tmp/openvpn
-			tar xzf $OVPN_FILE
-			conf="$(ls *.ovpn *.conf 2>/dev/null)"
-			login="$(ls *.login 2>/dev/null)"
+			# try tgz first, then assume direct config
+			tar xzf $OVPN_FILE 2>/dev/null || mv $OVPN_FILE config.ovpn
+			conf="$(ls *.ovpn *.conf)"
+			login="$(ls *.login)"
 
 			#prepare conf dir	
 			mkdir -p /etc/openvpn
