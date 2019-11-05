@@ -96,8 +96,8 @@ done
 setup_fallback_gateway 	# for safety reasons always store updated gw
 
 #dont use vpn server (or any openvpn server), it could interrupt connection
-ping_vpn_hosts="85.114.135.114 89.163.140.199 82.165.229.138 178.254.18.30 5.45.106.241 178.63.61.147 82.165.230.17"
-ping_hosts="$ping_vpn_hosts 9.9.9.9 8.8.8.8 1.1.1.1"
+# cloudflare, google 2x, freifunk-dresden.de, vpn1.freifunk-dresden.de, vpn2.freifunk-dresden.de vpn5.freifunk-dresden.de
+ping_hosts="1.1.1.1 8.8.8.8 9.9.9.9 89.163.140.199 178.63.61.147 148.251.48.91 5.45.106.241"
 #process max 3 user ping
 cfg_ping="$(uci -q get ddmesh.network.gateway_check_ping)"
 gw_ping="$(echo "$cfg_ping" | sed 's#[ ,;/	]\+# #g' | cut -d' ' -f1-3 ) $ping_hosts"
