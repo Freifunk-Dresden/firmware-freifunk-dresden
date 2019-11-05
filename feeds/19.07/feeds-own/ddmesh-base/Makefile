@@ -125,7 +125,7 @@ endef
 
 ##########################################################
 
-define Package/$(PKG_NAME)-usb-lte
+define Package/$(PKG_NAME)-lte
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
@@ -142,8 +142,8 @@ define Package/$(PKG_NAME)-usb-lte
   TITLE:=Meta package to enable usb LTE modem support
 endef
 
-define Package/$(PKG_NAME)-usb-lte/description
-        Meta package to enable usb LTE modem support
+define Package/$(PKG_NAME)-lte/description
+        Meta package to enable qmi LTE modem support
         https://openwrt.org/docs/guide-user/network/wan/wwan/ltedongle
 
 	LTE Stick must be switch to "ndis" interface via AT commands instead of "modem"
@@ -289,7 +289,7 @@ endef
 $(eval $(call BuildPackage,$(PKG_NAME)-base))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi))
 $(eval $(call BuildPackage,$(PKG_NAME)-usb-storage))
-$(eval $(call BuildPackage,$(PKG_NAME)-usb-lte))
+$(eval $(call BuildPackage,$(PKG_NAME)-lte))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi-extra))
 $(eval $(call BuildPackage,$(PKG_NAME)-extra-modules))
 
