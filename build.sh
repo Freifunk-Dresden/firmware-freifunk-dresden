@@ -565,12 +565,15 @@ EOM
         while true
         do
                 # use OPT to prevent jq from adding ""
+		test -z "$_target_patches" && break
+
                 entry="$(echo $_target_patches | jq $OPT .[$idx])"
                 test "$entry" = "null" && break
+                test -z "$entry"  && break
+
                 idx=$(( idx + 1 ))
 
 		# check patch
-
 		if [ -f $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ]; then
 			printf "[$idx] $C_GREEN$entry$C_NONE"
 
