@@ -168,7 +168,7 @@ cat<<EOM
 <TR>
 <TH>- Fallback-DNS (IP):</TH>
 <TD><INPUT NAME="form_fallback_dns" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.fallback_dns)"></TD>
-<td>DNS-IP-Adresse wird zus&auml;tzlich an Wifi-Ger&auml;te per DHCP als alternativen Nameserver mitgeteilt, falls DNS im Freifunk gest&ouml;rt ist (z. B.: 8.8.8.8).</td>
+<td>DNS-IP-Adresse wird zus&auml;tzlich an Wifi-Ger&auml;te per DHCP als alternativen Nameserver mitgeteilt, falls DNS im Freifunk gest&ouml;rt ist.</td>
 </TR>
 <TR>
 <TH>- Netzwerk-ID:</TH>

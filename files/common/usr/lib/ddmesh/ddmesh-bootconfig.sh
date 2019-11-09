@@ -105,7 +105,8 @@ config network 'network'
 	option	speed_up		'50000'
 	option	speed_network		'lan'
 	option	speed_enabled		0
-	option	internal_dns		'10.200.0.4'
+	option	internal_dns1		'10.200.0.4'
+	option	internal_dns2		'10.200.0.16'
 	option	mesh_network_id		'1206'
 	option	mesh_mtu		1200
 	option	mesh_on_lan		0
@@ -114,6 +115,7 @@ config network 'network'
 	option	wwan_apn		'internet'
 	option	wwan_pincode		''
 	option	wwan_syslog		0
+	option  fallback_dns		''
 
 config bmxd 'bmxd'
 	option  routing_class           3
