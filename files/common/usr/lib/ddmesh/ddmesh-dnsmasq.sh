@@ -10,17 +10,16 @@ if [ "$1" = "configure" ]; then
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
 	# set domains resolved by freifunk dns
-	nameserver="$(uci get ddmesh.network.internal_dns | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
-	uci -q set dhcp.dnsmasq.rebind_domain='ffdd/mei'
+	nameserver1="$(uci get ddmesh.network.internal_dns1 | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
+	nameserver2="$(uci get ddmesh.network.internal_dns2 | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
+	uci -q set dhcp.dnsmasq.rebind_domain='ffdd' # 'ffdd/mei'
 	uci -q delete dhcp.dnsmasq.server
-	if [ -n "$nameserver" ]; then
-		uci -q add_list dhcp.dnsmasq.server="/ffdd/$nameserver"
-		uci -q add_list dhcp.dnsmasq.server="/mei/$nameserver"
-		uci -q add_list dhcp.dnsmasq.server="//#"
-	fi
+	[ -n "$nameserver1" ] && uci -q add_list dhcp.dnsmasq.server="/ffdd/$nameserver1"
+	[ -n "$nameserver2" ] && uci -q add_list dhcp.dnsmasq.server="/ffdd/$nameserver2"
+	uci -q add_list dhcp.dnsmasq.server="//#"
 
 	#don't use 'freifunk-dresden.de' as domain!
-	domain=freifunk
+	domain=ffdd
 	uci -q set dhcp.dnsmasq.domain="$domain"
 
 	# no dns queries from the wan

@@ -170,7 +170,7 @@ else #wan interface
 	cat<<EOM
 <br/>
 Um den Router mit dem Internet zu verbinden, m&uuml;ssen in den LAN Einstellungen eine freie IP Adresse aus dem lokalen Netz,
- die Gateway IP und eine DNS IP eingetragen werden. Die DNS IP kann auch der &ouml;ffentliche DNS von Google sein (8.8.8.8)<br/>
+ die Gateway IP und eine DNS IP eingetragen werden. Die DNS IP kann jeder &ouml;ffentliche DNS<br/>
 Konfigurationen &uuml;ber die Konsole (ssh-login) sollten <b>NICHT</b> gemacht werden, da sonst das Rounting und die Firewall gest&ouml;rt
 werden und das private Netz zug&auml;nglich wird.
 EOM

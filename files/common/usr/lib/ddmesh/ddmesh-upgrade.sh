@@ -402,6 +402,9 @@ upgrade_6_0_11()
 {
  cp /rom/etc/iproute2/rt_tables /etc/iproute2/rt_tables 
  rm /etc/config/wireless # delete symlink
+ uci rename ddmesh.network.internal_dns='internal_dns1'
+ uci set ddmesh.network.internal_dns1='10.200.0.4'
+ uci set ddmesh.network.internal_dns2='10.200.0.16'
 }
 
 ##################################

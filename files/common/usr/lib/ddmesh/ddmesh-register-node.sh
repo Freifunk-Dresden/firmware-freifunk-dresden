@@ -76,10 +76,10 @@ case "$j_status" in
 				/usr/lib/ddmesh/ddmesh-geoloc.sh update-config 
 			fi
 
-			#update dns 
-			dns="$(uci -q get ddmesh.network.internal_dns)"
+			#update dns1 
+			dns="$(uci -q get ddmesh.network.internal_dns1)"
 			if [ -n "$j_dns" -a "$j_dns" != "$dns" ]; then
-				uci set ddmesh.network.internal_dns="$j_dns"
+				uci set ddmesh.network.internal_dns1="$j_dns"
 				logger -s -t $LOGGER_TAG "update dns to $j_dns."
 				uci_commit=1
 				rebooting=1
