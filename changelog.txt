@@ -1,7 +1,9 @@
-2019-09-25 6.0.11 (devel)
+2019-11-09 6.0.11 (devel)
 --------------------------------------------------
 build.sh		- more improvments 
 openwrt			- update 18.06 and 19.07 (different targets)
+openvpn			- add support to upload openvpn.conf file
+			  when this file contains all certificates
 
 2019-07-30 6.0.9 (testing)
 --------------------------------------------------
