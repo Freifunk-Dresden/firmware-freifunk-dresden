@@ -161,8 +161,13 @@ cat<<EOM
 <td>Angegebenes Gateway (z. B.: 10.200.0.1) wird bei Gateway-Auswahl bevorzugt. Ein leeres Feld l&ouml;scht das bevorzugte Gateway.</td>
 </TR>
 <TR>
-<TH>- Freifunk-DNS (IP):</TH>
-<TD><INPUT NAME="form_internal_dns" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.internal_dns)"></TD>
+<TH>- Freifunk-DNS 1 (IP):</TH>
+<TD><INPUT NAME="form_internal_dns1" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.internal_dns1)"></TD>
+<td></td>
+</TR>
+<TR>
+<TH>- Freifunk-DNS 2 (IP):</TH>
+<TD><INPUT NAME="form_internal_dns2" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.internal_dns2)"></TD>
 <td></td>
 </TR>
 <TR>
@@ -224,7 +229,8 @@ else
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}
 		uci set ddmesh.system.nightly_reboot=${form_nightly_reboot:-0}
-		uci set ddmesh.network.internal_dns="$(uhttpd -d $form_internal_dns)"
+		uci set ddmesh.network.internal_dns1="$(uhttpd -d $form_internal_dns1)"
+		uci set ddmesh.network.internal_dns2="$(uhttpd -d $form_internal_dns2)"
 		uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
 		uci set ddmesh.network.mesh_network_id=${form_mesh_network_id:-0}
 		uci set ddmesh.boot.boot_step=2
