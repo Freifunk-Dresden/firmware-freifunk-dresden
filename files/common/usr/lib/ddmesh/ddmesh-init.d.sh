@@ -53,6 +53,7 @@ start() {
 	/usr/lib/ddmesh/ddmesh-privnet.sh start
 
 	logger -s -t $LOGGER_TAG "start service openvpn"
+	test -f /etc/config/openvpn.ffdd && mv /etc/config/openvpn.ffdd /etc/config/openvpn
 	test -x /etc/init.d/openvpn && /etc/init.d/openvpn start
 
 	if [ -x /usr/bin/iperf3 ]; then

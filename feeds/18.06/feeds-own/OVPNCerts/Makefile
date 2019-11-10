@@ -39,8 +39,11 @@ define Build/Compile
 endef
 
 define Package/OVPNCerts/install
-#	$(INSTALL_DIR) $(1)/etc/config
-#	$(INSTALL_DATA) files/openvpn.config $(1)/etc/config/openvpn
+	$(INSTALL_DIR) $(1)/etc/config
+	# copy as openvpn.ffdd because of install conflics when OVPNCerts
+	# is included directly into firmware
+	# it will be renamed in ddmesh-init.d.sh  
+	$(INSTALL_DATA) files/openvpn.config $(1)/etc/config/openvpn.ffdd
 	$(INSTALL_DIR) $(1)/etc/openvpn
 	$(INSTALL_DATA) files/up.sh $(1)/etc/openvpn/up.sh
 	$(INSTALL_DATA) files/down.sh $(1)/etc/openvpn/down.sh
@@ -53,17 +56,5 @@ define Package/OVPNCerts/install
 	$(INSTALL_DATA) files/tunnel.cgi $(1)/www/admin
 endef
 
-#to overcome conficts when files are already provided by other packages (like openvpn provices /etc/config/openvpn)
-#a "overlay" installation should be defined (not well documented)
-define custom_install_commands
-	@echo "Installing extra files"
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_DATA) files/openvpn.config $(1)/etc/config/openvpn
-endef
-# Append custom commands to install recipe,
-# and make sure to include a newline to avoid syntax error
-Package/base-files/install += $(newline)$(custom_install_commands)
-
-
-
 $(eval $(call BuildPackage,OVPNCerts))
+

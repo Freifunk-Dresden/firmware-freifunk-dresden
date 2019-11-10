@@ -22,13 +22,11 @@ ip route flush table public_dns
 # any other resolving come from freifunk network and are processed by bind9
 # here I create a configuration fragment which is included in /etc/bind/named.conf.options
 dns_list=""
-for opt in ${!foreign_option_*};
+IFS='
+'
+for opt in $(set | sed -n 's#^foreign_option_[0-9]\+=\(.\+\)$#\1#p')
 do
-	#print all remote option that should be set
-        logger -t "ovpn up.sh" "$opt=${!opt}"
-
-        x="${!opt}"
-        if [ -n "$(echo $x | sed -n '/^dhcp-option DNS/p')" ]; then
+        if [ -n "$(echo $opt | sed -n '/^dhcp-option DNS/p')" ]; then
                 dns="${x#*dhcp-option DNS}"
                 dns_list="$dns_list $dns;"
 
