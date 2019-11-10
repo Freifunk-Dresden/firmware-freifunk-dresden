@@ -49,7 +49,9 @@
 							#      	a set of routers when selecting "multiple devices"
 							#	via "make menuconfig"
 
-		"openwrt_rev":"28d3afc8d67231c2ad7adbde3e4b1179d0648c0e", # 19.07 Mi 2. Okt 15:47:02 UTC 2019
+#		"openwrt_rev":"28d3afc8d67231c2ad7adbde3e4b1179d0648c0e", # 19.07 Mi 2. Okt 15:47:02 UTC 2019
+		"openwrt_rev":"d3e11e8ad85b9a51027174d5207e1e43a8c8fe94", # 19.07 Sat Nov 9 20:10:58 2019
+
 		"selector-config":"19.07",		# used to select config
 		"selector-files":"dummy",		# used to select files
 		"selector-feeds":"19.07",		# used to select feeds
@@ -65,10 +67,9 @@
 		# for short commit value use: git log --abbrev-commit
 		"feeds" : [
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
-				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"4f717a6"},
-			#	{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"204293a76"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"def3cd5"},
-				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"d9625b5"}
+				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"ec6cd9b9c"},
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"8d5ee29"},
+				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"821bcb7"}
 			  ],
 
 		# install addional packages from feeds (see feeds.conf)
@@ -140,11 +141,6 @@
 		"name":"openwrt:ipq40xx.generic",
 		"target":"ipq40xx",
 		"subtarget":"generic"
-	},
-	{	
-		"name":"openwrt:ath79.nand",
-		"target":"ath79",
-		"subtarget":"nand"
 	}
  ]
 }
