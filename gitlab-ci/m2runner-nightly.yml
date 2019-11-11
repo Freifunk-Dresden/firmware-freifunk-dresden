@@ -3,6 +3,11 @@
 before_script:
   - ln -s ~/mycache/dl
   - ln -s ~/mycache/workdir
+  # ensure that we have no old data. This is important when
+  # generating download.json. Else all old openwrt images would be
+  # included and mixed
+  - rm -rf ~/mycache/dl/*
+  - rm -rf ~/mycache/workdir/*
 
 nightly:ar71xx.tiny:
   only:
