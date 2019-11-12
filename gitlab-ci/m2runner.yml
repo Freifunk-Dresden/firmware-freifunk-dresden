@@ -1,8 +1,12 @@
 ######## m2runner ################
 
-before_script:
-  - ln -s ~/mycache/dl
-  - ln -s ~/mycache/workdir
+init:
+  stage: init       # special state, run before all other stages
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+  tags:
+  - m2runner
 
 ar71xx.tiny:
   except:
