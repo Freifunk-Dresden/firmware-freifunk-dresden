@@ -1,6 +1,8 @@
 ######## m2runner ################
 
 init:
+  except:
+    - schedules
   stage: init       # special state, run before all other stages
   script:
     - ln -s ~/mycache/dl
