@@ -1,4 +1,5 @@
 stages:
+- init
 - build
 - test
 - deploy
