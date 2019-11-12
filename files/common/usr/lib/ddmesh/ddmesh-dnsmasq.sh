@@ -66,10 +66,13 @@ if [ "$1" = "configure" ]; then
 	uci -q set dhcp.wifi2.leasetime="$(uci get ddmesh.network.wifi2_dhcplease)"
 	uci -q delete dhcp.wifi2.dhcp_option
 
-	dns2=$(uci -q get ddmesh.network.fallback_dns | sed 's#[ 	+]##g')
-	test -n "$dns2" && dns2=",$dns2"
+	nameserver3=$(uci -q get ddmesh.network.fallback_dns | sed 's#[ 	+]##g')
 
-	uci -q add_list dhcp.wifi2.dhcp_option="6,$_ddmesh_wifi2ip$dns2"	# dns
+	test -n "$nameserver1" && ns1=",$nameserver1"
+	test -n "$nameserver2" && ns2=",$nameserver2"
+	test -n "$nameserver3" && ns3=",$nameserver3"
+
+	uci -q add_list dhcp.wifi2.dhcp_option="6,$_ddmesh_wifi2ip$ns1$ns2$ns3"	# dns
 	uci -q add_list dhcp.wifi2.dhcp_option="3,$_ddmesh_wifi2ip"  # default route
 	uci -q add_list dhcp.wifi2.dhcp_option="1,$_ddmesh_wifi2netmask"
 	uci -q add_list dhcp.wifi2.dhcp_option="28,$_ddmesh_wifi2broadcast"
