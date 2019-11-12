@@ -3,7 +3,7 @@
 nightly:init:
   only:
     - schedules
-  stage: .pre       # special state, run before all other stages
+  stage: init       # special state, run before all other stages
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
