@@ -288,8 +288,9 @@ table.dataTable td {
   float: left;
 }
 .dataTables_wrapper .dataTables_filter {
-  float: right;
+  float: left;
   text-align: right;
+  font-weight: bold;
 }
 .dataTables_wrapper .dataTables_filter input {
   margin-left: 0.5em;
