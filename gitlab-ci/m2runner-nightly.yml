@@ -1,12 +1,16 @@
 ######## m2runner ################
 
+# dl and workdir symlinks are removed by gitlab for each job
+# so I need to recreate this
+before_script:
+  - ln -s ~/mycache/dl
+  - ln -s ~/mycache/workdir
+
 nightly:init:
   only:
     - schedules
   stage: init       # special state, run before all other stages
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
   # ensure that we have no old data. This is important when
   # generating download.json. Else all old openwrt images would be
   # included and mixed
