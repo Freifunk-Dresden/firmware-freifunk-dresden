@@ -73,9 +73,9 @@ start_openvpn()
 	local_gateway_present="$(ip ro li ta local_gateway)"
 
 	#only start openvpn when we have
-	if [ -n "$local_gateway_present" -a -x $OVPN ]; then
+	if [ -n "$local_gateway_present" -a -x $OVPN -a -f /etc/openvpn/openvpn.conf ]; then
 		#logger -s -t "$LOGGER_TAG" "restart openvpn"
-		test -x $OVPN && $OVPN restart 2>/dev/null
+		$OVPN restart 2>/dev/null
 	fi
 }
 
