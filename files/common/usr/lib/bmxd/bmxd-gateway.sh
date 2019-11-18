@@ -11,27 +11,27 @@ fi
 
 toggle_ssid()
 {
-	# determin wifi interface, uses same section as defined in /etc/config/wireless
+ # $1 - true if internet is present
 	json=$(wifi status)
-
 	# loop max through 3 interfaces
-	for i in 0 1 2; do
-		eval $(echo $json | jsonfilter -e wifi_section=@.radio0.interfaces[$i].section -e wifi_dev=@.radio0.interfaces[$i].ifname)
-		if [ "$wifi_section" = "@wifi-iface[1]" ]; then
-			echo " $wifi_dev"
-			break;
-		fi
+	for r in 0 1; do
+		for i in 0 1 2; do
+			unset wifi_dev
+			unset wifi_network
+			eval $(echo $json | jsonfilter -e wifi_dev=@.radio$r.interfaces[$i].ifname \
+				-e wifi_network=@.radio$r.interfaces[$i].config.network[0] \
+				-e wifi_ssid=@.radio$r.interfaces[$i].config.ssid)
+			if [ "$wifi_network" = "wifi2" -a -n "$wifi_dev" ]; then
+				if [ "$1" = "true" ]; then
+					logger -s -t $TAG "$wifi_dev ssid: $wifi_ssid"
+					wpa_cli -p /var/run/hostapd -i $wifi_dev set ssid "$wifi_ssid)" >/dev/null
+				else
+					logger -s -t $TAG "$wifi_dev ssid: "FF no-inet [$(uci -q get ddmesh.system.node)]""
+					wpa_cli -p /var/run/hostapd -i $wifi_dev set ssid "FF no-inet [$(uci -q get ddmesh.system.node)]" >/dev/null
+				fi
+			fi
+		done
 	done
-
-	if [ -n "$wifi_dev" ]; then
-		if [ "$1" = "true" ]; then
-			logger -s -t $TAG "ssid: $(uci -q get wireless.@wifi-iface[1].ssid)"
-			wpa_cli -p /var/run/hostapd -i $wifi_dev set ssid "$(uci -q get wireless.@wifi-iface[1].ssid)"
-		else
-			logger -s -t $TAG "ssid: "FF no-inet [$(uci -q get ddmesh.system.node)]""
-			wpa_cli -p /var/run/hostapd -i $wifi_dev set ssid "FF no-inet [$(uci -q get ddmesh.system.node)]"
-		fi
-	fi
 }
 
 # bmxd calles it with: gateway,del,IP
