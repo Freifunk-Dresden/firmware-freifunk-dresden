@@ -56,7 +56,7 @@ cat<<EOM
 <table>
 EOM
 
-ifconfig | sed '
+ifconfig -a | sed '
 /^[^ ]/s#^\([^ ]*\)\(.*\)#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#
 /^[ ]/s#.*#<tr class="colortoggle2"><th></th><td>&</td></tr>#'
 
