@@ -32,6 +32,7 @@ watchdog_wifi()
 		current_country="$(iw reg get | sed -n 's#.* \(..\):.*#\1#p')"
 		if [ ! "$current_country" = "$config_country" ]; then
 			logger -t $TAG "wifi: ERROR - rebooting router"
+			sync
 			sleep 10
 			reboot
 		fi

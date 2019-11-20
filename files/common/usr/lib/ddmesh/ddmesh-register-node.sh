@@ -129,7 +129,7 @@ case "$j_status" in
 
 			echo "updated (reboot:$rebooting)."
 
-			test "$rebooting" = 1 && sleep 5 && echo "rebooting..." && reboot
+			test "$rebooting" = 1 && sleep 5 && echo "rebooting..." && sync && reboot
 
 		;;
 	error) 		logger -s -t $LOGGER_TAG "$j_error"

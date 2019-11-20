@@ -415,6 +415,20 @@ done
 	uci set network.wan.type='bridge'
  	uci set network.wan.stp=1
 	uci set network.wan.bridge_empty=1
+	# force_link always up. else netifd reconfigures wan/mesh_wan because
+	# of hotplug events
+	uci set network.wan.force_link=1
+
+
+	# delete wan ip config and set it to static, to avoid ip conflicts with lan when udhcpc
+	# and to avoid creating iptables rules for wan that might block lan connections
+	if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ]; then
+		uci del network.wan.ipaddr
+		uci del network.wan.netmask
+		uci del network.wan.gateway
+		uci del network.wan.dns
+		uci set network.wan.proto='static'
+	fi
  }
 
  test -z "$(uci -q get network.mesh_lan)" && {
@@ -792,12 +806,16 @@ setup_mesh_on_wire()
 
 	 if [ "$mesh_on_lan" = "1" ]; then
 		logger -s -t "$LOGGER_TAG" "activate mesh-on-lan for $lan_phy"
+		# avoid ip conflicts when wan is in same network and gets ip from dhcp server
+		ip link set $lan_ifname down
  		brctl delif $lan_ifname $lan_phy
 	 	brctl addif $mesh_lan_ifname $lan_phy
 	 fi
 
 	 if [ "$mesh_on_wan" = "1" -a "$wan_iface_present" = "1" ]; then
 		logger -s -t "$LOGGER_TAG" "activate mesh-on-wan for $wan_phy"
+		# avoid ip conflicts when wan is in same network and gets ip from dhcp server
+		ip link set $wan_ifname down
  		brctl delif $wan_ifname $wan_phy
 	 	brctl addif $mesh_wan_ifname $wan_phy
 	 fi
