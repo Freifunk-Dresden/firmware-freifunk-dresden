@@ -24,7 +24,7 @@ toggle_ssid()
 			if [ "$wifi_network" = "wifi2" -a -n "$wifi_dev" ]; then
 				if [ "$1" = "true" ]; then
 					logger -s -t $TAG "$wifi_dev ssid: $wifi_ssid"
-					wpa_cli -p /var/run/hostapd -i $wifi_dev set ssid "$wifi_ssid)" >/dev/null
+					wpa_cli -p /var/run/hostapd -i $wifi_dev set ssid "$wifi_ssid" >/dev/null
 				else
 					logger -s -t $TAG "$wifi_dev ssid: "FF no-inet [$(uci -q get ddmesh.system.node)]""
 					wpa_cli -p /var/run/hostapd -i $wifi_dev set ssid "FF no-inet [$(uci -q get ddmesh.system.node)]" >/dev/null
