@@ -798,13 +798,14 @@ setup_mesh_on_wire()
 
  # give user time to change configs via lan/wan IP
  if [ "$mesh_on_lan" = "1" -o "$mesh_on_wan" = "1" ]; then
-	sleep 300
 
  	# mesh-on-lan: move phys ethernet to br-mesh_lan/br-mesh_wan
 	 lan_phy="$(uci -q get network.lan.ifname)"
 	 wan_phy="$(uci -q get network.wan.ifname)"
 
 	 if [ "$mesh_on_lan" = "1" ]; then
+		# only sleep for lan. no need to wait for mesh-on-wan
+		sleep 300
 		logger -s -t "$LOGGER_TAG" "activate mesh-on-lan for $lan_phy"
 		# avoid ip conflicts when wan is in same network and gets ip from dhcp server
 		ip link set $lan_ifname down
