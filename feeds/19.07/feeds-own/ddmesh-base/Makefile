@@ -94,7 +94,7 @@ define Package/$(PKG_NAME)-wifi
 	# only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
 	# This simply just selects wpa-cli without hiding current packet
   DEPENDS:= $(PKG_NAME)-base \
-		+iw +iwinfo +wpad-basic +@PACKAGE_wpa-cli +wshaper
+		+iw +iwinfo +wpad-basic +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
 endef

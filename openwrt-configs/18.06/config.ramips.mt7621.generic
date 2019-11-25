@@ -1514,7 +1514,7 @@ CONFIG_PACKAGE_freifunk-upload=y
 # CONFIG_PACKAGE_haserl is not set
 CONFIG_PACKAGE_libuecc=y
 CONFIG_PACKAGE_nacl=y
-CONFIG_PACKAGE_wshaper=y
+# CONFIG_PACKAGE_wshaper is not set
 CONFIG_PACKAGE_ddmesh-base=y
 CONFIG_PACKAGE_ddmesh-extra-modules=m
 CONFIG_PACKAGE_tcpdump=m
