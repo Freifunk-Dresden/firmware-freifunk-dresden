@@ -114,7 +114,7 @@ EOM
 			chown -R root:root /etc/openvpn
 			chmod -R g-rwx,o-rwx /etc/openvpn/
 			
-			
+			uci set openvpn.InternetTunnel.enabled='1'			
 			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 			;;
 		*)
