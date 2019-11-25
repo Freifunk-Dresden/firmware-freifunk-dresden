@@ -164,7 +164,10 @@ setup_statistic_rules() {
 	NETWORKS="bat wan wwan lan wifi wifi2 vpn tbb_fastd mesh_lan mesh_wan privnet"
 	for net in $NETWORKS
 	do
+		logger -s -t $TAG "LOOP: net=$net"
 		ifname=$(eval echo \$$net"_ifname")
+		test -z "$ifname" && continue
+
 		target_in=stat_"$net"_in
 		$IPT -N $target_in 2>/dev/null
 		$IPT -D statistic_input -i $ifname -j $target_in 2>/dev/null
@@ -177,7 +180,10 @@ setup_statistic_rules() {
 
 		for net2 in $NETWORKS
 		do
+			logger -s -t $TAG "LOOP2: net=$net2"
 			ifname2=$(eval echo \$$net2"_ifname")
+			test -z "$ifname2" && continue
+
 			target_fwd=stat_"$net"_"$net2"_fwd
 			$IPT -N $target_fwd 2>/dev/null
 			$IPT -D statistic_forward -i $ifname -o $ifname2 -j $target_fwd 2>/dev/null
