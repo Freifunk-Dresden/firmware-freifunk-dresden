@@ -122,7 +122,6 @@ cat<<EOM
 	<a href="firewall.cgi?ipt_table=nat&ip_version=ipv4">nat</a>,
 	<a href="firewall.cgi?ipt_table=mangle&ip_version=ipv4">mangle</a>,
 	<a href="firewall.cgi?ipt_table=raw&ip_version=ipv4">raw</a>
-	<a href="firewall.cgi?ipt_table=filter&ipt_chain=statistic&ip_version=ipv4">statistic</a>
 EOM
 if [ "$(uci get ddmesh.system.disable_splash)" != "1" ]; then
 cat<<EOM
