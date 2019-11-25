@@ -1,9 +1,24 @@
-2019-11-09 6.0.11 (devel)
+2019-11-09 6.0.13 (devel)
 --------------------------------------------------
 build.sh		- more improvments 
 openwrt			- update 18.06 and 19.07 (different targets)
+			- ar71xx tiny stick to updated 18.06
 openvpn			- add support to upload openvpn.conf file
 			  when this file contains all certificates
+			- remove syslog errors incase no certs are installed
+			- fix config issue for airvpn certificates
+traffic-shaping		- removed, because it was never used
+mesh-on-wan		- fix mesh-on-wan 
+			- speed up meshing for wan interface
+statistic-internal	- fix adding firewall statistic rules for non-existing interfaces
+gui:network		- display all interfaces (including disabled)
+wifi			- change ssid to no-inet also for 5GHz radio
+nameserver		- add new support for second freifunk DNS (including gui)
+reboot			- add syncing filesystem before rebooting to ensure that configs are written
+backbone		- update some libraries for fastd for more stability
+version			- add more infos on firmware version to gui:system 
+new devices		- add new devices (fritzbox, Netgear, WR1200js)
+
 
 2019-07-30 6.0.9 (testing)
 --------------------------------------------------
