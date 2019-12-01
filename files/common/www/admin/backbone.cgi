@@ -10,9 +10,12 @@ DEFAULT_PORT="$(uci get ddmesh.backbone.default_server_port)"
 NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
 STATUS_DIR="/var/backbone_status"
 KEY_LEN=64
+KEY_LEN_WG=44
 COUNT=$(uci show ddmesh | grep '=backbone_\(client\|accept\)' | wc -l)
 TOGGEL=1
 DEFAULT_KEY="$(uci get credentials.backbone.fastd_default_server_key)"
+WG_PATH="$(which wg)"
+FASTD_PATH="$(which fastd)"
 
 mkdir -p $STATUS_DIR
 
@@ -42,8 +45,14 @@ function checkinput_outgoing ()
 	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ungültig (1-65535)");return 0;}
 
 	v = document.backbone_form_connection_out.form_backbone_server_key.value;
-	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen)");return 0;}
-	if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
+	if( v.type=="fastd" || v.type==""){
+		if( v.length!=$KEY_LEN){ alert("Key ist ungültig (Fastd Key ist $KEY_LEN Zeichen)");return 0;}
+		if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
+	}
+	if( v.type=="wireguard"){
+                if( v.length!=$KEY_LEN_WG){ alert("Key ist ung..ltig (Wireguard Key ist $KEY_LEN_WG Zeichen)");return 0;}
+                if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ung..ltig");return 0;}
+        }
 	return 1;
 }
 
@@ -51,7 +60,7 @@ function checkinput_incomming ()
 {
 	var v;
 	v = document.backbone_form_connection_in.form_backbone_peer_key.value;
-	if( v.length!=$KEY_LEN){ alert("Key ist ungültig ($KEY_LEN Zeichen)");return 0;}
+	if( v.length!=$KEY_LEN){ alert("Key ist ungültig (fastd:$KEY_LEN Zeichen, wg:$KEY_LEN_WG Zeihen)");return 0;}
 	if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
 	return 1;
 }
@@ -119,13 +128,17 @@ show_outgoing()
 	local host
 	local port
 	local key
+	local type
 	config_get host "$config" host
 	config_get port "$config" port
 	config_get key "$config" public_key
-
+	config_get type "$config" type
+	if [ "$type" = "" ]; then
+		type="fastd"
+	fi
 
 	test -f "$STATUS_DIR/$key" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
-	echo "<tr class=\"colortoggle$TOGGEL\"><td>$host</td><td>$port</td><td>$key</td>"
+	echo "<tr class=\"colortoggle$TOGGEL\"><td>$type</td><td>$host</td><td>$port</td><td>$key</td>"
 	echo "<td><img src=\"$CONNECTED\"></td>"
 	echo "<td>"
 	echo "<button onclick=\"if(ask('$host'))form_submit(document.forms.backbone_form_connection_out,'client_del','$config')\" title=\"Verbindung l&ouml;schen\" type=\"button\">"
@@ -161,8 +174,16 @@ content()
 <input name="form_entry" value="none" type="hidden">
 <table>
 <tr><td colspan="3"><font color="red">Achtung: Wird ein neuer Schl&uuml;ssel generiert, muss dieser bei <b>allen</b> Backbone-Servern aktualisiert werden, da sonst keine Verbindung mehr von diesem Router akzeptiert wird.</font></td></tr>
-<tr><th>Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td>
- <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.backbone_form_keygen,'keygen','none')" name="bb_btn_new" type="button">Key Generieren</button></td></tr>
+<tr><th>FastD Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td>
+ <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.backbone_form_keygen,'keygen','none')" name="bb_btn_new" type="button">FastD Key Generieren</button></td></tr>
+EOM
+if [ -f "$WG_PATH" ];then
+cat<<EOM
+<tr><th>Wireguard Public-Key:</th><td>$(/sbin/uci get credentials.wireguard.key | wg pubkey)</td>
+ <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.backbone_form_keygen,'keygenwg','none')" name="bb_btn_new" type="button">Wireguard Key Generieren</button></td></tr>
+EOM
+fi
+cat<<EOM
 </table>
 </form>
 </fieldset>
@@ -209,7 +230,7 @@ EOM
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th>Server-Hostname (Freifunk-Router)</th><th>Server-Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<tr><th>Typ</th><th>Server-Hostname (Freifunk-Router)</th><th>Server-Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -219,6 +240,16 @@ EOM
 	if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
 	cat<<EOM
 <tr class="colortoggle$TOGGEL">
+ <td title="Typ"><select name="form_backbone_server_type" size="1">
+EOM
+if [ -f "$FASTD_PATH" ]; then
+echo "<option selected value=\"fastd\">fastd</option>"
+fi
+if [ -f "$WG_PATH" ]; then
+echo "<option value=\"wireguard\">wireguard</option>"
+fi
+cat<<EOM
+ </select></td>
  <td title="Hostname oder IP Adresse &uuml;ber den ein anderer Freifunk Router erreichbar ist (z.b. xxx.dyndns.org). Kann eine IP im LAN oder IP/Hostname im Internet sein."><input name="form_backbone_server_hostname" type="text" size="25" value=""></td>
  <td title="Port des Servers"><input name="form_backbone_server_port" type="text" size="8" value="$DEFAULT_PORT"></td>
  <td title="Public Key der Gegenstelle"><input name="form_backbone_server_key" type="text" size="40" value="$DEFAULT_KEY"></td>
@@ -280,10 +311,12 @@ else
 		;;
 		client_add)
 			if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
+				KEY=$(echo $form_backbone_server_key|sed "s/%2B/+/g; s/%2F/\//g; s/%3D/=/g;")
 				uci add ddmesh backbone_client >/dev/null
 				uci set ddmesh.@backbone_client[-1].host="$form_backbone_server_hostname"
 				uci set ddmesh.@backbone_client[-1].port="$form_backbone_server_port"
-				uci set ddmesh.@backbone_client[-1].public_key="$form_backbone_server_key"
+				uci set ddmesh.@backbone_client[-1].public_key="$KEY"
+				uci set ddmesh.@backbone_client[-1].type="$form_backbone_server_type"
 				uci_commit.sh
 				MSG=3;
 			else
@@ -304,6 +337,11 @@ else
 
 		keygen)
 			/usr/lib/ddmesh/ddmesh-backbone.sh gen_secret_key
+			;;
+		keygenwg)
+			WG_PRIV=$(wg genkey)
+			uci set credentials.wireguard.key="$WG_PRIV"
+			uci_commit.sh
 			;;
 		restart)
 			html_msg 8
