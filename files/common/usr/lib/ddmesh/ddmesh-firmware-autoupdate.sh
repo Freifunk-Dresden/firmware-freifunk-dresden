@@ -19,7 +19,10 @@ fi
 
 rm -f $ERROR_FILE
 
+allowed="$(uci get ddmesh.system.allow_autoupdate)"
+allowed=${allowed:=1}
 enabled="$(uci get ddmesh.system.firmware_autoupdate)"
+enabled=${enabled:=1}
 
 #return 0 if new > cur
 compare_versions() {
@@ -66,8 +69,8 @@ case "$1" in
 
 		autoupdate=$(echo $FILE_INFO_JSON | jsonfilter -e '@.fileinfo.autoupdate')
 
-		logger -s -t "$TAG" "Auto Update: Router enabled: $enabled; Server enabled: $autoupdate"
-		[ "$enabled" = "1" -a "$autoupdate" = "1" ] || exit 1
+		logger -s -t "$TAG" "Auto Update: Router enabled: $enabled; firmware enabled: $autoupdate; node allowed: $allowed"
+		[ "$allowed" = "1" -a "$enabled" = "1" -a "$autoupdate" = "1" ] || exit 1
 
 		check_version || exit 1
 		logger -s -t "$TAG" "new version available"
@@ -107,11 +110,14 @@ case "$1" in
 	check)
 		autoupdate=$(echo $FILE_INFO_JSON | jsonfilter -e '@.fileinfo.autoupdate')
 
-		echo "Auto Update: Router enabled: $enabled; Server enabled: $autoupdate"
+		echo "Auto Update: Router enabled: $enabled; Firmware enabled: $autoupdate; Node allowed: $allowed"
 
 		check_version || echo "no new firmware"
 		echo "your version: $firmware_current_version"
 		echo "version on server: $firmware_release_version"
+		run="no"
+		[ "$allowed" = "1" -a "$enabled" = "1" -a "$autoupdate" = "1" ] && run="yes"
+	       	echo "-> run: $run"	
 		exit 0
 		;;
 

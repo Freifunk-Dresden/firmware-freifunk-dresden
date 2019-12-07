@@ -45,6 +45,7 @@ eval $(echo "$json" | jsonfilter \
 	-e j_error='@.registration.error' \
 	-e j_node='@.registration.node' \
 	-e j_netid='@.control.netid' \
+	-e j_autoupdate='@.control.enable_autoupdate' \
 	-e j_gateway='@.control.trigger.gateway' \
 	-e j_dns='@.control.trigger.dns' \
 	-e j_reboot='@.control.trigger.reboot' \
@@ -64,6 +65,10 @@ eval $(echo "$json" | jsonfilter \
 case "$j_status" in
 	ok)
 			rebooting=0
+			overlay=0
+
+			# check if green
+			/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh >/dev/null && overlay=1 
 
 			node=$j_node
 			logger -s -t $LOGGER_TAG "SUCCESS: node=[$node]; key=[$key] registered."
@@ -109,9 +114,16 @@ case "$j_status" in
 				logger -s -t $LOGGER_TAG "update preferred gateway to $j_gateway."
 			fi
 
+			# enable autoupdate 
+			au="$(uci -q get ddmesh.system.allow_autoupdate)"
+			if [ -n "$j_autoupdate" -a "$j_autoupdate" != "$au" ]; then
+				uci set ddmesh.system.allow_autoupdate="$j_autoupdate"
+				logger -s -t $LOGGER_TAG "allow_autoupdate $j_autoupdate."
+				uci_commit=1
+			fi
 			test "$uci_commit" = 1 && uci_commit.sh
 
-			#if node wasn't stored before
+			# update new node number
 			[ -n "$node" ] && [ "$(uci get ddmesh.system.node)" != "$node" ] && {
 
 				echo "commit node [$node]"
@@ -127,9 +139,9 @@ case "$j_status" in
 				rebooting=1
 			}
 
-			echo "updated (reboot:$rebooting)."
-
-			test "$rebooting" = 1 && sleep 5 && echo "rebooting..." && sync && reboot
+			echo "updated (reboot:$rebooting, overlay:$overlay)."
+			test "$uci_commit" = 1 -a "$overlay" = "1" && /usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
+			test "$rebooting" = "1" && sleep 5 && echo "rebooting..." && sync && reboot
 
 		;;
 	error) 		logger -s -t $LOGGER_TAG "$j_error"
