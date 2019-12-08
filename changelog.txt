@@ -1,3 +1,10 @@
+
+
+2019-12-08 6.0.14 (devel)
+--------------------------------------------------
+autoupdate		- control autoupdate by registrator server
+
+
 2019-11-09 6.0.13 (devel)
 --------------------------------------------------
 build.sh		- more improvments 

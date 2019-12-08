@@ -19,8 +19,8 @@ fi
 
 rm -f $ERROR_FILE
 
-allowed="$(uci get ddmesh.system.allow_autoupdate)"
-allowed=${allowed:=1}
+allowed="$(uci -P /tmp/state get system.allow_autoupdate)"
+allowed=${allowed:=0}
 enabled="$(uci get ddmesh.system.firmware_autoupdate)"
 enabled=${enabled:=1}
 

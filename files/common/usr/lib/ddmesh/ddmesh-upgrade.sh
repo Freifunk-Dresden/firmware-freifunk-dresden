@@ -418,6 +418,12 @@ upgrade_6_0_13()
  uci set ddmesh.network.speed_enabled='0'
 }
 
+upgrade_6_0_14()
+{
+ true
+}
+
+
 ##################################
 
 run_upgrade

@@ -117,7 +117,7 @@ case "$j_status" in
 			# enable autoupdate 
 			au="$(uci -q get ddmesh.system.allow_autoupdate)"
 			if [ -n "$j_autoupdate" -a "$j_autoupdate" != "$au" ]; then
-				uci set ddmesh.system.allow_autoupdate="$j_autoupdate"
+				uci -P /tmp/state set system.allow_autoupdate="$j_autoupdate"
 				logger -s -t $LOGGER_TAG "allow_autoupdate $j_autoupdate."
 				uci_commit=1
 			fi
