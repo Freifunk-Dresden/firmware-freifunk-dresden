@@ -50,7 +50,8 @@
 							#	via "make menuconfig"
 
 #		"openwrt_rev":"28d3afc8d67231c2ad7adbde3e4b1179d0648c0e", # 19.07 Mi 2. Okt 15:47:02 UTC 2019
-		"openwrt_rev":"d3e11e8ad85b9a51027174d5207e1e43a8c8fe94", # 19.07 Sat Nov 9 20:10:58 2019
+#		"openwrt_rev":"d3e11e8ad85b9a51027174d5207e1e43a8c8fe94", # 19.07 Sat Nov 9 20:10:58 2019
+		"openwrt_rev":"d2d12346e8e6dd5fbb6befd4f9e3e1d5304a2e31", # 19.07 Mon Nov 25 16:53:59 2019 
 
 		"selector-config":"19.07",		# used to select config
 		"selector-files":"dummy",		# used to select files
