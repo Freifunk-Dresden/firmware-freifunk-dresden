@@ -671,10 +671,16 @@ config_create_symlink_files()
 }
 
 config_temp_configs() {
-# dnsmasq
 	# create directory to calm dnsmasq
 	mkdir -p /tmp/hosts
 	mkdir -p /var/etc
+
+	# create temporary config dir (use for storing temp configs)
+	mkdir -p /var/etc/tmp_config
+
+	# uci -c option mixes up /etc/config/... with /var/etc/config...
+	# result: options are stored uncontrolled at wrong locations.
+	# -> NEVER use this option
 
 	#setup_wireless
 	
@@ -682,10 +688,6 @@ config_temp_configs() {
 127.0.0.1 localhost
 $_ddmesh_wifi2ip hotspot
 EOM
-
-
-# generate temporary configurations
-	mkdir -p /var/etc/config
 
 	# update /etc/opkg.conf
 	eval $(cat /etc/openwrt_release)

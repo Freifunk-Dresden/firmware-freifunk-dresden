@@ -7,6 +7,15 @@ FIRMWARE_FILE="/tmp/firmware.bin"
 ERROR_FILE=/tmp/uclient.error
 CERT="--ca-certificate=/etc/ssl/certs/download.crt"
 
+usage() {
+	echo "$0 <run [nightly] | check | compare new old>"
+}		
+
+if [ -z "$1" ]; then
+	usage
+	exit 1
+fi
+
 eval $(cat /etc/openwrt_release)
 
 # download file info
@@ -19,7 +28,7 @@ fi
 
 rm -f $ERROR_FILE
 
-allowed="$(uci -P /tmp/state get system.allow_autoupdate)"
+allowed="$(cat /var/etc/tmp_config/allow_autoupdate 2>/dev/null)"
 allowed=${allowed:=0}
 enabled="$(uci get ddmesh.system.firmware_autoupdate)"
 enabled=${enabled:=1}
@@ -127,7 +136,7 @@ case "$1" in
 		;;
 
 	*)
-		echo "$0 <run [nightly] | check | compare new old>"
+		usage
 		;;
 esac
 

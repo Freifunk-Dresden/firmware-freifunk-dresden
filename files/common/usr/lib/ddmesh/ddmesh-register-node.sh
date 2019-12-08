@@ -66,6 +66,7 @@ case "$j_status" in
 	ok)
 			rebooting=0
 			overlay=0
+			uci_commit=0
 
 			# check if green
 			/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh >/dev/null && overlay=1 
@@ -114,13 +115,12 @@ case "$j_status" in
 				logger -s -t $LOGGER_TAG "update preferred gateway to $j_gateway."
 			fi
 
-			# enable autoupdate 
-			au="$(uci -q get ddmesh.system.allow_autoupdate)"
-			if [ -n "$j_autoupdate" -a "$j_autoupdate" != "$au" ]; then
-				uci -P /tmp/state set system.allow_autoupdate="$j_autoupdate"
+			# enable autoupdate (tmp)
+			if [ -n "$j_autoupdate" ]; then
+				echo "$j_autoupdate" > /var/etc/tmp_config/allow_autoupdate
 				logger -s -t $LOGGER_TAG "allow_autoupdate $j_autoupdate."
-				uci_commit=1
 			fi
+
 			test "$uci_commit" = 1 && uci_commit.sh
 
 			# update new node number
@@ -139,8 +139,8 @@ case "$j_status" in
 				rebooting=1
 			}
 
-			echo "updated (reboot:$rebooting, overlay:$overlay)."
-			test "$uci_commit" = 1 -a "$overlay" = "1" && /usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
+			echo "updated (reboot:$rebooting, uci:$uci_commit, overlay:$overlay)."
+			test "$uci_commit" = 1 -a "$overlay" = "1" && echo "overlay updated." && /usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
 			test "$rebooting" = "1" && sleep 5 && echo "rebooting..." && sync && reboot
 
 		;;

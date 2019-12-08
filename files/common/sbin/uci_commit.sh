@@ -6,7 +6,12 @@
 
 TMP_CONFIG_DIR=/var/etc/config
 
-# get all symlinks and commit them
+# get all symlinks and commit them. 
+# IMPORTANG: specify config names !!!
+
+# uci -c option mixes up /etc/config/... with /var/etc/config...
+# result: options are stored uncontrolled at wrong locations.
+# -> NEVER use this option some where else
 
 for config in $(ls -1F  /etc/config | sed -n 's#@$##p')
 do
