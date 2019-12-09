@@ -288,7 +288,7 @@
 { "name":"", "filename":"openwrt-ar71xx-generic-tl-wr810n-v2-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1",  "model":"", "model2":"", "filename":"openwrt-ar71xx-generic-tl-wr810n-v2-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-generic-tl-wr842n-v1-squashfs-factory.bin", "comment":""},
-{ "name":"", "autoupdate":"1",  "model":"", "model2":"TP-Link TL-WR842N/ND v1", "filename":"openwrt-ar71xx-generic-tl-wr842n-v1-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"1",  "model":"tl-mr3420", "model2":"TP-Link TL-WR842N/ND v1", "filename":"openwrt-ar71xx-generic-tl-wr842n-v1-squashfs-sysupgrade.bin", "comment":"getestet"},
 { "name":"", "filename":"openwrt-ar71xx-generic-tl-wr842n-v2-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1",  "model":"", "model2":"TP-Link TL-WR842N/ND v2", "filename":"openwrt-ar71xx-generic-tl-wr842n-v2-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-generic-tl-wr842n-v3-squashfs-factory.bin", "comment":""},
