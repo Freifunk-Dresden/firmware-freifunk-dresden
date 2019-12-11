@@ -17,8 +17,8 @@ PKG_NAME:=fastd
 #PKG_MD5SUM:=135b3083d2743e335738de3bd4bb0c3c
 #git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=git://git.universe-factory.net/fastd
-PKG_REV:=7d9f90ebe9dd3a7f6af1fbb97d8cc228fb0fded4
+PKG_SOURCE_URL:=https://github.com/NeoRaider/fastd.git
+PKG_REV:=8dc1ed3a1ee9af731205a7a4e167c1c2d1b3d819
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_REV)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
@@ -54,7 +54,7 @@ include $(INCLUDE_DIR)/cmake.mk
 define Package/fastd
   CATEGORY:=ddmesh
 #  no dependencies to +libuecc +nacl (they are linked, not installed)
-  DEPENDS:= +kmod-tun +librt +libpthread +libjson-c 
+  DEPENDS:= +kmod-tun +librt +libpthread +libjson-c
   TITLE:=Fast and Secure Tunneling Daemon
   URL:=https://projects.universe-factory.net/projects/fastd
   SUBMENU:=Packages
