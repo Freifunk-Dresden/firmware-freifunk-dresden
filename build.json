@@ -29,10 +29,9 @@
 # build.sh then only selects those targets which match the os version
 
 #########################################################################
-
-# "openwrt_rev":"70255e3d624cd393612069aae0a859d1acbbeeae", # tag 18.6.1
-# "openwrt_rev":"a02809f61bf9fda0387d37bd05d0bcfe8397e25d", # tag 18.06.2
-# "openwrt_rev":"db7a1e7c044ed1f8cf5fe8a4fc57c5dd27920337", # branch 18.07 31.8.2019
+# 5.0.5/B_FIRMWARE_5.0.3    lede_rev: 3ca1438ae0f780664e29bf0d102c1c6f9a99ece7 # lede v17.01.5~54
+# 6.0.9/T_FIRMWARE_6     openwrt_rev: a02809f61bf9fda0387d37bd05d0bcfe8397e25d # v18.06.2^0
+#
 
 {
  "targets": [
@@ -49,7 +48,6 @@
 							#      	a set of routers when selecting "multiple devices"
 							#	via "make menuconfig"
 
-#		"openwrt_rev":"28d3afc8d67231c2ad7adbde3e4b1179d0648c0e", # 19.07 Mi 2. Okt 15:47:02 UTC 2019
 #		"openwrt_rev":"d3e11e8ad85b9a51027174d5207e1e43a8c8fe94", # 19.07 Sat Nov 9 20:10:58 2019
 		"openwrt_rev":"d2d12346e8e6dd5fbb6befd4f9e3e1d5304a2e31", # 19.07 Mon Nov 25 16:53:59 2019
 
