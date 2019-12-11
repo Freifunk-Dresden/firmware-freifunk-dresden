@@ -93,8 +93,7 @@ define Package/$(PKG_NAME)-wifi
 	# complete package ddmesh-wifi will also not be visible.
 	# only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
 	# This simply just selects wpa-cli without hiding current packet
-  DEPENDS:= $(PKG_NAME)-base \
-		+iw +iwinfo +wpad-basic +@PACKAGE_wpa-cli
+  DEPENDS:= +iw +iwinfo +wpad-basic +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
 endef
@@ -111,8 +110,7 @@ define Package/$(PKG_NAME)-usb-storage
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-  DEPENDS:= $(PKG_NAME)-base \
-		+kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
+  DEPENDS:= 	+kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
 		+kmod-fs-vfat \
 		+block-mount 
 
@@ -130,8 +128,7 @@ define Package/$(PKG_NAME)-lte
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
   # usb umts/lte sticks has storage device. but I is normally not needed.
-  DEPENDS:= $(PKG_NAME)-base \
-		+kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
+  DEPENDS:= 	+kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
 		+kmod-usb-ledtrig-usbport +kmod-usb-storage \
 		+usb-modeswitch \
                 +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \

@@ -103,7 +103,13 @@
 		"target":"ar71xx",
 		"subtarget":"generic"
 	},
-	{
+	{	
+		"name":"openwrt:ar71xx.generic.gl-mifi",
+		"target":"ar71xx",
+		"subtarget":"generic",
+		"variant":"gl-mifi"
+	},
+	{	
 		"name":"openwrt:x86.generic",
 		"target":"x86",
 		"subtarget":"generic"

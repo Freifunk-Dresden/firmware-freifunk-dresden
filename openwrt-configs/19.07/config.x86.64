@@ -2517,7 +2517,7 @@ CONFIG_PACKAGE_libmnl=y
 CONFIG_PACKAGE_libnl-tiny=y
 # CONFIG_PACKAGE_libopcodes is not set
 # CONFIG_PACKAGE_libpam is not set
-CONFIG_PACKAGE_libpcap=y
+# CONFIG_PACKAGE_libpcap is not set
 
 #
 # Configuration
