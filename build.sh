@@ -160,7 +160,6 @@ setup_dynamic_firmware_config()
 }
 
 
-
 #----------------- process argument ----------------------------------
 if [ -z "$1" ]; then
 	# create a simple menu
@@ -215,36 +214,42 @@ if [ "$1" = "feed-revisions" ]; then
 	exit 0
 fi
 
-# get target (addtional arguments are passt to command line make)
-# last value will become DEFAULT
-regex="$1"
-shift
-
-#check if next argument is "menuconfig"
-if [ "$1" = "menuconfig" ]; then
-	MENUCONFIG=1
-	shift;
-fi
-
-#check if next argument is "rerun"
-if [ "$1" = "rerun" ]; then
-	REBUILD_ON_FAILURE=1
-	shift;
-fi
-#check if next argument is "clean"
 #it only cleans /bin and /build_dir of openwrt directory. toolchains and staging_dir ar kept
 if [ "$1" = "clean" ]; then
 	MAKE_CLEAN=1
-	shift;
+	regex=".*"	# loop through all targets. Note that targets can have different
+			# buildroots (openwrt versions)
+
+	# do not shift
+else
+	# target is passed as argument with its parameters
+
+	# get target (addtional arguments are passt to command line make) 
+	# last value will become DEFAULT
+	regex="$1"
+	shift
+
+	#check if next argument is "menuconfig"
+	if [ "$1" = "menuconfig" ]; then
+		MENUCONFIG=1
+		shift;
+	fi
+
+	#check if next argument is "rerun"
+	if [ "$1" = "rerun" ]; then
+		REBUILD_ON_FAILURE=1
+		shift;
+	fi
+
+	# correct regex
+	if [ "$regex" = "all" ]; then
+		regex=".*" 
+	fi
+
+	BUILD_PARAMS=$*
 fi
 
-# correct regex
-if [ "$regex" = "all" ]; then
-	regex=".*"
-fi
 echo "### target:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
-
-BUILD_PARAMS=$*
 
 setup_buildroot ()
 {
