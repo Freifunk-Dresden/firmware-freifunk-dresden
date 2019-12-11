@@ -229,6 +229,10 @@ else
 	regex="$1"
 	shift
 
+	# remove invalid characters: '/'
+	chars='/'
+	regex=${regex//$chars/}
+
 	#check if next argument is "menuconfig"
 	if [ "$1" = "menuconfig" ]; then
 		MENUCONFIG=1
