@@ -6,25 +6,25 @@
  	depends on !(arm || powerpc || sparc || TARGET_uml || i386 || x86_64)
 -	default y
 +	default n
-
+ 
  config KERNEL_SWAP
  	bool "Support for paging of anonymous memory (swap)"
 -	default y if !SMALL_FLASH
 +	default n
-
+ 
  config KERNEL_DEBUG_FS
  	bool "Compile the kernel with debug filesystem enabled"
 @@ -90,7 +90,7 @@
-
+ 
  config KERNEL_KALLSYMS
  	bool "Compile the kernel with symbol table information"
 -	default y if !SMALL_FLASH
 +	default n
  	help
  	  This will give you more information in stack traces from kernel oopses.
-
+ 
 @@ -135,7 +135,7 @@
-
+ 
  config KERNEL_DEBUG_INFO
  	bool "Compile the kernel with debug information"
 -	default y if !SMALL_FLASH
@@ -33,25 +33,34 @@
  	help
  	  This will compile your kernel and modules with debug information.
 @@ -216,7 +216,7 @@
-
+ 
  config KERNEL_MAGIC_SYSRQ
  	bool "Compile the kernel with SysRq support"
 -	default y
 +	default n
-
+ 
  config KERNEL_DEBUG_PINCTRL
  	bool "Compile the kernel with pinctrl debugging"
 @@ -228,11 +228,12 @@
-
+ 
  config KERNEL_COREDUMP
  	bool
 +	default n
-
+ 
  config KERNEL_ELF_CORE
  	bool "Enable process core dump support"
  	select KERNEL_COREDUMP
 -	default y if !SMALL_FLASH
 +	default n
-
+ 
  config KERNEL_PROVE_LOCKING
  	bool "Enable kernel lock checking"
+@@ -837,7 +838,7 @@
+ #
+ choice
+ 	prompt "Compiler optimization level"
+-	default KERNEL_CC_OPTIMIZE_FOR_SIZE if SMALL_FLASH
++	default KERNEL_CC_OPTIMIZE_FOR_SIZE
+ 
+ config KERNEL_CC_OPTIMIZE_FOR_PERFORMANCE
+ 	bool "Optimize for performance"
