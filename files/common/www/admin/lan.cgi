@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Konfiguration: LAN"
+export TITLE="Verwaltung &gt; Konfiguration: LAN"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM

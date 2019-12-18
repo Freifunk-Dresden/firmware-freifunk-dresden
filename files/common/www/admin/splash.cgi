@@ -2,7 +2,7 @@
 
 . /lib/functions.sh
 
-export TITLE="Verwaltung > Konfiguration: Splash"
+export TITLE="Verwaltung &gt; Konfiguration: Splash"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
@@ -108,7 +108,7 @@ IFS='
 '
 T=1
 C=0
-for i in $(cat /tmp/dhcp.leases | sed 's#\([^ ]\+\) \([^ ]\+\) \([^ ]\+\) \([^ ]\+\) \([^ ]\+\)#D="$(date --date=\"@\1\")";MAC1=\2;IP=\3;NAME=\4;MAC2=\5#')
+for i in $(sed 's#\([^ ]\+\) \([^ ]\+\) \([^ ]\+\) \([^ ]\+\) \([^ ]\+\)#D="$(date --date=\"@\1\")";MAC1=\2;IP=\3;NAME=\4;MAC2=\5#' /tmp/dhcp.leases)
 do
 	eval $i
 	stored=$(/usr/lib/ddmesh/ddmesh-splash.sh listmac | grep "$MAC1")

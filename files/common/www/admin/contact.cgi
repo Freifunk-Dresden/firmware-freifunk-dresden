@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Allgemein: Kontaktinfos"
+export TITLE="Verwaltung &gt; Allgemein: Kontaktinfos"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOF

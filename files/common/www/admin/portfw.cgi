@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Konfiguration: Portweiterleitung"
+export TITLE="Verwaltung &gt; Konfiguration: Portweiterleitung"
 . /usr/lib/www/page-pre.sh ${0%/*}
 . /lib/functions.sh
 
@@ -118,6 +118,5 @@ else
 	esac
 	show_rules
 fi
-
 
 . /usr/lib/www/page-post.sh ${0%/*}

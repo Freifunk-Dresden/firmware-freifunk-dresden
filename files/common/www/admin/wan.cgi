@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Konfiguration: WAN"
+export TITLE="Verwaltung &gt; Konfiguration: WAN"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 if [ -x /usr/sbin/pppd ]; then
@@ -175,5 +175,5 @@ Konfigurationen &uuml;ber die Konsole (ssh-login) sollten <b>NICHT</b> gemacht w
 werden und das private Netz zug&auml;nglich wird.
 EOM
 fi
-. /usr/lib/www/page-post.sh ${0%/*}
 
+. /usr/lib/www/page-post.sh ${0%/*}

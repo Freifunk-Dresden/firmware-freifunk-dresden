@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Konfiguration: DynDNS"
+export TITLE="Verwaltung &gt; Konfiguration: DynDNS"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOF

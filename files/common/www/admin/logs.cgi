@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Logs"
+export TITLE="Verwaltung &gt; Infos: Logs"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM

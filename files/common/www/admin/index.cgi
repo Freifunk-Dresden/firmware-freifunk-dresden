@@ -1,13 +1,13 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Allgemein"
+export TITLE="Verwaltung &gt; Allgemein"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 if [ "$form_action" = "overlay" ]; then
 	/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write >/dev/null
 fi
 
-eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
+eval $(sed 's#:\(.*\)$#="\1"#' /etc/built_info)
 
 case  "$git_ddmesh_branch" in
 	undefined)
@@ -61,7 +61,7 @@ auf eines der Steuerungselemente, um kurze Hilfetexte einzublenden.</p>
 <tr class="colortoggle2"><th>Git-Openwrt-Revision</th><td>$git_openwrt_rev</td></tr>
 <tr class="colortoggle1"><th>Git-Openwrt-Branch/Tag</th><td>$git_openwrt_branch</td></tr>
 
-<tr class="colortoggle2"><th>Build-Datum</th><td>$(cat /etc/built_info | sed -n '/builtdate/s#[^:]*:##p')</td></tr>
+<tr class="colortoggle2"><th>Build-Datum</th><td>$(sed -n '/builtdate/s#[^:]*:##p' /etc/built_info)</td></tr>
 $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#')
 </table>
 </fieldset>
@@ -73,9 +73,9 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1
 <tr class="colortoggle2"><th>Knoten-IP:</th><td colspan="6">$_ddmesh_ip</td></tr>
 <tr class="colortoggle2"><th>Nameserver:</th><td colspan="6">$(grep nameserver /tmp/resolv.conf.auto | sed 's#nameserver##g')</td></tr>
 <tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="6">$(uptime)</td></tr>
-<tr class="colortoggle2"><th>System:</th><td colspan="6">$(uname -m) $(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>
-<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="6">$device_model - $(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p') [$(cat /tmp/sysinfo/board_name)]</td></tr>
-<tr class="colortoggle2"><th>Filesystem:</th><td colspan="6">$(cat /proc/cmdline | sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#')</td></tr>
+<tr class="colortoggle2"><th>System:</th><td colspan="6">$(uname -m) $(sed -n '/system type/s#system[ 	]*type[ 	]*:##p' /proc/cpuinfo)</td></tr>
+<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="6">$device_model - $(sed -n '/system type/s#.*:[ 	]*##p' /proc/cpuinfo) [$(cat /tmp/sysinfo/board_name)]</td></tr>
+<tr class="colortoggle2"><th>Filesystem:</th><td colspan="6">$(sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#' /proc/cmdline)</td></tr>
 <tr class="colortoggle2"><th>SSH-Fingerprint (MD5)</th><td colspan="6">$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | sed -n '/Fingerprint/s#Fingerprint: md5 ##p')</td></tr>
 <tr class="colortoggle1"><th></th><th>Total</th> <th>Used</th> <th>Free</th> <th>Shared</th> <th>Buffered</th> <th>Cached</th></tr>
 $(free | sed -n '2,${s#[ 	]*\(.*\):[ 	]*\([0-9]\+\)[ 	]*\([0-9]\+\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)#<tr class="colortoggle2"><th>\1</th><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>#g;p}' )
@@ -93,7 +93,7 @@ EOM
 	IFS='
 '
 	T=1
-	for i in $(cat /tmp/dhcp.leases | sed 's#\([^ ]\+\) \([^ ]\+\) \([^ ]\+\) \([^ ]\+\) \([^ ]\+\)#D="$(date --date=\"@\1\")";MAC1=\2;IP=\3;NAME=\4;MAC2=\5#')
+	for i in $(sed 's#\([^ ]\+\) \([^ ]\+\) \([^ ]\+\) \([^ ]\+\) \([^ ]\+\)#D="$(date --date=\"@\1\")";MAC1=\2;IP=\3;NAME=\4;MAC2=\5#' /tmp/dhcp.leases)
 	do
 		eval $i
 		echo "<tr class="colortoggle$T" ><th>Zeit:</th><td>$D</td><th>MAC:</th><td>$MAC1</td><th>IP:</th><td>$IP</td><th>Name:</th><td>$NAME</td></tr>"
@@ -129,5 +129,3 @@ cat<<EOM
 EOM
 
 . /usr/lib/www/page-post.sh
-
-

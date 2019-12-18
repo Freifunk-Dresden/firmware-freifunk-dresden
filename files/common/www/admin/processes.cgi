@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Prozesse"
+export TITLE="Verwaltung &gt; Infos: Prozesse"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 TMPFILE=/tmp/top.output
@@ -38,6 +38,5 @@ $(pstree)
 </pre>
 </fieldset>
 EOF
-
 
 . /usr/lib/www/page-post.sh

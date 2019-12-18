@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Status"
+export TITLE="Infos &gt; Status"
 
 . /usr/share/libubox/jshn.sh
 . /usr/lib/www/page-pre.sh

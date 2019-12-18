@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Netzwerk"
+export TITLE="Verwaltung &gt; Infos: Netzwerk"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM

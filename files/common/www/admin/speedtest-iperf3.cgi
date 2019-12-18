@@ -1,21 +1,21 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Tools: Speedtest (iPerf3)"
+export TITLE="Verwaltung &gt; Tools: Speedtest (iPerf3)"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 
 cat<<EOF
-<script type="text/javascript"> 
-function checkInput()                                                     
-{                                                                         
-	var node = document.getElementById('id_node').value;  
+<script type="text/javascript">
+function checkInput()
+{
+	var node = document.getElementById('id_node').value;
 	if( node === undefined || checknumber(node) || node < 0)
-	{                                                                                    
+	{
 		alert("Falsche Knoten-Nr.");
-		return false;                                                                                    
-	}                                                                                                        
-	return true;                                                                                                     
-}                                                                                                                        
+		return false;
+	}
+	return true;
+}
 </script>
 
 <h2>$TITLE</h2>

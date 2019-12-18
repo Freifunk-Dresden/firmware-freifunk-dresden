@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Knoten"
+export TITLE="Infos &gt; Knoten"
 . /usr/lib/www/page-pre.sh
 
 cat<<EOM
