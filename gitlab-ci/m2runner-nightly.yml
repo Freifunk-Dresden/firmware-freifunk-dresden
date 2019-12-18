@@ -14,8 +14,8 @@ nightly:init:
   # ensure that we have no old data. This is important when
   # generating download.json. Else all old openwrt images would be
   # included and mixed
-  
-  # dont delete dl, it is not so important to have different old version for 
+
+  # dont delete dl, it is not so important to have different old version for
   # one packges, but it will reduce download overhead from external servers
   # every night. so just only delete workdirs to always have a clean build
   # - rm -rf ~/mycache/dl/*
@@ -90,7 +90,7 @@ nightly:deploy:
   only:
     - schedules
   stage: deploy
-  script: 
+  script:
     - ./gen-upload.sh all
     # runner must have ssh key that are added to download server. on download server there is a user "stephan" who owns the download directories
     # add the runners public key to user stephan authorized_keys file
@@ -103,5 +103,4 @@ nightly:deploy:
     - final_output
   tags:
   - m2runner
-
 

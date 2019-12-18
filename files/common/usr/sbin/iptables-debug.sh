@@ -5,4 +5,3 @@
 
 logger -s -t IPTABLES "iptables $*"
 iptables.exe iptables -w $*
-

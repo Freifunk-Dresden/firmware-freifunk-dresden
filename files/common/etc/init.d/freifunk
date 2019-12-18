@@ -1,7 +1,6 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) freiunk-dresden
 
-
 START=99
 start() {
 

@@ -35,7 +35,7 @@ toggle_ssid()
 }
 
 # bmxd calles it with: gateway,del,IP
-# boot and wan hotplug: init 
+# boot and wan hotplug: init
 case $1 in
 	gateway)
 		logger -s -t $TAG "GATEWAY"
@@ -48,7 +48,7 @@ case $1 in
 	del|init)
 		# check if this router is a gateway
 		gw="$(ip ro li ta public_gateway | grep default)"
-		
+
 		# set when "del" or if empty
 		if [ -z "$gw" -a "$1" = "del" -o -z "$(grep nameserver $RESOLV_CONF_FINAL)" ]; then
 			logger -s -t $TAG "remove GATEWAY (del)"
@@ -56,7 +56,7 @@ case $1 in
 			rm $RESOLV_CONF_FINAL
 			ln -s $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
 			/usr/lib/ddmesh/ddmesh-led.sh wifi alive
-			toggle_ssid false 
+			toggle_ssid false
 		fi
 	;;
 	*)
@@ -71,7 +71,7 @@ esac
 
 # restart dnsmasq, as workaround for dead dnsmasq
 /etc/init.d/dnsmasq restart
-                                        
+
 
 GW_STAT="/var/statistic/gateway_usage"
 count=$(sed -n "/$1:/s#.*:##p" $GW_STAT)
@@ -81,5 +81,3 @@ else
 	count=$(( $count + 1 ))
 	sed -i "/$1/s#:.*#:$count#" $GW_STAT
 fi
-
-

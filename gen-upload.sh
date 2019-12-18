@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #
-# copy firwmare,packets and generate download.json 
+# copy firwmare,packets and generate download.json
 
 # -------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ C_GREY='\033[0;37m'
 C_LGREY='\033[1;37m'
 
 #################################################################################################
-# parameter check and define variables 
+# parameter check and define variables
 #################################################################################################
 
 #parameter check
@@ -96,7 +96,7 @@ fi
 target_dir=$output_dir/$fwversion
 
 #################################################################################################
-# functions 
+# functions
 #################################################################################################
 
 gen_download_json_start()
@@ -138,7 +138,7 @@ isFirstFile=true
 gen_download_json_add_data()
 {
   output_path=$1 	# output path "firmware/4.2.15"
-  subpath=$2 		# relativ path to firmware "ar71xx/generic" 
+  subpath=$2 		# relativ path to firmware "ar71xx/generic"
   file_filter=$3 	# file filter "*.{bin,trx,img,dlf,gz}"
 
 	printf "add files to download.json\n"
@@ -160,7 +160,7 @@ gen_download_json_add_data()
 		filename=""
 		comment="new file"
 
-		# search file info 
+		# search file info
 		# jq: first selects the array with all entries and every entry is pass it to select().
 		#	select() checks a condition and returns the input data (current array entry)
 		#	if condition is true
@@ -180,15 +180,15 @@ gen_download_json_add_data()
 			# in case new files are present which are not in fileinfo, we need to create empty entries in
 			# download.json and fileinfo.json
 			if [ "$info_array" = "[]" ]; then
-				# on second loop we need to break 
+				# on second loop we need to break
 				test "$idx" != "0" && break;
 			else
 				info=$(echo "$info_array" | jq ".[$idx]")
 #printf "idx:%d info:$info\n" $idx
 				#info_array holds one entry for each device that is using same firmware image
-				#Normally it contains only one entry. 
+				#Normally it contains only one entry.
 				test "$info" = "null" && break;
-	
+
 				autoupdate="$(echo $info | jq $OPT '.autoupdate')"
 				[ "$autoupdate" = "null" ] && autoupdate="0"		# default disable auto update
 
@@ -272,11 +272,11 @@ gen_download_json_end()
 #exit
 
 #################################################################################################
-# main script start 
+# main script start
 #################################################################################################
 
 #################################################################################################
-# prepare output dir  
+# prepare output dir
 #################################################################################################
 mkdir -p $output_dir
 $ENABLE_COPY && {
@@ -296,7 +296,7 @@ gen_download_json_start "$target_dir" "$fwversion" "$fwdate"
 
 
 #################################################################################################
-# copy build dl  
+# copy build dl
 #################################################################################################
 $ENABLE_COPY && {
 	printf $C_YELLOW"copy downloaded packages"$C_NONE"\n"
@@ -305,7 +305,7 @@ $ENABLE_COPY && {
 }
 
 #################################################################################################
-# copy other files/sources  
+# copy other files/sources
 #################################################################################################
 
 #changelog
@@ -330,7 +330,7 @@ $ENABLE_COPY && {
 printf "finished.\n"
 
 #################################################################################################
-# copy firmware 
+# copy firmware
 #################################################################################################
 
 
@@ -359,7 +359,7 @@ do
 		printf $C_YELLOW"platform:"$C_NONE" ["$C_GREEN"$platform"$C_NONE"]\n"
 
 		mkdir -p $target_dir/$platform
-	
+
 		for subplatform in $(ls $buildroot/bin/targets/$platform)
 		do
 			mkdir -p $target_dir/$platform/$subplatform
@@ -373,14 +373,14 @@ do
 
 			#create md5sums file used when automatically or manually downloading via firmware.cgi
 			# solange das file erzeugen, wie software mit alter firmware drausen ist
-			# oder github 
+			# oder github
 			p=$(pwd)
 			cd $target_dir/$platform/$subplatform
 			printf $C_YELLOW"calculate md5sum"$C_NONE"\n"
 			md5sum * > $target_dir/$platform/$subplatform/md5sums
 			cd $p
 
-			#copy packages 
+			#copy packages
 			mkdir -p $target_dir/$platform/$subplatform/packages
 			printf "search package dir: $buildroot/bin/targets/$platform/$subplatform/packages/\n"
 			for package in $(cat $info_dir/packages)
@@ -402,7 +402,7 @@ do
 			$buildroot/scripts/ipkg-make-index.sh . > Packages
 			gzip -f Packages
 			cd $p
-		
+
 			gen_download_json_add_data $target_dir $platform/$subplatform $filefilter
 		done # for sub platform
 	done	# for platform
@@ -417,5 +417,4 @@ EOM
 
 
 printf "FINISHED: files are copied to directory [$target_dir]\n"
-
 

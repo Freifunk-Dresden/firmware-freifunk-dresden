@@ -19,4 +19,3 @@ fi
 $error || printf "\033[1;31mUCI-ERROR:\033[1;34m [$params]\033[0m\n" >/proc/self/fd/2
 # return original status
 $error
-

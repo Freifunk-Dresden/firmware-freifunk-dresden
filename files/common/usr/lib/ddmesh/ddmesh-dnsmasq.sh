@@ -31,10 +31,10 @@ if [ "$1" = "configure" ]; then
 		#create LAN DHCP: IP,NETMASK,BROADCAST,NETWORK,PREFIX,START,END
 		eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask) $(uci get ddmesh.network.dhcp_lan_offset) $(uci get ddmesh.network.dhcp_lan_limit))
 
-		test -z "$(uci -q get dhcp.dhcp)" && {                                                 
-			uci add dhcp dhcp             
+		test -z "$(uci -q get dhcp.dhcp)" && {
+			uci add dhcp dhcp
 			uci rename dhcp.@dhcp[-1]='lan'
-		}                                      
+		}
 
 		# start dhcp server also if another server is running in network
 		uci -q set dhcp.lan.force='1'
@@ -91,4 +91,3 @@ if [ "$1" == start ]; then
 	/etc/init.d/dnsmasq stop 2>/dev/null
 	/etc/init.d/dnsmasq start 2>/dev/null
 fi
-

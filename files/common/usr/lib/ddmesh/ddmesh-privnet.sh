@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 
 . /lib/functions.sh
 

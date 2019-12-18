@@ -21,7 +21,7 @@ start() {
 	/usr/lib/ddmesh/ddmesh-bootconfig.sh || exit
 
 	logger -s -t $LOGGER_TAG "restart firewall+addon"
-	fw3 restart 
+	fw3 restart
 	/usr/lib/ddmesh/ddmesh-firewall-addons.sh init
 
 	#check if we have a node
@@ -94,5 +94,4 @@ stop() {
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh stop
 	setup_routing del
 }
-
 

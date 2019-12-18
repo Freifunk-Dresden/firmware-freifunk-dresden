@@ -25,7 +25,7 @@ do
 
 	# search current provider
 	#network="$(uqmi -s -d $wwan_device --network-scan)"
-	#provider="$(echo $network | jsonfilter -e '@.network_info[@.status[@="current_serving"]].description')"	
+	#provider="$(echo $network | jsonfilter -e '@.network_info[@.status[@="current_serving"]].description')"
 	#"provider": "$provider",
 	#"network": $network,
 	#"service": $service,
@@ -63,4 +63,3 @@ EOM
 
 	sleep $delay
 done
-

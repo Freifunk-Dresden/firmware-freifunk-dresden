@@ -6,7 +6,7 @@
 
 TMP_CONFIG_DIR=/var/etc/config
 
-# get all symlinks and commit them. 
+# get all symlinks and commit them.
 # IMPORTANG: specify config names !!!
 
 # uci -c option mixes up /etc/config/... with /var/etc/config...
@@ -15,7 +15,7 @@ TMP_CONFIG_DIR=/var/etc/config
 
 for config in $(ls -1F  /etc/config | sed -n 's#@$##p')
 do
-	uci -q -c $TMP_CONFIG_DIR commit $config 
+	uci -q -c $TMP_CONFIG_DIR commit $config
 done
 
 # then commit all others to flash
@@ -23,5 +23,3 @@ done
 
 # sync file systems (ext4)
 sync
-
-

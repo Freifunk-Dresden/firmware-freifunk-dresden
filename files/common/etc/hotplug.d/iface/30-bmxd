@@ -8,7 +8,7 @@ test -f /tmp/freifunk-running || exit 0
 
 logger -t ddmesh "network-hotplug iface: network:[$INTERFACE] interface:$DEVICE $ACTION"
 
-if [ "$INTERFACE" = "wifi" ]; then 
+if [ "$INTERFACE" = "wifi" ]; then
 
 	if [ "$ACTION" = "ifup" ]; then
 		logger -t ddmesh "network-hotplug: add [$INTERFACE] to bmxd"

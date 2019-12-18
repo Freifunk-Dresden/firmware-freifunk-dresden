@@ -17,7 +17,7 @@
 <link rel="stylesheet" type="text/css" href="_res/jquery/jquery-ui.min.css">
 
 <link rel="stylesheet" type="text/css" href="_res/datatables/datatables.min.css">
-<script type="text/javascript" src="_res/datatables/datatables.min.js"></script>	
+<script type="text/javascript" src="_res/datatables/datatables.min.js"></script>
 
 <style>
 .stats {
@@ -35,7 +35,7 @@
     text-indent: 100%;
     white-space:nowrap;
 }
-</style>	
+</style>
 
 <h2> Freifunk Dresden - Firmware </h2>
 
@@ -48,7 +48,7 @@
 <br>
 
 <div>
-<b>Spalten anzeigen:</b> 
+<b>Spalten anzeigen:</b>
  <a class="toggle-vis" data-column="3">Model</a>
 </div>
 
@@ -62,7 +62,7 @@
                 <th>Kommentar</th>
             </tr>
         </thead>
-<!--        
+<!--
 	  <tfoot>
             <tr style="background-color:#434244;color:#cccccc;">
 	  <th colspan="5" ></th>
@@ -77,8 +77,8 @@
 /*
 https://api.jquery.com/jquery.noconflict/
 
-If for some reason two versions of jQuery are loaded (which is not recommended), 
-calling $.noConflict(true) from the second version will return the globally 
+If for some reason two versions of jQuery are loaded (which is not recommended),
+calling $.noConflict(true) from the second version will return the globally
 scoped jQuery variables to those of the first version.
 Some times it could be issue with older version (or not stable) of JQuery files.
 
@@ -125,7 +125,7 @@ my.query(function() {
 
 //        // https://datatables.net/reference/option/rowCallback
 //	"rowCallback": function( row, data ) {
-//		
+//
 //		if ( data.id < 1000 )
 //		{
 //			row.style.backgroundColor= (row.className=="odd") ? "#bbddbb" : "#cceecc";
@@ -133,7 +133,7 @@ my.query(function() {
 //		}
 //
 //		if ( data.status.offline_since > 2 )
-//		{	
+//		{
 //			//row.style.backgroundColor= (row.className=="odd") ? "#cccccc" : "#dddddd";
 //			row.style.backgroundColor= "#cccccc";
 //			//row.firstChild.style.backgroundColor = row.style.backgroundColor;
@@ -196,11 +196,11 @@ my.query(function() {
     my.query('a.toggle-vis').on( 'click', function (e) {
         e.preventDefault();
 
-        var col = this.attributes['data-column'].value; 
+        var col = this.attributes['data-column'].value;
 
         // Get the column API object
         var column = myTable.column( col );
- 
+
         // Toggle the visibility
         column.visible( ! column.visible() );
     } );
@@ -213,4 +213,3 @@ my.query(function() {
 </script>
 </body>
 </html>
-

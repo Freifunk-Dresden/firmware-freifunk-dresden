@@ -44,7 +44,7 @@ get_wifi_led()
 			;;
 		*)
 			wifi_led="$(uci -q get system.led_wlan.sysfs)"
-			test -z "$wifi_led" && wifi_led="$(uci -q get system.led_rssimediumlow.sysfs)" 
+			test -z "$wifi_led" && wifi_led="$(uci -q get system.led_rssimediumlow.sysfs)"
 			;;
 	esac
 }
@@ -54,7 +54,7 @@ get_wwan_led()
 	case  "$boardname" in
 		gl-mifi)
 			wwan_led="$(uci -q get system.led_wwan.sysfs)"
-			test -z "$wwan_led" && wwan_led="gl-mifi:green:net" 
+			test -z "$wwan_led" && wwan_led="gl-mifi:green:net"
 			;;
 		*)
 			wwan_led=""
@@ -141,4 +141,3 @@ case $1 in
 		esac
 		;;
 esac
-

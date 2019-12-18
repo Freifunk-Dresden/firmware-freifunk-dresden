@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# set when called from commmand line                                                              
+# set when called from commmand line
 test -z "$_ddmesh_ip" && eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
 setup()
@@ -16,7 +16,7 @@ ip rule $1 to 169.254.0.0/16 table main priority 302
 
 #byepass private ranges (not freifunk ranges)
 ip rule $1 to 192.168.0.0/16 table main priority 310
-ip rule $1 to 172.16.0.0/12 table main priority 320 
+ip rule $1 to 172.16.0.0/12 table main priority 320
 
 #bypass wifi2
 ip rule $1 to 100.64.0.0/16 table main priority 350
@@ -44,7 +44,7 @@ ip rule $1 table bat_default priority 505
 # put fallback after bat_default. If lan was configured and mesh-on-lan is active
 # local_gateway would be empty and any local internet communication (registration)
 # will be routed to dead ip
-ip rule $1 iif $(uci get network.loopback.ifname) table fallback_gateway priority 506 
+ip rule $1 iif $(uci get network.loopback.ifname) table fallback_gateway priority 506
 
 #stop any routing here, to avoid using default gatways in default routing table
 #those gateways are checked and added to gateway table if valid
@@ -83,4 +83,3 @@ case "$1" in
 	*)	echo "usage $0 [ start | stop | restart ]"
 		;;
 esac
-

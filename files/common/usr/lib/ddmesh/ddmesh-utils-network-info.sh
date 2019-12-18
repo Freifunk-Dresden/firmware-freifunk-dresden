@@ -34,7 +34,7 @@ test -z "$1" && {
 		wwan_4=1
 	fi
 	idx=$(( idx + 1 ))
- done 
+ done
 
  # retrieve all data
  idx=0
@@ -83,7 +83,7 @@ test -z "$1" && {
 	# if present then rename wwan_4 to generic name "wwan"
 	if [ "$net_name" = "wwan_4" ]; then
 		net_name="wwan"
-		net_error="$wwan_error" # 
+		net_error="$wwan_error" #
 	fi
 
 	#if net_name matches requested network, stay in this entry
@@ -93,7 +93,7 @@ test -z "$1" && {
 			echo "net_$net_name=$net_ifname"
 			idx=$(( idx + 1 ))
 			continue
-		fi	
+		fi
 
 #		if [ -n "$net_ifname" ]; then
 #			if [ -n "$(cat /proc/net/dev | grep $net_ifname)" ]; then
@@ -139,6 +139,3 @@ test -z "$1" && {
 	fi
 	idx=$(( idx + 1 ))
  done
-
-
-
