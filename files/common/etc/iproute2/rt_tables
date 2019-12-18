@@ -11,7 +11,7 @@
 #
 251	public_gateway
 250	local_gateway
-249	ping
+#249	ping
 248	vpn
 247	unreachable
 246	fallback_gateway

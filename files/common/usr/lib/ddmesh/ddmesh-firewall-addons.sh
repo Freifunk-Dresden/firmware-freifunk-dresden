@@ -59,10 +59,6 @@ setup_custom_rules() {
 # temp firewall rules (fw uci can not add custom chains)
 	logger -s -t $TAG "setup_custom_rules"
 
-	# gateway check
-	$IPT -t mangle -N output_gateway_check
-	$IPT -t mangle -A OUTPUT -p icmp -j output_gateway_check
-
 	#input rules for backbone/firewall ( to restrict tunnel pakets only via allowed interfaces )
 	#tbb traffic is controlled by zone rules tbb+
 	$IPT -N input_backbone_accept
