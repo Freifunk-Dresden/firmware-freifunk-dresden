@@ -6,7 +6,7 @@
 # boot1	-> reboot after flash, openwrt creates jffs2 -> reboot
 # boot2	-> openwrt creates initial configs
 #	-> start ddmesh-bootconfig.sh:
-#		no boot_step or boot_step=1 -> create /etc/config/ddmesh,sshkey,regkey,temp node 
+#		no boot_step or boot_step=1 -> create /etc/config/ddmesh,sshkey,regkey,temp node
 #		-> reboot (boot_step 2)
 # boot3		boot_step 2 -> update persistent configs from /etc/config/ddmesh
 #		-> reboot (boot_step 3)
@@ -133,11 +133,6 @@ config backbone 'backbone'
 #	option	comment			''
 
 config backbone_client
-	option 	host			'vpn13.freifunk-dresden.de'
-	option 	port			'5002'
-	option	public_key 		''
-
-config backbone_client
 	option 	host			'vpn2.freifunk-dresden.de'
 	option 	port			'5002'
 	option	public_key 		''
@@ -148,7 +143,12 @@ config backbone_client
 	option	public_key 		''
 
 config backbone_client
-	option 	host			'vpn7.freifunk-dresden.de'
+	option 	host			'vpn12.freifunk-dresden.de'
+	option 	port			'5002'
+	option	public_key 		''
+
+config backbone_client
+	option 	host			'vpn13.freifunk-dresden.de'
 	option 	port			'5002'
 	option	public_key 		''
 
@@ -219,7 +219,7 @@ EOM
 		logger -s -t "$LOGGER_TAG" "INFO: generated temorary node is $node"
 		uci set ddmesh.system.node=$node
 	}
-	
+
 	# dropbear ssh
 	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
 
@@ -233,7 +233,7 @@ setup_wireless()
  #wireless, regenerate config in case wifi usb stick plugged into different usb port
  # temp wifi config
  #rm /var/etc/config/wireless
- 
+
  wifi config
 
  #ensure we have valid country,with supportet channel and txpower
@@ -259,7 +259,7 @@ setup_wireless()
  #test -z "$(uci -q get ddmesh.network.wifi_htmode)" && uci set ddmesh.network.wifi_htmode="HT20"
  #uci set wireless.@wifi-device[0].htmode="$(uci get ddmesh.network.wifi_htmode)"
 
- # 5 GHz 
+ # 5 GHz
  wifi5ghz_present=false
  test -n "$(uci -q get wireless.@wifi-device[1])" && wifi5ghz_present=true
  if $wifi5ghz_present; then
@@ -524,7 +524,7 @@ done
  setup_wireless
 
  #############################################################################
- # setup tbb_fastd network assigned to a firewall zone (mesh) for a interface 
+ # setup tbb_fastd network assigned to a firewall zone (mesh) for a interface
  # that is not controlled by openwrt.
  # Bringing up tbb+ failes, but firewall rules are created anyway
  # got this information by testing, because openwrt feature to add non-controlled
@@ -660,11 +660,11 @@ config_create_symlink_files()
 {
 	mkdir -p /var/etc/config
 
-	#ensure we use temporarily created config after sysupgrade has restored config as file instead of symlink   
+	#ensure we use temporarily created config after sysupgrade has restored config as file instead of symlink
 	[ -L /etc/config/uhttpd ] || ( rm -f /etc/config/uhttpd && ln -s /var/etc/config/uhttpd /etc/config/uhttpd )
 	touch /var/etc/config/uhttpd
 
-	#ensure we use temporarily created config after sysupgrade has restored config as file instead of symlink   
+	#ensure we use temporarily created config after sysupgrade has restored config as file instead of symlink
 	[ -L /etc/config/wshaper ] || ( rm -f /etc/config/wshaper && ln -s /var/etc/config/wshaper /etc/config/wshaper )
 	touch /var/etc/config/wshaper
 
@@ -683,7 +683,7 @@ config_temp_configs() {
 	# -> NEVER use this option
 
 	#setup_wireless
-	
+
 	cat<<EOM >/var/etc/dnsmasq.hosts
 127.0.0.1 localhost
 $_ddmesh_wifi2ip hotspot
@@ -710,7 +710,7 @@ config uhttpd main
 	list listen_https	0.0.0.0:443
 	option home		/www
 	option rfc1918_filter 1
-	option max_requests	20	
+	option max_requests	20
 	option max_connections	100
 	option tcp_keepalive    1
 	option http_keepalive   60
@@ -891,9 +891,9 @@ case "$boot_step" in
 
 		#node valid after boot_step >= 2
 		node=$(uci get ddmesh.system.node)
-		if [ -z "$node" ]; then                                                     
+		if [ -z "$node" ]; then
 			logger -t $LOGGER_TAG "ERROR: no node number"
-                else 
+                else
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 			logger -t $LOGGER_TAG "run ddmesh upgrade"
@@ -928,9 +928,9 @@ case "$boot_step" in
 		/usr/lib/ddmesh/ddmesh-led.sh status boot3
 		logger -s -t "$LOGGER_TAG" "boot step 3"
 		node=$(uci get ddmesh.system.node)
-		if [ -z "$node" ]; then                                                     
+		if [ -z "$node" ]; then
 			logger -t $LOGGER_TAG "ERROR: no node number"
-                else 
+                else
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 			config_temp_configs
