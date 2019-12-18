@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# das script sucht alle commands; die von busybox bereitgestellt werden im 
+# das script sucht alle commands; die von busybox bereitgestellt werden im
 # filesystem.
 # CMD enthält alle busybox commands
 # das script sucht vom aktuellen directory aus, alle text files
@@ -14,7 +14,7 @@ IFS=', '
 for c in $CMD
 do
  echo "[$c]"
- 
+
  x=$(find ./ -type f ! -name 'jquery.js' ! -wholename './usr/lib/opkg/*' -name '*' -exec grep -I --color=always -w $c {} \; -print)
  test -n "$x" &&  echo "$x ->used" && UNUSED=${UNUSED/[, ]$c[, ]/;}
 

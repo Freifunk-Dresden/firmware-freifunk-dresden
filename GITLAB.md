@@ -20,15 +20,15 @@ apt-get install libssl-dev libncurses5-dev zlib1g-dev zlib1g-dev gcc-multilib
 Download and copy let's encrypt root certificates
 
 ```
- wget https://letsencrypt.org/certs/isrgrootx1.pem.txt -O /etc/ssl/certs/letencrypt-isrgrootx1.pem
- wget https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem.txt -O /etc/ssl/certs/lets-encrypt-x3-cross-signed.pem
- wget https://letsencrypt.org/certs/letsencryptauthorityx3.pem.txt -O /etc/ssl/certs/letsencryptauthorityx3.pe
- 
- # update certificates, so system knows about the new files
- update-ca-certificates --verbose --fresh
+wget https://letsencrypt.org/certs/isrgrootx1.pem.txt -O /etc/ssl/certs/letencrypt-isrgrootx1.pem
+wget https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem.txt -O /etc/ssl/certs/lets-encrypt-x3-cross-signed.pem
+wget https://letsencrypt.org/certs/letsencryptauthorityx3.pem.txt -O /etc/ssl/certs/letsencryptauthorityx3.pe
 
- # check if website is accessable
- wget -O - https://gitlab.freifunk-dresden.de/
+# update certificates, so system knows about the new files
+update-ca-certificates --verbose --fresh
+
+# check if website is accessable
+wget -O - https://gitlab.freifunk-dresden.de/
 ```
 
 ### 3b. Or allow *ANY* SSL cerificates and add user defined domain name (example with docker executor and local cache)
@@ -97,4 +97,3 @@ build:ar71xx.tiny:
 - https://docs.gitlab.com/ee/ci/yaml/#skipping-jobs
 - https://docs.gitlab.com/ce/ci/caching/
 - https://docs.gitlab.com/runner/configuration/advanced-configuration.html
-

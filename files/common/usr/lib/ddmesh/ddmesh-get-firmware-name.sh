@@ -36,5 +36,3 @@ eval $(echo $entry | jsonfilter -e subpath='@.path' -e filename='@.filename')
 
 url="$URL_DL/$subpath/$filename"
 echo "{ \"firmware_version\":\"$version\", \"url\":\"$url\", \"fileinfo\": $entry }"
-
-

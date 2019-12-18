@@ -1,3 +1,2 @@
 #!/bin/sh
 logger -t ddmesh "network-hotplug iface: [$INTERFACE] $ACTION type:$DEVTYPE interface:[$DEVICENAME] devpath:$DEVPATH"
-

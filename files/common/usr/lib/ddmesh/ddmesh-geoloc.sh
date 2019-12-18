@@ -7,7 +7,7 @@ SYSLOG_TAG="geoloc"
 
 GEO_LAST=/var/geoloc-last
 GEO_CURR=/var/geoloc-current
-touch $GEO_CURR $GEO_LAST 
+touch $GEO_CURR $GEO_LAST
 
 test -n "$1" && eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
 
@@ -40,8 +40,8 @@ BEGIN{
         }
 
 	# ignore hotspots: Freifunk+LTE router with hidden ssid
-	if(match(essid,/Freifunk/)) { continue; }	
-	if(essid == "unknown") { continue; }	
+	if(match(essid,/Freifunk/)) { continue; }
+	if(essid == "unknown") { continue; }
 
 	found=0
 	for(m in ignore_macs)
@@ -76,7 +76,7 @@ check_update_allowed()
 	eval $(echo "$r" | jsonfilter -e mac='@.macAddress' -e signal='@.signalStrength')
 	echo "$mac $signal" >> $GEO_CURR
  done
- 
+
  # check if new list still contains mac from old list
  awk '
 	FILENAME==ARGV[1]{ a[$1] = $2 }
@@ -87,7 +87,7 @@ check_update_allowed()
 		mac[$1] = mac[$1] + 1
 	}
 	END {
-		# google needs at least 2 AP 
+		# google needs at least 2 AP
 		if(length(b) <= 1) exit 1
 
 		for(m in mac)
@@ -103,7 +103,7 @@ check_update_allowed()
 send_request()
 {
 # $1 - 	store: writes to config
-#	sysinfo: stores json in tempfile 
+#	sysinfo: stores json in tempfile
 
 	host=$(uci -q get credentials.geoloc.host)
 	host=${host:=geoloc.ffdd}
@@ -178,14 +178,14 @@ case "$1" in
 		;;
 	update-sysinfo)
 		scan
-		# forward arg 
+		# forward arg
 		send_request sysinfo
 		;;
 	mobile)
 		# only request and store temporarily
 		while true; do
 			scan
-			check_update_allowed && send_request sysinfo 
+			check_update_allowed && send_request sysinfo
 			sleep 60
 		done
 		;;
@@ -198,4 +198,3 @@ case "$1" in
 	echo " mobile         - periodically update mobile geoloc"
 	;;
 esac
-

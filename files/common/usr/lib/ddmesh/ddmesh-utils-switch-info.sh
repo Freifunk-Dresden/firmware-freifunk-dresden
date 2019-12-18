@@ -5,7 +5,7 @@ env=false
 
 case $1 in
 	json)	json=true ;;
-	env)	env=true ;; 
+	env)	env=true ;;
 	*)
 		echo "usage: $(basename $0) json | env"
 		exit 1
@@ -21,7 +21,7 @@ eval $(ip link | awk '
 	/^[0-9]:/{
 		carrier=1
 		if(gsub("NO-CARRIER",$5)) carrier=0
-		
+
 		if($3=="'$net_lan'") { print "carrier_lan="carrier }
 		if($3=="'$net_wan'") { print "carrier_wan="carrier }
 		if($3=="'$net_mesh_lan'") { print "carrier_mesh_lan="carrier }
@@ -103,5 +103,3 @@ done
 if $json; then
 	echo "}"
 fi
-
-

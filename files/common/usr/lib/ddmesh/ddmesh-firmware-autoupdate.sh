@@ -9,7 +9,7 @@ CERT="--ca-certificate=/etc/ssl/certs/download.crt"
 
 usage() {
 	echo "$0 <run [nightly] | check | compare new old>"
-}		
+}
 
 if [ -z "$1" ]; then
 	usage
@@ -126,7 +126,7 @@ case "$1" in
 		echo "version on server: $firmware_release_version"
 		run="no"
 		[ "$allowed" = "1" -a "$enabled" = "1" -a "$autoupdate" = "1" ] && run="yes"
-	       	echo "-> run: $run"	
+	       	echo "-> run: $run"
 		exit 0
 		;;
 
@@ -139,4 +139,3 @@ case "$1" in
 		usage
 		;;
 esac
-

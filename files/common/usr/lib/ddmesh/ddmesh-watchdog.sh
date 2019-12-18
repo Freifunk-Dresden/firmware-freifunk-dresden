@@ -1,6 +1,5 @@
 #!/bin/ash
 
-
 TAG=watchdog
 
 call_watchdog()
@@ -78,5 +77,3 @@ call_watchdog 2 watchdog_bmxd
 call_watchdog 5 watchdog_wifi_scanfix
 call_watchdog 5 /usr/lib/ddmesh/ddmesh-backbone.sh runcheck
 call_watchdog 5 /usr/lib/ddmesh/ddmesh-privnet.sh runcheck
-
-

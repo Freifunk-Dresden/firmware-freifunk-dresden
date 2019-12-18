@@ -173,5 +173,3 @@ case "$1" in
    *)
 	echo "usage: $0 start|stop|restart|gen_secret_key|get_public_key|runcheck"
 esac
-
-

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 
 test -x /usr/bin/vtund || exit
 
@@ -157,5 +157,3 @@ if [ "$1" = "restart" ]; then
 	sleep 2
 	$0 start
 fi
-
-

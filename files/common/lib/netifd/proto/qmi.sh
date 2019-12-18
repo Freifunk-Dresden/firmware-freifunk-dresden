@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 
 [ -n "$INCLUDE_ONLY" ] || {
 	. /lib/functions.sh

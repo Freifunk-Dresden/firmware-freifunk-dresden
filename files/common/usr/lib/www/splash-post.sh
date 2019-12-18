@@ -15,5 +15,3 @@ Version:<font color="white">&nbsp;$(cat /etc/version)</font>, Internet&nbsp;IPv4
 </BODY>
 </HTML>
 EOF
-
-

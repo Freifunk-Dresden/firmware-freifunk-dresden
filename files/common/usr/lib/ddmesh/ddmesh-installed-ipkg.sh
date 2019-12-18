@@ -1,6 +1,5 @@
 #!/bin/ash
 
-
 j=$1
 spaces="$2"
 

@@ -15,7 +15,7 @@
 #
 #   Excample:
 #   	openwrt:ramips.mt7621
-#	openwrt:ramips.mt7621.ubiquiti-edgerouter-x"
+#	openwrt:ramips.mt7621.ubiquiti-edgerouter-x
 #   This would first build all targets that can be built, and then device specific
 #   builds are generated and copied
 #
@@ -39,8 +39,8 @@
 # ------------- default values ------------------------------
 # this block must come always first, because the first block is used
 # as default
-	{	
-		"name":"default",			# currently just an unused name (only displayed) 
+	{
+		"name":"default",			# currently just an unused name (only displayed)
 							# if following blocks do not specifiy there own value
 		"target":"ar71xx",
 		"subtarget":"generic",
@@ -51,13 +51,13 @@
 
 #		"openwrt_rev":"28d3afc8d67231c2ad7adbde3e4b1179d0648c0e", # 19.07 Mi 2. Okt 15:47:02 UTC 2019
 #		"openwrt_rev":"d3e11e8ad85b9a51027174d5207e1e43a8c8fe94", # 19.07 Sat Nov 9 20:10:58 2019
-		"openwrt_rev":"d2d12346e8e6dd5fbb6befd4f9e3e1d5304a2e31", # 19.07 Mon Nov 25 16:53:59 2019 
+		"openwrt_rev":"d2d12346e8e6dd5fbb6befd4f9e3e1d5304a2e31", # 19.07 Mon Nov 25 16:53:59 2019
 
 		"selector-config":"19.07",		# used to select config
 		"selector-files":"dummy",		# used to select files
 		"selector-feeds":"19.07",		# used to select feeds
 		"selector-patches":"19.07",		# used to select patches
-		
+
 		#"openwrt_rev":"f6de1fa6c6b69ac6282f453f61c894695d11f433", # 18.06 01-09-2019
 		#"selector-config":"18.06",		# used to select config
 		#"selector-files":"dummy",		# used to select files
@@ -81,7 +81,7 @@
 		"target-patches":[""]
 	},
 # ------------- specific targets ------------------------------
-	{	
+	{
 		"name":"openwrt:ar71xx.tiny",	# can be any name
 		"target":"ar71xx",
 		"subtarget":"tiny",
@@ -98,41 +98,41 @@
 				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"9167e30"}
 			  ]
 	},
-	{	
+	{
 		"name":"openwrt:ar71xx.generic",
 		"target":"ar71xx",
 		"subtarget":"generic"
 	},
-	{	
+	{
 		"name":"openwrt:x86.generic",
 		"target":"x86",
 		"subtarget":"generic"
 	},
-	{	
+	{
 		"name":"openwrt:x64.generic",
 		"target":"x86",
 		"subtarget":"64",
 		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson" ],
 		"target-patches":["package-qemu-ga-buildfix.patch"]
 	},
-	{	
+	{
 		"name":"openwrt:ramips.mt7621.generic",
 		"target":"ramips",
 		"subtarget":"mt7621",
 		"variant":"generic"
 	},
-	{	
+	{
 		"name":"openwrt:ramips.mt7621.ubiquiti-edgerouter-x",
 		"target":"ramips",
 		"subtarget":"mt7621",
 		"variant":"ubiquiti-edgerouter-x"	# specific target (overwrites previous generic only for this device)
 	},
-#	{	
+#	{
 #		"name":"openwrt:ramips.rt305x.generic",
 #		"target":"ramips",
 #		"subtarget":"rt305x"
 #	},
-	{	
+	{
 		"name":"openwrt:ramips.lantiq.xrx200",
 		"target":"lantiq",
 		"subtarget":"xrx200",

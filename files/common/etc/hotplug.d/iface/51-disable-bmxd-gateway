@@ -1,3 +1,4 @@
+#!/bin/sh
 
 test -f /tmp/freifunk-running || exit 0
 
@@ -6,4 +7,3 @@ test -f /tmp/freifunk-running || exit 0
 [ ifdown = "$ACTION" ] && {
 	[ wan = "$INTERFACE" -o lan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-bmxd.sh no_gateway
 }
-

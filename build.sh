@@ -71,7 +71,7 @@ s/^[ 	]*//
 s/[ 	]*$//
 /^$/d
 p
-" | jq "[ .targets[] ]" 
+" | jq "[ .targets[] ]"
 }
 
 listTargets()
@@ -141,7 +141,7 @@ listTargets()
 		target=$_target.$_subtarget
 		# add variant (if any)
 		test -n "$_variant" && target="$target.$_variant"
-	fi 
+	fi
 	test -z "$target" && break
  	printf  " %-40s | %-13s | %-7s | %-7s | %-7s | %-7s \n" $target "${openwrt_rev:0:10}..." $_selector_config $_selector_feeds $_selector_files $_selector_patches
 	targetIdx=$(( targetIdx + 1 ))
@@ -199,9 +199,9 @@ if [ "$1" = "feed-revisions" ]; then
 	REPOS="$REPOS https://git.openwrt.org/feed/telephony.git"
 
 	_date=$(date +"%b %d %Y")
-	p=$(pwd)	
+	p=$(pwd)
 	for r in $REPOS
-	do 
+	do
 		name=${r##*/}
 		d=/tmp/ffbuild_$name
 		rm -rf $d
@@ -211,11 +211,11 @@ if [ "$1" = "feed-revisions" ]; then
 		git log -1 --oneline --until="$_date"
 		cd $p
 	done
-	
+
 	exit 0
 fi
 
-# get target (addtional arguments are passt to command line make) 
+# get target (addtional arguments are passt to command line make)
 # last value will become DEFAULT
 regex="$1"
 shift
@@ -240,7 +240,7 @@ fi
 
 # correct regex
 if [ "$regex" = "all" ]; then
-	regex=".*" 
+	regex=".*"
 fi
 echo "### target:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
 
@@ -253,18 +253,18 @@ setup_buildroot ()
  openwrt_dl_dir=$3
  openwrt_patches_dir=$4
  firmware_files=$5
- 
+
  openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
 
  git_url="https://git.openwrt.org/openwrt/openwrt.git"
 
 	#check if directory exists. I'm not just checking
-	#  the build root itself, because gitlab left a working directory 
+	#  the build root itself, because gitlab left a working directory
 	# only with freifunk files, but without all other openwrt files
 	if [ ! -d $buildroot/toolchain ]
 	then
 		echo "directory [$buildroot] not present"
-		# ensure we have a clean workdir, after gitlab runner had removed 
+		# ensure we have a clean workdir, after gitlab runner had removed
 		# openwrt.org files (e.g. toolchain)
 		rm -rf $buildroot
 
@@ -276,7 +276,7 @@ setup_buildroot ()
 			#extract into buildroot dir
 			echo "using already downloaded $openwrt_dl_tgz"
 			cd $buildroot
-			tar xzf $RUN_DIR/$openwrt_dl_tgz 
+			tar xzf $RUN_DIR/$openwrt_dl_tgz
 		else
 			#clone from openwrt
 			echo "cloning openwrt"
@@ -285,7 +285,7 @@ setup_buildroot ()
 			cd $buildroot
 			git checkout $openwrt_rev >/dev/null
 			echo "create openwrt tgz"
-			tar czf $RUN_DIR/$openwrt_dl_tgz . 
+			tar czf $RUN_DIR/$openwrt_dl_tgz .
 		fi
 		cd $RUN_DIR
 
@@ -295,7 +295,7 @@ setup_buildroot ()
 			do
 				echo "apply openwrt patch: $i to buildroot:$buildroot"
 				patch --directory=$buildroot -p1 < $i
-			done 
+			done
 		fi
 	else
 		echo -e $C_PURPLE"Buildroot [$buildroot] already present"$C_NONE
@@ -310,7 +310,7 @@ setup_buildroot ()
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
 	cp -a $RUN_DIR/files/common/* $buildroot/files/
-	
+
 	# copy specific files over (may overwrite common)
 	echo -e $C_PURPLE"copy rootfs"$C_NONE
 	test -d "$RUN_DIR/files/$firmware_files)" && cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
@@ -327,7 +327,7 @@ setup_buildroot ()
 	git_openwrt_branch=$(cd $buildroot && git name-rev --name-only $git_openwrt_rev | sed 's#.*/##')
 	echo "git_openwrt_rev:$git_openwrt_rev" >> $buildroot/files/etc/built_info
 	echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
-	
+
 	git_ddmesh_rev=$(git log -1 --format=%H)
 	git_ddmesh_branch=$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')
 	if [ "$git_ddmesh_branch" = "undefined" ]; then
@@ -338,7 +338,7 @@ setup_buildroot ()
 	fi
 	echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
 	echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
-	
+
 	echo "builtdate:$(date)" >> $buildroot/files/etc/built_info
 
 	cat $buildroot/files/etc/built_info
@@ -400,7 +400,7 @@ do
  	entry=$(getTargetsJson | jq ".[$targetIdx]")
 	targetIdx=$(( targetIdx + 1 ))
 	test "$entry" = "null" && break
- 
+
 	# test "$_" = "null" && _="$_def_"
 
 	_target=$(echo $entry | jq $OPT '.target')
@@ -460,7 +460,7 @@ do
 	echo -e $C_YELLOW"Target$C_NONE    : $C_BLUE$_target"$C_NONE
 	echo -e $C_YELLOW"Sub-Target$C_NONE: $C_BLUE$_subtarget"$C_NONE
 	echo -e $C_YELLOW"Variant$C_NONE   : $C_BLUE$_variant"$C_NONE
-	echo -e $C_GREY"--------------------"$C_NONE	
+	echo -e $C_GREY"--------------------"$C_NONE
 
 	config_file="$CONFIG_DIR/$_selector_config/config.$target"
 	# use short revision because openwrt build path gets too long and
@@ -472,7 +472,7 @@ do
 
 	# --------- setup build root ------------------
 
-	setup_buildroot $buildroot $_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_selector_files 
+	setup_buildroot $buildroot $_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_selector_files
 
 	# --------  generate feeds -----------
 	echo -e $C_PURPLE"generate feed config"$C_NONE
@@ -503,11 +503,11 @@ EOM
 		_feed_rev=$(echo $feed | jq $OPT '.rev')
 
 		# for local feeds set correct absolute filename because when workdir is a symlink, relative
-		# path are note resolved correctly. Also we need to use $_selector_feeds 
+		# path are note resolved correctly. Also we need to use $_selector_feeds
 		if [ "$_feed_type" = "src-link" ]; then
 			_feed_src="$RUN_DIR/feeds/$_selector_feeds/$_feed_src"
 			_feed_rev=""	# src-link does not have a rev, because it is already in current git repo
-		else	
+		else
 			# if we have a feed revision, then add it. "^° is a special character
 			# followed by a "commit" (hash). openwrt then checks out this revision
 			test "$_feed_rev" = "null" && _feed_rev=""
@@ -529,10 +529,10 @@ EOM
 		make clean
 		continue # clean next target
 	fi
-	
+
 	# --------- update all feeds from feeds.conf (feed info) ----
 	echo -e $C_PURPLE"update feeds"$C_NONE
-	./scripts/feeds update -a 
+	./scripts/feeds update -a
 
 	echo -e $C_PURPLE"install missing packages from feeds"$C_NONE
 	# install additional packages (can be selected via "menuconfig")
@@ -543,13 +543,13 @@ EOM
 		entry="$(echo $_packages | jq $OPT .[$idx])"
 		test "$entry" = "null" && break
 		idx=$(( idx + 1 ))
-		
+
 		echo -e "[$idx] $C_GREEN$entry$C_NONE"
 		./scripts/feeds install $entry
 	done
 
 	echo -e $C_PURPLE"install all packages from own local feed directory (ddmesh_own)"$C_NONE
-	./scripts/feeds install -a -p ddmesh_own 
+	./scripts/feeds install -a -p ddmesh_own
 
 
 	# delete target dir, but only delete when no specific device/variant is built.
@@ -601,7 +601,7 @@ EOM
 	echo -e $C_PURPLE"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
 				# create a new config
-	cp $RUN_DIR/$config_file .config 
+	cp $RUN_DIR/$config_file .config
 
 
 	if [ "$MENUCONFIG" = "1" ]; then
@@ -626,7 +626,7 @@ EOM
 	error=$?
 	echo "make ret: $error"
 
-	# continue with next target in build.targets	
+	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
 		echo -e $C_RED"Error: build error"$C_NONE
 		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
@@ -642,7 +642,7 @@ EOM
 		fi
 	fi
 
-	# check if we have file 
+	# check if we have file
 	if [ ! -d "$RUN_DIR/$buildroot/bin/targets/$_target/$_subtarget" ]; then
 		echo -e $C_RED"Error: build error - generated directory not found"$C_NONE
 		echo "     $buildroot/bin/targets/$_target/$_subtarget/"
