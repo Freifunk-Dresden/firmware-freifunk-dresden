@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Allgemein: Kennwort"
+export TITLE="Verwaltung &gt; Allgemein: Kennwort"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 export uhttpd_restart=0

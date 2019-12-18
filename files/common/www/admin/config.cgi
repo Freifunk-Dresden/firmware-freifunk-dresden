@@ -4,7 +4,7 @@
 . /lib/upgrade/common.sh
 . /lib/upgrade/platform.sh
 
-export TITLE="Verwaltung > Wartung: Konfiguration"
+export TITLE="Verwaltung &gt; Wartung: Konfiguration"
 
 ver=$(uci get ddmesh.boot.upgrade_version)
 CONF_FILE="router-$(uci get ddmesh.system.node)-config-fw$ver-$(date +"%Y%b%d-%H%M%S").tgz"

@@ -2,7 +2,7 @@
 
 . /lib/functions.sh
 
-export TITLE="Verwaltung > Konfiguration: Knoten ignorieren"
+export TITLE="Verwaltung &gt; Konfiguration: Knoten ignorieren"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM

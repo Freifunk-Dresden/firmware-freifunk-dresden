@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Konfiguration: WWAN"
+export TITLE="Verwaltung &gt; Konfiguration: WWAN"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 # wwan interface present?
@@ -107,4 +107,3 @@ fi # query
 fi # iface present
 
 . /usr/lib/www/page-post.sh ${0%/*}
-

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Wartung: Remote-Syslog"
+export TITLE="Verwaltung &gt; Wartung: Remote-Syslog"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 

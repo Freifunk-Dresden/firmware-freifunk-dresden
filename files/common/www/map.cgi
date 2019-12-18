@@ -1,10 +1,10 @@
 #!/bin/sh
 
-export TITLE="Infos: Karte"
+export TITLE="Infos &gt; Karte"
 . /usr/lib/www/page-pre.sh
 
-SYSINFO_MOBILE_GEOLOC=/var/geoloc-mobile.json                                   
-                                                                                
+SYSINFO_MOBILE_GEOLOC=/var/geoloc-mobile.json
+
 if [ "$(uci -q get ddmesh.system.node_type)" = "mobile" ]; then
 	eval $(cat $SYSINFO_MOBILE_GEOLOC | jsonfilter \
                 -e gps_lat='@.location.lat' \

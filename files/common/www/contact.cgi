@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Kontakt"
+export TITLE="Infos &gt; Kontakt"
 . /usr/lib/www/page-pre.sh
 
 SYSINFO_MOBILE_GEOLOC=/var/geoloc-mobile.json

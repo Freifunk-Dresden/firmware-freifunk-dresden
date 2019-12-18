@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Konfiguration: WIFI"
+export TITLE="Verwaltung &gt; Konfiguration: WIFI"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 

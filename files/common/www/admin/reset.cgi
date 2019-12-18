@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung > Wartung: Neustart/Reset"
+export TITLE="Verwaltung &gt; Wartung: Neustart/Reset"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 
@@ -82,4 +82,3 @@ EOM
 fi
 
 . /usr/lib/www/page-post.sh ${0%/*}
-

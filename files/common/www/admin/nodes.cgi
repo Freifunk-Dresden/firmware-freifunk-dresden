@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Knoten"
+export TITLE="Verwaltung &gt; Infos: Knoten"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 

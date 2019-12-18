@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Firewall"
+export TITLE="Verwaltung &gt; Infos: Firewall"
 export HTTP_ALLOW_GET_REQUEST=1
 . /usr/lib/www/page-pre.sh ${0%/*}
 

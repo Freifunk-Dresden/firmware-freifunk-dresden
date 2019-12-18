@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Infos: Routen"
+export TITLE="Verwaltung &gt; Infos: Routen"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOF

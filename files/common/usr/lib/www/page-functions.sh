@@ -44,7 +44,7 @@ process_query()
   if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" -a "$HTTP_ALLOW_GET_REQUEST" != "1" ]; then
 	logger -t "HTTP-Request:" "Deny HTTP Get Request [$REMOTE_HOST:$REQUEST_URI]"
 	QUERY_STRING=""
-	exit 0	
+	exit 0
   fi
 
   if [ "$REQUEST_METHOD" = "POST" ]; then

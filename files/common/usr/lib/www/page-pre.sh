@@ -3,15 +3,15 @@
 #redirect to splash
 if [ "$SERVER_PORT" = "81" -a "$ALLOW_PAGE" != "1" ];then
         export DOCUMENT_ROOT="/www/splash"
-        $DOCUMENT_ROOT/index.cgi
+        "$DOCUMENT_ROOT"/index.cgi
         exit 0
 fi
 
 . /usr/lib/www/page-functions.sh
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
-device_model="$(cat /var/sysinfo/model 2>/dev/null | sed 's#[ ]\+$##')"
-test -z "$device_model" && device_model="$(cat /proc/cpuinfo | grep 'model name' | cut -d':' -f2)"
+device_model="$(sed 's#[ ]\+$##' /var/sysinfo/model 2>/dev/null)"
+test -z "$device_model" && device_model="$(grep 'model name' /proc/cpuinfo | cut -d':' -f2)"
 export device_model
 
 #check if access comes from disabled network and we have access to "Verwalten" enabled
@@ -159,4 +159,3 @@ cat<<EOF
 		<tr><td valign="top" height="100%" width="100%">
 <!-- page-pre -->
 EOF
-
