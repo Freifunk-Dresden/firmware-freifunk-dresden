@@ -112,7 +112,7 @@
 		"name":"openwrt:x64.generic",
 		"target":"x86",
 		"subtarget":"64",
-		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson" ],
+		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ],
 		"target-patches":["package-qemu-ga-buildfix.patch"]
 	},
 	{
