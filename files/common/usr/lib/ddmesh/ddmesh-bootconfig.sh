@@ -80,7 +80,6 @@ config contact 'contact'
 	option	note			''
 
 config network 'network'
-	list 	gateway_check_ping	''
 #	list	splash_mac		''
 #0-disable; in minutes;
 	option	client_disconnect_timeout 0
