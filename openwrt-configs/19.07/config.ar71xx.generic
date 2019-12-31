@@ -1851,7 +1851,7 @@ CONFIG_BUSYBOX_DEFAULT_SH_IS_ASH=y
 # CONFIG_BUSYBOX_DEFAULT_BASH_IS_HUSH is not set
 CONFIG_BUSYBOX_DEFAULT_BASH_IS_NONE=y
 CONFIG_BUSYBOX_DEFAULT_ASH=y
-# CONFIG_BUSYBOX_DEFAULT_ASH_OPTIMIZE_FOR_SIZE is not set
+CONFIG_BUSYBOX_DEFAULT_ASH_OPTIMIZE_FOR_SIZE=y
 CONFIG_BUSYBOX_DEFAULT_ASH_INTERNAL_GLOB=y
 CONFIG_BUSYBOX_DEFAULT_ASH_BASH_COMPAT=y
 # CONFIG_BUSYBOX_DEFAULT_ASH_BASH_SOURCE_CURDIR is not set
@@ -2713,6 +2713,7 @@ CONFIG_PACKAGE_ATH_DYNACK=y
 # CONFIG_PACKAGE_kmod-ath10k is not set
 CONFIG_PACKAGE_kmod-ath10k-ct=y
 CONFIG_ATH10K-CT_LEDS=y
+# CONFIG_PACKAGE_kmod-ath10k-ct-smallbuffers is not set
 CONFIG_PACKAGE_kmod-ath5k=y
 # CONFIG_PACKAGE_kmod-ath6kl-sdio is not set
 # CONFIG_PACKAGE_kmod-ath6kl-usb is not set
@@ -2811,7 +2812,6 @@ CONFIG_PACKAGE_MAC80211_MESH=y
 #
 # Filesystem
 #
-# CONFIG_PACKAGE_libattr is not set
 # CONFIG_PACKAGE_libfuse is not set
 # CONFIG_PACKAGE_libsysfs is not set
 
@@ -2833,7 +2833,6 @@ CONFIG_PACKAGE_libmbedtls=y
 # CONFIG_PACKAGE_libopenssl is not set
 # CONFIG_PACKAGE_libwolfssl is not set
 # CONFIG_PACKAGE_argp-standalone is not set
-# CONFIG_PACKAGE_glib2 is not set
 # CONFIG_PACKAGE_icu is not set
 # CONFIG_PACKAGE_icu-data-tools is not set
 # CONFIG_PACKAGE_icu-full-data is not set
@@ -2860,8 +2859,6 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libext2fs is not set
 # CONFIG_PACKAGE_libf2fs is not set
 # CONFIG_PACKAGE_libfdisk is not set
-# CONFIG_PACKAGE_libfdt is not set
-# CONFIG_PACKAGE_libffi is not set
 # CONFIG_PACKAGE_libgmp is not set
 # CONFIG_PACKAGE_libiconv is not set
 # CONFIG_PACKAGE_libiconv-full is not set
@@ -2925,7 +2922,6 @@ CONFIG_PACKAGE_libustream-mbedtls=y
 # CONFIG_PACKAGE_libxml2 is not set
 # CONFIG_PACKAGE_linux-atm is not set
 # CONFIG_PACKAGE_p11-kit is not set
-# CONFIG_PACKAGE_pixman is not set
 # CONFIG_PACKAGE_terminfo is not set
 # CONFIG_PACKAGE_uclibcxx is not set
 # CONFIG_PACKAGE_zlib is not set
@@ -3234,7 +3230,6 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 #
 # Filesystem
 #
-# CONFIG_PACKAGE_attr is not set
 # CONFIG_PACKAGE_badblocks is not set
 # CONFIG_PACKAGE_chattr is not set
 # CONFIG_PACKAGE_debugfs is not set
@@ -3265,10 +3260,6 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_script-utils is not set
 # CONFIG_PACKAGE_setterm is not set
 # CONFIG_PACKAGE_wall is not set
-
-#
-# Virtualization
-#
 # CONFIG_PACKAGE_adb is not set
 # CONFIG_PACKAGE_bsdiff is not set
 # CONFIG_PACKAGE_bspatch is not set
@@ -3276,8 +3267,6 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_ct-bugcheck is not set
 # CONFIG_PACKAGE_dmesg is not set
 # CONFIG_PACKAGE_dropbearconvert is not set
-# CONFIG_PACKAGE_dtc is not set
-# CONFIG_PACKAGE_fdt-utils is not set
 # CONFIG_PACKAGE_flock is not set
 # CONFIG_PACKAGE_fritz-caldata is not set
 # CONFIG_PACKAGE_fritz-tffs is not set
