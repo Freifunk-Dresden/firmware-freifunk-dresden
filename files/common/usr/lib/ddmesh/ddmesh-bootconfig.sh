@@ -61,6 +61,7 @@ config system 'system'
 	list	node_types		'mobile'
 	list	node_types		'server'
 	option	nightly_reboot		0
+	option	ignore_factory_reset_button 0
 
 config boot 'boot'
 	option boot_step                0

@@ -196,6 +196,12 @@ cat<<EOM
 <td>T&auml;glich um 4:00 Uhr wird der Router neu gestartet. Dies l&ouml;st manchmal seltsame Probleme, wenn der Router aus unbekannten Gr&uuml;nden nicht mehr richtig funktioniert.<td>
 </TR>
 
+<TR>
+<TH>- Ignoriere Werkseinstellungs-Button:</TH>
+<TD><INPUT NAME="form_ignore_factory_reset_button" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.ignore_factory_reset_button)" = "1" ];then echo ' checked="checked"';fi)></td>
+<td>Verhindert das Zur&uuml;cksetzen des Routers via Reset-Button<td>
+</TR>
+
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR>
 <TD COLSPAN="3"><INPUT NAME="form_submit" ONCLICK="return validate(systemform);" TITLE="Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." TYPE="SUBMIT" VALUE="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<INPUT NAME="form_abort" TITLE="Abbrechen und &Auml;nderungen verwerfen." TYPE="SUBMIT" VALUE="Abbrechen"></TD>
@@ -229,6 +235,7 @@ else
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}
 		uci set ddmesh.system.nightly_reboot=${form_nightly_reboot:-0}
+		uci set ddmesh.system.ignore_factory_reset_button=${form_ignore_factory_reset_button:-0}
 		uci set ddmesh.network.internal_dns1="$(uhttpd -d $form_internal_dns1)"
 		uci set ddmesh.network.internal_dns2="$(uhttpd -d $form_internal_dns2)"
 		uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
