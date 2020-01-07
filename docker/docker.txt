@@ -1,0 +1,113 @@
+# steps:
+# 1. install docker
+# 2. create openwrt-docker-build which is later used/started by docker 
+#    It is referenced by gitlab-ci.yml
+# 3. create my own cache directories to avoid downloading everytime from
+#    external sources.
+# 4. install gitlab-runner
+# 5. register register a new runner on this server (host) that uses this
+#    image. 
+# 6. modify gitlab-runner configs to setup mount points (mycache/dl) and
+#    disable pulling docker image from somewhere (only use local selfcreated image)
+#
+# gitlab provides own container, that may run all the time and are used
+# as container for jobs. those container act as normal vm and therefore
+# registration of the runner in this container must be done from inside 
+# of this container.
+# BUT:
+# we have a (host) machine already only used as gitlab runner. this runner
+# then uses a docker container to run the jobs. the registration must 
+# be done from where gitlab-runner is installed.
+
+#------- 1 ----------------------------------------------------------------
+# https://docs.gitlab.com/runner/register/index.html#docker
+
+    apt install docker
+    apt install docker.io
+
+#------- 2 ----------------------------------------------------------------
+# create openwrt docker image from "Dockerfile"
+# This creates an ubutnu image with all packages/users ... in 
+#  this image. Run it from directory where "Dockerimage" can be found.
+# NOTE: Dockerimage also defines which user is used when starting it with
+#       bash and interactivly
+
+    docker build -t openwrt-docker-build .
+
+# only for test, run image once and mount needed directories (e.g. ssl)
+# to check if docker image uses ssl certs from host.
+    docker run --rm -it openwrt-docker-build
+
+    # run from within the container:
+    curl -v https://gitlab.freifunk-dresden.de
+
+#------- 3 ----------------------------------------------------------------
+# create missing cache dir on host, this is mounted into the container at /cache
+   mkdir /cache
+   chmode 777 /cache        # container user "builder" needs access
+   
+# create my own local cache for downloads. gitlab-ci.yml (before_script) will
+# re-create this symlinks
+    mkdir -p /mycache
+    chmod 777 /mycache      # container user "builder" needs access
+
+#------- 4 ----------------------------------------------------------------
+# install gitlab-runner on host
+    curl -LJO https://gitlab-runner-downloads.s3.amazonaws.com/latest/deb/gitlab-runner_amd64.deb
+    dpkg -i gitlab-runner_amd64.deb
+
+#------- 5 ----------------------------------------------------------------
+# register new runner. Use created default image and tag 
+# (openwrt-docker-build:latest) during registration
+    gitlab-runner register
+
+#------- 6 ----------------------------------------------------------------
+# We now need to disable pulling images from remote (openwrt-docker-build is only stored locally).
+# see: https://docs.gitlab.com/runner/executors/docker.html#how-pull-policies-work
+# Edit /etc/gitlab-runner/config.toml and add the following below
+# [runners.docker]
+#    pull_policy = never
+
+
+# https://docs.gitlab.com/runner/configuration/advanced-configuration.html
+# This mounts /mycache to docker containers dir "/mycache".
+# The container will build firmware below /builds/<gitlab-username>/....
+# See also Dockerfile when docker image was created.
+#
+# When I do not add the "host part" for each volume, a new separte directory 
+# somewhere below  /var/lib/docker/volumes/ is created each time the container is
+# created. But I need to access same host location from this docker every time.
+# And I want to avoid wasting disk storage on host.
+# gitlab-ci.yml then will create /mycache/dl and a symlink to it
+# [runners.docker]
+#    volumes = ["/cache:/cache", "/mycache:/mycache"]
+
+# then restart gitlab-runner
+    gitlab-runner stop
+    gitlab-runner start # start service
+
+
+#------- 7 ----------------------------------------------------------------
+# Trouble-shooting
+# /etc/gitlab-runner/config.toml contains runner configurations
+# debugging: gitlab-runner stop
+#            gitlab-runner --debug run #run forground with debug infos
+# 
+#
+
+# some gitlab runner commands:
+# gitlab-runner list
+# gitlab-runner status
+
+# Some docker commands:
+# docker images - list all images
+# docker ps - list all running dockers
+# docker container prune - deletes all stopped containers. this is needed when
+                           I restart the container with above command 
+                           (when changing some parameters)
+
+
+
+
+
+
