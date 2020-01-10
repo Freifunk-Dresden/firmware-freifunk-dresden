@@ -12,6 +12,8 @@
 
 
 #build:ar71xx.tiny:
+#  except:
+#    - schedules
 #  image: openwrt-docker-build:latest
 #  stage: build
 #  cache:
@@ -32,6 +34,8 @@
 
 
 build:ar71xx.tiny:
+  except:
+    - schedules
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -45,6 +49,8 @@ build:ar71xx.tiny:
 
 
 build:ar71xx.generic:
+  except:
+    - schedules
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -58,6 +64,8 @@ build:ar71xx.generic:
 
 
 build:x86:
+  except:
+    - schedules
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -71,6 +79,8 @@ build:x86:
 
 
 build:ramips:
+  except:
+    - schedules
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -84,6 +94,8 @@ build:ramips:
 
 
 build:lantiq:
+  except:
+    - schedules
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -97,6 +109,8 @@ build:lantiq:
 
 
 build:ipq40xx:
+  except:
+    - schedules
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -110,6 +124,8 @@ build:ipq40xx:
 
 # provide local generated files as artifacts
 build:finish:
+  except:
+    - schedules
   image: openwrt-docker-build:latest
   stage: deploy 
   script:
