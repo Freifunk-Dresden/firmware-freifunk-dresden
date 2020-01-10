@@ -5,11 +5,10 @@
 # This directory is used as mount point to pass in /mycache from host machine.
 # I use this to avoid downloading/cloning from openwrt.org for each commit 
 # to gitlab.freifunk-dresden.de
-before_script:
-  - mkdir -p /mycache/dl
-  - ln -s /mycache/dl
-  - mkdir -p /mycache/workdir
-  - ln -s /mycache/workdir
+# "before_script" can be global or local to a job. but
+# but then it is same as if I put the command just before build command.
+# when "before_script" is global, then all global before_scripts are
+# executed independent of any job or runner (without any tags)
 
 
 #build:ar71xx.tiny:
@@ -20,6 +19,10 @@ before_script:
 #    paths:
 #    - dl/*
 #  script:
+#    - mkdir -p /mycache/dl
+#    - ln -s /mycache/dl
+#    - mkdir -p /mycache/workdir
+#    - ln -s /mycache/workdir
 #    - ./build.sh ar71xx.tiny -j6
 #  artifacts:
 #    paths:
@@ -32,6 +35,10 @@ build:ar71xx.tiny:
   image: openwrt-docker-build:latest
   stage: build
   script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
     - ./build.sh ar71xx.tiny rerun -j6
   tags:
   - docker
@@ -41,6 +48,10 @@ build:ar71xx.generic:
   image: openwrt-docker-build:latest
   stage: build
   script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
     - ./build.sh ar71xx.generic rerun -j6
   tags:
   - docker
@@ -50,6 +61,10 @@ build:x86:
   image: openwrt-docker-build:latest
   stage: build
   script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
     - ./build.sh x86 rerun -j6
   tags:
   - docker
@@ -59,6 +74,10 @@ build:ramips:
   image: openwrt-docker-build:latest
   stage: build
   script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
     - ./build.sh ramips rerun -j6
   tags:
   - docker
@@ -68,6 +87,10 @@ build:lantiq:
   image: openwrt-docker-build:latest
   stage: build
   script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
     - ./build.sh lantiq rerun -j6
   tags:
   - docker
@@ -77,6 +100,10 @@ build:ipq40xx:
   image: openwrt-docker-build:latest
   stage: build
   script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
     - ./build.sh ipq40xx rerun -j6
   tags:
   - docker
@@ -86,6 +113,10 @@ build:finish:
   image: openwrt-docker-build:latest
   stage: deploy 
   script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
     - ./gen-upload.sh all 
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
