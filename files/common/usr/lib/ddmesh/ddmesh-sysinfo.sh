@@ -39,7 +39,6 @@ else
 fi
 
 case "$(uci -q get ddmesh.system.node_type)" in
-	server)	node_type="server" ;;
 	node)	node_type="node" ;;
 	mobile)	node_type="mobile" ;;
 	*) node_type="node";;
