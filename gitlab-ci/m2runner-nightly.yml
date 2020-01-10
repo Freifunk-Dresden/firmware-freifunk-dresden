@@ -2,15 +2,16 @@
 
 # dl and workdir symlinks are removed by gitlab for each job
 # so I need to recreate this
-before_script:
-  - ln -s ~/mycache/dl
-  - ln -s ~/mycache/workdir
+#  - ln -s ~/mycache/dl
+#  - ln -s ~/mycache/workdir
 
 nightly:init:
   only:
     - schedules
   stage: init       # special state, run before all other stages
   script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
   # ensure that we have no old data. This is important when
   # generating download.json. Else all old openwrt images would be
   # included and mixed
@@ -28,6 +29,8 @@ nightly:ar71xx.tiny:
     - schedules
   stage: build
   script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.tiny rerun -j8
   tags:
   - m2runner
@@ -37,6 +40,8 @@ nightly:ar71xx.generic:
     - schedules
   stage: build
   script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.generic rerun -j8
   tags:
   - m2runner
@@ -46,6 +51,8 @@ nightly:x86.generic:
     - schedules
   stage: build
   script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
     - ./build.sh x86.generic rerun -j8
   tags:
   - m2runner
@@ -55,6 +62,8 @@ nightly:ramips.mt7621:
     - schedules
   stage: build
   script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
     - ./build.sh ramips.mt7621 rerun -j8
   tags:
   - m2runner
@@ -64,6 +73,8 @@ nightly:ipq40xx.generic:
     - schedules
   stage: build
   script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
     - ./build.sh ipq40xx.generic rerun -j8
   tags:
   - m2runner
@@ -73,6 +84,8 @@ nightly:lantiq.xrx200:
     - schedules
   stage: build
   script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
     - ./build.sh lantiq.xrx200 rerun -j8
   tags:
   - m2runner
@@ -82,6 +95,8 @@ nightly:ath79.nand:
     - schedules
   stage: build
   script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
     - ./build.sh ath79.nand rerun -j8
   tags:
   - m2runner
@@ -91,6 +106,8 @@ nightly:deploy:
     - schedules
   stage: deploy
   script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
     - ./gen-upload.sh all
     # runner must have ssh key that are added to download server. on download server there is a user "stephan" who owns the download directories
     # add the runners public key to user stephan authorized_keys file
