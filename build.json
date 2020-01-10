@@ -127,6 +127,12 @@
 		"subtarget":"mt7621",
 		"variant":"ubiquiti-edgerouter-x"	# specific target (overwrites previous generic only for this device)
 	},
+        {
+                "name":"openwrt:ramips.mt76x8.r6120", #config.ramips.mt76x8.r6120
+                "target":"ramips",
+                "subtarget":"mt76x8",
+                "variant":"r6120"
+        },
 #	{
 #		"name":"openwrt:ramips.rt305x.generic",
 #		"target":"ramips",
