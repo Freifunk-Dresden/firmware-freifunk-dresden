@@ -57,14 +57,14 @@ nightly:x86.generic:
   tags:
   - m2runner
 
-nightly:ramips.mt7621:
+nightly:ramips:
   only:
     - schedules
   stage: build
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ramips.mt7621 rerun -j8
+    - ./build.sh ramips rerun -j8
   tags:
   - m2runner
 
