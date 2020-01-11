@@ -75,3 +75,12 @@
  config BUSYBOX_DEFAULT_PWDX
  	bool
  	default n
+@@ -2881,7 +2881,7 @@
+ 	default y
+ config BUSYBOX_DEFAULT_ASH_OPTIMIZE_FOR_SIZE
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_ASH_INTERNAL_GLOB
+ 	bool
+ 	default y
