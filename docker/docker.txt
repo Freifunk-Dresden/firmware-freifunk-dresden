@@ -9,6 +9,7 @@
 #    image. 
 # 6. modify gitlab-runner configs to setup mount points (mycache/dl) and
 #    disable pulling docker image from somewhere (only use local selfcreated image)
+# 7. add cronjob to delete cache
 #
 # gitlab provides own container, that may run all the time and are used
 # as container for jobs. those container act as normal vm and therefore
@@ -86,8 +87,12 @@
     gitlab-runner stop
     gitlab-runner start # start service
 
-
 #------- 7 ----------------------------------------------------------------
+# add following lines to /etc/cron.d/gitlab-clear-cache:
+#        # delete gitlab runner cache once a week at sunday
+#        0 3  * * sun root rm -rf /mycache/* /cache/*
+
+#-------------------------------------------------------------------------
 # Trouble-shooting
 # /etc/gitlab-runner/config.toml contains runner configurations
 # debugging: gitlab-runner stop
