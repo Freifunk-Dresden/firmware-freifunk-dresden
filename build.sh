@@ -626,6 +626,9 @@ EOM
 	echo -e $C_PURPLE"run defconfig"$C_NONE
 	make defconfig
 
+	# make clean because openwrt could fail building targets after building different targets before
+	make clean
+
 	echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	cp .config $RUN_DIR/$config_file
 
