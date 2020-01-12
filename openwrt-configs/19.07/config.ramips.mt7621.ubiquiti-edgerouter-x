@@ -1551,7 +1551,7 @@ CONFIG_PACKAGE_usign=y
 #
 # CONFIG_ZABBIX_OPENSSL is not set
 # CONFIG_ZABBIX_GNUTLS is not set
-# CONFIG_ZABBIX_NOSSL is not set
+CONFIG_ZABBIX_NOSSL=y
 # CONFIG_PACKAGE_zabbix-extra-network is not set
 # CONFIG_PACKAGE_zabbix-extra-wifi is not set
 # CONFIG_PACKAGE_zabbix-get is not set
@@ -1563,7 +1563,7 @@ CONFIG_PACKAGE_usign=y
 # Database Software
 #
 # CONFIG_ZABBIX_MYSQL is not set
-# CONFIG_ZABBIX_POSTGRESQL is not set
+CONFIG_ZABBIX_POSTGRESQL=y
 # CONFIG_PACKAGE_zabbix-server-frontend is not set
 
 #
@@ -1616,7 +1616,7 @@ CONFIG_PACKAGE_nacl=y
 # CONFIG_PACKAGE_wshaper is not set
 CONFIG_PACKAGE_ddmesh-base=y
 CONFIG_PACKAGE_ddmesh-extra-modules=m
-CONFIG_PACKAGE_tcpdump=y
+CONFIG_PACKAGE_tcpdump=m
 CONFIG_PACKAGE_wireguard=m
 # CONFIG_PACKAGE_ddmesh-lte is not set
 # CONFIG_PACKAGE_ddmesh-usb-storage is not set
@@ -2458,7 +2458,7 @@ CONFIG_PACKAGE_libmnl=m
 CONFIG_PACKAGE_libnl-tiny=y
 # CONFIG_PACKAGE_libopcodes is not set
 # CONFIG_PACKAGE_libpam is not set
-# CONFIG_PACKAGE_libpcap is not set
+CONFIG_PACKAGE_libpcap=m
 
 #
 # Configuration
