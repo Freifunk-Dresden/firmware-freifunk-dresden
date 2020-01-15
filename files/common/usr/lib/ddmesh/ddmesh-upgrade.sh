@@ -420,10 +420,6 @@ upgrade_6_0_13()
 
 upgrade_6_0_14()
 {
- if [ "$(uci -q get ddmesh.system.node_type)" = "server" ]; then
-	uci -q set ddmesh.system.node_type='node'
- fi
- uci del_list ddmesh.system.node_types='server'
  uci add_list ddmesh.system.communities='Freifunk Tharandt'
 }
 

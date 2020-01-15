@@ -41,6 +41,7 @@ fi
 case "$(uci -q get ddmesh.system.node_type)" in
 	node)	node_type="node" ;;
 	mobile)	node_type="mobile" ;;
+	server)	node_type="server" ;;
 	*) node_type="node";;
 esac
 
