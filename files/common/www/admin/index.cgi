@@ -53,6 +53,30 @@ auf eines der Steuerungselemente, um kurze Hilfetexte einzublenden.</p>
 
 <br>
 <fieldset class="bubble">
+<legend>Flash</legend>
+<form name="form_overlay" action="index.cgi" method="POST">
+<input name="form_action" value="overlay" type="hidden">
+<p>Zeigt Flash&auml;nderungen, welche nur nach &Auml;nderung der Einstellungen vorhanden sein sollten.</p>
+<table>
+<tr><th></th><th>Vorhergehend</th><th>Aktuell</th></tr>
+EOM
+
+eval $(/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh read | sed 's#\(.*\):\(.*\)$#ovl_\1=\2#')
+if [ "$ovl_old" = "$ovl_cur" ]; then
+ co="green"
+else
+ co="red"
+fi
+
+cat<<EOM
+<tr class="colortoggle1" style="font-weight:bold;color: $co;"><th>Flash Overlay MD5</th><td>$ovl_old</td><td>$ovl_cur</td>
+<td><input name="form_firmware_submit" type="submit" value="Reset"></td></tr>
+</table>
+</form>
+</fieldset>
+
+<br>
+<fieldset class="bubble">
 <legend>System-Version</legend>
 <table>
 <tr class="colortoggle1"><th>Freifunk-Version (Dresden)</th><td>$(cat /etc/version)</td></tr>
@@ -81,9 +105,7 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1
 $(free | sed -n '2,${s#[ 	]*\(.*\):[ 	]*\([0-9]\+\)[ 	]*\([0-9]\+\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)#<tr class="colortoggle2"><th>\1</th><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>#g;p}' )
 </table>
 </fieldset>
-EOM
 
-	cat<<EOM
 <br>
 <fieldset class="bubble">
 <legend>DHCP-Leases (aktuelle)</legend>
@@ -100,31 +122,8 @@ EOM
 		if [ $T = 1 ]; then T=2 ;else T=1; fi
 	done
 
-	cat<<EOM
-</table>
-</fieldset>
-<br>
-<fieldset class="bubble">
-<legend>Flash</legend>
-<form name="form_overlay" action="index.cgi" method="POST">
-<input name="form_action" value="overlay" type="hidden">
-<p>Zeigt Flash&auml;nderungen, welche nur nach &Auml;nderung der Einstellungen vorhanden sein sollten.</p>
-<table>
-<tr><th></th><th>Vorhergehend</th><th>Aktuell</th></tr>
-EOM
-
-eval $(/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh read | sed 's#\(.*\):\(.*\)$#ovl_\1=\2#')
-if [ "$ovl_old" = "$ovl_cur" ]; then
- co="green"
-else
- co="red"
-fi
-
 cat<<EOM
-<tr class="colortoggle1" style="font-weight:bold;color: $co;"><th>Flash Overlay MD5</th><td>$ovl_old</td><td>$ovl_cur</td>
-<td><input name="form_firmware_submit" type="submit" value="Reset"></td></tr>
 </table>
-</form>
 </fieldset>
 EOM
 
