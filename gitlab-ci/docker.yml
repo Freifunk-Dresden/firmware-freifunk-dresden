@@ -25,7 +25,7 @@
 #    - ln -s /mycache/dl
 #    - mkdir -p /mycache/workdir
 #    - ln -s /mycache/workdir
-#    - ./build.sh ar71xx.tiny -j6
+#    - ./build.sh ar71xx.tiny -j9
 #  artifacts:
 #    paths:
 #    - workdir/*/bin/targets/*
@@ -43,7 +43,7 @@ build:ar71xx.tiny:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.tiny rerun -j6
+    - ./build.sh ar71xx.tiny rerun -j9
   tags:
   - docker
 
@@ -58,7 +58,7 @@ build:ar71xx.generic:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.generic rerun -j6
+    - ./build.sh ar71xx.generic rerun -j9
   tags:
   - docker
 
@@ -73,7 +73,7 @@ build:x86:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh x86 rerun -j6
+    - ./build.sh x86 rerun -j9
   tags:
   - docker
 
@@ -88,7 +88,7 @@ build:ramips:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ramips rerun -j6
+    - ./build.sh ramips rerun -j9
   tags:
   - docker
 
@@ -103,7 +103,7 @@ build:lantiq:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh lantiq rerun -j6
+    - ./build.sh lantiq rerun -j9
   tags:
   - docker
 
@@ -118,7 +118,7 @@ build:ipq40xx:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ipq40xx rerun -j6
+    - ./build.sh ipq40xx rerun -j9
   tags:
   - docker
 
