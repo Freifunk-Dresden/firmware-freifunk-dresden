@@ -267,17 +267,22 @@ setup_buildroot ()
 
  git_url="https://git.openwrt.org/openwrt/openwrt.git"
 
-	#check if directory exists. I'm not just checking
-	#  the build root itself, because gitlab left a working directory
+	# check if directory exists. I'm not just checking
+	# the build root itself, because gitlab left a working directory
 	# only with freifunk files, but without all other openwrt files
-	if [ ! -d $buildroot/toolchain ]
+	if [ ! -d "$buildroot/toolchain" ]
 	then
-		echo "directory [$buildroot] not present"
+		echo "directory [$buildroot/toolchain] not present -> re-create '$buildroot'"
 		# ensure we have a clean workdir, after gitlab runner had removed
 		# openwrt.org files (e.g. toolchain)
-		rm -rf $buildroot
+		rm -rf "$buildroot"
 
-		mkdir -p $buildroot
+		# re-create buildroot
+		mkdir -p "$buildroot"
+		if [ ! -d "$buildroot" ]; then
+			echo "Error: '$buildroot' could not be created. exit."
+			exit 1
+		fi
 
 		#check if we have already downloaded the openwrt revision
 		if [ -f $openwrt_dl_tgz ]
