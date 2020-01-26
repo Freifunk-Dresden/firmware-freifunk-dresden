@@ -112,12 +112,14 @@ nightly:deploy:
     # runner must have ssh key that are added to download server. on download server there is a user "stephan" who owns the download directories
     # add the runners public key to user stephan authorized_keys file
     - rsync -avz --info=all1 --delete -EH --progress final_output/*/* stephan@download.lxc:/var/www/files/nightly/
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-    expire_in: 2 days
-    paths:
-    - dl
-    - final_output
+    - rm -rf final_output
+# artifacts are not needed (waste of disk storage), because they are uploaded to download server
+#  artifacts:
+#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#    expire_in: 2 days
+#    paths:
+#    - dl
+#    - final_output
   tags:
   - m2runner
 
