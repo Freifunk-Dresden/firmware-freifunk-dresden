@@ -627,7 +627,8 @@ EOM
 	make defconfig
 
 	# make clean because openwrt could fail building targets after building different targets before
-	make clean
+	# but keep generated directories (ddmesh-makefile-lightclean.patch)
+	make lightclean
 
 	echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	cp .config $RUN_DIR/$config_file

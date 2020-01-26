@@ -1,0 +1,12 @@
+--- buildroot/Makefile	2020-01-25 16:25:00.199070323 +0000
++++ buildroot/Makefile	2020-01-25 16:25:55.071328153 +0000
+@@ -53,6 +53,9 @@
+
+ prepare: $(target/stamp-compile)
+
++lightclean: FORCE
++	rm -rf $(BUILD_DIR) $(STAGING_DIR) $(BUILD_LOG_DIR) $(TOPDIR)/staging_dir/packages
++
+ clean: FORCE
+ 	rm -rf $(BUILD_DIR) $(STAGING_DIR) $(BIN_DIR) $(OUTPUT_DIR)/packages/$(ARCH_PACKAGES) $(BUILD_LOG_DIR) $(TOPDIR)/staging_dir/packages
+
