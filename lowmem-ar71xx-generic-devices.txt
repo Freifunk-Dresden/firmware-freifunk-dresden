@@ -1,0 +1,28 @@
+lowmem:
+
+
+TP-Link TL-MR3020 
+TP-Link TL-MR3420 v2
+TP-Link TL-WA701N/ND v2
+TP-Link TL-WA801N/ND 
+TP-Link TL-WA850RE v1	
+TP-Link TL-WA901N
+TP-LINK TL-WR1043N
+TP-Link TL-WR710N
+TP-Link TL-WR740N
+TP-Link TL-WR741N
+TP-LINK TL-WR840N
+TP-Link TL-WR841N
+TP-Link TL-WR842N
+TP-Link TL-WR940N
+TP-Link TL-WR941N
+Ubiquiti Bullet M
+Ubiquiti Loco M XW
+Ubiquiti NanoStation loco
+Ubiquiti NanoStation M2
+
+
+
+
+
+

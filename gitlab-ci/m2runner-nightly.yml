@@ -31,7 +31,7 @@ nightly:ar71xx.tiny:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.tiny rerun -j8
+    - ./build.sh ar71xx.tiny.lowmem rerun -j8
   tags:
   - m2runner
 
@@ -42,7 +42,7 @@ nightly:ar71xx.generic:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.generic rerun -j8
+    - ./build.sh ar71xx.generic.* rerun -j8
   tags:
   - m2runner
 
@@ -57,6 +57,17 @@ nightly:x86.generic:
   tags:
   - m2runner
 
+nightly:x64.generic:
+  only:
+    - schedules
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh x64.generic rerun -j8
+  tags:
+  - m2runner
+
 nightly:ramips:
   only:
     - schedules
@@ -64,40 +75,29 @@ nightly:ramips:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ramips rerun -j8
+    - ./build.sh ramips.* rerun -j8
   tags:
   - m2runner
 
-nightly:ipq40xx.generic:
+nightly:ipq40xx:
   only:
     - schedules
   stage: build
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ipq40xx.generic rerun -j8
+    - ./build.sh ipq40xx.generic.* rerun -j8
   tags:
   - m2runner
 
-nightly:lantiq.xrx200:
+nightly:lantiq:
   only:
     - schedules
   stage: build
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh lantiq.xrx200 rerun -j8
-  tags:
-  - m2runner
-
-nightly:ath79.nand:
-  only:
-    - schedules
-  stage: build
-  script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-    - ./build.sh ath79.nand rerun -j8
+    - ./build.sh lantiq.* rerun -j8
   tags:
   - m2runner
 

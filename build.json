@@ -1,33 +1,18 @@
 ######################################################################
-# This file lists one target in each line that should be built
-# in one run.
 #
 #   The order is important for device specific builds.
 #   In this case output directory is not deleted and device specific
-#   files are placed in exisiting directory.
+#   files (variants) are placed in exisiting directory.
 #
 #       Example for device specific:
 #               ramips.mt7621.ubiquiti-edgerouter-x
 #
-#   If no specific device builds are created, then platform directory
-#   is deleted before.
-#   So consider order when specifying targets!
+#   If no variant is set, then platform directory is deleted before.
+#   So consider order and definition of variants when specifying targets!
 #
-#   Excample:
-#   	openwrt:ramips.mt7621
-#	openwrt:ramips.mt7621.ubiquiti-edgerouter-x
-#   This would first build all targets that can be built, and then device specific
-#   builds are generated and copied
+# config file names:
+#	config.<target>.<subtarget>[.<variant>][.<openwrt_variant>]
 #
-# target name has specific format:
-#   os:platform.subplatform
-# or
-#   os:platform.subplatform.device
-#
-# Each line starts with a "selector" (os)
-# When calling build.sh you select one of the os versions (openwrt or trunk...)
-# build.sh then only selects those targets which match the os version
-
 #########################################################################
 # 5.0.5/B_FIRMWARE_5.0.3    lede_rev: 3ca1438ae0f780664e29bf0d102c1c6f9a99ece7 # lede v17.01.5~54
 # 6.0.9/T_FIRMWARE_6     openwrt_rev: a02809f61bf9fda0387d37bd05d0bcfe8397e25d # v18.06.2^0
@@ -51,9 +36,16 @@
 #		"openwrt_rev":"d3e11e8ad85b9a51027174d5207e1e43a8c8fe94", # 19.07 Sat Nov 9 20:10:58 2019
 #		"openwrt_rev":"d2d12346e8e6dd5fbb6befd4f9e3e1d5304a2e31", # 19.07 Mon Nov 25 16:53:59 2019 
 		"openwrt_rev":"7ab5dc77b223fd71e07ac5b8eb2f32852e804db9", # 19.07 Mon Dec 2019 
+		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
+							# where no kernel modules (e.g.: usb) must be included.
+							# Note that selecting some packages as module could have
+							# dependencies to kernel modules/libs, that are included 
+							# in image also if package is optional (ipk)
+							# This value is added to config file name
+							# Example value could be : "lowmem" or "ram32mbyte"
 
 		"selector-config":"19.07",		# used to select config
-		"selector-files":"dummy",		# used to select files
+		"selector-files":"",			# used to select files
 		"selector-feeds":"19.07",		# used to select feeds
 		"selector-patches":"19.07",		# used to select patches
 
@@ -81,12 +73,12 @@
 	},
 # ------------- specific targets ------------------------------
 	{
-		"name":"openwrt:ar71xx.tiny",	# can be any name
+		"name":"ar71xx.tiny.lowmem",	# can be any name
 		"target":"ar71xx",
 		"subtarget":"tiny",
 		"openwrt_rev":"f6de1fa6c6b69ac6282f453f61c894695d11f433", # 18.06 01-09-2019
+		"openwrt_variant":"lowmem",
 		"selector-config":"18.06",		# used to select config
-		"selector-files":"dummy",		# used to select files
 		"selector-feeds":"18.06",		# used to select feeds
 		"selector-patches":"18.06",		# used to select patches
 		"feeds" : [
@@ -98,59 +90,76 @@
 			  ]
 	},
 	{
-		"name":"openwrt:ar71xx.generic",
+		"name":"ar71xx.generic.lowmem",	# can be any name
+		"target":"ar71xx",
+		"subtarget":"generic",
+		"openwrt_rev":"f6de1fa6c6b69ac6282f453f61c894695d11f433", # 18.06 01-09-2019
+		"openwrt_variant":"lowmem",
+		"selector-config":"18.06",		# used to select config
+		"selector-feeds":"18.06",		# used to select feeds
+		"selector-patches":"18.06",		# used to select patches
+		"feeds" : [
+				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
+				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
+				{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"204293a76"},
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"},
+				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"9167e30"}
+			  ]
+	},
+	{
+		"name":"ar71xx.generic",
 		"target":"ar71xx",
 		"subtarget":"generic"
 	},
 	{	
-		"name":"openwrt:ar71xx.generic.gl-mifi",
+		"name":"ar71xx.generic.gl-mifi",
 		"target":"ar71xx",
 		"subtarget":"generic",
 		"variant":"gl-mifi"
 	},
 	{	
-		"name":"openwrt:x86.generic",
+		"name":"x86.generic",
 		"target":"x86",
 		"subtarget":"generic"
 	},
 	{
-		"name":"openwrt:x64.generic",
+		"name":"x64.generic",
 		"target":"x86",
 		"subtarget":"64",
 		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ],
 		"target-patches":["package-qemu-ga-buildfix.patch"]
 	},
 	{
-		"name":"openwrt:ramips.mt7621.generic",
+		"name":"ramips.mt7621.generic",
 		"target":"ramips",
 		"subtarget":"mt7621",
 		"variant":"generic"
 	},
 	{
-		"name":"openwrt:ramips.mt7621.ubiquiti-edgerouter-x",
+		"name":"ramips.mt7621.ubiquiti-edgerouter-x",
 		"target":"ramips",
 		"subtarget":"mt7621",
 		"variant":"ubiquiti-edgerouter-x"	# specific target (overwrites previous generic only for this device)
 	},
         {
-                "name":"openwrt:ramips.mt76x8.r6120", #config.ramips.mt76x8.r6120
+                "name":"ramips.mt76x8.r6120", #config.ramips.mt76x8.r6120
                 "target":"ramips",
                 "subtarget":"mt76x8",
                 "variant":"r6120"
         },
 #	{
-#		"name":"openwrt:ramips.rt305x.generic",
+#		"name":"ramips.rt305x.generic",
 #		"target":"ramips",
 #		"subtarget":"rt305x"
 #	},
 	{
-		"name":"openwrt:ramips.lantiq.xrx200",
+		"name":"ramips.lantiq.xrx200",
 		"target":"lantiq",
 		"subtarget":"xrx200",
 		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
 	},
 	{	# created for fritzbox 4040
-		"name":"openwrt:ipq40xx.generic",
+		"name":"ipq40xx.generic",
 		"target":"ipq40xx",
 		"subtarget":"generic"
 	}
