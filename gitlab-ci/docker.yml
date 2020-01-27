@@ -43,7 +43,7 @@ build:ar71xx.tiny:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.tiny rerun -j9
+    - ./build.sh ar71xx.tiny.lowmem rerun -j9
   tags:
   - docker
 
@@ -58,7 +58,7 @@ build:ar71xx.generic:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.generic rerun -j9
+    - ./build.sh ar71xx.generic.* rerun -j9
   tags:
   - docker
 
@@ -73,7 +73,21 @@ build:x86:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh x86 rerun -j9
+    - ./build.sh x86.generic rerun -j9
+  tags:
+  - docker
+
+build:x64:
+  except:
+    - schedules
+  image: openwrt-docker-build:latest
+  stage: build
+  script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
+    - ./build.sh x64.generic rerun -j9
   tags:
   - docker
 
@@ -88,7 +102,7 @@ build:ramips:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ramips rerun -j9
+    - ./build.sh ramips.* rerun -j9
   tags:
   - docker
 
@@ -103,7 +117,7 @@ build:lantiq:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh lantiq rerun -j9
+    - ./build.sh lantiq.* rerun -j9
   tags:
   - docker
 
@@ -118,7 +132,7 @@ build:ipq40xx:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ipq40xx rerun -j9
+    - ./build.sh ipq40xx.* rerun -j9
   tags:
   - docker
 

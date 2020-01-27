@@ -11,7 +11,7 @@ ar71xx.tiny:
     - schedules
   stage: build
   script:
-    - ./build.sh ar71xx.tiny rerun -j2
+    - ./build.sh ar71xx.tiny.lowmem rerun -j2
   tags:
   - m2runner
 
@@ -20,7 +20,7 @@ ar71xx.generic:
     - schedules
   stage: build
   script:
-    - ./build.sh ar71xx.generic rerun -j2
+    - ./build.sh ar71xx.generic.* rerun -j2
   tags:
   - m2runner
 
@@ -29,43 +29,44 @@ x86.generic:
     - schedules
   stage: build
   script:
-    - ./build.sh x86.generic rerun -j2
+    - ./build.sh x86.generic.* rerun -j2
   tags:
   - m2runner
 
-ramips.mt7621:
+x64.generic:
   except:
     - schedules
   stage: build
   script:
-    - ./build.sh ramips.mt7621 rerun -j2
+    - ./build.sh x64.generic.* rerun -j2
   tags:
   - m2runner
 
-ipq40xx.generic:
+ramips:
   except:
     - schedules
   stage: build
   script:
-    - ./build.sh ipq40xx.generic rerun -j2
+    - ./build.sh ramips.* rerun -j2
   tags:
   - m2runner
 
-lantiq.xrx200:
+ipq40xx:
   except:
     - schedules
   stage: build
   script:
-    - ./build.sh lantiq.xrx200 rerun -j2
+    - ./build.sh ipq40xx.* rerun -j2
   tags:
   - m2runner
 
-ath79.nand:
+lantiq:
   except:
     - schedules
   stage: build
   script:
-    - ./build.sh ath79.nand rerun -j2
+    - ./build.sh lantiq.* rerun -j2
   tags:
   - m2runner
+
 

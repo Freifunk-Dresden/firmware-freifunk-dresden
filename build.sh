@@ -98,30 +98,35 @@ listTargets()
 	_def_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
         _def_target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
 	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
+	_def_openwrt_variant=$(echo $entry | jq $OPT '.openwrt_variant')
 	_def_feeds=$(echo $entry | jq $OPT '.feeds')
 	_def_packages=$(echo $entry | jq $OPT '.packages')
  fi
  targetIdx=$(( targetIdx + 1 ))
 
  printf -- '-------------------------------------------------------------------------------------------------\n'
- printf  " %-40s | %-13s | %-7s | %-7s | %-7s | %-s \n" target openwrt_rev config feeds files patches
- printf -- '------------------------------------------+---------------+---------+---------+---------+--------\n'
+ printf  " %-36s | %-7s | %-7s | %-7s | %-7s | %-7s | %-s \n" target wrt_rev wrt_var config feeds files patches
+ printf -- '--------------------------------------+---------+---------+---------+---------+---------+--------\n'
  # run through rest of json
  while true
  do
  	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
 
 	if [ "$entry" = "null" ]; then
- 		target=""
+		break;	# last entry
 	else
+		_name=$(echo $entry | jq $OPT '.name')
 		_target=$(echo $entry | jq $OPT '.target')
 		_subtarget=$(echo $entry | jq $OPT '.subtarget')
 
 		_variant=$(echo $entry | jq $OPT '.variant')
 		test "$_variant" = "null"  && _variant=""
 
-		openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
-		test "$openwrt_rev" = "null"  && openwrt_rev="$_def_openwrt_rev"
+		_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
+		test "$_openwrt_rev" = "null"  && _openwrt_rev="$_def_openwrt_rev"
+
+		_openwrt_variant=$(echo $entry | jq $OPT '.openwrt_variant')
+		test "$_openwrt_variant" = "null"  && _openwrt_variant="$_def_openwrt_variant"
 
 		_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
 		test "$_selector_config" = "null" && _selector_config="$_def_selector_config"
@@ -137,13 +142,12 @@ listTargets()
 
                 _target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
                 test "$_target_patches" = "null" && _target_patches="$_def_target_patches"
-
-		target=$_target.$_subtarget
-		# add variant (if any)
-		test -n "$_variant" && target="$target.$_variant"
 	fi
-	test -z "$target" && break
- 	printf  " %-40s | %-13s | %-7s | %-7s | %-7s | %-7s \n" $target "${openwrt_rev:0:10}..." $_selector_config $_selector_feeds $_selector_files $_selector_patches
+	
+	test -z "$_name" && echo "error: configuration has no name" && break
+
+ 	printf  " %-36s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s\n" "$_name" "${_openwrt_rev:0:7}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches"
+
 	targetIdx=$(( targetIdx + 1 ))
  done
  printf -- '-------------------------------------------------------------------------------------------------\n'
@@ -229,9 +233,20 @@ else
 	regex="$1"
 	shift
 
-	# remove invalid characters: '/'
-	chars='/'
+	if [ "$regex" = "all" ]; then
+		regex=".*" 
+	fi
+
+	# remove invalid characters: '/','$'
+	chars='[/$]'
 	regex=${regex//$chars/}
+
+	# append '$' to regex, to ensure that 'ar71xx.generic.xyz' is not built
+	# when 'ar71xx.generic' was specified. Use 'ar71xx.generic.*' if both
+	# targets should be created
+
+	regex="$regex\$"
+	echo "regex:[$regex]"
 
 	#check if next argument is "menuconfig"
 	if [ "$1" = "menuconfig" ]; then
@@ -245,15 +260,10 @@ else
 		shift;
 	fi
 
-	# correct regex
-	if [ "$regex" = "all" ]; then
-		regex=".*" 
-	fi
-
 	BUILD_PARAMS=$*
 fi
 
-echo "### target:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
+echo "### target-regex:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
 
 setup_buildroot ()
 {
@@ -394,6 +404,7 @@ if [ -n "$entry" ]; then
 	_def_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
         _def_target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
 	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
+	_def_openwrt_variant=$(echo $entry | jq $OPT '.openwrt_variant')
 	_def_feeds=$(echo $entry | jq $OPT '.feeds')
 	_def_packages=$(echo $entry | jq $OPT '.packages')
 #echo $_def_target
@@ -401,6 +412,7 @@ if [ -n "$entry" ]; then
 #echo $_def_variant
 #echo $_def_name
 #echo $_def_openwrt_rev
+#echo $_def_openwrt_variant
 #echo $_selector_config, $_selector_feeds, $_selector_files, $_selector_patches
 #echo $_def_feeds
 #echo $_def_packages
@@ -417,6 +429,9 @@ do
 
 	# test "$_" = "null" && _="$_def_"
 
+	_name=$(echo $entry | jq $OPT '.name')
+	test "$_name" = "null" && _name="$_def_name"
+
 	_target=$(echo $entry | jq $OPT '.target')
 	test "$_target" = "null" && _target="$_def_target"
 
@@ -426,11 +441,11 @@ do
 	_variant=$(echo $entry | jq $OPT '.variant')
 	test "$_variant" = "null" && _variant="$_def_variant"
 
-	_name=$(echo $entry | jq $OPT '.name')
-	test "$_name" = "null" && _name="$_def_name"
-
 	_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
 	test "$_openwrt_rev" = "null" && _openwrt_rev="$_def_openwrt_rev"
+
+	_openwrt_variant=$(echo $entry | jq $OPT '.openwrt_variant')
+	test "$_openwrt_variant" = "null" && _openwrt_variant="$_def_openwrt_variant"
 
 	_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
 	test "$_selector_config" = "null" && _selector_config="$_def_selector_config"
@@ -452,35 +467,46 @@ do
 
 	_packages=$(echo $entry | jq $OPT '.packages')
 	test "$_packages" = "null" && _packages="$_def_packages"
+#echo $_name
 #echo $_target
 #echo $_subtarget
 #echo $_variant
-#echo $_name
 #echo $_openwrt_rev
+#echo $_openwrt_variant
 #echo $_selector_config, $_selector_feeds, $_selector_files, $_selector_patches
 #echo $_feeds
 #echo $_packages
 
 
 	#build target name to filter on
-	target=$_target.$_subtarget
-	test -n "$_variant" && target="$target.$_variant"
+#	filter_target=$_target.$_subtarget
+#	test -n "$_variant" && filter_target="$filter_target.$_variant"
+#	test -n "$_openwrt_variant" && filter_target="$filter_target.$_openwrt_variant"
+	filter_target="$_name"
 
-	filterred=$(echo $target | sed -n "/$regex/p")
+	filterred=$(echo $filter_target | sed -n "/$regex/p")
 	test -z "$filterred" && continue
 
-	echo -e $C_GREY"--------------------"$C_NONE
-	echo -e $C_YELLOW"Name$C_NONE      : $C_BLUE$_name"$C_NONE
-	echo -e $C_YELLOW"Target$C_NONE    : $C_BLUE$_target"$C_NONE
-	echo -e $C_YELLOW"Sub-Target$C_NONE: $C_BLUE$_subtarget"$C_NONE
-	echo -e $C_YELLOW"Variant$C_NONE   : $C_BLUE$_variant"$C_NONE
-	echo -e $C_GREY"--------------------"$C_NONE
+	config_file="$CONFIG_DIR/$_selector_config/config.$_target.$_subtarget"
+	test -n "$_variant" && config_file="$config_file.$_variant"
+	test -n "$_openwrt_variant" && config_file="$config_file.$_openwrt_variant"
 
-	config_file="$CONFIG_DIR/$_selector_config/config.$target"
+	echo -e $C_GREY"----------------------------------------"$C_NONE
+	echo -e $C_YELLOW"Name$C_NONE              : $C_BLUE$_name"$C_NONE
+	echo -e $C_YELLOW"Target$C_NONE            : $C_BLUE$_target"$C_NONE
+	echo -e $C_YELLOW"Sub-Target$C_NONE        : $C_BLUE$_subtarget"$C_NONE
+	echo -e $C_YELLOW"Variant$C_NONE           : $C_BLUE$_variant"$C_NONE
+	echo -e $C_YELLOW"Openwrt Variant$C_NONE   : $C_BLUE$_openwrt_variant"$C_NONE
+	echo -e $C_YELLOW"Config-File$C_NONE       : $C_BLUE$config_file"$C_NONE
+	echo -e $C_GREY"----------------------------------------"$C_NONE
+
+
 	# use short revision because openwrt build path gets too long and
 	# make for ipq40xx.generic (fritzbox 4040) will fail
 	# (see git log --abbrev-commit)
 	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
+	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
+
 	openwrt_dl_dir="$DL_DIR"
 	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector_patches"
 
