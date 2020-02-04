@@ -20,7 +20,7 @@ watchdog_wifi()
 {
 	#check wifi: read country, try to set reg, verify reg
 	current_country="$(iw reg get | sed -n 's#.* \(..\):.*#\1#p')"
-	config_country="$(uci get wireless.radio0.country)"
+	config_country="$(uci get wireless.radio2g.country)"
 	logger -t $TAG "wifi: country $current_country"
 
 	if [ ! "$current_country" = "$config_country" ]; then
