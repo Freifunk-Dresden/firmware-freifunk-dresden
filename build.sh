@@ -595,10 +595,10 @@ EOM
 	# delete target dir, but only delete when no specific device/variant is built.
 	# generic targets (that contains all devices) must come before specific targets.
 	if [ -z "$_variant" ]; then
-		echo -e $C_PURPLE"delete previous firmware$C_NONE: $C_GREEN""bin/targets/$_target/$_subtarget"
+		echo -e $C_PURPLE"delete previous firmware$C_NONE: $C_GREEN""$buildroot/bin/targets/$_target/$_subtarget"
 		rm -rf bin/targets/$_target/$_subtarget
 	else
-		echo -e $C_PURPLE"DO NOT delete previous firmware$C_NONE: $C_GREEN""bin/targets/$_target/$_subtarget"
+		echo -e $C_PURPLE"KEEP previous firmware$C_NONE($_variant): $C_GREEN""$buildroot/bin/targets/$_target/$_subtarget"
 	fi
 
 	#try to apply target patches
