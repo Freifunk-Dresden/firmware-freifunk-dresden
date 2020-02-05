@@ -408,6 +408,10 @@ do
 				printf "copy $buildroot/bin/targets/$platform/$subplatform/$filefilter $tmpTargetDir\n"
 				# use "eval" to resolv filefilter wildcards
 				eval cp -a $buildroot/bin/targets/$platform/$subplatform/$filefilter $tmpTargetDir 2>/dev/null
+
+				# remove not-wanted files, because those are not used and added for different openwrt versions
+				# This would cause duplicate warning in gen-upload.sh
+				rm -f $tmpTargetDir/openwrt*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
 			}
 
 			#create md5sums file used when automatically or manually downloading via firmware.cgi
