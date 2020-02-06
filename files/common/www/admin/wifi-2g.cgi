@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung &gt; Konfiguration: WIFI"
+export TITLE="Verwaltung &gt; Konfiguration: WIFI 2.4GHz"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 
@@ -90,7 +90,7 @@ Ist der Splash aktiv, m&uuml;ssen MAC Adressen manuell hinzugef&uuml;gt werden (
 <tr><th>TX-Power:</th>
 <td><select name="form_wifi_txpower" size="1">
 $(iwinfo $wifi_status_radio2g_phy txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;txt=$0}else{sel="";v=$1;txt=$0}; print "<option "sel" value=\""v"\">"txt"</option>"}')
-</select> (konfiguriert: $(uci get ddmesh.network.wifi_txpower) dBm) <b>Aktuell:</b> $(iw $wifi_status_radio2g_phy info | awk '/txpower/{print $2,$3}')</td>
+</select> (konfiguriert: $(uci get ddmesh.network.wifi_txpower) dBm) <b>Aktuell:</b> $(iwinfo $wifi_status_radio2g_phy info | awk '/Tx-Power:/{print $2,$3}')</td>
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
 

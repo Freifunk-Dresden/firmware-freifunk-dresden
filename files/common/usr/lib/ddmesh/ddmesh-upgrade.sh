@@ -421,6 +421,8 @@ upgrade_6_0_13()
 upgrade_6_0_14()
 {
  uci add_list ddmesh.system.communities='Freifunk Tharandt'
+ uci rename ddmesh.network.wifi_channel_5Ghz=wifi_channel_5g
+ uci rename ddmesh.network.wifi_txpower_5Ghz=wifi_txpower_5g
 }
 
 
