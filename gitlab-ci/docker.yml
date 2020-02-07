@@ -121,6 +121,19 @@ build:lantiq:
   tags:
   - docker
 
+build:ath79:
+  except:
+    - schedules
+  image: openwrt-docker-build:latest
+  stage: build
+  script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
+    - ./build.sh ath79.* rerun -j9
+  tags:
+  - docker
 
 build:ipq40xx:
   except:
