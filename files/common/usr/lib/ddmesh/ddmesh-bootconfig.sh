@@ -74,6 +74,9 @@ config gps 'gps'
 	option  longitude		'0'
 	option  altitude		'0'
 
+config geoloc 'geoloc'
+	list	ignore_macs		''
+
 config contact 'contact'
 	option	name			''
 	option  email			''
@@ -92,8 +95,8 @@ config network 'network'
 	option	wifi_country		'DE'
 	option	wifi_channel		13
 	option  wifi_txpower		18
-	option	wifi_channel_5Ghz	44
-	option  wifi_txpower_5Ghz	18
+	option	wifi_channel_5g		44
+	option  wifi_txpower_5g		18
 #	option	wifi_diversity		1
 #	option	wifi_rxantenna		1
 #	option	wifi_txantenna		1
@@ -239,7 +242,7 @@ setup_wireless()
  #ensure we have valid country,with supportet channel and txpower
  test -z "$(uci -q get ddmesh.network.wifi_country)" && uci set ddmesh.network.wifi_country="DE"
 
- # --- detect 2/5Ghz radios
+ # --- detect 2/5GHz radios
  radio2g=""
  radio5g=""
 
@@ -281,8 +284,8 @@ setup_wireless()
  if [ -n "$radio5g" ]; then
  	uci -q delete wireless.radio5g.disabled
  	uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
-	uci set wireless.radio5g.channel="$(uci get ddmesh.network.wifi_channel_5Ghz)"
-	uci set wireless.radio5g.txpower="$(uci get ddmesh.network.wifi_txpower_5Ghz)"
+	uci set wireless.radio5g.channel="$(uci get ddmesh.network.wifi_channel_5g)"
+	uci set wireless.radio5g.txpower="$(uci get ddmesh.network.wifi_txpower_5g)"
  	uci set wireless.radio5g.legacy_rates="0"
  fi
 
@@ -341,7 +344,7 @@ setup_wireless()
 	# - wifi2 - 5G
 	iface=$((iface + 1))
 
-	# add 5Ghz
+	# add 5GHz
 	if [ -n "$radio5g" ]; then
 		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
 		uci set wireless.@wifi-iface[$iface].device='radio5g'
