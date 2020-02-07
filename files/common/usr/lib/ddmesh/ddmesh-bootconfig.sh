@@ -74,6 +74,9 @@ config gps 'gps'
 	option  longitude		'0'
 	option  altitude		'0'
 
+config geoloc 'geoloc'
+	list	ignore_macs		''
+
 config contact 'contact'
 	option	name			''
 	option  email			''
