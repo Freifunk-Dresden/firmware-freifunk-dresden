@@ -423,6 +423,9 @@ upgrade_6_0_14()
  uci add_list ddmesh.system.communities='Freifunk Tharandt'
  uci rename ddmesh.network.wifi_channel_5Ghz=wifi_channel_5g
  uci rename ddmesh.network.wifi_txpower_5Ghz=wifi_txpower_5g
+ uci add ddmesh geoloc
+ uci rename ddmesh.@geoloc[-1]='geoloc'
+ uci add_list ddmesh.geoloc.ignore_macs=''
 }
 
 

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. /lib/functions.sh
+
 OUTPUT=/var/geoloc.json.tmp
 FINAL_OUTPUT=/var/geoloc.json
 SYSINFO_MOBILE_GEOLOC=/var/geoloc-mobile.json
@@ -13,7 +15,17 @@ test -n "$1" && eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
 
 # remove my own macs from scan
 bssid="$(uci get credentials.wifi.bssid)"
-export own_macs=$(iwinfo | awk '/Access Point/{printf("%s ", gensub(/.*Access Point: /,"",$0))} END{printf("'$bssid'")}')
+own_macs=$(iwinfo | awk '/Access Point/{printf("%s ", gensub(/.*Access Point: /,"",$0))} END{printf("'$bssid'")}')
+
+# remove stored macs
+user_macs=''
+store_ignore_macs() {
+ user_macs="$user_macs $1"
+}
+config_load ddmesh
+config_list_foreach geoloc ignore_macs store_ignore_macs
+
+export ignore_macs="$own_macs $user_macs"
 
 scan()
 {
@@ -23,7 +35,7 @@ scan()
   "wifiAccessPoints": [
 $(iwinfo $net_ifname scan | awk '
 BEGIN{
-	split(ENVIRON["own_macs"],ignore_macs);
+	split(ENVIRON["ignore_macs"],ignore_macs);
 }
 /^Cell/{
         f[nf=1]=$0;
