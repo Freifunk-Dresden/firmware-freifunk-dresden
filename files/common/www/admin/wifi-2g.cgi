@@ -64,7 +64,7 @@ function checkInput()
 }
 </script>
 
-<form onsubmit="return checkInput();" name="form_wifi" action="wifi.cgi" class="form" method="POST">
+<form onsubmit="return checkInput();" name="form_wifi" action="wifi-2g.cgi" class="form" method="POST">
 <fieldset class="bubble">
 <legend>WiFi-Einstellungen</legend>
 <table>
@@ -139,7 +139,7 @@ $(iwinfo $wifi_status_radio2g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 <legend>Kanal-Info</legend>
 <table>
 <tr><th>Frequenz</th><th>Kanal</th><th>Maximale Sendeleistung</th></tr>
-$(iw $wifi_status_radio2g_phy info | sed -n '/[      ]*\*[   ]*[0-9]* MHz/{s#[       *]\+\([0-9]\+\) MHz \[\([0-9]\+\)\] (\(.*\))#<tr><td>\1</td><td>\2</td><td>\3</td></tr>#;p}')
+$(iw $wifi_status_radio2g_phy info | sed -n '/[      ]*\*[   ]*[0-9]* MHz/{s#[       *]\+\([0-9]\+\) MHz \[\([0-9]\+\)\] (\(.*\))#<tr><td>\1 MHz</td><td>\2</td><td>\3</td></tr>#;p}')
 </table>
 </fieldset>
 

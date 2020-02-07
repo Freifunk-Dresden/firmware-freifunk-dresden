@@ -11,8 +11,8 @@ eval $(echo "$status" | jsonfilter \
 	-e _radio5g_ifname='@.radio5g.interfaces[0].ifname' \
 )
 
-_radio2g_phy=$(iwinfo $_radio2g_ifname info | sed -n '/PHY name:/{s#.*\(phy[0-9]\)$#\1#p}')
-_radio5g_phy=$(iwinfo $_radio5g_ifname info | sed -n '/PHY name:/{s#.*\(phy[0-9]\)$#\1#p}')
+_radio2g_phy=$(cat /sys/class/net/$_radio2g_ifname/phy80211/name)
+test -n "$_radio5g_ifname" && _radio5g_phy=$(cat /sys/class/net/$_radio5g_ifname/phy80211/name)
 
 echo export $prefix"_radio2g_up"="$_radio2g_up"
 echo export $prefix"_radio2g_phy"="$_radio2g_phy"
