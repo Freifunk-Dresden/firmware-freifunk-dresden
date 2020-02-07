@@ -146,6 +146,12 @@
                 "target":"ramips",
                 "subtarget":"mt76x8",
                 "variant":"r6120"
+	},
+        {       # created for Orange Pi R1
+                "name":"sunxi.cortexa7.generic",
+                "target":"sunxi",
+                "subtarget":"cortexa7",
+		"variant":"generic"
         },
 #	{
 #		"name":"ramips.rt305x.generic",
