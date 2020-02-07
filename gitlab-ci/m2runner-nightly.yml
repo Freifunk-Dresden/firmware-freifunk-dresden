@@ -101,6 +101,17 @@ nightly:lantiq:
   tags:
   - m2runner
 
+nightly:sunxi:
+  only:
+    - schedules
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh sunxi.* rerun -j8
+  tags:
+  - m2runner
+
 nightly:deploy:
   only:
     - schedules
