@@ -9,6 +9,7 @@ fi
 
 . /usr/lib/www/page-functions.sh
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
+eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 device_model="$(sed 's#[ ]\+$##' /var/sysinfo/model 2>/dev/null)"
 test -z "$device_model" && device_model="$(grep 'model name' /proc/cpuinfo | cut -d':' -f2)"
