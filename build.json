@@ -153,6 +153,11 @@
                 "subtarget":"cortexa7",
 		"variant":"generic"
         },
+        {
+                "name":"ath79.generic",
+                "target":"ath79",
+                "subtarget":"generic"
+        },
 #	{
 #		"name":"ramips.rt305x.generic",
 #		"target":"ramips",
