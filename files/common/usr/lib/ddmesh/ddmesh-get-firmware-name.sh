@@ -34,5 +34,6 @@ fi
 
 eval $(echo $entry | jsonfilter -e subpath='@.path' -e filename='@.filename')
 
-url="$URL_DL/$subpath/$filename"
-echo "{ \"firmware_version\":\"$version\", \"url\":\"$url\", \"fileinfo\": $entry }"
+firmware_url="$URL_DL/$subpath/$filename"
+opkg_url="$URL_DL/$subpath/packages"
+echo "{ \"firmware_version\":\"$version\", \"firmware_url\":\"$firmware_url\", \"opkg_url\":\"$opkg_url\", \"fileinfo\": $entry }"

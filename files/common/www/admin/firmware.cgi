@@ -45,13 +45,13 @@ download_file_info()
 	test -n "$error" && TESTING_FILE_INFO_JSON=""
 
 	firmware_release_version=$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.firmware_version')
-	firmware_release_url="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.url')"
+	firmware_release_url="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.firmware_url')"
 	firmware_release_md5sum="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.md5sum')"
 	firmware_release_filename="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.filename')"
 	firmware_release_comment="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.comment')"
 
 	firmware_testing_version=$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.firmware_version')
-	firmware_testing_url="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.url')"
+	firmware_testing_url="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.firmware_url')"
 	firmware_testing_md5sum="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.md5sum')"
 }
 

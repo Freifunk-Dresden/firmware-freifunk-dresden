@@ -713,19 +713,6 @@ config_temp_configs() {
 $_ddmesh_wifi2ip hotspot
 EOM
 
-	# update /etc/opkg.conf
-	eval $(cat /etc/openwrt_release)
-	version="$(cat /etc/version)"
-	platform="$DISTRIB_TARGET"
-	url="$(uci -q get credentials.url.opkg)"
-	cat <<EOM >/tmp/opkg.conf
-src/gz ddmesh $url/$version/$platform/packages
-dest root /
-dest ram /tmp
-lists_dir ext /var/opkg-lists
-#option overlay_root /overlay
-EOM
-
 cat <<EOM >/var/etc/config/uhttpd
 #generated/overwritten by $0
 config uhttpd main

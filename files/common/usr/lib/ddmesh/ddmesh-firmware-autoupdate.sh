@@ -62,7 +62,7 @@ check_version() {
 }
 
 download_firmware(){
-	url=$(echo $FILE_INFO_JSON | jsonfilter -e '@.url')
+	url=$(echo $FILE_INFO_JSON | jsonfilter -e '@.firmware_url')
 	logger -s -t "$TAG" "Try downloading $url"
 	uclient-fetch $CERT -O $FIRMWARE_FILE "$url" 2>$ERROR_FILE || {
 		logger -s -t "$TAG" "Error: $(cat $ERROR_FILE)"

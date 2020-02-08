@@ -135,6 +135,27 @@ cat<<EOM
 EOM
 }
 
+update_opkg()
+{
+ RELEASE_FILE_INFO_JSON="$(/usr/lib/ddmesh/ddmesh-get-firmware-name.sh)"
+ error=$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.error')
+ test -n "$error" && RELEASE_FILE_INFO_JSON=""
+
+ opkg_release_url="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.opkg_url')"
+
+cat <<EOM >/tmp/opkg.conf
+src/gz ddmesh $opkg_release_url
+dest root /
+dest ram /tmp
+lists_dir ext /var/opkg-lists
+#option overlay_root /overlay
+EOM
+
+ echo "<pre>"
+ opkg update | flush
+ echo "</pre>"
+}
+
 if [ -z "$form_action" ]; then
 
 	show_page
@@ -143,9 +164,7 @@ else #form_action
 
 	case "$form_action" in
 		update)
-			echo "<pre>"
-			opkg update | flush
-			echo "</pre>"
+			update_opkg
 			show_page
 			;;
 		upload)

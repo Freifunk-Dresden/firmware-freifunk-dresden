@@ -426,6 +426,7 @@ upgrade_6_0_14()
  uci add ddmesh geoloc
  uci rename ddmesh.@geoloc[-1]='geoloc'
  uci add_list ddmesh.geoloc.ignore_macs=''
+ uci delete credentials.url.opkg
 }
 
 
