@@ -41,6 +41,9 @@ cat<<EOM
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 ajax_register();
 //--></SCRIPT>
+EOM
+if [ "$wifi_status_radio2g_up" = "1" ]; then
+cat<<EOM
 <br />
 <fieldset class="bubble">
 <legend>Access-Points (automatische Aktualisierung)</legend>
@@ -51,6 +54,7 @@ ajax_wlan();
 //--></SCRIPT>
 <br />
 EOM
+fi
 
 if [ "$wan_iface_present" = "1" ]; then
 
