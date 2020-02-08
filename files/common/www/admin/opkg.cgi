@@ -135,6 +135,17 @@ cat<<EOM
 EOM
 }
 
+create_opkg_conf()
+{
+cat <<EOM >/tmp/opkg.conf
+src/gz ddmesh $1
+dest root /
+dest ram /tmp
+lists_dir ext /var/opkg-lists
+#option overlay_root /overlay
+EOM
+}
+
 update_opkg()
 {
  RELEASE_FILE_INFO_JSON="$(/usr/lib/ddmesh/ddmesh-get-firmware-name.sh)"
@@ -143,14 +154,7 @@ update_opkg()
 
  opkg_release_url="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.opkg_url')"
 
-cat <<EOM >/tmp/opkg.conf
-src/gz ddmesh $opkg_release_url
-dest root /
-dest ram /tmp
-lists_dir ext /var/opkg-lists
-#option overlay_root /overlay
-EOM
-
+ create_opkg_conf $opkg_release_url
  echo "<pre>"
  opkg update | flush
  echo "</pre>"
@@ -194,6 +198,8 @@ EOM
 			if [ -z "$IPK_FILE" ]; then
 				notebox "Kein Paket geladen"
 			else
+				create_opkg_conf
+
 				echo "<pre>"
 				echo "*** install [$IPK_FILE]"
 				opkg -V2 --force-overwrite install $IPK_FILE 2>$OPKG_ERROR | flush
