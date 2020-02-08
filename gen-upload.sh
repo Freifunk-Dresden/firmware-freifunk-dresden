@@ -138,8 +138,10 @@ isFirstFile=true
 gen_download_json_add_data()
 {
   output_path=$1 	# output path "firmware/4.2.15"
-  subpath=$2 		# relativ path to firmware "ar71xx/generic"
+  subpath=$2 		# relativ path to firmware "7239bcd/ar71xx/generic"
   file_filter=$3 	# file filter "*.{bin,trx,img,dlf,gz}"
+
+  error=0
 
 	printf "add files to download.json\n"
 	# progress info
@@ -167,26 +169,28 @@ gen_download_json_add_data()
 		# Die eckigen klammern erzeugt ein array, in welches alle gefundenen objekte mit gleichem FILENAMEN gesammelt werden.
 		# Fuer die meisten filenamen ist das array 1 gross. aber fuer files die fuer verschiedene router
 		# verwendet werden, koennen mehrere eintraege sein.
-		info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename == \"$file\") ]")
+		if [ -f "$info_dir/$INPUT_FILEINFO_JSON_FILENAME" ]; then
+			info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename == \"$file\") ]")
+		else
+			info_array="[]"
+		fi
 #printf "info_array:$info_array\n"
 
 
 		OPT="--raw-output"
 
 		# run through each array (siehe kommentar zuvor)
+		# on file can be used for more than one device/model.
+		# At least run this loop once to store new file names if info_array was empty
 		idx=0
 		while true
 		do
-			# in case new files are present which are not in fileinfo, we need to create empty entries in
-			# download.json and fileinfo.json
-			if [ "$info_array" = "[]" ]; then
-				# on second loop we need to break
-				test "$idx" != "0" && break;
-			else
+			# try reading infos 
+			if [ "$info_array" != "[]" ]; then
 				info=$(echo "$info_array" | jq ".[$idx]")
 #printf "idx:%d info:$info\n" $idx
 				#info_array holds one entry for each device that is using same firmware image
-				#Normally it contains only one entry.
+				#Normally it contains only one entry. if last info was found, break.
 				test "$info" = "null" && break;
 
 				autoupdate="$(echo $info | jq $OPT '.autoupdate')"
@@ -231,22 +235,57 @@ gen_download_json_add_data()
 			}
 			isFirstFile=false
 
+			# check if firmware filename is already in OUTPUT_FILEINFO_JSON_FILENAME.
+			# When targets are moved from one buildroot to another (19.04 -> 18.06) then json may still(already)
+			# contain the filename. do not add it a second time.
+			# 
+			#
+
 			# generate download.json and new fileinfo.json
 			if [ $sysupgrade = 1 ]; then
+				# build a search string EXACTLY as I create it for json below. It is a simple fast search.
+				# it must contain model, model2 and filename, because for some images I have not added model infos, yet.
+				# and there could be one firmware image for different models. I have to keep those entries.
+				search="\"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\""
+				result=$(grep "$search" $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME)
+
+				if [ -n "$result" ]; then
+					printf "\n"$C_LRED"Warning: duplicate found: "$C_NONE"[$search]\n"
+					error=1
+				fi
+
 				printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 
 				# generate new input info file
-				printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\",  \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+				printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 			else
-				printf "{ \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+				# Factory Images do not have model-infos.
+				search="$file"
+				result=$(grep "$search" $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME)
+				if [ -n "$result" ]; then
+					printf "\n"$C_LRED"Warning: duplicate found: "$C_NONE"[$search]\n"
+					error=1
+				fi	
 
+				printf "{ \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 				# generate new input info file
 				printf "{ \"name\":\"$name\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 			fi
 
 			idx=$(( idx + 1 ))
+
+			# check if we have processed all infos. break loop if no more infos for same file or if file was new.
+			# continue with next file
+			if [ "$info_array" = "[]" ]; then
+				break;
+			fi
 		done
 	done
+
+	if [ $error -eq 1 ]; then
+		printf "Error: there were some duplicates.\n"
+		exit 1
+	fi
 	printf "\n"
 }
 
@@ -356,32 +395,37 @@ do
 
 	for platform in $(ls $_platforms)
 	do
-		printf $C_YELLOW"platform:"$C_NONE" ["$C_GREEN"$platform"$C_NONE"]\n"
 
-		mkdir -p $target_dir/$platform
+		printf $C_YELLOW"platform:"$C_NONE" ["$C_GREEN"$platform"$C_NONE"]\n"
+		mkdir -p $target_dir/$_buildroot/$platform
 
 		for subplatform in $(ls $buildroot/bin/targets/$platform)
 		do
-			mkdir -p $target_dir/$platform/$subplatform
+			tmpTargetDir="$target_dir/$_buildroot/$platform/$subplatform"
+			mkdir -p $tmpTargetDir
 
 			filefilter="*.{bin,trx,img,dlf,gz,tar}"
 			$ENABLE_COPY && {
-				printf "copy $buildroot/bin/targets/$platform/$subplatform/$filefilter $target_dir/$platform/$subplatform\n"
+				printf "copy $buildroot/bin/targets/$platform/$subplatform/$filefilter $tmpTargetDir\n"
 				# use "eval" to resolv filefilter wildcards
-				eval cp -a $buildroot/bin/targets/$platform/$subplatform/$filefilter $target_dir/$platform/$subplatform 2>/dev/null
+				eval cp -a $buildroot/bin/targets/$platform/$subplatform/$filefilter $tmpTargetDir 2>/dev/null
+
+				# remove not-wanted files, because those are not used and added for different openwrt versions
+				# This would cause duplicate warning in gen-upload.sh
+				rm -f $tmpTargetDir/openwrt*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
 			}
 
 			#create md5sums file used when automatically or manually downloading via firmware.cgi
 			# solange das file erzeugen, wie software mit alter firmware drausen ist
 			# oder github
 			p=$(pwd)
-			cd $target_dir/$platform/$subplatform
+			cd $tmpTargetDir
 			printf $C_YELLOW"calculate md5sum"$C_NONE"\n"
-			md5sum * > $target_dir/$platform/$subplatform/md5sums
+			md5sum * > $tmpTargetDir/md5sums
 			cd $p
 
 			#copy packages
-			mkdir -p $target_dir/$platform/$subplatform/packages
+			mkdir -p $tmpTargetDir/packages
 			printf "search package dir: $buildroot/bin/targets/$platform/$subplatform/packages/\n"
 			for package in $(cat $info_dir/packages)
 			do
@@ -392,18 +436,18 @@ do
 				test -z "$filename" && printf $C_ORANGE"WARNING: no package file found for "$C_NONE"$package\n"
 				$ENABLE_COPY && {
 	#			printf "copy package: $package -> [$filename]\n"
-					test -n "$filename" && cp -a $filename $target_dir/$platform/$subplatform/packages/
+					test -n "$filename" && cp -a $filename $tmpTargetDir/packages/
 				}
 			done
 
 			printf $C_YELLOW"generate package index"$C_NONE"\n"
 			p=$(pwd)
-			cd $target_dir/$platform/$subplatform/packages/
+			cd $tmpTargetDir/packages/
 			$buildroot/scripts/ipkg-make-index.sh . > Packages
 			gzip -f Packages
 			cd $p
 
-			gen_download_json_add_data $target_dir $platform/$subplatform $filefilter
+			gen_download_json_add_data $target_dir $_buildroot/$platform/$subplatform $filefilter
 		done # for sub platform
 	done	# for platform
 done # for buildroot
