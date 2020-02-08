@@ -257,7 +257,7 @@ gen_download_json_add_data()
 				printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 
 				# generate new input info file
-				printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\",  \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+				printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 			else
 				# Factory Images do not have model-infos.
 				search="$file"
