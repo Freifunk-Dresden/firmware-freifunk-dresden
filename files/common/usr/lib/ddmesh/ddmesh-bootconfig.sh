@@ -243,22 +243,9 @@ setup_wireless()
  test -z "$(uci -q get ddmesh.network.wifi_country)" && uci set ddmesh.network.wifi_country="DE"
 
  # --- detect 2/5GHz radios
- radio2g=""
- radio5g=""
-
- for idx in 0 1
- do
- 	_ch=$(uci -q get wireless.@wifi-device[$idx].channel)
-	 if [ -n "$_ch" ]; then
-		if [ "$_ch" -le 14 ]; then
-			radio2g=$idx
-		else
-			radio5g=$idx
-		fi
-	 fi
- done
- test -n "$radio2g" && uci -q rename wireless.@wifi-device[$radio2g]='radio2g'
- test -n "$radio5g" && uci -q rename wireless.@wifi-device[$radio5g]='radio5g'
+ eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
+ test -n "$wifi_status_radio2g_config_index" && uci -q rename wireless.@wifi-device[$wifi_status_radio2g_config_index]='radio2g'
+ test -n "$wifi_status_radio5g_config_index" && uci -q rename wireless.@wifi-device[$wifi_status_radio5g_config_index]='radio5g'
 
  # --- devices ---
  # 2.4Ghz
