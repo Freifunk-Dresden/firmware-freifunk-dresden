@@ -283,7 +283,8 @@ gen_download_json_add_data()
 	done
 
 	if [ $error -eq 1 ]; then
-		printf "Warning: there were some duplicates.\n"
+		printf "Error: there were some duplicates.\n"
+		exit 1
 	fi
 	printf "\n"
 }
