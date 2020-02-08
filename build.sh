@@ -352,9 +352,10 @@ setup_buildroot ()
 	echo "git_openwrt_rev:$git_openwrt_rev" >> $buildroot/files/etc/built_info
 	echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
 
-	git_ddmesh_rev=$(git log -1 --format=%H)
-	git_ddmesh_branch=$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')
+	git_ddmesh_rev="$(git log -1 --format=%H)"
+	git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
 	if [ "$git_ddmesh_branch" = "undefined" ]; then
+		git_ddmesh_branch="$(git branch | sed 's#^\* ##')"
 		echo ""
 		echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"
 		echo ""

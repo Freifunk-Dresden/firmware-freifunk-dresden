@@ -10,7 +10,7 @@ fi
 eval $(sed 's#:\(.*\)$#="\1"#' /etc/built_info)
 
 case  "$git_ddmesh_branch" in
-	undefined)
+	master)
 		html_git_ddmesh_branch="<font color=\"red\">$git_ddmesh_branch</font>"
 		;;
 	T_*)
