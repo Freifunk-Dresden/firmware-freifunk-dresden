@@ -1,10 +1,16 @@
-
 2019-12-08 6.0.14 (devel)
 --------------------------------------------------
 autoupdate                - control autoupdate by registrator server
 gui-system                - remove obsolet type 'server'
                           - make community "Tharandt" available
-
+wifi                      - add 2.4/5GHz radio detection
+                          - add 5GHz gui
+                          - add ath-dynack for some devices to speed up wifi connection
+opkg                      - rework path detection for downloading sw packages
+geoloc                    - add config to ignore specific access points 
+                            (may be used for mobile nodes which get internet from LTE router)
+openwrt                   - change build system to create firmware for low memory/flash devices
+                            on different openwrt versions
 
 2019-11-09 6.0.13 (devel)
 --------------------------------------------------
