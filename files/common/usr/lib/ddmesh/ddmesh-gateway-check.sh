@@ -86,7 +86,7 @@ start_openvpn()
 
 stop_openvpn()
 {
-	 test -x $OVPN && $OVPN stop
+	 test -x $OVPN && $OVPN stop 2>/dev/null
 }
 
 
@@ -151,7 +151,7 @@ true && {
 printf 'VPN:%s via %s\n' "$default_vpn_ifname" "$default_vpn_gateway"
 
 #try each gateway
-ok='false'
+ok=0
 IFS=' '
 # start with vpn, because this is prefered gateway, then WAN and lates LAN
 # (there is no forwarding to lan allowed by firewall)
@@ -166,7 +166,7 @@ do
 	$DEBUG && printf 'via=%s, dev=%s\n' "$via" "$dev"
 
 	#run check
-	ok='false'
+	ok=0
 	countSuccessful='0'
 	minSuccessful='1'
 
@@ -179,12 +179,12 @@ do
 		ping_check "$dev" "$ip" 2>&1 && countSuccessful="$((countSuccessful+1))"
 
 		if [ "$countSuccessful" -ge "$minSuccessful" ]; then
-			ok='true'
+			ok=1
 			break
 		fi
 	done
-	if "$ok"; then
-		printf 'gateway NOT found: via [%s] dev [%s]\n' "$via" "$dev"
+	if [ "$ok" = "1" ]; then
+		printf 'gateway found: via [%s] dev [%s]\n' "$via" "$dev"
 		printf 'landev: [%s], wandev=[%s], vpndev=[%s], wwan=[%s]\n' "$default_lan_ifname" "$default_wan_ifname" "$default_vpn_ifname" "$default_wwan_ifname"
 
 		#always add wan/wwan or lan to local gateway
@@ -238,7 +238,7 @@ unset IFS
 
 
 #in case no single gateway was working but gateway was announced, clear gateways
-if ! "$ok"; then
+if [ "$ok" != "1" ]; then
 	#remove all in default route from public_gateway table
 	printf 'no gateway found\n'
 	ip route flush table local_gateway 2>/dev/null
@@ -247,8 +247,8 @@ if ! "$ok"; then
 
 	stop_openvpn
 
-	# try to restart openvpn, in case connection is dead, but active ($ok was true)
-	# also if no vpn was active ($ok was false)
+	# try to restart openvpn, in case connection is dead, but active ($ok was 1)
+	# also if no vpn was active ($ok was 0)
 	#but only if no "no-ovpn-restart" was passed
 	if [ -z "$1" ]; then
 		start_openvpn
