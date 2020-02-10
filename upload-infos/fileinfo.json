@@ -65,7 +65,7 @@
 { "name":"", "filename":"openwrt-lantiq-xrx200-avm_fritz7362sl-initramfs-kernel.bin", "comment":""},
 { "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-lantiq-xrx200-avm_fritz7362sl-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-lantiq-xrx200-avm_fritz7412-initramfs-kernel.bin", "comment":""},
-{ "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-lantiq-xrx200-avm_fritz7412-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"0", "model":"avm,fritz7412", "model2":"AVM FRITZ!Box 7412", "filename":"openwrt-lantiq-xrx200-avm_fritz7412-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-lantiq-xrx200-bt_homehub-v5a-initramfs-kernel.bin", "comment":""},
 { "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-lantiq-xrx200-bt_homehub-v5a-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ramips-mt7621-r6220-initramfs-kernel.bin", "comment":""},
