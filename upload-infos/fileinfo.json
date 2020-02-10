@@ -51,7 +51,7 @@
 { "name":"", "autoupdate":"1", "model":"wndr3700", "model2":"NETGEAR WNDR3700v2", "filename":"openwrt-ar71xx-generic-wndr3700v2-squashfs-sysupgrade.bin", "comment":"getestet"},
 { "name":"", "filename":"openwrt-ar71xx-generic-wnr2200-squashfs-factory.img", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-generic-wnr2200-squashfs-factory-NA.img", "comment":""},
-{ "name":"", "autoupdate":"1", "model":"", "model2":"", "filename":"openwrt-ar71xx-generic-wnr2200-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"1", "model":"wnr2200", "model2":"NETGEAR WNR2200", "filename":"openwrt-ar71xx-generic-wnr2200-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ath79-generic-comfast_cf-e110n-v2-initramfs-kernel.bin", "comment":""},
 { "name":"", "autoupdate":"", "model":"", "model2":"", "filename":"openwrt-ath79-generic-comfast_cf-e110n-v2-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-eva.bin", "comment":""},
