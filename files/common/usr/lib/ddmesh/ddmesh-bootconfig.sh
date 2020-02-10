@@ -233,10 +233,9 @@ EOM
 
 setup_wireless()
 {
- #wireless, regenerate config in case wifi usb stick plugged into different usb port
- # temp wifi config
- #rm /var/etc/config/wireless
-
+ # wireless, regenerate config in case wifi usb stick plugged into different usb port
+ # wifi config
+ rm /etc/config/wireless
  wifi config
 
  #ensure we have valid country,with supportet channel and txpower
@@ -268,7 +267,7 @@ setup_wireless()
  #uci set wireless.radio2g.htmode="$(uci get ddmesh.network.wifi_htmode)"
 
  # 5 GHz
- if [ -n "$radio5g" ]; then
+ if [ -n "$wifi_status_radio5g_up" ]; then
  	uci -q delete wireless.radio5g.disabled
  	uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
 	uci set wireless.radio5g.channel="$(uci get ddmesh.network.wifi_channel_5g)"
@@ -332,7 +331,7 @@ setup_wireless()
 	iface=$((iface + 1))
 
 	# add 5GHz
-	if [ -n "$radio5g" ]; then
+	if [ -n "$wifi_status_radio5g_up" ]; then
 		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
 		uci set wireless.@wifi-iface[$iface].device='radio5g'
 		uci set wireless.@wifi-iface[$iface].network='wifi2'
