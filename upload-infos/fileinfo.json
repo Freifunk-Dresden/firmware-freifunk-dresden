@@ -80,7 +80,7 @@
 { "name":"", "filename":"openwrt-ramips-mt7621-youhua_wr1200js-initramfs-kernel.bin", "comment":""},
 { "name":"", "autoupdate":"0", "model":"youhua,wr1200js", "model2":"YouHua WR1200JS", "filename":"openwrt-ramips-mt7621-youhua_wr1200js-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ramips-mt76x8-netgear_r6120-squashfs-factory.img", "comment":""},
-{ "name":"", "autoupdate":"", "model":"", "model2":"", "filename":"openwrt-ramips-mt76x8-netgear_r6120-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"", "model":"netgear,r6120", "model2":"Netgear R6120", "filename":"openwrt-ramips-mt76x8-netgear_r6120-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-sunxi-cortexa7-sun8i-h2-plus-orangepi-r1-ext4-sdcard.img.gz", "comment":""},
 { "name":"", "filename":"openwrt-sunxi-cortexa7-sun8i-h2-plus-orangepi-r1-squashfs-sdcard.img.gz", "comment":""},
 { "name":"", "filename":"openwrt-x86-64-combined-squashfs.img.gz", "comment":""},
