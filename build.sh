@@ -6,7 +6,6 @@ tabs 4
 
 # gitlab variables
 # FF_REGISTERKEY_PREFIX
-# FF_BUILD_BRANCH
 # FF_BUILD_TAG
 
 #change to directory where build.sh is
@@ -358,20 +357,16 @@ setup_buildroot ()
 	echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
 
 	# when running from gitlab only specific revision is cloned. there are no branch infos.
-	# So I check if FF_BUILD_BRANCH/TAG are set and use those. If not defined I use
+	# So I check if FF_BUILD_TAG is set and then use this. If not defined I use
 	# the one I can determine.
 	git_ddmesh_rev="$(git log -1 --format=%H)"
-	if [ -n "$FF_BUILD_BRANCH" -o -n "$FF_BUILD_TAG" ]; then
-		# prefere tag
-		if [ -n "$FF_BUILD_TAG" ]; then
-			git_ddmesh_branch="$FF_BUILD_TAG"
-		else
-			git_ddmesh_branch="$FF_BUILD_BRANCH"
-		fi
+	if [ "$FF_BUILD_TAG" ]; then
+		git_ddmesh_branch="$FF_BUILD_TAG"
 	else
 		git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
+
 		if [ "$git_ddmesh_branch" = "undefined" ]; then
-			git_ddmesh_branch="$(git branch | sed 's#^\* ##')"
+			git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
 			echo ""
 			echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"
 			echo ""
