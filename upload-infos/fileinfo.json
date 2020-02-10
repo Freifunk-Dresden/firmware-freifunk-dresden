@@ -113,6 +113,7 @@
 { "name":"Ubiquiti NanoStation Loco M2 (XM)", "filename":"openwrt-ar71xx-generic-ubnt-nano-m-squashfs-factory.bin", "comment":"Gehäuse+Label: NanoStation Loco M2 / getestet"},
 { "name":"Ubiquiti NanoStation M", "autoupdate":"1", "model":"nanostation-m", "model2":"Ubiquiti NanoStation M", "filename":"openwrt-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin", "comment":"Gehäuse+Label: NanoStation Loco M2 / getestet"},
 { "name":"", "autoupdate":"0", "model":"nanostation-m", "model2":"Ubiquiti NanoStation M2", "filename":"openwrt-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"0", "model":"nanostation-m", "model2":"Ubiquiti NanoStation loco M2", "filename":"openwrt-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-generic-ubnt-nano-m-xw-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"nanostation-m-xw", "model2":"Ubiquiti NanoStation M XW", "filename":"openwrt-ar71xx-generic-ubnt-nano-m-xw-squashfs-sysupgrade.bin", "comment":"getestet"},
 { "name":"", "filename":"openwrt-ar71xx-tiny-a02-rb-w300n-squashfs-factory.bin", "comment":""},
