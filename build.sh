@@ -4,6 +4,11 @@ tabs 4
 #echo "ACHTUNG: aktuell stuerst firmware auf ubnt geraeten ab. Daher habe ich erstmal das bauen hier deaktiviert."
 #exit 1
 
+# gitlab variables
+# FF_REGISTERKEY_PREFIX
+# FF_BUILD_BRANCH
+# FF_BUILD_TAG
+
 #change to directory where build.sh is
 cd $(dirname $0)
 
@@ -352,14 +357,26 @@ setup_buildroot ()
 	echo "git_openwrt_rev:$git_openwrt_rev" >> $buildroot/files/etc/built_info
 	echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
 
+	# when running from gitlab only specific revision is cloned. there are no branch infos.
+	# So I check if FF_BUILD_BRANCH/TAG are set and use those. If not defined I use
+	# the one I can determine.
 	git_ddmesh_rev="$(git log -1 --format=%H)"
-	git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
-	if [ "$git_ddmesh_branch" = "undefined" ]; then
-		git_ddmesh_branch="$(git branch | sed 's#^\* ##')"
-		echo ""
-		echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"
-		echo ""
-		sleep 5
+	if [ -n "$FF_BUILD_BRANCH" -o -n "$FF_BUILD_TAG" ]; then
+		# prefere tag
+		if [ -n "$FF_BUILD_TAG" ]; then
+			git_ddmesh_branch="$FF_BUILD_TAG"
+		else
+			git_ddmesh_branch="$FF_BUILD_BRANCH"
+		fi
+	else
+		git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
+		if [ "$git_ddmesh_branch" = "undefined" ]; then
+			git_ddmesh_branch="$(git branch | sed 's#^\* ##')"
+			echo ""
+			echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"
+			echo ""
+			sleep 5
+		fi
 	fi
 	echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
 	echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
