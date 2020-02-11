@@ -133,7 +133,7 @@ nightly:deploy:
     - ./gen-upload.sh all
     # runner must have ssh key that are added to download server. on download server there is a user "stephan" who owns the download directories
     # add the runners public key to user stephan authorized_keys file
-    - rsync -avz --info=all1 --delete -EH --progress final_output/*/* stephan@download.lxc:/var/www/files/nightly/
+    - rsync -avz --info=all1 --delete -EH --progress final_output/*/* stephan@download.lxc:/var/www/files/$FF_UPLOAD_DIR/
     - rm -rf final_output
 # artifacts are not needed (waste of disk storage), because they are uploaded to download server
 #  artifacts:
