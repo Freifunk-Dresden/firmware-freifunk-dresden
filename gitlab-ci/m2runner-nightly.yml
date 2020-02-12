@@ -21,6 +21,7 @@ nightly:init:
   # every night. so just only delete workdirs to always have a clean build
     - test "$FF_GITLAB_REMOVE_DL" = "1" && rm -rf ~/mycache/dl/*
     - test "$FF_GITLAB_REMOVE_WORKDIR" = "1" && rm -rf ~/mycache/workdir/*
+    - /bin/true
   tags:
   - m2runner
 
