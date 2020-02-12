@@ -179,7 +179,7 @@ build:sunxi:
 
 # just to check also generation of final_output directory.
 # e.g.: check missing firmware infos
-build:finish:
+build:gen-upload-test:
   except:
     - schedules
   image: openwrt-docker-build:latest
