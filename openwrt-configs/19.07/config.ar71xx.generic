@@ -518,7 +518,7 @@ CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wdr4300-v1=y
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wdr4900-v2 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wdr6500-v2 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wpa8630-v1 is not set
-# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043n-v5 is not set
+CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043n-v5=y
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v2 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v3 is not set

@@ -32,6 +32,20 @@
 #  tags:
 #  - docker
 
+build:init:
+  except:
+    - schedules
+  image: openwrt-docker-build:latest
+  stage: init 
+  script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
+    - [ "$FF_GITLAB_REMOVE_DL" = "1" ] && rm -rf ~/mycache/dl/*
+    - [ "$FF_GITLAB_REMOVE_WORKDIR" = "1" ] && rm -rf ~/mycache/workdir/*
+  tags:
+    - docker
 
 build:ar71xx.tiny:
   except:

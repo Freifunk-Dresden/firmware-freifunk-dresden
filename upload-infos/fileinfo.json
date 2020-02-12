@@ -4,6 +4,8 @@
  "fileinfo": [
 { "name":"", "filename":"openwrt-ar71xx-generic-archer-c5-v1-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"archer-c5", "model2":"TP-Link Archer C5 v1", "filename":"openwrt-ar71xx-generic-archer-c5-v1-squashfs-sysupgrade.bin", "comment":"getestet"},
+{ "name":"", "filename":"openwrt-ar71xx-generic-archer-c60-v1-squashfs-factory.bin", "comment":"new file"},
+{ "name":"", "autoupdate":"0", "model":"archer-c60-v1", "model2":"TP-LINK Archer C60 v1", "filename":"openwrt-ar71xx-generic-archer-c60-v1-squashfs-sysupgrade.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ar71xx-generic-archer-c60-v2-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"archer-c60-v2", "model2":"TP-LINK Archer C60 v2", "filename":"openwrt-ar71xx-generic-archer-c60-v2-squashfs-sysupgrade.bin", "comment":"getested"},
 { "name":"", "filename":"openwrt-ar71xx-generic-archer-c7-v2-squashfs-factory.bin", "comment":""},
@@ -33,6 +35,8 @@
 { "name":"", "autoupdate":"1", "model":"tl-wdr4300", "model2":"TP-Link TL-WDR4300 v1", "filename":"openwrt-ar71xx-generic-tl-wdr4300-v1-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-generic-tl-wdr7500-v3-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"", "model2":"", "filename":"openwrt-ar71xx-generic-tl-wdr7500-v3-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "filename":"openwrt-ar71xx-generic-tl-wr1043n-v5-squashfs-factory.bin", "comment":"new file"},
+{ "name":"", "autoupdate":"0", "model":"tl-wr1043nd-v5", "model2":"TP-Link TL-WR1043N v5", "filename":"openwrt-ar71xx-generic-tl-wr1043n-v5-squashfs-sysupgrade.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ar71xx-generic-ubnt-rocket-m-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"rocket-m", "model2":"Ubiquiti Rocket M", "filename":"openwrt-ar71xx-generic-ubnt-rocket-m-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"0", "model":"rocket-m", "model2":"Ubiquiti Rocket M2", "filename":"openwrt-ar71xx-generic-ubnt-rocket-m-squashfs-sysupgrade.bin", "comment":""},
