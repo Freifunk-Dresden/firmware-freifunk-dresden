@@ -123,6 +123,15 @@ nightly:sunxi:
   tags:
   - m2runner
 
+nightly:test:
+  only:
+    - schedules
+  stage: test
+  script:
+    - true
+  tags:
+  - m2runner
+
 nightly:deploy-upload:
   only:
     - schedules
