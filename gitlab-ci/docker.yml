@@ -32,7 +32,7 @@
 #  tags:
 #  - docker
 
-init:
+docker:init:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -48,7 +48,7 @@ init:
   tags:
     - docker
 
-ar71xx.tiny:
+docker:ar71xx.tiny:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -63,7 +63,7 @@ ar71xx.tiny:
   - docker
 
 
-ar71xx.generic:
+docker:ar71xx.generic:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -78,7 +78,7 @@ ar71xx.generic:
   - docker
 
 
-x86:
+docker:x86:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -92,7 +92,7 @@ x86:
   tags:
   - docker
 
-x64:
+docker:x64:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -107,7 +107,7 @@ x64:
   - docker
 
 
-ramips:
+docker:ramips:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -122,7 +122,7 @@ ramips:
   - docker
 
 
-lantiq:
+docker:lantiq:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -136,7 +136,7 @@ lantiq:
   tags:
   - docker
 
-ath79:
+docker:ath79:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -150,7 +150,7 @@ ath79:
   tags:
   - docker
 
-ipq40xx:
+docker:ipq40xx:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -164,7 +164,7 @@ ipq40xx:
   tags:
   - docker
 
-sunxi:
+docker:sunxi:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -180,7 +180,7 @@ sunxi:
 
 # just to check also generation of final_output directory.
 # e.g.: check missing firmware infos
-gen-upload-test:
+docker:gen-upload-test:
   except:
     - schedules
   image: openwrt-docker-build:latest
