@@ -133,7 +133,7 @@ nightly:test:
   tags:
   - m2runner
 
-nightly:deploy-upload:
+nightly:upload:
   only:
     - schedules
   stage: deploy
