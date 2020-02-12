@@ -19,8 +19,8 @@ nightly:init:
   # dont delete dl, it is not so important to have different old version for
   # one packges, but it will reduce download overhead from external servers
   # every night. so just only delete workdirs to always have a clean build
-    - [ "$FF_GITLAB_REMOVE_DL" = "1" ] && rm -rf ~/mycache/dl/*
-    - [ "$FF_GITLAB_REMOVE_WORKDIR" = "1" ] && rm -rf ~/mycache/workdir/*
+    - test "$FF_GITLAB_REMOVE_DL" = "1" && rm -rf ~/mycache/dl/*
+    - test "$FF_GITLAB_REMOVE_WORKDIR" = "1" && rm -rf ~/mycache/workdir/*
   tags:
   - m2runner
 
