@@ -32,7 +32,7 @@
 #  tags:
 #  - docker
 
-build:init:
+init:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -48,7 +48,7 @@ build:init:
   tags:
     - docker
 
-build:ar71xx.tiny:
+ar71xx.tiny:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -63,7 +63,7 @@ build:ar71xx.tiny:
   - docker
 
 
-build:ar71xx.generic:
+ar71xx.generic:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -78,7 +78,7 @@ build:ar71xx.generic:
   - docker
 
 
-build:x86:
+x86:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -92,7 +92,7 @@ build:x86:
   tags:
   - docker
 
-build:x64:
+x64:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -107,7 +107,7 @@ build:x64:
   - docker
 
 
-build:ramips:
+ramips:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -122,7 +122,7 @@ build:ramips:
   - docker
 
 
-build:lantiq:
+lantiq:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -136,7 +136,7 @@ build:lantiq:
   tags:
   - docker
 
-build:ath79:
+ath79:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -150,7 +150,7 @@ build:ath79:
   tags:
   - docker
 
-build:ipq40xx:
+ipq40xx:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -164,7 +164,7 @@ build:ipq40xx:
   tags:
   - docker
 
-build:sunxi:
+sunxi:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -184,7 +184,7 @@ gen-upload-test:
   except:
     - schedules
   image: openwrt-docker-build:latest
-  stage: deploy 
+  stage: test 
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
