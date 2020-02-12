@@ -128,7 +128,7 @@ nightly:test:
     - schedules
   stage: test
   script:
-    - true
+    - echo "dummy"
   tags:
   - m2runner
 
