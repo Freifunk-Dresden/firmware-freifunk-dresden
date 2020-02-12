@@ -5,7 +5,7 @@
 #  - ln -s ~/mycache/dl
 #  - ln -s ~/mycache/workdir
 
-nightly:init:
+m2:init:
   only:
     - schedules
   stage: init       # special state, run before all other stages
@@ -25,7 +25,7 @@ nightly:init:
   tags:
   - m2runner
 
-nightly:ar71xx.tiny:
+m2:ar71xx.tiny:
   only:
     - schedules
   stage: build
@@ -36,7 +36,7 @@ nightly:ar71xx.tiny:
   tags:
   - m2runner
 
-nightly:ar71xx.generic:
+m2:ar71xx.generic:
   only:
     - schedules
   stage: build
@@ -47,7 +47,7 @@ nightly:ar71xx.generic:
   tags:
   - m2runner
 
-nightly:x86.generic:
+m2:x86.generic:
   only:
     - schedules
   stage: build
@@ -58,7 +58,7 @@ nightly:x86.generic:
   tags:
   - m2runner
 
-nightly:x64.generic:
+m2:x64.generic:
   only:
     - schedules
   stage: build
@@ -69,7 +69,7 @@ nightly:x64.generic:
   tags:
   - m2runner
 
-nightly:ramips:
+m2:ramips:
   only:
     - schedules
   stage: build
@@ -80,7 +80,7 @@ nightly:ramips:
   tags:
   - m2runner
 
-nightly:ipq40xx:
+m2:ipq40xx:
   only:
     - schedules
   stage: build
@@ -91,7 +91,7 @@ nightly:ipq40xx:
   tags:
   - m2runner
 
-nightly:lantiq:
+m2:lantiq:
   only:
     - schedules
   stage: build
@@ -102,7 +102,7 @@ nightly:lantiq:
   tags:
   - m2runner
 
-nightly:ath79:
+m2:ath79:
   only:
     - schedules
   stage: build
@@ -113,7 +113,7 @@ nightly:ath79:
   tags:
   - m2runner
 
-nightly:sunxi:
+m2:sunxi:
   only:
     - schedules
   stage: build
@@ -124,7 +124,7 @@ nightly:sunxi:
   tags:
   - m2runner
 
-nightly:test:
+m2:test:
   only:
     - schedules
   stage: test
@@ -133,7 +133,7 @@ nightly:test:
   tags:
   - m2runner
 
-nightly:deploy-upload:
+m2:upload:
   only:
     - schedules
   stage: deploy

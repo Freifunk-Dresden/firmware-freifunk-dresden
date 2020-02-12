@@ -32,7 +32,7 @@
 #  tags:
 #  - docker
 
-build:init:
+docker:init:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -48,7 +48,7 @@ build:init:
   tags:
     - docker
 
-build:ar71xx.tiny:
+docker:ar71xx.tiny:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -63,7 +63,7 @@ build:ar71xx.tiny:
   - docker
 
 
-build:ar71xx.generic:
+docker:ar71xx.generic:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -78,7 +78,7 @@ build:ar71xx.generic:
   - docker
 
 
-build:x86:
+docker:x86:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -92,7 +92,7 @@ build:x86:
   tags:
   - docker
 
-build:x64:
+docker:x64:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -107,7 +107,7 @@ build:x64:
   - docker
 
 
-build:ramips:
+docker:ramips:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -122,7 +122,7 @@ build:ramips:
   - docker
 
 
-build:lantiq:
+docker:lantiq:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -136,7 +136,7 @@ build:lantiq:
   tags:
   - docker
 
-build:ath79:
+docker:ath79:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -150,7 +150,7 @@ build:ath79:
   tags:
   - docker
 
-build:ipq40xx:
+docker:ipq40xx:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -164,7 +164,7 @@ build:ipq40xx:
   tags:
   - docker
 
-build:sunxi:
+docker:sunxi:
   except:
     - schedules
   image: openwrt-docker-build:latest
@@ -180,7 +180,7 @@ build:sunxi:
 
 # just to check also generation of final_output directory.
 # e.g.: check missing firmware infos
-build:gen-upload-test:
+docker:gen-upload-test:
   except:
     - schedules
   image: openwrt-docker-build:latest
