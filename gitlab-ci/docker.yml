@@ -184,7 +184,7 @@ gen-upload-test:
   except:
     - schedules
   image: openwrt-docker-build:latest
-  stage: test 
+  stage: deploy 
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
