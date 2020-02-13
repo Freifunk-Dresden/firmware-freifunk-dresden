@@ -25,7 +25,7 @@
 { "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-ar71xx-generic-cpe210-v3-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"fritz4020", "model2":"AVM FRITZ!Box 4020", "filename":"openwrt-ar71xx-generic-fritz4020-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"gl-ar150", "model2":"GL AR150", "filename":"openwrt-ar71xx-generic-gl-ar150-squashfs-sysupgrade.bin", "comment":""},
-{ "name":"", "autoupdate":"1", "model":"gl-ar300m", "model2":"GL-AR300M", "filename":"openwrt-ar71xx-generic-gl-ar300m-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"1", "model":"gl-ar300m", "model2":"GL.iNet GL-AR300M", "filename":"openwrt-ar71xx-generic-gl-ar300m-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"", "model2":"", "filename":"openwrt-ar71xx-generic-gl-ar300-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"gl-mifi", "model2":"GL.iNet GL-MIFI", "filename":"openwrt-ar71xx-generic-gl-mifi-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-ar71xx-generic-jt-or750i-squashfs-sysupgrade.bin", "comment":""},
