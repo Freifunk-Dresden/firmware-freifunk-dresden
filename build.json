@@ -147,6 +147,12 @@
                 "subtarget":"mt76x8",
                 "variant":"generic"
 	},
+	{
+		"name":"ramips.lantiq.xrx200",
+		"target":"lantiq",
+		"subtarget":"xrx200",
+		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
+	},
         {       # created for Orange Pi R1
                 "name":"sunxi.cortexa7.generic",
                 "target":"sunxi",
@@ -163,12 +169,6 @@
 #		"target":"ramips",
 #		"subtarget":"rt305x"
 #	},
-	{
-		"name":"ramips.lantiq.xrx200",
-		"target":"lantiq",
-		"subtarget":"xrx200",
-		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
-	},
 	{	# created for fritzbox 4040
 		"name":"ipq40xx.generic",
 		"target":"ipq40xx",
