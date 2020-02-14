@@ -142,10 +142,10 @@
 		"variant":"ubiquiti-edgerouter-x"	# specific target (overwrites previous generic only for this device)
 	},
         {
-                "name":"ramips.mt76x8.r6120", #config.ramips.mt76x8.r6120
+                "name":"ramips.mt76x8.generic",
                 "target":"ramips",
                 "subtarget":"mt76x8",
-                "variant":"r6120"
+                "variant":"generic"
 	},
         {       # created for Orange Pi R1
                 "name":"sunxi.cortexa7.generic",
