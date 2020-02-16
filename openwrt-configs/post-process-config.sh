@@ -17,22 +17,17 @@ cat <<EOM
 #
 # Steps to create config:
 # 1. ensure that there is no configuration for new platform in openwrt-config/
-# 2. call "build.sh openwrt menuconfig"
+# 2. add new config to build.json
+# 2. call "build.sh <new-target> menuconfig"
 # 3. select three main platform configurations (Target System, Subtarget, Target Profile)
 #    e.g.:
 	Target System:	Atheros AR7xxxx/AR9xxx
 	Subtarget:	Devices with small flash (this is new since Openwrt 18
 						  which per default creates only >= 8Mbyte flaesh devices)
-	Target Profile:	Default Profile (all drivers)
+	Target Profile:	Multiple Profile
+	Devices:	select devices
 #
-# 4. save config to correct new config file with secific filename
-#    Filename is parsed by build.sh.
-#      The format is:
-#        config.<platform>.<subplatform>
-#      or
-#        config.<platform>.<subplatform>.<device>
-#    look at directory structure at https://downloads.openwrt.org/releases/18.06.1/targets/
-#
+# 4. save config to ".config" as sugested (build.sh will copy it with correct name depending on build.json)
 # 5. run this script (post-process-config.sh)
 # 6. call "build.sh openwrt menuconfig"
 # 7. optional select ddmesh-wifi package for images with wifi support
