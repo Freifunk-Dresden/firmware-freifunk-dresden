@@ -47,6 +47,17 @@ m2:ar71xx.generic:
   tags:
   - m2runner
 
+m2:ar71xx.nand:
+  only:
+    - schedules
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ar71xx.nand.* rerun -j8
+  tags:
+  - m2runner
+
 m2:x86.generic:
   only:
     - schedules
