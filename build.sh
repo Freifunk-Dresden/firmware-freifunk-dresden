@@ -322,7 +322,9 @@ setup_buildroot ()
 			for i in $openwrt_patches_dir/*
 			do
 				echo "apply openwrt patch: $i to buildroot:$buildroot"
-				patch --directory=$buildroot -p1 < $i
+				# --no-backup-if-mismatch avoids creating backup files for files
+				# with different names or if not exist (new files)
+				patch --no-backup-if-mismatch --directory=$buildroot -p1 < $i
 			done
 		fi
 	else
