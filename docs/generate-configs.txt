@@ -1,0 +1,8 @@
+/bin/config_generate 
+ -> /bin/board_detect 
+    for (call /etc/board.d/*) 
+    { 01_leds: call /lib/functions/uci-defaults.sh::board_config_update() -> write board ids -> /etc/board.json
+               call /lib/functions/uci-defaults.sh::ucidef_....() -> update /etc/board
+
+ json_load /etc/board.json
+ -> /etc/network
