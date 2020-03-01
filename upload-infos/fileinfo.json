@@ -2,8 +2,6 @@
  "comment":"input file to generate final download.json via gen-upload.sh",
  "json_version":"1",
  "fileinfo": [
-{ "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-ar71xx-nand-r6100-squashfs-sysupgrade.tar", "comment":"new file"},
-{ "name":"", "filename":"openwrt-ar71xx-nand-r6100-ubi-factory.img", "comment":"new file"},
 { "name":"", "filename":"openwrt-ar71xx-generic-archer-c5-v1-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"archer-c5", "model2":"TP-Link Archer C5 v1", "filename":"openwrt-ar71xx-generic-archer-c5-v1-squashfs-sysupgrade.bin", "comment":"getestet"},
 { "name":"", "filename":"openwrt-ar71xx-generic-archer-c60-v1-squashfs-factory.bin", "comment":"new file"},
@@ -58,6 +56,8 @@
 { "name":"", "filename":"openwrt-ar71xx-generic-wnr2200-squashfs-factory.img", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-generic-wnr2200-squashfs-factory-NA.img", "comment":""},
 { "name":"", "autoupdate":"1", "model":"wnr2200", "model2":"NETGEAR WNR2200", "filename":"openwrt-ar71xx-generic-wnr2200-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-ar71xx-nand-r6100-squashfs-sysupgrade.tar", "comment":"new file"},
+{ "name":"", "filename":"openwrt-ar71xx-nand-r6100-ubi-factory.img", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-comfast_cf-e110n-v2-initramfs-kernel.bin", "comment":""},
 { "name":"", "autoupdate":"", "model":"", "model2":"", "filename":"openwrt-ath79-generic-comfast_cf-e110n-v2-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ath79-generic-tplink_tl-wr2543-v1-initramfs-kernel.bin", "comment":"new file"},
