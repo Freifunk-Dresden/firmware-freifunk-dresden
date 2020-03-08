@@ -49,8 +49,7 @@ function checkinput () {
 <input name="form_splash_action" value="disable" type="hidden">
 <table>
 <tr><td colspan="2">
-Der Splash-Screen kann komplett abgeschaltet werden. Damit k&ouml;nnen Nutzer sich ohne Einblendung einer Vorschaltseite mit dem Freifunk-WLAN verbinden.<br/>
-Diese Einstellung ist nicht empfohlen, da der Splash-Screen den User &uuml;ber Freifunk und seine Nutzungsbedingungen informiert.
+Der Splash-Screen kann komplett abgeschaltet werden. Damit k&ouml;nnen sich Nutzer ohne Einblendung einer Vorschaltseite, welche Informationen zu Freifunk bereitstellt und auf seine Nutzungsbedingungen hinweist, mit dem Freifunk-WLAN verbinden.
 </td></tr>
 <tr><td>Splash-Screen abschalten:<input name="form_disable_check" type="checkbox" value="1" $([ "$(uci get ddmesh.system.disable_splash)" = "1" ] && echo "checked")>
 <input name="form_disable_submit" type="submit" value="Anwenden"></td>
