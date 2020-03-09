@@ -75,12 +75,14 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 
 	_primary_major		= 200
 	_nonprimary_major	= 201
+	_wireguard_major	= 203
 	_middle			= int(node / 255) % 256
 	_minor			= (node % 255) + 1
 	_meshnet		= "10"
 
 	nodeip		= _meshnet "." _primary_major "." _middle "." _minor
 	nonprimary_ip	= _meshnet "." _nonprimary_major "." _middle "." _minor
+	wireguard_ip	= _meshnet "." _wireguard_major "." _middle "." _minor
 	meshpre		= 16
 	meshnetwork	= _meshnet "." _primary_major ".0.0"
 	meshnetmask	= "255.255.0.0"
@@ -113,6 +115,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	print "export _ddmesh_hostname=\"r"node"\""
 	print "export _ddmesh_ip=\""nodeip"\""
 	print "export _ddmesh_nonprimary_ip=\""nonprimary_ip"\""
+	print "export _ddmesh_wireguard_ip=\""wireguard_ip"\""
 	print "export _ddmesh_network=\""meshnetwork"\""
 	print "export _ddmesh_netpre=\""meshpre"\""
 	print "export _ddmesh_netmask=\""meshnetmask"\""

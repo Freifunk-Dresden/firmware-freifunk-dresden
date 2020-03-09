@@ -170,6 +170,13 @@
                 "target":"ath79",
                 "subtarget":"generic"
         },
+	{
+		"name":"ath79.tiny.wireguard.lowmem",
+		"target":"ath79",
+		"subtarget":"tiny",
+		"variant":"wireguard",
+		"openwrt_variant":"lowmem"
+	},
 #	{
 #		"name":"ramips.rt305x.generic",
 #		"target":"ramips",

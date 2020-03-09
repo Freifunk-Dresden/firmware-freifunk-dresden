@@ -7,6 +7,7 @@ FASTD_CONF=$CONF_DIR/backbone-fastd.conf
 CONF_PEERS=backbone-peers
 PID_FILE=/var/run/backbone-fastd.pid
 LOGGER_TAG="fastd-backbone"
+WG_PATH="$(which wg)"
 
 DEFAULT_PORT=$(uci get ddmesh.backbone.default_server_port)
 backbone_server_port=$(uci get ddmesh.backbone.server_port)
@@ -23,6 +24,13 @@ genkey()
 	}
 	uci -q set credentials.backbone_secret.key="$(fastd --machine-readable --generate-key)"
 	uci_commit.sh
+}
+
+genwgkey()
+{
+	WG_PRIV=$(wg genkey)                                                                                                                                                                       
+        uci set credentials.wireguard.key="$WG_PRIV"                                                                                                                                               
+        uci_commit.sh
 }
 
 generate_fastd_conf()
@@ -61,6 +69,13 @@ on disestablish sync "/etc/fastd/backbone-cmd.sh disestablish";
 #on verify sync "/etc/fastd/backbone-cmd.sh verify";
 
 EOM
+}
+
+start_wg ()
+{
+COUNT=$(uci show ddmesh | grep backbone_client | grep wireguard | wc -l)
+if (COUNT gt 0)
+fi
 }
 
 callback_accept_config ()
@@ -137,6 +152,10 @@ case "$1" in
  	config_foreach callback_outgoing_config backbone_client
 
 	fastd --config $FASTD_CONF --pid-file $PID_FILE --daemon
+
+	if [ -f "$WG_PATH" ];then
+		start_wg
+	fi
 	;;
 
   stop)
@@ -157,6 +176,10 @@ case "$1" in
 	genkey
 	generate_fastd_conf
 	;;
+
+  gen_wgsecret_key)
+        genwgkey
+        ;; 
 
   get_public_key)
 	fastd --machine-readable --show-key --config $FASTD_CONF

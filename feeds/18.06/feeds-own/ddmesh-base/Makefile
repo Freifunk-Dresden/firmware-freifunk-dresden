@@ -15,8 +15,7 @@ define Package/$(PKG_NAME)-base
   DEPENDS:=	+kmod-ledtrig-timer +kmod-tun +libmbedtls +libustream-mbedtls \
 		+uhttpd \
 		+bmxd +freifunk-upload \
-		+fastd +@FASTD_ENABLE_METHOD_NULL +@FASTD_ENABLE_CIPHER_NULL +@FASTD_ENABLE_CIPHER_SALSA2012 \
-		+libuecc +nacl +ddns-scripts +ddns-scripts_no-ip_com \
+		+ddns-scripts +ddns-scripts_no-ip_com \
 		+iptables \
 		+px5g-mbedtls \
 		+iperf3
@@ -44,7 +43,14 @@ define Package/$(PKG_NAME)-base/config
 			depends on PACKAGE_ddmesh-base
 			tristate "fastd"
 			help
-				required by firmware
+				need for backbone connections.
+
+		config PACKAGE_wireguard
+			# menu point is displayed when dependings are set
+			depends on PACKAGE_ddmesh-base
+			tristate "wireguard"
+			help
+				need for backbone connections.
 
 		# use SYMBOL of package that should be selected
 		config PACKAGE_bmxd
@@ -94,7 +100,7 @@ define Package/$(PKG_NAME)-wifi
 	# only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
 	# This simply just selects wpa-cli without hiding current packet
   DEPENDS:= $(PKG_NAME)-base \
-		+iw +iwinfo +wpad-basic +@PACKAGE_wpa-cli
+		+iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
 endef
