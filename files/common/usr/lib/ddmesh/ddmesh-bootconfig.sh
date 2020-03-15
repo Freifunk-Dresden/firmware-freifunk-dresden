@@ -235,8 +235,10 @@ setup_wireless()
 {
  # wireless, regenerate config in case wifi usb stick plugged into different usb port
  # wifi config
- rm /etc/config/wireless
- wifi config
+ if [ ! -f "/etc/config/wireless" ]; then
+	wifi config
+	uci commit
+ fi
 
  #ensure we have valid country,with supportet channel and txpower
  test -z "$(uci -q get ddmesh.network.wifi_country)" && uci set ddmesh.network.wifi_country="DE"
@@ -296,82 +298,78 @@ setup_wireless()
 
  # - wifi2 - 2G
  iface=$((iface + 1))
- #check if NO usb stick is used. most sticks do not support AP beside Adhoc
- if [ -z "$(uci -q get wireless.radio2g.path | grep '/usb')" ]; then
 
-	if [ "$(uci -q get ddmesh.network.custom_essid)" = "1" ]; then
-		custom="$(uci -q get ddmesh.network.essid_ap)"
-		if [ -n "$(echo "$custom" | sed 's#^ *$##')" ]; then
- 			essid2="$(uci -q get ddmesh.system.community):$(uci get ddmesh.network.essid_ap)"
- 			essid5="$(uci -q get ddmesh.system.community) 5GHz:$(uci get ddmesh.network.essid_ap)"
-		else
- 			essid2="$(uci -q get ddmesh.system.community)"
- 			essid5="$(uci -q get ddmesh.system.community) 5GHz"
-		fi
+ if [ "$(uci -q get ddmesh.network.custom_essid)" = "1" ]; then
+	custom="$(uci -q get ddmesh.network.essid_ap)"
+	if [ -n "$(echo "$custom" | sed 's#^ *$##')" ]; then
+		essid2="$(uci -q get ddmesh.system.community):$(uci get ddmesh.network.essid_ap)"
+		essid5="$(uci -q get ddmesh.system.community) 5GHz:$(uci get ddmesh.network.essid_ap)"
 	else
- 		essid2="$(uci -q get ddmesh.system.community) [$_ddmesh_node]"
- 		essid5="$(uci -q get ddmesh.system.community) 5GHz [$_ddmesh_node]"
+		essid2="$(uci -q get ddmesh.system.community)"
+		essid5="$(uci -q get ddmesh.system.community) 5GHz"
 	fi
+ else
+	essid2="$(uci -q get ddmesh.system.community) [$_ddmesh_node]"
+	essid5="$(uci -q get ddmesh.system.community) 5GHz [$_ddmesh_node]"
+ fi
 
-	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
-	uci set wireless.@wifi-iface[$iface].device='radio2g'
+ test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
+ uci set wireless.@wifi-iface[$iface].device='radio2g'
+ uci set wireless.@wifi-iface[$iface].network='wifi2'
+ uci set wireless.@wifi-iface[$iface].mode='ap'
+ uci set wireless.@wifi-iface[$iface].encryption='none'
+ isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
+ isolate="${isolate:-1}" #default isolate
+ uci set wireless.@wifi-iface[$iface].isolate="$isolate"
+ uci set wireless.@wifi-iface[$iface].ssid="${essid2:0:32}"
+ test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
+ #uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
+ #uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
+ #uci set wireless.@wifi-iface[$iface].ieee80211w='1'
+
+ # - wifi2 - 5G
+ iface=$((iface + 1))
+
+ # add 5GHz
+ if [ -n "$wifi_status_radio5g_up" ]; then
+	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
+	uci set wireless.@wifi-iface[$iface].device='radio5g'
 	uci set wireless.@wifi-iface[$iface].network='wifi2'
 	uci set wireless.@wifi-iface[$iface].mode='ap'
 	uci set wireless.@wifi-iface[$iface].encryption='none'
 	isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
 	isolate="${isolate:-1}" #default isolate
 	uci set wireless.@wifi-iface[$iface].isolate="$isolate"
- 	uci set wireless.@wifi-iface[$iface].ssid="${essid2:0:32}"
- 	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
+	uci set wireless.@wifi-iface[$iface].ssid="${essid5:0:32}"
 	#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
 	#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
 	#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
-
-	# - wifi2 - 5G
 	iface=$((iface + 1))
-
-	# add 5GHz
-	if [ -n "$wifi_status_radio5g_up" ]; then
-		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
-		uci set wireless.@wifi-iface[$iface].device='radio5g'
-		uci set wireless.@wifi-iface[$iface].network='wifi2'
-		uci set wireless.@wifi-iface[$iface].mode='ap'
-		uci set wireless.@wifi-iface[$iface].encryption='none'
-		isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
-		isolate="${isolate:-1}" #default isolate
-		uci set wireless.@wifi-iface[$iface].isolate="$isolate"
- 		uci set wireless.@wifi-iface[$iface].ssid="${essid5:0:32}"
-		#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
-		#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
-		#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
-		iface=$((iface + 1))
-	fi
-
-	# - wifi3 - add encrypted access point
-	 if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" -a -n "$(uci -q get credentials.wifi.private_ssid)" -a -n "$(uci -q get credentials.wifi.private_key)" ]; then
-		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
-		uci set wireless.@wifi-iface[$iface].device='radio2g'
-		uci set wireless.@wifi-iface[$iface].network="$(uci -q get ddmesh.network.wifi3_network)"
-		uci set wireless.@wifi-iface[$iface].mode='ap'
-		if [ "$(uci -q get ddmesh.network.wifi3_security)" = "1" ]; then
-			uci set wireless.@wifi-iface[$iface].encryption='psk2'
-			uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.wifi.private_key)"
-		else
-			uci set wireless.@wifi-iface[$iface].encryption='none'
-		fi
-		uci set wireless.@wifi-iface[$iface].isolate='0'
-		ssid="$(uci -q get credentials.wifi.private_ssid)"
-		uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
-		#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
-		#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
-		#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
-		iface=$((iface + 1))
-	fi
  fi
 
- # only wireless should be commited. if overlay-md5sum changes we have
- # an error
- uci_commit.sh
+ # - wifi3 - add encrypted access point
+ if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" -a -n "$(uci -q get credentials.wifi.private_ssid)" -a -n "$(uci -q get credentials.wifi.private_key)" ]; then
+	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
+	uci set wireless.@wifi-iface[$iface].device='radio2g'
+	uci set wireless.@wifi-iface[$iface].network="$(uci -q get ddmesh.network.wifi3_network)"
+	uci set wireless.@wifi-iface[$iface].mode='ap'
+	if [ "$(uci -q get ddmesh.network.wifi3_security)" = "1" ]; then
+		uci set wireless.@wifi-iface[$iface].encryption='psk2'
+		uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.wifi.private_key)"
+	else
+		uci set wireless.@wifi-iface[$iface].encryption='none'
+	fi
+
+	uci set wireless.@wifi-iface[$iface].isolate='0'
+	ssid="$(uci -q get credentials.wifi.private_ssid)"
+	uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
+	#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
+	#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
+	#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
+	iface=$((iface + 1))
+ fi
+
+ uci commit
 }
 
 #############################################################################
@@ -692,8 +690,6 @@ config_temp_configs() {
 	# result: options are stored uncontrolled at wrong locations.
 	# -> NEVER use this option
 
-	#setup_wireless
-
 	cat<<EOM >/var/etc/dnsmasq.hosts
 127.0.0.1 localhost
 $_ddmesh_wifi2ip hotspot
@@ -857,6 +853,12 @@ wait_for_wifi()
 		c=$((c+1))
 	done
 }
+
+# for debugging
+if [ "$1" = "wifi" ]; then
+	setup_wireless
+	exit 0
+fi
 
 #boot_step is empty for new devices
 boot_step="$(uci get ddmesh.boot.boot_step)"
