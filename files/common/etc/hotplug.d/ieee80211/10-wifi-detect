@@ -1,2 +1,7 @@
-# freifunk
-# disable hotplug, it runs asynchroniously to freifunk wifi setup
+#!/bin/sh
+
+[ "${ACTION}" = "add" ] && {
+	logger -s -t "hotplug:" "ieee80211 ADD"
+	/usr/lib/ddmesh/ddmesh-hotplug-wifi.sh
+}
+ 
