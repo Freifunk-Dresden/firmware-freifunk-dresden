@@ -30,12 +30,10 @@ do
 		radio2g_up=1
 		radio2g_phy=$phy
 		radio2g_config_index=$idx
-	else
-		if [ "$freq5" = "5" ]; then
-			radio5g_up=1
-			radio5g_phy=$phy
-			radio5g_config_index=$idx
-		fi
+	elif [ "$freq5" = "5" ]; then
+		radio5g_up=1
+		radio5g_phy=$phy
+		radio5g_config_index=$idx
 	fi
 
 done
