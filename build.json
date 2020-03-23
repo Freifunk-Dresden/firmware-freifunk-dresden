@@ -36,7 +36,7 @@
 #		"openwrt_rev":"d3e11e8ad85b9a51027174d5207e1e43a8c8fe94", # 19.07 Sat Nov 9 20:10:58 2019
 #		"openwrt_rev":"d2d12346e8e6dd5fbb6befd4f9e3e1d5304a2e31", # 19.07 Mon Nov 25 16:53:59 2019 
 #		"openwrt_rev":"7ab5dc77b223fd71e07ac5b8eb2f32852e804db9", # 19.07 Mon Dec 2019 
-		"openwrt_rev":"c56ed72d2bc6dbee3ff82b4bd42e1768f1a2c737", # 19.07 Thu Feb 27 22:34:09 2020 
+#		"openwrt_rev":"c56ed72d2bc6dbee3ff82b4bd42e1768f1a2c737", # 19.07 Thu Feb 27 22:34:09 2020 
 		"openwrt_rev":"74a8e36975a7148b4a901b849facbb6fa309ea97", # 19.07 Wed Mar 11 11:27:59 2020
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
