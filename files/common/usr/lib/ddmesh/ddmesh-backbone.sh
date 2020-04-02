@@ -2,16 +2,18 @@
 
 . /lib/functions.sh
 
-CONF_DIR=/var/etc/fastd
-FASTD_CONF=$CONF_DIR/backbone-fastd.conf
-CONF_PEERS=backbone-peers
-PID_FILE=/var/run/backbone-fastd.pid
-LOGGER_TAG="fastd-backbone"
-WG_PATH="$(which wg)"
+WG_BIN=$(which wg)
 
-DEFAULT_PORT=$(uci get ddmesh.backbone.default_server_port)
+FASTD_CONF_DIR=/var/etc/fastd
+FASTD_CONF=$FASTD_CONF_DIR/backbone-fastd.conf
+FASTD_BIN=$(which fastd)
+FASTD_LOGGER_TAG="fastd-backbone"
+FASTD_PID_FILE=/var/run/backbone-fastd.pid
+FASTD_CONF_PEERS=backbone-peers
+
+FASTD_DEFAULT_PORT=$(uci get ddmesh.backbone.default_server_port)
 backbone_server_port=$(uci get ddmesh.backbone.server_port)
-backbone_server_port=${backbone_server_port:-$DEFAULT_PORT}
+backbone_server_port=${backbone_server_port:-$FASTD_DEFAULT_PORT}
 MTU=$(uci get ddmesh.network.mesh_mtu)
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_fastd)
@@ -28,9 +30,9 @@ genkey()
 
 genwgkey()
 {
-	WG_PRIV=$(wg genkey)                                                                                                                                                                       
-        uci set credentials.wireguard.key="$WG_PRIV"                                                                                                                                               
-        uci_commit.sh
+	WG_PRIV=$(wg genkey)
+	uci set credentials.wireguard.key="$WG_PRIV"
+	uci_commit.sh
 }
 
 generate_fastd_conf()
@@ -40,7 +42,7 @@ generate_fastd_conf()
 
  secret="$(uci -q get credentials.backbone_secret.key)"
  if [ -z "$secret" ]; then
-	logger -t $LOGGER_TAG "no secret key - generating..."
+	logger -t $FASTD_LOGGER_TAG "no secret key - generating..."
 	genkey
 	secret="$(uci -q get credentials.backbone_secret.key)"
  fi
@@ -57,7 +59,7 @@ bind any:$backbone_server_port;
 secret "$secret";
 mtu $MTU;
 packet mark 0x5002;
-include peers from "$CONF_PEERS";
+include peers from "$FASTD_CONF_PEERS";
 forward no;
 on up sync "/etc/fastd/backbone-cmd.sh up";
 on down sync "/etc/fastd/backbone-cmd.sh down";
@@ -71,13 +73,6 @@ on disestablish sync "/etc/fastd/backbone-cmd.sh disestablish";
 EOM
 }
 
-start_wg ()
-{
-COUNT=$(uci show ddmesh | grep backbone_client | grep wireguard | wc -l)
-if (COUNT gt 0)
-fi
-}
-
 callback_accept_config ()
 {
 	local config="$1"
@@ -89,12 +84,11 @@ callback_accept_config ()
 
 	if [ -n "$key" -a -n "$comment" ]; then
 		#echo "[$key:$comment]"
-		FILE=$CONF_DIR/$CONF_PEERS/accept_$key.conf
+		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/accept_$key.conf
 		echo "# $comment" > $FILE
 		echo "key \"$key\";" >> $FILE
 	fi
 }
-
 
 callback_outgoing_config ()
 {
@@ -102,14 +96,26 @@ callback_outgoing_config ()
 	local host  #hostname or ip
 	local port
 	local key
+	local type
+	local node
+	local privkey=$(/sbin/uci get credentials.wireguard.key)
+	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+	local localwgip=$_ddmesh_wireguard_ip
 
 	config_get host "$config" host
 	config_get port "$config" port
 	config_get key "$config" public_key
+	config_get type "$config" type
+	config_get node "$config" node
 
-	if [ -n "$host" -a -n "$port" -a -n "$key" -a -n "$key" ]; then
+	if [ ! -z $node ]; then
+	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+	local remotewgip=$_ddmesh_wireguard_ip
+	fi
+
+	if [ -n "$host" -a -n "$port" -a -n "$key" -a -n "$key" ] && [ "$type" != "wireguard" ]; then
 		#echo "[$host:$port:$key]"
-		FILE=$CONF_DIR/$CONF_PEERS/"connect_"$host"_"$port".conf"
+		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/"connect_"$host"_"$port".conf"
 		echo "key \"$key\";" > $FILE
 		echo "remote ipv4 \"$host\":$port;" >> $FILE
 
@@ -119,50 +125,72 @@ callback_outgoing_config ()
 		iptables -A output_backbone_accept -p udp --dport $port -j ACCEPT
 		iptables -A output_backbone_reject -p udp --dport $port -j reject
 	fi
+
+	if [ "$type" == "wireguard" ];then 
+		INT_WG=tbb_wg_$node		#WG Interface
+		INT_WGTAP=tbb_wg_tap_$node	#TAP Interface
+		L_WG_IP=$(echo "$localwgip/16")		#local wg interface with netmask
+		R_WG_IP=$(echo "$remotewgip/32")	#remote wg interface, one ip only
+		# Add WG Interface
+		ip link add dev $INT_WG type wireguard
+		ip addr add $L_WG_IP dev $INT_WG
+		wg set $INT_WG private-key $privkey
+		wg set $INT_WG peer $key persistent-keepalive 25 allowed-ips $R_WG_IP endpoint $host:$port
+		ip link set $INT_WG up
+		# TAP Interface via WG
+		ip link add $INT_WGTAP type gretap remote $remotewgip local $localwgip
+		ip link set $INT_WGTAP up
+		# Insert GRETAP interface
+		bmxd -c dev=$INT_WGTAP /linklayer 1
+	fi
 }
 
 case "$1" in
 
  start)
-	echo "Starting backbone..."
-
-	mkdir -p $CONF_DIR
-	mkdir -p $CONF_DIR/$CONF_PEERS
-
-	rm -f $FAST_CONF
-	rm -f $CONF_DIR/$CONF_PEERS/*
-
-	generate_fastd_conf
-
 	iptables -F input_backbone_accept
 	iptables -F input_backbone_reject
 
-	# accept clients
- 	config_load ddmesh
- 	config_foreach callback_accept_config backbone_accept
+	# FastD Backbone
+	if [ -f $FASTD_BIN ]; then
+		echo "Starting fastd backbone ..."
+		mkdir -p $FASTD_CONF_DIR
+		mkdir -p $FASTD_CONF_DIR/$FASTD_CONF_PEERS
 
-	iptables -A input_backbone_accept -p udp --dport $backbone_server_port -j ACCEPT
-  	iptables -A input_backbone_reject -p udp --dport $backbone_server_port -j reject
+		rm -f $FASTD_CONF
+		rm -f $FASTD_CONF_DIR/$FASTD_CONF_PEERS/*
 
-	# outgoing
-	iptables -F output_backbone_accept
-	iptables -F output_backbone_reject
+		generate_fastd_conf
+	fi
+		# accept fastd and wg clients
+ 		config_load ddmesh
+ 		config_foreach callback_accept_config backbone_accept
 
- 	config_load ddmesh
- 	config_foreach callback_outgoing_config backbone_client
+		iptables -A input_backbone_accept -p udp --dport $backbone_server_port -j ACCEPT
+  		iptables -A input_backbone_reject -p udp --dport $backbone_server_port -j reject
 
-	fastd --config $FASTD_CONF --pid-file $PID_FILE --daemon
+		# outgoing
+		iptables -F output_backbone_accept
+		iptables -F output_backbone_reject
 
-	if [ -f "$WG_PATH" ];then
-		start_wg
+ 		config_load ddmesh
+ 		config_foreach callback_outgoing_config backbone_client
+
+	if [ -f $FASTD_BIN ]; then
+		fastd --config $FASTD_CONF --pid-file $FASTD_PID_FILE --daemon
 	fi
 	;;
 
   stop)
-	echo "Stopping backbone network..."
-	if [ -f $PID_FILE ]; then
-		kill $(cat $PID_FILE)
-		rm -f $PID_FILE
+	if [ -f $FASTD_BIN ]; then
+		echo "Stopping backbone network..."
+		if [ -f $FASTD_PID_FILE ]; then
+			kill $(cat $FASTD_PID_FILE)
+			rm -f $FASTD_PID_FILE
+		fi
+	fi
+	if [ -f $WG_BIN ]; then
+		ifconfig | grep tbb_wg | cut -f1 -d' ' | xargs -n 1 ip link del
 	fi
 	;;
 
@@ -173,23 +201,31 @@ case "$1" in
   	;;
 
   gen_secret_key)
-	genkey
-	generate_fastd_conf
+	if [ -f $FASTD_BIN ]; then
+		genkey
+		generate_fastd_conf
+	fi
 	;;
 
   gen_wgsecret_key)
-        genwgkey
+	if [ -f $WG_BIN ]; then
+	        genwgkey
+	fi
         ;; 
 
   get_public_key)
-	fastd --machine-readable --show-key --config $FASTD_CONF
+	if [ -f $FASTD_BIN ]; then
+		fastd --machine-readable --show-key --config $FASTD_CONF
+	fi
 	;;
 
   runcheck)
-	present="$(grep $FASTD_CONF /proc/$(cat $PID_FILE)/cmdline 2>/dev/null)"
-	if [ -z "$present" ]; then
-		logger -t $LOGGER_TAG "fastd not running -> restarting"
-		$0 start
+	if [ -f $FASTD_BIN ]; then
+		present="$(grep $FASTD_CONF /proc/$(cat $FASTD_PID_FILE)/cmdline 2>/dev/null)"
+		if [ -z "$present" ]; then
+			logger -t $FASTD_LOGGER_TAG "fastd not running -> restarting"
+			$0 start
+		fi
 	fi
 	;;
 
