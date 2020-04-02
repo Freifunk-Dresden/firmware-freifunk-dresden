@@ -101,7 +101,7 @@ callback_outgoing_config ()
 	local privkey=$(/sbin/uci get credentials.wireguard.key)
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 	local localwgip=$_ddmesh_wireguard_ip
-
+	local localwgtapip=$_ddmesh_nonprimary_ip
 	config_get host "$config" host
 	config_get port "$config" port
 	config_get key "$config" public_key
@@ -127,18 +127,21 @@ callback_outgoing_config ()
 	fi
 
 	if [ "$type" == "wireguard" ];then 
+		ip rule add to 10.203.0.0/16 lookup main prio 330
 		INT_WG=tbb_wg_$node		#WG Interface
 		INT_WGTAP=tbb_wg_tap_$node	#TAP Interface
 		L_WG_IP=$(echo "$localwgip/16")		#local wg interface with netmask
 		R_WG_IP=$(echo "$remotewgip/32")	#remote wg interface, one ip only
+		echo $privkey >/tmp/wg.pki
 		# Add WG Interface
 		ip link add dev $INT_WG type wireguard
 		ip addr add $L_WG_IP dev $INT_WG
-		wg set $INT_WG private-key $privkey
+		wg set $INT_WG private-key /tmp/wg.pki; rm /tmp/wg.pki
 		wg set $INT_WG peer $key persistent-keepalive 25 allowed-ips $R_WG_IP endpoint $host:$port
 		ip link set $INT_WG up
 		# TAP Interface via WG
 		ip link add $INT_WGTAP type gretap remote $remotewgip local $localwgip
+		ip addr add $localwgtapip broadcast 10.255.255.255 dev $INT_WGTAP
 		ip link set $INT_WGTAP up
 		# Insert GRETAP interface
 		bmxd -c dev=$INT_WGTAP /linklayer 1
