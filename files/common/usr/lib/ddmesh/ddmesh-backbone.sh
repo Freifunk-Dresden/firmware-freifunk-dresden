@@ -101,7 +101,7 @@ callback_outgoing_config ()
 	local privkey=$(/sbin/uci get credentials.wireguard.key)
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 	local localwgip=$_ddmesh_wireguard_ip
-	local localwgtapip=$_ddmesh_nonprimary_ip
+	local localwgtapip=$(echo "$_ddmesh_nonprimary_ip/16")
 	config_get host "$config" host
 	config_get port "$config" port
 	config_get key "$config" public_key
