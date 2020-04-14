@@ -56,10 +56,12 @@ EOM
 print_communities() {
 #$1 - community entry
 #$2 - current community
+	display="$1"
+	[ "$1" = 'Freifunk OL' ] && display='Freifunk Oberlausitz'
 	if [ "$1" = "$2" ]; then
-		echo " <option selected value=\"$1\">$1</option>"
+		echo " <option selected value=\"$1\">$display</option>"
 	else
-		echo " <option value=\"$1\">$1</option>"
+		echo " <option value=\"$1\">$display</option>"
 	fi
 }
 config_load ddmesh

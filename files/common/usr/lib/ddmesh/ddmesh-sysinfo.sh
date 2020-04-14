@@ -38,6 +38,12 @@ else
 	autoupdate=0
 fi
 
+if [ "$(uci get ddmesh.system.community)" = 'Freifunk OL' ]; then
+	ddmesh_community='Oberlausitz'
+else
+	ddmesh_community="$(uci get ddmesh.system.community | awk '{print $2}')"
+fi
+
 case "$(uci -q get ddmesh.system.node_type)" in
 	node)	node_type="node" ;;
 	mobile)	node_type="mobile" ;;
@@ -66,6 +72,7 @@ model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 
 # first search system type. if not use model name. exit after first cpu core
 cpu_info="$(cat /proc/cpuinfo | awk '/system type|model name/{gsub(/^.*:[ ]*/,"");print $0;exit}')"
+
 
 cat << EOM >> $OUTPUT
 {
@@ -110,13 +117,13 @@ $(cat /var/resolv.conf.final| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserve
 			"autoupdate":$autoupdate,
 			"available_flash_size":"$avail_flash_size",
 			"bmxd_restart_counter":0,
-			"overlay_md5sum": $(/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh -json) 
+			"overlay_md5sum": $(/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh -json)
 		},
 		"opkg":{
 $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 		},
 		"common":{
-			"city":"$(uci get ddmesh.system.community | awk '{print $2}')",
+			"city":"$ddmesh_community",
 			"node":"$_ddmesh_node",
 			"domain":"$_ddmesh_domain",
 			"ip":"$_ddmesh_ip",
@@ -190,7 +197,7 @@ cat /proc/net/arp | awk '
 			if( up > (86400*14)) s[10]=seen
 			if( up > (86400*30)) s[11]=seen
 			if( up > (86400*90)) s[12]=seen
-			
+
 			# s1 expired 1min
 			if( d > 60) s[1]=expired
 			# s2 expired 5min
@@ -213,7 +220,7 @@ cat /proc/net/arp | awk '
 			if( d > (86400*30)) s[10]=expired
 			# s11 expired 3m
 			if( d > (86400*90)) s[11]=expired
-	
+
 			# s12 counts unlimited time
 
 			# write back statfile
@@ -227,14 +234,13 @@ cat /proc/net/arp | awk '
 				if(match(s[i],seen))
 					count[i]++
 			}
-			
 		}
 		close(statfile)
 
 		# output json
 		printf("\"clients\" : [");
 		for(i=1;i<=12;i++)
-		{ 
+		{
 			if(i>1) printf(",");
 			printf("%d", count[i])
 		}
@@ -257,7 +263,7 @@ EOM
 
 			# firewall_rule_name:sysinfo_key_name
 			NETWORKS="lan:lan wan:wan wifi:adhoc wifi2:ap vpn:ovpn bat:gwt privnet:privnet tbb_fastd:tbb_fastd mesh_lan:mesh_lan mesh_wan:mesh_wan"
-			for net in $NETWORKS 
+			for net in $NETWORKS
 			do
 				first=${net%:*}
 				second=${net#*:}
