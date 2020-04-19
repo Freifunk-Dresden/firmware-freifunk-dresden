@@ -39,9 +39,9 @@
 
 <h2> Freifunk Dresden - Firmware </h2>
 
-<div id="gitlab">
-<a href="https://gitlab.freifunk-dresden.de/firmware-developer/firmware/pipelines"><img alt="pipeline status" src="https://gitlab.freifunk-dresden.de/firmware-developer/firmware/badges/master/pipeline.svg" /></a>
-<a href="https://gitlab.freifunk-dresden.de/firmware-developer/firmware/commits/master"><img alt="coverage report" src="https://gitlab.freifunk-dresden.de/firmware-developer/firmware/badges/master/coverage.svg" /></a>
+<div>
+	<div id="pipeline"> </div>
+	<div id="coverage"> </div>
 </div>
 <div id="version"></div>
 <div id="build_date"></div>
@@ -95,6 +95,11 @@ my.query(function() {
 
   my.query('#version').html("<b>Software Version</b>: " + data.firmware_version);
   my.query('#build_date').html("<b>Software Version</b>: " + data.firmware_date);
+
+  my.query('#pipeline').html("<a href=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/pipelines\"><img alt=\"pipeline status\" src=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/badges/" + data.firmware_branch + "/pipeline.svg\" /></a>");
+
+  my.query('#coverage').html("<a href=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/commits/master\"><img alt=\"coverage report\" src=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/badges/" + data.firmware_branch + "/coverage.svg\" /></a>");
+
 
 
   // remember Table, to later access it via event function when a link is clicked with
