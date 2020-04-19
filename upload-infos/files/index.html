@@ -98,7 +98,7 @@ my.query(function() {
 
   my.query('#pipeline').html("<a href=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/pipelines\"><img alt=\"pipeline status\" src=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/badges/" + data.firmware_branch + "/pipeline.svg\" /></a>");
 
-  my.query('#coverage').html("<a href=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/commits/master\"><img alt=\"coverage report\" src=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/badges/" + data.firmware_branch + "/coverage.svg\" /></a>");
+  my.query('#coverage').html("<a href=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/commits/"+ data.firmware_branch +"\"><img alt=\"coverage report\" src=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/badges/" + data.firmware_branch + "/coverage.svg\" /></a>");
 
 
 
