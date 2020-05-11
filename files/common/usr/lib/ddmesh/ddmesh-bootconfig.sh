@@ -137,12 +137,12 @@ config backbone 'backbone'
 #	option	comment			''
 
 config backbone_client
-	option 	host			'vpn2.freifunk-dresden.de'
+	option 	host			'vpn3.freifunk-dresden.de'
 	option 	port			'5002'
 	option	public_key 		''
 
 config backbone_client
-	option 	host			'vpn3.freifunk-dresden.de'
+	option 	host			'vpn4.freifunk-dresden.de'
 	option 	port			'5002'
 	option	public_key 		''
 
