@@ -135,6 +135,17 @@ m2:sunxi:
   tags:
   - m2runner
 
+m2:mpc85xx:
+  only:
+    - schedules
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh mpc85xx.* rerun -j8
+  tags:
+  - m2runner
+
 m2:test:
   only:
     - schedules
