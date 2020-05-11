@@ -1,5 +1,7 @@
 #!/bin/ash
 
+[ -z "$1" ] && exit 1
+
 . /lib/functions.sh
 
 #firewall rules that can not be created
@@ -189,22 +191,58 @@ setup_statistic_rules() {
 }
 
 callback_add_ignored_nodes() {
+	local entry=$1
+	IFS=':'
+	set $entry
+	unset IFS
+	local node=$1
+	local opt_lan=$2
+	local opt_tbb=$3
+	local opt_wifi=$4
+
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $1)
-	$IPT -A input_ignore_nodes -s $_ddmesh_nonprimary_ip -j DROP
+	if [ "$opt_lan" = "1" ]; then
+		$IPT -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP
+	fi
+	if [ "$opt_tbb" = "1" ]; then
+		$IPT -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP
+	fi
+	if [ "$opt_wifi" = "1" ]; then
+		$IPT -A input_ignore_nodes_wifi -s $_ddmesh_nonprimary_ip -j DROP
+	fi
 }
 
 setup_ignored_nodes() {
 	logger -s -t $TAG "setup_ignored_nodes"
-	if [ -n "$wifi_ifname" ]; then
-		#add rules to deny some nodes to prefer backbone connections
-		$IPT -N input_ignore_nodes
-		$IPT -I input_mesh_rule -i $wifi_ifname -j input_ignore_nodes
 
-		config_load ddmesh
-		config_list_foreach ignore_nodes node callback_add_ignored_nodes
+	$IPT -N input_ignore_nodes_wifi
+	$IPT -N input_ignore_nodes_lan
+	$IPT -N input_ignore_nodes_wan
+	$IPT -N input_ignore_nodes_tbb
+
+	#add rules to deny some nodes to prefer backbone connections
+	if [ -n "$wifi_ifname" ]; then
+		$IPT -I input_mesh_rule -i $wifi_ifname -j input_ignore_nodes_wifi
 	fi
+	$IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
+	$IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
+	$IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
+
+
+	config_load ddmesh
+	config_list_foreach ignore_nodes node callback_add_ignored_nodes
 }
 
+update_ignored_nodes() {
+	$IPT -F input_ignore_nodes_wifi
+	$IPT -F input_ignore_nodes_lan
+	$IPT -F input_ignore_nodes_wan
+	$IPT -F input_ignore_nodes_tbb
+
+	config_load ddmesh
+	config_list_foreach ignore_nodes node callback_add_ignored_nodes
+}
 
 _init()
 {
@@ -258,4 +296,8 @@ case "$1" in
 		_update
 		;;
 
+	update_ignore) update_ignored_nodes
+		;;
+
 esac
+
