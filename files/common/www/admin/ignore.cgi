@@ -78,7 +78,7 @@ cat<<EOM
 <br>
 <form name="form_firewall_update" action="ignore.cgi" method="post">
 <input name="form_action" value="firewall_update" type="hidden">
-<input type="submit" value="Aktiviere Konfiguration">
+<input type="submit" value="Aktualisiere Konfiguration">
 </form>
 
 EOM
@@ -99,18 +99,18 @@ if [ -n "$QUERY_STRING" ]; then
 			entry="$node:$form_opt_lan:$form_opt_tbb:$form_opt_wifi"
 			uci add_list ddmesh.ignore_nodes.node="$entry"
 			uci_commit.sh
-			notebox "Knoten <b>$node</b> wurde zur Konfiguration hinzugef&uuml;gt. Bitte Konfiguration aktivieren!"
+			notebox "Knoten <b>$node</b> wurde zur Konfiguration hinzugef&uuml;gt. Bitte Konfiguration aktualisieren!"
 			;;
 		  del)
 			node=$(uhttpd -d $form_node)
 			uci del_list ddmesh.ignore_nodes.node="$node"
 			uci_commit.sh
-			notebox "Knoten <b>$node</b> wurde gel&ouml;scht. Bitte Konfiguration aktivieren!"
+			notebox "Knoten <b>$node</b> wurde gel&ouml;scht. Bitte Konfiguration aktualisieren!"
 			;;
 		  delall)
 			uci delete ddmesh.ignore_nodes.node
 			uci_commit.sh
-			notebox "Alle Knoten wurden gel&ouml;scht. Bitte Konfiguration aktivieren!"
+			notebox "Alle Knoten wurden gel&ouml;scht. Bitte Konfiguration aktualisieren!"
 			;;
 		  firewall_update)
 			/usr/lib/ddmesh/ddmesh-firewall-addons.sh update_ignore
