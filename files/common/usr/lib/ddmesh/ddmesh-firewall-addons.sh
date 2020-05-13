@@ -200,6 +200,11 @@ callback_add_ignored_nodes() {
 	local opt_tbb=$3
 	local opt_wifi=$4
 
+	# if no flag is set, only node is given (old format)
+	# -> enable wifi only
+
+	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi" ] && opt_wifi='1'
+
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $1)
 	if [ "$opt_lan" = "1" ]; then
 		$IPT -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
