@@ -75,6 +75,7 @@ if [ "$1" = "configure" ]; then
 	uci -q add_list dhcp.wifi2.dhcp_option="6,$_ddmesh_wifi2ip$ns1$ns2$ns3"	# dns
 	uci -q add_list dhcp.wifi2.dhcp_option="3,$_ddmesh_wifi2ip"  # default route
 	uci -q add_list dhcp.wifi2.dhcp_option="1,$_ddmesh_wifi2netmask"
+	uci -q add_list dhcp.wifi2.dhcp_option='121,10.200.0.0/16,100.64.0.1' # add ffdd route
 	uci -q add_list dhcp.wifi2.dhcp_option="28,$_ddmesh_wifi2broadcast"
 	uci -q add_list dhcp.wifi2.dhcp_option="12,$_ddmesh_hostname"	# hostname
 	uci -q add_list dhcp.wifi2.dhcp_option="15,$domain"		# domain
