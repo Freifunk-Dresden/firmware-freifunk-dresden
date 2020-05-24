@@ -41,28 +41,29 @@ config system 'system'
 	list	communities	'Freifunk Radebeul'
 	list	communities	'Freifunk Tharandt'
 	list	communities	'Freifunk Waldheim'
-#	option 	node			0
-	option 	tmp_min_node		900
-	option	tmp_max_node		999
-#	option 	register_key		''
-	option	announce_gateway	0
-	option  wanssh                  1
-	option  wanhttp                 1
-	option  wanhttps                1
-	option  wanicmp                 1
-	option  wansetup                1
-	option  meshssh                 1
-	option  meshsetup               1
-	option	disable_splash		1
-	option	firmware_autoupdate     1
+#	option 	node                0
+	option 	tmp_min_node        900
+	option	tmp_max_node        999
+#	option 	register_key        ''
+	option	announce_gateway    0
+	option  wanssh              1
+	option  wanhttp             1
+	option  wanhttps            1
+	option  wanicmp             1
+	option  wansetup            1
+	option  meshssh             1
+	option  meshsetup           1
+	option	disable_splash      1
+	option	firmware_autoupdate 1
 	option	fwupdate_always_allow_testing 0
-	option	email_notification	0
-	option	node_type		'node'
-	list	node_types		'node'
-	list	node_types		'mobile'
-	list	node_types		'server'
-	option	nightly_reboot		0
+	option	email_notification  0
+	option	node_type           'node'
+	list	node_types          'node'
+	list	node_types          'mobile'
+	list	node_types          'server'
+	option	nightly_reboot      0
 	option	ignore_factory_reset_button 0
+	option	mesh_sleep          1
 
 config boot 'boot'
 	option boot_step                0
@@ -600,9 +601,9 @@ EOM
 
 cat <<EOM >/var/etc/config/wshaper
 config 'wshaper' 'settings'
-  option network "$(uci get ddmesh.network.speed_network)"
-  option downlink "$(uci get ddmesh.network.speed_down)"
-  option uplink "$(uci get ddmesh.network.speed_up)"
+	option network "$(uci get ddmesh.network.speed_network)"
+	option downlink "$(uci get ddmesh.network.speed_down)"
+	option uplink "$(uci get ddmesh.network.speed_up)"
 EOM
 
  #setup cron.d
@@ -652,13 +653,13 @@ setup_mesh_on_wire()
  # give user time to change configs via lan/wan IP
  if [ "$mesh_on_lan" = "1" -o "$mesh_on_wan" = "1" ]; then
 
- 	# mesh-on-lan: move phys ethernet to br-mesh_lan/br-mesh_wan
+	# mesh-on-lan: move phys ethernet to br-mesh_lan/br-mesh_wan
 	 lan_phy="$(uci -q get network.lan.ifname)"
 	 wan_phy="$(uci -q get network.wan.ifname)"
 
 	 if [ "$mesh_on_lan" = "1" ]; then
 		# only sleep for lan. no need to wait for mesh-on-wan
-		sleep 300
+		[ ! "$(uci get ddmesh.system.mesh_sleep)" = '1' ] && sleep 300 || sleep 3
 		logger -s -t "$LOGGER_TAG" "activate mesh-on-lan for $lan_phy"
 		# avoid ip conflicts when wan is in same network and gets ip from dhcp server
 		ip link set $lan_ifname down
@@ -744,7 +745,7 @@ case "$boot_step" in
 		node=$(uci get ddmesh.system.node)
 		if [ -z "$node" ]; then
 			logger -t $LOGGER_TAG "ERROR: no node number"
-                else
+		else
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 			logger -t $LOGGER_TAG "run ddmesh upgrade"
@@ -781,7 +782,7 @@ case "$boot_step" in
 		node=$(uci get ddmesh.system.node)
 		if [ -z "$node" ]; then
 			logger -t $LOGGER_TAG "ERROR: no node number"
-                else
+		else
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 			config_temp_configs
