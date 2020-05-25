@@ -192,6 +192,20 @@ docker:sunxi:
   tags:
   - docker
 
+docker:mpc85xx:
+  except:
+    - schedules
+  image: openwrt-docker-build:latest
+  stage: build
+  script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
+    - ./build.sh mpc85xx.* rerun -j8
+  tags:
+  - docker
+
 # just to check also generation of final_output directory.
 # e.g.: check missing firmware infos
 docker:gen-upload-test:

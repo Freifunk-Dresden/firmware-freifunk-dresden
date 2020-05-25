@@ -188,6 +188,11 @@
 		"name":"ipq40xx.generic",
 		"target":"ipq40xx",
 		"subtarget":"generic"
-	}
+	},
+        {
+                "name":"mpc85xx.p1020",
+                "target":"mpc85xx",
+                "subtarget":"p1020"
+        }
  ]
 }
