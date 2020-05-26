@@ -17,7 +17,7 @@ PKG_NAME:=libuecc
 #PKG_MD5SUM:=7f44df5dc69cb8686947562e2a11eea9
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=git://git.universe-factory.net/libuecc
+PKG_SOURCE_URL:=https://git.universe-factory.net/libuecc
 PKG_REV:=7c9a6f6af088d0764e792cf849e553d7f55ff99e
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_REV)

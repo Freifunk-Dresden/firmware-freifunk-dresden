@@ -100,7 +100,8 @@ EOM
 	fi
 
 	if [ -n "$TESTING_FILE_INFO_JSON" ]; then
-		compare_versions "$firmware_testing_version" "$cur_version" && firmware_testing_version_ok=1
+		keep_btn_enabled="$(uci -q get ddmesh.system.fwupdate_always_allow_testing)"
+		compare_versions "$firmware_testing_version" "$cur_version" || [ "$keep_btn_enabled" = "1" ] && firmware_testing_version_ok=1
 	fi
 
 
@@ -113,8 +114,9 @@ cat<<EOM
 	<input name="form_fileinfo_url" value="$firmware_release_url" type="hidden">
 	<input name="form_fileinfo_version" value="$firmware_release_version" type="hidden">
 	<input name="form_fileinfo_md5sum" value="$firmware_release_md5sum" type="hidden">
-	<input $(test -z "$firmware_release_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download der 'latest'-Version ($firmware_release_version)">
+	<input title="$firmware_release_url" $(test -z "$firmware_release_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download der 'latest'-Version ($firmware_release_version)">
 	</form>
+	</td>
 	</tr>
 
 	<tr><td class="nowrap">
@@ -123,8 +125,9 @@ cat<<EOM
 	<input name="form_fileinfo_url" value="$firmware_testing_url" type="hidden">
 	<input name="form_fileinfo_version" value="$firmware_testing_version" type="hidden">
 	<input name="form_fileinfo_md5sum" value="$firmware_testing_md5sum" type="hidden">
-	<input $(test -z "$firmware_testing_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download der 'testing'-Version ($firmware_testing_version)">
+	<input title="$firmware_testing_url" $(test -z "$firmware_testing_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download der 'testing'-Version ($firmware_testing_version)">
 	</form>
+	</td>
 	</tr>
 	<tr><td>(Wenn der direkte Download nicht verf&uuml;gbar ist, konnte der Download-Server nicht erreicht werden. Bitte Seite neu laden.)</td></tr>
 	</table>

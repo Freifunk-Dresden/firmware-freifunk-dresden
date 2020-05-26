@@ -1,3 +1,10 @@
+
+
+2020-00-00 6.0.15 (master)
+--------------------------------------------------
+ignore nodes              - add configuration option to specify link type 
+
+
 2019-12-08 6.0.15 (Release)
 --------------------------------------------------
 autoupdate                - control autoupdate by registrator server

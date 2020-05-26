@@ -75,6 +75,25 @@ SAVED_SYSTEM_PATH=$PATH
 fwversion="$(cat $firmwareroot/files/common/etc/version)"
 fwdate="$(date)"
 
+# when running from gitlab only specific revision is cloned. there are no branch infos.
+# So I check if FF_BUILD_TAG is set and then use this. If not defined I use
+# the one I can determine.
+git_ddmesh_rev="$(git log -1 --format=%H)"
+if [ "$FF_BUILD_TAG" ]; then
+	git_ddmesh_branch="$FF_BUILD_TAG"
+else
+	git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
+
+	if [ "$git_ddmesh_branch" = "undefined" ]; then
+		git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
+	fi
+fi
+echo "git_ddmesh_branch:$git_ddmesh_branch"
+echo "git_ddmesh_rev:$git_ddmesh_rev"
+fw_branch="$git_ddmesh_branch"
+fw_rev="$git_ddmesh_rev"
+
+
 if [ -z "$fwversion" ]; then
 	printf "ERROR: firmware version not detected (invalid path)\n"
 	exit 1
@@ -104,6 +123,8 @@ gen_download_json_start()
   output_path="$1" # output path "firmware/4.2.15"
   fw_version="$2" # firmware version
   fw_date="$3" # build date
+  fw_branch="$4" # ddmesh repository branch or tag
+  fw_rev="$5" # ddmesh git hash 
 
 	printf $C_YELLOW"create download.json"$C_NONE"\n"
 
@@ -113,6 +134,8 @@ gen_download_json_start()
 	printf " \"json_version\":\"1\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"firmware_version\":\"$fw_version\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"firmware_date\":\"$fw_date\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf " \"firmware_branch\":\"$fw_branch\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf " \"firmware_rev\":\"$fw_rev\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"fileinfo\": [\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 
 	# generate new input file
@@ -304,7 +327,7 @@ gen_download_json_end()
 
 
 #p=/tmp
-#gen_download_json_start $p 4.2.15
+#gen_download_json_start $p 4.2.15 master
 #gen_download_json_add_data $p /home/freifunk/upload-firmware/files/4.2.15 ar71xx/generic "*.{bin,trx,img,dlf,gz}"
 #gen_download_json_end $p
 #printf "ok\n"
@@ -331,7 +354,7 @@ printf "$fwversion\n" >$target_dir/version
 #################################################################################################
 # start json
 #################################################################################################
-gen_download_json_start "$target_dir" "$fwversion" "$fwdate"
+gen_download_json_start "$target_dir" "$fwversion" "$fwdate" "$fw_branch" "$fw_rev"
 
 
 #################################################################################################
@@ -392,6 +415,7 @@ do
 #	do
 #		gen_download_json_add_single_link "[$platform]" "$platform" $target_dir
 #	done
+
 
 	for platform in $(ls $_platforms)
 	do

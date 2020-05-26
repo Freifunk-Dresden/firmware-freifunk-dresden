@@ -41,27 +41,29 @@ config system 'system'
 	list	communities	'Freifunk Radebeul'
 	list	communities	'Freifunk Tharandt'
 	list	communities	'Freifunk Waldheim'
-#	option 	node			0
-	option 	tmp_min_node		900
-	option	tmp_max_node		999
-#	option 	register_key		''
-	option	announce_gateway	0
-	option  wanssh                  1
-	option  wanhttp                 1
-	option  wanhttps                1
-	option  wanicmp                 1
-	option  wansetup                1
-	option  meshssh                 1
-	option  meshsetup               1
-	option	disable_splash		1
-	option	firmware_autoupdate     1
-	option	email_notification	0
-	option	node_type		'node'
-	list	node_types		'node'
-	list	node_types		'mobile'
-	list	node_types		'server'
-	option	nightly_reboot		0
+#	option 	node                0
+	option 	tmp_min_node        900
+	option	tmp_max_node        999
+#	option 	register_key        ''
+	option	announce_gateway    0
+	option  wanssh              1
+	option  wanhttp             1
+	option  wanhttps            1
+	option  wanicmp             1
+	option  wansetup            1
+	option  meshssh             1
+	option  meshsetup           1
+	option	disable_splash      1
+	option	firmware_autoupdate 1
+	option	fwupdate_always_allow_testing 0
+	option	email_notification  0
+	option	node_type           'node'
+	list	node_types          'node'
+	list	node_types          'mobile'
+	list	node_types          'server'
+	option	nightly_reboot      0
 	option	ignore_factory_reset_button 0
+	option	mesh_sleep          1
 
 config boot 'boot'
 	option boot_step                0
@@ -136,12 +138,12 @@ config backbone 'backbone'
 #	option	comment			''
 
 config backbone_client
-	option 	host			'vpn2.freifunk-dresden.de'
+	option 	host			'vpn3.freifunk-dresden.de'
 	option 	port			'5002'
 	option	public_key 		''
 
 config backbone_client
-	option 	host			'vpn3.freifunk-dresden.de'
+	option 	host			'vpn4.freifunk-dresden.de'
 	option 	port			'5002'
 	option	public_key 		''
 
@@ -230,149 +232,6 @@ EOM
 	uci set network.lan.ipaddr='192.168.222.1'
 
 } # config_boot_step1
-
-setup_wireless()
-{
- # wireless, regenerate config in case wifi usb stick plugged into different usb port
- # wifi config
- rm /etc/config/wireless
- wifi config
-
- #ensure we have valid country,with supportet channel and txpower
- test -z "$(uci -q get ddmesh.network.wifi_country)" && uci set ddmesh.network.wifi_country="DE"
-
- # --- detect 2/5GHz radios
- eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
- test -n "$wifi_status_radio2g_config_index" && uci -q rename wireless.@wifi-device[$wifi_status_radio2g_config_index]='radio2g'
- test -n "$wifi_status_radio5g_config_index" && uci -q rename wireless.@wifi-device[$wifi_status_radio5g_config_index]='radio5g'
-
- # --- devices ---
- # 2.4Ghz
- uci -q delete wireless.radio2g.disabled
- uci set wireless.radio2g.hwmode=11n
- uci set wireless.radio2g.country="$(uci -q get ddmesh.network.wifi_country)"
- uci set wireless.radio2g.channel="$(uci get ddmesh.network.wifi_channel)"
- uci set wireless.radio2g.txpower="$(uci get ddmesh.network.wifi_txpower)"
- #setup wifi rates
- uci -q delete wireless.radio2g.basic_rate
- uci -q delete wireless.radio2g.supported_rates
- if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" ]; then
-	uci add_list wireless.radio2g.basic_rate='6000 9000 12000 18000 24000 36000 48000 54000'
-	uci add_list wireless.radio2g.supported_rates='6000 9000 12000 18000 24000 36000 48000 54000'
- fi
-
-# wird auf HT20 gesetzt oder bei usbsticks auf nix, wenn kein support da ist.
-# falsche werte sorgen fuer nicht funktionieren von wifi
- #test -z "$(uci -q get ddmesh.network.wifi_htmode)" && uci set ddmesh.network.wifi_htmode="HT20"
- #uci set wireless.radio2g.htmode="$(uci get ddmesh.network.wifi_htmode)"
-
- # 5 GHz
- if [ -n "$wifi_status_radio5g_up" ]; then
- 	uci -q delete wireless.radio5g.disabled
- 	uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
-	uci set wireless.radio5g.channel="$(uci get ddmesh.network.wifi_channel_5g)"
-	uci set wireless.radio5g.txpower="$(uci get ddmesh.network.wifi_txpower_5g)"
- 	uci set wireless.radio5g.legacy_rates="0"
- fi
-
- # --- interfaces ---
- # delete all interfaces if any
- while uci -q delete wireless.@wifi-iface[0]; do true; done
-
- # - wifi -
- iface=0
- test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
-
- uci set wireless.@wifi-iface[$iface].device='radio2g'
- uci set wireless.@wifi-iface[$iface].network='wifi'
- uci set wireless.@wifi-iface[$iface].mode='adhoc'
- uci set wireless.@wifi-iface[$iface].bssid="$(uci -q get credentials.wifi.bssid)"
- uci set wireless.@wifi-iface[$iface].encryption='none'
- test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
-
- essid="$(uci -q get ddmesh.network.essid_adhoc)"
- essid="${essid:-Freifunk-Mesh-Net}"
- uci set wireless.@wifi-iface[$iface].ssid="${essid:0:32}"
-
- # - wifi2 - 2G
- iface=$((iface + 1))
- #check if NO usb stick is used. most sticks do not support AP beside Adhoc
- if [ -z "$(uci -q get wireless.radio2g.path | grep '/usb')" ]; then
-
-	if [ "$(uci -q get ddmesh.network.custom_essid)" = "1" ]; then
-		custom="$(uci -q get ddmesh.network.essid_ap)"
-		if [ -n "$(echo "$custom" | sed 's#^ *$##')" ]; then
- 			essid2="$(uci -q get ddmesh.system.community):$(uci get ddmesh.network.essid_ap)"
- 			essid5="$(uci -q get ddmesh.system.community) 5GHz:$(uci get ddmesh.network.essid_ap)"
-		else
- 			essid2="$(uci -q get ddmesh.system.community)"
- 			essid5="$(uci -q get ddmesh.system.community) 5GHz"
-		fi
-	else
- 		essid2="$(uci -q get ddmesh.system.community) [$_ddmesh_node]"
- 		essid5="$(uci -q get ddmesh.system.community) 5GHz [$_ddmesh_node]"
-	fi
-
-	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
-	uci set wireless.@wifi-iface[$iface].device='radio2g'
-	uci set wireless.@wifi-iface[$iface].network='wifi2'
-	uci set wireless.@wifi-iface[$iface].mode='ap'
-	uci set wireless.@wifi-iface[$iface].encryption='none'
-	isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
-	isolate="${isolate:-1}" #default isolate
-	uci set wireless.@wifi-iface[$iface].isolate="$isolate"
- 	uci set wireless.@wifi-iface[$iface].ssid="${essid2:0:32}"
- 	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
-	#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
-	#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
-	#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
-
-	# - wifi2 - 5G
-	iface=$((iface + 1))
-
-	# add 5GHz
-	if [ -n "$wifi_status_radio5g_up" ]; then
-		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
-		uci set wireless.@wifi-iface[$iface].device='radio5g'
-		uci set wireless.@wifi-iface[$iface].network='wifi2'
-		uci set wireless.@wifi-iface[$iface].mode='ap'
-		uci set wireless.@wifi-iface[$iface].encryption='none'
-		isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
-		isolate="${isolate:-1}" #default isolate
-		uci set wireless.@wifi-iface[$iface].isolate="$isolate"
- 		uci set wireless.@wifi-iface[$iface].ssid="${essid5:0:32}"
-		#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
-		#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
-		#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
-		iface=$((iface + 1))
-	fi
-
-	# - wifi3 - add encrypted access point
-	 if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" -a -n "$(uci -q get credentials.wifi.private_ssid)" -a -n "$(uci -q get credentials.wifi.private_key)" ]; then
-		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
-		uci set wireless.@wifi-iface[$iface].device='radio2g'
-		uci set wireless.@wifi-iface[$iface].network="$(uci -q get ddmesh.network.wifi3_network)"
-		uci set wireless.@wifi-iface[$iface].mode='ap'
-		if [ "$(uci -q get ddmesh.network.wifi3_security)" = "1" ]; then
-			uci set wireless.@wifi-iface[$iface].encryption='psk2'
-			uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.wifi.private_key)"
-		else
-			uci set wireless.@wifi-iface[$iface].encryption='none'
-		fi
-		uci set wireless.@wifi-iface[$iface].isolate='0'
-		ssid="$(uci -q get credentials.wifi.private_ssid)"
-		uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
-		#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
-		#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
-		#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
-		iface=$((iface + 1))
-	fi
- fi
-
- # only wireless should be commited. if overlay-md5sum changes we have
- # an error
- uci_commit.sh
-}
 
 #############################################################################
 # update configuration depending on new ddmesh settings
@@ -530,8 +389,6 @@ done
  uci set network.wifi2.type='bridge'
  uci set network.wifi2.stp=1
  #don't store dns for wifi2 to avoid adding it to resolv.conf
-
- setup_wireless
 
  #############################################################################
  # setup tbb_fastd network assigned to a firewall zone (mesh) for a interface
@@ -692,8 +549,6 @@ config_temp_configs() {
 	# result: options are stored uncontrolled at wrong locations.
 	# -> NEVER use this option
 
-	#setup_wireless
-
 	cat<<EOM >/var/etc/dnsmasq.hosts
 127.0.0.1 localhost
 $_ddmesh_wifi2ip hotspot
@@ -746,9 +601,9 @@ EOM
 
 cat <<EOM >/var/etc/config/wshaper
 config 'wshaper' 'settings'
-  option network "$(uci get ddmesh.network.speed_network)"
-  option downlink "$(uci get ddmesh.network.speed_down)"
-  option uplink "$(uci get ddmesh.network.speed_up)"
+	option network "$(uci get ddmesh.network.speed_network)"
+	option downlink "$(uci get ddmesh.network.speed_down)"
+	option uplink "$(uci get ddmesh.network.speed_up)"
 EOM
 
  #setup cron.d
@@ -798,13 +653,13 @@ setup_mesh_on_wire()
  # give user time to change configs via lan/wan IP
  if [ "$mesh_on_lan" = "1" -o "$mesh_on_wan" = "1" ]; then
 
- 	# mesh-on-lan: move phys ethernet to br-mesh_lan/br-mesh_wan
+	# mesh-on-lan: move phys ethernet to br-mesh_lan/br-mesh_wan
 	 lan_phy="$(uci -q get network.lan.ifname)"
 	 wan_phy="$(uci -q get network.wan.ifname)"
 
 	 if [ "$mesh_on_lan" = "1" ]; then
 		# only sleep for lan. no need to wait for mesh-on-wan
-		sleep 300
+		[ ! "$(uci get ddmesh.system.mesh_sleep)" = '1' ] && sleep 300 || sleep 3
 		logger -s -t "$LOGGER_TAG" "activate mesh-on-lan for $lan_phy"
 		# avoid ip conflicts when wan is in same network and gets ip from dhcp server
 		ip link set $lan_ifname down
@@ -890,7 +745,7 @@ case "$boot_step" in
 		node=$(uci get ddmesh.system.node)
 		if [ -z "$node" ]; then
 			logger -t $LOGGER_TAG "ERROR: no node number"
-                else
+		else
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 			logger -t $LOGGER_TAG "run ddmesh upgrade"
@@ -927,7 +782,7 @@ case "$boot_step" in
 		node=$(uci get ddmesh.system.node)
 		if [ -z "$node" ]; then
 			logger -t $LOGGER_TAG "ERROR: no node number"
-                else
+		else
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 			config_temp_configs

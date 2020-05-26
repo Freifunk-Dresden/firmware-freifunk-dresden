@@ -2015,6 +2015,7 @@ CONFIG_PACKAGE_ddmesh-wifi=y
 #
 # Libraries
 #
+# CONFIG_PACKAGE_libxml2-dev is not set
 # CONFIG_PACKAGE_ar is not set
 # CONFIG_PACKAGE_binutils is not set
 # CONFIG_PACKAGE_gdb is not set
@@ -2765,6 +2766,44 @@ CONFIG_PACKAGE_MAC80211_MESH=y
 # CONFIG_PACKAGE_luac is not set
 
 #
+# Python
+#
+# CONFIG_PACKAGE_python-pip-conf is not set
+# CONFIG_PACKAGE_python3 is not set
+# CONFIG_PACKAGE_python3-asyncio is not set
+# CONFIG_PACKAGE_python3-base is not set
+# CONFIG_PACKAGE_python3-cgi is not set
+# CONFIG_PACKAGE_python3-cgitb is not set
+# CONFIG_PACKAGE_python3-codecs is not set
+# CONFIG_PACKAGE_python3-ctypes is not set
+# CONFIG_PACKAGE_python3-dbm is not set
+# CONFIG_PACKAGE_python3-decimal is not set
+# CONFIG_PACKAGE_python3-dev is not set
+# CONFIG_PACKAGE_python3-distutils is not set
+# CONFIG_PACKAGE_python3-email is not set
+# CONFIG_PACKAGE_python3-gdbm is not set
+# CONFIG_PACKAGE_python3-lib2to3 is not set
+# CONFIG_PACKAGE_python3-light is not set
+
+#
+# Configuration
+#
+# CONFIG_PYTHON3_BLUETOOTH_SUPPORT is not set
+# CONFIG_PACKAGE_python3-logging is not set
+# CONFIG_PACKAGE_python3-lzma is not set
+# CONFIG_PACKAGE_python3-multiprocessing is not set
+# CONFIG_PACKAGE_python3-ncurses is not set
+# CONFIG_PACKAGE_python3-openssl is not set
+# CONFIG_PACKAGE_python3-pip is not set
+# CONFIG_PACKAGE_python3-pkg-resources is not set
+# CONFIG_PACKAGE_python3-pydoc is not set
+# CONFIG_PACKAGE_python3-setuptools is not set
+# CONFIG_PACKAGE_python3-sqlite3 is not set
+# CONFIG_PACKAGE_python3-unittest is not set
+# CONFIG_PACKAGE_python3-urllib is not set
+# CONFIG_PACKAGE_python3-xml is not set
+
+#
 # Libraries
 #
 
@@ -2775,8 +2814,14 @@ CONFIG_PACKAGE_MAC80211_MESH=y
 # CONFIG_PACKAGE_liblzma is not set
 
 #
+# Database
+#
+# CONFIG_PACKAGE_libsqlite3 is not set
+
+#
 # Filesystem
 #
+# CONFIG_PACKAGE_libattr is not set
 # CONFIG_PACKAGE_libfuse is not set
 # CONFIG_PACKAGE_libsysfs is not set
 
@@ -2798,10 +2843,11 @@ CONFIG_PACKAGE_libmbedtls=y
 # CONFIG_PACKAGE_libopenssl is not set
 # CONFIG_PACKAGE_libwolfssl is not set
 # CONFIG_PACKAGE_argp-standalone is not set
+# CONFIG_PACKAGE_bluez-libs is not set
+# CONFIG_PACKAGE_glib2 is not set
 # CONFIG_PACKAGE_icu is not set
 # CONFIG_PACKAGE_icu-data-tools is not set
 # CONFIG_PACKAGE_icu-full-data is not set
-# CONFIG_PACKAGE_jansson is not set
 # CONFIG_PACKAGE_libasm is not set
 # CONFIG_PACKAGE_libbfd is not set
 # CONFIG_PACKAGE_libblkid is not set
@@ -2814,17 +2860,23 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libcurl is not set
 # CONFIG_PACKAGE_libdb47 is not set
 # CONFIG_PACKAGE_libdb47xx is not set
+# CONFIG_PACKAGE_libdbus is not set
 # CONFIG_PACKAGE_libdw is not set
+# CONFIG_PACKAGE_libedit is not set
 # CONFIG_PACKAGE_libelf is not set
 # CONFIG_PACKAGE_libevent2 is not set
 # CONFIG_PACKAGE_libevent2-core is not set
 # CONFIG_PACKAGE_libevent2-extra is not set
 # CONFIG_PACKAGE_libevent2-openssl is not set
 # CONFIG_PACKAGE_libevent2-pthreads is not set
+# CONFIG_PACKAGE_libexpat is not set
 # CONFIG_PACKAGE_libext2fs is not set
 # CONFIG_PACKAGE_libf2fs is not set
 # CONFIG_PACKAGE_libfdisk is not set
+# CONFIG_PACKAGE_libffi is not set
+# CONFIG_PACKAGE_libgdbm is not set
 # CONFIG_PACKAGE_libgmp is not set
+# CONFIG_PACKAGE_libical is not set
 # CONFIG_PACKAGE_libiconv is not set
 # CONFIG_PACKAGE_libiconv-full is not set
 # CONFIG_PACKAGE_libidn2 is not set
@@ -3175,6 +3227,11 @@ CONFIG_PACKAGE_wpad-basic=y
 # CONFIG_PACKAGE_xz-utils is not set
 
 #
+# Database
+#
+# CONFIG_PACKAGE_sqlite3-cli is not set
+
+#
 # Disc
 #
 # CONFIG_PACKAGE_blkdiscard is not set
@@ -3201,6 +3258,7 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 #
 # Filesystem
 #
+# CONFIG_PACKAGE_attr is not set
 # CONFIG_PACKAGE_badblocks is not set
 # CONFIG_PACKAGE_chattr is not set
 # CONFIG_PACKAGE_debugfs is not set
@@ -3232,10 +3290,15 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_setterm is not set
 # CONFIG_PACKAGE_wall is not set
 # CONFIG_PACKAGE_adb is not set
+# CONFIG_PACKAGE_bluez-daemon is not set
+# CONFIG_PACKAGE_bluez-utils is not set
+# CONFIG_PACKAGE_bluez-utils-extra is not set
 # CONFIG_PACKAGE_bsdiff is not set
 # CONFIG_PACKAGE_bspatch is not set
 # CONFIG_PACKAGE_cal is not set
 # CONFIG_PACKAGE_ct-bugcheck is not set
+# CONFIG_PACKAGE_dbus is not set
+# CONFIG_PACKAGE_dbus-utils is not set
 # CONFIG_PACKAGE_dmesg is not set
 # CONFIG_PACKAGE_dropbearconvert is not set
 # CONFIG_PACKAGE_flock is not set
@@ -3250,6 +3313,7 @@ CONFIG_PACKAGE_iwinfo=y
 CONFIG_PACKAGE_jshn=y
 # CONFIG_PACKAGE_kmod is not set
 CONFIG_PACKAGE_libjson-script=y
+# CONFIG_PACKAGE_libxml2-utils is not set
 # CONFIG_PACKAGE_logger is not set
 # CONFIG_PACKAGE_look is not set
 # CONFIG_PACKAGE_losetup is not set

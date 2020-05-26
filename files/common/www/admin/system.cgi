@@ -56,10 +56,12 @@ EOM
 print_communities() {
 #$1 - community entry
 #$2 - current community
+	display="$1"
+	[ "$1" = 'Freifunk OL' ] && display='Freifunk Oberlausitz'
 	if [ "$1" = "$2" ]; then
-		echo " <option selected value=\"$1\">$1</option>"
+		echo " <option selected value=\"$1\">$display</option>"
 	else
-		echo " <option value=\"$1\">$1</option>"
+		echo " <option value=\"$1\">$display</option>"
 	fi
 }
 config_load ddmesh
@@ -148,7 +150,7 @@ cat<<EOM
 <TR>
 <TH>- WAN-Meshing:</TH>
 <TD><INPUT NAME="form_wan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ];then echo ' checked="checked"';fi)></TD>
-<td>Wenn aktiv, wird der WAN-Port zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber die Knoten-IP-Adresse via WAN</b> erreichbar.<br/>WAN-Konfiguration wird deaktiviert. WAN-Meshing wird 5 min nach Routerstart aktiviert.</td>
+<td>Wenn aktiv, wird der WAN-Port zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber die Knoten-IP-Adresse via WAN</b> erreichbar.<br/>WAN-Konfiguration wird deaktiviert.</td>
 </TR>
 
 EOM
@@ -158,7 +160,11 @@ cat<<EOM
 <TR>
 <TH>- LAN-Meshing:</TH>
 <TD><INPUT NAME="form_lan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ];then echo ' checked="checked"';fi)></TD>
-<td>Wenn aktiv, werden alle LAN-Ports zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber Knoten-IP-Adresse via LAN</b> erreichbar.<br/>LAN-Konfiguration und privates Netzwerk werden deaktiviert. LAN-Meshing wird 5 min nach Routerstart aktiviert.</td>
+<td>Wenn aktiv, werden alle LAN-Ports zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber Knoten-IP-Adresse via LAN</b> erreichbar.<br/>LAN-Konfiguration und privates Netzwerk werden deaktiviert. LAN-Meshing wird erst 5 minuten nach Routerstart aktiviert wenn dies im Punkt "LAN-Meshing Wartezeit" nicht explizit deaktiviert wurde.</td>
+</TR>
+<TH>- LAN-Meshing Wartezeit:</TH>
+<TD><INPUT NAME="form_lan_meshing_sleep" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.mesh_sleep)" = "1" ];then echo ' checked="checked"';fi)></TD>
+<td>Wenn aktiv, dann wird LAN-Meshing erst 5 minuten nach Routerstart aktiviert.</td>
 </TR>
 <TR>
 <TH>- Bevorzugtes Gateway (IP):</TH>
@@ -201,6 +207,12 @@ cat<<EOM
 <td>T&auml;glich um 4:00 Uhr wird der Router neu gestartet. Dies l&ouml;st manchmal seltsame Probleme, wenn der Router aus unbekannten Gr&uuml;nden nicht mehr richtig funktioniert.<td>
 </TR>
 
+<TR>
+<TH>- Ignoriere Werkseinstellungs-Button:</TH>
+<TD><INPUT NAME="form_ignore_factory_reset_button" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.ignore_factory_reset_button)" = "1" ];then echo ' checked="checked"';fi)></td>
+<td>Verhindert das Zur&uuml;cksetzen des Routers via Reset-Button<td>
+</TR>
+
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR>
 <TD COLSPAN="3"><INPUT NAME="form_submit" ONCLICK="return validate(systemform);" TITLE="Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." TYPE="SUBMIT" VALUE="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<INPUT NAME="form_abort" TITLE="Abbrechen und &Auml;nderungen verwerfen." TYPE="SUBMIT" VALUE="Abbrechen"></TD>
@@ -229,11 +241,13 @@ else
 		uci set ddmesh.system.announce_gateway=${form_announce_gateway:-0}
 		uci set ddmesh.network.lan_local_internet=${form_lan_local_internet:-0}
 		uci set ddmesh.network.mesh_on_lan=${form_lan_meshing:-0}
+		uci set ddmesh.system.mesh_sleep=${form_lan_meshing_sleep:-0}
 		uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
 		prefgw="$(uhttpd -d $form_lan_preferred_gateway)"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}
 		uci set ddmesh.system.nightly_reboot=${form_nightly_reboot:-0}
+		uci set ddmesh.system.ignore_factory_reset_button=${form_ignore_factory_reset_button:-0}
 		uci set ddmesh.network.internal_dns1="$(uhttpd -d $form_internal_dns1)"
 		uci set ddmesh.network.internal_dns2="$(uhttpd -d $form_internal_dns2)"
 		uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"

@@ -16,19 +16,21 @@ do
 
 	phy=$(ls /sys/devices/$dev_path/ieee80211/)
 
-	unset ch11
-	unset ch36
+	unset freq2 
+	unset freq5
 
 	# check for channel (one radio might support 2.4 and 5GHz)
-	# Use ch 11 which is present for all countries. (nanostation has no 12+13 during boot)
-	ch11="$(iwinfo $phy freqlist | sed -n 's#.*Channel \([0-9]\+\).*#\1#;/^11$/p')"
-	ch36="$(iwinfo $phy freqlist | sed -n 's#.*Channel \([0-9]\+\).*#\1#;/^36$/p')"
+	# prefer 2g
+	freq2="$(iwinfo $phy freqlist | sed -n 's#[ *]*\([0-9]\).*$#\1#;/^2/{1p}')"
+	freq5="$(iwinfo $phy freqlist | sed -n 's#[ *]*\([0-9]\).*$#\1#;/^5/{1p}')"
 
-	if [ -n "$ch11" ]; then
+	#echo "[$freq2:$freq5]"
+
+	if [ "$freq2" = "2" ]; then
 		radio2g_up=1
 		radio2g_phy=$phy
 		radio2g_config_index=$idx
-	else
+	elif [ "$freq5" = "5" ]; then
 		radio5g_up=1
 		radio5g_phy=$phy
 		radio5g_config_index=$idx
