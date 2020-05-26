@@ -18,20 +18,20 @@ MTU=$(uci get ddmesh.network.mesh_mtu)
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_fastd)
 
-genkey()
+gen_fastd_key()
 {
 	test -z "$(uci -q get credentials.backbone_secret)" && {
 		uci -q add credentials backbone_secret
 		uci -q rename credentials.@backbone_secret[-1]='backbone_secret'
 	}
-	uci -q set credentials.backbone_secret.key="$(fastd --machine-readable --generate-key)"
+	uci -q set credentials.backbone_secret.fastd_key="$(fastd --machine-readable --generate-key)"
 	uci_commit.sh
 }
 
-genwgkey()
+gen_wg_key()
 {
 	WG_PRIV=$(wg genkey)
-	uci set credentials.wireguard.key="$WG_PRIV"
+	uci set credentials.backbone_secret.wireguard_key="$WG_PRIV"
 	uci_commit.sh
 }
 
@@ -40,11 +40,11 @@ generate_fastd_conf()
  # sources: https://projects.universe-factory.net/projects/fastd/wiki
  # docs: http://fastd.readthedocs.org/en/v17/
 
- secret="$(uci -q get credentials.backbone_secret.key)"
+ secret="$(uci -q get credentials.backbone_secret.fastd_key)"
  if [ -z "$secret" ]; then
 	logger -t $FASTD_LOGGER_TAG "no secret key - generating..."
-	genkey
-	secret="$(uci -q get credentials.backbone_secret.key)"
+	gen_fastd_key
+	secret="$(uci -q get credentials.backbone_secret.fastd_key)"
  fi
 
  cat << EOM > $FASTD_CONF
@@ -98,10 +98,10 @@ callback_outgoing_config ()
 	local key
 	local type
 	local node
-	local privkey=$(/sbin/uci get credentials.wireguard.key)
+	local privkey=$(/sbin/uci get credentials.backbone_secret.wireguard_key)
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 	local localwgip=$_ddmesh_wireguard_ip
-	local localwgtapip=$(echo "$_ddmesh_nonprimary_ip/16")
+	local localwgtapip=$(echo "$_ddmesh_nonprimary_ip/$_ddmesh_netpre")
 	config_get host "$config" host
 	config_get port "$config" port
 	config_get key "$config" public_key
@@ -126,11 +126,11 @@ callback_outgoing_config ()
 		iptables -A output_backbone_reject -p udp --dport $port -j reject
 	fi
 
-	if [ "$type" == "wireguard" ];then 
-		ip rule add to 10.203.0.0/16 lookup main prio 330
+	if [ "$type" == "wireguard" ];then
+		ip rule add to $_ddmesh_wireguard_network/$_ddmesh_netpre lookup main prio 330
 		INT_WG=tbb_wg_$node		#WG Interface
 		INT_WGTAP=tbb_wg_tap_$node	#TAP Interface
-		L_WG_IP=$(echo "$localwgip/16")		#local wg interface with netmask
+		L_WG_IP=$(echo "$localwgip/$_ddmesh_netpre")		#local wg interface with netmask
 		R_WG_IP=$(echo "$remotewgip/32")	#remote wg interface, one ip only
 		echo $privkey >/tmp/wg.pki
 		# Add WG Interface
@@ -141,7 +141,7 @@ callback_outgoing_config ()
 		ip link set $INT_WG up
 		# TAP Interface via WG
 		ip link add $INT_WGTAP type gretap remote $remotewgip local $localwgip
-		ip addr add $localwgtapip broadcast 10.255.255.255 dev $INT_WGTAP
+		ip addr add $localwgtapip broadcast $_ddmesh_broadcast dev $INT_WGTAP
 		ip link set $INT_WGTAP up
 		# Insert GRETAP interface
 		bmxd -c dev=$INT_WGTAP /linklayer 1
@@ -205,16 +205,16 @@ case "$1" in
 
   gen_secret_key)
 	if [ -f $FASTD_BIN ]; then
-		genkey
+		gen_fastd_key
 		generate_fastd_conf
 	fi
 	;;
 
   gen_wgsecret_key)
 	if [ -f $WG_BIN ]; then
-	        genwgkey
+	        gen_wg_key
 	fi
-        ;; 
+        ;;
 
   get_public_key)
 	if [ -f $FASTD_BIN ]; then

@@ -87,6 +87,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	meshnetwork	= _meshnet "." _primary_major ".0.0"
 	meshnetmask	= "255.255.0.0"
 	meshbroadcast	= "10.255.255.255"
+	wireguard_network = _meshnet "." _wireguard_major ".0.0"
 
 	mesh6pre	= "48"
 	mesh6net	= "fd11:11ae:7466::"
@@ -116,6 +117,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	print "export _ddmesh_ip=\""nodeip"\""
 	print "export _ddmesh_nonprimary_ip=\""nonprimary_ip"\""
 	print "export _ddmesh_wireguard_ip=\""wireguard_ip"\""
+	print "export _ddmesh_wireguard_network=\""wireguard_network"\""
 	print "export _ddmesh_network=\""meshnetwork"\""
 	print "export _ddmesh_netpre=\""meshpre"\""
 	print "export _ddmesh_netmask=\""meshnetmask"\""
