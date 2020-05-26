@@ -391,7 +391,7 @@ done
  #don't store dns for wifi2 to avoid adding it to resolv.conf
 
  #############################################################################
- # setup tbb_fastd network assigned to a firewall zone (mesh) for a interface
+ # setup tbb_fastd/wg network assigned to a firewall zone (mesh) for an interface
  # that is not controlled by openwrt.
  # Bringing up tbb+ failes, but firewall rules are created anyway
  # got this information by testing, because openwrt feature to add non-controlled
@@ -403,6 +403,26 @@ done
  }
  uci set network.tbb_fastd.ifname='tbb_fastd'
  uci set network.tbb_fastd.proto='static'
+
+ # wireguard
+ test -z "$(uci -q get network.tbb_wg)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='tbb_wg'
+ }
+ uci set network.tbb_wg.ifname='tbb_wg'
+ uci set network.tbb_wg.proto='static'
+
+ # gre tunnel via wireguard
+ # uci get ddmesh.backbone.number_of_clients
+ for n in 0 1 2 3 4
+ do
+	test -z "$(uci -q get network.tbb_gre$n)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='tbb_gre$n'
+	}
+	uci set network.tbb_gre$n.ifname='tbb_gre$n'
+	uci set network.tbb_gre$n.proto='static'
+ done
 
  #bmxd bat zone, to a masq rules to firewall
  test -z "$(uci -q get network.bat)" && {
@@ -423,7 +443,7 @@ done
  #######################################################################
  # add other interfaces to system but do not create firewall rules for them.
  # this allows to request all interfaces via ddmesh-utils-network-info.sh
- # Interfaces "priv" and "tbb_fastd" are created by fastd
+ # Interfaces "priv" and "tbb_fastd/tbb_wg" are created by fastd
  #
  #######################################################################
 
