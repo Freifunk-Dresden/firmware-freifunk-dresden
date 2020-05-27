@@ -659,7 +659,7 @@ setup_mesh_on_wire()
 
 	 if [ "$mesh_on_lan" = "1" ]; then
 		# only sleep for lan. no need to wait for mesh-on-wan
-		[ ! "$(uci get ddmesh.system.mesh_sleep)" = '1' ] && sleep 300 || sleep 3
+		[ "$(uci get ddmesh.system.mesh_sleep)" = '1' ] && sleep 300 || sleep 3
 		logger -s -t "$LOGGER_TAG" "activate mesh-on-lan for $lan_phy"
 		# avoid ip conflicts when wan is in same network and gets ip from dhcp server
 		ip link set $lan_ifname down
