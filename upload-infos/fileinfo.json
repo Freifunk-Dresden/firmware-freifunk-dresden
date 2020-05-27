@@ -62,7 +62,7 @@
 { "name":"COMFAST CF-E110N v2", "autoupdate":"1", "model":"comfast_cf-e110n-v2", "model2":"COMFAST CF-E110N v2", "filename":"openwrt-ath79-generic-comfast_cf-e110n-v2-squashfs-sysupgrade.bin", "comment":"getestet"},
 { "name":"", "filename":"openwrt-ath79-generic-tplink_tl-wr2543-v1-initramfs-kernel.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-tplink_tl-wr2543-v1-squashfs-factory.bin", "comment":"new file"},
-{ "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-ath79-generic-tplink_tl-wr2543-v1-squashfs-sysupgrade.bin", "comment":"new file"},
+{ "name":"", "autoupdate":"0", "model":"tplink,tl-wr2543-v1", "model2":"TP-Link TL-WR2543N/ND", "filename":"openwrt-ath79-generic-tplink_tl-wr2543-v1-squashfs-sysupgrade.bin", "comment":"getestet"},
 { "name":"", "filename":"openwrt-ath79-generic-wd_mynet-n750-initramfs-kernel.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-wd_mynet-n750-squashfs-factory.bin", "comment":"new file"},
 { "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-ath79-generic-wd_mynet-n750-squashfs-sysupgrade.bin", "comment":"new file"},
