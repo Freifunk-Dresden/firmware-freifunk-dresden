@@ -454,8 +454,8 @@ do
 			for package in $(cat $info_dir/packages)
 			do
 				printf $C_YELLOW"process package: "$C_GREEN"$package"$C_NONE"\n"
-				filename=$(find $buildroot/bin/targets/$platform/$subplatform/packages/ -name "$package""_*.ipk" -print 2>/dev/null)
-	#			printf "package filename: $filename\n"
+				filename=$(find $buildroot/bin/targets/$platform/$subplatform/packages/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
+				printf "package filename: $filename\n"
 
 				test -z "$filename" && printf $C_ORANGE"WARNING: no package file found for "$C_NONE"$package\n"
 				$ENABLE_COPY && {
