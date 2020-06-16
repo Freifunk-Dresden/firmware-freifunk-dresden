@@ -177,7 +177,7 @@
 		"target":"ath79",
 		"subtarget":"generic",
 		"selector-config":"MASTER",
-		"openwrt_rev":"e3e17b4ed44a7855ff3fe3f6270fd47a3ca70567"
+		"openwrt_rev":"ad84c095028f6ddef95a92e028760cce23d32f6c"
 	},
 #	{
 #		"name":"ramips.rt305x.generic",
