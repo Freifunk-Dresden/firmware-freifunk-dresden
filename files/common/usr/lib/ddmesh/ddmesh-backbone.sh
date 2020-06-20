@@ -226,6 +226,8 @@ case "$1" in
 				ip link set $wg_ifname up
 				rm $secret_file
 
+				ip route add $_ddmesh_wireguard_network/$_ddmesh_netpre dev $wg_ifname src $_ddmesh_wireguard_ip
+
 				# add outgoing clients to wg and bmxd (sollte hier nicht aufgerufen werden)
 				# pass local ip addresses to callback
 				# wg provides tunnels to all peers via one interface.
@@ -249,14 +251,15 @@ case "$1" in
 		fi
 		if [ -f $WG_BIN ]; then
 			# delete all ipip tunnels
-			wg_config_counter=0
-			while [ $wg_config_counter -lt $NUMBER_OF_CLIENTS ]
+			LS=$(which ls)
+			IFS='
+'
+			for i in $($LS -1d  /sys/class/net/$wg_ifname? 2>/dev/null | sed 's#.*/##')
 			do
-				sub_ifname=$wg_ifname$wg_config_counter
-				bmxd -c dev=-$sub_ifname >/dev/null
-				ip link del $sub_ifname 2>/dev/null
-				wg_config_counter=$((wg_config_counter + 1))
+				bmxd -c dev=-$i >/dev/null
+				ip link del $i 2>/dev/null
 			done
+			unset IFS
  
 			ip link del $wg_ifname 2>/dev/null
 		fi
