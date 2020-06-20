@@ -3,6 +3,7 @@
 . /lib/functions.sh
 
 WG_BIN=$(which wg)
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_wg wg)
 
 FASTD_CONF_DIR=/var/etc/fastd
 FASTD_CONF=$FASTD_CONF_DIR/backbone-fastd.conf
@@ -11,10 +12,12 @@ FASTD_LOGGER_TAG="fastd-backbone"
 FASTD_PID_FILE=/var/run/backbone-fastd.pid
 FASTD_CONF_PEERS=backbone-peers
 
-FASTD_DEFAULT_PORT=$(uci get ddmesh.backbone.default_server_port)
+DEFAULT_SERVER_PORT=$(uci get ddmesh.backbone.default_server_port)
 backbone_server_port=$(uci get ddmesh.backbone.server_port)
-backbone_server_port=${backbone_server_port:-$FASTD_DEFAULT_PORT}
+backbone_server_port=${backbone_server_port:-$DEFAULT_SERVER_PORT}
 MTU=$(uci get ddmesh.network.mesh_mtu)
+
+NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
 
 gen_fastd_key()
 {
@@ -39,6 +42,7 @@ generate_fastd_conf()
  # docs: http://fastd.readthedocs.org/en/v17/
  local ifname=$1
 
+ echo "generate fastd config"
  secret="$(uci -q get credentials.backbone_secret.fastd_key)"
  if [ -z "$secret" ]; then
 	logger -t $FASTD_LOGGER_TAG "no secret key - generating..."
@@ -81,9 +85,11 @@ callback_accept_fastd_config ()
 	config_get key "$config" public_key
 	config_get comment "$config" comment
 
+	echo "fastd process accept: $key # $comment"
 	if [ -n "$key" -a -n "$comment" ]; then
-		#echo "[$key:$comment]"
 		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/accept_$key.conf
+		echo "fastd accept peer: [$key:$comment] ($FILE)"
+		
 		echo "# $comment" > $FILE
 		echo "key \"$key\";" >> $FILE
 	fi
@@ -101,19 +107,20 @@ callback_outgoing_fastd_config ()
 	config_get port "$config" port
 	config_get key "$config" public_key
 	config_get type "$config" type
-  [ -z "$type" ] && type="fastd"
+	[ -z "$type" ] && type="fastd"
 
-	if [ "$type" == "fastd" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$key" ]; then
-		#echo "[$host:$port:$key]"
-		FILE=$CONF_DIR/$CONF_PEERS/"connect_"$host"_"$port".conf"
+	echo "fastd process out: cfgtype:$type, host:$host, port:$port, key:$key]"
+	if [ "$type" == "fastd" -a -n "$host" -a -n "$port" -a -n "$key" ]; then
+		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/"connect_"$host"_"$port".conf"
+		echo "fastd out: add peer ($FILE)"
 		echo "key \"$key\";" > $FILE
 		echo "remote ipv4 \"$host\":$port;" >> $FILE
 
 		#dont use hostnames, can not be resolved
-		iptables -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
-		iptables -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
-		iptables -A output_backbone_accept -p udp --dport $port -j ACCEPT
-		iptables -A output_backbone_reject -p udp --dport $port -j reject
+		iptables -w -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
+		iptables -w -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
+		iptables -w -A output_backbone_accept -p udp --dport $port -j ACCEPT
+		iptables -w -A output_backbone_reject -p udp --dport $port -j reject
 	fi
 }
 
@@ -121,7 +128,7 @@ callback_outgoing_wireguard_config ()
 {
 	local config="$1"
 	local local_wg_ip=$2
-  local local_gre_ip=$3
+	local local_sub_ip=$3
 
 	local host  #hostname or ip
 	local port
@@ -135,41 +142,45 @@ callback_outgoing_wireguard_config ()
 	config_get type "$config" type
 	config_get node "$config" node
 
-	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$key" -n "$node"]; then
+	echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
+	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
+		
+		[ $wg_config_counter -ge $NUMBER_OF_CLIENTS ] && return 1
 
+		echo "wg out: add peer ($wg_config_counter)"
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
-
+echo "rip:$remote_wg_ip"
 		#dont use hostnames, can not be resolved
-		iptables -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
-		iptables -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
-		iptables -A output_backbone_accept -p udp --dport $port -j ACCEPT
-		iptables -A output_backbone_reject -p udp --dport $port -j reject
+		iptables -w -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
+		iptables -w -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
+		iptables -w -A output_backbone_accept -p udp --dport $port -j ACCEPT
+		iptables -w -A output_backbone_reject -p udp --dport $port -j reject
 
 		# allow client ip
+echo 		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 
-		# create gre interface
-		gre_ifname="tbb_gre$wg_config_counter"
-		ip link add $gre_ifname type gretap remote $remote_wg_ip local $local_wg_ip
-		ip addr add $local_gre_ip broadcast $_ddmesh_broadcast dev $gre_ifname
-		ip link set $gre_ifname up
+		# create sub interface
+		sub_ifname="$wg_ifname$wg_config_counter"
+		ip link add $sub_ifname type ipip remote $remote_wg_ip local $local_wg_ip
+		ip addr add $local_sub_ip broadcast $_ddmesh_broadcast dev $sub_ifname
+		ip link set $sub_ifname up
 		wg_config_counter=$((wg_config_counter + 1))
 
-		# Insert GRETAP interface
-		bmxd -c dev=$gre_ifname /linklayer 1
+		bmxd -c dev=$sub_ifname /linklayer 1
 	fi
 }
 
 case "$1" in
 
 	start)
-		iptables -F input_backbone_accept
-		iptables -F input_backbone_reject
-		iptables -A input_backbone_accept -p udp --dport $backbone_server_port -j ACCEPT
-		iptables -A input_backbone_reject -p udp --dport $backbone_server_port -j reject
-		iptables -F output_backbone_accept
-		iptables -F output_backbone_reject
+		iptables -w -F input_backbone_accept
+		iptables -w -F input_backbone_reject
+		iptables -w -A input_backbone_accept -p udp --dport $backbone_server_port -j ACCEPT
+		iptables -w -A input_backbone_reject -p udp --dport $backbone_server_port -j reject
+		iptables -w -F output_backbone_accept
+		iptables -w -F output_backbone_reject
 
 		# FastD Backbone
 		if [ -f $FASTD_BIN ]; then
@@ -195,21 +206,36 @@ case "$1" in
 		fi
 
 		if [ -f $WG_BIN ]; then
+			echo "Starting wg backbone ..."
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
-			eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_wg wg)
 
 			# create tbb_wg
-			$(/sbin/uci get credentials.backbone_secret.wireguard_key) > /tmp/wg.pki
-			ip link add dev $wg_ifname type wireguard
-			ip addr add "$_ddmesh_wireguard_ip/$_ddmesh_netpre" dev $wg_ifname
-			wg set $wg_ifname private-key /tmp/wg.pki; rm /tmp/wg.pki
-			ip link set $wg_ifname up
+			secret=$(/sbin/uci -q get credentials.backbone_secret.wireguard_key)
+			if [ -n "$secret" ]; then
+				# setup local wg interface. this is used to receive/transmit data for/from
+				# all peers (hosts)
+				secret_file="/tmp/wg.pki"
+				echo $secret > $secret_file
+				ip link add $wg_ifname type wireguard
+				ip addr add "$_ddmesh_wireguard_ip/32" dev $wg_ifname
+				wg set $wg_ifname private-key $secret_file 
 
-			# add outgoing clients to wg and bmxd (sollte hier nicht aufgerufen werden)
-			# pass local ip addresses to callback
-			wg_config_counter=0 #incremented in callback to create greX interfaces
-			config_load ddmesh
-			config_foreach callback_outgoing_wireguard_config backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
+# in zukunft wird nur fastd oder wg als lokaler server verwendet, beides ist nicht notwendig
+				# wg set $wg_ifname listen-port $backbone_server_port
+
+				ip link set $wg_ifname up
+				rm $secret_file
+
+				# add outgoing clients to wg and bmxd (sollte hier nicht aufgerufen werden)
+				# pass local ip addresses to callback
+				# wg provides tunnels to all peers via one interface.
+				# through this tunnel an ipip tunnel is setup from node to node, because of some
+				# wg restrictions (no broacast possible). ipip tunnel has its own interface for
+				# each peer. this iface is added to bmxd
+				wg_config_counter=0 #incremented in callback to create ipip interfaces
+				config_load ddmesh
+				config_foreach callback_outgoing_wireguard_config backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
+			fi
 		fi
 		;;
 
@@ -222,7 +248,17 @@ case "$1" in
 			fi
 		fi
 		if [ -f $WG_BIN ]; then
-			ifconfig | grep tbb_wg | cut -f1 -d' ' | xargs -n 1 ip link del
+			# delete all ipip tunnels
+			wg_config_counter=0
+			while [ $wg_config_counter -lt $NUMBER_OF_CLIENTS ]
+			do
+				sub_ifname=$wg_ifname$wg_config_counter
+				bmxd -c dev=-$sub_ifname >/dev/null
+				ip link del $sub_ifname 2>/dev/null
+				wg_config_counter=$((wg_config_counter + 1))
+			done
+ 
+			ip link del $wg_ifname 2>/dev/null
 		fi
 		;;
 
