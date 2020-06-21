@@ -128,7 +128,7 @@ callback_outgoing_wireguard_config ()
 {
 	local config="$1"
 	local local_wg_ip=$2
-	local local_sub_ip=$3
+	local local_wgX_ip=$3
 
 	local host  #hostname or ip
 	local port
@@ -145,9 +145,7 @@ callback_outgoing_wireguard_config ()
 	echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
 	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
 		
-		[ $wg_config_counter -ge $NUMBER_OF_CLIENTS ] && return 1
-
-		echo "wg out: add peer ($wg_config_counter)"
+		echo "wg out: add peer ($node)"
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
 echo "rip:$remote_wg_ip"
@@ -162,11 +160,10 @@ echo 		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_w
 		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 
 		# create sub interface
-		sub_ifname="$wg_ifname$wg_config_counter"
-		ip link add $sub_ifname type ipip remote $remote_wg_ip local $local_wg_ip
-		ip addr add $local_sub_ip broadcast $_ddmesh_broadcast dev $sub_ifname
+		sub_ifname="$wg_ifname$node"
+		ip link add $sub_ifname type gretap remote $remote_wg_ip local $local_wg_ip
+		ip addr add $local_wgX_ip broadcast $_ddmesh_broadcast dev $sub_ifname
 		ip link set $sub_ifname up
-		wg_config_counter=$((wg_config_counter + 1))
 
 		bmxd -c dev=$sub_ifname /linklayer 1
 	fi
@@ -234,7 +231,6 @@ case "$1" in
 				# through this tunnel an ipip tunnel is setup from node to node, because of some
 				# wg restrictions (no broacast possible). ipip tunnel has its own interface for
 				# each peer. this iface is added to bmxd
-				wg_config_counter=0 #incremented in callback to create ipip interfaces
 				config_load ddmesh
 				config_foreach callback_outgoing_wireguard_config backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
 			fi
@@ -254,14 +250,12 @@ case "$1" in
 			LS=$(which ls)
 			IFS='
 '
-			for i in $($LS -1d  /sys/class/net/$wg_ifname? 2>/dev/null | sed 's#.*/##')
+			for i in $($LS -1d  /sys/class/net/$wg_ifname* 2>/dev/null | sed 's#.*/##')
 			do
-				bmxd -c dev=-$i >/dev/null
+				[ "$i" != "$wg_ifname" ] && bmxd -c dev=-$i >/dev/null
 				ip link del $i 2>/dev/null
 			done
 			unset IFS
- 
-			ip link del $wg_ifname 2>/dev/null
 		fi
 		;;
 
