@@ -145,10 +145,11 @@ callback_outgoing_wireguard_config ()
 	echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
 	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
 		
-		echo "wg out: add peer ($node)"
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
-echo "rip:$remote_wg_ip"
+
+		echo "wg out: add peer ($node)"
+
 		#dont use hostnames, can not be resolved
 		iptables -w -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
 		iptables -w -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
@@ -156,7 +157,6 @@ echo "rip:$remote_wg_ip"
 		iptables -w -A output_backbone_reject -p udp --dport $port -j reject
 
 		# allow client ip
-echo 		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 
 		# create sub interface

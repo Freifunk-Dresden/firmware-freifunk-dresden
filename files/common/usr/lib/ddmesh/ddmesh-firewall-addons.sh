@@ -230,9 +230,7 @@ setup_ignored_nodes() {
 	$IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
 	$IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
 	[ -n "$wifi_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
-# fastd hat nur ein interface fuer alle clients, bei wg muss ich evt alle n interfaces auflisten
-# oder ne andere loesung finden.
-#	[ -n "$wifi_ifname" ] && $IPT -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
+	[ -n "$wifi_ifname" ] && $IPT -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
 
 
 	config_load ddmesh

@@ -409,20 +409,8 @@ done
  	uci add network interface
  	uci rename network.@interface[-1]='tbb_wg'
  }
- uci set network.tbb_wg.ifname='tbb_wg'
+ uci set network.tbb_wg.ifname='tbb_wg+'
  uci set network.tbb_wg.proto='static'
-
- # gre tunnel via wireguard
- # uci get ddmesh.backbone.number_of_clients
- for n in 0 1 2 3 4
- do
-	test -z "$(uci -q get network.tbb_gre$n)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='tbb_gre$n'
-	}
-	uci set network.tbb_gre$n.ifname='tbb_gre$n'
-	uci set network.tbb_gre$n.proto='static'
- done
 
  #bmxd bat zone, to a masq rules to firewall
  test -z "$(uci -q get network.bat)" && {
