@@ -1,8 +1,4 @@
 #!/bin/bash
-# 
-# server script to manage freifunk wireguard
-#
-# version 1
 
 wg_ifname=tbb_wg
 port=5003
@@ -92,8 +88,10 @@ accept_peer()
 
 remove_peer()
 {
-	peer=$1
-	wg set tbb_wg peer "$peer" remove
+	node=$1
+	key=$2
+	wg set tbb_wg peer "$key" remove
+	rm "$peers_dir/accept_$node"
 }
 
 load_accept_peers()
@@ -110,26 +108,52 @@ case $1 in
 		mkdir -p $peers_dir
 		start_wg
 		load_accept_peers
-	;;
+		;;
 
 	stop)
 		stop_wg
-	;;
+		;;
 
 	reload)
 		load_accept_peers
 		;;
 
 	accept)
+		node=$2
+		key=$3
 		if [ -z "$3" ]; then
 			echo "missing parameters"
 			exit 1
 		fi
-		accept_peer $2 $3 1
+		# check if we have already accepted for this node
+		# It prevents accidential overwriting working configs
+		if [ -f "$peers_dir/accept_$node" ]; then
+			echo "Error: node already accepted"
+			exit 1
+		fi
+		accept_peer $node $key 1
+		;;
 
-	;;
+	delete)
+		node=$2
+		if [ -z "$2" ]; then
+			echo "missing parameters"
+			exit 1
+		fi
+		
+		eval "$(awk '/^node/{printf("node=%s\n",$2)} /^key/{printf("key=%s\n",$2)}' $peers_dir/accept_$node )"
+
+		read -s -p "delete $node [y/N]: " -n 1 -a input && echo ${input[0]}
+		if [ "${input[0]}" = "y" ]; then
+			remove_peer $node $key
+			echo "peer $node deleted"
+		else
+			echo "keep peer $node"
+		fi
+		;;
 
 	*)
-		echo "$(basename $0) [start | stop | reload | accept <node> <pubkey>]"
+		echo "$(basename $0) [start | stop | reload | accept <node> <pubkey> | delete <node> ]"
 		echo ""
+		;;
 esac
