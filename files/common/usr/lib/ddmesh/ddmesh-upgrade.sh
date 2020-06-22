@@ -433,9 +433,12 @@ upgrade_6_0_15()
  uci add_list ddmesh.geoloc.ignore_macs=''
  uci delete credentials.url.opkg
  uci set ddmesh.system.mesh_sleep='1'
- uci rename credentials.backbone_secret.key='fastd_key'
 }
 
+upgrade_6_1_1()
+{
+ uci rename credentials.backbone_secret.key='fastd_key'
+}
 
 ##################################
 
