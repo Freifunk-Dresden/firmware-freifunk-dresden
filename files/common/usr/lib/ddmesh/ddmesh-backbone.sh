@@ -161,7 +161,7 @@ callback_outgoing_wireguard_config ()
 
 		# create sub interface
 		sub_ifname="$wg_ifname$node"
-		ip link add $sub_ifname type gretap remote $remote_wg_ip local $local_wg_ip
+		ip link add $sub_ifname type ipip remote $remote_wg_ip local $local_wg_ip
 		ip addr add $local_wgX_ip broadcast $_ddmesh_broadcast dev $sub_ifname
 		ip link set $sub_ifname up
 
