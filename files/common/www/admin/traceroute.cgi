@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export TITLE="Verwaltung &gt; Tools: Speedtest (iPerf3)"
+export TITLE="Verwaltung &gt; Tools: Traceroute"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 
@@ -26,26 +26,19 @@ if [ -n "$QUERY_STRING" ]; then
 
 #set IFS to any value that is not used as values;else nvram will ignore all after spaces
 	IFS='	'
-	if [ -n "$post_speedtest" ]; then
+	if [ -n "$post_traceroute" ]; then
 
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 		cat<<EOM
 <fieldset class="bubble">
-<legend>Speedtest &ndash; $node ($_ddmesh_ip)</legend>
+<legend>Traceroute &ndash; $node ($_ddmesh_ip)</legend>
 Starte...<br>
 <pre>
 EOM
 
 	if [ -x /usr/bin/iperf3 ]; then
-		echo '--- TCP rx ---'
-		/usr/lib/ddmesh/ddmesh-iperf3.sh $_ddmesh_ip rxtcp | flush
-		echo '--- TCP tx ---'
-		/usr/lib/ddmesh/ddmesh-iperf3.sh $_ddmesh_ip txtcp | flush
-		echo '--- UDP rx ---'
-		/usr/lib/ddmesh/ddmesh-iperf3.sh $_ddmesh_ip rxudp | flush
-		echo '--- UDP tx ---'
-		/usr/lib/ddmesh/ddmesh-iperf3.sh $_ddmesh_ip txudp | flush
+		traceroute -ln $_ddmesh_ip | flush
 	fi
 
 	cat<<EOM
@@ -61,14 +54,14 @@ EOM
 fi
 
 cat<<EOF
-<form action="speedtest-iperf3.cgi" method="POST" onsubmit="return checkInput();">
+<form action="traceroute.cgi" method="POST" onsubmit="return checkInput();">
 <fieldset class="bubble">
-<legend>Speedtest</legend>
+<legend>Traceroute</legend>
 <table>
 <tr>
 <th>Knoten-Nr.:</th>
 <td><input id="id_node" name="node" size="10" type="text" onkeypress="return isNumberKey(event);"></td>
-<td><input name="post_speedtest" type="submit" value="Test"></td>
+<td><input name="post_traceroute" type="submit" value="Test"></td>
 <td style="width: 100%;"></td>
 </tr>
 </table>
