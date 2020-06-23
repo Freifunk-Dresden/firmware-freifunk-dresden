@@ -438,6 +438,7 @@ upgrade_6_0_15()
 upgrade_6_1_1()
 {
  uci rename credentials.backbone_secret.key='fastd_key'
+ uci add_list firewall.zone_mesh.network='tbb_wg'
 }
 
 ##################################
