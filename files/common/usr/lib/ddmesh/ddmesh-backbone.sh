@@ -4,6 +4,7 @@
 
 WG_BIN=$(which wg)
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_wg wg)
+WG_LOGGER_TAG="wg-backbone"
 
 FASTD_CONF_DIR=/var/etc/fastd
 FASTD_CONF=$FASTD_CONF_DIR/backbone-fastd.conf
@@ -109,10 +110,10 @@ callback_outgoing_fastd_config ()
 	config_get type "$config" type
 	[ -z "$type" ] && type="fastd"
 
-	echo "fastd process out: cfgtype:$type, host:$host, port:$port, key:$key]"
+	#echo "fastd process out: cfgtype:$type, host:$host, port:$port, key:$key]"
 	if [ "$type" == "fastd" -a -n "$host" -a -n "$port" -a -n "$key" ]; then
 		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/"connect_"$host"_"$port".conf"
-		echo "fastd out: add peer ($FILE)"
+		#echo "fastd out: add peer ($FILE)"
 		echo "key \"$key\";" > $FILE
 		echo "remote ipv4 \"$host\":$port;" >> $FILE
 
@@ -124,7 +125,7 @@ callback_outgoing_fastd_config ()
 	fi
 }
 
-callback_outgoing_wireguard_config ()
+callback_outgoing_wireguard_interfaces ()
 {
 	local config="$1"
 	local local_wg_ip=$2
@@ -142,22 +143,19 @@ callback_outgoing_wireguard_config ()
 	config_get type "$config" type
 	config_get node "$config" node
 
-	echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
+	#echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
 	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
 		
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
 
-		echo "wg out: add peer ($node)"
+		#echo "wg out: add peer ($node)"
 
 		#dont use hostnames, can not be resolved
 		iptables -w -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
 		iptables -w -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
 		iptables -w -A output_backbone_accept -p udp --dport $port -j ACCEPT
 		iptables -w -A output_backbone_reject -p udp --dport $port -j reject
-
-		# allow client ip
-		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 
 		# create sub interface
 		sub_ifname="$wg_ifname$node"
@@ -166,6 +164,33 @@ callback_outgoing_wireguard_config ()
 		ip link set $sub_ifname up
 
 		bmxd -c dev=$sub_ifname /linklayer 1
+	fi
+}
+
+callback_outgoing_wireguard_connection ()
+{
+	local config="$1"
+	local local_wg_ip=$2
+	local local_wgX_ip=$3
+
+	local host  #hostname or ip
+	local port
+	local key
+	local type
+	local node
+
+	config_get host "$config" host
+	config_get port "$config" port
+	config_get key "$config" public_key
+	config_get type "$config" type
+	config_get node "$config" node
+
+	#echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
+	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
+		
+		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+		local remote_wg_ip=$_ddmesh_wireguard_ip
+		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 	fi
 }
 
@@ -231,10 +256,31 @@ case "$1" in
 				# through this tunnel an ipip tunnel is setup from node to node, because of some
 				# wg restrictions (no broacast possible). ipip tunnel has its own interface for
 				# each peer. this iface is added to bmxd
+
+				# only interfaces an firewall are configured
 				config_load ddmesh
-				config_foreach callback_outgoing_wireguard_config backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
+				config_foreach callback_outgoing_wireguard_interfaces backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
 			fi
 		fi
+		
+		# try to resolve host names and setup wg tunnel
+		# wg command only resolves host name once. if no connection is available during
+		# boot, wg gives up. we need to retry it later (via cron). I can 
+
+		$0 update
+		;;
+
+	update)
+		# try to resolv and update wg config. wg does not interrupt connection
+		# when there is no change
+
+		# check for working dns to avoid delays created by wg-tool trying to resolve
+		nslookup "freifunk-dresden.de" && {
+			logger -t "$WG_LOGGER_TAG" "DNS resolv ok - update wg config"
+			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+			config_load ddmesh
+			config_foreach callback_outgoing_wireguard_connection backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
+		}
 		;;
 
 	stop)

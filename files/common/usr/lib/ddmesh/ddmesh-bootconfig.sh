@@ -618,24 +618,14 @@ EOM
 mkdir -p /var/etc/crontabs
 m=$(( $_ddmesh_node % 60))
 cat<<EOM > /var/etc/crontabs/root
-#every 1 minutes batman run check
+
 */1 * * * *  /usr/lib/ddmesh/ddmesh-bmxd.sh check >/dev/null 2>/dev/null
-
-#every 3 minutes start (after killing)
 */3 * * * *  /usr/lib/ddmesh/ddmesh-gateway-check.sh >/dev/null 2>/dev/null &
-
-#every 1h
 $m */1 * * *  /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
-
-#forced user disconnection
 */5 * * * *  /usr/lib/ddmesh/ddmesh-splash.sh autodisconnect >/dev/null 2>/dev/null
-
-#watchdog
 * * * * *  /usr/lib/ddmesh/ddmesh-watchdog.sh >/dev/null 2>/dev/null
-
-#sysinfo
 * * * * * /usr/lib/ddmesh/ddmesh-sysinfo.sh >/dev/null 2>/dev/null
-
+* * * * * /usr/lib/ddmesh/ddmesh-backbone.sh update >/dev/null 2>/dev/null
 EOM
 
 if [ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ];then
