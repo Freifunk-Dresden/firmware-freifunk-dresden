@@ -1,10 +1,18 @@
 #!/bin/bash
 
+VERSION="uci V1.0"
+
 wg_ifname=tbb_wg
 port=5003
 peers_dir="/etc/wireguard-backbone/peers"
 
-local_node=$(nvram get ddmesh_node)
+if [ -z "$(which uci)" ]; then
+	echo "Error: command 'uci' not found"
+	exit 1
+fi
+
+
+local_node=$(uci get ffdd.sys.ddmesh_node)
 eval $(ddmesh-ipcalc.sh -n $local_node)
 
 echo "DEVEL: manuall calculation of _ddmesh_wireguard_ip"
@@ -13,31 +21,48 @@ local_wgX_ip="$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
 
 start_wg()
 {
+	# create config section
+	if [ -z "$(uci -q get ffdd.wireguard)" ]; then
+		uci -q add ffdd wireguard
+		uci -q rename ffdd.@wireguard[-1]='wireguard'
+	fi
+
 	# create key
-	secret=$(nvram get wireguard_secret)
+	secret=$(uci -q get ffdd.wireguard.secret)
 	if [ -z "$secret" ]; then
 		echo "create wireguard key"
 		secret=$(wg genkey)
-		pubkey=$(echo $secret | wg pubkey)
-		nvram set wireguard_secret "$secret"
-		nvram set wireguard_public "$pubkey"
+		uci -q set ffdd.wireguard.secret="$secret"
 	fi
+
+	# store public
+	public=$(echo $secret | wg pubkey)
+	uci -q set ffdd.wireguard.public="$public"
+
+	# save config
+	uci commit
 
 	secret_file=$(tempfile)
 	echo $secret > $secret_file
 
 	# create interface
 	echo "create wireguard interface [$wg_ifname]"
+	
+echo	ip link add $wg_ifname type wireguard
 	ip link add $wg_ifname type wireguard
+echo	ip addr add "$local_wireguard_ip/32" dev $wg_ifname
 	ip addr add "$local_wireguard_ip/32" dev $wg_ifname
+echo	wg set $wg_ifname private-key $secret_file
 	wg set $wg_ifname private-key $secret_file
+echo	wg set $wg_ifname listen-port $port
 	wg set $wg_ifname listen-port $port
+echo	ip link set $wg_ifname up
 	ip link set $wg_ifname up
 	rm $secret_file
 
 	ip rule add to 10.203.0.0/16 table main prio 304
 	ip route add 10.203.0.0/16 dev tbb_wg src $local_wireguard_ip
-	WAN_DEV="$(nvram get ifname)"
+	WAN_DEV="$(uci get ffdd.sys.ifname)"
 	iptables -w -D INPUT -i $WAN_DEV -p udp --dport $port -j ACCEPT
 	iptables -w -I INPUT -i $WAN_DEV -p udp --dport $port -j ACCEPT
 	iptables -w -D INPUT -i tbb_wg+ -j ACCEPT
@@ -56,6 +81,8 @@ stop_wg()
 		ip link del $i 2>/dev/null
 	done
 	unset IFS
+
+	ip rule del to 10.203.0.0/16 table main prio 304
 }
 
 accept_peer()
@@ -152,8 +179,13 @@ case $1 in
 		fi
 		;;
 
+	status)
+		wg show $wg_ifname 
+		;;
+
 	*)
-		echo "$(basename $0) [start | stop | reload | accept <node> <pubkey> | delete <node> ]"
+		echo "$(basename $0) Version $VERSION"
+		echo "$(basename $0) [start | stop | reload | status | accept <node> <pubkey> | delete <node> ]"
 		echo ""
 		;;
 esac
