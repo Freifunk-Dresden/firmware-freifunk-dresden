@@ -61,7 +61,7 @@ setup_custom_rules() {
 # temp firewall rules (fw uci can not add custom chains)
 	logger -s -t $TAG "setup_custom_rules"
 
-	#input rules for backbone/firewall ( to restrict tunnel pakets only via allowed interfaces )
+	#input rules for backbone packets ( to restrict tunnel pakets only via allowed interfaces )
 	#tbb traffic is controlled by zone rules tbb+
 	$IPT -N input_backbone_accept
 	$IPT -N input_backbone_reject
@@ -79,7 +79,7 @@ setup_custom_rules() {
 	$IPT -A output_bat_rule -j output_backbone_reject
 	$IPT -A output_wifi2_rule -j output_backbone_reject
 
-	#input rules for privnet/firewall ( to restrict tunnel pakets only via allowed interfaces )
+	#input rules for privnet packets( to restrict tunnel pakets only via allowed interfaces )
 	#private data traffic is controlled by zone rules lan (br-lan)
 	$IPT -N input_privnet_accept
 	$IPT -N input_privnet_reject
@@ -89,8 +89,7 @@ setup_custom_rules() {
 	$IPT -A input_bat_rule -j input_privnet_reject
 	$IPT -A input_wifi2_rule -j input_privnet_reject
 
-	#add rules to avoid access node via lan/wan ip; insert at start
-	#to consider other tables (backbone)
+	#add tables that are later filled with IPs that should be blocked.
 	# loop through zones
 	for i in mesh wifi2 bat lan wan vpn
 	do
@@ -224,15 +223,14 @@ setup_ignored_nodes() {
 	$IPT -N input_ignore_nodes_wifi
 	$IPT -N input_ignore_nodes_lan
 	$IPT -N input_ignore_nodes_wan
-	$IPT -N input_ignore_nodes_tbb
+	$IPT -N input_ignore_nodes_tbb # fastd+wg
 
-	#add rules to deny some nodes to prefer backbone connections
-	if [ -n "$wifi_ifname" ]; then
-		$IPT -I input_mesh_rule -i $wifi_ifname -j input_ignore_nodes_wifi
-	fi
+	#add tables to deny some nodes to prefer backbone connections
+	[ -n "$wifi_ifname" ] && $IPT -I input_mesh_rule -i $wifi_ifname -j input_ignore_nodes_wifi
 	$IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
 	$IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
-	$IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
+	[ -n "$wifi_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
+	[ -n "$wifi_ifname" ] && $IPT -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
 
 
 	config_load ddmesh
@@ -305,4 +303,3 @@ case "$1" in
 		;;
 
 esac
-

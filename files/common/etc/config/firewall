@@ -37,7 +37,7 @@ config zone 'zone_wifi2'
 	option mtu_fix '1'
 
 #interface is not brought up by network system, because it is created not by openwrt network environment.
-#it is created by fastd 
+#it is created by fastd
 #mask: lan->bat
 #mask: wifi2->bat
 #mask: mesh->bat
@@ -56,12 +56,26 @@ config zone 'zone_mesh'
 	list network 'mesh_lan'
 	list network 'mesh_wan'
 	list network 'tbb_fastd'
+	list network 'tbb_wg'
 	list network 'wifi'
 	option input 'REJECT'
 	option output 'ACCEPT'
 	option forward 'REJECT'
 	option masq '0'
 	option mtu_fix '1'
+
+#interface is not brought up by network system, because it is created not by openwrt network environment.
+#created by wireguard.
+#mask: any->vpn
+config zone 'zone_wg'
+	option name 'wg'
+	list network 'tbb_wg'
+	option input 'REJECT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+	option masq '1'
+	option mtu_fix '1'
+
 
 #interface is not brought up by network system, because it is created not by openwrt network environment.
 #created by openvpn
@@ -563,8 +577,12 @@ config rule 'wanicmp'
 	option proto 'icmp'
 	option target 'ACCEPT'
 
+#### allow wg input ####
+config rule
+	option name 'Allow-wg-all'
+	option src 'tbb_wg'
+	option target 'ACCEPT'
+# perhaps restrict to local ip and/or gre protocol
 
 config include
 	option path '/etc/firewall.user'
-
-

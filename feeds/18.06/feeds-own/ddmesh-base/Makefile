@@ -15,8 +15,7 @@ define Package/$(PKG_NAME)-base
   DEPENDS:=	+kmod-ledtrig-timer +kmod-tun +libmbedtls +libustream-mbedtls \
 		+uhttpd \
 		+bmxd +freifunk-upload \
-		+fastd +@FASTD_ENABLE_METHOD_NULL +@FASTD_ENABLE_CIPHER_NULL +@FASTD_ENABLE_CIPHER_SALSA2012 \
-		+libuecc +nacl +ddns-scripts +ddns-scripts_no-ip_com \
+		+ddns-scripts +ddns-scripts_no-ip_com \
 		+iptables \
 		+px5g-mbedtls \
 		+iperf3
@@ -29,7 +28,7 @@ define Package/$(PKG_NAME)-base/description
 endef
 
 # This section holds only package configurations (compile switches).
-# Each config may depend on some packages and is displayed if this 
+# Each config may depend on some packages and is displayed if this
 # packages was selected
 define Package/$(PKG_NAME)-base/config
 
@@ -44,7 +43,14 @@ define Package/$(PKG_NAME)-base/config
 			depends on PACKAGE_ddmesh-base
 			tristate "fastd"
 			help
-				required by firmware
+				need for backbone connections.
+
+		config PACKAGE_wireguard
+			# menu point is displayed when dependings are set
+			depends on PACKAGE_ddmesh-base
+			tristate "wireguard"
+			help
+				need for backbone connections.
 
 		# use SYMBOL of package that should be selected
 		config PACKAGE_bmxd
@@ -114,7 +120,7 @@ define Package/$(PKG_NAME)-usb-storage
   DEPENDS:= $(PKG_NAME)-base \
 		+kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
 		+kmod-fs-vfat \
-		+block-mount 
+		+block-mount
 
   TITLE:=Meta package to enable usb storage
 endef
@@ -153,7 +159,7 @@ define Package/$(PKG_NAME)-lte/description
 	Huawei: https://rychly.gitlab.io/post/huawei-e173s1/
 
 	ACHTUNG:  Never turn Off PC interface (2:PCUI in this example)!
-        Denn da diese Settings persistent sind, kann man nicht mehr via terminal auf 
+        Denn da diese Settings persistent sind, kann man nicht mehr via terminal auf
         den stick zu greifen und ihn mit AT commands konfigurieren
 
 
@@ -174,16 +180,16 @@ define Package/$(PKG_NAME)-lte/description
 
           - AT+COPS? – get active network Name and ID
             +COPS: 1,0,"disco",2
-     
+
           - AT+CSQ – get signal strength as +CSQ rssi (higher is better) and ber (lower is better; 99 = unknown)
 
-          - 
+          -
         AT Commands for Huawei
           - AT^GETPORTMODE to display a list of devices present in a USB-stick
             ^GETPORTMODE:TYPE:WCDMA:Qualcomm,MDM:0,NDIS:1,DIAG:2,PCUI:3,CDROM:4,SD:5
 
           - AT^SYSCFG? to display network-mode preferences
-            ^SYSCFG:2,2,3FFFFFFF,1,2 
+            ^SYSCFG:2,2,3FFFFFFF,1,2
 
           - AT^U2DIAG? for reading/controlling default mode (an alternative to usb_modeswitch)
             276 - means: currently factory reset values are set (all enabled)
@@ -191,7 +197,7 @@ define Package/$(PKG_NAME)-lte/description
           usb_modeswitch will do all the needed steps to switch from SDCard to Modem.
 
 
-        
+
 endef
 
 ##########################################################
@@ -221,13 +227,13 @@ endef
 ##########################################################
 define Package/$(PKG_NAME)-extra-modules
   CATEGORY:=ddmesh
-	
+
   # when this module is selected, it also selects all depending modules as module.
-  # The "config" section can contain "default", but this is ignored. 
+  # The "config" section can contain "default", but this is ignored.
   # If the package itself setups DEFAULT, then this is used.
   # The DEFAULT of this package (ddmesh-extra-modules) overwrites the default. But it can not
   # go below package DEFAULT. Means:  N -> <N|M|Y>  OR M -> {M|Y}  OR Y -> {Y}
-  # 
+  #
   # The "default" value of the menu below is completely ignored
   DEFAULT:=m
   # I do not select all possible modules, so I can disable them
@@ -292,4 +298,3 @@ $(eval $(call BuildPackage,$(PKG_NAME)-usb-storage))
 $(eval $(call BuildPackage,$(PKG_NAME)-lte))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi-extra))
 $(eval $(call BuildPackage,$(PKG_NAME)-extra-modules))
-

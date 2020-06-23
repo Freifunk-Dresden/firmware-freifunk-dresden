@@ -435,8 +435,11 @@ upgrade_6_0_15()
  uci set ddmesh.system.mesh_sleep='1'
 }
 
+upgrade_6_1_1()
+{
+ uci rename credentials.backbone_secret.key='fastd_key'
+}
 
 ##################################
 
 run_upgrade
-

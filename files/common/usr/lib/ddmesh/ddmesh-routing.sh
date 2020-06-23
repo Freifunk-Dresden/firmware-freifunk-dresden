@@ -17,6 +17,7 @@ ip rule $1 to 169.254.0.0/16 table main priority 302
 #byepass private ranges (not freifunk ranges)
 ip rule $1 to 192.168.0.0/16 table main priority 310
 ip rule $1 to 172.16.0.0/12 table main priority 320
+ip rule add to $_ddmesh_wireguard_network/$_ddmesh_netpre lookup main prio 330
 
 #bypass wifi2
 ip rule $1 to 100.64.0.0/16 table main priority 350

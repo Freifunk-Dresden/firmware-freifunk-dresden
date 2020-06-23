@@ -179,6 +179,13 @@
 		"selector-config":"MASTER",
 		"openwrt_rev":"ad84c095028f6ddef95a92e028760cce23d32f6c"
 	},
+	{
+		"name":"ath79.tiny.wireguard.lowmem",
+		"target":"ath79",
+		"subtarget":"tiny",
+		"variant":"wireguard",
+		"openwrt_variant":"lowmem"
+	},
 #	{
 #		"name":"ramips.rt305x.generic",
 #		"target":"ramips",
