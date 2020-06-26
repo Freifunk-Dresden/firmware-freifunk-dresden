@@ -1,6 +1,10 @@
 #!/bin/bash
 tabs 4
 
+#usage: see below
+SCRIPT_VERSION="7"
+
+
 #echo "ACHTUNG: aktuell stuerst firmware auf ubnt geraeten ab. Daher habe ich erstmal das bauen hier deaktiviert."
 #exit 1
 
@@ -10,9 +14,6 @@ tabs 4
 
 #change to directory where build.sh is
 cd $(dirname $0)
-
-#usage: see below
-SCRIPT_VERSION="6"
 
 # target file
 PLATFORMS_JSON="build.json"
@@ -158,6 +159,12 @@ listTargets()
 }
 
 
+search_target()
+{
+	target=$1
+	 awk '/^CONFIG_TARGET_.*'$target'/{print FILENAME}' openwrt-configs/*/*
+}
+
 setup_dynamic_firmware_config()
 {
 	FILES="$1"
@@ -172,8 +179,9 @@ setup_dynamic_firmware_config()
 if [ -z "$1" ]; then
 	# create a simple menu
 	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) list | clean | feed-revisions | (target | all  [menuconfig ] [rerun] [ <make params ...> ])"
+	echo "usage: $(basename $0) list | search <string> | clean | feed-revisions | (target | all  [menuconfig ] [rerun] [ <make params ...> ])"
 	echo " list             - lists all available targets"
+	echo " search           - search specific router (target)"
 	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
 	echo " feed-revisions   - returns the git HEAD revision hash for current date (now)."
 	echo "                    The revisions then could be set in build.json"
@@ -195,6 +203,11 @@ fi
 #check if next argument is "menuconfig"
 if [ "$1" = "list" ]; then
 	listTargets
+	exit 0
+fi
+
+if [ "$1" = "search" ]; then
+	search_target $2
 	exit 0
 fi
 
