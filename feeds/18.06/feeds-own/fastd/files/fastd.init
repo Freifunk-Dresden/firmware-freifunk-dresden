@@ -76,7 +76,6 @@ config_string_pmtu='pmtu $(yes_no "$value");'
 config_string_forward='forward $(yes_no "$value");'
 config_string_hide_ip_addresses='hide ip addresses $(yes_no "$value");'
 config_string_hide_mac_addresses='hide mac addresses $(yes_no "$value");'
-config_string_secure_handshakes='secure handshakes $(yes_no "$value");'
 config_string_packet_mark='packet mark $(guard_value "$value");'
 
 config_string_peer='peer $(escape_string "$value") {'
