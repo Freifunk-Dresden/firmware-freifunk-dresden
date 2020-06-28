@@ -156,9 +156,15 @@
                 "variant":"generic"
 	},
 	{
-		"name":"ramips.lantiq.xrx200",
+		"name":"lantiq.xrx200",
 		"target":"lantiq",
 		"subtarget":"xrx200",
+		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
+	},
+	{
+		"name":"lantiq.xway",
+		"target":"lantiq",
+		"subtarget":"xway",
 		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
 	},
         {       # created for Orange Pi R1
