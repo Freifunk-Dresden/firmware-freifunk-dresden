@@ -9,13 +9,18 @@ export TITLE="Verwaltung &gt; Konfiguration: Backbone"
 DEFAULT_PORT="$(uci get ddmesh.backbone.default_server_port)"
 NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
 STATUS_DIR="/var/backbone_status"
-KEY_LEN_FASTD=64
-KEY_LEN_WG=44
 COUNT=$(uci show ddmesh | grep '=backbone_\(client\|accept\)' | wc -l)
 TOGGEL=1
+
 DEFAULT_KEY="$(uci get credentials.backbone.fastd_default_server_key)"
-WG_PATH="$(which wg)"
 FASTD_PATH="$(which fastd)"
+KEY_LEN_FASTD=64
+
+WG_PATH="$(which wg)"
+KEY_LEN_WG=44
+WG_HAND_SHAKE_TIME_S=120
+UTC=$(date +"%s")
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_wg wg)
 
 mkdir -p $STATUS_DIR
 
@@ -151,9 +156,19 @@ show_outgoing()
                 type="fastd"
         fi
 
-	test -f "$STATUS_DIR/$key" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+	if [ "$type" = "fastd" ]; then
+		test -f "$STATUS_DIR/$key" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+		connect_title=""
+	else
+		IFS='	'
+		set $(wg show $wg_ifname latest-handshakes | grep "$key")
+		diff=$(( $UTC - $2 ))
+		[ $diff -lt $WG_HAND_SHAKE_TIME_S ] && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+		connect_title="Handshake vor $diff s"
+	fi
+
         echo "<tr class=\"colortoggle$TOGGEL\"><td>$type</td><td>$node</td><td>$host</td><td>$port</td><td>$key</td>"
-	echo "<td><img src=\"$CONNECTED\"></td>"
+	echo "<td><img title=\"$connect_title\" src=\"$CONNECTED\"></td>"
 	echo "<td>"
 	echo "<button onclick=\"if(ask('$host'))form_submit(document.forms.backbone_form_connection_out,'client_del','$config')\" title=\"Verbindung l&ouml;schen\" type=\"button\">"
 	echo "<img src="/images/loeschen.gif" align=bottom width=16 height=16 hspace=4></button></td></tr>"
