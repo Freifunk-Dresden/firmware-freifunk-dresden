@@ -50,7 +50,7 @@
 { "name":"", "autoupdate":"1", "model":"unifi", "model2":"Ubiquiti UniFi", "filename":"openwrt-ar71xx-generic-ubnt-unifi-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-generic-wndr3700-squashfs-factory.img", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-generic-wndr3700-squashfs-factory-NA.img", "comment":""},
-{ "name":"", "autoupdate":"1", "model":"", "model2":"", "filename":"openwrt-ar71xx-generic-wndr3700-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"1", "model":"wndr3700", "model2":"NETGEAR WNDR3700", "filename":"openwrt-ar71xx-generic-wndr3700-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-generic-wndr3700v2-squashfs-factory.img", "comment":""},
 { "name":"", "autoupdate":"1", "model":"wndr3700", "model2":"NETGEAR WNDR3700v2", "filename":"openwrt-ar71xx-generic-wndr3700v2-squashfs-sysupgrade.bin", "comment":"getestet"},
 { "name":"", "filename":"openwrt-ar71xx-generic-wnr2200-squashfs-factory.img", "comment":""},
