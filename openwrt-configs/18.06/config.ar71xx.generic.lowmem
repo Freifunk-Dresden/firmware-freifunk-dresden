@@ -519,9 +519,9 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wpa8630-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043n-v5 is not set
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v1=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v2=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v3=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v4=y
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v2 is not set
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v3 is not set
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr1043nd-v4 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr2543-v1 is not set
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr710n-v1=y
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_tl-wr710n-v2.1=y
@@ -1939,9 +1939,9 @@ CONFIG_PACKAGE_libuecc=y
 CONFIG_PACKAGE_nacl=y
 # CONFIG_PACKAGE_wshaper is not set
 CONFIG_PACKAGE_ddmesh-base=y
+# CONFIG_PACKAGE_wireguard is not set
 CONFIG_PACKAGE_ddmesh-extra-modules=y
 CONFIG_PACKAGE_tcpdump=m
-# CONFIG_PACKAGE_wireguard is not set
 # CONFIG_PACKAGE_ddmesh-lte is not set
 # CONFIG_PACKAGE_ddmesh-usb-storage is not set
 CONFIG_PACKAGE_ddmesh-wifi=y
