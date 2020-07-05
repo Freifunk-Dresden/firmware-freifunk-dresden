@@ -25,7 +25,7 @@
 #    - ln -s /mycache/dl
 #    - mkdir -p /mycache/workdir
 #    - ln -s /mycache/workdir
-#    - ./build.sh ar71xx.tiny -j9
+#    - ./build.sh ar71xx.tiny -j"$(( $(nproc) + 1))"
 #  artifacts:
 #    paths:
 #    - workdir/*/bin/targets/*
@@ -58,7 +58,7 @@ docker:ar71xx.tiny:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.tiny.lowmem rerun -j9
+    - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -73,7 +73,7 @@ docker:ar71xx.generic:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.generic.* rerun -j9
+    - ./build.sh ar71xx.generic.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -87,7 +87,7 @@ docker:ar71xx.nand:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.nand.* rerun -j9
+    - ./build.sh ar71xx.nand.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -102,7 +102,7 @@ docker:x86:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh x86.generic rerun -j9
+    - ./build.sh x86.generic rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -116,7 +116,7 @@ docker:x64:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh x64.generic rerun -j9
+    - ./build.sh x64.generic rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -131,7 +131,7 @@ docker:ramips:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ramips.* rerun -j9
+    - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -146,7 +146,7 @@ docker:lantiq:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh lantiq.* rerun -j9
+    - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -160,7 +160,7 @@ docker:ath79:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ath79.* rerun -j9
+    - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -174,7 +174,7 @@ docker:ipq40xx:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ipq40xx.* rerun -j9
+    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -188,7 +188,7 @@ docker:sunxi:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh sunxi.* rerun -j8
+    - ./build.sh sunxi.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -202,7 +202,7 @@ docker:mpc85xx:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh mpc85xx.* rerun -j8
+    - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 

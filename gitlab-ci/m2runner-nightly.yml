@@ -32,7 +32,7 @@ m2:ar71xx.tiny:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.tiny.lowmem rerun -j8
+    - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -43,7 +43,7 @@ m2:ar71xx.generic:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.generic.* rerun -j8
+    - ./build.sh ar71xx.generic.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -54,7 +54,7 @@ m2:ar71xx.nand:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.nand.* rerun -j8
+    - ./build.sh ar71xx.nand.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -65,7 +65,7 @@ m2:x86.generic:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh x86.generic rerun -j8
+    - ./build.sh x86.generic rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -76,7 +76,7 @@ m2:x64.generic:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh x64.generic rerun -j8
+    - ./build.sh x64.generic rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -87,7 +87,7 @@ m2:ramips:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ramips.* rerun -j8
+    - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -98,7 +98,7 @@ m2:ipq40xx:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ipq40xx.generic.* rerun -j8
+    - ./build.sh ipq40xx.generic.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -109,7 +109,7 @@ m2:lantiq:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh lantiq.* rerun -j8
+    - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -120,7 +120,7 @@ m2:ath79:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ath79.* rerun -j8
+    - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -131,7 +131,7 @@ m2:sunxi:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh sunxi.* rerun -j8
+    - ./build.sh sunxi.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
@@ -142,7 +142,7 @@ m2:mpc85xx:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh mpc85xx.* rerun -j8
+    - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
