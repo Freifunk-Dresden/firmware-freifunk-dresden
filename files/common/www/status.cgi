@@ -17,7 +17,7 @@ cat<<EOF
 <tr><th>Nameserver:</th><td>$(grep nameserver /var/resolv.conf.final | sed 's#nameserver##g')</td></tr>
 <tr><th>Ger&auml;telaufzeit:</th><td>$(uptime)</td></tr>
 <tr><th>System:</th><td>$(uname -m) $(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>
-<tr><th>Ger&auml;teinfo:</th><td>$device_model - $(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p') [$(cat /tmp/sysinfo/board_name)]</td></tr>
+<tr><th>Ger&auml;teinfo:</th><td><b>Model:</b> $model ($model2) - <b>CPU:</b> $(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p') - <b>Board:</b> $(cat /tmp/sysinfo/board_name)</td></tr>
 <tr><th>Firmware-Version:</th><td>Freifunk Dresden Edition $(cat /etc/version) / $DISTRIB_DESCRIPTION</td></tr>
 <tr><th>Freier Speicher:</th><td>$(cat /proc/meminfo | grep MemFree | cut -d':' -f2) von $(cat /proc/meminfo | grep MemTotal | cut -d':' -f2)</td></tr>
 </table>

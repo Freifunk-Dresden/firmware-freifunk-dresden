@@ -70,7 +70,7 @@ cat<<EOM
 	<form name="form_firmware_upload" action="firmware.cgi" enctype="multipart/form-data" method="POST">
 	<input name="form_action" value="upload" type="hidden">
 	<table>
-	<tr><th>Ger&auml;teinfo:</th><td>$device_model;$(cat /proc/cpuinfo | sed -n '/system type/s#.*:[ 	]*##p')</td></tr>
+	<tr><th>Ger&auml;teinfo:</th><td><b>Model:</b> $model ($model2) - <b>CPU:</b> $(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p')</td></tr>
 	<tr><th>Filesystem:</th><td>$(cat /proc/cmdline | sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#')</td></tr>
 	<tr><th colspan="2">&nbsp;</th></tr>
 	<tr><th colspan="2">Weitere Infos sind nur verf&uuml;gbar, wenn der Download-Server erreichbar ist:</th></tr>

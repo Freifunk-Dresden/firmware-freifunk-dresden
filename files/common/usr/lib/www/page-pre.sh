@@ -11,9 +11,11 @@ fi
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
-device_model="$(sed 's#[ ]\+$##' /var/sysinfo/model 2>/dev/null)"
-test -z "$device_model" && device_model="$(grep 'model name' /proc/cpuinfo | cut -d':' -f2)"
-export device_model
+# get model                                                              
+eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
+export model="$(echo $model | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
+export model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
+
 
 #check if access comes from disabled network and we have access to "Verwalten" enabled
 in_ifname="$(ip ro get $REMOTE_ADDR | sed -n '1,2s#.*dev[ ]\+\([^ ]\+\).*#\1#p')"
@@ -127,7 +129,7 @@ cat<<EOM
  <tr><td COLSPAN="5">
   <table class="navibar" width="100%" CELLPADDING="0" CELLSPACING="0">
   <tr>
-  <TD COLSPAN="4" HEIGHT="19" class="infobar" >Model: <span class="infobarvalue">$device_model</span>, Version:<span class="infobarvalue">$(cat /etc/version)</span></TD>
+  <TD COLSPAN="4" HEIGHT="19" class="infobar" >Model: <span class="infobarvalue">$model2</span>, Version:<span class="infobarvalue">$(cat /etc/version)</span></TD>
   <TD HEIGHT="19" WIDTH="150"><IMG ALT="" BORDER="0" HEIGHT="19" SRC="/images/ff-logo-2.gif" WIDTH="150"></TD></TR>
   </table></td></tr>
  <TR><TD class="ie_color" HEIGHT="100%" VALIGN="top">

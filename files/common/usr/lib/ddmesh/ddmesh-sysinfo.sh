@@ -71,7 +71,7 @@ model="$(echo $model | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 
 # first search system type. if not use model name. exit after first cpu core
-cpu_info="$(cat /proc/cpuinfo | awk '/system type|model name/{gsub(/^.*:[ ]*/,"");print $0;exit}')"
+cpu_info="$(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p')"
 
 
 cat << EOM >> $OUTPUT

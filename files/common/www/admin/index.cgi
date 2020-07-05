@@ -98,7 +98,7 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1
 <tr class="colortoggle2"><th>Nameserver:</th><td colspan="6">$(grep nameserver /tmp/resolv.conf.auto | sed 's#nameserver##g')</td></tr>
 <tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="6">$(uptime)</td></tr>
 <tr class="colortoggle2"><th>System:</th><td colspan="6">$(uname -m) $(sed -n '/system type/s#system[ 	]*type[ 	]*:##p' /proc/cpuinfo)</td></tr>
-<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="6">$device_model - $(sed -n '/system type/s#.*:[ 	]*##p' /proc/cpuinfo) [$(cat /tmp/sysinfo/board_name)]</td></tr>
+<tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="6"><b>Model:</b> $model ($model2) - <b>CPU:</b> $(sed -n '/system type/s#[^:]\+:[ 	]*##p' /proc/cpuinfo) - <b>Board:</b> $(cat /tmp/sysinfo/board_name)</td></tr>
 <tr class="colortoggle2"><th>Filesystem:</th><td colspan="6">$(sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#' /proc/cmdline)</td></tr>
 <tr class="colortoggle2"><th>SSH-Fingerprint (MD5)</th><td colspan="6">$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | sed -n '/Fingerprint/s#Fingerprint: md5 ##p')</td></tr>
 <tr class="colortoggle1"><th></th><th>Total</th> <th>Used</th> <th>Free</th> <th>Shared</th> <th>Buffered</th> <th>Cached</th></tr>
