@@ -103,15 +103,15 @@ setup_custom_rules() {
 	$IPT -A input_rule -i $lan_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-lan-request'
 	$IPT -A output_rule -o $lan_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-lan-response'
 
-	# don't snat icmp to debug tbb links with ping
-	$IPT -t nat -A postrouting_mesh_rule -p icmp -j ACCEPT
-
 	#snat mesh from 10.201.xxx to 10.200.xxxx
 	$IPT -t nat -A postrouting_mesh_rule -p udp --dport 4305:4307 -j ACCEPT
 	$IPT -t nat -A postrouting_mesh_rule -p tcp --dport 4305:4307 -j ACCEPT
 	test "$lan_up" = "1" && $IPT -t nat -A postrouting_mesh_rule -s $lan_ipaddr/$lan_mask -j SNAT --to-source $_ddmesh_ip
 	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_mesh_rule -s $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $_ddmesh_ip
 
+    # don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
+	$IPT -t nat -A postrouting_mesh_rule -p icmp -j ACCEPT
+	
 	test "$lan_up" = "1" && $IPT -t nat -A postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan'
 	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2'
 
