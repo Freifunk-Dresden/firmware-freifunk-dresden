@@ -1,16 +1,18 @@
 Freifunk Dresden: Router Firmware
 =================================
 
-Original Source / Built tree for <a href="https://www.freifunk-dresden.de">Freifunk Dresden</a> Firmware.<br>
+Original Source / Built tree for <a href="https://www.freifunk-dresden.de">Freifunk Dresden</a> Firmware.<br/>
 
-[Wiki Documentation (German)](https://wiki.freifunk-dresden.de/index.php/Dokumentation) | [Issues](https://gitlab.freifunk-dresden.de/firmware-developer/firmware/issues)
+[Wiki Build Dokumentation](https://wiki.freifunk-dresden.de/index.php/Firmware_selber_bauen)<br/>
+[Wiki Dokumentation](https://wiki.freifunk-dresden.de/index.php/Dokumentation)<br/>
+[Issues](https://gitlab.freifunk-dresden.de/firmware-developer/firmware/issues)<br/>
 
 ACHTUNG
 =======
-Aktuell befindet sich dieser Stand in Entwicklung und sollte unbedingt als INSTABIL betrachtet werden.<br>
+Aktuell befindet sich dieser Stand in Entwicklung und sollte unbedingt als INSTABIL betrachtet werden.<br/>
 Freigebene Firmware Versionen sind auf <a href="https://www.freifunk-dresden.de">Freifunk Dresden</a> zu finden und werden
-Repository entsprechend getagged.<br>
-Die Firmware kann auf eingenes Risiko vewendet werden (was auch die Sicherheit des Firewalls betrifft).<br>
+Repository entsprechend getagged.<br/>
+Die Firmware kann auf eingenes Risiko vewendet werden (was auch die Sicherheit des Firewalls betrifft).<br/>
 Wenn Fehler in dieser Firmware gefunden werden, hinterlasst bitte hier eine Nachrricht.
 
 
