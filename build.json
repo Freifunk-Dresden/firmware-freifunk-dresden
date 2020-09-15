@@ -179,13 +179,6 @@
                 "subtarget":"generic"
         },
 	{
-		"name":"ath79.generic.master",
-		"target":"ath79",
-		"subtarget":"generic",
-		"selector-config":"MASTER",
-		"openwrt_rev":"ad84c095028f6ddef95a92e028760cce23d32f6c"
-	},
-	{
 		"name":"ath79.tiny.wireguard.lowmem",
 		"target":"ath79",
 		"subtarget":"tiny",

@@ -58,6 +58,8 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_buffalo_wzr-hp-g450h is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e110n-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e120a-v3 is not set
+# CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e130n-v2 is not set
+# CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e314n-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e5 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_dlink_dir-825-b1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_dlink_dir-825-c1 is not set
@@ -188,6 +190,8 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_buffalo_wzr-hp-g450h is not set
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e110n-v2=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e120a-v3 is not set
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e130n-v2=y
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e314n-v2=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e5 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-825-b1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-825-c1 is not set
