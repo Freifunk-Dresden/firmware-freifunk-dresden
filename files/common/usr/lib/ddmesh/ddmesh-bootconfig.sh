@@ -115,8 +115,12 @@ config network 'network'
 	option	mesh_network_id		'1206'
 	option	mesh_mtu		1200
 	option	mesh_on_lan		0
-	option	wifi3_enabled		0
-	option	wifi3_network		'lan'
+	option	wifi3_2g_enabled	0
+	option	wifi3_2g_network	'lan'
+	option	wifi3_2g_security	0
+	option	wifi3_5g_enabled	0
+	option	wifi3_5g_network	'lan'
+	option	wifi3_5g_security	0
 	option	wwan_apn		'internet'
 	option	wwan_pincode		''
 	option	wwan_syslog		0

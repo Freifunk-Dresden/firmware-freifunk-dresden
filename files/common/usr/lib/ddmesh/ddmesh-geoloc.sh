@@ -14,7 +14,7 @@ touch $GEO_CURR $GEO_LAST
 test -n "$1" && eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
 
 # remove my own macs from scan
-bssid="$(uci get credentials.wifi.bssid)"
+bssid="$(uci get credentials.wifi_2g.bssid)"
 own_macs=$(iwinfo | awk '/Access Point/{printf("%s ", gensub(/.*Access Point: /,"",$0))} END{printf("'$bssid'")}')
 
 # remove stored macs
