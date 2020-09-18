@@ -447,6 +447,12 @@ upgrade_6_1_2()
  uci -q rename ddmesh.network.wifi3_enabled='wifi3_2g_enabled'
  uci -q rename ddmesh.network.wifi3_security='wifi3_2g_security'
  uci rename credentials.wifi='wifi_2g'
+ uci add credentials wifi
+ uci rename credentials.@wifi[-1]='wifi_5g'
+ uci set credentials.wifi_5g.private_ssid='private5g'
+ uci set ddmesh.network.wifi3_5g_network='0'
+ uci set ddmesh.network.wifi3_5g_enabled='0'
+ uci set ddmesh.network.wifi3_5g_security='0'
 }
 
 ##################################
