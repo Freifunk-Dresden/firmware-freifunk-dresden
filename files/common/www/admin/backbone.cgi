@@ -161,9 +161,14 @@ show_outgoing()
 		connect_title=""
 	else
 		IFS='	'
-		set $(wg show $wg_ifname latest-handshakes | grep "$key")
-		diff=$(( $UTC - $2 ))
-		[ $diff -lt $WG_HAND_SHAKE_TIME_S ] && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+		hs=$(wg show $wg_ifname latest-handshakes | grep "$key")
+		if [ -n "$hs" ]; then
+			set $(wg show $wg_ifname latest-handshakes | grep "$key")
+			diff=$(( $UTC - $2 ))
+			[ $diff -lt $WG_HAND_SHAKE_TIME_S ] && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+		else
+			CONNECTED=/images/no.png
+		fi
 		connect_title="Handshake vor $diff s"
 	fi
 
