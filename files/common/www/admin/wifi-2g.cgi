@@ -11,7 +11,7 @@ EOF
 
 if [ -z "$QUERY_STRING" ]; then
 
-if [ "$(uci -q get ddmesh.network.wifi3_network)" = "wan" ]; then
+if [ "$(uci -q get ddmesh.network.wifi3_2g_network)" = "wan" ]; then
 	checked_wan='checked="checked"'
 else
 	checked_lan='checked="checked"'
@@ -19,7 +19,7 @@ fi
 
 # workaround to pass key with " and ' to input field
 # javascript setWifi3_key reads content and assigns it to value of input field
-wifi3_key="$(uci get credentials.wifi.private_key)"
+wifi3_key="$(uci get credentials.wifi_2g.private_key)"
 echo "<div style=\"visibility: hidden;\" id=\"wifi3_key\">$wifi3_key</div>"
 
 cat<<EOM
@@ -49,12 +49,17 @@ function setWifi3_key()
 function checkInput()
 {
 	var enabled = document.getElementById('id_wifi3_enabled').checked;
+	var security = document.getElementById('id_wifi3_security').checked;
+
 	if(enabled)
 	{
 		var key = document.getElementById('id_wifi3_key').value;
 		var ssid = document.getElementById('id_wifi3_ssid').value;
-		if( key === undefined || ssid === undefined
-		   || key.length < 8 || !checkWifiKey(document.getElementById('id_wifi3_key').value))
+		if(   ssid === undefined 
+		   || ( security && 
+			( key === undefined || key.length < 8 
+			  || !checkWifiKey(document.getElementById('id_wifi3_key').value)))
+		  )
 		{
 			alert("Ungültige WiFi-Konfiguration!\nWiFi-Key/-SSID zu kurz oder enthält ungültige Zeichen.");
 			return false;
@@ -99,7 +104,7 @@ $(iwinfo $wifi_status_radio2g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 </tr>
 
 <tr><th>BSSID:</th>
-<td><input name="form_wifi_bssid" size="32" type="text" value="$(uci get credentials.wifi.bssid)" disabled></td>
+<td><input name="form_wifi_bssid" size="32" type="text" value="$(uci get credentials.wifi_2g.bssid)" disabled></td>
 </tr>
 
 <tr><th></th><td></td></tr>
@@ -113,12 +118,12 @@ $(iwinfo $wifi_status_radio2g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 <tr><td colspan="2"><hr size=1></td></tr>
 
 <tr><th>Aktiviere privates WiFi:</th>
-<td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es, ein zusätzliches privates WiFi zu aktivieren.</td></tr>
+<td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_2g_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es, ein zusätzliches privates WiFi zu aktivieren.</td></tr>
 <tr><th>SSID:</th>
-<td><input id="id_wifi3_ssid" name="form_wifi3_ssid" size="32" type="text" value="$(uci get credentials.wifi.private_ssid)"></td>
+<td><input id="id_wifi3_ssid" name="form_wifi3_ssid" size="32" type="text" value="$(uci get credentials.wifi_2g.private_ssid)"></td>
 </tr>
 <tr><th>Verschl&uuml;sselung:</th>
-<td><INPUT onchange="enable_wifi_security();" id="id_wifi3_security" NAME="form_wifi3_security" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_security)" = "1" ];then echo ' checked="checked"';fi)>WPA2-PSK</td></tr>
+<td><INPUT onchange="enable_wifi_security();" id="id_wifi3_security" NAME="form_wifi3_security" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_2g_security)" = "1" ];then echo ' checked="checked"';fi)>WPA2-PSK</td></tr>
 <tr><th>Key (mind. 8 Zeichen):</th>
 <td><input onkeypress="return isWifiKey(event);" id="id_wifi3_key" name="form_wifi3_key" width="30" type="text"></td>
 </tr>
@@ -162,14 +167,16 @@ else #query string
 			uci set ddmesh.network.essid_ap="$(uhttpd -d "$form_wifi_ap_ssid")"
 			uci set ddmesh.network.custom_essid="$form_wifi_custom_essid"
 			uci set ddmesh.network.wifi_slow_rates="$form_wifi_slow_rates"
-			uci set ddmesh.network.wifi3_enabled="$form_wifi3_enabled"
+
+			uci set ddmesh.network.wifi3_2g_enabled="$form_wifi3_enabled"
 			# avoid clearing values when disabled
 			if [ "$form_wifi3_enabled" = 1 ]; then
-				uci set ddmesh.network.wifi3_network="$form_wifi3_network"
-				uci set ddmesh.network.wifi3_security="$form_wifi3_security"
-				uci set credentials.wifi.private_ssid="$(uhttpd -d "$form_wifi3_ssid")"
-				uci set credentials.wifi.private_key="$(uhttpd -d "$form_wifi3_key")"
+				uci set ddmesh.network.wifi3_2g_network="$form_wifi3_network"
+				uci set ddmesh.network.wifi3_2g_security="$form_wifi3_security"
+				uci set credentials.wifi_2g.private_ssid="$(uhttpd -d "$form_wifi3_ssid")"
+				uci set credentials.wifi_2g.private_key="$(uhttpd -d "$form_wifi3_key")"
 			fi
+
 			uci set ddmesh.boot.boot_step=2
 			uci_commit.sh
 			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
