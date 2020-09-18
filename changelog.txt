@@ -1,9 +1,9 @@
 
 
-2020-00-00 6.0.15 (master)
+2020-00-00 6.1.2 (master)
 --------------------------------------------------
 ignore nodes              - add configuration option to specify link type 
-
+wifi                      - add private wifi (5GHz)
 
 2019-12-08 6.0.15 (Release)
 --------------------------------------------------

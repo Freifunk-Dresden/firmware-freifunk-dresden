@@ -441,6 +441,14 @@ upgrade_6_1_1()
  uci add_list firewall.zone_mesh.network='tbb_wg'
 }
 
+upgrade_6_1_2()
+{
+ uci -q rename ddmesh.network.wifi3_network='wifi3_2g_network'
+ uci -q rename ddmesh.network.wifi3_enabled='wifi3_2g_enabled'
+ uci -q rename ddmesh.network.wifi3_security='wifi3_2g_security'
+ uci rename credentials.wifi='wifi_2g'
+}
+
 ##################################
 
 run_upgrade
