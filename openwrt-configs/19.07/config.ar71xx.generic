@@ -493,8 +493,8 @@ CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c5-v1=y
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c58-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c59-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c59-v2 is not set
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c60-v1=y
-CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c60-v2=y
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c60-v1 is not set
+# CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c60-v2 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v1 is not set
 CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v2=y
 # CONFIG_TARGET_DEVICE_ar71xx_generic_DEVICE_archer-c7-v2-il is not set
@@ -589,7 +589,6 @@ CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mno-branch-likely -mips32r2 -mtun
 CONFIG_CPU_TYPE="24kc"
 CONFIG_LINUX_4_14=y
 CONFIG_DEFAULT_ath10k-firmware-qca9887=y
-CONFIG_DEFAULT_ath10k-firmware-qca9888-ct=y
 CONFIG_DEFAULT_ath10k-firmware-qca988x-ct=y
 CONFIG_DEFAULT_base-files=y
 CONFIG_DEFAULT_busybox=y
