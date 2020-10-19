@@ -109,9 +109,9 @@ listTargets()
  fi
  targetIdx=$(( targetIdx + 1 ))
 
- printf -- '-------------------------------------------------------------------------------------------------\n'
- printf  " %-36s | %-7s | %-7s | %-7s | %-7s | %-7s | %-s \n" target wrt_rev wrt_var config feeds files patches
- printf -- '--------------------------------------+---------+---------+---------+---------+---------+--------\n'
+ printf -- '----------------------------------------------------------------------------------------------------\n'
+ printf  " %-36s | %-7s | %-10s | %-7s | %-7s | %-7s | %-s \n" target wrt_rev wrt_var config feeds files patches
+ printf -- '--------------------------------------+---------+------------+---------+---------+---------+--------\n'
  # run through rest of json
  while true
  do
@@ -151,18 +151,18 @@ listTargets()
 	
 	test -z "$_name" && echo "error: configuration has no name" && break
 
- 	printf  " %-36s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s\n" "$_name" "${_openwrt_rev:0:7}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches"
+ 	printf  " %-36.36s | %-7.7s | %-10.10s | %-7.7s | %-7.7s | %-7.7s | %-7.7s\n" "$_name" "${_openwrt_rev:0:7}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches"
 
 	targetIdx=$(( targetIdx + 1 ))
  done
- printf -- '-------------------------------------------------------------------------------------------------\n'
+ printf -- '----------------------------------------------------------------------------------------------------\n'
 }
 
 
 search_target()
 {
 	target=$1
-	 awk '/^CONFIG_TARGET_.*'$target'/{print FILENAME}' openwrt-configs/*/*
+	 awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{print FILENAME}' openwrt-configs/*/*
 }
 
 setup_dynamic_firmware_config()
@@ -635,9 +635,10 @@ EOM
         idx=0
         while true
         do
-                # use OPT to prevent jq from adding ""
+		# check if all patches was processed
 		test -z "$_target_patches" && break
 
+                # use OPT to prevent jq from adding ""
                 entry="$(echo $_target_patches | jq $OPT .[$idx])"
                 test "$entry" = "null" && break
                 test -z "$entry"  && break

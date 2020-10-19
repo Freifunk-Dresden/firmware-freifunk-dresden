@@ -455,6 +455,16 @@ upgrade_6_1_2()
  uci set ddmesh.network.wifi3_5g_security='0'
 }
 
+upgrade_6_1_3()
+{
+ true
+}
+
+#upgrade_6_X_Y()
+#{
+# true
+#}
+
 ##################################
 
 run_upgrade
