@@ -5,12 +5,13 @@ MAINTAINER info@lank.me
 RUN apt-get update && \
         apt-get full-upgrade -y && \
         apt-get install -y nodejs git build-essential devscripts debhelper \
-                dh-systemd python dh-python libssl-dev libncurses5-dev unzip \
+                dh-systemd python python3 dh-python libssl-dev libncurses5-dev unzip \
                 gawk zlib1g-dev subversion gcc-multilib flex gettext curl \
                 wget time rsync jq \
-                python-pathlib python-pathlib2 python-scandir && \
+                python-pip python-pathlib python-pathlib2 python-scandir && \
         apt-get clean
 
+RUN 
 # create user which is used to building firmware
 RUN useradd -m builder
 

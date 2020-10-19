@@ -1,0 +1,11 @@
+--- buildroot/rules.mk.ori	2020-10-07 00:00:40.505134016 +0000
++++ buildroot/rules.mk	2020-10-07 00:00:51.241192720 +0000
+@@ -276,7 +276,7 @@
+ TAR:=tar
+ FIND:=find
+ PATCH:=patch
+-PYTHON:=python
++PYTHON:=python3
+
+ INSTALL_BIN:=install -m0755
+ INSTALL_SUID:=install -m4755

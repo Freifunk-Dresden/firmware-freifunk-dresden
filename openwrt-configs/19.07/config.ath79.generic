@@ -130,6 +130,7 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr1043nd-v4 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr2543-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr710n-v1 is not set
+# CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr710n-v2.1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr810n-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr810n-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr842n-v3 is not set
@@ -270,6 +271,7 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v3=y
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v4=y
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr2543-v1=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr710n-v1 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr710n-v2.1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr810n-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr810n-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr842n-v3 is not set
@@ -394,6 +396,7 @@ CONFIG_TARGET_UBIFS_JOURNAL_SIZE=""
 #
 # Global build settings
 #
+# CONFIG_JSON_OVERVIEW_IMAGE_INFO is not set
 # CONFIG_ALL_NONSHARED is not set
 # CONFIG_ALL_KMODS is not set
 # CONFIG_ALL is not set
@@ -439,7 +442,6 @@ CONFIG_KERNEL_DEBUG_FS=y
 # CONFIG_KERNEL_MAGIC_SYSRQ is not set
 # CONFIG_KERNEL_DEBUG_PINCTRL is not set
 # CONFIG_KERNEL_DEBUG_GPIO is not set
-# CONFIG_KERNEL_COREDUMP is not set
 # CONFIG_KERNEL_ELF_CORE is not set
 # CONFIG_KERNEL_PROVE_LOCKING is not set
 CONFIG_KERNEL_PRINTK_TIME=y
@@ -1683,6 +1685,36 @@ CONFIG_PACKAGE_usign=y
 # CONFIG_PACKAGE_zram-swap is not set
 
 #
+# Administration
+#
+
+#
+# zabbix
+#
+# CONFIG_PACKAGE_zabbix-agentd is not set
+
+#
+# SSL support
+#
+# CONFIG_ZABBIX_OPENSSL is not set
+# CONFIG_ZABBIX_GNUTLS is not set
+CONFIG_ZABBIX_NOSSL=y
+# CONFIG_PACKAGE_zabbix-extra-mac80211 is not set
+# CONFIG_PACKAGE_zabbix-extra-network is not set
+# CONFIG_PACKAGE_zabbix-extra-wifi is not set
+# CONFIG_PACKAGE_zabbix-get is not set
+# CONFIG_PACKAGE_zabbix-proxy is not set
+# CONFIG_PACKAGE_zabbix-sender is not set
+# CONFIG_PACKAGE_zabbix-server is not set
+
+#
+# Database Software
+#
+# CONFIG_ZABBIX_MYSQL is not set
+CONFIG_ZABBIX_POSTGRESQL=y
+# CONFIG_PACKAGE_zabbix-server-frontend is not set
+
+#
 # Boot Loaders
 #
 
@@ -1745,7 +1777,6 @@ CONFIG_PACKAGE_tcpdump=m
 #
 # Libraries
 #
-# CONFIG_PACKAGE_libxml2-dev is not set
 # CONFIG_PACKAGE_ar is not set
 # CONFIG_PACKAGE_binutils is not set
 # CONFIG_PACKAGE_gdb is not set
@@ -1754,6 +1785,11 @@ CONFIG_PACKAGE_tcpdump=m
 # CONFIG_PACKAGE_trace-cmd is not set
 # CONFIG_PACKAGE_trace-cmd-extra is not set
 # CONFIG_PACKAGE_valgrind is not set
+
+#
+# Extra packages
+#
+# CONFIG_PACKAGE_wireguard-tools is not set
 
 #
 # Firmware
@@ -2488,42 +2524,74 @@ CONFIG_PACKAGE_MAC80211_MESH=y
 # CONFIG_PACKAGE_luac is not set
 
 #
+# PHP
+#
+# CONFIG_PACKAGE_php7 is not set
+
+#
 # Python
 #
 # CONFIG_PACKAGE_python-pip-conf is not set
 # CONFIG_PACKAGE_python3 is not set
 # CONFIG_PACKAGE_python3-asyncio is not set
+# CONFIG_PACKAGE_python3-asyncio-src is not set
 # CONFIG_PACKAGE_python3-base is not set
+# CONFIG_PACKAGE_python3-base-src is not set
 # CONFIG_PACKAGE_python3-cgi is not set
+# CONFIG_PACKAGE_python3-cgi-src is not set
 # CONFIG_PACKAGE_python3-cgitb is not set
+# CONFIG_PACKAGE_python3-cgitb-src is not set
 # CONFIG_PACKAGE_python3-codecs is not set
+# CONFIG_PACKAGE_python3-codecs-src is not set
 # CONFIG_PACKAGE_python3-ctypes is not set
+# CONFIG_PACKAGE_python3-ctypes-src is not set
 # CONFIG_PACKAGE_python3-dbm is not set
+# CONFIG_PACKAGE_python3-dbm-src is not set
 # CONFIG_PACKAGE_python3-decimal is not set
+# CONFIG_PACKAGE_python3-decimal-src is not set
 # CONFIG_PACKAGE_python3-dev is not set
+# CONFIG_PACKAGE_python3-dev-src is not set
 # CONFIG_PACKAGE_python3-distutils is not set
+# CONFIG_PACKAGE_python3-distutils-src is not set
 # CONFIG_PACKAGE_python3-email is not set
+# CONFIG_PACKAGE_python3-email-src is not set
 # CONFIG_PACKAGE_python3-gdbm is not set
+# CONFIG_PACKAGE_python3-gdbm-src is not set
 # CONFIG_PACKAGE_python3-lib2to3 is not set
+# CONFIG_PACKAGE_python3-lib2to3-src is not set
 # CONFIG_PACKAGE_python3-light is not set
 
 #
 # Configuration
 #
 # CONFIG_PYTHON3_BLUETOOTH_SUPPORT is not set
+# CONFIG_PACKAGE_python3-light-src is not set
 # CONFIG_PACKAGE_python3-logging is not set
+# CONFIG_PACKAGE_python3-logging-src is not set
 # CONFIG_PACKAGE_python3-lzma is not set
+# CONFIG_PACKAGE_python3-lzma-src is not set
 # CONFIG_PACKAGE_python3-multiprocessing is not set
+# CONFIG_PACKAGE_python3-multiprocessing-src is not set
 # CONFIG_PACKAGE_python3-ncurses is not set
+# CONFIG_PACKAGE_python3-ncurses-src is not set
 # CONFIG_PACKAGE_python3-openssl is not set
+# CONFIG_PACKAGE_python3-openssl-src is not set
 # CONFIG_PACKAGE_python3-pip is not set
+# CONFIG_PACKAGE_python3-pip-src is not set
 # CONFIG_PACKAGE_python3-pkg-resources is not set
+# CONFIG_PACKAGE_python3-pkg-resources-src is not set
 # CONFIG_PACKAGE_python3-pydoc is not set
+# CONFIG_PACKAGE_python3-pydoc-src is not set
 # CONFIG_PACKAGE_python3-setuptools is not set
+# CONFIG_PACKAGE_python3-setuptools-src is not set
 # CONFIG_PACKAGE_python3-sqlite3 is not set
+# CONFIG_PACKAGE_python3-sqlite3-src is not set
 # CONFIG_PACKAGE_python3-unittest is not set
+# CONFIG_PACKAGE_python3-unittest-src is not set
 # CONFIG_PACKAGE_python3-urllib is not set
+# CONFIG_PACKAGE_python3-urllib-src is not set
 # CONFIG_PACKAGE_python3-xml is not set
+# CONFIG_PACKAGE_python3-xml-src is not set
 
 #
 # Libraries
@@ -2534,11 +2602,6 @@ CONFIG_PACKAGE_MAC80211_MESH=y
 #
 # CONFIG_PACKAGE_libbz2 is not set
 # CONFIG_PACKAGE_liblzma is not set
-
-#
-# Database
-#
-# CONFIG_PACKAGE_libsqlite3 is not set
 
 #
 # Filesystem
@@ -2564,12 +2627,20 @@ CONFIG_PACKAGE_libmbedtls=y
 # CONFIG_LIBMBEDTLS_DEBUG_C is not set
 # CONFIG_PACKAGE_libopenssl is not set
 # CONFIG_PACKAGE_libwolfssl is not set
+
+#
+# database
+#
+# CONFIG_PACKAGE_libpq is not set
+# CONFIG_PACKAGE_libsqlite3 is not set
 # CONFIG_PACKAGE_argp-standalone is not set
 # CONFIG_PACKAGE_bluez-libs is not set
 # CONFIG_PACKAGE_glib2 is not set
 # CONFIG_PACKAGE_icu is not set
 # CONFIG_PACKAGE_icu-data-tools is not set
 # CONFIG_PACKAGE_icu-full-data is not set
+# CONFIG_PACKAGE_jansson is not set
+# CONFIG_PACKAGE_libaio is not set
 # CONFIG_PACKAGE_libasm is not set
 # CONFIG_PACKAGE_libbfd is not set
 # CONFIG_PACKAGE_libblkid is not set
@@ -2595,7 +2666,9 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libext2fs is not set
 # CONFIG_PACKAGE_libf2fs is not set
 # CONFIG_PACKAGE_libfdisk is not set
+# CONFIG_PACKAGE_libfdt is not set
 # CONFIG_PACKAGE_libffi is not set
+# CONFIG_PACKAGE_libfreetype is not set
 # CONFIG_PACKAGE_libgdbm is not set
 # CONFIG_PACKAGE_libgmp is not set
 # CONFIG_PACKAGE_libical is not set
@@ -2606,11 +2679,13 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libintl-full is not set
 # CONFIG_PACKAGE_libiw is not set
 CONFIG_PACKAGE_libiwinfo=y
+# CONFIG_PACKAGE_libjpeg is not set
 CONFIG_PACKAGE_libjson-c=y
 # CONFIG_PACKAGE_libkmod is not set
 # CONFIG_PACKAGE_libltdl is not set
 # CONFIG_PACKAGE_liblua is not set
 CONFIG_PACKAGE_liblzo=m
+# CONFIG_PACKAGE_libmariadb is not set
 # CONFIG_PACKAGE_libmnl is not set
 # CONFIG_PACKAGE_libmount is not set
 # CONFIG_PACKAGE_libncurses is not set
@@ -2640,6 +2715,10 @@ CONFIG_PACKAGE_libpcap=m
 # CONFIG_PCAP_HAS_USB is not set
 # CONFIG_PCAP_HAS_NETFILTER is not set
 # CONFIG_PACKAGE_libpci is not set
+# CONFIG_PACKAGE_libpcre is not set
+# CONFIG_PACKAGE_libpcre16 is not set
+# CONFIG_PACKAGE_libpcrecpp is not set
+# CONFIG_PACKAGE_libpng is not set
 # CONFIG_PACKAGE_libpopt is not set
 # CONFIG_PACKAGE_libreadline is not set
 # CONFIG_PACKAGE_libroxml is not set
@@ -2667,8 +2746,10 @@ CONFIG_PACKAGE_libustream-mbedtls=y
 # CONFIG_PACKAGE_libxml2 is not set
 # CONFIG_PACKAGE_linux-atm is not set
 # CONFIG_PACKAGE_p11-kit is not set
+# CONFIG_PACKAGE_pixman is not set
 # CONFIG_PACKAGE_terminfo is not set
 # CONFIG_PACKAGE_uclibcxx is not set
+# CONFIG_PACKAGE_uw-imap is not set
 # CONFIG_PACKAGE_zlib is not set
 
 #
@@ -2847,7 +2928,6 @@ CONFIG_OPENVPN_mbedtls_ENABLE_PF=y
 CONFIG_OPENVPN_mbedtls_ENABLE_SMALL=y
 # CONFIG_PACKAGE_openvpn-nossl is not set
 # CONFIG_PACKAGE_openvpn-openssl is not set
-# CONFIG_PACKAGE_wireguard-tools is not set
 
 #
 # WWAN
@@ -2892,6 +2972,10 @@ CONFIG_PACKAGE_iperf3=y
 # CONFIG_PACKAGE_iputils-tracepath is not set
 CONFIG_PACKAGE_iw=y
 # CONFIG_PACKAGE_iw-full is not set
+# CONFIG_PACKAGE_krb5-client is not set
+# CONFIG_PACKAGE_krb5-libs is not set
+# CONFIG_PACKAGE_krb5-server is not set
+# CONFIG_PACKAGE_krb5-server-extras is not set
 # CONFIG_PACKAGE_libipset is not set
 # CONFIG_PACKAGE_odhcpd is not set
 # CONFIG_PACKAGE_omcproxy is not set
@@ -2932,6 +3016,7 @@ CONFIG_DRIVER_11W_SUPPORT=y
 # CONFIG_PACKAGE_wpa-supplicant-wolfssl is not set
 # CONFIG_PACKAGE_wpad is not set
 CONFIG_PACKAGE_wpad-basic=y
+# CONFIG_PACKAGE_wpad-basic-wolfssl is not set
 # CONFIG_PACKAGE_wpad-mesh-openssl is not set
 # CONFIG_PACKAGE_wpad-mesh-wolfssl is not set
 # CONFIG_PACKAGE_wpad-mini is not set
@@ -2955,11 +3040,6 @@ CONFIG_PACKAGE_wpad-basic=y
 #
 # CONFIG_PACKAGE_bzip2 is not set
 # CONFIG_PACKAGE_xz-utils is not set
-
-#
-# Database
-#
-# CONFIG_PACKAGE_sqlite3-cli is not set
 
 #
 # Disc
@@ -3013,16 +3093,50 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_xfs-mkfs is not set
 
 #
+# Image Manipulation
+#
+# CONFIG_PACKAGE_jpeg-tools is not set
+
+#
 # Terminal
 #
 # CONFIG_PACKAGE_agetty is not set
 # CONFIG_PACKAGE_script-utils is not set
 # CONFIG_PACKAGE_setterm is not set
 # CONFIG_PACKAGE_wall is not set
+
+#
+# Virtualization
+#
+
+#
+# Zoneinfo
+#
+# CONFIG_PACKAGE_zoneinfo-africa is not set
+# CONFIG_PACKAGE_zoneinfo-all is not set
+# CONFIG_PACKAGE_zoneinfo-asia is not set
+# CONFIG_PACKAGE_zoneinfo-atlantic is not set
+# CONFIG_PACKAGE_zoneinfo-australia-nz is not set
+# CONFIG_PACKAGE_zoneinfo-core is not set
+# CONFIG_PACKAGE_zoneinfo-europe is not set
+# CONFIG_PACKAGE_zoneinfo-india is not set
+# CONFIG_PACKAGE_zoneinfo-northamerica is not set
+# CONFIG_PACKAGE_zoneinfo-pacific is not set
+# CONFIG_PACKAGE_zoneinfo-poles is not set
+# CONFIG_PACKAGE_zoneinfo-simple is not set
+# CONFIG_PACKAGE_zoneinfo-southamerica is not set
+
+#
+# database
+#
+# CONFIG_PACKAGE_mariadb-common is not set
+# CONFIG_PACKAGE_pgsql-cli is not set
+# CONFIG_PACKAGE_pgsql-cli-extra is not set
+# CONFIG_PACKAGE_pgsql-server is not set
+# CONFIG_PACKAGE_sqlite3-cli is not set
 # CONFIG_PACKAGE_adb is not set
 # CONFIG_PACKAGE_bluez-daemon is not set
 # CONFIG_PACKAGE_bluez-utils is not set
-# CONFIG_PACKAGE_bluez-utils-extra is not set
 # CONFIG_PACKAGE_bsdiff is not set
 # CONFIG_PACKAGE_bspatch is not set
 # CONFIG_PACKAGE_cal is not set
@@ -3031,6 +3145,8 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_dbus-utils is not set
 # CONFIG_PACKAGE_dmesg is not set
 # CONFIG_PACKAGE_dropbearconvert is not set
+# CONFIG_PACKAGE_dtc is not set
+# CONFIG_PACKAGE_fdt-utils is not set
 # CONFIG_PACKAGE_flock is not set
 # CONFIG_PACKAGE_fritz-caldata is not set
 # CONFIG_PACKAGE_fritz-tffs is not set
@@ -3043,7 +3159,6 @@ CONFIG_PACKAGE_iwinfo=y
 CONFIG_PACKAGE_jshn=y
 # CONFIG_PACKAGE_kmod is not set
 CONFIG_PACKAGE_libjson-script=y
-# CONFIG_PACKAGE_libxml2-utils is not set
 # CONFIG_PACKAGE_logger is not set
 # CONFIG_PACKAGE_look is not set
 # CONFIG_PACKAGE_losetup is not set

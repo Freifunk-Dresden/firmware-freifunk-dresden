@@ -1,23 +1,24 @@
---- buildroot/package/base-files/image-config.in.orig	2019-09-07 13:07:50.762744079 +0200
-+++ buildroot/package/base-files/image-config.in	2019-09-07 13:47:49.141206674 +0200
+--- buildroot/package/base-files/image-config.in.ori	2020-10-07 00:14:39.409837748 +0000
++++ buildroot/package/base-files/image-config.in	2020-10-07 00:16:48.938575609 +0000
 @@ -183,7 +183,7 @@
  	config VERSION_REPO
  		string
  		prompt "Release repository"
--		default "http://downloads.openwrt.org/releases/19.07-SNAPSHOT"
+-		default "http://downloads.openwrt.org/releases/19.07.4"
 +		default "https://github.com/freifunk-dresden/firmware-freifunk-dresden.git"
  		help
  			This is the repository address embedded in the image, it defaults
  			to the trunk snapshot repo; the url may contain the following placeholders:
-@@ -210,6 +210,7 @@
+@@ -210,7 +210,7 @@
 
  	config VERSION_MANUFACTURER
  		string
-+		default "Freifunk Dresden"
- 		prompt "Manufacturer name"
+-		prompt "Manufacturer name"
++		prompt "Freifunk Dresden"
  		help
  			This is the manufacturer name embedded in /etc/device_info
-@@ -251,7 +252,7 @@
+ 			Useful for OEMs building OpenWrt based firmware
+@@ -251,7 +251,7 @@
  	config VERSION_FILENAMES
  		bool
  		prompt "Version number in filenames"
@@ -26,17 +27,8 @@
  		help
  			Enable this to include the version number in firmware image, SDK-
  			and Image Builder archive file names
-@@ -259,7 +260,7 @@
- 	config VERSION_CODE_FILENAMES
- 		bool
- 		prompt "Revision code in filenames"
--		default y
-+		default n
- 		help
- 			Enable this to include the revision identifier or the configured
- 			version code into the firmware image, SDK- and Image Builder archive
-@@ -269,7 +270,7 @@
- 
+@@ -269,7 +269,7 @@
+
  menuconfig PER_FEED_REPO
  	bool "Separate feed repositories" if IMAGEOPT
 -	default y

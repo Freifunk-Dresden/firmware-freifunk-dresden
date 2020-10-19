@@ -14,9 +14,6 @@
 #	config.<target>.<subtarget>[.<variant>][.<openwrt_variant>]
 #
 #########################################################################
-# 5.0.5/B_FIRMWARE_5.0.3    lede_rev: 3ca1438ae0f780664e29bf0d102c1c6f9a99ece7 # lede v17.01.5~54
-# 6.0.9/T_FIRMWARE_6     openwrt_rev: a02809f61bf9fda0387d37bd05d0bcfe8397e25d # v18.06.2^0
-#
 
 {
  "targets": [
@@ -33,12 +30,7 @@
 							#      	a set of routers when selecting "multiple devices"
 							#	via "make menuconfig"
 
-#		"openwrt_rev":"d3e11e8ad85b9a51027174d5207e1e43a8c8fe94", # 19.07 Sat Nov 9 20:10:58 2019
-#		"openwrt_rev":"d2d12346e8e6dd5fbb6befd4f9e3e1d5304a2e31", # 19.07 Mon Nov 25 16:53:59 2019 
-#		"openwrt_rev":"7ab5dc77b223fd71e07ac5b8eb2f32852e804db9", # 19.07 Mon Dec 2019 
-#		"openwrt_rev":"c56ed72d2bc6dbee3ff82b4bd42e1768f1a2c737", # 19.07 Thu Feb 27 22:34:09 2020 
-#		"openwrt_rev":"74a8e36975a7148b4a901b849facbb6fa309ea97", # 19.07 Wed Mar 11 11:27:59 2020
-		"openwrt_rev":"01b624e28ec7e45573e6c501125510c19f64c257", # 19.07 2020-04-12 11:46:34
+		"openwrt_rev":"d5810aa61367a9424599935572f622d27f8303f0", # v19.07.4
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
 							# Note that selecting some packages as module could have
@@ -52,19 +44,16 @@
 		"selector-feeds":"19.07",		# used to select feeds
 		"selector-patches":"19.07",		# used to select patches
 
-		#"openwrt_rev":"f6de1fa6c6b69ac6282f453f61c894695d11f433", # 18.06 01-09-2019
-		#"selector-config":"18.06",		# used to select config
-		#"selector-files":"dummy",		# used to select files
-		#"selector-feeds":"18.06",		# used to select feeds
-		#"selector-patches":"18.06",		# used to select patches
-
 		# generates the feeds/feeds-[selector].conf
 		# for short commit value use: git log --abbrev-commit
+
+
+		# Versions from: 2020.08.21
 		"feeds" : [
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
-				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"1812713fa"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"f71d733"},
-				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"bf49bc5"}
+				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"cedba1ca2"},
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"b77498b"},
+				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"c1e923b"}
 			  ],
 
 		# install addional packages from feeds (see feeds.conf)
@@ -112,7 +101,8 @@
 	{
 		"name":"ar71xx.generic",
 		"target":"ar71xx",
-		"subtarget":"generic"
+		"subtarget":"generic",
+		"target-patches":["ar71xx.joy-it-or750i.patch"]
 	},
 	{	
 		"name":"ar71xx.generic.gl-mifi",
@@ -134,8 +124,8 @@
 		"name":"x64.generic",
 		"target":"x86",
 		"subtarget":"64",
-		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ],
-		"target-patches":["package-qemu-ga-buildfix.patch"]
+		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
+#		"target-patches":["package-qemu-ga-buildfix.patch"]
 	},
 	{
 		"name":"ramips.mt7621.generic",
@@ -159,13 +149,13 @@
 		"name":"lantiq.xrx200",
 		"target":"lantiq",
 		"subtarget":"xrx200",
+		"openwrt_variant":"patchset-1",
 		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
 	},
 	{
 		"name":"lantiq.xway",
 		"target":"lantiq",
-		"subtarget":"xway",
-		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
+		"subtarget":"xway"
 	},
         {       # created for Orange Pi R1
                 "name":"sunxi.cortexa7.generic",
@@ -176,7 +166,8 @@
         {
                 "name":"ath79.generic",
                 "target":"ath79",
-                "subtarget":"generic"
+                "subtarget":"generic",
+		"target-patches":["device1-comfast-e314n.patch", "device2-comfast-comfast-e130n.patch"]
         },
 	{
 		"name":"ath79.tiny.wireguard.lowmem",
@@ -185,11 +176,6 @@
 		"variant":"wireguard",
 		"openwrt_variant":"lowmem"
 	},
-#	{
-#		"name":"ramips.rt305x.generic",
-#		"target":"ramips",
-#		"subtarget":"rt305x"
-#	},
 	{	# created for fritzbox 4040
 		"name":"ipq40xx.generic",
 		"target":"ipq40xx",
