@@ -15,6 +15,8 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 vpn=vpn0
 gwt=bat0
 
+eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
+
 eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
 eval $(cat /etc/openwrt_release)
 
@@ -343,6 +345,7 @@ EOM
 		fi
 cat<<EOM >>$OUTPUT
 		"traffic_shaping":{"enabled":$tc_enabled, "network":"$(uci -q get ddmesh.network.speed_network)", "incomming":"$(uci -q get ddmesh.network.speed_down)", "outgoing":"$(uci -q get ddmesh.network.speed_up)"},
+		"airtime":{"radio2g":"$(echo $wifi_status_radio2g_airtime)"$([ ! -z "$wifi_status_radio5g_airtime" ] && echo ", \"radio5g\":\"$wifi_status_radio5g_airtime\"" )},
 		"network_switch":$(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh json)
 EOM
 
