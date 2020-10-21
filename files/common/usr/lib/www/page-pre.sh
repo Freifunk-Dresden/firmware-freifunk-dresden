@@ -9,7 +9,6 @@ fi
 
 . /usr/lib/www/page-functions.sh
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
-eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 # get model                                                              
 eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
