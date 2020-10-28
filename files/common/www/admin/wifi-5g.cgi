@@ -3,6 +3,7 @@
 export TITLE="Verwaltung &gt; Konfiguration: WIFI 5GHz"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
+eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 cat<<EOF
 <h2>$TITLE</h2>
