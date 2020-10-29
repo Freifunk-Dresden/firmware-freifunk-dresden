@@ -117,10 +117,10 @@ config network 'network'
 	option	mesh_on_lan		0
 	option	wifi3_2g_enabled	0
 	option	wifi3_2g_network	'lan'
-	option	wifi3_2g_security	0
+	option	wifi3_2g_security	1
 	option	wifi3_5g_enabled	0
 	option	wifi3_5g_network	'lan'
-	option	wifi3_5g_security	0
+	option	wifi3_5g_security	1
 	option	wwan_apn		'internet'
 	option	wwan_pincode		''
 	option	wwan_syslog		0
