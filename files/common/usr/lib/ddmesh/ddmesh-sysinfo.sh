@@ -264,16 +264,11 @@ cat<<EOM >> $OUTPUT
 EOM
 
 			# firewall_rule_name:sysinfo_key_name
-			NETWORKS="lan:lan wan:wan wifi:adhoc wifi2:ap vpn:ovpn bat:gwt privnet:privnet tbb_fastd:tbb_fastd mesh_lan:mesh_lan mesh_wan:mesh_wan"
+			NETWORKS="lan:lan wan:wan wifi:adhoc wifi2:ap vpn:ovpn bat:gwt privnet:privnet tbb_fastd:tbb_fastd tbb_wg:tbb_wg mesh_lan:mesh_lan mesh_wan:mesh_wan"
 			for net in $NETWORKS
 			do
 				first=${net%:*}
 				second=${net#*:}
-				rx=$(iptables -w -L statistic_input -xvn | awk '/stat_'$first'_in/{print $2}')
-				tx=$(iptables -w -L statistic_output -xvn | awk '/stat_'$first'_out/{print $2}')
-				[ -z "$rx" ] && rx=0
-				[ -z "$tx" ] && tx=0
-				echo "			\"traffic_$second\": \"$rx,$tx\"," >> $OUTPUT
 
 				for net2 in $NETWORKS
 				do
