@@ -128,11 +128,13 @@ show_accept()
 	config_get comment "$config" comment
 
 	test -f "$STATUS_DIR/$key" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
-	echo "<tr class=\"colortoggle$TOGGEL\"><td>$key</td><td>$comment</td>"
-	echo "<td><img src=\"$CONNECTED\"></td>"
-	echo "<td><button onclick=\"if(ask('$comment'))form_submit(document.forms.backbone_form_connection_in,'accept_del','$config')\" title=\"Verbindung l&ouml;schen\" type=\"button\">"
-	echo "<img src=\"/images/loeschen.gif\" align=bottom width=16 height=16 hspace=4></button></td>"
-	echo "</tr>"
+	cat < EOM
+	<tr class="colortoggle$TOGGEL">
+	<td>$key</td><td>$comment</td> <td><img src="$CONNECTED"></td>
+	<td><button onclick="if(ask('$comment'))form_submit(document.forms.backbone_form_connection_in,'accept_del','$config')" title="Verbindung l&ouml;schen" type="button">
+	<img src="/images/loeschen.gif" align=bottom width=16 height=16 hspace=4></button></td>
+	</tr>
+EOM
 	if [ $TOGGEL = "1" ]; then
 		TOGGEL=2
 	else

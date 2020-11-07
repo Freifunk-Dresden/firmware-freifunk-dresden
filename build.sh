@@ -2,7 +2,7 @@
 tabs 4
 
 #usage: see below
-SCRIPT_VERSION="7"
+SCRIPT_VERSION="8"
 
 
 #echo "ACHTUNG: aktuell stuerst firmware auf ubnt geraeten ab. Daher habe ich erstmal das bauen hier deaktiviert."
@@ -159,6 +159,40 @@ listTargets()
 }
 
 
+listTargetsNames()
+{
+
+ OPT="--raw-output" # do not excape values
+
+ cleanJson=$(getTargetsJson)
+
+ # first read default
+ targetIdx=0
+ entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+ if [ -n "$entry" ]; then
+	_def_name=$(echo $entry | jq $OPT '.name')
+ fi
+ targetIdx=$(( targetIdx + 1 ))
+
+ # run through rest of json
+ while true
+ do
+ 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+
+	if [ "$entry" = "null" ]; then
+		break;	# last entry
+	else
+		_name=$(echo $entry | jq $OPT '.name')
+	fi
+	
+	test -z "$_name" && echo "error: configuration has no name" && break
+
+ 	printf  "$_name\n"
+
+	targetIdx=$(( targetIdx + 1 ))
+ done
+}
+
 search_target()
 {
 	target=$1
@@ -181,6 +215,7 @@ if [ -z "$1" ]; then
 	echo "Version: $SCRIPT_VERSION"
 	echo "usage: $(basename $0) list | search <string> | clean | feed-revisions | (target | all  [menuconfig ] [rerun] [ <make params ...> ])"
 	echo " list             - lists all available targets"
+	echo " list-targets     - lists only target names for usage in IDE"
 	echo " search           - search specific router (target)"
 	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
 	echo " feed-revisions   - returns the git HEAD revision hash for current date (now)."
@@ -203,6 +238,11 @@ fi
 #check if next argument is "menuconfig"
 if [ "$1" = "list" ]; then
 	listTargets
+	exit 0
+fi
+
+if [ "$1" = "list-targets" ]; then
+	listTargetsNames	
 	exit 0
 fi
 
