@@ -4,7 +4,7 @@
         {
             "label": "build freifunk firmware",
             "type": "shell",
-            "command": "./build.sh ramips.mt7621.ubiquiti-edgerouter-x -j8",
+            "command": "./build.sh ar71xx.tiny.lowmem -j8",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -16,6 +16,40 @@
                 "echo": true,
                 "reveal": "always"
             }
+        },
+        {
+            "label": "list targets",
+            "type": "shell",
+            "command": "./build.sh list",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "upload current file",
+            "type": "shell",
+            "command": "eval scp ${file} root@${input:targetIp}:/$(echo '${relativeFile}' | sed 's#files/common##' )",
+            "problemMatcher": [
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always"
+            }
+        }
+    ],
+    "inputs" : [
+        {
+            "id" : "targetIp",
+            "description" : "IP address of target",
+            "default" : "192.168.222.1",
+            "type" : "promptString",
         }
     ]
 }
