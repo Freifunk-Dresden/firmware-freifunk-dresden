@@ -17,6 +17,8 @@ DEFAULT_FASTD_PORT=$(uci get ddmesh.backbone.default_fastd_port)
 DEFAULT_WG_PORT=$(uci get ddmesh.backbone.default_wg_port)
 backbone_local_fastd_port=$(uci get ddmesh.backbone.fastd_port)
 backbone_local_fastd_port=${backbone_local_fastd_port:-$DEFAULT_FASTD_PORT}
+backbone_local_wg_port=$(uci get ddmesh.backbone.wg_port)
+backbone_local_wg_port=${backbone_local_wg_port:-$DEFAULT_WG_PORT}
 MTU=$(uci get ddmesh.network.mesh_mtu)
 
 NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
@@ -168,6 +170,38 @@ callback_outgoing_wireguard_interfaces ()
 	fi
 }
 
+callback_incomming_wireguard_interfaces ()
+{
+	local config="$1"
+	local local_wg_ip=$2
+	local local_wgX_ip=$3
+
+	local key
+	local type
+	local node
+
+	config_get key "$config" public_key
+	config_get type "$config" type
+	config_get node "$config" node
+
+	echo "wg process out: cfgtype:$type, key:$key, target node:$node]"
+	if [ "$type" == "wireguard" -a -n "$key" -a -n "$node" ]; then
+
+		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+		local remote_wg_ip=$_ddmesh_wireguard_ip
+
+		echo "wg in: add peer ($node)"
+
+		# create sub interface
+		sub_ifname="$wg_ifname$node"
+		ip link add $sub_ifname type ipip remote $remote_wg_ip local $local_wg_ip
+		ip addr add $local_wgX_ip broadcast $_ddmesh_broadcast dev $sub_ifname
+		ip link set $sub_ifname up
+
+		bmxd -c dev=$sub_ifname /linklayer 1
+	fi
+}
+
 callback_outgoing_wireguard_connection ()
 {
 	local config="$1"
@@ -202,6 +236,8 @@ case "$1" in
 		iptables -w -F input_backbone_reject
 		iptables -w -A input_backbone_accept -p udp --dport $backbone_local_fastd_port -j ACCEPT
 		iptables -w -A input_backbone_reject -p udp --dport $backbone_local_fastd_port -j reject
+		iptables -w -A input_backbone_accept -p udp --dport $backbone_local_wg_port -j ACCEPT
+		iptables -w -A input_backbone_reject -p udp --dport $backbone_local_wg_port -j reject
 		iptables -w -F output_backbone_accept
 		iptables -w -F output_backbone_reject
 
@@ -243,24 +279,26 @@ case "$1" in
 				ip addr add "$_ddmesh_wireguard_ip/32" dev $wg_ifname
 				wg set $wg_ifname private-key $secret_file
 
-# in zukunft wird nur fastd oder wg als lokaler server verwendet, beides ist nicht notwendig
-				# wg set $wg_ifname listen-port $backbone_local_fastd_port
+				wg set $wg_ifname listen-port $backbone_local_wg_port
 
 				ip link set $wg_ifname up
 				rm $secret_file
 
 				ip route add $_ddmesh_wireguard_network/$_ddmesh_netpre dev $wg_ifname src $_ddmesh_wireguard_ip
 
-				# add outgoing clients to wg and bmxd (sollte hier nicht aufgerufen werden)
 				# pass local ip addresses to callback
 				# wg provides tunnels to all peers via one interface.
 				# through this tunnel an ipip tunnel is setup from node to node, because of some
 				# wg restrictions (no broacast possible). ipip tunnel has its own interface for
 				# each peer. this iface is added to bmxd
 
-				# only interfaces an firewall are configured
+				# add outgoing clients
 				config_load ddmesh
 				config_foreach callback_outgoing_wireguard_interfaces backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
+
+				# add incomming clients
+				config_load ddmesh
+				config_foreach callback_incomming_wireguard_interfaces backbone_accept $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
 			fi
 		fi
 
