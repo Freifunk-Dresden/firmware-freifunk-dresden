@@ -37,49 +37,53 @@ function checkinput_fastd_server_port ()
 {
 	var v;
 	v = document.backbone_form_local_fastd.form_backbone_local_fastd_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("fastd-Server-Port ist ung&uuml;ltig (1-65535)");return 0;}
+	if( checknumber(v) || v<1 || v>65535 ){ alert("fastd-Server-Port ist ungültig (1-65535)");return 0;}
 	return 1;
 }
 
 function checkinput_outgoing ()
 {
-	var v;
-	v = document.backbone_form_connection_out.form_backbone_outgoing_peer_hostname.value;
-	if( v==""){ alert("Hostname ist ung&uuml;ltig");return 0;}
+	var h = document.backbone_form_connection_out.form_backbone_outgoing_peer_hostname.value;
+	if( h == ""){ alert("Hostname ist ungültig");return 0;}
 
-	v = document.backbone_form_connection_out.form_backbone_outgoing_peer_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("Server-Port ist ungültig (1-65535)");return 0;}
+	var p = document.backbone_form_connection_out.form_backbone_outgoing_peer_port.value;
+	if( checknumber(p) || p<1 || p>65535 ){ alert("Server-Port ist ungültig (1-65535)");return 0;}
 
-	v = document.backbone_form_connection_out.form_backbone_outgoing_peer_key.value;
-	if( v.type=="fastd" || v.type==""){
-		if( v.length!=$KEY_LEN_FASTD){ alert("Key ist ungültig (Fastd Key ist $KEY_LEN_FASTD Zeichen)");return 0;}
-		if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
+	var k = document.backbone_form_connection_out.form_backbone_outgoing_peer_key.value;
+	var t = document.backbone_form_connection_out.form_backbone_outgoing_peer_type.value;
+	if( t == "fastd" || t == ""){
+		if( k.length != $KEY_LEN_FASTD){ alert("Key ist ungültig (Fastd Key ist $KEY_LEN_FASTD Zeichen)");return 0;}
+		if( k.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
 	}
 
-	if( v.type=="wireguard"){
-		if( v.length!=$KEY_LEN_WG){ alert("Key ist ung..ltig (Wireguard Key ist $KEY_LEN_WG Zeichen)");return 0;}
-		if( v.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ung..ltig");return 0;}
+	if( t == "wireguard"){
+		var n = document.backbone_form_connection_out.form_backbone_outgoing_peer_node.value;
+		if( n == ""){ alert("Knotennummer ist ungültig");return 0;}
+
+		if( k.length != $KEY_LEN_WG){ alert("Key ist ungültig (Wireguard Key ist $KEY_LEN_WG Zeichen)");return 0;}
+		if( k.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
 	}
 	return 1;
 }
 
 function checkinput_incomming ()
 {
-	var v = document.backbone_form_connection_in.form_backbone_incomming_peer_key.value;
 	var t = document.backbone_form_connection_in.form_backbone_incomming_peer_type.value;
-	var keylen = (t=="wireguard") ? $KEY_LEN_WG : $KEY_LEN_FASTD;
+	var k = document.backbone_form_connection_in.form_backbone_incomming_peer_key.value;
 
-	if( v.length!=keylen)
-	{
-		alert("Key ist ungültig (fastd:$KEY_LEN_FASTD Zeichen, wg:$KEY_LEN_WG Zeichen)");
-		return 0;
+	if( t == "fastd" || t == ""){
+		if( k.length != $KEY_LEN_FASTD){ alert("Key ist ungültig (Fastd Key ist $KEY_LEN_FASTD Zeichen)");return 0;}
+		if( k.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
 	}
 
-	if( v.replace(/[0-9a-f]/g,"") != "" )
-	{
-		alert("Key ist ungültig");
-		return 0;
+	if( t == "wireguard"){
+		var n = document.backbone_form_connection_in.form_backbone_incomming_peer_node.value;
+		if( n == ""){ alert("Knotennummer ist ungültig");return 0;}
+
+		if( k.length != $KEY_LEN_WG){ alert("Key ist ungültig (Wireguard Key ist $KEY_LEN_WG Zeichen)");return 0;}
+		if( k.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
 	}
+
 	return 1;
 }
 
@@ -90,8 +94,9 @@ function form_submit (form,action,entry)
 	form.submit();
 }
 
-function enable_formfields_incomming() {
-	var type = document.getElementById('form_backbone_incomming_peer_type').value;
+function enable_formfields_incomming()
+{
+	var type = document.getElementsByName('form_backbone_incomming_peer_type')[0].value;
 
 	if(type == "wireguard")
 	{
@@ -101,19 +106,22 @@ function enable_formfields_incomming() {
 	{
 		document.getElementsByName('form_backbone_incomming_peer_node')[0].disabled = true;
 	}
+}
 
-function enable_formfields_outgoing() {
-	var type = document.getElementById('form_backbone_outgoing_peer_type').value;
+function enable_formfields_outgoing()
+{
+	var type = document.getElementsByName('form_backbone_outgoing_peer_type')[0].value;
 
 	if(type == "wireguard")
 	{
 		document.getElementsByName('form_backbone_outgoing_peer_node')[0].disabled = false;
+		document.getElementsByName('form_backbone_outgoing_peer_port')[0].value = "$DEFAULT_WG_PORT";
 	}
 	else
 	{
 		document.getElementsByName('form_backbone_outgoing_peer_node')[0].disabled = true;
+		document.getElementsByName('form_backbone_outgoing_peer_port')[0].value = "$DEFAULT_FASTD_PORT";
 	}
-
 }
 
 </script>
@@ -336,7 +344,7 @@ echo "<option value=\"wireguard\">wireguard</option>"
 fi
 cat<<EOM
  </select></td>
- <td title="Zielknottennummer (nur fuer Wireguard)"><input disabled name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>
+ <td title="Zielknottennummer (nur f&uuml;r Wireguard)"><input disabled name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>
  <td title="Hostname oder IP Adresse &uuml;ber den ein anderer Freifunk Router erreichbar ist (z.b. xxx.dyndns.org). Kann eine IP im LAN oder IP/Hostname im Internet sein."><input name="form_backbone_outgoing_peer_hostname" type="text" size="25" value=""></td>
  <td title="Port des Servers"><input name="form_backbone_outgoing_peer_port" type="text" size="8" value="$DEFAULT_FASTD_PORT"></td>
  <td title="Public Key der Gegenstelle"><input name="form_backbone_outgoing_peer_key" type="text" size="40" value="$DEFAULT_FASTD_KEY"></td>
@@ -416,7 +424,7 @@ else
 				uci set ddmesh.@backbone_accept[-1].comment="$form_backbone_incomming_peer_comment"
 				uci set ddmesh.@backbone_accept[-1].public_key="$form_backbone_incomming_peer_key"
 				uci set ddmesh.@backbone_accept[-1].node="$form_backbone_incomming_peer_node"
-				uci set ddmesh.@backbone_accept[-1].node="$form_backbone_incomming_peer_type"
+				uci set ddmesh.@backbone_accept[-1].type="$form_backbone_incomming_peer_type"
 				uci_commit.sh
 				MSG=3;
 			else

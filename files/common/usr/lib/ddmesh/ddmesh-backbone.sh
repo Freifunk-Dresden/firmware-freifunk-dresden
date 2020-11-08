@@ -14,8 +14,9 @@ FASTD_PID_FILE=/var/run/backbone-fastd.pid
 FASTD_CONF_PEERS=backbone-peers
 
 DEFAULT_FASTD_PORT=$(uci get ddmesh.backbone.default_fastd_port)
-backbone_server_port=$(uci get ddmesh.backbone.server_port)
-backbone_server_port=${backbone_server_port:-$DEFAULT_FASTD_PORT}
+DEFAULT_WG_PORT=$(uci get ddmesh.backbone.default_wg_port)
+backbone_local_fastd_port=$(uci get ddmesh.backbone.server_port)
+backbone_local_fastd_port=${backbone_local_fastd_port:-$DEFAULT_FASTD_PORT}
 MTU=$(uci get ddmesh.network.mesh_mtu)
 
 NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
@@ -59,7 +60,7 @@ interface "$ifname";
 method "null";
 #method "salsa2012+umac";
 secure handshakes yes;
-bind any:$backbone_server_port;
+bind any:$backbone_local_fastd_port;
 secret "$secret";
 mtu $MTU;
 packet mark 0x5002;
@@ -199,8 +200,8 @@ case "$1" in
 	start)
 		iptables -w -F input_backbone_accept
 		iptables -w -F input_backbone_reject
-		iptables -w -A input_backbone_accept -p udp --dport $backbone_server_port -j ACCEPT
-		iptables -w -A input_backbone_reject -p udp --dport $backbone_server_port -j reject
+		iptables -w -A input_backbone_accept -p udp --dport $backbone_local_fastd_port -j ACCEPT
+		iptables -w -A input_backbone_reject -p udp --dport $backbone_local_fastd_port -j reject
 		iptables -w -F output_backbone_accept
 		iptables -w -F output_backbone_reject
 
@@ -243,7 +244,7 @@ case "$1" in
 				wg set $wg_ifname private-key $secret_file
 
 # in zukunft wird nur fastd oder wg als lokaler server verwendet, beides ist nicht notwendig
-				# wg set $wg_ifname listen-port $backbone_server_port
+				# wg set $wg_ifname listen-port $backbone_local_fastd_port
 
 				ip link set $wg_ifname up
 				rm $secret_file
