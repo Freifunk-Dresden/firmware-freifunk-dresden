@@ -235,7 +235,7 @@ show_outgoing()
 
 content()
 {
-	backbone_local_fastd_port=$(uci get ddmesh.backbone.server_port)
+	backbone_local_fastd_port=$(uci get ddmesh.backbone.fastd_port)
 	backbone_local_fastd_port=${backbone_local_fastd_port:-$DEFAULT_FASTD_PORT}
 
 	COUNT=$(uci show ddmesh | grep '=backbone_\(client\|accept\)' | wc -l)
@@ -392,7 +392,7 @@ else
 	RESTART=0
 	case $form_action in
 		local)
-			uci set ddmesh.backbone.server_port=$backbone_local_fastd_port
+			uci set ddmesh.backbone.fastd_port=$backbone_local_fastd_port
 			uci_commit.sh
 			MSG=2
 		;;

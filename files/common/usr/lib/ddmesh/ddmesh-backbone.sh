@@ -15,7 +15,7 @@ FASTD_CONF_PEERS=backbone-peers
 
 DEFAULT_FASTD_PORT=$(uci get ddmesh.backbone.default_fastd_port)
 DEFAULT_WG_PORT=$(uci get ddmesh.backbone.default_wg_port)
-backbone_local_fastd_port=$(uci get ddmesh.backbone.server_port)
+backbone_local_fastd_port=$(uci get ddmesh.backbone.fastd_port)
 backbone_local_fastd_port=${backbone_local_fastd_port:-$DEFAULT_FASTD_PORT}
 MTU=$(uci get ddmesh.network.mesh_mtu)
 

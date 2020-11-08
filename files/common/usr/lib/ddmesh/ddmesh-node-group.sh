@@ -11,9 +11,9 @@ NETWORK_DEV=priv
 #protocol is desided by server. clients ignore this parameter
 PROTO=tcp
 NUMBER_OF_CLIENTS=$(uci get ddmesh.privnet.number_of_clients)
-DEFAULT_PORT=$(uci get ddmesh.privnet.default_server_port)
+DEFAULT_PORT=$(uci get ddmesh.privnet.default_fastd_port)
 
-privnet_server_port=$(uci get ddmesh.privnet.server_port)
+privnet_server_port=$(uci get ddmesh.privnet.fastd_port)
 privnet_server_port=${privnet_server_port:-$DEFAULT_PORT}
 privnet_server_enabled=$(uci get ddmesh.privnet.server_enabled)
 privnet_server_enabled=${privnet_server_enabled:-0}

@@ -149,7 +149,7 @@ upgrade_4_2_3()
  uci delete ddmesh.vpn
  uci add ddmesh privnet
  uci rename ddmesh.@privnet[-1]='privnet'
- uci set ddmesh.privnet.server_port=4000
+ uci set ddmesh.privnet.fastd_port=4000
  uci set ddmesh.privnet.default_server_port=4000
  uci set ddmesh.privnet.number_of_clients=5
  uci set network.wifi2.stp=1
@@ -463,6 +463,9 @@ upgrade_6_1_3()
 upgrade_6_1_4()
 {
  uci -q rename ddmesh.backbone.default_server_port='default_fastd_port'
+ uci -q rename ddmesh.backbone.server_port='fastd_port'
+ uci -q rename ddmesh.privnet.default_server_port='default_fastd_port'
+ uci -q rename ddmesh.privnet.server_port='fastd_port'
  uci set ddmesh.backbone.default_wg_port='5003'
 }
 
