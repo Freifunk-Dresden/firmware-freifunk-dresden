@@ -171,11 +171,26 @@ show_accept()
 		type="fastd"
 	fi
 
-	test -f "$STATUS_DIR/$key" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+	if [ "$type" = "fastd" ]; then
+		test -f "$STATUS_DIR/$key" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+		connect_title=""
+	else
+		IFS='	'
+		hs=$(wg show $wg_ifname latest-handshakes | grep "$key")
+		if [ -n "$hs" ]; then
+			set $(wg show $wg_ifname latest-handshakes | grep "$key")
+			diff=$(( $UTC - $2 ))
+			[ $diff -lt $WG_HAND_SHAKE_TIME_S ] && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+		else
+			CONNECTED=/images/no.png
+		fi
+		connect_title="Handshake vor $diff s"
+	fi
+
 	cat <<EOM
 	<tr class="colortoggle$TOGGEL">
 	<td>$type</td> <td>$node</td> <td>$key</td>	<td>$comment</td>
-	<td><img src="$CONNECTED"></td>
+	<td><img title="$connect_title" src="$CONNECTED"></td>
 	<td><button onclick="if(ask('$comment'))form_submit(document.forms.backbone_form_connection_in,'accept_del','$config')" title="Verbindung l&ouml;schen" type="button">
 	<img src="/images/loeschen.gif" align=bottom width=16 height=16 hspace=4></button></td>
 	</tr>
