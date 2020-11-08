@@ -57,6 +57,7 @@
             "default" : "ar71xx.tiny.lowmem",
             "type" : "pickString",
             "options" : [
+                "all"
                 "ar71xx.tiny.lowmem",
                 "ar71xx.generic.lowmem",
                 "ar71xx.generic",
