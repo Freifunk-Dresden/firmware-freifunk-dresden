@@ -389,13 +389,13 @@ setup_buildroot ()
 	ln -s ../../$openwrt_dl_dir $buildroot/dl
 
 	# copy common files first
-	echo -e $C_PURPLE"copy rootfs$C_NONE: $C_GREEN""common"$C_NONE
+	echo -e "$C_PURPLE copy rootfs $C_NONE: $C_GREEN common $C_NONE"
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
 	cp -a $RUN_DIR/files/common/* $buildroot/files/
 
 	# copy specific files over (may overwrite common)
-	echo -e $C_PURPLE"copy rootfs"$C_NONE
+	echo -e "$C_PURPLE copy specific files $C_NONE: $C_GREEN $firmware_files $C_NONE"
 	test -d "$RUN_DIR/files/$firmware_files)" && cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
 
 	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
@@ -423,17 +423,21 @@ setup_buildroot ()
 		if [ "$git_ddmesh_branch" = "undefined" ]; then
 			git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
 			echo ""
-			echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"
+			echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"$C_NONE
 			echo ""
 			sleep 5
 		fi
 	fi
+	
 	echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
 	echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
-
 	echo "builtdate:$(date)" >> $buildroot/files/etc/built_info
 
-	cat $buildroot/files/etc/built_info
+	echo "git_openwrt_rev:     $git_openwrt_rev"
+	echo "git_openwrt_branch:  $git_openwrt_branch"
+	echo "git_ddmesh_rev:      $git_ddmesh_rev"
+	echo "git_ddmesh_branch:   $git_ddmesh_branch"
+	echo ""
 
 
 } # setup_buildroot
@@ -741,7 +745,9 @@ EOM
 
 	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
-		echo -e $C_RED"Error: build error"$C_NONE
+
+		echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "$_name" $C_NONE
+
 		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
 			echo -e $C_PURPLE".......... rerun build with V=s ........................"$C_NONE
 			time -p make $BUILD_PARAMS V=s -j1
