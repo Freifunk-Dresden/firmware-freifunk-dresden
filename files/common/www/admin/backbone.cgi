@@ -33,11 +33,13 @@ function ask (n)
 	return x;
 }
 
-function checkinput_fastd_server_port ()
+function checkinput_server_ports ()
 {
 	var v;
-	v = document.backbone_form_local_fastd.form_backbone_local_fastd_port.value;
-	if( checknumber(v) || v<1 || v>65535 ){ alert("fastd-Server-Port ist ungültig (1-65535)");return 0;}
+	v = document.backbone_form_local.form_backbone_local_fastd_port.value;
+	if( checknumber(v) || v<1 || v>65535 ){ alert("Fastd Server Port ist ungültig (1-65535)");return 0;}
+	v = document.backbone_form_local.form_backbone_local_wg_port.value;
+	if( checknumber(v) || v<1 || v>65535 ){ alert("Wireguard Server Port ist ungültig (1-65535)");return 0;}
 	return 1;
 }
 
@@ -236,17 +238,41 @@ content()
 	backbone_local_fastd_port=$(uci get ddmesh.backbone.fastd_port)
 	backbone_local_fastd_port=${backbone_local_fastd_port:-$DEFAULT_FASTD_PORT}
 
+	backbone_local_wg_port=$(uci get ddmesh.backbone.wg_port)
+	backbone_local_wg_port=${backbone_local_wg_port:-$DEFAULT_WG_PORT}
+
 	COUNT=$(uci show ddmesh | grep '=backbone_\(client\|accept\)' | wc -l)
 
 	cat<<EOM
 <fieldset class="bubble">
 <legend>Backbone-Einstellungen</legend>
-<form name="backbone_form_local_fastd" action="backbone.cgi" method="POST">
+<form name="backbone_form_local" action="backbone.cgi" method="POST">
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th title="Port des Servers">Server-Port:</th><td><input name="form_backbone_local_fastd_port" type="text" size="8" value="$backbone_local_fastd_port"</td>
- <td title="Einstellungen werden nach Neustart wirksam."><button onclick="if(checkinput_fastd_server_port())form_submit(document.forms.backbone_form_local_fastd,'local','none')" name="bb_btn_new" type="button">Speichern</button></td></tr>
+<tr>
+<th title="Port des fastd Servers">Fastd-Server-Port:</th>
+EOM
+if [ -f "$WG_PATH" ];then
+cat<<EOM
+<th title="Port des wireguard Servers">Wireguard Server-Port:</th>
+EOM
+fi
+cat<<EOM
+<th></th>
+</tr>
+
+<tr>
+<td><input name="form_backbone_local_fastd_port" type="text" size="8" value="$backbone_local_fastd_port"</td>
+EOM
+if [ -f "$WG_PATH" ];then
+cat<<EOM
+<td><input name="form_backbone_local_wg_port" type="text" size="8" value="$backbone_local_wg_port"</td>
+EOM
+fi
+cat<<EOM
+<td title="Einstellungen werden nach Neustart wirksam."><button onclick="if(checkinput_server_ports())form_submit(document.forms.backbone_form_local,'local','none')" name="bb_btn_new" type="button">Speichern</button></td>
+</tr>
 </table>
 </form>
 
@@ -255,7 +281,7 @@ content()
 <input name="form_entry" value="none" type="hidden">
 <table>
 <tr><td colspan="3"><font color="red">Achtung: Wird ein neuer Schl&uuml;ssel generiert, muss dieser bei <b>allen</b> Backbone-Servern aktualisiert werden, da sonst keine Verbindung mehr von diesem Router akzeptiert wird.</font></td></tr>
-<tr><th>FastD Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td>
+<tr><th>Fastd Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.backbone_form_keygen,'keygen_fastd','none')" name="bb_btn_new" type="button">FastD Key Generieren</button></td></tr>
 EOM
 if [ -f "$WG_PATH" ];then
@@ -390,7 +416,8 @@ else
 	RESTART=0
 	case $form_action in
 		local)
-			uci set ddmesh.backbone.fastd_port=$backbone_local_fastd_port
+			uci set ddmesh.backbone.fastd_port=$form_backbone_local_fastd_port
+			uci set ddmesh.backbone.wg_port=$form_backbone_local_wg_port
 			uci_commit.sh
 			MSG=2
 		;;
