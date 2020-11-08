@@ -170,7 +170,7 @@ callback_outgoing_wireguard_interfaces ()
 	fi
 }
 
-callback_incomming_wireguard_interfaces ()
+callback_incomming_wireguard ()
 {
 	local config="$1"
 	local local_wg_ip=$2
@@ -190,7 +190,7 @@ callback_incomming_wireguard_interfaces ()
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
 
-		echo "wg in: add peer ($node)"
+		echo "wg in: add peer ($node) $local_wg_ip -> $remote_wg_ip"
 
 		# create sub interface
 		sub_ifname="$wg_ifname$node"
@@ -199,6 +199,8 @@ callback_incomming_wireguard_interfaces ()
 		ip link set $sub_ifname up
 
 		bmxd -c dev=$sub_ifname /linklayer 1
+
+		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32
 	fi
 }
 
@@ -266,7 +268,12 @@ case "$1" in
 
 		if [ -f $WG_BIN ]; then
 			echo "Starting wg backbone ..."
+
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+			local_wg_ip=$_ddmesh_wireguard_ip
+			local_wg_ip_nonprimary=$_ddmesh_nonprimary_ip
+			local_wg_ip_netpre=$_ddmesh_netpre
+			local_wg_net=$_ddmesh_wireguard_network
 
 			# create tbb_wg
 			secret=$(/sbin/uci -q get credentials.backbone_secret.wireguard_key)
@@ -276,7 +283,7 @@ case "$1" in
 				secret_file="/tmp/wg.pki"
 				echo $secret > $secret_file
 				ip link add $wg_ifname type wireguard
-				ip addr add "$_ddmesh_wireguard_ip/32" dev $wg_ifname
+				ip addr add "$local_wg_ip/32" dev $wg_ifname
 				wg set $wg_ifname private-key $secret_file
 
 				wg set $wg_ifname listen-port $backbone_local_wg_port
@@ -284,7 +291,7 @@ case "$1" in
 				ip link set $wg_ifname up
 				rm $secret_file
 
-				ip route add $_ddmesh_wireguard_network/$_ddmesh_netpre dev $wg_ifname src $_ddmesh_wireguard_ip
+				ip route add $local_wg_net/$local_wg_ip_netpre dev $wg_ifname src $local_wg_ip
 
 				# pass local ip addresses to callback
 				# wg provides tunnels to all peers via one interface.
@@ -292,13 +299,13 @@ case "$1" in
 				# wg restrictions (no broacast possible). ipip tunnel has its own interface for
 				# each peer. this iface is added to bmxd
 
-				# add outgoing clients
+				# add outgoing clients only interfaces (rest is done below "update" only if dns is working)
 				config_load ddmesh
-				config_foreach callback_outgoing_wireguard_interfaces backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
+				config_foreach callback_outgoing_wireguard_interfaces backbone_client $local_wg_ip "$local_wg_ip_nonprimary/$local_wg_ip_netpre"
 
 				# add incomming clients
 				config_load ddmesh
-				config_foreach callback_incomming_wireguard_interfaces backbone_accept $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
+				config_foreach callback_incomming_wireguard backbone_accept $local_wg_ip "$local_wg_ip_nonprimary/$local_wg_ip_netpre"
 			fi
 		fi
 
@@ -306,6 +313,7 @@ case "$1" in
 		# wg command only resolves host name once. if no connection is available during
 		# boot, wg gives up. we need to retry it later (via cron). I can
 
+		# setup wireguard outgoing
 		$0 update
 		;;
 
