@@ -13,9 +13,9 @@ FASTD_LOGGER_TAG="fastd-backbone"
 FASTD_PID_FILE=/var/run/backbone-fastd.pid
 FASTD_CONF_PEERS=backbone-peers
 
-DEFAULT_SERVER_PORT=$(uci get ddmesh.backbone.default_server_port)
+DEFAULT_FASTD_PORT=$(uci get ddmesh.backbone.default_fastd_port)
 backbone_server_port=$(uci get ddmesh.backbone.server_port)
-backbone_server_port=${backbone_server_port:-$DEFAULT_SERVER_PORT}
+backbone_server_port=${backbone_server_port:-$DEFAULT_FASTD_PORT}
 MTU=$(uci get ddmesh.network.mesh_mtu)
 
 NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
@@ -90,7 +90,7 @@ callback_accept_fastd_config ()
 	if [ -n "$key" -a -n "$comment" ]; then
 		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/accept_$key.conf
 		echo "fastd accept peer: [$key:$comment] ($FILE)"
-		
+
 		echo "# $comment" > $FILE
 		echo "key \"$key\";" >> $FILE
 	fi
@@ -145,7 +145,7 @@ callback_outgoing_wireguard_interfaces ()
 
 	#echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
 	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
-		
+
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
 
@@ -187,7 +187,7 @@ callback_outgoing_wireguard_connection ()
 
 	#echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
 	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
-		
+
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
 		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
@@ -240,7 +240,7 @@ case "$1" in
 				echo $secret > $secret_file
 				ip link add $wg_ifname type wireguard
 				ip addr add "$_ddmesh_wireguard_ip/32" dev $wg_ifname
-				wg set $wg_ifname private-key $secret_file 
+				wg set $wg_ifname private-key $secret_file
 
 # in zukunft wird nur fastd oder wg als lokaler server verwendet, beides ist nicht notwendig
 				# wg set $wg_ifname listen-port $backbone_server_port
@@ -262,10 +262,10 @@ case "$1" in
 				config_foreach callback_outgoing_wireguard_interfaces backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"
 			fi
 		fi
-		
+
 		# try to resolve host names and setup wg tunnel
 		# wg command only resolves host name once. if no connection is available during
-		# boot, wg gives up. we need to retry it later (via cron). I can 
+		# boot, wg gives up. we need to retry it later (via cron). I can
 
 		$0 update
 		;;

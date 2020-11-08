@@ -134,7 +134,8 @@ config bmxd 'bmxd'
 
 config backbone 'backbone'
 	option  server_port		'5002'
-	option  default_server_port	'5002'
+	option  default_fastd_port	'5002'
+	option  default_wg_port	'5003'
 	option	number_of_clients	5
 
 #config backbone_accept

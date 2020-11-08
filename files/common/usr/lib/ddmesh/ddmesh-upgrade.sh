@@ -460,6 +460,14 @@ upgrade_6_1_3()
  true
 }
 
+upgrade_6_1_4()
+{
+ uci -q rename ddmesh.backbone.default_server_port='default_fastd_port'
+ uci set ddmesh.backbone.default_wg_port='5003'
+}
+
+
+
 #upgrade_6_X_Y()
 #{
 # true
