@@ -13,7 +13,6 @@ STATUS_DIR="/var/backbone_status"
 COUNT=$(uci show ddmesh | grep '=backbone_\(client\|accept\)' | wc -l)
 TOGGEL=1
 
-DEFAULT_FASTD_KEY="$(uci get credentials.backbone.fastd_default_server_key)"
 FASTD_PATH="$(which fastd)"
 KEY_LEN_FASTD=64
 
@@ -386,7 +385,7 @@ cat<<EOM
  <td title="Zielknottennummer (nur f&uuml;r Wireguard)"><input disabled name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>
  <td title="Hostname oder IP Adresse &uuml;ber den ein anderer Freifunk Router erreichbar ist (z.b. xxx.dyndns.org). Kann eine IP im LAN oder IP/Hostname im Internet sein."><input name="form_backbone_outgoing_peer_hostname" type="text" size="15" value=""></td>
  <td title="Port des Servers"><input name="form_backbone_outgoing_peer_port" type="text" size="8" value="$DEFAULT_FASTD_PORT"></td>
- <td title="Public Key der Gegenstelle"><input name="form_backbone_outgoing_peer_key" type="text" size="40" value="$DEFAULT_FASTD_KEY"></td>
+ <td title="Public Key der Gegenstelle"><input name="form_backbone_outgoing_peer_key" type="text" size="40" value=""></td>
  <td></td>
  <td><button onclick="if(checkinput_outgoing())form_submit(document.forms.backbone_form_connection_out,'client_add_outgoing','none')" name="bb_btn_new" title="Verbindung speichern" type="button">Neu</button></td>
 </tr>
