@@ -61,7 +61,6 @@ function checkinput_outgoing ()
 		if( n == ""){ alert("Knotennummer ist ungültig");return 0;}
 
 		if( k.length != $KEY_LEN_WG){ alert("Key ist ungültig (Wireguard Key ist $KEY_LEN_WG Zeichen)");return 0;}
-		if( k.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
 	}
 	return 1;
 }
@@ -81,7 +80,6 @@ function checkinput_incomming ()
 		if( n == ""){ alert("Knotennummer ist ungültig");return 0;}
 
 		if( k.length != $KEY_LEN_WG){ alert("Key ist ungültig (Wireguard Key ist $KEY_LEN_WG Zeichen)");return 0;}
-		if( k.replace(/[0-9a-f]/g,"") != "" ){ alert("Key ist ungültig");return 0;}
 	}
 
 	return 1;
