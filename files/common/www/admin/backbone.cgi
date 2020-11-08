@@ -345,7 +345,7 @@ fi
 cat<<EOM
  </select></td>
  <td title="Zielknottennummer (nur f&uuml;r Wireguard)"><input disabled name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>
- <td title="Hostname oder IP Adresse &uuml;ber den ein anderer Freifunk Router erreichbar ist (z.b. xxx.dyndns.org). Kann eine IP im LAN oder IP/Hostname im Internet sein."><input name="form_backbone_outgoing_peer_hostname" type="text" size="25" value=""></td>
+ <td title="Hostname oder IP Adresse &uuml;ber den ein anderer Freifunk Router erreichbar ist (z.b. xxx.dyndns.org). Kann eine IP im LAN oder IP/Hostname im Internet sein."><input name="form_backbone_outgoing_peer_hostname" type="text" size="15" value=""></td>
  <td title="Port des Servers"><input name="form_backbone_outgoing_peer_port" type="text" size="8" value="$DEFAULT_FASTD_PORT"></td>
  <td title="Public Key der Gegenstelle"><input name="form_backbone_outgoing_peer_key" type="text" size="40" value="$DEFAULT_FASTD_KEY"></td>
  <td></td>

@@ -221,7 +221,7 @@ EOM
 	if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
 	cat<<EOM
 <tr class="colortoggle$TOGGEL">
- <td title="Knoten-Nr."><input name="form_privnet_peer_node" type="text" size="25" value=""></td>
+ <td title="Knoten-Nr."><input name="form_privnet_peer_node" type="text" size="15" value=""></td>
  <td title="TCP-Port des Servers"><input name="form_privnet_peer_port" type="text" size="8" value="$DEFAULT_PORT"></td>
  <td title="Public-Key der Gegenstelle"><input name="form_privnet_peer_key" type="text" size="40" value=""></td>
  <td></td>
