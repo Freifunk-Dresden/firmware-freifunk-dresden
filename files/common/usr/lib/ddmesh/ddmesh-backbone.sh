@@ -314,8 +314,7 @@ case "$1" in
 		# when there is no change
 
 		# check for working dns to avoid delays created by wg-tool trying to resolve
-		nslookup "freifunk-dresden.de" && {
-			logger -t "$WG_LOGGER_TAG" "DNS resolv ok - update wg config"
+		nslookup "freifunk-dresden.de" >/dev/null && {
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 			config_load ddmesh
 			config_foreach callback_outgoing_wireguard_connection backbone_client $_ddmesh_wireguard_ip "$_ddmesh_nonprimary_ip/$_ddmesh_netpre"

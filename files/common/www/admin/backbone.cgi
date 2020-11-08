@@ -434,7 +434,7 @@ else
 				uci add ddmesh backbone_client >/dev/null
 				uci set ddmesh.@backbone_client[-1].host="$form_backbone_outgoing_peer_hostname"
 				uci set ddmesh.@backbone_client[-1].port="$form_backbone_outgoing_peer_port"
-				uci set ddmesh.@backbone_client[-1].public_key="$form_backbone_outgoing_peer_key"
+				uci set ddmesh.@backbone_client[-1].public_key="$(uhttpd -d $form_backbone_outgoing_peer_key)"
 				uci set ddmesh.@backbone_client[-1].type="$form_backbone_outgoing_peer_type"
 				uci set ddmesh.@backbone_client[-1].node="$form_backbone_outgoing_peer_node"
 				uci_commit.sh
@@ -447,7 +447,7 @@ else
 			if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
 				uci add ddmesh backbone_accept >/dev/null
 				uci set ddmesh.@backbone_accept[-1].comment="$form_backbone_incomming_peer_comment"
-				uci set ddmesh.@backbone_accept[-1].public_key="$form_backbone_incomming_peer_key"
+				uci set ddmesh.@backbone_accept[-1].public_key="$(uhttpd -d $form_backbone_incomming_peer_key)"
 				uci set ddmesh.@backbone_accept[-1].node="$form_backbone_incomming_peer_node"
 				uci set ddmesh.@backbone_accept[-1].type="$form_backbone_incomming_peer_type"
 				uci_commit.sh
