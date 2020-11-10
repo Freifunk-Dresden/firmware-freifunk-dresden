@@ -14,6 +14,7 @@
 #build:ar71xx.tiny:
 #  except:
 #    - schedules
+#    - master
 #  image: openwrt-docker-build:latest
 #  stage: build
 #  cache:
@@ -35,6 +36,7 @@
 docker:init:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: init 
   script:
@@ -51,6 +53,7 @@ docker:init:
 docker:ar71xx.tiny:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -66,6 +69,7 @@ docker:ar71xx.tiny:
 docker:ar71xx.generic:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -80,6 +84,7 @@ docker:ar71xx.generic:
 docker:ar71xx.nand:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -95,6 +100,7 @@ docker:ar71xx.nand:
 docker:x86:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -109,6 +115,7 @@ docker:x86:
 docker:x64:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -124,6 +131,7 @@ docker:x64:
 docker:ramips:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -139,6 +147,7 @@ docker:ramips:
 docker:lantiq:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -153,6 +162,7 @@ docker:lantiq:
 docker:ath79:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -167,6 +177,7 @@ docker:ath79:
 docker:ipq40xx:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -181,6 +192,7 @@ docker:ipq40xx:
 docker:sunxi:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -195,6 +207,7 @@ docker:sunxi:
 docker:mpc85xx:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: build
   script:
