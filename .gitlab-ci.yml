@@ -5,8 +5,8 @@ stages:
 - deploy
 
 include:
+  - local: '/gitlab-ci/m2runner-schedules.yml'
   - local: '/gitlab-ci/m2runner-master.yml'
-  - local: '/gitlab-ci/m2runner-nightly.yml'
-  - local: '/gitlab-ci/docker.yml'
   - local: '/gitlab-ci/docker2-yaro.yml'
+  - local: '/gitlab-ci/docker.yml'
 
