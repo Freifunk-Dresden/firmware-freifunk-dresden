@@ -2,7 +2,7 @@
 tabs 4
 
 #usage: see below
-SCRIPT_VERSION="7"
+SCRIPT_VERSION="8"
 
 
 #echo "ACHTUNG: aktuell stuerst firmware auf ubnt geraeten ab. Daher habe ich erstmal das bauen hier deaktiviert."
@@ -159,6 +159,40 @@ listTargets()
 }
 
 
+listTargetsNames()
+{
+
+ OPT="--raw-output" # do not excape values
+
+ cleanJson=$(getTargetsJson)
+
+ # first read default
+ targetIdx=0
+ entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+ if [ -n "$entry" ]; then
+	_def_name=$(echo $entry | jq $OPT '.name')
+ fi
+ targetIdx=$(( targetIdx + 1 ))
+
+ # run through rest of json
+ while true
+ do
+ 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+
+	if [ "$entry" = "null" ]; then
+		break;	# last entry
+	else
+		_name=$(echo $entry | jq $OPT '.name')
+	fi
+	
+	test -z "$_name" && echo "error: configuration has no name" && break
+
+ 	printf  "$_name\n"
+
+	targetIdx=$(( targetIdx + 1 ))
+ done
+}
+
 search_target()
 {
 	target=$1
@@ -181,6 +215,7 @@ if [ -z "$1" ]; then
 	echo "Version: $SCRIPT_VERSION"
 	echo "usage: $(basename $0) list | search <string> | clean | feed-revisions | (target | all  [menuconfig ] [rerun] [ <make params ...> ])"
 	echo " list             - lists all available targets"
+	echo " list-targets     - lists only target names for usage in IDE"
 	echo " search           - search specific router (target)"
 	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
 	echo " feed-revisions   - returns the git HEAD revision hash for current date (now)."
@@ -203,6 +238,11 @@ fi
 #check if next argument is "menuconfig"
 if [ "$1" = "list" ]; then
 	listTargets
+	exit 0
+fi
+
+if [ "$1" = "list-targets" ]; then
+	listTargetsNames	
 	exit 0
 fi
 
@@ -349,13 +389,13 @@ setup_buildroot ()
 	ln -s ../../$openwrt_dl_dir $buildroot/dl
 
 	# copy common files first
-	echo -e $C_PURPLE"copy rootfs$C_NONE: $C_GREEN""common"$C_NONE
+	echo -e "$C_PURPLE copy rootfs $C_NONE: $C_GREEN common $C_NONE"
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
 	cp -a $RUN_DIR/files/common/* $buildroot/files/
 
 	# copy specific files over (may overwrite common)
-	echo -e $C_PURPLE"copy rootfs"$C_NONE
+	echo -e "$C_PURPLE copy specific files $C_NONE: $C_GREEN $firmware_files $C_NONE"
 	test -d "$RUN_DIR/files/$firmware_files)" && cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
 
 	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
@@ -383,17 +423,21 @@ setup_buildroot ()
 		if [ "$git_ddmesh_branch" = "undefined" ]; then
 			git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
 			echo ""
-			echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"
+			echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"$C_NONE
 			echo ""
 			sleep 5
 		fi
 	fi
+	
 	echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
 	echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
-
 	echo "builtdate:$(date)" >> $buildroot/files/etc/built_info
 
-	cat $buildroot/files/etc/built_info
+	echo "git_openwrt_rev:     $git_openwrt_rev"
+	echo "git_openwrt_branch:  $git_openwrt_branch"
+	echo "git_ddmesh_rev:      $git_ddmesh_rev"
+	echo "git_ddmesh_branch:   $git_ddmesh_branch"
+	echo ""
 
 
 } # setup_buildroot
@@ -701,7 +745,9 @@ EOM
 
 	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
-		echo -e $C_RED"Error: build error"$C_NONE
+
+		echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "$_name" $C_NONE
+
 		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
 			echo -e $C_PURPLE".......... rerun build with V=s ........................"$C_NONE
 			time -p make $BUILD_PARAMS V=s -j1

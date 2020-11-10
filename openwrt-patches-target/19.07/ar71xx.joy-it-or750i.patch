@@ -1,5 +1,5 @@
---- buildroot/package/boot/uboot-envtools/files/ar71xx
-+++ buildroot/package/boot/uboot-envtools/files/ar71xx
+--- package/boot/uboot-envtools/files/ar71xx
++++ package/boot/uboot-envtools/files/ar71xx
 @@ -37,6 +37,7 @@ gl-ar300m|\
  gl-ar750|\
  hornet-ub|\
@@ -10,8 +10,8 @@
  mr1750|\
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
 index 23f3d23bf53883fb08944bc65b98cac06a16c0a5..c5f863765a01e4595c535615dd8fc2f124f02cb0 100755
---- buildroot/target/linux/ar71xx/base-files/etc/board.d/01_leds
-+++ buildroot/target/linux/ar71xx/base-files/etc/board.d/01_leds
+--- target/linux/ar71xx/base-files/etc/board.d/01_leds
++++ target/linux/ar71xx/base-files/etc/board.d/01_leds
 @@ -111,14 +111,20 @@ n5q)
  		;;
  	esac
@@ -39,8 +39,8 @@ index 23f3d23bf53883fb08944bc65b98cac06a16c0a5..c5f863765a01e4595c535615dd8fc2f1
  archer-c7)
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
 index e9522252a2b8ba7de1c8ca7d070ff7f2897aade9..c4838e8ec593f1fb166602e012e43a24443e47a2 100755
---- buildroot/target/linux/ar71xx/base-files/etc/board.d/02_network
-+++ buildroot/target/linux/ar71xx/base-files/etc/board.d/02_network
+--- target/linux/ar71xx/base-files/etc/board.d/02_network
++++ target/linux/ar71xx/base-files/etc/board.d/02_network
 @@ -475,6 +475,11 @@
  		ucidef_add_switch "switch0" \
  			"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "5@eth1"
@@ -55,8 +55,8 @@ index e9522252a2b8ba7de1c8ca7d070ff7f2897aade9..c4838e8ec593f1fb166602e012e43a24
  		ucidef_add_switch "switch0" \
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
 index 4eb2abb26ca2676576babb14eb1baa38a2f0de2b..7a52bcac305d635eb22db409fce1a73242ec64d5 100644
---- buildroot/target/linux/ar71xx/base-files/etc/diag.sh
-+++ buildroot/target/linux/ar71xx/base-files/etc/diag.sh
+--- target/linux/ar71xx/base-files/etc/diag.sh
++++ target/linux/ar71xx/base-files/etc/diag.sh
 @@ -263,6 +263,9 @@ get_status_led() {
  	ja76pf2)
  		status_led="jjplus:green:led1"
@@ -69,8 +69,8 @@ index 4eb2abb26ca2676576babb14eb1baa38a2f0de2b..7a52bcac305d635eb22db409fce1a732
  		;;
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 index 2ba8de4783..077f28768f 100644
---- buildroot/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-+++ buildroot/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+--- target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 @@ -76,6 +76,7 @@ case "$FIRMWARE" in
  	dlan-pro-1200-ac|\
  	e1700ac-v2|\
@@ -81,8 +81,8 @@ index 2ba8de4783..077f28768f 100644
  	oolite-v5.2-dev|\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 index ccbd4e77c324a36e7fba6e6dccad59d8f94a3921..5b5130e97dd61b20e1566d1e196f164af33b3467 100755
---- buildroot/target/linux/ar71xx/base-files/lib/ar71xx.sh
-+++ buildroot/target/linux/ar71xx/base-files/lib/ar71xx.sh
+--- target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -792,6 +792,9 @@ ar71xx_board_detect() {
  	*"JA76PF2")
  		name="ja76pf2"
@@ -95,8 +95,8 @@ index ccbd4e77c324a36e7fba6e6dccad59d8f94a3921..5b5130e97dd61b20e1566d1e196f164a
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 index ca1270b7fdc84c53f8417c226f18ca4fff1f27d8..65ed1d8b7ada9cfba4b7d1e8b72d17594aa5e1b6 100755
---- buildroot/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-+++ buildroot/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+--- target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -272,6 +272,7 @@ platform_check_image() {
  	gl-usb150|\
  	hiwifi-hc6361|\
@@ -107,8 +107,8 @@ index ca1270b7fdc84c53f8417c226f18ca4fff1f27d8..65ed1d8b7ada9cfba4b7d1e8b72d1759
  	lima|\
 diff --git a/target/linux/ar71xx/config-4.14 b/target/linux/ar71xx/config-4.14
 index 9a524fae43..a4ca5ff699 100644
---- buildroot/target/linux/ar71xx/config-4.14
-+++ buildroot/target/linux/ar71xx/config-4.14
+--- target/linux/ar71xx/config-4.14
++++ target/linux/ar71xx/config-4.14
 @@ -137,6 +137,7 @@ CONFIG_ATH79=y
  # CONFIG_ATH79_MACH_HIWIFI_HC6361 is not set
  # CONFIG_ATH79_MACH_HORNET_UB is not set
@@ -119,8 +119,8 @@ index 9a524fae43..a4ca5ff699 100644
  # CONFIG_ATH79_MACH_KOALA is not set
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
 index 1d0e3d910d42ab87af8481d6d13a79949d68e41b..5f2696ad424aef9b1cd300c2bcd3111e7fad3935 100644
---- buildroot/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
-+++ buildroot/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
+--- target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
++++ target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
 @@ -965,6 +965,17 @@ config ATH79_MACH_JA76PF
  	select ATH79_DEV_M25P80
  	select ATH79_DEV_USB
@@ -141,8 +141,8 @@ index 1d0e3d910d42ab87af8481d6d13a79949d68e41b..5f2696ad424aef9b1cd300c2bcd3111e
  	select SOC_AR71XX
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Makefile b/target/linux/ar71xx/files/arch/mips/ath79/Makefile
 index 8800a7de1020062cbf4f25cf507ed9b1fbe78da0..8a992507ff4f6ac77bd64743c927f29d4d2cc1d8 100644
---- buildroot/target/linux/ar71xx/files/arch/mips/ath79/Makefile
-+++ buildroot/target/linux/ar71xx/files/arch/mips/ath79/Makefile
+--- target/linux/ar71xx/files/arch/mips/ath79/Makefile
++++ target/linux/ar71xx/files/arch/mips/ath79/Makefile
 @@ -145,6 +145,7 @@ obj-$(CONFIG_ATH79_MACH_HIVEAP_121)		+= mach-hiveap-121.o
  obj-$(CONFIG_ATH79_MACH_HIWIFI_HC6361)		+= mach-hiwifi-hc6361.o
  obj-$(CONFIG_ATH79_MACH_HORNET_UB)		+= mach-hornet-ub.o
@@ -155,7 +155,7 @@ diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-jt-or750i.c b/target
 new file mode 100644
 index 0000000000000000000000000000000000000000..7ce8abb4d21a3cbb61ecec784ae7f177505e1bca
 --- /dev/null
-+++ buildroot/target/linux/ar71xx/files/arch/mips/ath79/mach-jt-or750i.c
++++ target/linux/ar71xx/files/arch/mips/ath79/mach-jt-or750i.c
 @@ -0,0 +1,122 @@
 +/*
 + * Joy-IT JT-OR750i board support
@@ -281,8 +281,8 @@ index 0000000000000000000000000000000000000000..7ce8abb4d21a3cbb61ecec784ae7f177
 +MIPS_MACHINE(ATH79_MACH_JT_OR750I, "JT-OR750I", "Joy-IT JT-OR750i", or750i_setup);
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
 index 80f6e1d95b7a4e5559e7d5da041b32d962ad4e84..65005c19741359f492e4e23ea71826c1ba20071a 100644
---- buildroot/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
-+++ buildroot/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+--- target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
++++ target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
 @@ -144,6 +144,7 @@ enum ath79_mach_type {
  	ATH79_MACH_HORNET_UB,			/* ALFA Networks Hornet-UB */
  	ATH79_MACH_JA76PF,			/* jjPlus JA76PF */
@@ -293,8 +293,8 @@ index 80f6e1d95b7a4e5559e7d5da041b32d962ad4e84..65005c19741359f492e4e23ea71826c1
  	ATH79_MACH_KOALA,			/* OCEDO Koala */
 diff --git a/target/linux/ar71xx/generic/config-default b/target/linux/ar71xx/generic/config-default
 index 55ccd93fedbcf3062c94f18ec57dc132b272a83c..036fcdd4c96eebb2f7953011bf5e96bbba512d64 100644
---- buildroot/target/linux/ar71xx/generic/config-default
-+++ buildroot/target/linux/ar71xx/generic/config-default
+--- target/linux/ar71xx/generic/config-default
++++ target/linux/ar71xx/generic/config-default
 @@ -106,6 +106,7 @@ CONFIG_ATH79_MACH_GS_OOLITE_V5_2=y
  CONFIG_ATH79_MACH_HIWIFI_HC6361=y
  CONFIG_ATH79_MACH_HORNET_UB=y
@@ -305,8 +305,8 @@ index 55ccd93fedbcf3062c94f18ec57dc132b272a83c..036fcdd4c96eebb2f7953011bf5e96bb
  CONFIG_ATH79_MACH_KOALA=y
 diff --git a/target/linux/ar71xx/image/generic.mk b/target/linux/ar71xx/image/generic.mk
 index 4568b656219419e9ca1156c6716bd2124074cb32..4a73c47a8abc530dec2484c937a105a88a2dbf98 100644
---- buildroot/target/linux/ar71xx/image/generic.mk
-+++ buildroot/target/linux/ar71xx/image/generic.mk
+--- target/linux/ar71xx/image/generic.mk
++++ target/linux/ar71xx/image/generic.mk
 @@ -551,6 +551,18 @@ define Device/gl-usb150
  endef
  TARGET_DEVICES += gl-usb150

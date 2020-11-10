@@ -79,7 +79,7 @@ notebox ()
 
 check_passwd()
 {
- if [ -n "$(cat /etc/shadow | grep '^root::0:')" ]; then
+ if [ -n "$(cat /etc/shadow | grep '^root::')" ]; then
   return 0
  else
   return 1
@@ -98,4 +98,3 @@ if [ -n "$INET_GW_IP" ]; then
 fi
 
 process_query
-

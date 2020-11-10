@@ -69,7 +69,7 @@ cat<<EOM
 <br/><br/>
 
 <b>Folgende Ports werden vom Router verwendet und k&ouml;nnen nicht f&uuml;r eigene Portweiterleitungen genutzt werden:</b><br/>
-$PORTS, $(uci get ddmesh.backbone.server_port), $(uci get ddmesh.privnet.server_port)<br/>
+$PORTS, $(uci get ddmesh.backbone.fastd_port), $(uci get ddmesh.privnet.fastd_port)<br/>
 <br />
 <form name="form_portfw_new" action="portfw.cgi" method="POST">
 <input name="form_action" value="add" type="hidden">

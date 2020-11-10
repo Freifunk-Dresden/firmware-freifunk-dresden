@@ -6,7 +6,7 @@ export TITLE="Verwaltung &gt; Konfiguration: Privates Netzwerk"
 . /lib/functions.sh
 
 #grep
-DEFAULT_PORT="$(uci get ddmesh.privnet.default_server_port)"
+DEFAULT_PORT="$(uci get ddmesh.privnet.default_fastd_port)"
 DEFAULT_PASSWD="$(echo "$(ip link;date)" | md5sum | sed 's# .*$##' | cut -c3-10)"
 NUMBER_OF_CLIENTS="$(uci get ddmesh.privnet.number_of_clients)"
 STATUS_DIR="/var/vtund/privnet"
@@ -149,7 +149,7 @@ content() {
 	privnet_server_enabled="${privnet_server_enabled:-0}"
 	privnet_clients_enabled="$(uci get ddmesh.privnet.clients_enabled)"
 	privnet_clients_enabled="${privnet_clients_enabled:-0}"
-	privnet_server_port=$(uci get ddmesh.privnet.server_port)
+	privnet_server_port=$(uci get ddmesh.privnet.fastd_port)
 	privnet_server_port=${privnet_server_port:-$DEFAULT_PORT}
 
 	COUNT=$(uci show ddmesh | grep '=privnet_\(client\|accept\)' | wc -l)
@@ -269,7 +269,7 @@ else
 	case $form_action in
 		local) uci set ddmesh.privnet.server_enabled=${form_privnet_server_enabled:-0}
 			uci set ddmesh.privnet.clients_enabled=${form_privnet_clients_enabled:-0}
-			uci set ddmesh.privnet.server_port=$form_privnet_server_port
+			uci set ddmesh.privnet.fastd_port=$form_privnet_server_port
 			uci_commit.sh
 			MSG=2
 		;;

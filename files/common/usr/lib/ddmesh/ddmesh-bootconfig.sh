@@ -127,14 +127,15 @@ config network 'network'
 	option  fallback_dns		''
 
 config bmxd 'bmxd'
-	option  routing_class           3
-	option  gateway_class           '1024/1024'
-	option  prefered_gateway        ''
+	option  routing_class	3
+	option  gateway_class	'1024/1024'
+	option  prefered_gateway	''
 
 
 config backbone 'backbone'
-	option  server_port		'5002'
-	option  default_server_port	'5002'
+	option  fastd_port		'5002'
+	option  default_fastd_port	'5002'
+	option  default_wg_port	'5003'
 	option	number_of_clients	5
 
 #config backbone_accept
@@ -162,8 +163,8 @@ config backbone_client
 	option	public_key 		''
 
 config privnet 'privnet'
-	option  server_port		'4000'
-	option  default_server_port	'4000'
+	option  fastd_port		'4000'
+	option  default_fastd_port	'4000'
 	option	number_of_clients	5
 
 #config privnet_accept
@@ -178,9 +179,9 @@ config privnet 'privnet'
 config nodegroup 'nodegroup'
 	option  clients_enabled         1
 	option  server_enabled          0
-	option  server_port		'4000'
+	option  fastd_port		'4000'
 	option	server_passwd		''
-	option  default_server_port	'4000'
+	option  default_fastd_port	'4000'
 	option	number_of_clients	5
 
 #config nodegroup_accept

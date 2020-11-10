@@ -4,7 +4,7 @@
         {
             "label": "build freifunk firmware",
             "type": "shell",
-            "command": "./build.sh ramips.mt7621.ubiquiti-edgerouter-x -j8",
+            "command": "./build.sh ${input:pickTarget} -j8",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -16,6 +16,66 @@
                 "echo": true,
                 "reveal": "always"
             }
+        },
+        {
+            "label": "list targets",
+            "type": "shell",
+            "command": "./build.sh list-targets",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "upload current file",
+            "type": "shell",
+            "command": "eval scp ${file} root@${input:targetIp}:/$(echo '${relativeFile}' | sed 's#files/common##' )",
+            "problemMatcher": [
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always"
+            }
+        }
+    ],
+    "inputs" : [
+        {
+            "id" : "targetIp",
+            "description" : "IP address of target",
+            "default" : "192.168.222.1",
+            "type" : "promptString",
+        },
+        {
+            "id" : "pickTarget",
+            "description" : "provides a list with targets",
+            "default" : "ar71xx.tiny.lowmem",
+            "type" : "pickString",
+            "options" : [
+                "all"
+                "ar71xx.tiny.lowmem",
+                "ar71xx.generic.lowmem",
+                "ar71xx.generic",
+                "ar71xx.generic.gl-mifi",
+                "ar71xx.nand",
+                "x86.generic",
+                "x64.generic",
+                "ramips.mt7621.generic",
+                "ramips.mt7621.ubiquiti-edgerouter-x",
+                "ramips.mt76x8.generic",
+                "lantiq.xrx200",
+                "lantiq.xway",
+                "sunxi.cortexa7.generic",
+                "ath79.generic",
+                "ath79.tiny.wireguard.lowmem",
+                "ipq40xx.generic",
+                "mpc85xx.p1020"
+            ]
         }
     ]
 }

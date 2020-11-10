@@ -8,8 +8,8 @@ CONF_PEERS=privnet-peers
 PID_FILE=/var/run/privnet-fastd.pid
 LOGGER_TAG="fastd-privnet"
 
-DEFAULT_PORT=$(uci -q get ddmesh.privnet.default_server_port)
-privnet_server_port=$(uci -q get ddmesh.privnet.server_port)
+DEFAULT_PORT=$(uci -q get ddmesh.privnet.default_fastd_port)
+privnet_server_port=$(uci -q get ddmesh.privnet.fastd_port)
 privnet_server_port=${privnet_server_port:-$DEFAULT_PORT}
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh privnet)
@@ -177,5 +177,3 @@ case "$1" in
    *)
 	echo "usage: $0 start|stop|restart|gen_secret_key|get_public_key|runcheck"
 esac
-
-
