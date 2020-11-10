@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 
 export TITLE="Verwaltung &gt; Konfiguration: Backbone"
 
@@ -157,40 +157,42 @@ html_msg()
 show_accept()
 {
 	local config="$1"
-	local comment
-	local key
-	local type
-	local node
+	local vcomment
+	local vkey
+	local vtype
+	local vnode
 
-	config_get node "$config" node
-	config_get key "$config" public_key
-	config_get comment "$config" comment
-	config_get type "$config" type
-	if [ "$type" = "" ]; then
-		type="fastd"
+	config_get vnode "$config" node
+	config_get vkey  "$config" public_key
+	config_get vcomment "$config" comment
+	config_get vtype "$config" type
+	if [ "$vtype" = "" ]; then
+		vtype="fastd"
 	fi
 
-	if [ "$type" = "fastd" ]; then
-		test -f "$STATUS_DIR/$key" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+	if [ "$vtype" = "fastd" ]; then
+		test -f "$STATUS_DIR/$vkey" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
 		connect_title=""
 	else
-		IFS='	'
-		hs=$(wg show $wg_ifname latest-handshakes | grep "$key")
-		if [ -n "$hs" ]; then
-			set $(wg show $wg_ifname latest-handshakes | grep "$key")
-			diff=$(( $UTC - $2 ))
-			[ $diff -lt $WG_HAND_SHAKE_TIME_S ] && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
-		else
-			CONNECTED=/images/no.png
+		if [ -n "$vkey" ]; then
+			IFS='	'
+			hs=$(wg show $wg_ifname latest-handshakes | grep "$vkey")
+			if [ -n "$hs" ]; then
+				set $hs
+				diff=$(( $UTC - $2 ))
+				[ $diff -lt $WG_HAND_SHAKE_TIME_S ] && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+			else
+				CONNECTED=/images/no.png
+			fi
+			connect_title="Handshake vor $diff s"
 		fi
-		connect_title="Handshake vor $diff s"
 	fi
 
 	cat <<EOM
 	<tr class="colortoggle$TOGGEL">
-	<td>$type</td> <td>$node</td> <td>$key</td>	<td>$comment</td>
+	<td>$vtype</td> <td>$vnode</td> <td>$vkey</td>	<td>$vcomment</td>
 	<td><img title="$connect_title" src="$CONNECTED"></td>
-	<td><button onclick="if(ask('$comment'))form_submit(document.forms.backbone_form_connection_in,'accept_del','$config')" title="Verbindung l&ouml;schen" type="button">
+	<td><button onclick="if(ask('$vnode'))form_submit(document.forms.backbone_form_connection_in,'accept_del','$config')" title="Verbindung l&ouml;schen" type="button">
 	<img src="/images/loeschen.gif" align=bottom width=16 height=16 hspace=4></button></td>
 	</tr>
 EOM
@@ -202,31 +204,31 @@ EOM
 }
 show_outgoing()
 {
+
 	local config="$1"
-	local host
-	local port
-	local key
-	local type
-	local node
+	local vhost
+	local vport
+	local vkey
+	local vtype
+	local vnode
 
-	config_get node "$config" node
-	config_get host "$config" host
-	config_get port "$config" port
-	config_get key "$config" public_key
-
-	config_get type "$config" type
-	if [ "$type" = "" ]; then
-		type="fastd"
+	config_get vnode "$config" node
+	config_get vhost "$config" host
+	config_get vport "$config" port
+	config_get vkey  "$config" public_key
+	config_get vtype "$config" type
+	if [ "$vtype" = "" ]; then
+		vtype="fastd"
 	fi
 
-	if [ "$type" = "fastd" ]; then
-		test -f "$STATUS_DIR/$key" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
+	if [ "$vtype" = "fastd" ]; then
+		test -f "$STATUS_DIR/$vkey" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
 		connect_title=""
 	else
 		IFS='	'
-		hs=$(wg show $wg_ifname latest-handshakes | grep "$key")
+		hs=$(wg show $wg_ifname latest-handshakes | grep "$vkey")
 		if [ -n "$hs" ]; then
-			set $(wg show $wg_ifname latest-handshakes | grep "$key")
+			set $hs
 			diff=$(( $UTC - $2 ))
 			[ $diff -lt $WG_HAND_SHAKE_TIME_S ] && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
 		else
@@ -235,10 +237,10 @@ show_outgoing()
 		connect_title="Handshake vor $diff s"
 	fi
 
-	echo "<tr class=\"colortoggle$TOGGEL\"><td>$type</td><td>$node</td><td>$host</td><td>$port</td><td>$key</td>"
+	echo "<tr class=\"colortoggle$TOGGEL\"><td>$vtype</td><td>$vnode</td><td>$vhost</td><td>$vport</td><td>$vkey</td>"
 	echo "<td><img title=\"$connect_title\" src=\"$CONNECTED\"></td>"
 	echo "<td>"
-	echo "<button onclick=\"if(ask('$host'))form_submit(document.forms.backbone_form_connection_out,'client_del','$config')\" title=\"Verbindung l&ouml;schen\" type=\"button\">"
+	echo "<button onclick=\"if(ask('$vhost'))form_submit(document.forms.backbone_form_connection_out,'client_del','$config')\" title=\"Verbindung l&ouml;schen\" type=\"button\">"
 	echo "<img src="/images/loeschen.gif" align=bottom width=16 height=16 hspace=4></button></td></tr>"
 	if [ $TOGGEL = "1" ]; then
 		TOGGEL=2
@@ -319,6 +321,7 @@ cat<<EOM
 EOM
 
 	TOGGEL=1
+
 	config_load ddmesh
 	config_foreach show_accept backbone_accept
 
@@ -362,7 +365,7 @@ EOM
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th>Typ</th><th>Knotennumer</th><th>Server-Hostname (Freifunk-Router)</th><th>Server-Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<tr><th>Typ</th><th>Knotennummer</th><th>Server-Hostname (Freifunk-Router)</th><th>Server-Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -435,13 +438,15 @@ else
 			uci_commit.sh
 			MSG=2
 		;;
-		client_del) uci delete ddmesh.$form_entry;
-		uci_commit.sh
-		MSG=4
+		client_del)
+			uci delete ddmesh.$form_entry;
+			uci_commit.sh
+			MSG=4
 		;;
-		accept_del) uci delete ddmesh.$form_entry;
-		uci_commit.sh
-		MSG=4;
+		accept_del)
+			uci delete ddmesh.$form_entry;
+			uci_commit.sh
+			MSG=4;
 		;;
 		client_add_outgoing)
 			if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
