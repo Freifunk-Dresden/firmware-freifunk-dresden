@@ -37,6 +37,7 @@ docker:init:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: init 
   script:
@@ -54,6 +55,7 @@ docker:ar71xx.tiny:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -70,6 +72,7 @@ docker:ar71xx.generic:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -85,6 +88,7 @@ docker:ar71xx.nand:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -101,6 +105,7 @@ docker:x86:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -116,6 +121,7 @@ docker:x64:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -132,6 +138,7 @@ docker:ramips:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -148,6 +155,7 @@ docker:lantiq:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -163,6 +171,7 @@ docker:ath79:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -178,6 +187,7 @@ docker:ipq40xx:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -193,6 +203,7 @@ docker:sunxi:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -208,6 +219,7 @@ docker:mpc85xx:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -225,6 +237,7 @@ docker:gen-upload-test:
   except:
     - schedules
     - master
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: deploy 
   script:
