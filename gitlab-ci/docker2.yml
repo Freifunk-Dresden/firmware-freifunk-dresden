@@ -1,0 +1,16 @@
+####### docker2 ############
+# this config, lets run jobs on yaros maschine.
+# only one job to avoid copying an artifacts/build environments
+
+docker:build-all:
+  except:
+    - schedules
+    - master
+  image: openwrt-docker-build:latest
+  stage: build
+  script:
+    - ./build.sh all rerun -j"$(( $(nproc) + 1))"
+    - ./gen-upload.sh all
+  tags:
+  - docker2
+
