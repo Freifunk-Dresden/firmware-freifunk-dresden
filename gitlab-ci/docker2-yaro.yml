@@ -3,9 +3,8 @@
 # only one job to avoid copying an artifacts/build environments
 
 docker2:build-all:
-  except:
-    - schedules
-    - master
+  only:
+    - /^yaro-.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
