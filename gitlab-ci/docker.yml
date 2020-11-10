@@ -224,6 +224,7 @@ docker:mpc85xx:
 docker:gen-upload-test:
   except:
     - schedules
+    - master
   image: openwrt-docker-build:latest
   stage: deploy 
   script:
