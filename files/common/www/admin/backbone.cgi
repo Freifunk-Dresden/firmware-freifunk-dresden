@@ -184,11 +184,12 @@ show_accept()
 			else
 				CONNECTED=/images/no.png
 			fi
+			unset IFS
 			connect_title="Handshake vor $diff s"
 		fi
 	fi
 
-	cat <<EOM
+	cat<<EOM
 	<tr class="colortoggle$TOGGEL">
 	<td>$vtype</td> <td>$vnode</td> <td>$vkey</td>	<td>$vcomment</td>
 	<td><img title="$connect_title" src="$CONNECTED"></td>
@@ -234,14 +235,18 @@ show_outgoing()
 		else
 			CONNECTED=/images/no.png
 		fi
+		unset IFS
 		connect_title="Handshake vor $diff s"
 	fi
 
-	echo "<tr class=\"colortoggle$TOGGEL\"><td>$vtype</td><td>$vnode</td><td>$vhost</td><td>$vport</td><td>$vkey</td>"
-	echo "<td><img title=\"$connect_title\" src=\"$CONNECTED\"></td>"
-	echo "<td>"
-	echo "<button onclick=\"if(ask('$vhost'))form_submit(document.forms.backbone_form_connection_out,'client_del','$config')\" title=\"Verbindung l&ouml;schen\" type=\"button\">"
-	echo "<img src="/images/loeschen.gif" align=bottom width=16 height=16 hspace=4></button></td></tr>"
+	cat<<EOM
+	<tr class="colortoggle$TOGGEL"><td>$vtype</td><td>$vnode</td><td>$vhost</td><td>$vport</td><td>$vkey</td>
+	<td><img title="$connect_title" src="$CONNECTED"></td>
+	<td>
+	<button onclick="if(ask('$vhost'))form_submit(document.forms.backbone_form_connection_out,'client_del','$config')" title="Verbindung l&ouml;schen" type="button">
+	<img src="/images/loeschen.gif" align=bottom width=16 height=16 hspace=4></button></td></tr>
+EOM
+
 	if [ $TOGGEL = "1" ]; then
 		TOGGEL=2
 	else
