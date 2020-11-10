@@ -2,7 +2,7 @@
 # this config, lets run jobs on yaros maschine.
 # only one job to avoid copying an artifacts/build environments
 
-docker:build-all:
+docker2:build-all:
   except:
     - schedules
     - master
