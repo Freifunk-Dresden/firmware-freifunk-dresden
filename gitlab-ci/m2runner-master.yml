@@ -149,7 +149,7 @@ m2:mpc85xx:
 
 m2:test:
   only:
-    - schedules
+    - master
   stage: test
   script:
     - echo "dummy"
