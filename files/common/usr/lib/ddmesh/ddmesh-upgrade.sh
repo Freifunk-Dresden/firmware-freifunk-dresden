@@ -468,6 +468,7 @@ upgrade_6_1_4()
  uci -q rename ddmesh.privnet.server_port='fastd_port'
  uci set ddmesh.backbone.default_wg_port='5003'
  uci set ddmesh.backbone.wg_port='5003'
+ uci set system.@system[0].cronloglevel=9
 }
 
 

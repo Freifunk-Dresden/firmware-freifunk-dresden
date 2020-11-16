@@ -6,8 +6,7 @@ test -f /tmp/freifunk-running || exit 0
 # "net" is triggered serveral times during boot, but final state
 # is only triggerred once via "iface"
 
-logger -t ddmesh "network-hotplug iface: network:[$INTERFACE] interface:$DEVICE $ACTION"
-
+logger -t ddmesh "network-hotplug 30-bmxd: [$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
 if [ "$INTERFACE" = "wifi" ]; then
 
 	if [ "$ACTION" = "ifup" ]; then
