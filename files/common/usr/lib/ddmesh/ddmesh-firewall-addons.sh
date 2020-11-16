@@ -164,7 +164,7 @@ setup_statistic_rules() {
 	NETWORKS="bat wan wwan lan wifi wifi2 vpn tbb_fastd tbb_wg mesh_lan mesh_wan privnet"
 	for net in $NETWORKS
 	do
-		logger -s -t $TAG "LOOP: net=$net"
+#		logger -s -t $TAG "LOOP: net=$net"
 		ifname=$(eval echo \$$net"_ifname")
 		test -z "$ifname" && continue
 
@@ -180,7 +180,7 @@ setup_statistic_rules() {
 
 		for net2 in $NETWORKS
 		do
-			logger -s -t $TAG "LOOP2: net=$net2"
+#			logger -s -t $TAG "LOOP2: net=$net2"
 			ifname2=$(eval echo \$$net2"_ifname")
 			test -z "$ifname2" && continue
 
