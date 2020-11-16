@@ -1,0 +1,11 @@
+#!/bin/sh
+
+test -f /tmp/freifunk-running || exit 0
+
+# ddmesh-utils-network-info.sh uses cached data. update cache when interfaces
+# become up (and have got IP)
+logger -t "hotplug 75-update-network-info" "$INTERFACE - action:$ACTION"
+[ ifup = "$ACTION" -o ifdown = "$ACTION" ] && {
+	[ wan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
+	[ lan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
+}
