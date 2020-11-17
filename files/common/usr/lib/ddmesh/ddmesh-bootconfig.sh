@@ -790,7 +790,8 @@ case "$boot_step" in
 
 			config_temp_configs
 			/etc/init.d/uhttpd restart
-			/etc/init.d/wshaper restart
+			WSHAPER=/etc/init.d/wshaper
+			[ -x "$WSHAPER" ] && $WSHAPER restart
 			# cron job is started from ddmesh-init.sh after bmxd
 
 			wait_for_wifi

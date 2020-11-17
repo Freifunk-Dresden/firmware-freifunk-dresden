@@ -6,7 +6,7 @@ test -f /tmp/freifunk-running || exit 0
 
 if [ "$INTERFACE" = "wan" -o "$INTERFACE" = "wwan" ]; then
 	if [ "$ACTION" = "ifup" ]; then
-		logger -t ddmesh "network-hotplug iface: update resolv.conf.final"
+		logger -t ddmesh "network-hotplug 31-resolv-conf.final"
 		/usr/lib/bmxd/bmxd-gateway.sh init
 	fi
 fi

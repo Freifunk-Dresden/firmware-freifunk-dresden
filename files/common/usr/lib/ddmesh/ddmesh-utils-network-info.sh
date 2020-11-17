@@ -2,11 +2,24 @@
 #$1 -network name
 #$2 -variable prefix
 
-test -z "$1" && {
-	echo "$0 <list> | <network-name>"
+CACHEDIR=/var/cache
+CACHE_DATA=$CACHEDIR/netdata
+
+ARG="$1"
+PREFIX="$2"
+
+test -z "$ARG" && {
+	echo "$0 <list> | <network-name> | update"
 	echo "  network name (wan,wifi,wifi2,mesh_lan,mesh_wan,vpn,...) or all"
+	echo "  list - lists network interfaces"
 	exit 1
 }
+
+# always create cache
+if [ $ARG = "update" -o ! -f "$CACHE_DATA" ]; then
+
+ mkdir -p $CACHEDIR
+ > $CACHE_DATA
 
  #get network info as json struct and rename key (workaround for jsonfilter)
  json="$(ubus call network.interface dump | sed 's#ipv\([46]\)-address#ipv\1_address#g;s#dns-server#dns_server#g')"
@@ -87,19 +100,6 @@ test -z "$1" && {
 	fi
 
 	#if net_name matches requested network, stay in this entry
-	if [ "$net_name" = "$1" -o "$1" = "list" -o "$1" = "all" ]; then
-
-		if [ "$1" = "list" ]; then
-			echo "net_$net_name=$net_ifname"
-			idx=$(( idx + 1 ))
-			continue
-		fi
-
-#		if [ -n "$net_ifname" ]; then
-#			if [ -n "$(cat /proc/net/dev | grep $net_ifname)" ]; then
-#				net_iface_present=1
-#			fi
-#		fi
 
 		[ "$net_available" = 1 ] && net_iface_present=1
 
@@ -111,31 +111,44 @@ test -z "$1" && {
 				net_network=$NETWORK
 		}
 
-		if [ "$1" = "all" ]; then
-			prefix=$net_name
-		else
-			prefix=${2:-net}
-		fi
 
-		# replace "-" with "_" to allow network names with "-" in there names
-		# but have valid variable names
-		prefix=${prefix/-/_}
+		echo export $net_name"_iface_present=$net_iface_present" >> $CACHE_DATA
+		echo export $net_name"_mask=$net_mask" >> $CACHE_DATA
+		echo export $net_name"_ipaddr=$net_ipaddr" >> $CACHE_DATA
+		echo export $net_name"_netmask=$net_netmask" >> $CACHE_DATA
+		echo export $net_name"_broadcast=$net_broadcast" >> $CACHE_DATA
+		echo export $net_name"_gateway=$net_gateway" >> $CACHE_DATA
+		echo export $net_name"_dns=$net_dns" >> $CACHE_DATA
+		echo export $net_name"_connect_time=$net_connect_time" >> $CACHE_DATA
+		echo export $net_name"_ifname=$net_ifname" >> $CACHE_DATA
+		echo export $net_name"_up=$net_up" >> $CACHE_DATA
+		echo export $net_name"_network=$net_network" >> $CACHE_DATA
+		echo export $net_name"_error=$net_error" >> $CACHE_DATA
 
-		echo export $prefix"_iface_present=$net_iface_present"
-		echo export $prefix"_mask=$net_mask"
-		echo export $prefix"_ipaddr=$net_ipaddr"
-		echo export $prefix"_netmask=$net_netmask"
-		echo export $prefix"_broadcast=$net_broadcast"
-		echo export $prefix"_gateway=$net_gateway"
-		echo export $prefix"_dns=$net_dns"
-		echo export $prefix"_connect_time=$net_connect_time"
-		echo export $prefix"_ifname=$net_ifname"
-		echo export $prefix"_up=$net_up"
-		echo export $prefix"_network=$net_network"
-		echo export $prefix"_error=$net_error"
-#geht nicht mit allen
-#		echo export $prefix"_device=$(uci -P /var/state get network.$1.device)"
-
-	fi
+#	fi
 	idx=$(( idx + 1 ))
  done
+
+fi # update cache data
+
+
+#-------------------------------------------
+
+case "$ARG" in
+	list)
+		cat $CACHE_DATA | sed -n "s#export \(.*\)_ifname=\(.*\)#net_\1=\2#p" 
+		;;
+
+	all) 	cat $CACHE_DATA
+		;;
+
+	*)
+		# replace "-" with "_" to allow network names with "-" in there names
+		# but have valid variable names
+		pfx=${PREFIX:-net}
+		pfx=${pfx/-/_}
+
+		cat $CACHE_DATA | sed -n "/^export ${ARG}_/s#export ${ARG}_\(.*\)#export ${pfx}_\1#p" 
+		;;
+esac
+

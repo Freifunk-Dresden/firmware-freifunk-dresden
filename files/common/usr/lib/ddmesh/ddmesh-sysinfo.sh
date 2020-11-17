@@ -263,22 +263,36 @@ cat<<EOM >> $OUTPUT
 			"dhcp_lease" : "$(grep 'dhcp-range=.*wifi2' /var/etc/dnsmasq.conf.dnsmasq | cut -d',' -f5)",
 EOM
 
-			# firewall_rule_name:sysinfo_key_name
-			NETWORKS="lan:lan wan:wan wifi:adhoc wifi2:ap vpn:ovpn bat:gwt privnet:privnet tbb_fastd:tbb_fastd tbb_wg:tbb_wg mesh_lan:mesh_lan mesh_wan:mesh_wan"
-			for net in $NETWORKS
-			do
-				first=${net%:*}
-				second=${net#*:}
-
-				for net2 in $NETWORKS
-				do
-					first2=${net2%:*}
-					second2=${net2#*:}
-					x=$(iptables -w -L statistic_forward -xvn | awk '/stat_'$first'_'$first2'_fwd/{print $2}')
-					[ -z "$x" ] && x=0
-					echo "			\"traffic_"$second"_"$second2"\": \"$x\"," >> $OUTPUT
-				done
-			done
+iptables -w -L statistic_forward -xvn | awk '
+	BEGIN {
+		# networks [ firewall_rule_name ] = sysinfo_key_name
+		networks["lan"]="lan";
+		networks["wan"]="wan";
+		networks["wifi"]="adhoc";
+		networks["wifi2"]="ap";
+		networks["vpn"]="ovpn";
+		networks["bat"]="gwt";
+		networks["tbb_fastd"]="tbb_fastd";
+		networks["tbb_wg"]="tbb_wg";
+		networks["mesh_lan"]="mesh_lan";
+		networks["mesh_wan"]="mesh_wan";
+	}
+	NR>2{
+		#read counter into array
+		data[$3]=$2
+	}
+	END {
+		for ( netA in networks )
+		{
+			for ( netB in networks )
+			{
+				key="stat_" netA "_" netB "_fwd"
+				j="\"traffic_" networks[netA] "_" networks[netB] "\":\"" data[key] "\","
+				print j;
+			}
+		}
+	}
+' >> $OUTPUT
 
 cat<<EOM >> $OUTPUT
 $(cat /proc/meminfo | sed -n '/^MemTotal\|^MemFree\|^Buffers\|^Cached/{s#\(.*\):[ 	]\+\([0-9]\+\)[ 	]*\(.*\)#\t\t\t\"meminfo_\1\" : \"\2\ \3\",#p}')
