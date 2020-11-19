@@ -7,7 +7,7 @@ STOP=10
 
 USE_PROCD=1
 NAME=ddmesh-tasks
-PROG=/usr/sbin/ddmesh-tasks.sh
+PROG=/usr/lib/ddmesh/ddmesh-tasks.sh
 
 start_service()
 {
