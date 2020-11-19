@@ -11,7 +11,7 @@ call_task()
 
  ut=$(expr $(cat /proc/uptime | cut -d'.' -f1) / 60)
 
- test $(expr $ut % $interval) -eq 0 && $args
+ test $(expr $ut % $interval) -eq 0 && $args 2>/dev/null >/dev/null
 }
 
 
