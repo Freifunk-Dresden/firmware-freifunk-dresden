@@ -18,28 +18,6 @@ call_task()
 
 #--------- user functions ----
 
-task_wifi()
-{
-	#check wifi: read country, try to set reg, verify reg
-	current_country="$(iw reg get | sed -n 's#.* \(..\):.*#\1#p')"
-	config_country="$(uci get wireless.radio2g.country)"
-	logger -t $TAG "wifi: country $current_country"
-
-	if [ ! "$current_country" = "$config_country" ]; then
-		logger -t $TAG "wifi: ERROR - country mismatch '$current_country' != '$config_country'"
-		iw reg set "$config_country"
-
-		#verify
-		current_country="$(iw reg get | sed -n 's#.* \(..\):.*#\1#p')"
-		if [ ! "$current_country" = "$config_country" ]; then
-			logger -t $TAG "wifi: ERROR - rebooting router"
-			sync
-			sleep 10
-			reboot
-		fi
-	fi
-}
-
 task_wifi_scanfix()
 {
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
@@ -72,13 +50,10 @@ logger -t $TAG "start service"
 # task loop
 while true;
 do
+	sleep 60 # give some time before calling first time
 
 	# call task scripts
 	# call_task <interval-minutes> <script | function> [arguments...]
-
-
-	# "iw reg get" has changed its output format. perhaps wifi-dead bug is solved?
-	# call_task 2 task_wifi
 
 	call_task 3 task_routing
 	call_task 2 task_bmxd
