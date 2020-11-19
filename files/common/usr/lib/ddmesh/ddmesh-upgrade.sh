@@ -469,6 +469,9 @@ upgrade_6_1_4()
  uci set ddmesh.backbone.default_wg_port='5003'
  uci set ddmesh.backbone.wg_port='5003'
  uci set system.@system[0].cronloglevel=9
+ uci add ddmesh log
+ uci rename ddmesh.@log[-1]='log'
+ uci -q set ddmesh.log.tasks=0
 }
 
 

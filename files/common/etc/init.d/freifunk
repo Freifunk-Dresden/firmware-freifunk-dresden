@@ -1,7 +1,7 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) freiunk-dresden
 
-START=99
+START=98
 start() {
 
 	# check if overlayfs exist. If not some router are updated in two steps.

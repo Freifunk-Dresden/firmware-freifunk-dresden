@@ -19,6 +19,7 @@
 
 LOGGER_TAG="ddmesh-boot"
 
+/usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
 config_boot_step1() {
@@ -70,6 +71,9 @@ config boot 'boot'
 	option upgrade_version		$(cat /etc/version)
 	option nightly_upgrade_running	0
 	option upgrade_running		0
+
+config log 'log'
+	option tasks			0
 
 config gps 'gps'
 	option 	latitude		'0'
@@ -623,14 +627,7 @@ EOM
 mkdir -p /var/etc/crontabs
 m=$(( $_ddmesh_node % 60))
 cat<<EOM > /var/etc/crontabs/root
-
-*/1 * * * *  /usr/lib/ddmesh/ddmesh-bmxd.sh check >/dev/null 2>/dev/null
-*/3 * * * *  /usr/lib/ddmesh/ddmesh-gateway-check.sh >/dev/null 2>/dev/null &
 $m */1 * * *  /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
-*/5 * * * *  /usr/lib/ddmesh/ddmesh-splash.sh autodisconnect >/dev/null 2>/dev/null
-* * * * *  /usr/lib/ddmesh/ddmesh-watchdog.sh >/dev/null 2>/dev/null
-* * * * * /usr/lib/ddmesh/ddmesh-sysinfo.sh >/dev/null 2>/dev/null
-* * * * * /usr/lib/ddmesh/ddmesh-backbone.sh update >/dev/null 2>/dev/null
 EOM
 
 if [ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ];then
