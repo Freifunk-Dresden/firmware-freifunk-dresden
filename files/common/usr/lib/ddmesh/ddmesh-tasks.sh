@@ -2,6 +2,8 @@
 
 TAG="ddmesh task"
 
+MINUTE_COUNTER=0
+
 call_task()
 { # $1 - interval in min
   # $x - function or script with arguments
@@ -9,9 +11,7 @@ call_task()
  shift
  args=$*
 
- ut=$(expr $(cat /proc/uptime | cut -d'.' -f1) / 60)
-
- test $(expr $ut % $interval) -eq 0 && $args 2>/dev/null >/dev/null
+ test $(expr $MINUTE_COUNTER % $interval) -eq 0 && $args 2>/dev/null >/dev/null
 }
 
 
@@ -50,7 +50,9 @@ logger -t $TAG "start service"
 # task loop
 while true;
 do
-	sleep 60 # give some time before calling first time
+	sleep 60 # must be exact 60s
+ 	MINUTE_COUNTER=$((MINUTE_COUNTER + 1))
+	[ "$MINUTE_COUNTER" -gt 10000 ] && MINUTE_COUNTER=0
 
 	# call task scripts
 	# call_task <interval-minutes> <script | function> [arguments...]
