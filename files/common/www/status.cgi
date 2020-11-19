@@ -31,8 +31,14 @@ cat<<EOF
 <tr><th>Ger&auml;teinfo:</th><td><b>Model:</b> $model ($model2) - <b>CPU:</b> $(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p') - <b>Board:</b> $(cat /tmp/sysinfo/board_name)</td></tr>
 <tr><th>Firmware-Version:</th><td>Freifunk Dresden Edition $(cat /etc/version) / $DISTRIB_DESCRIPTION</td></tr>
 <tr><th>Freier Speicher:</th><td>$(cat /proc/meminfo | grep MemFree | cut -d':' -f2) von $(cat /proc/meminfo | grep MemTotal | cut -d':' -f2)</td></tr>
-<tr><th>WIFI AirTime:</th><td> 2Ghz: $(getairtime $wifi_status_radio2g_airtime)</td></tr>
-$( [ ! -z "$wifi_status_radio5g_airtime" ] && echo "<tr><th><td> 5Ghz:"; getairtime $wifi_status_radio5g_airtime; echo "</td></tr>")
+<tr><th>WIFI AirTime:</th><td>2Ghz: $(getairtime $wifi_status_radio2g_airtime)</td></tr>
+EOF
+ if [ ! -z "$wifi_status_radio5g_airtime" ];then
+	echo "<tr><th><td> 5Ghz:"
+	getairtime $wifi_status_radio5g_airtime
+	echo "</td></tr>"
+ fi
+cat<<EOF
 </table>
 </fieldset>
 EOF
