@@ -72,6 +72,9 @@ config boot 'boot'
 	option nightly_upgrade_running	0
 	option upgrade_running		0
 
+config log 'log'
+	option tasks			0
+
 config gps 'gps'
 	option 	latitude		'0'
 	option  longitude		'0'
