@@ -44,7 +44,12 @@ setup_wireless()
  if [ -n "$wifi_status_radio5g_up" ]; then
  	uci -q delete wireless.radio5g.disabled
  	uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
-	uci set wireless.radio5g.channel="$(uci get ddmesh.network.wifi_channel_5g)"
+	if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
+		uci set wireless.radio5g.channel="$(uci get ddmesh.network.wifi_channel_5g)"
+	else
+		uci set wireless.radio5g.channel="auto"
+		uci set wireless.radio5g.channels="$(uci get ddmesh.network.wifi_channels_5g_outdoor)"
+	fi
 	uci set wireless.radio5g.txpower="$(uci get ddmesh.network.wifi_txpower_5g)"
  	uci set wireless.radio5g.legacy_rates="0"
  fi

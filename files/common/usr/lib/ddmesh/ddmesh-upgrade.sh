@@ -472,6 +472,9 @@ upgrade_6_1_4()
  uci add ddmesh log
  uci rename ddmesh.@log[-1]='log'
  uci -q set ddmesh.log.tasks=0
+ uci set ddmesh.network.wifi_channel_5g=44
+ uci add ddmesh.network.wifi_indoor_5g=0
+ uci add ddmesh.network.wifi_channels_5g_outdoor='100-140'
 }
 
 
