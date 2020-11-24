@@ -94,15 +94,33 @@ define Package/$(PKG_NAME)-wifi
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
 	# to enable basic wifi, kmod-mac80211 is needed
-	# wpa-cli is used to set depending on whether router has internet or not.
 	#
-	# If wpa-mini is not selected wpa-cli will not appear in menu. And because of this
-	# complete package ddmesh-wifi will also not be visible.
+	# If wpa-basic is not selected wpa-cli will not appear in menu. And because of this
+	# the complete package "ddmesh-wifi" will also not be visible.
 	# only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
 	# This simply just selects wpa-cli without hiding current packet
-  DEPENDS:= +iw +iwinfo +wpad-basic +@PACKAGE_wpa-cli
+  DEPENDS:= +iw +iwinfo +@ddmesh-mesh-wifi:PACKAGE_wpad-mesh-openssl +@!ddmesh-mesh-wifi:PACKAGE_wpad-basic +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
+
+  # when MENU:=1 than this package also has a submenu.
+  # all under "config" section below is moved to it
+  #MENU:=1
+endef
+
+define Package/$(PKG_NAME)-wifi/config
+
+	# menu is optional. It is directly inserted below current package menu entry (same window)
+	menu "Config"
+	#depends on PACKAGE_$(PKG_NAME)-wifi
+		# menu point is displayed when dependings are set
+		config ddmesh-mesh-wifi
+			# menu point is displayed when dependings are set
+			#tristate "wifi 802.11s support"
+			boolean "wifi 802.11s support"
+			help
+				required by firmware
+	endmenu
 endef
 
 define Package/$(PKG_NAME)-wifi/description
