@@ -103,24 +103,17 @@ define Package/$(PKG_NAME)-wifi
 
   TITLE:=Selects all addtional wifi tools.
 
-  # when MENU:=1 than this package also has a submenu.
-  # all under "config" section below is moved to it
-  #MENU:=1
 endef
 
 define Package/$(PKG_NAME)-wifi/config
 
-	# menu is optional. It is directly inserted below current package menu entry (same window)
-	menu "Config"
-	#depends on PACKAGE_$(PKG_NAME)-wifi
 		# menu point is displayed when dependings are set
 		config ddmesh-mesh-wifi
 			# menu point is displayed when dependings are set
-			#tristate "wifi 802.11s support"
+			depends on PACKAGE_$(PKG_NAME)-wifi
 			boolean "wifi 802.11s support"
 			help
-				required by firmware
-	endmenu
+			  This option adds wifi mesh. Only router with at least 8 MByte Flash and 64MByte RAM should use this option.	
 endef
 
 define Package/$(PKG_NAME)-wifi/description
