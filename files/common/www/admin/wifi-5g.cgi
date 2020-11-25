@@ -71,8 +71,18 @@ function checkInput()
 <legend>WiFi-Einstellungen</legend>
 <table>
 
-<tr><th>Kanal:</th>
-<td><input name="form_wifi_channel" size="32" type="text" value="$(uci get ddmesh.network.wifi_channel_5g)"></td>
+<tr>
+<th>Router steht Indoor</th>
+<td><input name="form_wifi_indoor" id="id_wifi_indoor" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = 1 ];then echo 'checked="checked"';fi) onchange="enable_indoor_wifi();"></td>
+</tr>
+
+<tr><th>Indoor-Kanal:</th>
+<td><input name="form_wifi_channel" size="32" type="text" value="$(uci get ddmesh.network.wifi_channel_5g)" disabled></td>
+</tr>
+
+<tr>
+<th>Outdoor-Kanalbereich:</th>
+<td><input name="form_wifi_channels" size="32" type="text" value"$(uci get ddmesh.network.wifi_channels_5g_outdoor)"></td>
 </tr>
 
 <tr><th>TX-Power:</th>
@@ -131,8 +141,9 @@ else #query string
 
 	if [ -n "$form_wifi_submit" ]; then
 		if [ -n "$form_wifi_txpower" ]; then
-			uci set ddmesh.network.wifi_channel_5g="$form_wifi_channel"
 			uci set ddmesh.network.wifi_txpower_5g="$form_wifi_txpower"
+			uci set ddmesh.network.wifi_indoor_5g="$form_wifi_indoor"
+			uci set ddmesh.network.wifi_channels_5g_outdoor="$form_wifi_channels"
 			
 			uci set ddmesh.network.wifi3_5g_enabled="$form_wifi3_enabled"
 			# avoid clearing values when disabled
