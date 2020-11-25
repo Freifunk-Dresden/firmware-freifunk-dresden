@@ -106,14 +106,18 @@ define Package/$(PKG_NAME)-wifi
 endef
 
 define Package/$(PKG_NAME)-wifi/config
-
+	#menu "config"
 		# menu point is displayed when dependings are set
 		config ddmesh-mesh-wifi
 			# menu point is displayed when dependings are set
 			depends on PACKAGE_$(PKG_NAME)-wifi
 			boolean "wifi 802.11s support"
 			help
-			  This option adds wifi mesh. Only router with at least 8 MByte Flash and 64MByte RAM should use this option.	
+		  This option adds wifi mesh. Only router with at least 8 MByte Flash and 64MByte RAM should use this option.
+
+	# AFTER config, there MUST be at least one empty line !
+
+	#endmenu
 endef
 
 define Package/$(PKG_NAME)-wifi/description
