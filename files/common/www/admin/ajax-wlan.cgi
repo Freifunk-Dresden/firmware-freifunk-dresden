@@ -6,7 +6,7 @@ echo 'Content-type: text/plain txt'
 echo ''
 }
 
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 WIDTH=150
 
 eval "$(cat /etc/openwrt_release)"

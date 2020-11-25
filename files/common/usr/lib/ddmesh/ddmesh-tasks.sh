@@ -23,7 +23,7 @@ call_task()
 
 task_wifi_scanfix()
 {
-	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
+	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 	/usr/sbin/iw dev $net_ifname scan >/dev/null
 }
 
