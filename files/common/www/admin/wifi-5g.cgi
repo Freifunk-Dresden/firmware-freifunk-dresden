@@ -73,7 +73,7 @@ function checkInput()
 
 <tr>
 <th>Router steht Indoor</th>
-<td><input name="form_wifi_indoor" id="id_wifi_indoor" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = 1 ];then echo 'checked="checked"';fi) onchange="enable_indoor_wifi();"></td>
+<td><input name="form_wifi_indoor" id="id_wifi_indoor" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = 1 ];then echo 'checked="checked"';fi) ></td>
 </tr>
 
 <tr><th>Indoor-Kanal:</th>
@@ -82,7 +82,7 @@ function checkInput()
 
 <tr>
 <th>Outdoor-Kanalbereich:</th>
-<td><input name="form_wifi_channels" size="32" type="text" value"$(uci get ddmesh.network.wifi_channels_5g_outdoor)"></td>
+<td><input name="form_wifi_channels" size="32" type="text" value="$(uci get ddmesh.network.wifi_channels_5g_outdoor)"></td>
 </tr>
 
 <tr><th>TX-Power:</th>
