@@ -14,7 +14,7 @@ if [ ! "$DISTRIB_TARGET" = "brcm-2.4" ]; then
 
 cat<<EOM
 <table>
- <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
+ <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc/Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
  <pre>
 EOM
 
@@ -92,7 +92,7 @@ EOM
 <TR class="$class" >
 <TD style="$style" width="$WIDTH">$wifi_essid_clean</TD>
 <TD style="$style">$wifi_channel</TD>
-<TD style="$style"><IMG SRC="/images/$wifi_adhoc.png" ALT="$wifi_adhoc" TITLE="Ad-Hoc mode"></TD>
+<TD style="$style"><IMG SRC="/images/$wifi_adhoc.png" ALT="$wifi_adhoc" TITLE="Ad-Hoc/Mesh mode"></TD>
 <TD style="$style"><IMG SRC="/images/$wifi_open.png" ALT="$wifi_open"></TD>
 <TD style="$style"><IMG SRC="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm, Noise: $wifi_noise dBm"></TD>
 <TD style="$style">- $wifi_signal</TD>
@@ -114,7 +114,7 @@ else #BROADCOM
 
 cat<<EOM
 <table>
- <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc</TH><TH>Open</TH><TH>Signal</TH><TD>RSSI&nbsp;(dBm)</TD><TD>Noise&nbsp;(dBm)</TD><TH>BSSID</TH></TR>
+ <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc/Mesh</TH><TH>Open</TH><TH>Signal</TH><TD>RSSI&nbsp;(dBm)</TD><TD>Noise&nbsp;(dBm)</TD><TH>BSSID</TH></TR>
 EOM
 
 T=1
@@ -151,7 +151,7 @@ EOM
 	cat<<EOM
 <TD style="$style" width="$WIDTH">$wifi_essid</TD>
 <TD style="$style">$wifi_channel</TD>
-<TD style="$style"><IMG SRC="/images/$wifi_adhoc.png" ALT="$wifi_adhoc" TITLE="Ad-Hoc mode"></TD>
+<TD style="$style"><IMG SRC="/images/$wifi_adhoc.png" ALT="$wifi_adhoc" TITLE="Ad-Hoc/Mesh mode"></TD>
 <TD style="$style"><IMG SRC="/images/$wifi_open.png" ALT="$wifi_open" TITLE="offen"></TD>
 <TD style="$style"><IMG SRC="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm, Noise: $wifi_noise dBm"></TD>
 <TD style="$style">$wifi_signal</TD>
