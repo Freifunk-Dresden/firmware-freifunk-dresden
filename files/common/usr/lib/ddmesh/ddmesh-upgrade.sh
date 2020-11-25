@@ -474,6 +474,11 @@ upgrade_6_1_4()
  uci -q set ddmesh.log.tasks=0
 }
 
+upgrade_6_2_1()
+{
+ uci set ddmesh.network.mesh_mode='adhoc+mesh' 
+}
+
 
 
 #upgrade_6_X_Y()
