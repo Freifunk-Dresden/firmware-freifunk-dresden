@@ -109,7 +109,7 @@ config network 'network'
 	option	wifi_slow_rates		0
 	option	wifi2_dhcplease		'5m'
 	option	wifi2_isolate		'1'
-	option  mesh_mode		'adhoc+mesh' #adhoc,mesh,adhoc+mesh
+	option	mesh_mode		'adhoc+mesh' #adhoc,mesh,adhoc+mesh
 	option	lan_local_internet	'0'
 	option	speed_down		'200000'
 	option	speed_up		'50000'
@@ -379,14 +379,24 @@ done
  # Interfaces for "wifi" and "wifi2" are created by wireless subsystem and
  # assigned to this networks
  #############################################################################
- test -z "$(uci -q get network.wifi)" && {
+ test -z "$(uci -q get network.wifi_adhoc)" && {
  	uci add network interface
- 	uci rename network.@interface[-1]='wifi'
+ 	uci rename network.@interface[-1]='wifi_adhoc'
  }
- uci set network.wifi.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi.netmask="$_ddmesh_netmask"
- uci set network.wifi.broadcast="$_ddmesh_broadcast"
- uci set network.wifi.proto='static'
+ uci set network.wifi_adhoc.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.wifi_adhoc.netmask="$_ddmesh_netmask"
+ uci set network.wifi_adhoc.broadcast="$_ddmesh_broadcast"
+ uci set network.wifi_adhoc.proto='static'
+
+ test -z "$(uci -q get network.wifi_mesh)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='wifi_mesh'
+ }
+ uci set network.wifi_mesh.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.wifi_mesh.netmask="$_ddmesh_netmask"
+ uci set network.wifi_mesh.broadcast="$_ddmesh_broadcast"
+ uci set network.wifi_mesh.proto='static'
+
 
  test -z "$(uci -q get network.wifi2)" && {
  	uci add network interface
@@ -692,7 +702,7 @@ wait_for_wifi()
 	do
 		# use /tmp/state  instead of ubus because up-state is wrong.
 		# /tmp/state is never set back (but this can be ignored here. if needed use /etc/hotplug.d/iface)
-		wifi_up="$(uci -q -P /tmp/state get network.wifi.up)"
+		wifi_up="$(uci -q -P /tmp/state get network.wifi_adhoc.up)"
 		wifi2_up="$(uci -q -P /tmp/state get network.wifi2.up)"
 
 		logger -s -t "$LOGGER_TAG" "Wait for WIFI up: $c/$max (only_adhoc=$only_adhoc, wifi:$wifi_up, wifi2:$wifi_up)"

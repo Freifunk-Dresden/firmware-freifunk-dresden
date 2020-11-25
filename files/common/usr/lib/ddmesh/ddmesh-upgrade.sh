@@ -476,7 +476,8 @@ upgrade_6_1_4()
 
 upgrade_6_2_1()
 {
- uci set ddmesh.network.mesh_mode='adhoc+mesh' 
+ uci set ddmesh.network.mesh_mode='adhoc+mesh'
+ uci -q rename network.wifi='wifi_adhoc' 
 }
 
 
