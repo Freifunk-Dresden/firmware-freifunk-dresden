@@ -7,7 +7,7 @@ test -f /tmp/freifunk-running || exit 0
 # is only triggerred once via "iface"
 
 logger -t ddmesh "network-hotplug 30-bmxd: [$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
-if [ "$INTERFACE" = "wifi" ]; then
+if [ "$INTERFACE" = "wifi_adhoc" -o "$INTERFACE" = "wifi_mesh" ]; then
 
 	if [ "$ACTION" = "ifup" ]; then
 		logger -t ddmesh "network-hotplug: add [$INTERFACE] to bmxd"
