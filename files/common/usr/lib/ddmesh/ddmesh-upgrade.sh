@@ -481,6 +481,9 @@ upgrade_6_3_1()
  uci add credentials network             
  uci rename credentials.@network[-1]='network'
  uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
+ uci del_list firewall.zone_mesh.network='wifi'
+ uci add_list firewall.zone_mesh.network='wifi_adhoc'
+ uci add_list firewall.zone_mesh.network='wifi_mesh'
 }
 
 
