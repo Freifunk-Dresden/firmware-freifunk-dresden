@@ -1,6 +1,8 @@
 #!/bin/sh
 
-test -f /tmp/freifunk-running || exit 0
+# bmxd is started before 
+# and hotplug interfaces are added before touching /tmp/freifunk-running
+# -> do not check for freifunk-running, else event gets lost
 
 # use /etc/hotplug.d/iface  instead  /etc/hotplug.d/net because
 # "net" is triggered serveral times during boot, but final state

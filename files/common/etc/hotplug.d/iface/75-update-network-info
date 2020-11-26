@@ -6,7 +6,5 @@
 logger -t ddmesh "network-hotplug 75-update-network-info: [$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
 
 [ ifup = "$ACTION" -o ifdown = "$ACTION" ] && {
-	if [ "$INTERFACE" = "wan" -o "$INTERFACE" = "lan" -o "$INTERFACE" = "wifi" ]; then
 		/usr/lib/ddmesh/ddmesh-utils-network-info.sh update
-	fi
 }
