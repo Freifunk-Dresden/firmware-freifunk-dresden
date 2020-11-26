@@ -33,8 +33,12 @@ setup_forwarding() {
 		$IPT -t nat -D $table -d $_ddmesh_ip -j PORT_FORWARDING 2>/dev/null
 		$IPT -t nat -A $table -d $_ddmesh_ip -j PORT_FORWARDING
 	done
-	$IPT -t nat -D prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING 2>/dev/null
-	$IPT -t nat -A prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING
+
+	# interface might not be ready yet (wait for other hotplug updates)	
+	if [ "$lan_up" = "1" -a -n "$lan_ipaddr" ]; then
+		$IPT -t nat -D prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING 2>/dev/null
+		$IPT -t nat -A prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING
+	fi
 
 	$IPT -N PORT_FORWARDING 2>/dev/null
 	$IPT -N PORT_FORWARDING_RULES 2>/dev/null
@@ -51,7 +55,7 @@ setup_forwarding() {
 			$IPT -D $table -o $lan_ifname -d $lan_network/$lan_mask -j PORT_FORWARDING 2>/dev/null
 			$IPT -A $table -o $lan_ifname -d $lan_network/$lan_mask -j PORT_FORWARDING
 		fi
-		if [ "$wifi2_up" = "1" ]; then
+		if [ "$wifi2_up" = "1" -a -n "$wifi2_network" -a -n "$wifi2_mask" ]; then
 			$IPT -D $table -o $wifi2_ifname -d $wifi2_network/$wifi2_mask -j PORT_FORWARDING 2>/dev/null
 			$IPT -A $table -o $wifi2_ifname -d $wifi2_network/$wifi2_mask -j PORT_FORWARDING
 		fi
