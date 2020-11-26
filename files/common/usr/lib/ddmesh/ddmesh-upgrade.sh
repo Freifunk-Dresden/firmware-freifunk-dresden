@@ -474,10 +474,13 @@ upgrade_6_1_4()
  uci -q set ddmesh.log.tasks=0
 }
 
-upgrade_6_2_1()
+upgrade_6_3_1()
 {
  uci set ddmesh.network.mesh_mode='adhoc+mesh'
  uci -q rename network.wifi='wifi_adhoc' 
+ uci add credentials network             
+ uci rename credentials.@network[-1]='network'
+ uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
 }
 
 
