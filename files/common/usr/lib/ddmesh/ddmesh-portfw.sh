@@ -47,7 +47,7 @@ setup_forwarding() {
 
 	for table in forwarding_mesh_rule forwarding_lan_rule forwarding_wifi2_rule
 	do
-		if [ "$lan_up" = "1" ]; then
+		if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
 			$IPT -D $table -o $lan_ifname -d $lan_network/$lan_mask -j PORT_FORWARDING 2>/dev/null
 			$IPT -A $table -o $lan_ifname -d $lan_network/$lan_mask -j PORT_FORWARDING
 		fi
@@ -57,7 +57,7 @@ setup_forwarding() {
 		fi
 	done
 
-	if [ $wan_up = 1 ]; then
+	if [ $wan_up = 1 -a -n "$wan_network" -a -n "$wan_mask" ]; then
 		for table in forwarding_mesh_rule forwarding_lan_rule forwarding_wifi2_rule
 		do
 			$IPT -D $table -o $wan_ifname -d $wan_network/$wan_mask -j PORT_FORWARDING 2>/dev/null

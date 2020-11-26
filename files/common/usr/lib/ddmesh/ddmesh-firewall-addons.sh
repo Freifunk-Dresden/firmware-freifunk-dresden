@@ -272,7 +272,7 @@ _update()
 	$IPT -F input_bat_deny
 	$IPT -F input_vpn_deny
 
-	if [ "$lan_up" = "1" ]; then
+	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
 		for n in wan mesh wifi2 bat vpn
 		do
 			$IPT -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
@@ -280,7 +280,7 @@ _update()
 		done
 	fi
 
-	if [ "$wan_up" = "1" ]; then
+	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
 		for n in lan mesh wifi2 bat vpn
 		do
 			$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
