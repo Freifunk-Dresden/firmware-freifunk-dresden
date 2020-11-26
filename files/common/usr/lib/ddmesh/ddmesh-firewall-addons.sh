@@ -143,6 +143,7 @@ setup_openvpn_rules() {
 		done
 	fi
 	unset IFS
+
 }
 
 setup_statistic_rules() {
@@ -231,8 +232,8 @@ setup_ignored_nodes() {
 	#add tables to deny some nodes to prefer backbone connections
 	[ -n "$wifi_adhoc_ifname" ] && $IPT -I input_mesh_rule -i $wifi_adhoc_ifname -j input_ignore_nodes_wifi
 	[ -n "$wifi_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh_ifname -j input_ignore_nodes_wifi
-	$IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
-	$IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
+	[ -n "$mesh_lan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
+	[ -n "$mesh_wan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
 	[ -n "$tbb_fastd_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
 	[ -n "$tbb_wg_ifname" ] && $IPT -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
 
@@ -283,7 +284,7 @@ _update()
 	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
 		for n in lan mesh wifi2 bat vpn
 		do
-			$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
+ 			$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
 			$IPT -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject
 		done
 	fi
