@@ -484,6 +484,7 @@ upgrade_6_3_1()
  uci del_list firewall.zone_mesh.network='wifi'
  uci add_list firewall.zone_mesh.network='wifi_adhoc'
  uci add_list firewall.zone_mesh.network='wifi_mesh'
+ uci set credentials.network.wifi_mesh_key='ffkey-placeholder'
 }
 
 
