@@ -73,7 +73,7 @@ setup_wireless()
  	uci set wireless.@wifi-iface[$iface].device='radio2g'
 	uci set wireless.@wifi-iface[$iface].network='wifi_adhoc'
 	uci set wireless.@wifi-iface[$iface].mode='adhoc'
-	uci set wireless.@wifi-iface[$iface].ifname='mesh0'
+	uci set wireless.@wifi-iface[$iface].ifname='mesh-adhoc'
  	uci set wireless.@wifi-iface[$iface].bssid="$(uci -q get credentials.wifi_2g.bssid)"
  	uci set wireless.@wifi-iface[$iface].encryption='none'
  	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
@@ -87,7 +87,7 @@ setup_wireless()
  	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
  	uci set wireless.@wifi-iface[$iface].device='radio2g'
 	uci set wireless.@wifi-iface[$iface].network='wifi_mesh'
-	uci set wireless.@wifi-iface[$iface].ifname='mesh1'
+	uci set wireless.@wifi-iface[$iface].ifname='mesh-802.11s'
 	uci set wireless.@wifi-iface[$iface].mode='mesh'
  	uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
  	uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.network.wifi_mesh_key)"
