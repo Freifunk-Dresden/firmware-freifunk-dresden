@@ -25,8 +25,8 @@ echo "<div style=\"visibility: hidden;\" id=\"wifi3_key\">$wifi3_key</div>"
 
 IFS='-'
 i=0
-for ch in $(uci get ddmesh.network.wifi_channels_5g_outdoor); do
-        eval wifi_5g_channels_$i=$ch
+for ch in $(uci -q get ddmesh.network.wifi_channels_5g_outdoor); do
+        let wifi_5g_channels_$i="$ch"
         i=$((i + 1))
 done
 unset IFS
@@ -92,7 +92,7 @@ Indoor: fester Kanal; AccessPoint und Mesh 802.11s (folgt noch)
 </tr>
 
 <tr><th>Indoor-Kanal:</th>
-<td><input name="form_wifi_channel" size="32" type="text" value="$(uci get ddmesh.network.wifi_channel_5g)" disabled></td>
+<td><input name="form_wifi_channel" size="32" type="text" value="$(uci -q get ddmesh.network.wifi_channel_5g)" disabled></td>
 </tr>
 
 <tr>
