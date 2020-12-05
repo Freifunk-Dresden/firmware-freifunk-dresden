@@ -7,11 +7,11 @@ function getnode(ip)
 function color_interface(ifname)
 {
  ifcolor="#000000"
- if ( ifname ~ /tbb_wg.*/)	{ifcolor="#d1a90f";}
- if ( ifname ~ /tbb_fastd/)	{ifcolor="#807754";}
- if ( ifname ~ /br-mesh.*/)	{ifcolor="#278f2e";}
- if ( ifname ~ /mesh-adhoc/)	{ifcolor="#8e6aad";}
- if ( ifname ~ /mesh-802.*/)	{ifcolor="#90839c";}
+ if ( ifname ~ /tbb_wg.*/)	{ifcolor="#328f4a";}
+ if ( ifname ~ /tbb_fastd/)	{ifcolor="#328f4a";}
+ if ( ifname ~ /br-mesh.*/)	{ifcolor="#009c08";}
+ if ( ifname ~ /mesh-adhoc/)	{ifcolor="#5030a1";}
+ if ( ifname ~ /mesh-802.*/)	{ifcolor="#a13067";}
  return "<div style=\"color:"ifcolor";\">"ifname"</div>";
 }
 

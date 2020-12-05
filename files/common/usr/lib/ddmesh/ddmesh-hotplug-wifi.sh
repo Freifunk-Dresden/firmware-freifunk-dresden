@@ -87,7 +87,7 @@ setup_wireless()
  	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
  	uci set wireless.@wifi-iface[$iface].device='radio2g'
 	uci set wireless.@wifi-iface[$iface].network='wifi_mesh'
-	uci set wireless.@wifi-iface[$iface].ifname='mesh-802.11s'
+	uci set wireless.@wifi-iface[$iface].ifname='mesh-80211s'
 	uci set wireless.@wifi-iface[$iface].mode='mesh'
  	uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
  	uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.network.wifi_mesh_key)"
