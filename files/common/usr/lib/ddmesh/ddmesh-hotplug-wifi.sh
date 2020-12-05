@@ -68,7 +68,7 @@ setup_wireless()
  esac
 
  iface=0
- if [ $wifi_mode_adhoc == 1 ]; then
+ if [ $wifi_mode_adhoc = 1 ]; then
  	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
  	uci set wireless.@wifi-iface[$iface].device='radio2g'
 	uci set wireless.@wifi-iface[$iface].network='wifi_adhoc'
@@ -83,7 +83,7 @@ setup_wireless()
  	iface=$((iface + 1))
  fi
 
- if [ $wifi_mode_mesh == 1 ]; then
+ if [ $wifi_mode_mesh = 1 ]; then
  	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
  	uci set wireless.@wifi-iface[$iface].device='radio2g'
 	uci set wireless.@wifi-iface[$iface].network='wifi_mesh'
