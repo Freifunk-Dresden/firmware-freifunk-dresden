@@ -6,7 +6,6 @@ echo 'Content-type: text/plain txt'
 echo ''
 }
 
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 WIDTH=150
 
 eval "$(cat /etc/openwrt_release)"
@@ -19,7 +18,7 @@ cat<<EOM
 EOM
 
 T=1
-/usr/sbin/iw dev $net_ifname scan | sed 's#\\x00.*##' | sed -ne'
+/usr/sbin/iw dev wifi2ap scan | sed 's#\\x00.*##' | sed -ne'
 s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="";wifi_essid="";wifi_signal="0";wifi_open="yes";#p
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
 s#	SSID: \(.*\)#wifi_essid="\1";#p
@@ -111,6 +110,7 @@ cat<<EOM
 EOM
 
 else #BROADCOM
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 
 cat<<EOM
 <table>
