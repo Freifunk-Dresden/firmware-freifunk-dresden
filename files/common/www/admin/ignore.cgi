@@ -20,7 +20,7 @@ cat<<EOM
 <legend>Gespeicherte Knoten</legend>
 <table>
 
-<tr><th width="100">Knoten</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi</th><th></th></tr>
+<tr><th width="100">Knoten</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi-Adhoc</th><th>Wifi-802.11s</th><th></th></tr>
 EOM
 
 T=1
@@ -70,7 +70,7 @@ cat<<EOM
 <form name="form_node_new" action="ignore.cgi" method="post">
 <input name="form_action" value="add" type="hidden">
 <table>
- <tr><th width="100">Knoten</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi</th><th></th></tr>
+ <tr><th width="100">Knoten</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi-Adhoc</th><th>Wifi-802.11s</th><th></th></tr>
  <tr>	<td><input name="form_node" type="text" value="" size="17" maxlength="17"></td>
 	<td><input name="form_opt_lan" type="checkbox" value="1" ></td>
 	<td><input name="form_opt_tbb" type="checkbox" value="1" ></td>

@@ -764,6 +764,10 @@ case "$boot_step" in
 
 			config_update
 
+			# regenerate wireless config after firmware update.
+			# hotplug event ieee80211 is not reliable before rebooting
+			/usr/lib/ddmesh/ddmesh-hotplug-wifi.sh
+
 			upgrade_running=$(uci -q get ddmesh.boot.upgrade_running)
 			uci set ddmesh.boot.boot_step=3
 			uci set ddmesh.boot.nightly_upgrade_running=0
