@@ -22,15 +22,9 @@ fi
 # javascript setWifi3_key reads content and assigns it to value of input field
 wifi3_key="$(uci get credentials.wifi_5g.private_key)"
 echo "<div style=\"visibility: hidden;\" id=\"wifi3_key\">$wifi3_key</div>"
-
-IFS='-'
-i=0
-for ch in $(uci -q get ddmesh.network.wifi_channels_5g_outdoor); do
-        let wifi_5g_channels_$i="$ch"
-        i=$((i + 1))
-done
-unset IFS
-
+range=$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)
+wifi_5g_channels_min="${range%-*}"
+wifi_5g_channels_max="${range#*-}"
 cat<<EOM
 <div id="status"></div>
 <script type="text/javascript">
