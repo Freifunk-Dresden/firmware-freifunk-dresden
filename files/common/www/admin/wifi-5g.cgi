@@ -92,9 +92,9 @@ Indoor: fester Kanal; AccessPoint und Mesh 802.11s (folgt noch)
 <tr>
 <th>Outdoor-Kanalbereich:</th>
 <td>
-<input name="form_wifi_channels_lower" size="15" type="number" min="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_min)" max="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_max)" step="4" value="$wifi_5g_channels_0">
+<input name="form_wifi_channels_lower" size="15" type="number" min="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_min)" max="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_max)" step="4" value="$wifi_5g_channels_min">
 -
-<input name="form_wifi_channels_upper" size="15" type="number" min="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_min)" max="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_max)" step="4" value="$wifi_5g_channels_1">
+<input name="form_wifi_channels_upper" size="15" type="number" min="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_min)" max="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_max)" step="4" value="$wifi_5g_channels_max">
 </td>
 </tr>
 
