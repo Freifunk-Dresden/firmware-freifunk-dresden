@@ -474,6 +474,15 @@ upgrade_6_1_4()
  uci -q set ddmesh.log.tasks=0
 }
 
+upgrade_6_1_5()
+{
+ uci set ddmesh.network.wifi_channel_5g=44
+ uci set ddmesh.network.wifi_indoor_5g=0
+ uci set ddmesh.network.wifi_channels_5g_outdoor='100-140'
+ uci set ddmesh.network.wifi_ch_5g_outdoor_min=100
+ uci set ddmesh.network.wifi_ch_5g_outdoor_max=140
+}
+
 
 
 #upgrade_6_X_Y()
