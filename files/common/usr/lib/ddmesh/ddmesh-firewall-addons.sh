@@ -236,7 +236,8 @@ setup_ignored_nodes() {
 
 	#add tables to deny some nodes to prefer backbone connections
 	[ -n "$wifi_adhoc_ifname" ] && $IPT -I input_mesh_rule -i $wifi_adhoc_ifname -j input_ignore_nodes_wifia
-	[ -n "$wifi_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh_ifname -j input_ignore_nodes_wifim
+	[ -n "$wifi2_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi2_mesh_ifname -j input_ignore_nodes_wifim
+	[ -n "$wifi5_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi5_mesh_ifname -j input_ignore_nodes_wifim
 	[ -n "$mesh_lan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
 	[ -n "$mesh_wan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
 	[ -n "$tbb_fastd_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb

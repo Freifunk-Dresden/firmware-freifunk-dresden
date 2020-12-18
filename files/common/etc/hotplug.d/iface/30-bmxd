@@ -9,12 +9,12 @@
 # is only triggerred once via "iface"
 
 logger -t ddmesh "network-hotplug 30-bmxd: network: [$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
-if [ "$INTERFACE" = "wifi_adhoc" -o "$INTERFACE" = "wifi_mesh" ]; then
+if [ "$INTERFACE" = "wifi_adhoc" -o "$INTERFACE" = "wifi2_mesh" -o "$INTERFACE" = "wifi5_mesh" ]; then
 
 	# INTERFACE contains network name, have to determine interace name
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 	eval ifname=\$${INTERFACE}_ifname
-echo $ifname
+
 	if [ "$ACTION" = "ifup" ]; then
 		logger -t ddmesh "network-hotplug: add [$ifname] to bmxd"
 		/usr/lib/ddmesh/ddmesh-bmxd.sh add_if $ifname

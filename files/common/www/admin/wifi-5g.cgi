@@ -22,7 +22,9 @@ fi
 # javascript setWifi3_key reads content and assigns it to value of input field
 wifi3_key="$(uci get credentials.wifi_5g.private_key)"
 echo "<div style=\"visibility: hidden;\" id=\"wifi3_key\">$wifi3_key</div>"
-
+range=$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)
+wifi_5g_channels_min="${range%-*}"
+wifi_5g_channels_max="${range#*-}"
 cat<<EOM
 <div id="status"></div>
 <script type="text/javascript">
@@ -71,8 +73,29 @@ function checkInput()
 <legend>WiFi-Einstellungen</legend>
 <table>
 
-<tr><th>Kanal:</th>
-<td><input name="form_wifi_channel" size="32" type="text" value="$(uci get ddmesh.network.wifi_channel_5g)"></td>
+<tr>
+<th>Router steht Indoor</th>
+<td><input name="form_wifi_indoor" id="id_wifi_indoor" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = 1 ];then echo 'checked="checked"';fi) ></td>
+</tr>
+<tr><td></td>
+<td>
+<font color="red">Einstellung darf nur gesetzt werden, wenn Router drinnen steht!</font><br/>
+Outdoor: automatische Kanalwahl aus Bereich f&uuml;r Outdoor; nur Access-Point<br/>
+Indoor: fester Kanal; AccessPoint und Mesh 802.11s (folgt noch)
+</td>
+</tr>
+
+<tr><th>Indoor-Kanal:</th>
+<td><input name="form_wifi_channel" size="32" type="text" value="$(uci -q get ddmesh.network.wifi_channel_5g)" disabled></td>
+</tr>
+
+<tr>
+<th>Outdoor-Kanalbereich:</th>
+<td>
+<input name="form_wifi_channels_lower" size="15" type="number" min="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_min)" max="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_max)" step="4" value="$wifi_5g_channels_min">
+-
+<input name="form_wifi_channels_upper" size="15" type="number" min="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_min)" max="$(uci -q get ddmesh.network.wifi_ch_5g_outdoor_max)" step="4" value="$wifi_5g_channels_max">
+</td>
 </tr>
 
 <tr><th>TX-Power:</th>
@@ -131,8 +154,13 @@ else #query string
 
 	if [ -n "$form_wifi_submit" ]; then
 		if [ -n "$form_wifi_txpower" ]; then
-			uci set ddmesh.network.wifi_channel_5g="$form_wifi_channel"
 			uci set ddmesh.network.wifi_txpower_5g="$form_wifi_txpower"
+			uci set ddmesh.network.wifi_indoor_5g="$form_wifi_indoor"
+			if [ "$form_wifi_channels_lower" -gt "$form_wifi_channels_upper" ]; then
+				uci set ddmesh.network.wifi_channels_5g_outdoor="$form_wifi_channels_upper-$form_wifi_channels_lower"
+			else
+				uci set ddmesh.network.wifi_channels_5g_outdoor="$form_wifi_channels_lower-$form_wifi_channels_upper"
+			fi
 			
 			uci set ddmesh.network.wifi3_5g_enabled="$form_wifi3_enabled"
 			# avoid clearing values when disabled

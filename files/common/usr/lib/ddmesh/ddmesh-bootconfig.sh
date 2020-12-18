@@ -103,6 +103,10 @@ config network 'network'
 	option  wifi_txpower		18
 	option	wifi_channel_5g		44
 	option  wifi_txpower_5g		18
+	option  wifi_indoor_5g		0
+	option  wifi_channels_5g_outdoor '100-140'
+	option	wifi_ch_5g_outdoor_min	100
+	option	wifi_ch_5g_outdoor_max	140
 #	option	wifi_diversity		1
 #	option	wifi_rxantenna		1
 #	option	wifi_txantenna		1
@@ -388,15 +392,23 @@ done
  uci set network.wifi_adhoc.broadcast="$_ddmesh_broadcast"
  uci set network.wifi_adhoc.proto='static'
 
- test -z "$(uci -q get network.wifi_mesh)" && {
+ test -z "$(uci -q get network.wifi2_mesh)" && {
  	uci add network interface
- 	uci rename network.@interface[-1]='wifi_mesh'
+ 	uci rename network.@interface[-1]='wifi2_mesh'
  }
- uci set network.wifi_mesh.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi_mesh.netmask="$_ddmesh_netmask"
- uci set network.wifi_mesh.broadcast="$_ddmesh_broadcast"
- uci set network.wifi_mesh.proto='static'
+ uci set network.wifi2_mesh.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.wifi2_mesh.netmask="$_ddmesh_netmask"
+ uci set network.wifi2_mesh.broadcast="$_ddmesh_broadcast"
+ uci set network.wifi2_mesh.proto='static'
 
+ test -z "$(uci -q get network.wifi5_mesh)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='wifi5_mesh'
+ }
+ uci set network.wifi5_mesh.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.wifi5_mesh.netmask="$_ddmesh_netmask"
+ uci set network.wifi5_mesh.broadcast="$_ddmesh_broadcast"
+ uci set network.wifi5_mesh.proto='static'
 
  test -z "$(uci -q get network.wifi2)" && {
  	uci add network interface

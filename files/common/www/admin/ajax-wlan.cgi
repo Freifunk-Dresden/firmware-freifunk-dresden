@@ -19,9 +19,10 @@ EOM
 
 T=1
 /usr/sbin/iw dev wifi2ap scan | sed 's#\\x00.*##' | sed -ne'
-s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="";wifi_essid="";wifi_signal="0";wifi_open="yes";#p
+s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="";wifi_essid="";wifi_meshid="";wifi_signal="0";wifi_open="yes";#p
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
 s#	SSID: \(.*\)#wifi_essid="\1";#p
+s#	MESH ID: \(.*\)#wifi_meshid="\1";#p
 s#	WPA:.*#wifi_open="no";#p
 s#	WPE:.*#wifi_open="no";#p
 s#	RSN:.*#wifi_open="no";#p
@@ -33,9 +34,16 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 
 	#clean essid
 	wifi_essid_clean="$(echo $wifi_essid | sed 's#[$`]# #g')"
+	wifi_meshid_clean="$(echo $wifi_meshid | sed 's#[$`]# #g')"
 
 	#if essid hidden -> no info for encryption
-	test -z "$wifi_essid" && wifi_open="no"
+	test -z "$wifi_essid_clean" && wifi_open="no"
+
+	# use mesh id if present
+	if [ -z "$wifi_essid_clean" -a "$wifi_meshid_clean" ]; then
+		wifi_essid_clean="$wifi_meshid_clean"
+		wifi_mode="mesh"
+	fi
 
 	#check if this is my own adhoc signal
 	test $wifi_signal -eq 0 && continue
@@ -68,21 +76,29 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 
 	wifi_adhoc="no"
 	test "$wifi_mode" = "ad-hoc" && wifi_adhoc="yes"
+	test "$wifi_mode" = "mesh" && wifi_adhoc="yes"
 	style="vertical-align:middle;white-space: nowrap;"
 	cat<<EOM
 EOM
 	class=colortoggle$T
 	# Mesh-Net
-	A=$(echo "$wifi_bssid" | tr 'abcdef' 'ABCDEF')
-	B=$(echo "$(uci get wireless.@wifi-iface[0].bssid)" | tr 'abcdef' 'ABCDEF')
-	if [ "$A" = "$B" ]; then
+	A="$(uci get ddmesh.network.essid_adhoc)"
+	if [ "$wifi_essid_clean" = "$A" ]; then
 		style="$style font-weight:bold;"
 		class="selected"
 	fi
+
+	# check for meshid
+	A="$(uci -q get credentials.network.wifi_mesh_id)"
+	if [ "$wifi_essid_clean" = "$A" ]; then
+		style="$style font-weight:bold;"
+		class="selected"
+	fi
+
 	# Freifunk (ap) check that community name is in essid
 	A="$(uci get ddmesh.system.community)"
-	B="${wifi_essid/$A/}"
-	if [ "$wifi_essid" != "$B" ]; then
+	B="${wifi_essid_clean/$A/}"
+	if [ "$wifi_essid_clean" != "$B" ]; then
 		style="$style font-weight:bold;"
 		class="selected_ap"
 	fi
