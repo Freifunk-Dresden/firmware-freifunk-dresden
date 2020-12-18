@@ -1542,6 +1542,7 @@ CONFIG_PACKAGE_wireguard=y
 # CONFIG_PACKAGE_ddmesh-lte is not set
 # CONFIG_PACKAGE_ddmesh-usb-storage is not set
 CONFIG_PACKAGE_ddmesh-wifi=y
+# CONFIG_ddmesh-mesh-wifi is not set
 # CONFIG_PACKAGE_ddmesh-wifi-extra is not set
 
 #
