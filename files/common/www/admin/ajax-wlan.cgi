@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 
 # only display if arg1 is not "no-html-header"
 test -z $1 && {
@@ -8,25 +8,17 @@ echo ''
 
 WIDTH=150
 
-eval "$(cat /etc/openwrt_release)"
-if [ ! "$DISTRIB_TARGET" = "brcm-2.4" ]; then
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
-cat<<EOM
-<table>
- <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc/Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
- <pre>
-EOM
 
-T=1
 
 SCAN_RESULT=/tmp/wifi_scan
 
 /usr/sbin/iw dev wifi2ap scan > $SCAN_RESULT
 [ "$wifi_status_radio5g_up" = "1" ] && /usr/sbin/iw dev wifi5ap scan >> $SCAN_RESULT
 
-cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne'
+json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne' 
 s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="";wifi_essid="";wifi_meshid="";wifi_signal="0";wifi_open="yes";#p
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
 s#	SSID: \(.*\)#wifi_essid="\1";#p
@@ -38,6 +30,7 @@ s#	freq: \(.*\)#wifi_freq="\1";#p
 s#	signal: -*\([^. ]*\).*#wifi_signal="\1";#p
 s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 }' | sed ':a;N;$!ba;s#\n##g;s#;wifi_bssid#\nwifi_bssid#g'  | while read line; do
+#echo "### $line ###" >>/tmp/weg
 	eval $line
 
 	#clean essid
@@ -56,13 +49,6 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	#check if this is my own adhoc signal
 	test $wifi_signal -eq 0 && continue
 
-	gif=5
-	test $wifi_signal -gt 50 && gif=4
-	test $wifi_signal -gt 60 && gif=3
-	test $wifi_signal -gt 70 && gif=2
-	test $wifi_signal -gt 80 && gif=1
-	test $wifi_signal -gt 89 && gif=0
-
 	# calulate channel
 	if [ "$wifi_freq" -lt 5000 ]; then
 		wifi_channel=$(( ($wifi_freq-2412)/5 + 1 ))
@@ -73,39 +59,92 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	wifi_adhoc="no"
 	test "$wifi_mode" = "ad-hoc" && wifi_adhoc="yes"
 	test "$wifi_mode" = "mesh" && wifi_adhoc="yes"
-	style="vertical-align:middle;white-space: nowrap;"
 	cat<<EOM
 EOM
-	class=colortoggle$T
+
+	type=""
+
 	# Mesh-Net
 	A="$(uci get ddmesh.network.essid_adhoc)"
 	if [ "$wifi_essid_clean" = "$A" ]; then
-		style="$style font-weight:bold;"
-		class="selected"
+		type="ffmesh"
 	fi
 
 	# check for meshid
 	A="$(uci -q get credentials.network.wifi_mesh_id)"
 	if [ "$wifi_essid_clean" = "$A" ]; then
-		style="$style font-weight:bold;"
-		class="selected"
+		type="ffmesh"
 	fi
 
 	# Freifunk (ap) check that community name is in essid
 	A="$(uci get ddmesh.system.community)"
 	B="${wifi_essid_clean/$A/}"
 	if [ "$wifi_essid_clean" != "$B" ]; then
-		style="$style font-weight:bold;"
-		class="selected_ap"
+		type="ffap"
 	fi
 
-	cat<<EOM
+	line="{\"type\": \"$type\", \"ssid\": \"$wifi_essid_clean\", \"channel\": \"$wifi_channel\","
+	line="$line  \"open\": \"$wifi_open\", \"adhoc\": \"$wifi_adhoc\",\"signal\": \"$wifi_signal\","
+	line="$line  \"uptime\": \"$wifi_uptime\", \"bssid\": \"$wifi_bssid\"},"
+
+	# output line from subshell
+	echo "$line"	
+done ) ]}"
+
+#echo "$json" >/tmp/wegj
+
+cat<<EOM
+<table>
+ <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc/Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
+ <pre>
+EOM
+
+base_style="vertical-align:middle;white-space: nowrap;"
+
+T=1
+idx=0
+while true
+do
+
+	line=$(echo "$json" | jsonfilter  -e "@.stations[$idx]")
+	let "idx++"
+
+	[ -z "$line" ] && break;
+
+	eval $(echo "$line" | jsonfilter -e wifi_type='@.type' -e wifi_ssid='@.ssid' -e wifi_channel='@.channel' \
+					 -e wifi_open='@.open' -e wifi_adhoc='@.adhoc' -e wifi_signal='@.signal' \
+					 -e wifi_uptime='@.uptime' -e wifi_bssid='@.bssid')
+
+	gif=5
+	test $wifi_signal -gt 50 && gif=4
+	test $wifi_signal -gt 60 && gif=3
+	test $wifi_signal -gt 70 && gif=2
+	test $wifi_signal -gt 80 && gif=1
+	test $wifi_signal -gt 89 && gif=0
+
+
+	case "$wifi_type" in
+		ffmesh)
+			style="$base_style font-weight:bold;"
+			class="selected"
+			;;
+		ffap)
+			style="$base_style font-weight:bold;"
+			class="selected_ap"
+			;;
+		*)
+			class=colortoggle$T
+			style="$base_style"
+			;;
+	esac
+
+cat<<EOM
 <TR class="$class" >
-<TD style="$style" width="$WIDTH">$wifi_essid_clean</TD>
+<TD style="$style" width="$WIDTH">$wifi_ssid</TD>
 <TD style="$style">$wifi_channel</TD>
 <TD style="$style"><IMG SRC="/images/$wifi_adhoc.png" ALT="$wifi_adhoc" TITLE="Ad-Hoc/Mesh mode"></TD>
 <TD style="$style"><IMG SRC="/images/$wifi_open.png" ALT="$wifi_open"></TD>
-<TD style="$style"><IMG SRC="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm, Noise: $wifi_noise dBm"></TD>
+<TD style="$style"><IMG SRC="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm"></TD>
 <TD style="$style">- $wifi_signal</TD>
 <TD style="$style">$wifi_uptime</TD>
 <TD style="$style">$wifi_bssid</TD></tr>
@@ -115,71 +154,9 @@ EOM
 	else
 		T=1
 	fi
+
 done
 
 cat<<EOM
 </table>
 EOM
-
-else #BROADCOM
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
-
-cat<<EOM
-<table>
- <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc/Mesh</TH><TH>Open</TH><TH>Signal</TH><TD>RSSI&nbsp;(dBm)</TD><TD>Noise&nbsp;(dBm)</TD><TH>BSSID</TH></TR>
-EOM
-
-T=1
-/usr/sbin/iwlist $net_ifname scanning | sed -ne'
-/^$/d
-s/^[ 	]*//
-s/Cell.*Address:[ 	]*\([^ 	]*\).*/wifi_bssid="\1";/p
-s/ESSID:[ 	]*"\([^"]*\)".*/wifi_essid="\1";/p
-s/Mode:[ 	]*\([^ 	]*\).*/wifi_mode="\1";/p
-s/Channel:[ 	]*\([^ 	]*\).*/wifi_channel="\1";/p
-s/Quality:\([^ 	]\+\)[ 	]*Signal level:\([^ 	]\+\)[ 	]\+dBm[ 	]\+Noise level:\([^ 	]\+\)[ 	]\+dBm.*/wifi_quality="\1";wifi_signal="\2";wifi_noise="\3";/p
-s/Encryption key:off.*/wifi_open="yes";/p
-s/Encryption key:on.*/wifi_open="no";/p
-' | sed -n '
-/wifi_open/{H;g;s#\n##g;p;s#.*##;h;}
-H
-' | while read line; do
-	eval $line
-	gif=${wifi_quality%/*}
-
-	test $gif -gt 5 && gif=5
-	test $gif -lt 0 && gif=0
-	wifi_adhoc="no"
-	test "$wifi_mode" = "Ad-Hoc" && wifi_adhoc="yes"
-	style="vertical-align:middle;white-space: nowrap;"
-	cat<<EOM
-<TR class="colortoggle$T" >
-EOM
-	A=$(echo "$wifi_bssid" | tr 'abcdef' 'ABCDEF')
-	B=$(echo "$(uci get wireless.@wifi-iface[0].bssid)" | tr 'abcdef' 'ABCDEF')
-	if [ "$A" = "$B" ]; then
-		style="$style font-weight:bold;"
-	fi
-	cat<<EOM
-<TD style="$style" width="$WIDTH">$wifi_essid</TD>
-<TD style="$style">$wifi_channel</TD>
-<TD style="$style"><IMG SRC="/images/$wifi_adhoc.png" ALT="$wifi_adhoc" TITLE="Ad-Hoc/Mesh mode"></TD>
-<TD style="$style"><IMG SRC="/images/$wifi_open.png" ALT="$wifi_open" TITLE="offen"></TD>
-<TD style="$style"><IMG SRC="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm, Noise: $wifi_noise dBm"></TD>
-<TD style="$style">$wifi_signal</TD>
-<TD style="$style">$wifi_noise</TD>
-<TD style="$style">$wifi_bssid</TD></tr>
-EOM
-	if [ $T -eq 1 ]; then
-		T=2
-	else
-		T=1
-	fi
-done
-
-cat<<EOM
-</table>
-EOM
-
-fi #BROADCOM
-

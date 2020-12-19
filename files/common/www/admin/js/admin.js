@@ -22,7 +22,7 @@ function ajax_wlan(data)
 	lock_wlan=1;
 	t=Math.random();
 	$("#ajax_wlan").load("/admin/ajax-wlan.cgi", {dummy:t});
-	if(timer_wlan=="undefined"||timer_wlan==null)timer_wlan = window.setInterval("ajax_wlan()", 5000);
+	if(timer_wlan=="undefined"||timer_wlan==null)timer_wlan = window.setInterval("ajax_wlan()", 10000);
 	lock_wlan=0;
 }
 function ajax_register(data)
