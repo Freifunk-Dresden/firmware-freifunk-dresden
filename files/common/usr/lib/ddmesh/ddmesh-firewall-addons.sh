@@ -98,10 +98,10 @@ setup_custom_rules() {
 	done
 
 	# allow dhcp because "subnet" definition. client has no ip yet.
-	$IPT -A input_rule -i $wifi2_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-wifi2-request'
-	$IPT -A output_rule -o $wifi2_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-wifi2-response'
-	$IPT -A input_rule -i $lan_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-lan-request'
-	$IPT -A output_rule -o $lan_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-lan-response'
+	# $IPT -A input_rule -i $wifi2_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-wifi2-request'
+	# $IPT -A output_rule -o $wifi2_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-wifi2-response'
+	# $IPT -A input_rule -i $lan_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-lan-request'
+	# $IPT -A output_rule -o $lan_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-lan-response'
 
 	#snat mesh from 10.201.xxx to 10.200.xxxx
 	$IPT -t nat -A postrouting_mesh_rule -p udp --dport 4305:4307 -j ACCEPT
@@ -143,6 +143,7 @@ setup_openvpn_rules() {
 		done
 	fi
 	unset IFS
+
 }
 
 setup_statistic_rules() {
@@ -200,12 +201,14 @@ callback_add_ignored_nodes() {
 	local node=$1
 	local opt_lan=$2
 	local opt_tbb=$3
-	local opt_wifi=$4
+	local opt_wifi_adhoc=$4
+	local opt_wifi2_mesh=$5
+	local opt_wifi5_mesh=$6
 
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
 
-	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi" ] && opt_wifi='1'
+	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi2_mesh" -a -z "$opt_wifi5_mesh" ] && opt_wifi_adhoc='1'
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $1)
 	if [ "$opt_lan" = "1" ]; then
@@ -215,25 +218,35 @@ callback_add_ignored_nodes() {
 	if [ "$opt_tbb" = "1" ]; then
 		$IPT -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP
 	fi
-	if [ "$opt_wifi" = "1" ]; then
-		$IPT -A input_ignore_nodes_wifi -s $_ddmesh_nonprimary_ip -j DROP
+	if [ "$opt_wifi_adhoc" = "1" ]; then
+		$IPT -A input_ignore_nodes_wifia -s $_ddmesh_nonprimary_ip -j DROP
+	fi
+	if [ "$opt_wifi2_mesh" = "1" ]; then
+		$IPT -A input_ignore_nodes_wifi2m -s $_ddmesh_nonprimary_ip -j DROP
+	fi
+	if [ "$opt_wifi5_mesh" = "1" ]; then
+		$IPT -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 }
 
 setup_ignored_nodes() {
 	logger -s -t $TAG "setup_ignored_nodes"
 
-	$IPT -N input_ignore_nodes_wifi
+	$IPT -N input_ignore_nodes_wifia
+	$IPT -N input_ignore_nodes_wifi2m
+	$IPT -N input_ignore_nodes_wifi5m
 	$IPT -N input_ignore_nodes_lan
 	$IPT -N input_ignore_nodes_wan
 	$IPT -N input_ignore_nodes_tbb # fastd+wg
 
 	#add tables to deny some nodes to prefer backbone connections
-	[ -n "$wifi_ifname" ] && $IPT -I input_mesh_rule -i $wifi_ifname -j input_ignore_nodes_wifi
-	$IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
-	$IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
-	[ -n "$wifi_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
-	[ -n "$wifi_ifname" ] && $IPT -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
+	[ -n "$wifi_adhoc_ifname" ] && $IPT -I input_mesh_rule -i $wifi_adhoc_ifname -j input_ignore_nodes_wifia
+	[ -n "$wifi2_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi2_mesh_ifname -j input_ignore_nodes_wifi2m
+	[ -n "$wifi5_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi5_mesh_ifname -j input_ignore_nodes_wifi5m
+	[ -n "$mesh_lan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
+	[ -n "$mesh_wan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
+	[ -n "$tbb_fastd_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
+	[ -n "$tbb_wg_ifname" ] && $IPT -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
 
 
 	config_load ddmesh
@@ -241,7 +254,9 @@ setup_ignored_nodes() {
 }
 
 update_ignored_nodes() {
-	$IPT -F input_ignore_nodes_wifi
+	$IPT -F input_ignore_nodes_wifia
+	$IPT -F input_ignore_nodes_wifi2m
+	$IPT -F input_ignore_nodes_wifi5m
 	$IPT -F input_ignore_nodes_lan
 	$IPT -F input_ignore_nodes_wan
 	$IPT -F input_ignore_nodes_tbb
@@ -271,7 +286,7 @@ _update()
 	$IPT -F input_bat_deny
 	$IPT -F input_vpn_deny
 
-	if [ "$lan_up" = "1" ]; then
+	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
 		for n in wan mesh wifi2 bat vpn
 		do
 			$IPT -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
@@ -279,10 +294,10 @@ _update()
 		done
 	fi
 
-	if [ "$wan_up" = "1" ]; then
+	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
 		for n in lan mesh wifi2 bat vpn
 		do
-			$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
+ 			$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
 			$IPT -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject
 		done
 	fi

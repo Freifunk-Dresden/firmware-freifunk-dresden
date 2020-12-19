@@ -12,4 +12,4 @@ docker2:build-all:
     - ./gen-upload.sh all
   tags:
   - docker2
-
+ 

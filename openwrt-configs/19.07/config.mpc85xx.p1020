@@ -1514,6 +1514,7 @@ CONFIG_PACKAGE_tcpdump=m
 # CONFIG_PACKAGE_ddmesh-lte is not set
 # CONFIG_PACKAGE_ddmesh-usb-storage is not set
 CONFIG_PACKAGE_ddmesh-wifi=y
+CONFIG_ddmesh-mesh-wifi=y
 # CONFIG_PACKAGE_ddmesh-wifi-extra is not set
 
 #
@@ -2349,7 +2350,56 @@ CONFIG_PACKAGE_libxtables=y
 # CONFIG_PACKAGE_libgnutls is not set
 CONFIG_PACKAGE_libmbedtls=y
 # CONFIG_LIBMBEDTLS_DEBUG_C is not set
-# CONFIG_PACKAGE_libopenssl is not set
+CONFIG_PACKAGE_libopenssl=y
+
+#
+# Build Options
+#
+# CONFIG_OPENSSL_OPTIMIZE_SPEED is not set
+CONFIG_OPENSSL_WITH_ASM=y
+CONFIG_OPENSSL_WITH_DEPRECATED=y
+# CONFIG_OPENSSL_NO_DEPRECATED is not set
+CONFIG_OPENSSL_WITH_ERROR_MESSAGES=y
+
+#
+# Protocol Support
+#
+CONFIG_OPENSSL_WITH_TLS13=y
+# CONFIG_OPENSSL_WITH_DTLS is not set
+# CONFIG_OPENSSL_WITH_NPN is not set
+CONFIG_OPENSSL_WITH_SRP=y
+CONFIG_OPENSSL_WITH_CMS=y
+
+#
+# Algorithm Selection
+#
+# CONFIG_OPENSSL_WITH_EC2M is not set
+CONFIG_OPENSSL_WITH_CHACHA_POLY1305=y
+CONFIG_OPENSSL_PREFER_CHACHA_OVER_GCM=y
+CONFIG_OPENSSL_WITH_PSK=y
+
+#
+# Less commonly used build options
+#
+# CONFIG_OPENSSL_WITH_ARIA is not set
+# CONFIG_OPENSSL_WITH_CAMELLIA is not set
+# CONFIG_OPENSSL_WITH_IDEA is not set
+# CONFIG_OPENSSL_WITH_SEED is not set
+# CONFIG_OPENSSL_WITH_SM234 is not set
+# CONFIG_OPENSSL_WITH_BLAKE2 is not set
+# CONFIG_OPENSSL_WITH_MDC2 is not set
+# CONFIG_OPENSSL_WITH_WHIRLPOOL is not set
+# CONFIG_OPENSSL_WITH_COMPRESSION is not set
+# CONFIG_OPENSSL_WITH_RFC3779 is not set
+
+#
+# Engine/Hardware Support
+#
+CONFIG_OPENSSL_ENGINE=y
+# CONFIG_OPENSSL_ENGINE_BUILTIN is not set
+# CONFIG_OPENSSL_WITH_GOST is not set
+# CONFIG_PACKAGE_libopenssl-conf is not set
+# CONFIG_PACKAGE_libopenssl-devcrypto is not set
 # CONFIG_PACKAGE_libwolfssl is not set
 
 #
@@ -2738,9 +2788,9 @@ CONFIG_DRIVER_11W_SUPPORT=y
 # CONFIG_PACKAGE_wpa-supplicant-p2p is not set
 # CONFIG_PACKAGE_wpa-supplicant-wolfssl is not set
 # CONFIG_PACKAGE_wpad is not set
-CONFIG_PACKAGE_wpad-basic=y
+CONFIG_PACKAGE_wpad-basic=m
 # CONFIG_PACKAGE_wpad-basic-wolfssl is not set
-# CONFIG_PACKAGE_wpad-mesh-openssl is not set
+CONFIG_PACKAGE_wpad-mesh-openssl=y
 # CONFIG_PACKAGE_wpad-mesh-wolfssl is not set
 # CONFIG_PACKAGE_wpad-mini is not set
 # CONFIG_PACKAGE_wpad-openssl is not set

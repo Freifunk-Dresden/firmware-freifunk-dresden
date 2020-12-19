@@ -317,7 +317,9 @@ EOM
 					}
 					BEGIN {
 						# map iface to net type (set by ddmesh-utils-network-info.sh)
-						nettype_lookup[ENVIRON["wifi_ifname"]]="wifi";
+						nettype_lookup[ENVIRON["wifi_adhoc_ifname"]]="wifi_adhoc";
+						nettype_lookup[ENVIRON["wifi2_mesh_ifname"]]="wifi_mesh";
+						nettype_lookup[ENVIRON["wifi5_mesh_ifname"]]="wifi_mesh";
 						nettype_lookup[ENVIRON["mesh_lan_ifname"]]="lan";
 						nettype_lookup[ENVIRON["mesh_wan_ifname"]]="lan";
 						nettype_lookup[ENVIRON["tbb_fastd_ifname"]]="backbone";

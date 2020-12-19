@@ -21,7 +21,8 @@ in_ifname="$(ip ro get $REMOTE_ADDR | sed -n '1,2s#.*dev[ ]\+\([^ ]\+\).*#\1#p')
 enable_setup=1
 test ! "$(uci get ddmesh.system.wansetup)" = "1" && test "$in_ifname" = "$(uci get network.wan.ifname)" && enable_setup=0
 if [ "$(uci get ddmesh.system.meshsetup)" != "1" ]; then
-	test "$in_ifname" = "$wifi_ifname" && enable_setup=0
+	test "$in_ifname" = "$wifi_adhoc_ifname" && enable_setup=0
+	test "$in_ifname" = "$wifi_mesh_ifname" && enable_setup=0
 	test "$in_ifname" = "$wifi2_ifname" && enable_setup=0
 	test "${in_ifname%%[_0-9]*}" = "tbb" && enable_setup=0
 	test "$in_ifname" = "$tbb_ifname" && enable_setup=0

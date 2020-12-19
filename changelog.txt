@@ -1,9 +1,18 @@
 
-2020-00-00 6.1.4 (master)
+2020-00-00 6.3.1 (master)
+--------------------------------------------------
+wifi                      - add support for 802.11s mesh for large router (>8MByte Flash, >64MByte RAM)
+wifi-gui                  - add option to select 5ghz channel. it also controls if meshing is enabled
+                          - add option to ignore nodes for 802.11s mesh
+                          - get fritzbox 4040 wifi working (inkl. mesh 802.11s, uses ath10k wifi driver, not ct)
+
+2020-11-25 6.1.4 (master)
 --------------------------------------------------
 gui:backcbone             - fix and add backbone configuration
-openwrt:                  - update openwrt and packages to new versions with
+openwrt                   - update openwrt and packages to new versions with
                             (security fixes)
+backbone-fastd            - udpate to v19
+backbone-wg               - router accepts incomming connections
 
 2020-00-00 6.1.2 (master)
 --------------------------------------------------

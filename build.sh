@@ -11,6 +11,7 @@ SCRIPT_VERSION="8"
 # gitlab variables
 # FF_REGISTERKEY_PREFIX
 # FF_BUILD_TAG
+# FF_MESH_KEY
 
 #change to directory where build.sh is
 cd $(dirname $0)
@@ -206,6 +207,10 @@ setup_dynamic_firmware_config()
 	# modify registration credentials from envronment variable passed in by gitlabs
 	# FF_REGISTERKEY_PREFIX is set in gitlab UI of freifunk-dresden-firmware: settings->CI/CD->Environment
 	sed -i "/register_service_url/s#registerkey='#registerkey=${FF_REGISTERKEY_PREFIX//_/:}'#" $FILES/etc/config/credentials
+
+	# modify key
+	[ -z "${FF_MESH_KEY}" ] && FF_MESH_KEY='custom-firmware-key'
+	sed -i "/wifi_mesh_key/s#ffkey-placeholder#${FF_MESH_KEY}'#" $FILES/etc/config/credentials
 }
 
 

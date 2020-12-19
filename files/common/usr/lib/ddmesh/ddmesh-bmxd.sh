@@ -62,10 +62,19 @@ case "$ARG1" in
 	_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1 dev=$LAN_IF /linklayer 1 dev=$WAN_IF /linklayer 1"
 
 	#add wifi, if hotplug event did occur before starting bmxd
-	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
+	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 	if [ -n "$net_ifname" ]; then
 		_IF="$_IF dev=$net_ifname /linklayer 2"
 	fi
+	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi2_mesh)
+	if [ -n "$net_ifname" ]; then
+		_IF="$_IF dev=$net_ifname /linklayer 2"
+	fi
+	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi5_mesh)
+	if [ -n "$net_ifname" ]; then
+		_IF="$_IF dev=$net_ifname /linklayer 2"
+	fi
+
 
 	#default start with no gatway.will be updated by gateway_check.sh
 	#SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"

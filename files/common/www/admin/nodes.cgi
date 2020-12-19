@@ -14,18 +14,12 @@ cat<<EOM
 <tr><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Device</th><th>IP-Adresse</th><th>RTQ</th><th>vom Nachbarn (RQ)</th><th>zum Nachbarn (TQ)</th></tr>
 EOM
 
-/usr/bin/bmxd -c --links | awk '
- function getnode(ip) {
- 	split($0,a,".");
- 	f1=a[3]*255;f2=a[4]-1;
- 	return f1+f2;
- }
+/usr/bin/bmxd -c --links | awk -f /usr/lib/www/page-functions.awk -e '
  BEGIN {c=1;count=0;}
  {
-
 	if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
 	{
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$3,$3,$2,$1,$4,$4,$5,$6);
+ 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$3,$3,color_interface($2),$1,$4,$4,$5,$6);
 		if(c==1)c=2;else c=1;
 		count=count+1;
 	}
@@ -51,12 +45,7 @@ cat<<EOM
 EOM
 
 export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p' )"
-/usr/bin/bmxd -c --gateways | awk '
- function getnode(ip) {
- 	split($0,a,".");
- 	f1=a[3]*255;f2=a[4]-1;
- 	return f1+f2;
- }
+/usr/bin/bmxd -c --gateways | awk -f /usr/lib/www/page-functions.awk -e '
  BEGIN {c=1;count=0;}
  {
 
@@ -94,18 +83,13 @@ cat<<EOM
 <tr><th>Knoten-Nr.</th><th>Ip</th><th>BRC</th><th>via Routing-Interface</th><th>via Router</th></tr>
 EOM
 
-/usr/bin/bmxd -c --originators | awk '
- function getnode(ip) {
- 	split($0,a,".");
- 	f1=a[3]*255;f2=a[4]-1;
- 	return f1+f2;
- }
+/usr/bin/bmxd -c --originators | awk -f /usr/lib/www/page-functions.awk -e '
  BEGIN {c=1;count=0;}
  {
 
 	if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
 	{
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$1,$1,$4,$4,$2,$3);
+ 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$1,$1,$4,$4,color_interface($2),$3);
 		if(c==1)c=2;else c=1;
 		count=count+1;
 	}

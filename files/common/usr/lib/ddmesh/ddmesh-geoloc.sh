@@ -11,7 +11,7 @@ GEO_LAST=/var/geoloc-last
 GEO_CURR=/var/geoloc-current
 touch $GEO_CURR $GEO_LAST
 
-test -n "$1" && eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi)
+test -n "$1" && eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 
 # remove my own macs from scan
 bssid="$(uci get credentials.wifi_2g.bssid)"
