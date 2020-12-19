@@ -11,6 +11,8 @@ WIDTH=150
 eval "$(cat /etc/openwrt_release)"
 if [ ! "$DISTRIB_TARGET" = "brcm-2.4" ]; then
 
+eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
+
 cat<<EOM
 <table>
  <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc/Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
@@ -18,7 +20,13 @@ cat<<EOM
 EOM
 
 T=1
-/usr/sbin/iw dev wifi2ap scan | sed 's#\\x00.*##' | sed -ne'
+
+SCAN_RESULT=/tmp/wifi_scan
+
+/usr/sbin/iw dev wifi2ap scan > $SCAN_RESULT
+[ "$wifi_status_radio5g_up" = "1" ] && /usr/sbin/iw dev wifi5ap scan >> $SCAN_RESULT
+
+cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne'
 s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="";wifi_essid="";wifi_meshid="";wifi_signal="0";wifi_open="yes";#p
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
 s#	SSID: \(.*\)#wifi_essid="\1";#p
@@ -55,24 +63,12 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	test $wifi_signal -gt 80 && gif=1
 	test $wifi_signal -gt 89 && gif=0
 
-	#convert freq to channel
-	case "$wifi_freq" in
-		"2412") wifi_channel=1 ;;
-		"2417") wifi_channel=2 ;;
-		"2422") wifi_channel=3 ;;
-		"2427") wifi_channel=4 ;;
-		"2432") wifi_channel=5 ;;
-		"2437") wifi_channel=6 ;;
-		"2442") wifi_channel=7 ;;
-		"2447") wifi_channel=8 ;;
-		"2452") wifi_channel=9 ;;
-		"2457") wifi_channel=10 ;;
-		"2462") wifi_channel=11 ;;
-		"2467") wifi_channel=12 ;;
-		"2472") wifi_channel=13 ;;
-		"2484") wifi_channel=14 ;;
-		*) wifi_channel="unknown";;
-	esac
+	# calulate channel
+	if [ "$wifi_freq" -lt 5000 ]; then
+		wifi_channel=$(( ($wifi_freq-2412)/5 + 1 ))
+	else
+		wifi_channel=$(( ($wifi_freq-5180)/5 + 36 ))
+	fi
 
 	wifi_adhoc="no"
 	test "$wifi_mode" = "ad-hoc" && wifi_adhoc="yes"
