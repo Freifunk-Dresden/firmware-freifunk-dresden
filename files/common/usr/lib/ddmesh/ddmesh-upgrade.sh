@@ -474,32 +474,45 @@ upgrade_6_1_4()
  uci -q set ddmesh.log.tasks=0
 }
 
+
 upgrade_6_1_5()
+{
+ true
+}
+
+upgrade_6_3_1()
+{
+ true
+}
+
+
+upgrade_6_4_2()
 {
  uci set ddmesh.network.wifi_channel_5g=44
  uci set ddmesh.network.wifi_indoor_5g=0
  uci set ddmesh.network.wifi_channels_5g_outdoor='100-140'
  uci set ddmesh.network.wifi_ch_5g_outdoor_min=100
  uci set ddmesh.network.wifi_ch_5g_outdoor_max=140
-}
-
-upgrade_6_3_1()
-{
  uci set ddmesh.network.mesh_mode='adhoc+mesh'
- uci -q rename network.wifi='wifi_adhoc' 
- uci add credentials network             
- uci rename credentials.@network[-1]='network'
- uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
- uci del_list firewall.zone_mesh.network='wifi'
- uci del_list firewall.zone_mesh.network='wifi_mesh'
+ if [ -n "$(uci -q get network.wifi)" ]; then
+	uci -q rename network.wifi='wifi_adhoc' 
+ fi
+ if [ -z "$(uci -q get credentials.network)" ]; then
+	uci add credentials network             
+	uci rename credentials.@network[-1]='network'
+	uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
+ 	uci set credentials.network.wifi_mesh_key='ffkey-placeholder'
+ fi
+ uci del firewall.zone_mesh.network
+ uci add_list firewall.zone_mesh.network='mesh_lan'
+ uci add_list firewall.zone_mesh.network='mesh_wan'
+ uci add_list firewall.zone_mesh.network='tbb_fastd'
+ uci add_list firewall.zone_mesh.network='tbb_wg'
  uci add_list firewall.zone_mesh.network='wifi_adhoc'
  uci add_list firewall.zone_mesh.network='wifi2_mesh'
  uci add_list firewall.zone_mesh.network='wifi5_mesh'
- uci set credentials.network.wifi_mesh_key='ffkey-placeholder'
  uci del network.wifi_mesh
 }
-
-
 
 #upgrade_6_X_Y()
 #{
