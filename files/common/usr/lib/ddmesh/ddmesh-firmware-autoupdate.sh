@@ -5,7 +5,7 @@
 TAG="AutoFirmwareUpdate"
 FIRMWARE_FILE="/tmp/firmware.bin"
 ERROR_FILE=/tmp/uclient.error
-CERT="--ca-certificate=/etc/ssl/certs/download.crt"
+CERT="--ca-certificate=/etc/ssl/certs/current.crt --ca-certificate=/etc/ssl/certs/comming.crt"
 
 usage() {
 	echo "$0 <run [nightly] | check | compare new old>"

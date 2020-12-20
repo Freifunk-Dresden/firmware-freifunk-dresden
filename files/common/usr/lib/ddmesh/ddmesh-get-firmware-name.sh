@@ -9,7 +9,7 @@ else
 fi
 
 DL_INFO_FILE="download.json"
-CERT="--ca-certificate=/etc/ssl/certs/download.crt"
+CERT="--ca-certificate=/etc/ssl/certs/current.crt --ca-certificate=/etc/ssl/certs/comming.crt"
 LOCAL_FILE="/tmp/download.json"
 
 eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')

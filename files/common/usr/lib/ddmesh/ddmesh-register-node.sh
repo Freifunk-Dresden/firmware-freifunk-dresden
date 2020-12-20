@@ -10,7 +10,7 @@ node="$(uci get ddmesh.system.node)"
 key="$(uci get ddmesh.system.register_key)"
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
-CERT="--ca-certificate=/etc/ssl/certs/register.crt"
+CERT="--ca-certificate=/etc/ssl/certs/current.crt --ca-certificate=/etc/ssl/certs/comming.crt"
 
 echo "usage: register_node.sh [new_node]"
 echo "current node: [$node]"
@@ -139,7 +139,8 @@ case "$j_status" in
 				rebooting=1
 			}
 
-			logger -s -t $LOGGER_TAG "updated (reboot:$rebooting, uci:$uci_commit, overlay:$overlay)."
+			echo "updated (reboot:$rebooting, uci:$uci_commit, overlay:$overlay)."
+			logger -t $LOGGER_TAG "updated (reboot:$rebooting, uci:$uci_commit, overlay:$overlay)."
 			test "$uci_commit" = 1 -a "$overlay" = "1" && echo "overlay updated." && /usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
 			test "$rebooting" = "1" && sleep 5 && echo "rebooting..." && sync && reboot
 
