@@ -75,7 +75,6 @@ sed -i '
   s/.*\(CONFIG_PACKAGE_kmod-nls-base\)[ =].*/# \1 is not set/
   s/.*\(CONFIG_PACKAGE_kmod-ppp\)[ =].*/# \1 is not set/
   s/.*\(CONFIG_PACKAGE_kmod-slhc\)[ =].*/# \1 is not set/
-  s/.*\(CONFIG_PACKAGE_kmod-gpio-button-hotplug\)[ =].*/# \1 is not set/
   s/.*\(CONFIG_PACKAGE_kmod-lib-crc-ccitt\)[ =].*/# \1 is not set/
   s/.*\(CONFIG_PACKAGE_odhcpd-ipv6only\)[ =].*/# \1 is not set/
   s/.*\(CONFIG_PACKAGE_ppp\)[ =].*/# \1 is not set/

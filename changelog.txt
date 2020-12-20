@@ -6,6 +6,7 @@ wifi                      - add 5GHz mesh support for indoor
 certificates              - update to new let'encrypt ca certificates 
                             (secures registration and firmware download for next 5 years)
 ignore nodes              - add configuration to ignore node connections via mesh 2.4/5Ghz
+fail-safe                 - fix reset button to start router in fail-safe mode
 
 
 2020-00-00 6.3.1 (master)
