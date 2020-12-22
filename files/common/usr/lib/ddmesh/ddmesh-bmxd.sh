@@ -61,6 +61,9 @@ case "$ARG1" in
 
 	_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1 dev=$LAN_IF /linklayer 1 dev=$WAN_IF /linklayer 1"
 
+    # needed during async boot
+    /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
+    
 	#add wifi, if hotplug event did occur before starting bmxd
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 	if [ -n "$net_ifname" ]; then
