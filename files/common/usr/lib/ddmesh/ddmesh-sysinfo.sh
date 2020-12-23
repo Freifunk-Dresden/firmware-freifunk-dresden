@@ -112,7 +112,7 @@ $(cat /var/resolv.conf.final| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserve
 			"cpuinfo":"$cpu_info",
 			"cpucount":"$(grep -c ^processor /proc/cpuinfo)",
 			"bmxd" : "$(cat $BMXD_DB_PATH/status)",
-			"essid":"$(uci get wireless.@wifi-iface[1].ssid)",
+			"essid":"$(uci get wireless.wifi2_2g.ssid)",
 			"node_type":"$node_type",
 			"splash":$splash,
 			"email_notification":$email_notification,

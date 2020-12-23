@@ -75,6 +75,7 @@ setup_wireless()
  iface=0
  if [ $wifi_mode_adhoc = 1 ]; then
  	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
+	uci rename wireless.@wifi-iface[$iface]='wifi_adhoc'
  	uci set wireless.@wifi-iface[$iface].device='radio2g'
 	uci set wireless.@wifi-iface[$iface].network='wifi_adhoc'
 	uci set wireless.@wifi-iface[$iface].mode='adhoc'
@@ -90,6 +91,7 @@ setup_wireless()
 
  if [ $wifi_mode_mesh = 1 ]; then
  	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
+	uci rename wireless.@wifi-iface[$iface]='wifi_mesh2g'
  	uci set wireless.@wifi-iface[$iface].device='radio2g'
 	uci set wireless.@wifi-iface[$iface].network='wifi2_mesh'
 	uci set wireless.@wifi-iface[$iface].ifname='mesh2g-80211s'
@@ -120,6 +122,7 @@ setup_wireless()
  fi
 
  test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
+ uci rename wireless.@wifi-iface[$iface]='wifi2_2g'
  uci set wireless.@wifi-iface[$iface].device='radio2g'
  uci set wireless.@wifi-iface[$iface].network='wifi2'
  uci set wireless.@wifi-iface[$iface].ifname='wifi2ap'
@@ -140,6 +143,7 @@ setup_wireless()
  # add 5GHz
  if [ -n "$wifi_status_radio5g_up" ]; then
 	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
+	uci rename wireless.@wifi-iface[$iface]='wifi_mesh5g'
 	uci set wireless.@wifi-iface[$iface].device='radio5g'
 	uci set wireless.@wifi-iface[$iface].network='wifi2'
  	uci set wireless.@wifi-iface[$iface].ifname='wifi5ap'
@@ -157,6 +161,7 @@ setup_wireless()
 	# 5ghz mesh only for indoor
 	if [ $wifi_mode_mesh = 1 -a "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
  		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
+ 		uci rename wireless.@wifi-iface[$iface]='wifi5_mesh'
 	 	uci set wireless.@wifi-iface[$iface].device='radio5g'
 		uci set wireless.@wifi-iface[$iface].network='wifi5_mesh'
 		uci set wireless.@wifi-iface[$iface].ifname='mesh5g-80211s'
@@ -173,6 +178,7 @@ setup_wireless()
  # - wifi3-2g (private AP)
  if [ "$(uci -q get ddmesh.network.wifi3_2g_enabled)" = "1" -a -n "$(uci -q get credentials.wifi_2g.private_ssid)" ] && [ "$(uci -q get ddmesh.network.wifi3_2g_security)" != "1" -o -n "$(uci -q get credentials.wifi_2g.private_key)" ]; then
 	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
+ 	uci rename wireless.@wifi-iface[$iface]='wifi2priv'
 	uci set wireless.@wifi-iface[$iface].device='radio2g'
 	uci set wireless.@wifi-iface[$iface].network="$(uci -q get ddmesh.network.wifi3_2g_network)"
  	uci set wireless.@wifi-iface[$iface].ifname='wifi2prv'
@@ -197,6 +203,7 @@ setup_wireless()
  if [ -n "$wifi_status_radio5g_up" ]; then
    if [ "$(uci -q get ddmesh.network.wifi3_5g_enabled)" = "1" -a -n "$(uci -q get credentials.wifi_5g.private_ssid)" ] && [ "$(uci -q get ddmesh.network.wifi3_5g_security)" != "1" -o -n "$(uci -q get credentials.wifi_5g.private_key)" ]; then
 	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
+ 	uci rename wireless.@wifi-iface[$iface]='wifi5priv'
 	uci set wireless.@wifi-iface[$iface].device='radio5g'
 	uci set wireless.@wifi-iface[$iface].network="$(uci -q get ddmesh.network.wifi3_5g_network)"
  	uci set wireless.@wifi-iface[$iface].ifname='wifi5prv'
@@ -227,6 +234,10 @@ boot_step="$(uci get ddmesh.boot.boot_step)"
 if [ "$boot_step" = "2" -o ! -f /etc/config/wireless ];
 then
 	logger -s -t "$LOGGER_TAG" "update wifi config"
+
+	# update mesh_key from rom
+	uci set credentials.network.wifi_mesh_key=$(cat /rom/etc/config/credentials | awk '/wifi_mesh_key/{v=$3; gsub(/'\''/,"",v); print v}')
+
 	setup_wireless
 fi
 exit 0
