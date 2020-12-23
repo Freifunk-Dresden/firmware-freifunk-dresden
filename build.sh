@@ -210,7 +210,7 @@ setup_dynamic_firmware_config()
 
 	# modify key
 	[ -z "${FF_MESH_KEY}" ] && FF_MESH_KEY='custom-firmware-key'
-	sed -i "/wifi_mesh_key/s#ffkey-placeholder#${FF_MESH_KEY}'#" $FILES/etc/config/credentials
+	sed -i "/wifi_mesh_key/s#ffkey-placeholder#${FF_MESH_KEY}#" $FILES/etc/config/credentials
 }
 
 
