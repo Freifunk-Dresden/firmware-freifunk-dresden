@@ -6,6 +6,21 @@ export TITLE="Verwaltung &gt; Konfiguration: Knoten ignorieren"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 cat<<EOM
+<script type="text/javascript">
+
+function check_node()
+{
+	v = document.form_node_new.form_node.value;
+	if( checknumber(v) || v<1 || v>$_ddmesh_max ){ alert("Knotennummer ist ungültig.");return 0;}
+	return 1;
+}
+
+function form_submit (form,action,entry) {
+	form.form_action.value=action;
+	form.submit();
+}
+</script>
+
 <h2>$TITLE</h2>
 <br>
 
@@ -20,7 +35,7 @@ cat<<EOM
 <legend>Gespeicherte Knoten</legend>
 <table>
 
-<tr><th width="100">Knoten</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi-Adhoc</th><th>Wifi-802.11s 5GHz</th><th>Wifi-802.11s 5GHz</th><th></th></tr>
+<tr><th width="100">Knoten</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi-Adhoc</th><th>Wifi-802.11s 2.4GHz</th><th>Wifi-802.11s 5GHz</th><th></th></tr>
 EOM
 
 T=1
@@ -70,7 +85,7 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Knoten hinzuf&uuml;gen</legend>
 <form name="form_node_new" action="ignore.cgi" method="post">
-<input name="form_action" value="add" type="hidden">
+<input name="form_action" value="none" type="hidden">
 <table>
  <tr><th width="100">Knoten</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi-Adhoc</th><th>Wifi-802.11s 2.4GHz</th><th>Wifi-802.11s 5GHz</th><th></th></tr>
  <tr>	<td><input name="form_node" type="text" value="" size="17" maxlength="17"></td>
@@ -79,7 +94,7 @@ cat<<EOM
 	<td><input name="form_opt_wifi_adhoc" type="checkbox" value="1" ></td>
 	<td><input name="form_opt_wifi2_mesh" type="checkbox" value="1" ></td>
 	<td><input name="form_opt_wifi5_mesh" type="checkbox" value="1" ></td>
-	<td><input title="Knoten hinzuf&uuml;gen" type="submit" value="Neu"></td>
+	<td><button onclick="if(check_node())form_submit(form_node_new,'add') " name="form_btn_new" title="Knoten hinzuf&uuml;gen" type="button">Neu</button></td>
  </tr>
 </table>
 </form>

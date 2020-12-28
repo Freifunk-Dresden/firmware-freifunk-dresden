@@ -194,7 +194,7 @@ setup_statistic_rules() {
 }
 
 callback_add_ignored_nodes() {
-	local entry=$1
+	local entry="$1"
 	IFS=':'
 	set $entry
 	unset IFS
@@ -210,11 +210,12 @@ callback_add_ignored_nodes() {
 
 	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi2_mesh" -a -z "$opt_wifi5_mesh" ] && opt_wifi_adhoc='1'
 
-	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $1)
+	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 	if [ "$opt_lan" = "1" ]; then
 		$IPT -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
 		$IPT -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP
 	fi
+
 	if [ "$opt_tbb" = "1" ]; then
 		$IPT -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP
 	fi
