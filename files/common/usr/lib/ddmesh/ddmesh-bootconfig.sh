@@ -818,7 +818,7 @@ case "$boot_step" in
 			[ -x "$WSHAPER" ] && $WSHAPER restart
 			# cron job is started from ddmesh-init.sh after bmxd
 
-			wait_for_wifi
+			[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
 
 			# delay start mesh_on_wire, to allow access router config via lan/wan ip
 			setup_mesh_on_wire &
