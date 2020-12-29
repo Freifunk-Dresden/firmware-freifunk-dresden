@@ -1,2 +1,2 @@
 #!/bin/sh
-logger -t ddmesh "network-hotplug iface: [$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
+logger -t "ddmesh-hotplug" "iface-event: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"

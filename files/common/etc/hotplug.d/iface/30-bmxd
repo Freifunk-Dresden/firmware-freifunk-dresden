@@ -8,7 +8,10 @@
 # "net" is triggered serveral times during boot, but final state
 # is only triggerred once via "iface"
 
-logger -t ddmesh "network-hotplug 30-bmxd: network: [$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
+TAG="ddmesh-hotplug"
+TAG2="30-bmxd"
+
+logger -t "$TAG" "$TAG2:  net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
 if [ "$INTERFACE" = "wifi_adhoc" -o "$INTERFACE" = "wifi2_mesh" -o "$INTERFACE" = "wifi5_mesh" ]; then
 
 	# INTERFACE contains network name, have to determine interace name
@@ -16,11 +19,11 @@ if [ "$INTERFACE" = "wifi_adhoc" -o "$INTERFACE" = "wifi2_mesh" -o "$INTERFACE" 
 	eval ifname=\$${INTERFACE}_ifname
 
 	if [ "$ACTION" = "ifup" ]; then
-		logger -t ddmesh "network-hotplug: add [$ifname] to bmxd"
+		logger -t "$TAG" "$TAG2: add [$ifname] to bmxd"
 		/usr/lib/ddmesh/ddmesh-bmxd.sh add_if $ifname
 	fi
 	if [ "$ACTION" = "ifdown" ]; then
-		logger -t ddmesh "network-hotplug: remove [$ifname] from bmxd"
+		logger -t "$TAG" "$TAG2: remove [$ifname] from bmxd"
 		/usr/lib/ddmesh/ddmesh-bmxd.sh del_if $ifname
 	fi
 fi

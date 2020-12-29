@@ -1,6 +1,5 @@
 #!/bin/sh
 
-[ "${ACTION}" = "add" ] && {
-	logger -s -t "hotplug:" "ieee80211 ADD $DEVPATH"
-}
+TAG="ddmesh-hotplug"
+logger -t "$TAG" "ieee80211-event: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
 

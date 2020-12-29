@@ -3,6 +3,28 @@
 
 LOGGER_TAG="ddmesh-boot"
 
+wait_for_wifi()
+{
+	c=0
+	max=60
+	while [ $c -lt $max ]
+	do
+		# use /tmp/state  instead of ubus because up-state is wrong.
+		# /tmp/state is never set back (but this can be ignored here. if needed use /etc/hotplug.d/iface)
+		wifi2_up="$(uci -q -P /tmp/state get network.wifi2.up)"
+
+		logger -s -t "$LOGGER_TAG" "Wait for WIFI up: $c/$max (wifi2:$wifi_up)"
+
+		if [ "$wifi2_up" = 1 ]; then
+			logger -s -t "$LOGGER_TAG" "WIFI is up -> continue"
+			/usr/lib/ddmesh/ddmesh-led.sh wifi alive
+			break;
+		fi
+		sleep 1
+		c=$((c+1))
+	done
+}
+
 start() {
 
 	# enable OOM killer reboot
@@ -20,9 +42,11 @@ start() {
 	#check if boot process should be stopped
 	/usr/lib/ddmesh/ddmesh-bootconfig.sh || exit
 
-	logger -s -t $LOGGER_TAG "restart firewall+addon"
+	# wait for wifi before setting firewall, because it would be run parallel
+	[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
+
+	logger -s -t $LOGGER_TAG "restart firewall"
 	fw3 restart
-	/usr/lib/ddmesh/ddmesh-firewall-addons.sh init
 
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit

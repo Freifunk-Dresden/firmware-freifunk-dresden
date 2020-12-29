@@ -1,3 +1,5 @@
 #!/bin/sh
-logger -t ddmesh "network-hotplug net: [$INTERFACE] $ACTION type:$DEVTYPE interface:[$DEVICENAME] devpath:$DEVPATH"
+TAG="ddmesh-hotplug"
+
+logger -t "$TAG" "net-event: net:[$INTERFACE] $ACTION type:$DEVTYPE interface:[$DEVICENAME] devpath:$DEVPATH"
 
