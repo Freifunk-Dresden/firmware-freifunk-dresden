@@ -106,18 +106,17 @@ setup_custom_rules() {
 	#snat mesh from 10.201.xxx to 10.200.xxxx
 	$IPT -t nat -A postrouting_mesh_rule -p udp --dport 4305:4307 -j ACCEPT
 	$IPT -t nat -A postrouting_mesh_rule -p tcp --dport 4305:4307 -j ACCEPT
-	test "$lan_up" = "1" && $IPT -t nat -A postrouting_mesh_rule -s $lan_ipaddr/$lan_mask -j SNAT --to-source $_ddmesh_ip
-	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_mesh_rule -s $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $_ddmesh_ip
+	$IPT -t nat -A postrouting_mesh_rule -j SNAT --to-source $_ddmesh_ip
 
-    # don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
+	# don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
 	$IPT -t nat -A postrouting_mesh_rule -p icmp -j ACCEPT
 	
-	test "$lan_up" = "1" && $IPT -t nat -A postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan'
-	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2'
+	test -n "$lan_ipaddr" && $IPT -t nat -A postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan'
+	test -n "$wifi2_ipaddr" && $IPT -t nat -A postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2'
 
 	#add rules if gateway is on lan
 	if [ -n "$lan_gateway" -a "$lan_up" = "1" ]; then
-		$IPT -A forwarding_bat_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
+		$IPT -A forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
 		$IPT -A forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
 		$IPT -t nat -A postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway'
 	fi
@@ -304,7 +303,7 @@ _update()
 	fi
 
 	#update port forwarding on hotplug.d/iface (wan rules)
-	/usr/lib/ddmesh/ddmesh-portfw.sh init
+	/usr/lib/ddmesh/ddmesh-portfw.sh load
 }
 
 logger -s -t $TAG "called with $1"

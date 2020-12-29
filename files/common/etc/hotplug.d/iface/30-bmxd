@@ -11,7 +11,7 @@
 TAG="ddmesh-hotplug"
 TAG2="30-bmxd"
 
-logger -t "$TAG" "$TAG2:  net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
+logger -t "$TAG" "$TAG2: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
 if [ "$INTERFACE" = "wifi_adhoc" -o "$INTERFACE" = "wifi2_mesh" -o "$INTERFACE" = "wifi5_mesh" ]; then
 
 	# INTERFACE contains network name, have to determine interace name
