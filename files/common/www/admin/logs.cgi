@@ -50,6 +50,7 @@ BEGIN {t=1;}
 	line=gensub(/(br-mesh_lan|br-mesh_wan|(br|mesh)[-_](lan|wan|wifi)[0-9a-z]*|mesh[25]g-80211s)/,"<font color=\"#000088\">\\1</font>","",line);
 	line=gensub(/(.*hotplug.*)/,"<font color=\"#006655\">\\1</font>","",line);
 	line=gensub(/(.*([Ff][Aa][Ii][Ll][Ee][Dd]|[Ee][Rr][Rr][Oo][Rr]).*)/,"<font color=\"red\">\\1</font>","",line);
+	line=gensub(/(.*Wait for WIFI up.*|.*WIFI is up.*)/,"<div style=\"background-color:#ffaaff;\">\\1</div>","",line);
 	printf("<tr class=\"colortoggle%d\"><td class=\"nowrap\">%s</td><td class=\"nowrap\">%s</td><td class=\"nowrap\">%s</td><td>%s</td></tr>\n",t,d,tag1,tag2,line);
 	
 
