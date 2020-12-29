@@ -104,8 +104,6 @@ cat<<EOM
 <input name="form_action" value="firewall_update" type="hidden">
 <input type="submit" value="Aktualisiere Konfiguration">
 </form>
-
-EOM
 EOM
 #end display_ignored_nodes
 }
