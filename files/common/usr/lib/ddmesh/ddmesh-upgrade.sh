@@ -501,7 +501,6 @@ upgrade_6_4_2()
 	uci add credentials network             
 	uci rename credentials.@network[-1]='network'
 	uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
- 	uci set credentials.network.wifi_mesh_key='ffkey-placeholder'
  fi
  uci del firewall.zone_mesh.network
  uci add_list firewall.zone_mesh.network='mesh_lan'

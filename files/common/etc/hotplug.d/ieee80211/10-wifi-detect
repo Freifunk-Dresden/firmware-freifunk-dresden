@@ -2,6 +2,5 @@
 
 [ "${ACTION}" = "add" ] && {
 	logger -s -t "hotplug:" "ieee80211 ADD $DEVPATH"
-	/usr/lib/ddmesh/ddmesh-hotplug-wifi.sh
 }
- 
+

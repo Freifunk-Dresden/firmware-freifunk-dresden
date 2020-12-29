@@ -27,12 +27,35 @@ cat<<EOM
 <table class="hidden" id="fs_logread">
 EOM
 
-logread 2>&1 | sed -n '
-s#^.*$#<tr class="colortoggle1"><td>&</td></tr>#
-p
-n
-s#^.*$#<tr class="colortoggle2"><td>&</td></tr>#
-p
+logread 2>&1 | awk '
+BEGIN {t=1;}
+{
+	line=$0
+	d=substr(line,1,24)
+	line=substr($0,26)
+	len=index(line,":");
+	tag=substr(line,1,len);
+	tag1=gensub(/([^ :]+)[^:]*:.*/,"\\1", "", tag)
+	tag2=gensub(/([^ :]+)([^:]*):.*/,"\\2", "", tag)
+	line=substr(line,len+1);
+
+	tag1=gensub(/(user\..*)/,"<font color=\"green\">\\1</font>","",tag1);
+	tag2=gensub(/(ddmesh.*)/,"<font color=\"green\">\\1</font>","",tag2);
+	tag1=gensub(/(kern\..*)/,"<font color=\"blue\">\\1</font>","",tag1);
+	tag1=gensub(/(.*\.err)/,"<font color=\"red\">\\1</font>","",tag1);
+	tag2=gensub(/(kernel)/,"<font color=\"blue\">\\1</font>","",tag2);
+	tag2=gensub(/(netifd)/,"<font color=\"purple\">\\1</font>","",tag2);
+	tag2=gensub(/(hostapd|wpa_.*|mac80211)/,"<font color=\"#ff2a2a\">\\1</font>","",tag2);
+
+	line=gensub(/(br-mesh_lan|br-mesh_wan|(br|mesh)[-_](lan|wan|wifi)[0-9a-z]*|mesh[25]g-80211s)/,"<font color=\"#000088\">\\1</font>","",line);
+	line=gensub(/(.*hotplug.*)/,"<font color=\"#006655\">\\1</font>","",line);
+	line=gensub(/(.*([Ff][Aa][Ii][Ll][Ee][Dd]|[Ee][Rr][Rr][Oo][Rr]).*)/,"<font color=\"red\">\\1</font>","",line);
+	printf("<tr class=\"colortoggle%d\"><td class=\"nowrap\">%s</td><td class=\"nowrap\">%s</td><td class=\"nowrap\">%s</td><td>%s</td></tr>\n",t,d,tag1,tag2,line);
+	
+
+	if(t==1){ t=2;}
+	else{ t=1;}
+}
 '
 
 cat<<EOM

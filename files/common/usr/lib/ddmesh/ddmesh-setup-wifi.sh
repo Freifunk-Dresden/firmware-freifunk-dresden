@@ -1,9 +1,6 @@
 #!/bin/ash
 
-# wireless config is created on hotplug event, to ensure
-# that config settings is generated in correct order
-
-LOGGER_TAG="hotplug-wifi"
+LOGGER_TAG="ddmesh-wifi"
 
 node=$(uci get ddmesh.system.node)
 setup_wireless()
@@ -13,6 +10,9 @@ setup_wireless()
 
  #ensure we have valid country,with supportet channel and txpower
  test -z "$(uci -q get ddmesh.network.wifi_country)" && uci set ddmesh.network.wifi_country="DE"
+
+ # update mesh_key from rom
+ wifi_mesh_key="$(wifi_mesh_key=$(uci -c /rom/etc/config get credentials.network.wifi_mesh_key)"
 
  # --- detect 2/5GHz radios
  eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
@@ -97,7 +97,7 @@ setup_wireless()
 	uci set wireless.@wifi-iface[$iface].ifname='mesh2g-80211s'
 	uci set wireless.@wifi-iface[$iface].mode='mesh'
  	uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
- 	uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.network.wifi_mesh_key)"
+ 	uci set wireless.@wifi-iface[$iface].key="$wifi_mesh_key"
  	uci set wireless.@wifi-iface[$iface].encryption='psk2+ccmp'
  	uci set wireless.@wifi-iface[$iface].mesh_fwding='0'
  	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
@@ -167,7 +167,7 @@ setup_wireless()
 		uci set wireless.@wifi-iface[$iface].ifname='mesh5g-80211s'
 		uci set wireless.@wifi-iface[$iface].mode='mesh'
 	 	uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
- 		uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.network.wifi_mesh_key)"
+ 		uci set wireless.@wifi-iface[$iface].key="$wifi_mesh_key"
 	 	uci set wireless.@wifi-iface[$iface].encryption='psk2+ccmp'
  		uci set wireless.@wifi-iface[$iface].mesh_fwding='0'
 	 	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
@@ -234,10 +234,6 @@ boot_step="$(uci get ddmesh.boot.boot_step)"
 if [ "$boot_step" = "2" -o ! -f /etc/config/wireless ];
 then
 	logger -s -t "$LOGGER_TAG" "update wifi config"
-
-	# update mesh_key from rom
-	uci set credentials.network.wifi_mesh_key=$(cat /rom/etc/config/credentials | awk '/wifi_mesh_key/{v=$3; gsub(/'\''/,"",v); print v}')
-
 	setup_wireless
 fi
 exit 0

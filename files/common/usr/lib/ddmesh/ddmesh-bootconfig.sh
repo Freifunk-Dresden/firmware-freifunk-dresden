@@ -107,9 +107,6 @@ config network 'network'
 	option  wifi_channels_5g_outdoor '100-140'
 	option	wifi_ch_5g_outdoor_min	100
 	option	wifi_ch_5g_outdoor_max	140
-#	option	wifi_diversity		1
-#	option	wifi_rxantenna		1
-#	option	wifi_txantenna		1
 	option	wifi_slow_rates		0
 	option	wifi2_dhcplease		'5m'
 	option	wifi2_isolate		'1'
@@ -638,7 +635,6 @@ config cert px5g
 EOM
 
 #traffic shaping
-
 cat <<EOM >/var/etc/config/wshaper
 config 'wshaper' 'settings'
 	option network "$(uci get ddmesh.network.speed_network)"
@@ -700,42 +696,6 @@ setup_mesh_on_wire()
  fi
 }
 
-wait_for_wifi()
-{
-	logger -s -t "$LOGGER_TAG" "check  for WIFI"
-	#check if usb stick is used. mostly do not support AP beside Adhoc
-	if [ -n "$(uci -q get wireless.radio2g.path | grep '/usb')" ]; then
-		only_adhoc=1
-	fi
-
-	c=0
-	max=60
-	while [ $c -lt $max ]
-	do
-		# use /tmp/state  instead of ubus because up-state is wrong.
-		# /tmp/state is never set back (but this can be ignored here. if needed use /etc/hotplug.d/iface)
-		wifi_up="$(uci -q -P /tmp/state get network.wifi_adhoc.up)"
-		wifi2_up="$(uci -q -P /tmp/state get network.wifi2.up)"
-
-		logger -s -t "$LOGGER_TAG" "Wait for WIFI up: $c/$max (only_adhoc=$only_adhoc, wifi:$wifi_up, wifi2:$wifi_up)"
-
-		if [ -n "$only_adhoc" ]; then
-			wifi_is_up="$wifi_up"
-		else
-			if [ "$wifi_up" = 1 -a "$wifi2_up" = 1 ]; then
-				wifi_is_up=1
-			fi
-		fi
-		if [ "$wifi_is_up" = 1 ]; then
-			logger -s -t "$LOGGER_TAG" "WIFI is up - continue"
-			/usr/lib/ddmesh/ddmesh-led.sh wifi alive
-			break;
-		fi
-		sleep 1
-		c=$((c+1))
-	done
-}
-
 #boot_step is empty for new devices
 boot_step="$(uci get ddmesh.boot.boot_step)"
 test -z "$boot_step" && boot_step=1
@@ -776,9 +736,10 @@ case "$boot_step" in
 
 			config_update
 
-			# regenerate wireless config after firmware update.
+			# regenerate wireless config after firmware update or
+			# config update.
 			# hotplug event ieee80211 is not reliable before rebooting
-			/usr/lib/ddmesh/ddmesh-hotplug-wifi.sh
+			/usr/lib/ddmesh/ddmesh-setup-wifi.sh
 
 			upgrade_running=$(uci -q get ddmesh.boot.upgrade_running)
 			uci set ddmesh.boot.boot_step=3
@@ -817,8 +778,6 @@ case "$boot_step" in
 			WSHAPER=/etc/init.d/wshaper
 			[ -x "$WSHAPER" ] && $WSHAPER restart
 			# cron job is started from ddmesh-init.sh after bmxd
-
-			[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
 
 			# delay start mesh_on_wire, to allow access router config via lan/wan ip
 			setup_mesh_on_wire &

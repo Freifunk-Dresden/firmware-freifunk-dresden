@@ -1,6 +1,7 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2006 OpenWrt.org
 
+LOGGER_TAG="ddmesh-boot"
 
 start() {
 
@@ -13,7 +14,6 @@ start() {
 	eval $(cat /etc/openwrt_release)
 
 	/usr/lib/ddmesh/ddmesh-led.sh wifi_off
-	LOGGER_TAG="ddmesh boot"
 
 	#initial setup and node depended setup (crond calles ddmesh-register-node.sh to update node)
 	logger -s -t $LOGGER_TAG "inital boot setting"
@@ -29,7 +29,7 @@ start() {
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
 	#setup network (routing rules) manually (no support by uci)
-	logger -s -t $LOGGER_TAG "network"
+	logger -s -t $LOGGER_TAG "setup routing"
 	/usr/lib/ddmesh/ddmesh-routing.sh start
 
 	#load splash mac from config to firewall
@@ -81,7 +81,7 @@ start() {
 	logger -s -t $LOGGER_TAG "finished."
 	/usr/lib/ddmesh/ddmesh-led.sh status done
 
-	# enable hotplug events
+	# enable hotplug some more events
 	touch /tmp/freifunk-running
 
 	logger -s -t $LOGGER_TAG "finished."
