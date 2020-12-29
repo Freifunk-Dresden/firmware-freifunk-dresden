@@ -13,13 +13,13 @@ FASTD_LOGGER_TAG="fastd-backbone"
 FASTD_PID_FILE=/var/run/backbone-fastd.pid
 FASTD_CONF_PEERS=backbone-peers
 
-DEFAULT_FASTD_PORT=$(uci get ddmesh.backbone.default_fastd_port)
-DEFAULT_WG_PORT=$(uci get ddmesh.backbone.default_wg_port)
-backbone_local_fastd_port=$(uci get ddmesh.backbone.fastd_port)
+DEFAULT_FASTD_PORT=$(uci -q get ddmesh.backbone.default_fastd_port)
+DEFAULT_WG_PORT=$(uci -q get ddmesh.backbone.default_wg_port)
+backbone_local_fastd_port=$(uci -q get ddmesh.backbone.fastd_port)
 backbone_local_fastd_port=${backbone_local_fastd_port:-$DEFAULT_FASTD_PORT}
-backbone_local_wg_port=$(uci get ddmesh.backbone.wg_port)
+backbone_local_wg_port=$(uci -q get ddmesh.backbone.wg_port)
 backbone_local_wg_port=${backbone_local_wg_port:-$DEFAULT_WG_PORT}
-MTU=$(uci get ddmesh.network.mesh_mtu)
+MTU=$(uci -q get ddmesh.network.mesh_mtu)
 
 NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
 
@@ -119,12 +119,6 @@ callback_outgoing_fastd_config ()
 		#echo "fastd out: add peer ($FILE)"
 		echo "key \"$key\";" > $FILE
 		echo "remote ipv4 \"$host\":$port;" >> $FILE
-
-		#dont use hostnames, can not be resolved
-		iptables -w -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
-		iptables -w -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
-		iptables -w -A output_backbone_accept -p udp --dport $port -j ACCEPT
-		iptables -w -A output_backbone_reject -p udp --dport $port -j reject
 	fi
 }
 
@@ -153,12 +147,6 @@ callback_outgoing_wireguard_interfaces ()
 		local remote_wg_ip=$_ddmesh_wireguard_ip
 
 		#echo "wg out: add peer ($node)"
-
-		#dont use hostnames, can not be resolved
-		iptables -w -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
-		iptables -w -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
-		iptables -w -A output_backbone_accept -p udp --dport $port -j ACCEPT
-		iptables -w -A output_backbone_reject -p udp --dport $port -j reject
 
 		# create sub interface
 		sub_ifname="$wg_ifname$node"
@@ -231,17 +219,46 @@ callback_outgoing_wireguard_connection ()
 	fi
 }
 
+callback_firewall()
+{
+	local config="$1"
+	local host  #hostname or ip
+	local port
+
+	config_get host "$config" host
+	config_get port "$config" port
+
+	if [ -n "$host" -a -n "$port" ]; then
+		#dont use hostnames, can not be resolved
+		iptables -w -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
+		iptables -w -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
+		iptables -w -A output_backbone_accept -p udp --dport $port -j ACCEPT
+		iptables -w -A output_backbone_reject -p udp --dport $port -j reject
+	fi
+}
+
+setup_firewall()
+{
+	iptables -w -F input_backbone_accept
+	iptables -w -F input_backbone_reject
+	iptables -w -A input_backbone_accept -p udp --dport $backbone_local_fastd_port -j ACCEPT
+	iptables -w -A input_backbone_reject -p udp --dport $backbone_local_fastd_port -j reject
+	iptables -w -A input_backbone_accept -p udp --dport $backbone_local_wg_port -j ACCEPT
+	iptables -w -A input_backbone_reject -p udp --dport $backbone_local_wg_port -j reject
+	iptables -w -F output_backbone_accept
+	iptables -w -F output_backbone_reject
+	config_load ddmesh
+	config_foreach callback_firewall backbone_client
+}
+
 case "$1" in
 
+	firewall)
+		setup_firewall
+		;;
+
 	start)
-		iptables -w -F input_backbone_accept
-		iptables -w -F input_backbone_reject
-		iptables -w -A input_backbone_accept -p udp --dport $backbone_local_fastd_port -j ACCEPT
-		iptables -w -A input_backbone_reject -p udp --dport $backbone_local_fastd_port -j reject
-		iptables -w -A input_backbone_accept -p udp --dport $backbone_local_wg_port -j ACCEPT
-		iptables -w -A input_backbone_reject -p udp --dport $backbone_local_wg_port -j reject
-		iptables -w -F output_backbone_accept
-		iptables -w -F output_backbone_reject
+		setup_firewall
 
 		# FastD Backbone
 		if [ -f $FASTD_BIN ]; then
