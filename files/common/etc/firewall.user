@@ -1,0 +1,9 @@
+# called by fw3 after start or restart (not update)
+
+/usr/lib/ddmesh/ddmesh-firewall-addons.sh init 
+/usr/lib/ddmesh/ddmesh-firewall-addons.sh update
+/usr/lib/ddmesh/ddmesh-portfw.sh load
+/usr/lib/ddmesh/ddmesh-backbone.sh firewall
+/usr/lib/ddmesh/ddmesh-privnet.sh firewall
+/usr/lib/ddmesh/ddmesh-splash.sh loadconfig
+
