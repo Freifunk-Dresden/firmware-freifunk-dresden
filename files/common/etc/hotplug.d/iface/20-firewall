@@ -1,2 +1,11 @@
-#firewall reloading disabled; it would delete all rules set by backbone/vpn.
-#all interfaces are preset to "up" state, so all rules are set during boot.
+#!/bin/sh
+
+test -f /tmp/freifunk-running || exit 0
+
+TAG="ddmesh-hotplug"
+TAG2="70-firewall-addons"
+
+logger -t "$TAG" "$TAG2: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
+[ ifup = "$ACTION" -o ifdown = "$ACTION" ] && {
+	[ "wan" = "$INTERFACE" -o "lan" = "$INTERFACE" -o "wifi2" = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-firewall-addons.sh update
+}

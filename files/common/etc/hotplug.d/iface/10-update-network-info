@@ -3,7 +3,7 @@
 # ddmesh-utils-network-info.sh uses cached data. update cache when interfaces
 # become up (and have got IP)
 
-TAG="ddmesh-hotplug"
+TAG="ddmesh-hotplug-iface"
 TAG2="10-update-network-info"
 
 logger -t "$TAG" "$TAG2: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"

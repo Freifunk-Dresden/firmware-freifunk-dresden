@@ -8,7 +8,7 @@
 # "net" is triggered serveral times during boot, but final state
 # is only triggerred once via "iface"
 
-TAG="ddmesh-hotplug"
+TAG="ddmesh-hotplug-iface"
 TAG2="30-bmxd"
 
 logger -t "$TAG" "$TAG2: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"

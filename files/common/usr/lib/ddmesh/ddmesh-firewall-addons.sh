@@ -111,15 +111,6 @@ setup_custom_rules() {
 	# don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
 	$IPT -t nat -A postrouting_mesh_rule -p icmp -j ACCEPT
 	
-	test -n "$lan_ipaddr" && $IPT -t nat -A postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan'
-	test -n "$wifi2_ipaddr" && $IPT -t nat -A postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2'
-
-	#add rules if gateway is on lan
-	if [ -n "$lan_gateway" -a "$lan_up" = "1" ]; then
-		$IPT -A forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
-		$IPT -A forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
-		$IPT -t nat -A postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway'
-	fi
 }
 
 setup_openvpn_rules() {
@@ -292,6 +283,20 @@ _update()
 			$IPT -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
 			$IPT -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
 		done
+
+		# remove/add SNAT rule when iface becomes available	
+		for cmd in D A
+		do	
+			$IPT -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null 
+		done
+
+		#add rules if gateway is on lan
+		if [ -n "$lan_gateway" ]; then
+			$IPT -A forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
+			$IPT -A forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
+			$IPT -t nat -A postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway'
+		fi
+
 	fi
 
 	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
@@ -299,6 +304,14 @@ _update()
 		do
  			$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
 			$IPT -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject
+		done
+	fi
+
+	if [ "$wifi2_up" = "1" -a -n "$wifi2_ipaddr" -a -n "$wifi2_mask" ]; then
+		# remove/add SNAT rule when iface becomes available	
+		for cmd in D A
+		do	
+			$IPT -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2' 2>/dev/null
 		done
 	fi
 
