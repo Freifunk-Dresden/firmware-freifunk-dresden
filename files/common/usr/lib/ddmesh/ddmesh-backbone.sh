@@ -258,8 +258,6 @@ case "$1" in
 		;;
 
 	start)
-		setup_firewall
-
 		# FastD Backbone
 		if [ -f $FASTD_BIN ]; then
 			echo "Starting fastd backbone ..."

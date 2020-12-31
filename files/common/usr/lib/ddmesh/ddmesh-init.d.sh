@@ -45,9 +45,19 @@ start() {
 	# wait for wifi before setting firewall, because it would be run parallel
 	[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
 
+	# need to wait, until async netifd has finished. (there is no event/condition to wait for)
+logger -t "DEVEL" "#evt. auf alle "ups" in /tmp/state/network warten?"
+	logger -t "SLEEP" "SLEEP START"
+	sleep 60
+	logger -t "SLEEP" "SLEEP END"
+
 	logger -s -t $LOGGER_TAG "restart firewall"
-	touch /tmp/freifunk-enable-firewall
 	fw3 restart
+	/usr/lib/ddmesh/ddmesh-firewall-addons.sh init
+	/usr/lib/ddmesh/ddmesh-firewall-addons.sh update
+	/usr/lib/ddmesh/ddmesh-backbone.sh firewall
+	/usr/lib/ddmesh/ddmesh-privnet.sh firewall
+	/usr/lib/ddmesh/ddmesh-splash.sh loadconfig
 
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit
@@ -56,10 +66,6 @@ start() {
 	#setup network (routing rules) manually (no support by uci)
 	logger -s -t $LOGGER_TAG "setup routing"
 	/usr/lib/ddmesh/ddmesh-routing.sh start
-
-	#load splash mac from config to firewall
-	logger -s -t $LOGGER_TAG "splash firewall"
-	/usr/lib/ddmesh/ddmesh-splash.sh loadconfig
 
 	#---- starting serivces ------
 
@@ -103,7 +109,6 @@ start() {
 	logger -s -t $LOGGER_TAG "start cron"
 	/etc/init.d/cron start
 
-	logger -s -t $LOGGER_TAG "finished."
 	/usr/lib/ddmesh/ddmesh-led.sh status done
 
 	# enable hotplug some more events
