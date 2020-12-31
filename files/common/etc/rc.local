@@ -1,0 +1,6 @@
+# DON'T put anything here, because it is saved and restored along 
+# saving configurations
+# freifunk must not call scripts from here
+
+exit 0
+

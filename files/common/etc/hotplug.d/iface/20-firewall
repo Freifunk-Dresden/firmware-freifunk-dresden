@@ -2,8 +2,8 @@
 
 test -f /tmp/freifunk-running || exit 0
 
-TAG="ddmesh-hotplug"
-TAG2="70-firewall-addons"
+TAG="ddmesh-hotplug-iface"
+TAG2="20-firewall"
 
 logger -t "$TAG" "$TAG2: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
 [ ifup = "$ACTION" -o ifdown = "$ACTION" ] && {

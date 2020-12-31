@@ -292,9 +292,13 @@ _update()
 
 		#add rules if gateway is on lan
 		if [ -n "$lan_gateway" ]; then
-			$IPT -A forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
-			$IPT -A forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
-			$IPT -t nat -A postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway'
+			# remove/add SNAT rule when iface becomes available	
+			for cmd in D A
+			do
+				$IPT -$cmd forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
+				$IPT -$cmd forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
+				$IPT -t nat -$cmd postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway' 2>/dev/null
+			done
 		fi
 
 	fi

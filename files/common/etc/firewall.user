@@ -1,4 +1,6 @@
-# called by fw3 after start or restart (not update)
+# called by fw3 after start or restart (not on reload)
+
+test -f /tmp/freifunk-enable-firewall || exit 0
 
 /usr/lib/ddmesh/ddmesh-firewall-addons.sh init 
 /usr/lib/ddmesh/ddmesh-firewall-addons.sh update

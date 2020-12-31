@@ -46,6 +46,7 @@ start() {
 	[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
 
 	logger -s -t $LOGGER_TAG "restart firewall"
+	touch /tmp/freifunk-enable-firewall
 	fw3 restart
 
 	#check if we have a node
