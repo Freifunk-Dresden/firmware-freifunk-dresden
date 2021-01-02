@@ -54,10 +54,10 @@ logger -t "DEVEL" "#evt. auf alle "ups" in /tmp/state/network warten?"
 	logger -s -t $LOGGER_TAG "restart firewall"
 	fw3 restart
 	/usr/lib/ddmesh/ddmesh-firewall-addons.sh init
-	/usr/lib/ddmesh/ddmesh-firewall-addons.sh update
-	/usr/lib/ddmesh/ddmesh-backbone.sh firewall
-	/usr/lib/ddmesh/ddmesh-privnet.sh firewall
-	/usr/lib/ddmesh/ddmesh-splash.sh loadconfig
+	/usr/lib/ddmesh/ddmesh-firewall-addons.sh firewall-update
+	/usr/lib/ddmesh/ddmesh-backbone.sh firewall-update
+	/usr/lib/ddmesh/ddmesh-privnet.sh firewall-update
+	/usr/lib/ddmesh/ddmesh-splash.sh firewall-update 
 
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit

@@ -438,6 +438,7 @@ done
  	uci add network interface
  	uci rename network.@interface[-1]='tbb_wg'
  }
+# "+" is needed to create firewall rules for all tbb_wg+... ifaces
  uci set network.tbb_wg.ifname='tbb_wg+'
  uci set network.tbb_wg.proto='static'
 

@@ -117,7 +117,7 @@ setup_firewall()
 
 case "$1" in
 
- firewall)
+ firewall-update)
 	setup_firewall
 	;;
  start)

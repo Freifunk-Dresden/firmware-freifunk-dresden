@@ -330,7 +330,7 @@ case "$1" in
 		_update
 		;;
 
-	update)
+	firewall-update)
 		_update
 		;;
 

@@ -6,6 +6,7 @@ WG_BIN=$(which wg)
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_wg wg)
 WG_LOGGER_TAG="wg-backbone"
 
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_fastd fastd)
 FASTD_CONF_DIR=/var/etc/fastd
 FASTD_CONF=$FASTD_CONF_DIR/backbone-fastd.conf
 FASTD_BIN=$(which fastd)
@@ -149,7 +150,7 @@ callback_outgoing_wireguard_interfaces ()
 		#echo "wg out: add peer ($node)"
 
 		# create sub interface
-		sub_ifname="$wg_ifname$node"
+		sub_ifname="${wg_ifname/+/}${node}"
 		ip link add $sub_ifname type ipip remote $remote_wg_ip local $local_wg_ip
 		ip addr add $local_wgX_ip broadcast $_ddmesh_broadcast dev $sub_ifname
 		ip link set $sub_ifname up
@@ -181,7 +182,7 @@ callback_incomming_wireguard ()
 		echo "wg in: add peer ($node) $local_wg_ip -> $remote_wg_ip"
 
 		# create sub interface
-		sub_ifname="$wg_ifname$node"
+		sub_ifname="${wg_ifname/+/}${node}"
 		ip link add $sub_ifname type ipip remote $remote_wg_ip local $local_wg_ip
 		ip addr add $local_wgX_ip broadcast $_ddmesh_broadcast dev $sub_ifname
 		ip link set $sub_ifname up
@@ -253,7 +254,7 @@ setup_firewall()
 
 case "$1" in
 
-	firewall)
+	firewall-update)
 		setup_firewall
 		;;
 
@@ -267,7 +268,6 @@ case "$1" in
 			rm -f $FASTD_CONF
 			rm -f $FASTD_CONF_DIR/$FASTD_CONF_PEERS/*
 
-			eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_fastd fastd)
 			generate_fastd_conf $fastd_ifname
 
 			# accept fastd clients
@@ -357,7 +357,7 @@ case "$1" in
 			LS=$(which ls)
 			IFS='
 '
-			for i in $($LS -1d  /sys/class/net/$wg_ifname* 2>/dev/null | sed 's#.*/##')
+			for i in $($LS -1d  /sys/class/net/$wg_ifname_* 2>/dev/null | sed 's#.*/##')
 			do
 				[ "$i" != "$wg_ifname" ] && bmxd -c dev=-$i >/dev/null
 				ip link del $i 2>/dev/null
