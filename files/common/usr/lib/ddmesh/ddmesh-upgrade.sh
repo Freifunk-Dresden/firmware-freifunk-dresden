@@ -511,6 +511,12 @@ upgrade_6_4_2()
  uci add_list firewall.zone_mesh.network='wifi2_mesh'
  uci add_list firewall.zone_mesh.network='wifi5_mesh'
  uci del network.wifi_mesh
+
+ uci add firewall rule
+ uci set firewall.@rule[-1].name='Allow-wg-ipip'
+ uci set firewall.@rule[-1].src='mesh'
+ uci set firewall.@rule[-1].proto='4'
+ uci set firewall.@rule[-1].target='ACCEPT'
 }
 
 #upgrade_6_X_Y()
