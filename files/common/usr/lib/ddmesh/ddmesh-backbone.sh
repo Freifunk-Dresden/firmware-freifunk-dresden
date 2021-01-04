@@ -3,6 +3,7 @@
 . /lib/functions.sh
 
 WG_BIN=$(which wg)
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbbwg tbbwg)
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_wg wg)
 WG_LOGGER_TAG="wg-backbone"
 
@@ -189,7 +190,7 @@ callback_incomming_wireguard ()
 
 		bmxd -c dev=$sub_ifname /linklayer 1
 
-		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32
+		wg set $tbbwg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32
 	fi
 }
 
@@ -216,7 +217,7 @@ callback_outgoing_wireguard_connection ()
 
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
-		wg set $wg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
+		wg set $tbbwg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 	fi
 }
 
@@ -290,23 +291,23 @@ case "$1" in
 			local_wg_ip_netpre=$_ddmesh_netpre
 			local_wg_net=$_ddmesh_wireguard_network
 
-			# create tbb_wg
+			# create tbbwg
 			secret=$(/sbin/uci -q get credentials.backbone_secret.wireguard_key)
 			if [ -n "$secret" ]; then
 				# setup local wg interface. this is used to receive/transmit data for/from
 				# all peers (hosts)
 				secret_file="/tmp/wg.pki"
 				echo $secret > $secret_file
-				ip link add $wg_ifname type wireguard
-				ip addr add "$local_wg_ip/32" dev $wg_ifname
-				wg set $wg_ifname private-key $secret_file
+				ip link add $tbbwg_ifname type wireguard
+				ip addr add "$local_wg_ip/32" dev $tbbwg_ifname
+				wg set $tbbwg_ifname private-key $secret_file
 
-				wg set $wg_ifname listen-port $backbone_local_wg_port
+				wg set $tbbwg_ifname listen-port $backbone_local_wg_port
 
-				ip link set $wg_ifname up
+				ip link set $tbbwg_ifname up
 				rm $secret_file
 
-				ip route add $local_wg_net/$local_wg_ip_netpre dev $wg_ifname src $local_wg_ip
+				ip route add $local_wg_net/$local_wg_ip_netpre dev $tbbwg_ifname src $local_wg_ip
 
 				# pass local ip addresses to callback
 				# wg provides tunnels to all peers via one interface.

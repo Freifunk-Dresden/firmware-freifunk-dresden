@@ -502,21 +502,12 @@ upgrade_6_4_2()
 	uci rename credentials.@network[-1]='network'
 	uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
  fi
- uci del firewall.zone_mesh.network
- uci add_list firewall.zone_mesh.network='mesh_lan'
- uci add_list firewall.zone_mesh.network='mesh_wan'
- uci add_list firewall.zone_mesh.network='tbb_fastd'
- uci add_list firewall.zone_mesh.network='tbb_wg'
- uci add_list firewall.zone_mesh.network='wifi_adhoc'
- uci add_list firewall.zone_mesh.network='wifi2_mesh'
- uci add_list firewall.zone_mesh.network='wifi5_mesh'
  uci del network.wifi_mesh
+}
 
- uci add firewall rule
- uci set firewall.@rule[-1].name='Allow-wg-ipip'
- uci set firewall.@rule[-1].src='mesh'
- uci set firewall.@rule[-1].proto='4'
- uci set firewall.@rule[-1].target='ACCEPT'
+upgrade_6_4_3()
+{
+ cp /rom/etc/config/firewall /etc/config/firewall
 }
 
 #upgrade_6_X_Y()

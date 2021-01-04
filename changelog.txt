@@ -1,4 +1,17 @@
 
+2020-12-20 6.4.3 (master)
+--------------------------------------------------
+syslog-gui                - reformat syslog (logread)
+backbone-wg               - fix firewall rules
+boot                      - add boot delay to workaround boot issues where openwrt runs 
+                            network initialisations parallel in background and does not provide
+                            a final "ready-event" to rely on
+firewall                  - hotplug fixes
+                          - rework firewall setup for several ddmesh scripts
+firmware upgrade          - stop background tasks that could disturb upgrade process
+
+
+
 2020-12-20 6.4.2 (master)
 --------------------------------------------------
 wifi                      - add 5GHz mesh support for indoor

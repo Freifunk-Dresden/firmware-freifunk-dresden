@@ -433,16 +433,26 @@ done
  uci set network.tbb_fastd.ifname='tbb_fastd'
  uci set network.tbb_fastd.proto='static'
 
- # wireguard
+ # wireguard tunnel
+ test -z "$(uci -q get network.tbbwg)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='tbbwg'
+ }
+ uci set network.tbbwg.ifname='tbbwg+'
+ uci set network.tbbwg.ipaddr="$_ddmesh_wireguard_ip"
+ uci set network.tbbwg.netmask="$_ddmesh_netmask"
+ uci set network.tbbwg.proto='static'
+
+ # wireguard ipip
  test -z "$(uci -q get network.tbb_wg)" && {
  	uci add network interface
  	uci rename network.@interface[-1]='tbb_wg'
  }
-# "+" is needed to create firewall rules for all tbb_wg+... ifaces
+ # "+" is needed to create firewall rules for all tbb_wg+... ifaces
  uci set network.tbb_wg.ifname='tbb_wg+'
  uci set network.tbb_wg.proto='static'
 
- #bmxd bat zone, to a masq rules to firewall
+ #bmxd bat zone
  test -z "$(uci -q get network.bat)" && {
  	uci add network interface
  	uci rename network.@interface[-1]='bat'
@@ -450,7 +460,7 @@ done
  uci set network.bat.ifname="bat+"
  uci set network.bat.proto='static'
 
- #openvpn zone, to a masq rules to firewall
+ #openvpn zone
  test -z "$(uci -q get network.vpn)" && {
  	uci add network interface
  	uci rename network.@interface[-1]='vpn'
