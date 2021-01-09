@@ -2,7 +2,7 @@
 tabs 4
 
 #usage: see below
-SCRIPT_VERSION="8"
+SCRIPT_VERSION="9"
 
 
 #echo "ACHTUNG: aktuell stuerst firmware auf ubnt geraeten ab. Daher habe ich erstmal das bauen hier deaktiviert."
@@ -231,6 +231,7 @@ if [ -z "$1" ]; then
 	echo "          'ramips.*'              - builds all ramips targets only"
 	echo "          'ramips.rt305x.generic' - builds exact this target"
 	echo "          '^rt30.*'               - builds all that start with 'rt30'"
+	echo "          'ramips.mt7621.generic|ar71xx.tiny.lowmem' - builds two targets"
 	echo ""
 	echo " menuconfig       - displays configuration menu"
 	echo " rerun            - enables a second compilation with make option 'V=s'"
@@ -302,6 +303,9 @@ else
 	# remove invalid characters: '/','$'
 	chars='[/$]'
 	regex=${regex//$chars/}
+
+	# add '\' to each '|’
+	regex=${regex//|/\\|}
 
 	# append '$' to regex, to ensure that 'ar71xx.generic.xyz' is not built
 	# when 'ar71xx.generic' was specified. Use 'ar71xx.generic.*' if both
