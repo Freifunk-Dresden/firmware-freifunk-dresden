@@ -106,11 +106,9 @@ setup_custom_rules() {
 	#snat mesh from 10.201.xxx to 10.200.xxxx
 	$IPT -t nat -A postrouting_mesh_rule -p udp --dport 4305:4307 -j ACCEPT
 	$IPT -t nat -A postrouting_mesh_rule -p tcp --dport 4305:4307 -j ACCEPT
-	$IPT -t nat -A postrouting_mesh_rule -j SNAT --to-source $_ddmesh_ip
-
 	# don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
-	$IPT -t nat -A postrouting_mesh_rule -p icmp -j ACCEPT
-	
+	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -p icmp -j ACCEPT
+	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -j SNAT --to-source $_ddmesh_ip
 }
 
 setup_openvpn_rules() {
@@ -288,6 +286,7 @@ _update()
 		for cmd in D A
 		do	
 			$IPT -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null 
+			$IPT -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'lan-to-mesh' 2>/dev/null
 		done
 
 		#add rules if gateway is on lan

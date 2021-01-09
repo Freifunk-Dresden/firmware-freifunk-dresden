@@ -20,7 +20,7 @@ WG_PATH="$(which wg)"
 KEY_LEN_WG=44
 WG_HAND_SHAKE_TIME_S=120
 UTC=$(date +"%s")
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_wg wg)
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbbwg wg)
 
 mkdir -p $STATUS_DIR
 

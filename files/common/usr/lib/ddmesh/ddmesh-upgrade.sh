@@ -508,6 +508,7 @@ upgrade_6_4_2()
 upgrade_6_4_3()
 {
  cp /rom/etc/config/firewall /etc/config/firewall
+ cp /rom/etc/firewall.user /etc/firewall.user
 }
 
 #upgrade_6_X_Y()
