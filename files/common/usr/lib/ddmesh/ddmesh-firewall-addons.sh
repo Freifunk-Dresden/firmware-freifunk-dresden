@@ -167,6 +167,17 @@ setup_statistic_rules() {
 		$IPT -D statistic_output -o $ifname -j $target_out 2>/dev/null
 		$IPT -A statistic_output -o $ifname -j $target_out
 
+		target_fwd=stat_any_"$net"_fwd
+		$IPT -N $target_fwd 2>/dev/null
+		$IPT -D statistic_forward -o $ifname -j $target_fwd 2>/dev/null
+		$IPT -A statistic_forward -o $ifname -j $target_fwd
+
+		target_fwd=stat_"$net"_any_fwd
+		$IPT -N $target_fwd 2>/dev/null
+		$IPT -D statistic_forward -i $ifname -j $target_fwd 2>/dev/null
+		$IPT -A statistic_forward -i $ifname -j $target_fwd
+
+		# detailed
 		for net2 in $NETWORKS
 		do
 #			logger -s -t $TAG "LOOP2: net=$net2"
@@ -324,7 +335,7 @@ _update()
 
 logger -s -t $TAG "called with $1"
 case "$1" in
-	init)
+	init-update)
 		_init
 		_update
 		;;

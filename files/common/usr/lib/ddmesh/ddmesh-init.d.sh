@@ -53,7 +53,8 @@ logger -t "DEVEL" "#evt. auf alle "ups" in /tmp/state/network warten?"
 
 	logger -s -t $LOGGER_TAG "restart firewall"
 	fw3 restart
-	/usr/lib/ddmesh/ddmesh-firewall-addons.sh init
+	# manually update (firmware still not running)
+	/usr/lib/ddmesh/ddmesh-firewall-addons.sh init-update
 	/usr/lib/ddmesh/ddmesh-firewall-addons.sh firewall-update
 	/usr/lib/ddmesh/ddmesh-backbone.sh firewall-update
 	/usr/lib/ddmesh/ddmesh-privnet.sh firewall-update
