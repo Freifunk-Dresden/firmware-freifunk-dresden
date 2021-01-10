@@ -261,7 +261,7 @@ case "$1" in
 
 	start)
 		# FastD Backbone
-		if [ -f $FASTD_BIN ]; then
+		if [ -n "$FASTD_BIN" ]; then
 			echo "Starting fastd backbone ..."
 			mkdir -p $FASTD_CONF_DIR
 			mkdir -p $FASTD_CONF_DIR/$FASTD_CONF_PEERS
@@ -282,7 +282,7 @@ case "$1" in
 			fastd --config $FASTD_CONF --pid-file $FASTD_PID_FILE --daemon
 		fi
 
-		if [ -f $WG_BIN ]; then
+		if [ -n "$WG_BIN" ]; then
 			echo "Starting wg backbone ..."
 
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
@@ -346,24 +346,29 @@ case "$1" in
 		;;
 
 	stop)
-		if [ -f $FASTD_BIN ]; then
+		if [ -n "$FASTD_BIN" ]; then
 			echo "Stopping backbone network..."
 			if [ -f $FASTD_PID_FILE ]; then
 				kill $(cat $FASTD_PID_FILE)
 				rm -f $FASTD_PID_FILE
 			fi
 		fi
-		if [ -f $WG_BIN ]; then
+		if [ -n "$WG_BIN" -a -n "$wg_ifname" ]; then
 			# delete all ipip tunnels
 			LS=$(which ls)
-			IFS='
+			ifname="${wg_ifname/+/}"
+
+			#ensure ifname is NOT empty
+			if [ -n "$ifname" ]; then	
+				IFS='
 '
-			for i in $($LS -1d  /sys/class/net/$wg_ifname_* 2>/dev/null | sed 's#.*/##')
-			do
-				[ "$i" != "$wg_ifname" ] && bmxd -c dev=-$i >/dev/null
-				ip link del $i 2>/dev/null
-			done
-			unset IFS
+				for i in $($LS -1d  "/sys/class/net/$ifname"* 2>/dev/null | sed 's#.*/##')
+				do
+					bmxd -c dev=-$i >/dev/null
+					ip link del $i 2>/dev/null
+				done
+				unset IFS
+			fi
 		fi
 		;;
 
@@ -374,25 +379,25 @@ case "$1" in
 		;;
 
 	gen_secret_key)
-		if [ -f $FASTD_BIN ]; then
+		if [ -n "$FASTD_BIN" ]; then
 			gen_fastd_key
 		fi
 		;;
 
 		gen_wgsecret_key)
-		if [ -f $WG_BIN ]; then
+		if [ -n "$WG_BIN" ]; then
 						gen_wg_key
 		fi
 					;;
 
 		get_public_key)
-		if [ -f $FASTD_BIN ]; then
+		if [ -n "$FASTD_BIN" ]; then
 			fastd --machine-readable --show-key --config $FASTD_CONF
 		fi
 		;;
 
 	runcheck)
-		if [ -f $FASTD_BIN ]; then
+		if [ -n "$FASTD_BIN" ]; then
 			present="$(grep $FASTD_CONF /proc/$(cat $FASTD_PID_FILE)/cmdline 2>/dev/null)"
 			if [ -z "$present" ]; then
 				logger -t $FASTD_LOGGER_TAG "fastd not running -> restarting"
