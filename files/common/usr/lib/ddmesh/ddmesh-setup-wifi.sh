@@ -12,7 +12,7 @@ setup_wireless()
  test -z "$(uci -q get ddmesh.network.wifi_country)" && uci set ddmesh.network.wifi_country="DE"
 
  # update mesh_key from rom
- wifi_mesh_key="$(wifi_mesh_key=$(uci -c /rom/etc/config get credentials.network.wifi_mesh_key)"
+ wifi_mesh_key="$(uci -c /rom/etc/config get credentials.network.wifi_mesh_key)"
 
  # --- detect 2/5GHz radios
  eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
@@ -64,10 +64,10 @@ setup_wireless()
 	mesh)		wifi_mode_mesh=1
 			wifi_mode_adhoc=1
 	;;
-	adhoc+mesh)	wifi_mode_mesh=1 
+	adhoc+mesh)	wifi_mode_mesh=1
 			wifi_mode_adhoc=1
 	;;
-	*)		wifi_mode_mesh=0 
+	*)		wifi_mode_mesh=0
 			wifi_mode_adhoc=1
 	;;
  esac
