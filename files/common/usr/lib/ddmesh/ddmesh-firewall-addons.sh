@@ -108,7 +108,7 @@ setup_custom_rules() {
 	$IPT -t nat -A postrouting_mesh_rule -p tcp --dport 4305:4307 -j ACCEPT
 	# don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
 	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -p icmp -j ACCEPT
-	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -j SNAT --to-source $_ddmesh_ip
+	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_linknet -j SNAT --to-source $_ddmesh_ip
 	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_wifi2net -j SNAT --to-source $_ddmesh_ip
 }
 

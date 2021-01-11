@@ -98,6 +98,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	mesh6nodepre	= "64"
 
 	meshnet		= "10.200.0.0/16"
+	linknet		= "10.201.0.0/16"
 	fullnet		= "10.200.0.0/15"
 	wifi2net	= "100.64.0.0/16"
 	wifi2ip		= "100.64.0.1"
@@ -128,6 +129,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	print "export _ddmesh_mesh6ip=\""mesh6ip"\""
 	print "export _ddmesh_mesh6nodepre=\""mesh6nodepre"\""
 	print "export _ddmesh_meshnet=\""meshnet"\""
+	print "export _ddmesh_linknet=\""linknet"\""
 	print "export _ddmesh_fullnet=\""fullnet"\""
 	print "export _ddmesh_wifi2net=\""wifi2net"\""
 	print "export _ddmesh_wifi2ip=\""wifi2ip"\""
