@@ -86,7 +86,6 @@
 		"name":"ar71xx.generic.lowmem",	# can be any name
 		"target":"ar71xx",
 		"subtarget":"generic",
-		#"openwrt_rev":"f6de1fa6c6b69ac6282f453f61c894695d11f433", # 18.06 01-09-2019
 		"openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
 		"openwrt_variant":"lowmem",
 		"selector-config":"18.06",		# used to select config
@@ -103,8 +102,7 @@
 	{
 		"name":"ar71xx.generic",
 		"target":"ar71xx",
-		"subtarget":"generic",
-		"target-patches":["ar71xx.joy-it-or750i.patch"]
+		"subtarget":"generic"
 	},
 	{	
 		"name":"ar71xx.generic.gl-mifi",
@@ -127,7 +125,6 @@
 		"target":"x86",
 		"subtarget":"64",
 		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
-#		"target-patches":["package-qemu-ga-buildfix.patch"]
 	},
 	{
 		"name":"ramips.mt7621.generic",
