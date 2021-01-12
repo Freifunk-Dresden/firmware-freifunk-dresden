@@ -511,6 +511,13 @@ upgrade_6_4_3()
  cp /rom/etc/firewall.user /etc/firewall.user
 }
 
+upgrade_6_4_4()
+{
+ cp /rom/etc/config/firewall /etc/config/firewall
+ uci rename network.wifi2_mesh='wifi_mesh2g'
+ uci rename network.wifi5_mesh='wifi_mesh5g'
+}
+
 #upgrade_6_X_Y()
 #{
 # true

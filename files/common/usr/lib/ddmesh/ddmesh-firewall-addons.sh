@@ -202,13 +202,13 @@ callback_add_ignored_nodes() {
 	local opt_lan=$2
 	local opt_tbb=$3
 	local opt_wifi_adhoc=$4
-	local opt_wifi2_mesh=$5
-	local opt_wifi5_mesh=$6
+	local opt_wifi_mesh2g=$5
+	local opt_wifi_mesh5g=$6
 
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
 
-	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi2_mesh" -a -z "$opt_wifi5_mesh" ] && opt_wifi_adhoc='1'
+	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" ] && opt_wifi_adhoc='1'
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 	if [ "$opt_lan" = "1" ]; then
@@ -222,10 +222,10 @@ callback_add_ignored_nodes() {
 	if [ "$opt_wifi_adhoc" = "1" ]; then
 		$IPT -A input_ignore_nodes_wifia -s $_ddmesh_nonprimary_ip -j DROP
 	fi
-	if [ "$opt_wifi2_mesh" = "1" ]; then
+	if [ "$opt_wifi_mesh2g" = "1" ]; then
 		$IPT -A input_ignore_nodes_wifi2m -s $_ddmesh_nonprimary_ip -j DROP
 	fi
-	if [ "$opt_wifi5_mesh" = "1" ]; then
+	if [ "$opt_wifi_mesh5g" = "1" ]; then
 		$IPT -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 }
@@ -242,8 +242,8 @@ setup_ignored_nodes() {
 
 	#add tables to deny some nodes to prefer backbone connections
 	[ -n "$wifi_adhoc_ifname" ] && $IPT -I input_mesh_rule -i $wifi_adhoc_ifname -j input_ignore_nodes_wifia
-	[ -n "$wifi2_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi2_mesh_ifname -j input_ignore_nodes_wifi2m
-	[ -n "$wifi5_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi5_mesh_ifname -j input_ignore_nodes_wifi5m
+	[ -n "$wifi_mesh2g_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh2g_ifname -j input_ignore_nodes_wifi2m
+	[ -n "$wifi_mesh5g_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh5g_ifname -j input_ignore_nodes_wifi5m
 	[ -n "$mesh_lan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
 	[ -n "$mesh_wan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
 	[ -n "$tbb_fastd_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb

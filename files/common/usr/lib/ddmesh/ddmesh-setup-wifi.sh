@@ -93,7 +93,7 @@ setup_wireless()
  	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
 	uci rename wireless.@wifi-iface[$iface]='wifi_mesh2g'
  	uci set wireless.@wifi-iface[$iface].device='radio2g'
-	uci set wireless.@wifi-iface[$iface].network='wifi2_mesh'
+	uci set wireless.@wifi-iface[$iface].network='wifi_mesh2g'
 	uci set wireless.@wifi-iface[$iface].ifname='mesh2g-80211s'
 	uci set wireless.@wifi-iface[$iface].mode='mesh'
  	uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
@@ -143,7 +143,7 @@ setup_wireless()
  # add 5GHz
  if [ -n "$wifi_status_radio5g_up" ]; then
 	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
-	uci rename wireless.@wifi-iface[$iface]='wifi_mesh5g'
+	uci rename wireless.@wifi-iface[$iface]='wifi2_5g'
 	uci set wireless.@wifi-iface[$iface].device='radio5g'
 	uci set wireless.@wifi-iface[$iface].network='wifi2'
  	uci set wireless.@wifi-iface[$iface].ifname='wifi5ap'
@@ -161,9 +161,9 @@ setup_wireless()
 	# 5ghz mesh only for indoor
 	if [ $wifi_mode_mesh = 1 -a "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
  		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
- 		uci rename wireless.@wifi-iface[$iface]='wifi5_mesh'
+ 		uci rename wireless.@wifi-iface[$iface]='wifi_mesh5g'
 	 	uci set wireless.@wifi-iface[$iface].device='radio5g'
-		uci set wireless.@wifi-iface[$iface].network='wifi5_mesh'
+		uci set wireless.@wifi-iface[$iface].network='wifi_mesh5g'
 		uci set wireless.@wifi-iface[$iface].ifname='mesh5g-80211s'
 		uci set wireless.@wifi-iface[$iface].mode='mesh'
 	 	uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"

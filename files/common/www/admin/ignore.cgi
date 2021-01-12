@@ -49,19 +49,19 @@ print_node() {
 	local opt_lan=$2
 	local opt_tbb=$3
 	local opt_wifi_adhoc=$4
-	local opt_wifi2_mesh=$5
-	local opt_wifi5_mesh=$6
+	local opt_wifi_mesh2g=$5
+	local opt_wifi_mesh5g=$6
 
 	# old format
-	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi2_mesh" -a -z "$opt_wifi5_mesh" ] && opt_wifi_adhoc='1'
+	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" ] && opt_wifi_adhoc='1'
 
 	if [ -n "$1" ]; then
 		echo "<tr class=\"colortoggle$T\" ><td width=\"100\">$node</td>"
 		echo "<td><input disabled name="form_opt_lan" type="checkbox" value="1" $(if [ "$opt_lan" = "1" ];then echo 'checked="checked"';fi)></td>"
 		echo "<td><input disabled name="form_opt_tbb" type="checkbox" value="1" $(if [ "$opt_tbb" = "1" ];then echo 'checked="checked"';fi)></td>"
 		echo "<td><input disabled name="form_opt_wifi_adhoc" type="checkbox" value="1" $(if [ "$opt_wifi_adhoc" = "1" ];then echo 'checked="checked"';fi)></td>"
-		echo "<td><input disabled name="form_opt_wifi2_mesh" type="checkbox" value="1" $(if [ "$opt_wifi2_mesh" = "1" ];then echo 'checked="checked"';fi)></td>"
-		echo "<td><input disabled name="form_opt_wifi5_mesh" type="checkbox" value="1" $(if [ "$opt_wifi5_mesh" = "1" ];then echo 'checked="checked"';fi)></td>"
+		echo "<td><input disabled name="form_opt_wifi_mesh2g" type="checkbox" value="1" $(if [ "$opt_wifi_mesh2g" = "1" ];then echo 'checked="checked"';fi)></td>"
+		echo "<td><input disabled name="form_opt_wifi_mesh5g" type="checkbox" value="1" $(if [ "$opt_wifi_mesh5g" = "1" ];then echo 'checked="checked"';fi)></td>"
 		echo "<td valign=bottom><FORM name=\"form_node_del_"$C"\" ACTION=\"ignore.cgi\" METHOD=\"POST\">"
 		echo "<input name=\"form_action\" value=\"del\" type=\"hidden\">"
 		echo "<input name=\"form_node\" value=\"$entry\" type=\"hidden\">"
@@ -92,8 +92,8 @@ cat<<EOM
 	<td><input name="form_opt_lan" type="checkbox" value="1" ></td>
 	<td><input name="form_opt_tbb" type="checkbox" value="1" ></td>
 	<td><input name="form_opt_wifi_adhoc" type="checkbox" value="1" ></td>
-	<td><input name="form_opt_wifi2_mesh" type="checkbox" value="1" ></td>
-	<td><input name="form_opt_wifi5_mesh" type="checkbox" value="1" ></td>
+	<td><input name="form_opt_wifi_mesh2g" type="checkbox" value="1" ></td>
+	<td><input name="form_opt_wifi_mesh5g" type="checkbox" value="1" ></td>
 	<td><button onclick="if(check_node())form_submit(form_node_new,'add') " name="form_btn_new" title="Knoten hinzuf&uuml;gen" type="button">Neu</button></td>
  </tr>
 </table>
@@ -118,7 +118,7 @@ if [ -n "$QUERY_STRING" ]; then
 			fi
 
 			node=$(uhttpd -d $form_node)
-			entry="$node:$form_opt_lan:$form_opt_tbb:$form_opt_wifi_adhoc:$form_opt_wifi2_mesh:$form_opt_wifi5_mesh"
+			entry="$node:$form_opt_lan:$form_opt_tbb:$form_opt_wifi_adhoc:$form_opt_wifi_mesh2g:$form_opt_wifi_mesh5g"
 			uci add_list ddmesh.ignore_nodes.node="$entry"
 			uci_commit.sh
 			notebox "Knoten <b>$node</b> wurde zur Konfiguration hinzugef&uuml;gt. Bitte Konfiguration aktualisieren!"

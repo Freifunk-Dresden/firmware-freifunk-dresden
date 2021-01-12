@@ -389,23 +389,23 @@ done
  uci set network.wifi_adhoc.broadcast="$_ddmesh_broadcast"
  uci set network.wifi_adhoc.proto='static'
 
- test -z "$(uci -q get network.wifi2_mesh)" && {
+ test -z "$(uci -q get network.wifi_mesh2g)" && {
  	uci add network interface
- 	uci rename network.@interface[-1]='wifi2_mesh'
+ 	uci rename network.@interface[-1]='wifi_mesh2g'
  }
- uci set network.wifi2_mesh.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi2_mesh.netmask="$_ddmesh_netmask"
- uci set network.wifi2_mesh.broadcast="$_ddmesh_broadcast"
- uci set network.wifi2_mesh.proto='static'
+ uci set network.wifi_mesh2g.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.wifi_mesh2g.netmask="$_ddmesh_netmask"
+ uci set network.wifi_mesh2g.broadcast="$_ddmesh_broadcast"
+ uci set network.wifi_mesh2g.proto='static'
 
- test -z "$(uci -q get network.wifi5_mesh)" && {
+ test -z "$(uci -q get network.wifi_mesh5g)" && {
  	uci add network interface
- 	uci rename network.@interface[-1]='wifi5_mesh'
+ 	uci rename network.@interface[-1]='wifi_mesh5g'
  }
- uci set network.wifi5_mesh.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi5_mesh.netmask="$_ddmesh_netmask"
- uci set network.wifi5_mesh.broadcast="$_ddmesh_broadcast"
- uci set network.wifi5_mesh.proto='static'
+ uci set network.wifi_mesh5g.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.wifi_mesh5g.netmask="$_ddmesh_netmask"
+ uci set network.wifi_mesh5g.broadcast="$_ddmesh_broadcast"
+ uci set network.wifi_mesh5g.proto='static'
 
  test -z "$(uci -q get network.wifi2)" && {
  	uci add network interface

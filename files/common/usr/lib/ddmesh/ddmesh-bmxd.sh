@@ -69,11 +69,11 @@ case "$ARG1" in
 	if [ -n "$net_ifname" ]; then
 		_IF="$_IF dev=$net_ifname /linklayer 2"
 	fi
-	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi2_mesh)
+	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_mesh2g)
 	if [ -n "$net_ifname" ]; then
 		_IF="$_IF dev=$net_ifname /linklayer 2"
 	fi
-	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi5_mesh)
+	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_mesh5g)
 	if [ -n "$net_ifname" ]; then
 		_IF="$_IF dev=$net_ifname /linklayer 2"
 	fi

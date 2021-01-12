@@ -76,8 +76,8 @@ config zone 'zone_mesh'
 	list network 'tbb_fastd'
 	list network 'tbb_wg'
 	list network 'wifi_adhoc'
-	list network 'wifi2_mesh'
-	list network 'wifi5_mesh'
+	list network 'wifi_mesh2g'
+	list network 'wifi_mesh5g'
 
 
 #interface is not brought up by network system, because it is created not by openwrt network environment.
