@@ -38,6 +38,9 @@ docker:init:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: init 
   script:
@@ -56,6 +59,9 @@ docker:ar71xx.tiny:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -73,6 +79,9 @@ docker:ar71xx.generic:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -89,6 +98,9 @@ docker:ar71xx.nand:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -106,6 +118,9 @@ docker:x86:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -122,6 +137,9 @@ docker:x64:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -139,6 +157,9 @@ docker:ramips:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -156,6 +177,9 @@ docker:lantiq:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -172,6 +196,9 @@ docker:ath79:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -188,6 +215,9 @@ docker:ipq40xx:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -204,6 +234,9 @@ docker:sunxi:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -220,6 +253,9 @@ docker:mpc85xx:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: build
   script:
@@ -238,6 +274,9 @@ docker:gen-upload-test:
     - schedules
     - master
     - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
   image: openwrt-docker-build:latest
   stage: deploy 
   script:
