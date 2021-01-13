@@ -1,0 +1,182 @@
+######## m2runner ################
+
+# dl and workdir symlinks are removed by gitlab for each job
+# so I need to recreate this
+#  - ln -s ~/mycache/dl
+#  - ln -s ~/mycache/workdir
+
+m2:init:
+  only:	# follwoing tags can only be created by maintainer.
+	# So this pipeline is secured 
+    - /^TESTING_FIRMWARE_.*$/
+ 
+  stage: init       # special state, run before all other stages
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+  # ensure that we have no old data. This is important when
+  # generating download.json. Else all old openwrt images would be
+  # included and mixed
+
+  # dont delete dl, it is not so important to have different old version for
+  # one packges, but it will reduce download overhead from external servers
+  # every night. so just only delete workdirs to always have a clean build
+    - test "$FF_GITLAB_REMOVE_DL" = "1" && rm -rf ~/mycache/dl/*
+    - test "$FF_GITLAB_REMOVE_WORKDIR" = "1" && rm -rf ~/mycache/workdir/*
+    - /bin/true
+  tags:
+  - m2runner
+
+m2:ar71xx.tiny:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:ar71xx.generic:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ar71xx.generic.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:ar71xx.nand:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ar71xx.nand.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:x86.generic:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh x86.generic rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:x64.generic:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh x64.generic rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:ramips:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:ipq40xx:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ipq40xx.generic.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:lantiq:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:ath79:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:sunxi:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh sunxi.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+m2:mpc85xx:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
+
+m2:test:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: test
+  script:
+    - echo "dummy"
+  tags:
+  - m2runner
+
+m2:upload:
+  only:
+    - /^TESTING_FIRMWARE_.*$/ 
+  stage: deploy
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./gen-upload.sh all
+    # runner must have ssh key that are added to download server. on download server there is a user "deploy-firmware" who owns the download directories
+    # add the runners public key to user stephan authorized_keys file
+    - ([ -n "$FF_UPLOAD_DIR" ] && rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.lxc:/var/www/files/firmware/$FF_UPLOAD_DIR/)
+    - rm -rf final_output
+# artifacts are not needed (waste of disk storage), because they are uploaded to download server
+#  artifacts:
+#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+#    expire_in: 2 days
+#    paths:
+#    - dl
+#    - final_output
+  tags:
+  - m2runner
+
