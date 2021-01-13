@@ -81,7 +81,7 @@ function checkInput()
 <td>
 <font color="red">Einstellung darf nur gesetzt werden, wenn Router drinnen steht!</font><br/>
 Outdoor: automatische Kanalwahl aus Bereich f&uuml;r Outdoor; nur Access-Point<br/>
-Indoor: fester Kanal; AccessPoint und Mesh 802.11s (folgt noch)
+Indoor: fester Kanal; AccessPoint und Mesh 802.11s
 </td>
 </tr>
 
