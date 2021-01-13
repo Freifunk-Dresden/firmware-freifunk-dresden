@@ -168,13 +168,13 @@
                 "subtarget":"generic",
 		"target-patches":["device1-comfast-e314n.patch", "device2-comfast-comfast-e130n.patch"]
         },
-	{
-		"name":"ath79.tiny.wireguard.lowmem",
-		"target":"ath79",
-		"subtarget":"tiny",
-		"variant":"wireguard",
-		"openwrt_variant":"lowmem"
-	},
+#	{
+#		"name":"ath79.tiny.wireguard.lowmem",
+#		"target":"ath79",
+#		"subtarget":"tiny",
+#		"variant":"wireguard",
+#		"openwrt_variant":"lowmem"
+#	},
 	{	# created for fritzbox 4040
 		"name":"ipq40xx.generic",
 		"target":"ipq40xx",
