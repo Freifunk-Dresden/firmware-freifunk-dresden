@@ -428,7 +428,7 @@ do
 			tmpTargetDir="$target_dir/$_buildroot/$platform/$subplatform"
 			mkdir -p $tmpTargetDir
 
-			filefilter="*.{bin,trx,img,dlf,gz,tar}"
+			filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
 			$ENABLE_COPY && {
 				printf "copy $buildroot/bin/targets/$platform/$subplatform/$filefilter $tmpTargetDir\n"
 				# use "eval" to resolv filefilter wildcards
