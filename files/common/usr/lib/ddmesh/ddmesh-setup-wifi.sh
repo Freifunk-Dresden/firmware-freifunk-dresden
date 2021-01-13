@@ -98,7 +98,7 @@ setup_wireless()
 	uci set wireless.@wifi-iface[$iface].mode='mesh'
  	uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
  	uci set wireless.@wifi-iface[$iface].key="$wifi_mesh_key"
- 	uci set wireless.@wifi-iface[$iface].encryption='psk2+ccmp'
+ 	uci set wireless.@wifi-iface[$iface].encryption='sae'
  	uci set wireless.@wifi-iface[$iface].mesh_fwding='0'
  	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
  	iface=$((iface + 1))
@@ -168,7 +168,7 @@ setup_wireless()
 		uci set wireless.@wifi-iface[$iface].mode='mesh'
 	 	uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
  		uci set wireless.@wifi-iface[$iface].key="$wifi_mesh_key"
-	 	uci set wireless.@wifi-iface[$iface].encryption='psk2+ccmp'
+	 	uci set wireless.@wifi-iface[$iface].encryption='sae'
  		uci set wireless.@wifi-iface[$iface].mesh_fwding='0'
 	 	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
  		iface=$((iface + 1))
