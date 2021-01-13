@@ -107,8 +107,19 @@ callback_outgoing_config ()
 	fi
 }
 
+setup_firewall()
+{
+	iptables -F input_privnet_accept
+	iptables -F input_privnet_reject
+	iptables -A input_privnet_accept -p udp --dport $privnet_server_port -j ACCEPT
+  	iptables -A input_privnet_reject -p udp --dport $privnet_server_port -j reject
+}
+
 case "$1" in
 
+ firewall-update)
+	setup_firewall
+	;;
  start)
 	echo "Starting privnet..."
 
@@ -122,15 +133,12 @@ case "$1" in
 
 		generate_fastd_conf
 
-		iptables -F input_privnet_accept
-		iptables -F input_privnet_reject
+		setup_firewall
 
 		# accept clients
 	 	config_load ddmesh
  		config_foreach callback_accept_config privnet_accept
 
-		iptables -A input_privnet_accept -p udp --dport $privnet_server_port -j ACCEPT
-  		iptables -A input_privnet_reject -p udp --dport $privnet_server_port -j reject
 
 	 	config_load ddmesh
 	 	config_foreach callback_outgoing_config privnet_client

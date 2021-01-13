@@ -107,9 +107,6 @@ config network 'network'
 	option  wifi_channels_5g_outdoor '100-140'
 	option	wifi_ch_5g_outdoor_min	100
 	option	wifi_ch_5g_outdoor_max	140
-#	option	wifi_diversity		1
-#	option	wifi_rxantenna		1
-#	option	wifi_txantenna		1
 	option	wifi_slow_rates		0
 	option	wifi2_dhcplease		'5m'
 	option	wifi2_isolate		'1'
@@ -392,23 +389,23 @@ done
  uci set network.wifi_adhoc.broadcast="$_ddmesh_broadcast"
  uci set network.wifi_adhoc.proto='static'
 
- test -z "$(uci -q get network.wifi2_mesh)" && {
+ test -z "$(uci -q get network.wifi_mesh2g)" && {
  	uci add network interface
- 	uci rename network.@interface[-1]='wifi2_mesh'
+ 	uci rename network.@interface[-1]='wifi_mesh2g'
  }
- uci set network.wifi2_mesh.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi2_mesh.netmask="$_ddmesh_netmask"
- uci set network.wifi2_mesh.broadcast="$_ddmesh_broadcast"
- uci set network.wifi2_mesh.proto='static'
+ uci set network.wifi_mesh2g.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.wifi_mesh2g.netmask="$_ddmesh_netmask"
+ uci set network.wifi_mesh2g.broadcast="$_ddmesh_broadcast"
+ uci set network.wifi_mesh2g.proto='static'
 
- test -z "$(uci -q get network.wifi5_mesh)" && {
+ test -z "$(uci -q get network.wifi_mesh5g)" && {
  	uci add network interface
- 	uci rename network.@interface[-1]='wifi5_mesh'
+ 	uci rename network.@interface[-1]='wifi_mesh5g'
  }
- uci set network.wifi5_mesh.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi5_mesh.netmask="$_ddmesh_netmask"
- uci set network.wifi5_mesh.broadcast="$_ddmesh_broadcast"
- uci set network.wifi5_mesh.proto='static'
+ uci set network.wifi_mesh5g.ipaddr="$_ddmesh_nonprimary_ip"
+ uci set network.wifi_mesh5g.netmask="$_ddmesh_netmask"
+ uci set network.wifi_mesh5g.broadcast="$_ddmesh_broadcast"
+ uci set network.wifi_mesh5g.proto='static'
 
  test -z "$(uci -q get network.wifi2)" && {
  	uci add network interface
@@ -436,15 +433,26 @@ done
  uci set network.tbb_fastd.ifname='tbb_fastd'
  uci set network.tbb_fastd.proto='static'
 
- # wireguard
+ # wireguard tunnel
+ test -z "$(uci -q get network.tbbwg)" && {
+ 	uci add network interface
+ 	uci rename network.@interface[-1]='tbbwg'
+ }
+ uci set network.tbbwg.ifname='tbbwg+'
+ uci set network.tbbwg.ipaddr="$_ddmesh_wireguard_ip"
+ uci set network.tbbwg.netmask="$_ddmesh_netmask"
+ uci set network.tbbwg.proto='static'
+
+ # wireguard ipip
  test -z "$(uci -q get network.tbb_wg)" && {
  	uci add network interface
  	uci rename network.@interface[-1]='tbb_wg'
  }
+ # "+" is needed to create firewall rules for all tbb_wg+... ifaces
  uci set network.tbb_wg.ifname='tbb_wg+'
  uci set network.tbb_wg.proto='static'
 
- #bmxd bat zone, to a masq rules to firewall
+ #bmxd bat zone
  test -z "$(uci -q get network.bat)" && {
  	uci add network interface
  	uci rename network.@interface[-1]='bat'
@@ -452,7 +460,7 @@ done
  uci set network.bat.ifname="bat+"
  uci set network.bat.proto='static'
 
- #openvpn zone, to a masq rules to firewall
+ #openvpn zone
  test -z "$(uci -q get network.vpn)" && {
  	uci add network interface
  	uci rename network.@interface[-1]='vpn'
@@ -638,7 +646,6 @@ config cert px5g
 EOM
 
 #traffic shaping
-
 cat <<EOM >/var/etc/config/wshaper
 config 'wshaper' 'settings'
 	option network "$(uci get ddmesh.network.speed_network)"
@@ -700,42 +707,6 @@ setup_mesh_on_wire()
  fi
 }
 
-wait_for_wifi()
-{
-	logger -s -t "$LOGGER_TAG" "check  for WIFI"
-	#check if usb stick is used. mostly do not support AP beside Adhoc
-	if [ -n "$(uci -q get wireless.radio2g.path | grep '/usb')" ]; then
-		only_adhoc=1
-	fi
-
-	c=0
-	max=60
-	while [ $c -lt $max ]
-	do
-		# use /tmp/state  instead of ubus because up-state is wrong.
-		# /tmp/state is never set back (but this can be ignored here. if needed use /etc/hotplug.d/iface)
-		wifi_up="$(uci -q -P /tmp/state get network.wifi_adhoc.up)"
-		wifi2_up="$(uci -q -P /tmp/state get network.wifi2.up)"
-
-		logger -s -t "$LOGGER_TAG" "Wait for WIFI up: $c/$max (only_adhoc=$only_adhoc, wifi:$wifi_up, wifi2:$wifi_up)"
-
-		if [ -n "$only_adhoc" ]; then
-			wifi_is_up="$wifi_up"
-		else
-			if [ "$wifi_up" = 1 -a "$wifi2_up" = 1 ]; then
-				wifi_is_up=1
-			fi
-		fi
-		if [ "$wifi_is_up" = 1 ]; then
-			logger -s -t "$LOGGER_TAG" "WIFI is up - continue"
-			/usr/lib/ddmesh/ddmesh-led.sh wifi alive
-			break;
-		fi
-		sleep 1
-		c=$((c+1))
-	done
-}
-
 #boot_step is empty for new devices
 boot_step="$(uci get ddmesh.boot.boot_step)"
 test -z "$boot_step" && boot_step=1
@@ -776,9 +747,10 @@ case "$boot_step" in
 
 			config_update
 
-			# regenerate wireless config after firmware update.
+			# regenerate wireless config after firmware update or
+			# config update.
 			# hotplug event ieee80211 is not reliable before rebooting
-			/usr/lib/ddmesh/ddmesh-hotplug-wifi.sh
+			/usr/lib/ddmesh/ddmesh-setup-wifi.sh
 
 			upgrade_running=$(uci -q get ddmesh.boot.upgrade_running)
 			uci set ddmesh.boot.boot_step=3
@@ -817,8 +789,6 @@ case "$boot_step" in
 			WSHAPER=/etc/init.d/wshaper
 			[ -x "$WSHAPER" ] && $WSHAPER restart
 			# cron job is started from ddmesh-init.sh after bmxd
-
-			[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
 
 			# delay start mesh_on_wire, to allow access router config via lan/wan ip
 			setup_mesh_on_wire &

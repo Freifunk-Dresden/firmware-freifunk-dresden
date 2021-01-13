@@ -1,0 +1,9 @@
+# called by fw3 after start or restart (not on reload)
+
+test -f /tmp/freifunk-running || exit 0
+
+/usr/lib/ddmesh/ddmesh-firewall-addons.sh init-update
+/usr/lib/ddmesh/ddmesh-backbone.sh firewall-update
+/usr/lib/ddmesh/ddmesh-privnet.sh firewall-update
+/usr/lib/ddmesh/ddmesh-splash.sh firewall-update
+

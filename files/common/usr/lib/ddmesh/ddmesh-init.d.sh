@@ -1,6 +1,29 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2006 OpenWrt.org
 
+LOGGER_TAG="ddmesh-boot"
+
+wait_for_wifi()
+{
+	c=0
+	max=60
+	while [ $c -lt $max ]
+	do
+		# use /tmp/state  instead of ubus because up-state is wrong.
+		# /tmp/state is never set back (but this can be ignored here. if needed use /etc/hotplug.d/iface)
+		wifi2_up="$(uci -q -P /tmp/state get network.wifi2.up)"
+
+		logger -s -t "$LOGGER_TAG" "Wait for WIFI up: $c/$max (wifi2:$wifi_up)"
+
+		if [ "$wifi2_up" = 1 ]; then
+			logger -s -t "$LOGGER_TAG" "WIFI is up -> continue"
+			/usr/lib/ddmesh/ddmesh-led.sh wifi alive
+			break;
+		fi
+		sleep 1
+		c=$((c+1))
+	done
+}
 
 start() {
 
@@ -13,28 +36,37 @@ start() {
 	eval $(cat /etc/openwrt_release)
 
 	/usr/lib/ddmesh/ddmesh-led.sh wifi_off
-	LOGGER_TAG="ddmesh boot"
 
 	#initial setup and node depended setup (crond calles ddmesh-register-node.sh to update node)
 	logger -s -t $LOGGER_TAG "inital boot setting"
 	#check if boot process should be stopped
 	/usr/lib/ddmesh/ddmesh-bootconfig.sh || exit
 
-	logger -s -t $LOGGER_TAG "restart firewall+addon"
+	# wait for wifi before setting firewall, because it would be run parallel
+	[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
+
+	# need to wait, until async netifd has finished. (there is no event/condition to wait for)
+logger -t "DEVEL" "#evt. auf alle "ups" in /tmp/state/network warten?"
+	logger -t "SLEEP" "SLEEP START"
+	sleep 60
+	logger -t "SLEEP" "SLEEP END"
+
+	logger -s -t $LOGGER_TAG "restart firewall"
 	fw3 restart
-	/usr/lib/ddmesh/ddmesh-firewall-addons.sh init
+	# manually update (firmware still not running)
+	/usr/lib/ddmesh/ddmesh-firewall-addons.sh init-update
+	/usr/lib/ddmesh/ddmesh-firewall-addons.sh firewall-update
+	/usr/lib/ddmesh/ddmesh-backbone.sh firewall-update
+	/usr/lib/ddmesh/ddmesh-privnet.sh firewall-update
+	/usr/lib/ddmesh/ddmesh-splash.sh firewall-update 
 
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
 	#setup network (routing rules) manually (no support by uci)
-	logger -s -t $LOGGER_TAG "network"
+	logger -s -t $LOGGER_TAG "setup routing"
 	/usr/lib/ddmesh/ddmesh-routing.sh start
-
-	#load splash mac from config to firewall
-	logger -s -t $LOGGER_TAG "splash firewall"
-	/usr/lib/ddmesh/ddmesh-splash.sh loadconfig
 
 	#---- starting serivces ------
 
@@ -78,10 +110,9 @@ start() {
 	logger -s -t $LOGGER_TAG "start cron"
 	/etc/init.d/cron start
 
-	logger -s -t $LOGGER_TAG "finished."
 	/usr/lib/ddmesh/ddmesh-led.sh status done
 
-	# enable hotplug events
+	# enable hotplug some more events
 	touch /tmp/freifunk-running
 
 	logger -s -t $LOGGER_TAG "finished."

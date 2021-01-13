@@ -2,11 +2,14 @@
 
 test -f /tmp/freifunk-running || exit 0
 
+TAG="ddmesh-hotplug"
+TAG2="31-resolv-conf-final"
+
 # update resolv.conf.final if wan cable is inserted after bmxd has started
 
 if [ "$INTERFACE" = "wan" -o "$INTERFACE" = "wwan" ]; then
 	if [ "$ACTION" = "ifup" ]; then
-		logger -t ddmesh "network-hotplug 31-resolv-conf.final"
+		logger -t "$TAG" "$TAG2: set /tmp/resolv-conf.final"
 		/usr/lib/bmxd/bmxd-gateway.sh init
 	fi
 fi

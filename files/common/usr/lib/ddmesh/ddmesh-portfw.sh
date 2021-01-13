@@ -14,8 +14,9 @@ fwprint()
 
 IPT=fwprint
 
-setup_forwarding() {
-	# prepare forwarding
+setup_forwarding()
+{
+	# prepare "NAT" tables
 	$IPT -t nat -N PORT_FORWARDING 2>/dev/null
 	$IPT -t nat -N PORT_FORWARDING_PROTECT 2>/dev/null
 	$IPT -t nat -N PORT_FORWARDING_RULES 2>/dev/null
@@ -28,18 +29,28 @@ setup_forwarding() {
 	$IPT -t nat -A PORT_FORWARDING -j PORT_FORWARDING_PROTECT
 	$IPT -t nat -A PORT_FORWARDING -j PORT_FORWARDING_RULES
 
+	# forward incomming packets to PORT_FORWARDING rules (from wifi range to _ddmesh_ip) 
 	for table in prerouting_mesh_rule prerouting_lan_rule prerouting_wifi2_rule
 	do
-		$IPT -t nat -D $table -d $_ddmesh_ip -j PORT_FORWARDING 2>/dev/null
-		$IPT -t nat -A $table -d $_ddmesh_ip -j PORT_FORWARDING
+		$IPT -t nat -D $table -s $_ddmesh_network/$_ddmesh_netpre -d $_ddmesh_ip -j PORT_FORWARDING 2>/dev/null
+		$IPT -t nat -A $table -s $_ddmesh_network/$_ddmesh_netpre -d $_ddmesh_ip -j PORT_FORWARDING
 	done
 
+	# forward incomming packets to PORT_FORWARDING rules (from lan range to lan ip)
 	# interface might not be ready yet (wait for other hotplug updates)	
 	if [ "$lan_up" = "1" -a -n "$lan_ipaddr" ]; then
-		$IPT -t nat -D prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING 2>/dev/null
-		$IPT -t nat -A prerouting_lan_rule -d $lan_ipaddr -j PORT_FORWARDING
+		$IPT -t nat -D prerouting_lan_rule -s $lan_network/$lan_mask -d $lan_ipaddr -j PORT_FORWARDING 2>/dev/null
+		$IPT -t nat -A prerouting_lan_rule -s $lan_network/$lan_mask -d $lan_ipaddr -j PORT_FORWARDING
 	fi
 
+	# forward incomming packets to PORT_FORWARDING rules (to wan ip)
+	# interface might not be ready yet (wait for other hotplug updates)	
+	if [ "$wan_up" = "1" -a -n "$wan_ipaddr" ]; then
+		$IPT -t nat -D prerouting_wan_rule -s $wan_network/$wan_mask -d $wan_ipaddr -j PORT_FORWARDING 2>/dev/null
+		$IPT -t nat -A prerouting_wan_rule -s $wan_network/$wan_mask -d $wan_ipaddr -j PORT_FORWARDING
+	fi
+
+	# prepare "filter" table
 	$IPT -N PORT_FORWARDING 2>/dev/null
 	$IPT -N PORT_FORWARDING_RULES 2>/dev/null
 
@@ -49,6 +60,7 @@ setup_forwarding() {
 
 	$IPT -A PORT_FORWARDING -j PORT_FORWARDING_RULES
 
+	# allow forwarding via rules in PORT_FORWARDING (security: restrict to interface ip range only)
 	for table in forwarding_mesh_rule forwarding_lan_rule forwarding_wifi2_rule
 	do
 		if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
@@ -59,15 +71,11 @@ setup_forwarding() {
 			$IPT -D $table -o $wifi2_ifname -d $wifi2_network/$wifi2_mask -j PORT_FORWARDING 2>/dev/null
 			$IPT -A $table -o $wifi2_ifname -d $wifi2_network/$wifi2_mask -j PORT_FORWARDING
 		fi
-	done
-
-	if [ $wan_up = 1 -a -n "$wan_network" -a -n "$wan_mask" ]; then
-		for table in forwarding_mesh_rule forwarding_lan_rule forwarding_wifi2_rule
-		do
+		if [ $wan_up = 1 -a -n "$wan_network" -a -n "$wan_mask" ]; then
 			$IPT -D $table -o $wan_ifname -d $wan_network/$wan_mask -j PORT_FORWARDING 2>/dev/null
 			$IPT -A $table -o $wan_ifname -d $wan_network/$wan_mask -j PORT_FORWARDING
-		done
-	fi
+		fi
+	done
 }
 
 setup_rules() {
@@ -104,12 +112,6 @@ setup_rules() {
 	fi
 }
 
-load() {
-	$IPT -t nat -F PORT_FORWARDING_RULES
-	$IPT -F PORT_FORWARDING_RULES
-	config_load ddmesh
-	config_foreach setup_rules
-}
 
 if [ "$1" = "init" -o "$1" = "load" ]; then
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
@@ -117,7 +119,7 @@ if [ "$1" = "init" -o "$1" = "load" ]; then
 fi
 
 case "$1" in
-	init)
+	load)
 		setup_forwarding
 
 		for p in $PROTECTED_PORTS
@@ -125,8 +127,11 @@ case "$1" in
 			$IPT -t nat -A PORT_FORWARDING_PROTECT -p tcp --dport $p -j ACCEPT
 			$IPT -t nat -A PORT_FORWARDING_PROTECT -p udp --dport $p -j ACCEPT
 		done
-		load ;;
-	load)	load ;;
+
+		config_load ddmesh
+		config_foreach setup_rules
+		;;
+
 	ports)  echo $PROTECTED_PORTS ;;
 
 	*) echo "usage: $1 init|load|ports" ;;

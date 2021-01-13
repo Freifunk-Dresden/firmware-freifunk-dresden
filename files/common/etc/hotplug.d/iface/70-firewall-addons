@@ -1,9 +1,0 @@
-#!/bin/sh
-
-test -f /tmp/freifunk-running || exit 0
-
-logger -t ddmesh "network-hotplug 70-firewall-addons: [$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
-[ ifup = "$ACTION" -o ifdown = "$ACTION" ] && {
-	[ wan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-firewall-addons.sh update
-	[ lan = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-firewall-addons.sh update
-}

@@ -70,7 +70,7 @@ case "$1" in
 		m=$(echo $2 | sed 'y#ABCDEF#abcdef#')
 		iptables -t nat -L SPLASH_AUTH_USERS | sed 's/ \+/ /g' | grep MAC | cut -d' ' -f7 | sed 'y#ABCDEF#abcdef#' | grep $m >/dev/null
 	;;
-  	loadconfig)
+  	firewall-update)
 		rm -f $STORED/*
 		config_load ddmesh
 		config_list_foreach network splash_mac config_splash_addmac do-not-add-to-db
@@ -101,14 +101,14 @@ echo $start
 		fi
 	;;
 	*)
-		echo "splash.sh islan ip | getmac ip | addmac mac | delmac mac | listmac | checkmac mac | loadconfig | autodisconnect"
+		echo "splash.sh islan ip | getmac ip | addmac mac | delmac mac | listmac | checkmac mac | firewall-update | autodisconnect"
 		echo " Version: 5 08/2018"
-		echo "  getmac         gets the mac from dhcp leases"
-		echo "  addmac         add mac to iptable SPLASH_AUTH"
-		echo "  delmac         deletes mac from iptable SPLASH_AUTH (only if not stored in config)"
-		echo "  listmac        lists all mac of iptable SPLASH_AUTH"
-		echo "  checkmac       checks mac if present in SPLASH_AUTH, returns 0 if yes"
-		echo "  loadconfig     loads the mac from config"
+		echo "  getmac          gets the mac from dhcp leases"
+		echo "  addmac          add mac to iptable SPLASH_AUTH"
+		echo "  delmac          deletes mac from iptable SPLASH_AUTH (only if not stored in config)"
+		echo "  listmac         lists all mac of iptable SPLASH_AUTH"
+		echo "  checkmac        checks mac if present in SPLASH_AUTH, returns 0 if yes"
+		echo "  firewall-update loads the mac from config"
 		echo "  autodisconnect check and disconnect client after specific time"
 		exit 1
 	;;

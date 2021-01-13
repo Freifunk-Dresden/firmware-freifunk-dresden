@@ -57,6 +57,10 @@ do
  	MINUTE_COUNTER=$((MINUTE_COUNTER + 1))
 	[ "$MINUTE_COUNTER" -gt 10000 ] && MINUTE_COUNTER=0
 
+	# stop tasks when status file is deleted. this avoids running tasks during
+	# firmware update
+	test -f /tmp/freifunk-running || continue 
+
 	# call task scripts
 	# call_task <interval-minutes> <script | function> [arguments...]
 

@@ -58,7 +58,11 @@ EOM
 
 ifconfig -a | sed '
 /^[^ ]/s#^\([^ ]*\)\(.*\)#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#
-/^[ ]/s#.*#<tr class="colortoggle2"><th></th><td>&</td></tr>#'
+/^[ ]/s#.*#<tr class="colortoggle2"><th></th><td>&</td></tr>#
+s#\(UP\|inet addr:\|P-t-P:\|Bcast:\|Mask:\)#<b>\1</b>#g
+s#\(MTU:\)\([0-9]\+\)#<b>\1</b><font style="color: magenta;">\2</font>#g
+s#\([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\)#<font style="color: blue;">\1</font>#g
+'
 
 cat<<EOM
 </table>

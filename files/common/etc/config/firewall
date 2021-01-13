@@ -35,6 +35,7 @@ config zone 'zone_wifi2'
 	option forward 'REJECT'
 	option masq '0'
 	option mtu_fix '1'
+	list subnet '100.64.0.0/16'
 
 #interface is not brought up by network system, because it is created not by openwrt network environment.
 #it is created by fastd
@@ -51,32 +52,32 @@ config zone 'zone_bat'
 	option masq '1'
 	option mtu_fix '1'
 
-config zone 'zone_mesh'
-	option name 'mesh'
-	list network 'mesh_lan'
-	list network 'mesh_wan'
-	list network 'tbb_fastd'
-	list network 'tbb_wg'
-	list network 'wifi_adhoc'
-	list network 'wifi2_mesh'
-	list network 'wifi5_mesh'
+#interface is not brought up by network system, because it is created not by openwrt network environment.
+#created by wireguard.
+config zone 'zone_tbbwg'
+	option name 'tbbwg'
+	list network 'tbbwg'
 	option input 'REJECT'
 	option output 'ACCEPT'
 	option forward 'REJECT'
 	option masq '0'
 	option mtu_fix '1'
+	option subnet '10.203.0.0/16'
 
-#interface is not brought up by network system, because it is created not by openwrt network environment.
-#created by wireguard.
-#mask: any->vpn
-config zone 'zone_wg'
-	option name 'wg'
-	list network 'tbb_wg'
+config zone 'zone_mesh'
+	option name 'mesh'
 	option input 'REJECT'
 	option output 'ACCEPT'
 	option forward 'REJECT'
-	option masq '1'
+	option masq '0'
 	option mtu_fix '1'
+	list network 'mesh_lan'
+	list network 'mesh_wan'
+	list network 'tbb_fastd'
+	list network 'tbb_wg'
+	list network 'wifi_adhoc'
+	list network 'wifi_mesh2g'
+	list network 'wifi_mesh5g'
 
 
 #interface is not brought up by network system, because it is created not by openwrt network environment.
@@ -388,6 +389,13 @@ config rule
 	option target 'ACCEPT'
 	option family 'ipv4'
 
+config rule
+	option name 'Allow-tbbwg-icmp'
+	option src 'tbbwg'
+	option proto 'icmp'
+	option family 'ipv4'
+	option target 'ACCEPT'
+
 #### dhcp ####
 # We need to accept udp packets on port 68,
 # see https://dev.openwrt.org/ticket/4108
@@ -579,12 +587,6 @@ config rule 'wanicmp'
 	option proto 'icmp'
 	option target 'ACCEPT'
 
-#### allow wg input ####
-config rule
-	option name 'Allow-wg-all'
-	option src 'tbb_wg'
-	option target 'ACCEPT'
-# perhaps restrict to local ip and/or gre protocol
-
 config include
 	option path '/etc/firewall.user'
+

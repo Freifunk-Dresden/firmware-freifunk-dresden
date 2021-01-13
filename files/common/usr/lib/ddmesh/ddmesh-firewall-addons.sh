@@ -106,21 +106,10 @@ setup_custom_rules() {
 	#snat mesh from 10.201.xxx to 10.200.xxxx
 	$IPT -t nat -A postrouting_mesh_rule -p udp --dport 4305:4307 -j ACCEPT
 	$IPT -t nat -A postrouting_mesh_rule -p tcp --dport 4305:4307 -j ACCEPT
-	test "$lan_up" = "1" && $IPT -t nat -A postrouting_mesh_rule -s $lan_ipaddr/$lan_mask -j SNAT --to-source $_ddmesh_ip
-	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_mesh_rule -s $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $_ddmesh_ip
-
-    # don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
-	$IPT -t nat -A postrouting_mesh_rule -p icmp -j ACCEPT
-	
-	test "$lan_up" = "1" && $IPT -t nat -A postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan'
-	test "$wifi2_up" = "1" && $IPT -t nat -A postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2'
-
-	#add rules if gateway is on lan
-	if [ -n "$lan_gateway" -a "$lan_up" = "1" ]; then
-		$IPT -A forwarding_bat_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
-		$IPT -A forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT
-		$IPT -t nat -A postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway'
-	fi
+	# don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
+	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -p icmp -j ACCEPT
+	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_linknet -j SNAT --to-source $_ddmesh_ip
+	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_wifi2net -j SNAT --to-source $_ddmesh_ip
 }
 
 setup_openvpn_rules() {
@@ -179,6 +168,17 @@ setup_statistic_rules() {
 		$IPT -D statistic_output -o $ifname -j $target_out 2>/dev/null
 		$IPT -A statistic_output -o $ifname -j $target_out
 
+		target_fwd=stat_any_"$net"_fwd
+		$IPT -N $target_fwd 2>/dev/null
+		$IPT -D statistic_forward -o $ifname -j $target_fwd 2>/dev/null
+		$IPT -A statistic_forward -o $ifname -j $target_fwd
+
+		target_fwd=stat_"$net"_any_fwd
+		$IPT -N $target_fwd 2>/dev/null
+		$IPT -D statistic_forward -i $ifname -j $target_fwd 2>/dev/null
+		$IPT -A statistic_forward -i $ifname -j $target_fwd
+
+		# detailed
 		for net2 in $NETWORKS
 		do
 #			logger -s -t $TAG "LOOP2: net=$net2"
@@ -194,7 +194,7 @@ setup_statistic_rules() {
 }
 
 callback_add_ignored_nodes() {
-	local entry=$1
+	local entry="$1"
 	IFS=':'
 	set $entry
 	unset IFS
@@ -202,29 +202,30 @@ callback_add_ignored_nodes() {
 	local opt_lan=$2
 	local opt_tbb=$3
 	local opt_wifi_adhoc=$4
-	local opt_wifi2_mesh=$5
-	local opt_wifi5_mesh=$6
+	local opt_wifi_mesh2g=$5
+	local opt_wifi_mesh5g=$6
 
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
 
-	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi2_mesh" -a -z "$opt_wifi5_mesh" ] && opt_wifi_adhoc='1'
+	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" ] && opt_wifi_adhoc='1'
 
-	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $1)
+	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 	if [ "$opt_lan" = "1" ]; then
 		$IPT -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
 		$IPT -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP
 	fi
+
 	if [ "$opt_tbb" = "1" ]; then
 		$IPT -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 	if [ "$opt_wifi_adhoc" = "1" ]; then
 		$IPT -A input_ignore_nodes_wifia -s $_ddmesh_nonprimary_ip -j DROP
 	fi
-	if [ "$opt_wifi2_mesh" = "1" ]; then
+	if [ "$opt_wifi_mesh2g" = "1" ]; then
 		$IPT -A input_ignore_nodes_wifi2m -s $_ddmesh_nonprimary_ip -j DROP
 	fi
-	if [ "$opt_wifi5_mesh" = "1" ]; then
+	if [ "$opt_wifi_mesh5g" = "1" ]; then
 		$IPT -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 }
@@ -241,8 +242,8 @@ setup_ignored_nodes() {
 
 	#add tables to deny some nodes to prefer backbone connections
 	[ -n "$wifi_adhoc_ifname" ] && $IPT -I input_mesh_rule -i $wifi_adhoc_ifname -j input_ignore_nodes_wifia
-	[ -n "$wifi2_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi2_mesh_ifname -j input_ignore_nodes_wifi2m
-	[ -n "$wifi5_mesh_ifname" ] && $IPT -I input_mesh_rule -i $wifi5_mesh_ifname -j input_ignore_nodes_wifi5m
+	[ -n "$wifi_mesh2g_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh2g_ifname -j input_ignore_nodes_wifi2m
+	[ -n "$wifi_mesh5g_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh5g_ifname -j input_ignore_nodes_wifi5m
 	[ -n "$mesh_lan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
 	[ -n "$mesh_wan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
 	[ -n "$tbb_fastd_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
@@ -292,6 +293,25 @@ _update()
 			$IPT -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
 			$IPT -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
 		done
+
+		# remove/add SNAT rule when iface becomes available	
+		for cmd in D A
+		do	
+			$IPT -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null 
+			$IPT -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'lan-to-mesh' 2>/dev/null
+		done
+
+		#add rules if gateway is on lan
+		if [ -n "$lan_gateway" ]; then
+			# remove/add SNAT rule when iface becomes available	
+			for cmd in D A
+			do
+				$IPT -$cmd forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
+				$IPT -$cmd forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
+				$IPT -t nat -$cmd postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway' 2>/dev/null
+			done
+		fi
+
 	fi
 
 	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
@@ -302,18 +322,26 @@ _update()
 		done
 	fi
 
+	if [ "$wifi2_up" = "1" -a -n "$wifi2_ipaddr" -a -n "$wifi2_mask" ]; then
+		# remove/add SNAT rule when iface becomes available	
+		for cmd in D A
+		do	
+			$IPT -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2' 2>/dev/null
+		done
+	fi
+
 	#update port forwarding on hotplug.d/iface (wan rules)
-	/usr/lib/ddmesh/ddmesh-portfw.sh init
+	/usr/lib/ddmesh/ddmesh-portfw.sh load
 }
 
 logger -s -t $TAG "called with $1"
 case "$1" in
-	init)
+	init-update)
 		_init
 		_update
 		;;
 
-	update)
+	firewall-update)
 		_update
 		;;
 

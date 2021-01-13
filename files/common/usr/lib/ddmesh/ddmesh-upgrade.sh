@@ -501,17 +501,21 @@ upgrade_6_4_2()
 	uci add credentials network             
 	uci rename credentials.@network[-1]='network'
 	uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
- 	uci set credentials.network.wifi_mesh_key='ffkey-placeholder'
  fi
- uci del firewall.zone_mesh.network
- uci add_list firewall.zone_mesh.network='mesh_lan'
- uci add_list firewall.zone_mesh.network='mesh_wan'
- uci add_list firewall.zone_mesh.network='tbb_fastd'
- uci add_list firewall.zone_mesh.network='tbb_wg'
- uci add_list firewall.zone_mesh.network='wifi_adhoc'
- uci add_list firewall.zone_mesh.network='wifi2_mesh'
- uci add_list firewall.zone_mesh.network='wifi5_mesh'
  uci del network.wifi_mesh
+}
+
+upgrade_6_4_3()
+{
+ cp /rom/etc/config/firewall /etc/config/firewall
+ cp /rom/etc/firewall.user /etc/firewall.user
+}
+
+upgrade_6_4_4()
+{
+ cp /rom/etc/config/firewall /etc/config/firewall
+ uci rename network.wifi2_mesh='wifi_mesh2g'
+ uci rename network.wifi5_mesh='wifi_mesh5g'
 }
 
 #upgrade_6_X_Y()

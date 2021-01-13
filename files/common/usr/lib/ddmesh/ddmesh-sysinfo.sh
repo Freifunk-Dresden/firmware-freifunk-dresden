@@ -284,10 +284,26 @@ iptables -w -L statistic_forward -xvn | awk '
 	END {
 		for ( netA in networks )
 		{
+			key="stat_any_" netA "_fwd"
+			value=data[key]
+			if(value=="")value="0"
+			j="\"traffic_any_" networks[netA] "\":\"" value "\","
+			print j;
+
+			key="stat_" netA "_any_fwd"
+			value=data[key]
+			if(value=="")value="0"
+			j="\"traffic_" networks[netA] "_any\":\"" value "\","
+			print j;
+		}
+		for ( netA in networks )
+		{
 			for ( netB in networks )
 			{
 				key="stat_" netA "_" netB "_fwd"
-				j="\"traffic_" networks[netA] "_" networks[netB] "\":\"" data[key] "\","
+				value=data[key]
+				if(value=="")value="0"
+				j="\"traffic_" networks[netA] "_" networks[netB] "\":\"" value "\","
 				print j;
 			}
 		}
@@ -318,8 +334,8 @@ EOM
 					BEGIN {
 						# map iface to net type (set by ddmesh-utils-network-info.sh)
 						nettype_lookup[ENVIRON["wifi_adhoc_ifname"]]="wifi_adhoc";
-						nettype_lookup[ENVIRON["wifi2_mesh_ifname"]]="wifi_mesh";
-						nettype_lookup[ENVIRON["wifi5_mesh_ifname"]]="wifi_mesh";
+						nettype_lookup[ENVIRON["wifi_mesh2g_ifname"]]="wifi_mesh";
+						nettype_lookup[ENVIRON["wifi_mesh5g_ifname"]]="wifi_mesh";
 						nettype_lookup[ENVIRON["mesh_lan_ifname"]]="lan";
 						nettype_lookup[ENVIRON["mesh_wan_ifname"]]="lan";
 						nettype_lookup[ENVIRON["tbb_fastd_ifname"]]="backbone";
