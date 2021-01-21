@@ -16,7 +16,7 @@ m2testing:init:
   # ensure that we have no old data. This is important when
   # generating download.json. Else all old openwrt images would be
   # included and mixed
-    - echo "FF_GITLAB_REMOVE_DL"
+    - echo "FF_GITLAB_REMOVE_DL: [$FF_GITLAB_REMOVE_DL]"
     - echo "FF_GITLAB_REMOVE_WORKDIR: $FF_GITLAB_REMOVE_WORKDIR"
     - echo "FF_UPLOAD_DIR: $FF_UPLOAD_DIR"
 
