@@ -44,9 +44,9 @@ docker:init:
   image: openwrt-docker-build:latest
   stage: init 
   script:
-    - echo "FF_GITLAB_REMOVE_DL: [$FF_GITLAB_REMOVE_DL]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR: [$FF_GITLAB_REMOVE_WORKDIR]"
-    - echo "FF_UPLOAD_DIR: [$FF_UPLOAD_DIR]"
+    - echo "FF_GITLAB_REMOVE_DL: \"$FF_GITLAB_REMOVE_DL\""
+    - echo "FF_GITLAB_REMOVE_WORKDIR: \"$FF_GITLAB_REMOVE_WORKDIR\""
+    - echo "FF_UPLOAD_DIR: \"$FF_UPLOAD_DIR\""
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
