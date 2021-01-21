@@ -24,8 +24,8 @@ m2testing:init:
   # dont delete dl, it is not so important to have different old version for
   # one packges, but it will reduce download overhead from external servers
   # every night. so just only delete workdirs to always have a clean build
-    - test "$FF_GITLAB_REMOVE_DL" = "1" && rm -rf ~/mycache/dl/*
-    - test "$FF_GITLAB_REMOVE_WORKDIR" = "1" && rm -rf ~/mycache/workdir/*
+    - test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl/*
+    - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
     - /bin/true
   tags:
   - m2runner
@@ -185,7 +185,7 @@ m2testing:upload:
     # runner must have ssh key that are added to download server. on download server there is a user "deploy-firmware" who owns the download directories
     # add the runners public key to user stephan authorized_keys file
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
-    - ([ -n "$FF_UPLOAD_DIR" ] && rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.lxc:/var/www/files/firmware/$FF_UPLOAD_DIR/)
+    - ([ -n "${FF_UPLOAD_DIR}" ] && rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.lxc:/var/www/files/firmware/${FF_UPLOAD_DIR}/)
     - rm -rf final_output
 # artifacts are not needed (waste of disk storage), because they are uploaded to download server
 #  artifacts:
