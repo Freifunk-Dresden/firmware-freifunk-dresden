@@ -51,8 +51,8 @@ docker:init:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - test "$FF_GITLAB_REMOVE_DL" = "1" && rm -rf ~/mycache/dl/*
-    - test "$FF_GITLAB_REMOVE_WORKDIR" = "1" && rm -rf ~/mycache/workdir/*
+    - test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl/*
+    - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
     - /bin/true
   tags:
     - docker
