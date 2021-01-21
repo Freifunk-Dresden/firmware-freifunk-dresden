@@ -16,9 +16,9 @@ m2:init:
   # generating download.json. Else all old openwrt images would be
   # included and mixed
 
-    - echo "FF_GITLAB_REMOVE_DL: [$FF_GITLAB_REMOVE_DL]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR: [$FF_GITLAB_REMOVE_WORKDIR]"
-    - echo "FF_UPLOAD_DIR: [$FF_UPLOAD_DIR]"
+    - echo "FF_GITLAB_REMOVE_DL: \"$FF_GITLAB_REMOVE_DL\""
+    - echo "FF_GITLAB_REMOVE_WORKDIR: \"$FF_GITLAB_REMOVE_WORKDIR\""
+    - echo "FF_UPLOAD_DIR: \"$FF_UPLOAD_DIR\""
     
   # dont delete dl, it is not so important to have different old version for
   # one packges, but it will reduce download overhead from external servers
