@@ -228,6 +228,8 @@ callback_add_ignored_nodes() {
 	if [ "$opt_wifi_mesh5g" = "1" ]; then
 		$IPT -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP
 	fi
+
+	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 }
 
 setup_ignored_nodes() {
