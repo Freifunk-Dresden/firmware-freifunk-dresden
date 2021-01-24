@@ -518,6 +518,13 @@ upgrade_6_4_4()
  uci rename network.wifi5_mesh='wifi_mesh5g'
 }
 
+upgrade_6_4_5()
+{
+ uci set credentials.url.firmware_download_release="$(uci -c /rom/etc/config get credentials.url.firmware_download_release)"
+ uci set credentials.url.firmware_download_testing="$(uci -c /rom/etc/config get credentials.url.firmware_download_testing)"
+ uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
+}
+
 #upgrade_6_X_Y()
 #{
 # true
