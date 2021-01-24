@@ -9,7 +9,6 @@ else
 fi
 
 DL_INFO_FILE="download.json"
-CERT="--ca-certificate=/etc/ssl/certs/current.pem --ca-certificate=/etc/ssl/certs/comming.pem --ca-certificate=/etc/ssl/certs/cross1.pem --ca-certificate=/etc/ssl/certs/cross2.pem"
 LOCAL_FILE="/tmp/download.json"
 
 eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
@@ -18,7 +17,7 @@ model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 
 rm -f $LOCAL_FILE
 
-uclient-fetch $CERT -O $LOCAL_FILE "$URL_DL/$DL_INFO_FILE" ||  error=1
+wget -O $LOCAL_FILE "$URL_DL/$DL_INFO_FILE" ||  error=1
 if [ "$error" = "1" ]; then
 	echo "{\"error\":\"downloading $URL_DL/$DL_INFO_FILE\"}"
 	exit 1

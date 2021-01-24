@@ -53,7 +53,7 @@ $SPLASH_BASE
 EOM
 if [ -f /www/custom/custom-head.url ]; then
         url="$(cat /www/custom/custom-head.url | sed '1,1{s#[`$()]##}')"
-        uclient-fetch -O - "$url"
+        wget -O - "$url"
 else
 	cat /www/custom/custom-head.html
 fi

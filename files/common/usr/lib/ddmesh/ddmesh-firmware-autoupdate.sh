@@ -4,8 +4,7 @@
 
 TAG="AutoFirmwareUpdate"
 FIRMWARE_FILE="/tmp/firmware.bin"
-ERROR_FILE=/tmp/uclient.error
-CERT="--ca-certificate=/etc/ssl/certs/current.crt --ca-certificate=/etc/ssl/certs/comming.crt"
+ERROR_FILE=/tmp/wget.error
 
 usage() {
 	echo "$0 <run [nightly] | check | compare new old>"
@@ -64,7 +63,7 @@ check_version() {
 download_firmware(){
 	url=$(echo $FILE_INFO_JSON | jsonfilter -e '@.firmware_url')
 	logger -s -t "$TAG" "Try downloading $url"
-	uclient-fetch $CERT -O $FIRMWARE_FILE "$url" 2>$ERROR_FILE || {
+	wget -O $FIRMWARE_FILE "$url" 2>$ERROR_FILE || {
 		logger -s -t "$TAG" "Error: $(cat $ERROR_FILE)"
 		return 1
 	}

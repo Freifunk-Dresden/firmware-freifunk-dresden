@@ -10,8 +10,6 @@ node="$(uci get ddmesh.system.node)"
 key="$(uci get ddmesh.system.register_key)"
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
-CERT="--ca-certificate=/etc/ssl/certs/current.pem --ca-certificate=/etc/ssl/certs/comming.pem --ca-certificate=/etc/ssl/certs/cross1.pem --ca-certificate=/etc/ssl/certs/cross2.pem"
-
 echo "usage: register_node.sh [new_node]"
 echo "current node: [$node]"
 echo "current key: [$key]"
@@ -30,7 +28,7 @@ test -z "$key" && {
 }
 
 echo "Try to register node [$node], key [$key]"
-n="$(uclient-fetch $CERT -O- $(uci get credentials.registration.register_service_url)$key\&node=$node 2>/dev/null)"
+n="$(wget -O- $(uci get credentials.registration.register_service_url)$key\&node=$node 2>/dev/null)"
 
 if [ -z "$n" ]; then
 	echo "connection error"

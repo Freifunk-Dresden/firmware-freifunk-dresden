@@ -48,7 +48,7 @@ EOM
 echo "<div>"
 if [ -f /www/custom/custom.url ]; then
 	url="$(cat /www/custom/custom.url | sed '1,1{s#[`$()]##}')"
-	uclient-fetch -O - "$url"
+	wget -O - "$url"
 else
 	cat /www/custom/custom.html
 fi
