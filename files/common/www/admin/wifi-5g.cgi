@@ -107,7 +107,7 @@ $(iwinfo $wifi_status_radio5g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 
 <tr><th></th><td></td></tr>
 <tr><th>Access-Point-SSID:</th>
-<TD class="nowrap">$(uci get wireless.@wifi-iface[2].ssid)</TD>
+<TD class="nowrap">$(uci get wireless.wifi2_5g.ssid)</TD>
 </tr>
 
 <tr><td colspan="2"><hr size=1></td></tr>
