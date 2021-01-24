@@ -31,7 +31,7 @@ eval $(/usr/bin/freifunk-upload -e 2>/dev/null)
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 FIRMWARE_FILE="/tmp/firmware.bin"
-CERT="--ca-certificate=/etc/ssl/certs/current.crt --ca-certificate=/etc/ssl/certs/comming.crt"
+CERT="--ca-certificate=/etc/ssl/certs/current.pem --ca-certificate=/etc/ssl/certs/comming.pem --ca-certificate=/etc/ssl/certs/cross1.pem --ca-certificate=/etc/ssl/certs/cross2.pem"
 
 download_file_info()
 {

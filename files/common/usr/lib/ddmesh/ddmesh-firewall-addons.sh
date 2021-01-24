@@ -151,7 +151,7 @@ setup_statistic_rules() {
 	$IPT -A forwarding_rule -j statistic_forward
 	$IPT -A output_rule -j statistic_output
 
-	NETWORKS="bat wan wwan lan wifi wifi2 vpn tbb_fastd tbb_wg mesh_lan mesh_wan privnet"
+	NETWORKS="bat wan wwan lan wifi_adhoc wifi_mesh2g wifi_mesh5g wifi2 vpn tbb_fastd tbb_wg mesh_lan mesh_wan privnet"
 	for net in $NETWORKS
 	do
 #		logger -s -t $TAG "LOOP: net=$net"
@@ -348,6 +348,9 @@ case "$1" in
 		;;
 
 	update_ignore) update_ignored_nodes
+		;;
+	*)
+	 	echo "invalid param"
 		;;
 
 esac

@@ -10,7 +10,7 @@ node="$(uci get ddmesh.system.node)"
 key="$(uci get ddmesh.system.register_key)"
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
-CERT="--ca-certificate=/etc/ssl/certs/current.crt --ca-certificate=/etc/ssl/certs/comming.crt"
+CERT="--ca-certificate=/etc/ssl/certs/current.pem --ca-certificate=/etc/ssl/certs/comming.pem --ca-certificate=/etc/ssl/certs/cross1.pem --ca-certificate=/etc/ssl/certs/cross2.pem"
 
 echo "usage: register_node.sh [new_node]"
 echo "current node: [$node]"

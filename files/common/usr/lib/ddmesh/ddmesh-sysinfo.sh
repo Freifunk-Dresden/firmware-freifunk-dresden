@@ -268,7 +268,9 @@ iptables -w -L statistic_forward -xvn | awk '
 		# networks [ firewall_rule_name ] = sysinfo_key_name
 		networks["lan"]="lan";
 		networks["wan"]="wan";
-		networks["wifi"]="adhoc";
+		networks["wifi_adhoc"]="adhoc";
+		networks["wifi_mesh2g"]="mesh2g";
+		networks["wifi_mesh5g"]="mesh5g";
 		networks["wifi2"]="ap";
 		networks["vpn"]="ovpn";
 		networks["bat"]="gwt";
