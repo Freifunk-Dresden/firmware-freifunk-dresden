@@ -51,7 +51,6 @@ log to syslog level error;
 mode tap;
 interface "$net_ifname";
 method "salsa2012+umac";
-secure handshakes yes;
 bind any:$privnet_server_port;
 secret "$secret";
 mtu $MTU;
