@@ -63,7 +63,6 @@ mode tap;
 interface "$ifname";
 method "null";
 #method "salsa2012+umac";
-secure handshakes yes;
 bind any:$backbone_local_fastd_port;
 secret "$secret";
 mtu $MTU;
