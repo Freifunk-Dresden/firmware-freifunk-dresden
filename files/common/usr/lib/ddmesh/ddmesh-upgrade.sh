@@ -523,6 +523,7 @@ upgrade_6_4_5()
  uci set credentials.url.firmware_download_release="$(uci -c /rom/etc/config get credentials.url.firmware_download_release)"
  uci set credentials.url.firmware_download_testing="$(uci -c /rom/etc/config get credentials.url.firmware_download_testing)"
  uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
+ uci set ddmesh.system.mesh_sleep='1'
 }
 
 #upgrade_6_X_Y()
