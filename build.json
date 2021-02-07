@@ -30,7 +30,7 @@
 							#      	a set of routers when selecting "multiple devices"
 							#	via "make menuconfig"
 
-		"openwrt_rev":"d5810aa61367a9424599935572f622d27f8303f0", # v19.07.4
+		"openwrt_rev":"b12284a14ce90d77c9b0e77876454e173be5bea6", # v19.07.6
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
 							# Note that selecting some packages as module could have
@@ -48,12 +48,12 @@
 		# for short commit value use: git log --abbrev-commit
 
 
-		# Versions from: 2020.11.08
+		# Versions: tagged on openwrt v19.07.6 
 		"feeds" : [
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
-				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"5b3870890"},
+				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"ce5a4eaea2"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"02b4dbf"},
-				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"c1e923b"}
+				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"6e019c94d"}
 			  ],
 
 		# install addional packages from feeds (see feeds.conf)

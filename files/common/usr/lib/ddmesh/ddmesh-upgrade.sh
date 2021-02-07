@@ -526,6 +526,11 @@ upgrade_6_4_5()
  uci set ddmesh.system.mesh_sleep='1'
 }
 
+upgrade_6_4_6()
+{
+ true
+}
+
 #upgrade_6_X_Y()
 #{
 # true

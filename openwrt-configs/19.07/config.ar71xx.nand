@@ -202,6 +202,7 @@ CONFIG_KERNEL_DEBUG_FS=y
 # CONFIG_KERNEL_MAGIC_SYSRQ is not set
 # CONFIG_KERNEL_DEBUG_PINCTRL is not set
 # CONFIG_KERNEL_DEBUG_GPIO is not set
+# CONFIG_KERNEL_COREDUMP is not set
 # CONFIG_KERNEL_ELF_CORE is not set
 # CONFIG_KERNEL_PROVE_LOCKING is not set
 CONFIG_KERNEL_PRINTK_TIME=y
@@ -1550,11 +1551,6 @@ CONFIG_ddmesh-mesh-wifi=y
 # CONFIG_PACKAGE_valgrind is not set
 
 #
-# Extra packages
-#
-# CONFIG_PACKAGE_wireguard-tools is not set
-
-#
 # Firmware
 #
 
@@ -2748,6 +2744,7 @@ CONFIG_OPENVPN_mbedtls_ENABLE_PF=y
 CONFIG_OPENVPN_mbedtls_ENABLE_SMALL=y
 # CONFIG_PACKAGE_openvpn-nossl is not set
 # CONFIG_PACKAGE_openvpn-openssl is not set
+# CONFIG_PACKAGE_wireguard-tools is not set
 
 #
 # WWAN
