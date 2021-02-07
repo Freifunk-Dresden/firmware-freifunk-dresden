@@ -158,22 +158,22 @@ setup_statistic_rules() {
 		ifname=$(eval echo \$$net"_ifname")
 		test -z "$ifname" && continue
 
-		target_in=stat_"$net"_in
+		target_in=s_"$net"_in
 		$IPT -N $target_in 2>/dev/null
 		$IPT -D statistic_input -i $ifname -j $target_in 2>/dev/null
 		$IPT -A statistic_input -i $ifname -j $target_in
 
-		target_out=stat_"$net"_out
+		target_out=s_"$net"_out
 		$IPT -N $target_out 2>/dev/null
 		$IPT -D statistic_output -o $ifname -j $target_out 2>/dev/null
 		$IPT -A statistic_output -o $ifname -j $target_out
 
-		target_fwd=stat_any_"$net"_fwd
+		target_fwd=s_any_"$net"_f
 		$IPT -N $target_fwd 2>/dev/null
 		$IPT -D statistic_forward -o $ifname -j $target_fwd 2>/dev/null
 		$IPT -A statistic_forward -o $ifname -j $target_fwd
 
-		target_fwd=stat_"$net"_any_fwd
+		target_fwd=s_"$net"_any_f
 		$IPT -N $target_fwd 2>/dev/null
 		$IPT -D statistic_forward -i $ifname -j $target_fwd 2>/dev/null
 		$IPT -A statistic_forward -i $ifname -j $target_fwd
@@ -185,7 +185,7 @@ setup_statistic_rules() {
 			ifname2=$(eval echo \$$net2"_ifname")
 			test -z "$ifname2" && continue
 
-			target_fwd=stat_"$net"_"$net2"_fwd
+			target_fwd=s_"$net"_"$net2"_f
 			$IPT -N $target_fwd 2>/dev/null
 			$IPT -D statistic_forward -i $ifname -o $ifname2 -j $target_fwd 2>/dev/null
 			$IPT -A statistic_forward -i $ifname -o $ifname2 -j $target_fwd

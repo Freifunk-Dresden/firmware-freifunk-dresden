@@ -286,13 +286,13 @@ iptables -w -L statistic_forward -xvn | awk '
 	END {
 		for ( netA in networks )
 		{
-			key="stat_any_" netA "_fwd"
+			key="s_any_" netA "_f"
 			value=data[key]
 			if(value=="")value="0"
 			j="\"traffic_any_" networks[netA] "\":\"" value "\","
 			print j;
 
-			key="stat_" netA "_any_fwd"
+			key="s_" netA "_any_f"
 			value=data[key]
 			if(value=="")value="0"
 			j="\"traffic_" networks[netA] "_any\":\"" value "\","
@@ -302,7 +302,7 @@ iptables -w -L statistic_forward -xvn | awk '
 		{
 			for ( netB in networks )
 			{
-				key="stat_" netA "_" netB "_fwd"
+				key="s_" netA "_" netB "_f"
 				value=data[key]
 				if(value=="")value="0"
 				j="\"traffic_" networks[netA] "_" networks[netB] "\":\"" value "\","
