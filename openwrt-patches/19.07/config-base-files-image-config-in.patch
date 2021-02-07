@@ -1,14 +1,5 @@
 --- buildroot/package/base-files/image-config.in.ori	2020-10-07 00:14:39.409837748 +0000
 +++ buildroot/package/base-files/image-config.in	2020-10-07 00:16:48.938575609 +0000
-@@ -183,7 +183,7 @@
- 	config VERSION_REPO
- 		string
- 		prompt "Release repository"
--		default "http://downloads.openwrt.org/releases/19.07.4"
-+		default "https://github.com/freifunk-dresden/firmware-freifunk-dresden.git"
- 		help
- 			This is the repository address embedded in the image, it defaults
- 			to the trunk snapshot repo; the url may contain the following placeholders:
 @@ -210,7 +210,7 @@
 
  	config VERSION_MANUFACTURER

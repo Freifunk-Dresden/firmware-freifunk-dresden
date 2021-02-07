@@ -68,6 +68,7 @@
 
  config KERNEL_CC_OPTIMIZE_FOR_SIZE
  	bool "Optimize for size"
++	default y
  	help
 	  Enabling this option will pass "-Os" instead of "-O2" to
 	  your compiler resulting in a smaller kernel.
