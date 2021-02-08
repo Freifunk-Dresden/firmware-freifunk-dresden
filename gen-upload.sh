@@ -229,7 +229,8 @@ gen_download_json_add_data()
 
 			# determine "sysupgrade" files
 			if [   	-z "${file/*sysupgrade*/}" \
-			     -o	-z "${file/*x86-generic*/}" ]
+			     -o	-z "${file/*x86-generic*/}" \
+			     -o	-z "${file/*x86-64*/}" ]
 			then
 				sysupgrade=1
 			else
