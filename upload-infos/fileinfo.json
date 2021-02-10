@@ -152,7 +152,7 @@
 { "name":"", "autoupdate":"1", "model":"tplink,archer-c60-v1", "model2":"TP-Link Archer C60 v1", "filename":"openwrt-ath79-generic-tplink_archer-c60-v1-squashfs-sysupgrade.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-tplink_archer-c60-v2-initramfs-kernel.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-tplink_archer-c60-v2-squashfs-factory.bin", "comment":"new file"},
-{ "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-ath79-generic-tplink_archer-c60-v2-squashfs-sysupgrade.bin", "comment":"new file"},
+{ "name":"", "autoupdate":"1", "model":"tplink,archer-c60-v2", "model2":"TP-Link Archer C60 v2", "filename":"openwrt-ath79-generic-tplink_archer-c60-v2-squashfs-sysupgrade.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-tplink_tl-wr1043nd-v2-initramfs-kernel.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-factory.bin", "comment":"new file"},
 { "name":"", "autoupdate":"1", "model":"tplink,tl-wr1043nd-v2", "model2":"TP-Link TL-WR1043ND v2", "filename":"openwrt-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-sysupgrade.bin", "comment":"new file"},
