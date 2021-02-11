@@ -75,10 +75,126 @@ model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 # first search system type. if not use model name. exit after first cpu core
 cpu_info="$(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p')"
 
+function parseWifiDump()
+{
+ ifname="$1"
+ statfile="$2"
+ touch $statfile
+
+ iw dev $ifname station dump | awk -v statfile=$statfile '
+        function uptime()
+	{
+		cmd = "cat /proc/uptime"
+		cmd | getline line
+		split(line, arr, ".")
+		return arr[1]
+	}
+	BEGIN {
+		while(getline line < statfile > 0)
+		{
+			split(line,a," ");
+			mac[a[1]]=a[2]
+		};
+		close(statfile);
+
+		timekey[1] = "1min"
+		timekey[2] = "5min"
+		timekey[3] = "15min"
+		timekey[4] = "1h"
+		timekey[5] = "6h"
+		timekey[6] = "12h"
+		timekey[7] = "1d"
+		timekey[8] = "7d"
+		timekey[9] = "14d"
+		timekey[10] = "30d"
+		timekey[11] = "90d"
+		timekey[12] = "infinity"
+	}
+	/Station/{
+			m=$2
+			mac[m]=systime()
+	}
+	END {
+		cur = systime()
+		up = uptime()
+
+		for(i=1;i<=12;i++)
+		{ count[i]=0 }
+
+		for(m in mac)
+		{
+			expired="-"
+			seen="+"
+			d = cur - mac[m]
+
+			# default mark all stat columns
+			s[1]=seen
+			if( up > 60) s[2]=seen
+			if( up > 300) s[3]=seen
+			if( up > 900) s[4]=seen
+			if( up > 3600) s[5]=seen
+			if( up > (3600*6)) s[6]=seen
+			if( up > (3600*12)) s[7]=seen
+			if( up > (86400)) s[8]=seen
+			if( up > (86400*7)) s[9]=seen
+			if( up > (86400*14)) s[10]=seen
+			if( up > (86400*30)) s[11]=seen
+			if( up > (86400*90)) s[12]=seen
+
+			# s1 expired 1min
+			if( d > 60) s[1]=expired
+			# s2 expired 5min
+			if( d > 300) s[2]=expired
+			# s3 expired 15min
+			if( d > 900) s[3]=expired
+			# s4 expired 1h
+			if( d > 3600) s[4]=expired
+			# s5 expired 6h
+			if( d > (3600*6)) s[5]=expired
+			# s6 expired 12h
+			if( d > (3600*12)) s[6]=expired
+			# s7 expired 1d
+			if( d > (86400)) s[7]=expired
+			# s8 expired 7d
+			if( d > (86400*7)) s[8]=expired
+			# s9 expired 14d
+			if( d > (86400*14)) s[9]=expired
+			# s10 expired 30d
+			if( d > (86400*30)) s[10]=expired
+			# s11 expired 3m
+			if( d > (86400*90)) s[11]=expired
+
+			# s12 counts unlimited time
+
+			# write back statfile
+			printf("%s %d\n", m, mac[m]) > statfile 
+
+			#printf("%s %s %s %s %s %s %s %s %s %s %s %s %s,\n", m, s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10], s[11], s[12])
+
+			# count each column
+			for(i=1;i<=12;i++)
+			{
+				if(match(s[i],seen))
+					count[i]++
+			}
+		}
+		close(statfile)
+
+		# output json
+		printf("{\n");
+		for(i=1;i<=12;i++)
+		{
+			if(i>1) printf(",\n");
+			printf("\"%s\": %d", timekey[i], count[i])
+		}
+		printf("\n}\n");
+	}
+'
+}
 
 cat << EOM >> $OUTPUT
 {
- "version":"15",
+ "version":"16",
  "timestamp":"$(date +'%s')",
  "data":{
 
@@ -147,120 +263,10 @@ EOM
 
 cat<<EOM >> $OUTPUT
 		"statistic" : {
-EOM
 
-cat /proc/net/arp | awk '
-	function uptime()
-	{
-		cmd = "cat /proc/uptime"
-		cmd | getline line
-		split(line, arr, ".")
-		return arr[1]
-	}
-	BEGIN {
-		statfile="/var/wifi2_client.stat"
-		while(getline line < statfile > 0)
-		{
-			split(line,a," ");
-			mac[a[1]]=a[2]
-		};
-		close(statfile);
-	}
-	{
-		if(match("'$wifi2_ifname'",$6) && match("0x2",$3))
-		{
-			m=$4
-			mac[m]=systime()
-		}
-	}
-	END {
-		cur = systime()
-		up = uptime()
+"client2g" : $( parseWifiDump wifi2ap /var/statistic/wifi2g.stat),
+"client5g" : $( parseWifiDump wifi5ap /var/statistic/wifi5g.stat),
 
-		for(i=1;i<=8;i++)
-		{ count[i]=0 }
-
-		for(m in mac)
-		{
-			expired="-"
-			seen="+"
-			d = cur - mac[m]
-
-			# default mark all stat columns
-			s[1]=seen
-			if( up > 60) s[2]=seen
-			if( up > 300) s[3]=seen
-			if( up > 900) s[4]=seen
-			if( up > 3600) s[5]=seen
-			if( up > (3600*6)) s[6]=seen
-			if( up > (3600*12)) s[7]=seen
-			if( up > (86400)) s[8]=seen
-			if( up > (86400*7)) s[9]=seen
-			if( up > (86400*14)) s[10]=seen
-			if( up > (86400*30)) s[11]=seen
-			if( up > (86400*90)) s[12]=seen
-
-			# s1 expired 1min
-			if( d > 60) s[1]=expired
-			# s2 expired 5min
-			if( d > 300) s[2]=expired
-			# s3 expired 15min
-			if( d > 900) s[3]=expired
-			# s4 expired 1h
-			if( d > 3600) s[4]=expired
-			# s5 expired 6h
-			if( d > (3600*6)) s[5]=expired
-			# s6 expired 12h
-			if( d > (3600*12)) s[6]=expired
-			# s7 expired 1d
-			if( d > (86400)) s[7]=expired
-			# s8 expired 7d
-			if( d > (86400*7)) s[8]=expired
-			# s9 expired 14d
-			if( d > (86400*14)) s[9]=expired
-			# s10 expired 30d
-			if( d > (86400*30)) s[10]=expired
-			# s11 expired 3m
-			if( d > (86400*90)) s[11]=expired
-
-			# s12 counts unlimited time
-
-			# write back statfile
-			printf("%s %d\n", m, mac[m]) > statfile
-
-			#printf("%s %s %s %s %s %s %s %s %s %s %s %s %s,\n", m, s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10], s[11], s[12])
-
-			# count each column
-			for(i=1;i<=12;i++)
-			{
-				if(match(s[i],seen))
-					count[i]++
-			}
-		}
-		close(statfile)
-
-		# output json
-		printf("\"clients\" : [");
-		for(i=1;i<=12;i++)
-		{
-			if(i>1) printf(",");
-			printf("%d", count[i])
-		}
-		printf("],\n");
-
-		# deprecated
-		printf("\"accepted_user_count\" : %d,\n", count[4]);
-		printf("\"dhcp_count\" : %d,\n", count[4]);
-	}
-' >> $OUTPUT
-
-# clear all arp wifi entries, to remove dead entries.
-# this will create a very short delay when arp determins MAC for existing connection again.
-# but this is not a problem
-ip link set arp off dev $wifi2_ifname && ip link set arp on dev $wifi2_ifname
-
-cat<<EOM >> $OUTPUT
-			"dhcp_lease" : "$(grep 'dhcp-range=.*wifi2' /var/etc/dnsmasq.conf.dnsmasq | cut -d',' -f5)",
 EOM
 
 iptables -w -L statistic_forward -xvn | awk '
