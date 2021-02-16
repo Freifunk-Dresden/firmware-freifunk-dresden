@@ -46,7 +46,6 @@ start() {
 	[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
 
 	# need to wait, until async netifd has finished. (there is no event/condition to wait for)
-logger -t "DEVEL" "#evt. auf alle "ups" in /tmp/state/network warten?"
 	logger -t "SLEEP" "SLEEP START"
 	sleep 60
 	logger -t "SLEEP" "SLEEP END"
