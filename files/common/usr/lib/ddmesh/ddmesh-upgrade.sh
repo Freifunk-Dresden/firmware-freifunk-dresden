@@ -531,6 +531,11 @@ upgrade_6_4_6()
  true
 }
 
+upgrade_7_0_1()
+{
+ true
+}
+
 #upgrade_6_X_Y()
 #{
 # true

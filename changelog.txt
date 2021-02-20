@@ -1,3 +1,17 @@
+2021-02-13 7.0.1 (rc)
+--------------------------------------------------
+wifi                      - disable external wifi button
+                          - fix wifi ssid
+certificates              - replace let's encrypt certificates with own to avoid
+                            nodes registration and firmware download problems in future
+network                   - rework network interface naming
+network-gui               - colorize interface names in node lists
+gui                       - improve wifi hotspot list
+sysinfo                   - new version for sysinfo.json
+openwrt                   - update to last openwrt release (19.07.05)
+statistic                 - internal minor fixes
+device support            - add some new devices
+
 
 2020-12-20 6.4.3 (master)
 --------------------------------------------------
