@@ -5,10 +5,11 @@
 #  - ln -s ~/mycache/dl
 #  - ln -s ~/mycache/workdir
 
-m2testing:init:
+m2tags:init:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: init       # special state, run before all other stages
   script:
     - ln -s ~/mycache/dl
@@ -30,10 +31,11 @@ m2testing:init:
   tags:
   - m2runner
 
-m2testing:ar71xx.tiny:
+m2tags:ar71xx.tiny:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -42,10 +44,11 @@ m2testing:ar71xx.tiny:
   tags:
   - m2runner
 
-m2testing:ar71xx.generic:
+m2tags:ar71xx.generic:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -54,10 +57,11 @@ m2testing:ar71xx.generic:
   tags:
   - m2runner
 
-m2testing:ar71xx.nand:
+m2tags:ar71xx.nand:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -66,10 +70,11 @@ m2testing:ar71xx.nand:
   tags:
   - m2runner
 
-m2testing:x86.generic:
+m2tags:x86.generic:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -78,10 +83,11 @@ m2testing:x86.generic:
   tags:
   - m2runner
 
-m2testing:x64.generic:
+m2tags:x64.generic:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -90,10 +96,11 @@ m2testing:x64.generic:
   tags:
   - m2runner
 
-m2testing:ramips:
+m2tags:ramips:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -102,10 +109,11 @@ m2testing:ramips:
   tags:
   - m2runner
 
-m2testing:ipq40xx:
+m2tags:ipq40xx:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -114,10 +122,11 @@ m2testing:ipq40xx:
   tags:
   - m2runner
 
-m2testing:lantiq:
+m2tags:lantiq:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -126,10 +135,11 @@ m2testing:lantiq:
   tags:
   - m2runner
 
-m2testing:ath79:
+m2tags:ath79:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -138,10 +148,11 @@ m2testing:ath79:
   tags:
   - m2runner
 
-m2testing:sunxi:
+m2tags:sunxi:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -150,10 +161,11 @@ m2testing:sunxi:
   tags:
   - m2runner
 
-m2testing:mpc85xx:
+m2tags:mpc85xx:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: build
   script:
     - ln -s ~/mycache/dl
@@ -163,20 +175,22 @@ m2testing:mpc85xx:
   - m2runner
 
 
-m2testing:test:
+m2tags:test:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: test
   script:
     - echo "dummy"
   tags:
   - m2runner
 
-m2testing:upload:
+m2tags:upload:
   only:
     # DO NOT UPLOAD for branch: R_FIRMWARE....
     - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
   stage: deploy
   script:
     - ln -s ~/mycache/dl
