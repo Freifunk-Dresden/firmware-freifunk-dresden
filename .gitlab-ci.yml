@@ -5,7 +5,7 @@ stages:
 - deploy
 
 include:
-  - local: '/gitlab-ci/m2runner-testing.yml'
+  - local: '/gitlab-ci/m2runner-tags.yml'
   - local: '/gitlab-ci/m2runner-master.yml'
   - local: '/gitlab-ci/docker2-yaro.yml'
   - local: '/gitlab-ci/docker.yml'
