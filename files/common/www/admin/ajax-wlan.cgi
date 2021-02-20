@@ -56,18 +56,12 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 		wifi_channel=$(( ($wifi_freq-5180)/5 + 36 ))
 	fi
 
-	wifi_adhoc="no"
-	test "$wifi_mode" = "ad-hoc" && wifi_adhoc="yes"
-	test "$wifi_mode" = "mesh" && wifi_adhoc="yes"
-	cat<<EOM
-EOM
-
 	type=""
 
 	# Mesh-Net
 	A="$(uci get ddmesh.network.essid_adhoc)"
 	if [ "$wifi_essid_clean" = "$A" ]; then
-		type="ffmesh"
+		type="ffadhoc"
 	fi
 
 	# check for meshid
@@ -84,7 +78,7 @@ EOM
 	fi
 
 	line="{\"type\": \"$type\", \"ssid\": \"$wifi_essid_clean\", \"channel\": \"$wifi_channel\","
-	line="$line  \"open\": \"$wifi_open\", \"adhoc\": \"$wifi_adhoc\",\"signal\": \"$wifi_signal\","
+	line="$line  \"open\": \"$wifi_open\", \"signal\": \"$wifi_signal\","
 	line="$line  \"uptime\": \"$wifi_uptime\", \"bssid\": \"$wifi_bssid\"},"
 
 	# output line from subshell
@@ -112,7 +106,7 @@ do
 	[ -z "$line" ] && break;
 
 	eval $(echo "$line" | jsonfilter -e wifi_type='@.type' -e wifi_ssid='@.ssid' -e wifi_channel='@.channel' \
-					 -e wifi_open='@.open' -e wifi_adhoc='@.adhoc' -e wifi_signal='@.signal' \
+					 -e wifi_open='@.open' -e wifi_signal='@.signal' \
 					 -e wifi_uptime='@.uptime' -e wifi_bssid='@.bssid')
 
 	gif=5
@@ -124,25 +118,52 @@ do
 
 
 	case "$wifi_type" in
-		ffmesh)
+		ffadhoc)
+			#display only one entry
+			test "$seen_ffadhoc" = 1 && continue
+
 			style="$base_style font-weight:bold;"
-			class="selected"
+			class="selected_adhoc"
+			meshimage="yes.png"
+			wifi_ssid='Freifunk-Adhoc-Net'
+			wifi_bssid='multiple'
+			seen_ffadhoc=1
+			;;
+		ffmesh)
+			#display only one entry
+			ch="$(uci -q get wireless.radio2g.channel)"
+			if [ "$ch" = "$wifi_channel" ]; then
+				test "$seen_ffmesh2g" = 1 && continue
+				seen_ffmesh2g=1
+			else
+				test "$seen_ffmesh5g" = 1 && continue
+				seen_ffmesh5g=1
+			fi
+
+			style="$base_style font-weight:bold;"
+			class="selected_mesh"
+			meshimage="yes.png"
+			wifi_ssid='Freifunk-Mesh-Net'
+			wifi_bssid='multiple'
 			;;
 		ffap)
 			style="$base_style font-weight:bold;"
 			class="selected_ap"
+			meshimage="no.png"
 			;;
 		*)
 			class=colortoggle$T
 			style="$base_style"
+			meshimage="no.png"
 			;;
 	esac
+
 
 cat<<EOM
 <TR class="$class" >
 <TD style="$style" width="$WIDTH">$wifi_ssid</TD>
 <TD style="$style">$wifi_channel</TD>
-<TD style="$style"><IMG SRC="/images/$wifi_adhoc.png" ALT="$wifi_adhoc" TITLE="Ad-Hoc/Mesh mode"></TD>
+<TD style="$style"><IMG SRC="/images/$meshimage" ALT="$wifi_type" TITLE="Ad-Hoc/Mesh mode"></TD>
 <TD style="$style"><IMG SRC="/images/$wifi_open.png" ALT="$wifi_open"></TD>
 <TD style="$style"><IMG SRC="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm"></TD>
 <TD style="$style">- $wifi_signal</TD>

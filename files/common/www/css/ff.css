@@ -218,7 +218,10 @@ input.disabled {
 tr.default {
 	background-color: #cccccc;
 }
-tr.selected{
+tr.selected_adhoc{
+	background-color: #ccccff;
+}
+tr.selected_mesh{
 	background-color: #aaaaff;
 }
 tr.selected_ap{
