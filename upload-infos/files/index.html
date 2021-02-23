@@ -49,13 +49,14 @@
 
 <div>
 <b>Spalten anzeigen:</b>
- <a class="toggle-vis" data-column="3">Model</a>
+ <a class="toggle-vis" data-column="4">Model</a>
 </div>
 
 <table id="table" class="display cell-border compact" style="width:100%;">
         <thead>
             <tr style="background-color:#434244;color:#cccccc;">
                 <th>Ger&auml;t</th>
+                <th>Auto Update</th>
                 <th>Firmware</th>
                 <th>md5sum</th>
                 <th>Model</th>
@@ -65,7 +66,7 @@
 <!--
 	  <tfoot>
             <tr style="background-color:#434244;color:#cccccc;">
-	  <th colspan="5" ></th>
+	  <th colspan="6" ></th>
             </tr>
         </tfoot>
 -->
@@ -112,7 +113,7 @@ my.query(function() {
 	paging: false,
 
 	// sort after filename
-	"order" : [[1,'asc']],
+	"order" : [[2,'asc']],
 
 	// extensions
 	"fixedHeader": true,
@@ -121,9 +122,9 @@ my.query(function() {
 
 	// define nowrap for specific columns
 	"columnDefs": [
-		{ className: "dt-nowrap", "targets": [0,1,2,3,4] },
+		{ className: "dt-nowrap", "targets": [0,1,2,3,4,5] },
 		// default: visible
-		{ visible: false, "targets": [ 3 ] }
+		{ visible: false, "targets": [ 4 ] }
 
 	],
         "data": data.fileinfo,
@@ -154,6 +155,15 @@ my.query(function() {
                                         if(n == '') n = data.model1;
                                         if(n == '') n = '-';
                                         if(n == undefined) n = '-';
+                                        return n;
+				}
+		},
+		{ "data":	function(row, type, set, meta) { return row; },
+		  "render" : 	function (data, type, row) {
+					var n = data.autoupdate;
+                                        if(n == '1') n = "<font color=\"green\">yes</font>";
+                                        else if(n == '0') n = "<font color=\"gray\">no</font>";
+					else n = "";
                                         return n;
 				}
 		},
