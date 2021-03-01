@@ -151,6 +151,17 @@ m2:mpc85xx:
   - m2runner
 
 
+m2:bcm53xx.arm.generic:
+  only:
+    - master
+  stage: build
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh bcm53xx.arm.generic rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m2runner
+
 m2:test:
   only:
     - master

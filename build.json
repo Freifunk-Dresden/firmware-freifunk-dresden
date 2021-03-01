@@ -180,6 +180,12 @@
 		"target":"ipq40xx",
 		"subtarget":"generic"
 	},
+	{	
+		"name":"bcm53xx.generic.arm",
+		"target":"bcm53xx",
+		"subtarget":"generic",
+		"openwrt_variant":"arm"
+	},
         {
                 "name":"mpc85xx.p1020",
                 "target":"mpc85xx",
