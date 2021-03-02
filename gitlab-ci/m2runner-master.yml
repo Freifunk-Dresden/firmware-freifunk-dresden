@@ -151,14 +151,14 @@ m2:mpc85xx:
   - m2runner
 
 
-m2:bcm53xx.arm.generic:
+m2:bcm53xx.generic.arm:
   only:
     - master
   stage: build
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh bcm53xx.arm.generic rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh bcm53xx.generic.arm rerun -j"$(( $(nproc) + 1))"
   tags:
   - m2runner
 
