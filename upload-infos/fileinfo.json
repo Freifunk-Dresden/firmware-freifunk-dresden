@@ -34,6 +34,8 @@
 { "name":"", "autoupdate":"1", "model":"tl-wa901nd", "model2":"TP-Link TL-WA801N/ND v1", "filename":"openwrt-ar71xx-tiny-tl-wa801nd-v1-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-tiny-tl-wa801nd-v2-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"tl-wa801nd-v2", "model2":"TP-Link TL-WA801N/ND v2", "filename":"openwrt-ar71xx-tiny-tl-wa801nd-v2-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "filename":"openwrt-ar71xx-tiny-tl-wa801nd-v3-squashfs-factory.bin", "comment":""},
+{ "name":"", "autoupdate":"1", "model":"tl-wa801nd-v3", "model2":"TP-Link TL-WA801N/ND v3", "filename":"openwrt-ar71xx-tiny-tl-wa801nd-v3-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-tiny-tl-wa830re-v2-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"tl-wa830re-v2", "model2":"TP-Link TL-WA830RE v2", "filename":"openwrt-ar71xx-tiny-tl-wa830re-v2-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-tiny-tl-wa850re-v1-squashfs-factory.bin", "comment":""},
