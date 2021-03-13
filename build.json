@@ -34,7 +34,7 @@
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
 							# Note that selecting some packages as module could have
-							# dependencies to kernel modules/libs, that are included 
+							# dependencies to kernel modules/libs, that are included
 							# in image also if package is optional (ipk)
 							# This value is added to config file name
 							# Example value could be : "lowmem" or "ram32mbyte"
@@ -48,7 +48,7 @@
 		# for short commit value use: git log --abbrev-commit
 
 
-		# Versions: tagged on openwrt v19.07.6 
+		# Versions: tagged on openwrt v19.07.6
 		"feeds" : [
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"ce5a4eaea2"},
@@ -104,7 +104,7 @@
 		"target":"ar71xx",
 		"subtarget":"generic"
 	},
-	{	
+	{
 		"name":"ar71xx.generic.gl-mifi",
 		"target":"ar71xx",
 		"subtarget":"generic",
@@ -115,7 +115,7 @@
 		"target":"ar71xx",
 		"subtarget":"nand"
 	},
-	{	
+	{
 		"name":"x86.generic",
 		"target":"x86",
 		"subtarget":"generic"
@@ -138,11 +138,11 @@
 		"subtarget":"mt7621",
 		"variant":"ubiquiti-edgerouter-x"	# specific target (overwrites previous generic only for this device)
 	},
-        {
-                "name":"ramips.mt76x8.generic",
-                "target":"ramips",
-                "subtarget":"mt76x8",
-                "variant":"generic"
+	{
+		"name":"ramips.mt76x8.generic",
+		"target":"ramips",
+		"subtarget":"mt76x8",
+		"variant":"generic"
 	},
 	{
 		"name":"lantiq.xrx200",
@@ -156,18 +156,18 @@
 		"target":"lantiq",
 		"subtarget":"xway"
 	},
-        {       # created for Orange Pi R1
-                "name":"sunxi.cortexa7.generic",
-                "target":"sunxi",
-                "subtarget":"cortexa7",
+	{	# created for Orange Pi R1
+		"name":"sunxi.cortexa7.generic",
+		"target":"sunxi",
+		"subtarget":"cortexa7",
 		"variant":"generic"
-        },
-        {
-                "name":"ath79.generic",
-                "target":"ath79",
-                "subtarget":"generic",
+	},
+	{
+		"name":"ath79.generic",
+		"target":"ath79",
+		"subtarget":"generic",
 		"target-patches":["device1-comfast-e314n.patch", "device2-comfast-comfast-e130n.patch"]
-        },
+	},
 #	{
 #		"name":"ath79.tiny.wireguard.lowmem",
 #		"target":"ath79",
@@ -180,16 +180,16 @@
 		"target":"ipq40xx",
 		"subtarget":"generic"
 	},
-	{	
+	{
 		"name":"bcm53xx.generic.arm",
 		"target":"bcm53xx",
 		"subtarget":"generic",
 		"openwrt_variant":"arm"
 	},
-        {
-                "name":"mpc85xx.p1020",
-                "target":"mpc85xx",
-                "subtarget":"p1020"
-        }
+	{
+		"name":"mpc85xx.p1020",
+		"target":"mpc85xx",
+		"subtarget":"p1020"
+	}
  ]
 }
