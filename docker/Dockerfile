@@ -14,12 +14,12 @@ RUN apt-get update && \
 # create user which is used to building firmware
 RUN useradd -m builder
 
+WORKDIR /builds
+RUN mkdir -p /builds && chown builder:builder /builds
+
 # create cache directories; /builds is evt used as container cache and could have
-# coflicts with mycache/dl, Therefore use separate directory
+# conflicts with mycache/dl, Therefore use separate directory
 RUN mkdir -p /cache && chown builder:builder /cache
 RUN mkdir -p /mycache && chown builder:builder /mycache
 
 USER builder
-
-WORKDIR /builds
-
