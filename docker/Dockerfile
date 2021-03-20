@@ -11,7 +11,6 @@ RUN apt-get update && \
                 python-pip python-pathlib python-pathlib2 python-scandir && \
         apt-get clean
 
-RUN 
 # create user which is used to building firmware
 RUN useradd -m builder
 
