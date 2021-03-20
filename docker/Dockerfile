@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
-MAINTAINER info@lank.me
-# updated by stephan@freifunk-dresden.de
+MAINTAINER stephan@freifunk-dresden.de
+
 
 RUN apt-get update && \
         apt-get full-upgrade -y && \
@@ -11,7 +11,10 @@ RUN apt-get update && \
                 python-pip python-pathlib python-pathlib2 python-scandir && \
         apt-get clean
 
-# create user which is used to building firmware
+# only used when starting container by our self (not by gitlab)
+# gitlab runner makes ONLY a bind mount to workdir and works a root user
+# /builds will get "root" as owner (when looking in running container)
+# - create user which is used to building firmware
 RUN useradd -m builder
 
 WORKDIR /builds
@@ -23,3 +26,4 @@ RUN mkdir -p /cache && chown builder:builder /cache
 RUN mkdir -p /mycache && chown builder:builder /mycache
 
 USER builder
+
