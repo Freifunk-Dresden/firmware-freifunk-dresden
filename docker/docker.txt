@@ -1,4 +1,3 @@
-
 # There are two possibilities to install gitlab-runner
 #  1. install native gitlab-runner tools, which runs on host and
 #      uses gitlab-runner/helber to build firmware with docker image.
@@ -34,20 +33,32 @@ docker run -d --name gitlab-runner --restart always \
 docker run --rm -it -v gitlab-runner-config:/etc/gitlab-runner gitlab/gitlab-runner:latest register
 
 # modify docker configuration and restart container.
-# - add to [runners.docker] to allow loading images when those are not present on any server
+
+docker exec -it gitlab-runner bash
+
+# - add to [runners.docker] to allow loading images when those are not present on any server 
+#                           (only generated locally)
 #                           but .gitlab-ci.yml has a reference to a remote docker registry
 #  pull_policy = ["if-not-present"]
 #
-# - add /mycache bind mount. this is working because runner creates the openwrt-container within
-#   host, not within docker (not nested)
-#   volumes = ["/cache", "/root/mycache:/mycache"]
-#
-# This could be needed, if openwrt-docker-build:latest (used by docker gitlab-runner) is only present/created
-# locally.
-# 
-# There are two ways: execute a bash within the container and modifiy config, or
-# use "docker volume inspect gitlab-runner-config" to get the mount point path and modify
-# the config there in host
 
-docker exec -it gitlab-runner bash
+# Howto use /mycache:
+# 1. add /mycache bind mount. this is working because runner creates the openwrt-container within
+#    host, not within docker (not nested)
+#  volumes = ["/cache", "/root/mycache:/mycache"]
+#
+# 2. host: mkdir /root/mycache && chmod 777 /root/mycache
+#    This is needed because gitlab-runner bind-mounts this directory. firmware is build as user "builder"
+#    which is required not to be "root". It has to be able to create /mycache/dl and /mycache/workdir.
+#
+# 3. Optional if testing manually.
+#    - docker run --rm -it -v "/root/mycache:/mycache" openwrt-docker-build bash
+#    - checkout project
+#    - cd firmware
+#    - mkdir -p /mycache/dl /mycache/workdir
+#    - ln -s /mycache/dl && ln -s /mycache/dl
+#
+ 
+
+
 
