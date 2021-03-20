@@ -1,3 +1,14 @@
+
+# There are two possibilities to install gitlab-runner
+#  1. install native gitlab-runner tools, which runs on host and
+#      uses gitlab-runner/helber to build firmware with docker image.
+#      This allows to create openwrt-docker-build with bind-mounted
+#      /mycache directory. /mycache would then hold working dir and dl dir
+#  2. install gitlab-runner as docker image, that has gitlab-runner tools
+#      in container. this container runs always to speak with gitlab server.
+#      The runners config is within the container.
+
+
 # https://docs.gitlab.com/runner/install/docker.html
 #
 # bind mount to /etc/gitlab-runner/ does not work, so I have to use the
@@ -5,7 +16,7 @@
 
 # for instance set "pull_policy = if-not-present
 
-# create and run container
+# create and run container (variante 2)
 
 docker run -d --name gitlab-runner --restart always \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -16,19 +27,27 @@ docker run -d --name gitlab-runner --restart always \
 # register docker runner with gitlab
 # https://docs.gitlab.com/runner/register/#docker
 #
-# when ask for default docker image, use "registry.gitlab.freifunk-dresden.de/openwrt-docker-build:latest"
+# When ask for default docker image, use "registry.gitlab.freifunk-dresden.de/openwrt-docker-build:latest"
+# Registration process will update /etc/gitlab-runner/config.toml (which is either
+# on host (variante 1) or within the docker-runner container (variante 2)
 
 docker run --rm -it -v gitlab-runner-config:/etc/gitlab-runner gitlab/gitlab-runner:latest register
 
 # modify docker configuration and restart container.
-# for instance set:
-#         pull_policy = ["if-not-present"]
-
+# - add to [runners.docker] to allow loading images when those are not present on any server
+#                           but .gitlab-ci.yml has a reference to a remote docker registry
+#  pull_policy = ["if-not-present"]
+#
+# - add /mycache bind mount. this is working because runner creates the openwrt-container within
+#   host, not within docker (not nested)
+#   volumes = ["/cache", "/root/mycache:/mycache"]
+#
 # This could be needed, if openwrt-docker-build:latest (used by docker gitlab-runner) is only present/created
 # locally.
-# gitlab-runner is a container that calles nested container to build firmware.
 # 
 # There are two ways: execute a bash within the container and modifiy config, or
 # use "docker volume inspect gitlab-runner-config" to get the mount point path and modify
 # the config there in host
+
 docker exec -it gitlab-runner bash
+
