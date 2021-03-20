@@ -1,8 +1,34 @@
-
 # https://docs.gitlab.com/runner/install/docker.html
 #
-# instead creating a volume, bind mount the config directory in the host.
-# this allows to adjust the configuration.
+# bind mount to /etc/gitlab-runner/ does not work, so I have to use the
+# original docker command to create container.
+
 # for instance set "pull_policy = if-not-present
 
-docker run -d --name gitlab-runner --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /etc/gitlab-runner:/etc/gitlab-runner gitlab/gitlab-runner:latest
+# create and run container
+
+docker run -d --name gitlab-runner --restart always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v gitlab-runner-config:/etc/gitlab-runner \
+    gitlab/gitlab-runner:latest
+    
+    
+# register docker runner with gitlab
+# https://docs.gitlab.com/runner/register/#docker
+#
+# when ask for default docker image, use "registry.gitlab.freifunk-dresden.de/openwrt-docker-build:latest"
+
+docker run --rm -it -v gitlab-runner-config:/etc/gitlab-runner gitlab/gitlab-runner:latest register
+
+# modify docker configuration and restart container.
+# for instance set:
+#         pull_policy = ["if-not-present"]
+
+# This could be needed, if openwrt-docker-build:latest (used by docker gitlab-runner) is only present/created
+# locally.
+# gitlab-runner is a container that calles nested container to build firmware.
+# 
+# There are two ways: execute a bash within the container and modifiy config, or
+# use "docker volume inspect gitlab-runner-config" to get the mount point path and modify
+# the config there in host
+docker exec -it gitlab-runner bash
