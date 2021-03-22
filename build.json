@@ -185,6 +185,12 @@
 		"subtarget":"generic",
 		"target-patches":["device1-comfast-e314n.patch", "device2-comfast-comfast-e130n.patch"]
 	},
+	{
+		"name":"ath79.generic.smallbuffers",
+		"target":"ath79",
+		"subtarget":"generic",
+		"variant":"smallbuffers"
+	},
 #	{
 #		"name":"ath79.tiny.wireguard.lowmem",
 #		"target":"ath79",
