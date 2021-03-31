@@ -70,7 +70,7 @@ cat<<EOM
 	<input name="form_action" value="upload" type="hidden">
 	<table>
 	<tr><th>Ger&auml;teinfo:</th><td><b>Model:</b> $model ($model2) - <b>CPU:</b> $(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p')</td></tr>
-	<tr><th>Filesystem:</th><td>$(cat /proc/cmdline | sed 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#')</td></tr>
+	<tr><th>Filesystem:</th><td>$(cat /proc/cmdline | sed -n 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#p')</td></tr>
 	<tr><th colspan="2">&nbsp;</th></tr>
 	<tr><th colspan="2">Weitere Infos sind nur verf&uuml;gbar, wenn der Download-Server erreichbar ist:</th></tr>
 	<tr><th width="100" style="white-space: nowrap;">- Erwartete Firmware-Datei:</th><td>$firmware_release_filename</td></tr>
