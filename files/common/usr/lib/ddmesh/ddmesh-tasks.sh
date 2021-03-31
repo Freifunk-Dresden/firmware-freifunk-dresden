@@ -1,8 +1,37 @@
 #!/bin/ash
 
 TAG="ddmesh task"
+TIMESTAMP="/var/run/ddmesh-tasks.time"
+PIDFILE="/var/run/ddmesh-tasks.pid"
+
+# watchdog time must be greater than 1min + script runtime
+WD_TIME=120
+
+# watchdog check
+if [ "$1" = "watchdog" ]; then
+	pid="$(cat $PIDFILE)"
+        tdiff="$(( $(date +'%s') - $(cat $TIMESTAMP) ))"
+
+	# kill check
+	if [ $tdiff -gt $WD_TIME ]; then
+
+		kill $pid
+
+		logger -t "WD" "kill hanging ddmesh-tasks.sh (since $tdiff s)"
+
+		# reset timestamp to avoid comparing against old value
+		date +'%s' > $TIMESTAMP
+	fi
+	exit 0
+fi
+
 
 MINUTE_COUNTER=0
+
+
+echo "$$" > $PIDFILE
+
+
 
 call_task()
 { # $1 - interval in min
@@ -74,6 +103,9 @@ do
 	call_task 1 /usr/lib/ddmesh/ddmesh-backbone.sh update
 	call_task 3 /usr/lib/ddmesh/ddmesh-gateway-check.sh
 	call_task 5 /usr/lib/ddmesh/ddmesh-splash.sh autodisconnect
+
+	# watchdog timestamp
+	date +'%s' > $TIMESTAMP
 done
 
 logger -t $TAG "crashed."

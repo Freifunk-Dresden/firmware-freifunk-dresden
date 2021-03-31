@@ -645,7 +645,7 @@ config cert px5g
 	option node		'Node $(uci -q get ddmesh.system.node)'
 EOM
 
-#traffic shaping
+# traffic shaping
 cat <<EOM >/var/etc/config/wshaper
 config 'wshaper' 'settings'
 	option network "$(uci get ddmesh.network.speed_network)"
@@ -653,11 +653,12 @@ config 'wshaper' 'settings'
 	option uplink "$(uci get ddmesh.network.speed_up)"
 EOM
 
- #setup cron.d
+# setup cron.d
 mkdir -p /var/etc/crontabs
 m=$(( $_ddmesh_node % 60))
 cat<<EOM > /var/etc/crontabs/root
 $m */1 * * *  /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
+* * * * *  /usr/lib/ddmesh/ddmesh-tasks.sh watchdog  >/dev/null 2>/dev/null
 EOM
 
 if [ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ];then
