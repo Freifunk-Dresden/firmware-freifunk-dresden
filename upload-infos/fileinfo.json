@@ -52,6 +52,8 @@
 { "name":"", "autoupdate":"1", "model":"tl-wa901nd-v5", "model2":"TP-Link TL-WA901N/ND v5", "filename":"openwrt-ar71xx-tiny-tl-wa901nd-v5-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-tiny-tl-wr740n-v4-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"tl-wr741nd-v4", "model2":"TP-Link TL-WR740N/ND v4", "filename":"openwrt-ar71xx-tiny-tl-wr740n-v4-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "filename":"openwrt-ar71xx-tiny-tl-wr741nd-v4-squashfs-factory.bin", "comment":""},
+{ "name":"", "autoupdate":"1", "model":"tl-wr741nd-v4", "model2":"TP-Link TL-WR741N/ND v4", "filename":"openwrt-ar71xx-tiny-tl-wr741nd-v4-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-tiny-tl-wr802n-v1-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"", "model2":"", "filename":"openwrt-ar71xx-tiny-tl-wr802n-v1-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ar71xx-tiny-tl-wr840n-v2-squashfs-factory.bin", "comment":""},
