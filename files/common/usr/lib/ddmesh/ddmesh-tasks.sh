@@ -50,12 +50,6 @@ call_task()
 
 #--------- user functions ----
 
-task_wifi_scanfix()
-{
-	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
-	/usr/sbin/iw dev $net_ifname scan >/dev/null
-}
-
 task_bmxd()
 {
 	# bmxd mit fehler hat folgenden status
@@ -95,7 +89,6 @@ do
 
 	call_task 3 task_routing
 	call_task 2 task_bmxd
-	call_task 5 task_wifi_scanfix
 	call_task 5 /usr/lib/ddmesh/ddmesh-backbone.sh runcheck
 	call_task 5 /usr/lib/ddmesh/ddmesh-privnet.sh runcheck
 	call_task 1 /usr/lib/ddmesh/ddmesh-sysinfo.sh
