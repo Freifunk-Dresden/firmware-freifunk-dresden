@@ -17,11 +17,7 @@
  *
  */
 
-
-
 #include "list-batman.h"
-
-
 
 /*
  * Insert a new entry between two known consecutive entries.
@@ -31,7 +27,6 @@
  */
 /*
 void __list_add( struct list_head *new, struct list_head *prev, struct list_head *next ) {
-
 	new->next = next;
 	prev->next = new;
 
@@ -46,16 +41,14 @@ void __list_add( struct list_head *new, struct list_head *prev, struct list_head
  * Insert a new entry after the specified head.
  * This is good for implementing stacks.
  */
-void list_add( struct list_head *new, struct list_head_first *head ) {
-
-//	__list_add( new, (struct list_head *)head, head->next );
+void list_add(struct list_head *new, struct list_head_first *head)
+{
+	//	__list_add( new, (struct list_head *)head, head->next );
 	new->next = head->next;
 	((struct list_head *)head)->next = new;
 
-
-	if ( head->prev == (struct list_head *)head )
+	if (head->prev == (struct list_head *)head)
 		head->prev = new;
-
 }
 
 /**
@@ -66,24 +59,20 @@ void list_add( struct list_head *new, struct list_head_first *head ) {
  * Insert a new entry before the specified head.
  * This is useful for implementing queues.
  */
-void list_add_tail( struct list_head *new, struct list_head_first *head ) {
-
-//	__list_add( new, head->prev, (struct list_head *)head );
-        new->next = (struct list_head *)head;
-        head->prev->next = new;
+void list_add_tail(struct list_head *new, struct list_head_first *head)
+{
+	//	__list_add( new, head->prev, (struct list_head *)head );
+	new->next = (struct list_head *)head;
+	head->prev->next = new;
 
 	head->prev = new;
-
 }
 
-void list_add_before( struct list_head *prev_node, struct list_head *next_node, struct list_head *new_node ) {
-
+void list_add_before(struct list_head *prev_node, struct list_head *next_node, struct list_head *new_node)
+{
 	prev_node->next = new_node;
 	new_node->next = next_node;
-
 }
-
-
 
 /*
  * Delete a list entry by making the next entries
@@ -94,7 +83,6 @@ void list_add_before( struct list_head *prev_node, struct list_head *next_node, 
  */
 /*
 void __list_del( struct list_head *prev, struct list_head *next ) {
-
 	prev->next = next;
 
 }
@@ -105,20 +93,16 @@ void __list_del( struct list_head *prev, struct list_head *next ) {
  * @entry: the element to delete from the list.
  * Note: list_empty on entry does not return true after this, the entry is in an undefined state.
  */
-void list_del( struct list_head *prev_entry, struct list_head *entry, struct list_head_first *head ) {
-
-	if ( head->prev == entry )
+void list_del(struct list_head *prev_entry, struct list_head *entry, struct list_head_first *head)
+{
+	if (head->prev == entry)
 		head->prev = prev_entry;
 
-//	__list_del( prev_entry, entry->next );
+	//	__list_del( prev_entry, entry->next );
 	prev_entry->next = entry->next;
 
-
-	entry->next = (void *) 0;
-
+	entry->next = (void *)0;
 }
-
-
 
 /**
  * list_empty - tests whether a list is empty
@@ -126,7 +110,6 @@ void list_del( struct list_head *prev_entry, struct list_head *entry, struct lis
  */
 /*
 int list_empty( struct list_head_first *head ) {
-
 	return head->next == (struct list_head *)head;
 
 }

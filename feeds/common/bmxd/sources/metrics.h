@@ -16,22 +16,20 @@
  * 02110-1301, USA
  *
  */
- 
+
 #ifndef _BATMAN_METRICS_H
 #define _BATMAN_METRICS_H
-
 
 #define MAX_BITS_RANGE 1024
 
 #define OGI_WAVG_EXP 3
 
+void flush_sq_record(struct sq_record *sqr);
 
-void flush_sq_record( struct sq_record *sqr );
+void update_lounged_metric(uint8_t probe, uint8_t lounge_size, SQ_TYPE sqn_incm, SQ_TYPE sqn_max, struct sq_record *sqr, uint8_t ws);
 
-void update_lounged_metric( uint8_t probe, uint8_t lounge_size, SQ_TYPE sqn_incm, SQ_TYPE sqn_max, struct sq_record *sqr, uint8_t ws );
+#define WAVG(wavg, weight_exp) ((uint32_t)((wavg) >> (weight_exp)))
 
-#define WAVG( wavg , weight_exp ) ( (uint32_t) ( (wavg) >> (weight_exp) ) )
-
-uint32_t upd_wavg( uint32_t *wavg, uint32_t probe, uint8_t weight_exp );
+uint32_t upd_wavg(uint32_t *wavg, uint32_t probe, uint8_t weight_exp);
 
 #endif

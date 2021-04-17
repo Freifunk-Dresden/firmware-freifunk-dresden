@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2006 B.A.T.M.A.N. contributors:
  * Axel Neumann
  * This program is free software; you can redistribute it and/or
@@ -25,21 +25,20 @@ extern int32_t my_ogi; // my originator interval
 
 #define ARG_OGI_PWRSAVE "ogi_power_save"
 
-
 #define MIN_AGGR_IVAL 35
 #define MAX_AGGR_IVAL 4000
 #define DEF_AGGR_IVAL 500
 #define ARG_AGGR_IVAL "aggreg_interval"
 
-void init_schedule( void );
-void start_schedule( void );
-void change_selects( void );
-void cleanup_schedule( void );
-void register_task( uint32_t timeout, void (* task) (void *), void *data );
-void remove_task( void (* task) (void *), void *data );
-uint32_t whats_next( void );
-void wait4Event( uint32_t timeout );
-void schedule_own_ogm( struct batman_if *batman_if );
-void debug_send_list( struct ctrl_node *cn );
-void remove_outstanding_ogms( struct batman_if *bif );
-void schedule_rcvd_ogm( uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb );
+void init_schedule(void);
+void start_schedule(void);
+void change_selects(void);
+void cleanup_schedule(void);
+void register_task(uint32_t timeout, void (*task)(void *), void *data);
+void remove_task(void (*task)(void *), void *data);
+uint32_t whats_next(void);
+void wait4Event(uint32_t timeout);
+void schedule_own_ogm(struct batman_if *batman_if);
+void debug_send_list(struct ctrl_node *cn);
+void remove_outstanding_ogms(struct batman_if *bif);
+void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb);

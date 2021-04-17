@@ -20,26 +20,22 @@
  *
  */
 
-
-#include <stdint.h> 
-
-
-
+#include <stdint.h>
 
 #define DATA_TYPE_NEIGH 1
 #define DATA_TYPE_SEC_IF 2
 #define DATA_TYPE_HNA 3
 
-
-
-struct vis_packet {
+struct vis_packet
+{
 	uint32_t sender_ip;
 	uint8_t version;
 	uint8_t gw_class;
 	uint8_t seq_range;
 } __attribute__((packed));
 
-struct vis_data {
+struct vis_data
+{
 	uint8_t type;
 	uint8_t data;
 	uint32_t ip;

@@ -17,8 +17,6 @@
  *
  */
 
-
-
 #ifndef _LINUX_LIST_H
 #define _LINUX_LIST_H
 
@@ -39,34 +37,38 @@
  * using the generic single-entry routines.
  */
 
-struct list_head {
+struct list_head
+{
 	struct list_head *next;
 };
 
-struct list_head_first {
+struct list_head_first
+{
 	struct list_head *next, *prev;
 };
 
-
-void list_add( struct list_head *new, struct list_head_first *head );
-void list_add_tail( struct list_head *new, struct list_head_first *head );
-void list_add_before( struct list_head *prev_node, struct list_head *next_node, struct list_head *new_node );
-void list_del( struct list_head *prev_entry, struct list_head *entry, struct list_head_first *head );
+void list_add(struct list_head *new, struct list_head_first *head);
+void list_add_tail(struct list_head *new, struct list_head_first *head);
+void list_add_before(struct list_head *prev_node, struct list_head *next_node, struct list_head *new_node);
+void list_del(struct list_head *prev_entry, struct list_head *entry, struct list_head_first *head);
 //int list_empty( struct list_head_first *head );
 
-#define list_empty(lst)  ((lst)->next == (struct list_head *)(lst))
+#define list_empty(lst) ((lst)->next == (struct list_head *)(lst))
 
-#define INIT_LIST_HEAD(ptr) do { \
-	(ptr)->next = (ptr); \
-} while (0)
+#define INIT_LIST_HEAD(ptr) \
+	do                        \
+	{                         \
+		(ptr)->next = (ptr);    \
+	} while (0)
 
-#define INIT_LIST_HEAD_FIRST(ptr) do { \
-	ptr.next = (struct list_head *)&ptr; ptr.prev = (struct list_head *)&ptr; \
-} while (0)
+#define INIT_LIST_HEAD_FIRST(ptr)        \
+	do                                     \
+	{                                      \
+		ptr.next = (struct list_head *)&ptr; \
+		ptr.prev = (struct list_head *)&ptr; \
+	} while (0)
 
-
-#define SIMPEL_LIST(lst) struct list_head_first lst = { (struct list_head *)&lst, (struct list_head *)&lst }
-
+#define SIMPEL_LIST(lst) struct list_head_first lst = {(struct list_head *)&lst, (struct list_head *)&lst}
 
 /**
  * list_entry - get the struct for this entry
@@ -75,18 +77,16 @@ void list_del( struct list_head *prev_entry, struct list_head *entry, struct lis
  * @member:	the name of the list_struct within the struct.
  */
 #define list_entry(ptr, type, member) \
-	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
-
+	((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
 
 /**
  * list_for_each	-	iterate over a list
  * @pos:	the &struct list_head to use as a loop counter.
  * @head:	the head for your list.
  */
-#define list_for_each(pos, head) \
+#define list_for_each(pos, head)                              \
 	for (pos = (head)->next; pos != (struct list_head *)(head); \
-        	pos = pos->next)
-
+			 pos = pos->next)
 
 /**
  * list_for_each_safe	-	iterate over a list safe against removal of list entry
@@ -94,9 +94,8 @@ void list_del( struct list_head *prev_entry, struct list_head *entry, struct lis
  * @n:		another &struct list_head to use as temporary storage
  * @head:	the head for your list.
  */
-#define list_for_each_safe(pos, n, head) \
+#define list_for_each_safe(pos, n, head)                                     \
 	for (pos = (head)->next, n = pos->next; pos != (struct list_head *)(head); \
-		pos = n, n = pos->next)
-
+			 pos = n, n = pos->next)
 
 #endif
