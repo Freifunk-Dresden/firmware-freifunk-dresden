@@ -2,7 +2,7 @@
 tabs 4
 
 #usage: see below
-SCRIPT_VERSION="9"
+SCRIPT_VERSION="10"
 
 
 #echo "ACHTUNG: aktuell stuerst firmware auf ubnt geraeten ab. Daher habe ich erstmal das bauen hier deaktiviert."
@@ -64,6 +64,91 @@ RUN_DIR=$(pwd)
 # Die eckigen klammern aussenherum erzeugt ein array, in welches alle gefundenen objekte gesammelt werden.
 # Fuer die meisten filenamen ist das array 1 gross. aber fuer files die fuer verschiedene router
 # verwendet werden, koennen mehrere eintraege sein.
+
+
+
+############# progress bar ##########################
+function progressbar {
+  #######################################
+  # Display a progress bar
+  # Arguments:
+  #   $1 Current loop number
+  #   $2 max. no of loops (1005)
+  # Returns:
+  #   None
+  #######################################
+
+  title="Progress :"
+  title_len=10
+
+  _cols=$(tput cols)
+  let _cols=$_cols-$title_len
+
+  # Process data
+  let _progress=(${1}*100/${2}*100)/100
+  let _done=(${_progress}*4)/10
+  let _left=$_cols-$_done-20
+
+  # Build progressbar string lengths
+  _fill=$(printf "%${_done}s")
+  _empty=$(printf "%${_left}s")
+
+  # 1.2 Build progressbar strings and print the progressbar line
+  # 1.2.1 Output example:
+  # 1.2.1.1 Progress : [########################################] 100%
+  printf "\r$title [${_fill// /#}${_empty// /-}] ${_progress}%% ($1/$2)"
+  # erase until end of line
+  tput el
+}
+
+# clean up screen and 
+clean_up()
+{
+	# reset region
+	if [ -n "$row" ]; then
+		printf "\\033[r\n"
+		tput cup $row 0
+	fi
+	exit 1
+}
+
+trap clean_up SIGINT SIGTERM
+
+show_progress()
+{
+ # dont overwrite last value, when no parameter was given (window resize signal)
+ [ -n "$1" ] && _count=$1
+ [ -n "$2" ] && _max=$2
+
+ [ "$_max" -eq 0 ] && return 
+
+ row=$(tput lines)
+
+ # empty second line
+ tput cup 1 0
+ tput el
+
+ # print progress bar at top
+ tput cup $(( $row - 1)) 0
+ progressbar $_count $_max
+
+ # print empty line above
+ tput cup $(( $row - 2)) 0
+ tput el
+
+ # define scroll region before setting cursor. else it would overwrite progress bar
+ # leave out second row parameter to use max
+ printf "\\033[0;%dr" $(( $row - 2 ))
+
+ # set cursor into last line of region
+ tput cup $(( $row - 3)) 0
+}
+
+trap show_progress SIGWINCH
+
+
+
+############# build.sh functions ####################
 
 getTargetsJson()
 {
@@ -192,6 +277,40 @@ listTargetsNames()
 
 	targetIdx=$(( targetIdx + 1 ))
  done
+}
+
+# returns number of targets in build.json
+numberOfTargets()
+{
+ _regex=$1
+ [ -z "$_regex" ] && _regex='.*'
+
+ OPT="--raw-output" # do not excape values
+
+ cleanJson=$(getTargetsJson)
+
+ # ignore first default entry
+ targetIdx=1
+
+ count=0
+
+ # run through rest of json
+ while true
+ do
+ 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+	[ "$entry" = "null" ] &&  break	# last entry
+	_name=$(echo $entry | jq $OPT '.name')
+	[ -z "$_name" ] && break
+
+	targetIdx=$(( targetIdx + 1 ))
+
+	# ignore targets that do not match
+	filterred=$(echo $_name | sed -n "/$_regex/p")
+	test -z "$filterred" && continue
+
+	count=$(( $count + 1 ))
+ done
+ printf "%d" $count
 }
 
 search_target()
@@ -499,8 +618,22 @@ if [ -n "$entry" ]; then
 #echo $_def_packages
 fi
 
+
+
+progress_counter=0
+progress_max=$(numberOfTargets "$regex")
+
+if [ $progress_max -eq 0 ]; then
+ 	echo "no target found"
+	clean_up
+	exit 1
+fi
+
 while true
 do
+	show_progress $progress_counter $progress_max
+	progress_counter=$(( $progress_counter + 1 ))
+
 	cd $RUN_DIR
 
 	# get next potential target
@@ -780,6 +913,8 @@ EOM
 	echo -e $C_PURPLE"images created in$C_NONE $C_GREEN$buildroot/bin/targets/$_target/$_subtarget/..."$C_NONE
 
 done
+
+clean_up
 
 echo -e $C_PURPLE".......... complete build finished ........................"$C_NONE
 echo ""
