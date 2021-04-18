@@ -1,6 +1,6 @@
 #!/bin/bash
 tabs 4
-
+echo $TERM
 #usage: see below
 SCRIPT_VERSION="10"
 
