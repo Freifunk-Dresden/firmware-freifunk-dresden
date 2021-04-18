@@ -120,7 +120,7 @@ clean_up()
 		printf "\\033[r\n"
 		tput cup $row 0
 	fi
-	exit 1
+	exit 0
 }
 
 
