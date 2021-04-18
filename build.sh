@@ -715,6 +715,7 @@ do
 		echo $progress_counter $progress_max
 		show_progress $progress_counter $progress_max
 		progress_counter=$(( $progress_counter + 1 ))
+		echo ""
 	fi
 
 
