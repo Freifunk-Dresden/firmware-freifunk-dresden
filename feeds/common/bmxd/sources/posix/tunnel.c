@@ -869,7 +869,7 @@ static void gws_recv_udp(int32_t fd_in)
   // receive udp package (type+version+u.ip_packet) and
 	while ((tp_len = recvfrom(gws_args->sock, (unsigned char *)&tp.start, TX_DP_SIZE, 0, (struct sockaddr *)&addr, &addr_len)) > 0)
 	{
-		if (tp_len < sizeof(tp.start))
+		if (tp_len < (int32_t)sizeof(tp.start))
 		{
 			dbgf(DBGL_SYS, DBGT_ERR, "Invalid packet size (%d) via tunnel, from %s",
 					 tp_len, ipStr(addr.sin_addr.s_addr));
