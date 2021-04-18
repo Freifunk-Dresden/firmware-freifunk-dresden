@@ -1,6 +1,11 @@
 #!/bin/bash
 tabs 4
+
+echo "term:"
 echo $TERM
+tput lines
+tput cols
+
 #usage: see below
 SCRIPT_VERSION="10"
 
