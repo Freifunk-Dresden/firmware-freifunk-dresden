@@ -1,11 +1,6 @@
 #!/bin/bash
 tabs 4
 
-echo "term:"
-echo $TERM
-tput lines
-tput cols
-
 #usage: see below
 SCRIPT_VERSION="10"
 
@@ -17,6 +12,16 @@ SCRIPT_VERSION="10"
 # FF_REGISTERKEY_PREFIX
 # FF_BUILD_TAG
 # FF_MESH_KEY
+
+
+# check terms
+case "$TERM" in
+	xterm*) _TERM=1 ;;
+	screen) _TERM=1 ;;
+	vt1*)   _TERM=1 ;;
+	*) _TERM=0 ;;
+esac
+
 
 #change to directory where build.sh is
 cd $(dirname $0)
@@ -73,6 +78,7 @@ RUN_DIR=$(pwd)
 
 
 ############# progress bar ##########################
+
 function progressbar {
   #######################################
   # Display a progress bar
@@ -117,7 +123,6 @@ clean_up()
 	exit 1
 }
 
-trap clean_up SIGINT SIGTERM
 
 show_progress()
 {
@@ -149,7 +154,10 @@ show_progress()
  tput cup $(( $row - 3)) 0
 }
 
-trap show_progress WINCH 
+if [ "$_TERM" = "1" ]; then
+	trap clean_up SIGINT SIGTERM
+	trap show_progress WINCH 
+fi
 
 
 
@@ -636,8 +644,10 @@ fi
 
 while true
 do
-	show_progress $progress_counter $progress_max
-	progress_counter=$(( $progress_counter + 1 ))
+	if [ "$_TERM" = "1" ]; then
+		show_progress $progress_counter $progress_max
+		progress_counter=$(( $progress_counter + 1 ))
+	fi
 
 	cd $RUN_DIR
 
