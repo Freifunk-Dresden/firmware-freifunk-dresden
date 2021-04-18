@@ -115,38 +115,23 @@ static uint32_t my_gw_addr = 0;
 static int32_t tun_orig_registry = FAILURE;
 
 static SIMPEL_LIST(gw_list);
-struct tun_packet_start
-{
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-	unsigned int type : 4;
-	unsigned int version : 4; // should be the first field in the packet in network byte order
-#elif __BYTE_ORDER == __BIG_ENDIAN
-	unsigned int version : 4;
-	unsigned int type : 4;
-#else
-#error "Please fix <bits/endian.h>"
-#endif
-} __attribute__((packed));
+
+#define TP_VERS(v) (((v)>>4) & 0xf)
+#define TP_TYPE(v) ((v) & 0xf)
 
 struct tun_packet
 {
-	struct tun_packet_start start;
-#define TP_TYPE start.type
-#define TP_VERS start.version
-
+  unsigned char start; //[7:4]version; [3:0]type
 	union
 	{
 		unsigned char ip_packet[MAX_MTU];
 		struct iphdr iphdr;
-	} tt;
-#define IP_PACKET tt.ip_packet
-#define IP_HDR tt.iphdr
-} __attribute__((packed));
-
-#define TX_RP_SIZE (sizeof(struct tun_packet_start))
+	} u;
+} __attribute__((packed));  // use "packed" structure to avoid compiler padding bytes inserted
 
 // MAX_MTU is used for ip_packet buffer size in struct tun_packet
-#define TX_DP_SIZE (sizeof(struct tun_packet_start) + MAX_MTU)
+// 1 byte for struct tun_packet::start
+#define TX_DP_SIZE (1 + MAX_MTU)
 
 struct gwc_args
 {
@@ -631,21 +616,18 @@ static void gwc_recv_tun(int32_t fd_in)
 		return;
 	}
 
-  // read data from bat0 interface and send version+type+IP_PACKET as udp packet
-	while (r++ < 30 && (tp_data_len = read(gwc_args->tun_fd, tp.IP_PACKET, sizeof(tp.IP_PACKET) /*TBD: why -2 here? */)) > 0)
+  // read data from bat0 interface and send version+type+u.ip_packet as udp packet
+	while (r++ < 30 && (tp_data_len = read(gwc_args->tun_fd, tp.u.ip_packet, sizeof(tp.u.ip_packet) /*TBD: why -2 here? */)) > 0)
 	{
 		tp_len = tp_data_len + sizeof(tp.start);
 
-		if (tp_data_len < (int32_t)sizeof(struct iphdr) || tp.IP_HDR.version != 4)
+		if (tp_data_len < (int32_t)sizeof(struct iphdr) || tp.u.iphdr.version != 4)
 		{
 			dbgf(DBGL_SYS, DBGT_ERR, "Received Invalid packet type via tunnel !");
 			continue;
 		}
 
-		tp.TP_VERS = COMPAT_VERSION;
-		tp.TP_TYPE = TUNNEL_DATA;
-
-dbg(DBGL_SYS, DBGT_ERR, "SEc: size:%d/%d [%02x]v:%02x t:%02x", TX_RP_SIZE, TX_DP_SIZE, tp.start, tp.TP_VERS, tp.TP_TYPE);
+		tp.start = (COMPAT_VERSION<<4) | TUNNEL_DATA; //version|type
 
 		if (gwc_args->my_tun_addr == 0)
 		{
@@ -680,9 +662,9 @@ dbg(DBGL_SYS, DBGT_ERR, "SEc: size:%d/%d [%02x]v:%02x t:%02x", TX_RP_SIZE, TX_DP
 			//gwc_args->last_invalidip_warning = batman_time;
 			dbg_mute(60, DBGL_CHANGES, DBGT_ERR,
 							 "Gateway client - Invalid outgoing src IP: %s (should be %s) or dst IP %s ! Dropping packet",
-							 ipStr(tp.IP_HDR.saddr), gwc_args->my_tun_str, gwc_args->gw_str);
+							 ipStr(tp.u.iphdr.saddr), gwc_args->my_tun_str, gwc_args->gw_str);
 
-			if (tp.IP_HDR.saddr == gwc_args->gw_addr.sin_addr.s_addr)
+			if (tp.u.iphdr.saddr == gwc_args->gw_addr.sin_addr.s_addr)
 			{
 				gwc_cleanup();
 				return;
@@ -884,39 +866,37 @@ static void gws_recv_udp(int32_t fd_in)
 		return;
 	}
 
-  // receive udp package (type+version+IP_PACKET) and
+  // receive udp package (type+version+u.ip_packet) and
 	while ((tp_len = recvfrom(gws_args->sock, (unsigned char *)&tp.start, TX_DP_SIZE, 0, (struct sockaddr *)&addr, &addr_len)) > 0)
 	{
-dbg(DBGL_SYS, DBGT_ERR, "SEs: size:%d/%d [%02x]v:%02x t:%02x", TX_RP_SIZE, TX_DP_SIZE, tp.start, tp.TP_VERS, tp.TP_TYPE);
-
-		if (tp_len < (int32_t)TX_RP_SIZE)
+		if (tp_len < sizeof(tp.start))
 		{
 			dbgf(DBGL_SYS, DBGT_ERR, "Invalid packet size (%d) via tunnel, from %s",
 					 tp_len, ipStr(addr.sin_addr.s_addr));
 			continue;
 		}
 
-		if (tp.TP_VERS != COMPAT_VERSION)
+		if (TP_VERS(tp.start) != COMPAT_VERSION)
 		{
 			dbgf(DBGL_SYS, DBGT_ERR, "Invalid compat version (%d) via tunnel, from %s",
-					 tp.TP_VERS, ipStr(addr.sin_addr.s_addr));
+					 TP_VERS(tp.start), ipStr(addr.sin_addr.s_addr));
 			continue;
 		}
 
 		tp_data_len = tp_len - sizeof(tp.start);
 
-		if (tp.TP_TYPE == TUNNEL_DATA)
+		if (TP_TYPE(tp.start) == TUNNEL_DATA)
 		{
-			if (!(tp_data_len >= (int32_t)sizeof(struct iphdr) && tp.IP_HDR.version == 4))
+			if (!(tp_data_len >= (int32_t)sizeof(struct iphdr) && tp.u.iphdr.version == 4))
 			{
 				dbgf(DBGL_SYS, DBGT_ERR, "Invalid packet type via tunnel");
 				continue;
 			}
 
 			if (gws_args->owt &&
-					((tp.IP_HDR.saddr & gws_args->my_tun_netmask) != gws_args->my_tun_ip || tp.IP_HDR.saddr == addr.sin_addr.s_addr))
+					((tp.u.iphdr.saddr & gws_args->my_tun_netmask) != gws_args->my_tun_ip || tp.u.iphdr.saddr == addr.sin_addr.s_addr))
 			{
-				if (write(gws_args->tun_fd, tp.IP_PACKET, tp_data_len) < 0)
+				if (write(gws_args->tun_fd, tp.u.ip_packet, tp_data_len) < 0)
 					dbg(DBGL_SYS, DBGT_ERR, "can't write packet: %s", strerror(errno));
 
 				continue;
@@ -925,7 +905,7 @@ dbg(DBGL_SYS, DBGT_ERR, "SEs: size:%d/%d [%02x]v:%02x t:%02x", TX_RP_SIZE, TX_DP
 		else
 		{
 			dbgf(DBGL_SYS, DBGT_ERR, "received unknown packet type %d from %s",
-					 tp.TP_VERS, ipStr(addr.sin_addr.s_addr));
+					 TP_VERS(tp.start), ipStr(addr.sin_addr.s_addr));
 		}
 	}
 }
