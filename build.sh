@@ -144,7 +144,7 @@ show_progress()
  tput cup $(( $row - 3)) 0
 }
 
-trap show_progress SIGWINCH
+trap show_progress WINCH 
 
 
 
