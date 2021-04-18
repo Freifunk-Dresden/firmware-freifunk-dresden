@@ -629,15 +629,15 @@ static void flush_routes_rules(int8_t is_rule)
 				{
 					add_del_rule(dest, mask, rtm->rtm_table, prio, iif, rule_type, DEL, TRACK_NO);
 
-					dbg(DBGL_SYS, DBGT_WARN, "flushing orphan rule type %d dest? %s/%d  table %d  prio %d",
-							rule_type, ipStr(dest), mask, rtm->rtm_table, prio);
+//					dbg(DBGL_SYS, DBGT_WARN, "flushing orphan rule type %d dest? %s/%d  table %d  prio %d",
+//							rule_type, ipStr(dest), mask, rtm->rtm_table, prio);
 				}
 				else
 				{
 					add_del_route(dest, mask, router, 0, oif, "unknown", rtm->rtm_table, rtm->rtm_type, DEL, TRACK_NO);
 
-					dbg(DBGL_SYS, DBGT_WARN, "flushing orphan route to %s  via %s  type %d  table %d",
-							ipStr(dest), ipStr(router), rtm->rtm_type, rtm->rtm_table);
+//					dbg(DBGL_SYS, DBGT_WARN, "flushing orphan route to %s  via %s  type %d  table %d",
+//							ipStr(dest), ipStr(router), rtm->rtm_type, rtm->rtm_table);
 				}
 			}
 		}
@@ -1243,18 +1243,18 @@ static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, 
 		prev_pos = &tmp_rn->list;
 	}
 
-	if (track_t == TRACK_NO ||
-			(del && !first_found_rn) ||
-			(del && found_rns != 1) ||
-			(!del && found_rns > 0))
-	{
-		dbg((track_t == TRACK_NO || (del && !first_found_rn)) ? DBGL_SYS : DBGL_ALL,
-				(track_t == TRACK_NO || (del && !first_found_rn)) ? DBGT_ERR : DBGT_INFO,
-				"  %s route to %-15s via %-15s  src %s  dev %s table %d  %s  "
-				"%s has %d (%d exact) matches",
-				del ? "del" : "add", ipStr(dest), ipStr(gw), ipStr(src), dev, rt_table,
-				rt2str(rta_type), trackt2str(track_t), found_rns, (first_found_rn ? 1 : 0));
-	}
+	// if (track_t == TRACK_NO ||
+	// 		(del && !first_found_rn) ||
+	// 		(del && found_rns != 1) ||
+	// 		(!del && found_rns > 0))
+	// {
+	// 	dbg((track_t == TRACK_NO || (del && !first_found_rn)) ? DBGL_SYS : DBGL_ALL,
+	// 			(track_t == TRACK_NO || (del && !first_found_rn)) ? DBGT_ERR : DBGT_INFO,
+	// 			"  %s route to %-15s via %-15s  src %s  dev %s table %d  %s  "
+	// 			"%s has %d (%d exact) matches",
+	// 			del ? "del" : "add", ipStr(dest), ipStr(gw), ipStr(src), dev, rt_table,
+	// 			rt2str(rta_type), trackt2str(track_t), found_rns, (first_found_rn ? 1 : 0));
+	// }
 
 	if (track_t == TRACK_NO)
 		return YES;
@@ -1313,11 +1313,13 @@ void add_del_route(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32
 	if (track_route_and_proceed(dest, mask, gw, src, ifi, dev, rt_table, rta_type, del, track_t) == NO)
 		return;
 
-	if (track_t != TRACK_OTHER_HOST)
-		dbg(DBGL_CHANGES, DBGT_INFO,
-				" %s route to %15s/%-2d  table %d  via %-15s  dev %-10s ifi %2d  %s %s",
-				del ? "del" : "add",
-				ipStr(dest), mask, rt_table, ipStr(gw), dev, ifi, rt2str(rta_type), trackt2str(track_t));
+	// if (track_t != TRACK_OTHER_HOST)
+	// {
+	// 	dbg(DBGL_CHANGES, DBGT_INFO,
+	// 			" %s route to %15s/%-2d  table %d  via %-15s  dev %-10s ifi %2d  %s %s",
+	// 			del ? "del" : "add",
+	// 			ipStr(dest), mask, rt_table, ipStr(gw), dev, ifi, rt2str(rta_type), trackt2str(track_t));
+	// }
 
 	if (gw == dest)
 		my_router = 0;
