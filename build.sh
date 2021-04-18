@@ -644,11 +644,6 @@ fi
 
 while true
 do
-	if [ "$_TERM" = "1" ]; then
-		show_progress $progress_counter $progress_max
-		progress_counter=$(( $progress_counter + 1 ))
-	fi
-
 	cd $RUN_DIR
 
 	# get next potential target
@@ -715,6 +710,13 @@ do
 
 	filterred=$(echo $filter_target | sed -n "/$regex/p")
 	test -z "$filterred" && continue
+
+	if [ "$_TERM" = "1" ]; then
+		echo $progress_counter $progress_max
+		show_progress $progress_counter $progress_max
+		progress_counter=$(( $progress_counter + 1 ))
+	fi
+
 
 	config_file="$CONFIG_DIR/$_selector_config/config.$_target.$_subtarget"
 	test -n "$_variant" && config_file="$config_file.$_variant"
