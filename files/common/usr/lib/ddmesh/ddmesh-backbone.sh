@@ -211,12 +211,16 @@ callback_outgoing_wireguard_connection ()
 	config_get type "$config" type
 	config_get node "$config" node
 
-	#echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
+	# echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
 	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
 
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
 		wg set $tbbwg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
+
+		# if bmxd was restarted re-add interface
+		sub_ifname="${wg_ifname/+/}${node}"
+		bmxd -c dev=$sub_ifname /linklayer 1
 	fi
 }
 

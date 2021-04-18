@@ -7,7 +7,7 @@ PIDFILE="/var/run/ddmesh-tasks.pid"
 # watchdog time must be greater than 1min + script runtime
 WD_TIME=120
 
-# watchdog check
+# watchdog check via cron.d
 if [ "$1" = "watchdog" ]; then
 	pid="$(cat $PIDFILE)"
         tdiff="$(( $(date +'%s') - $(cat $TIMESTAMP) ))"
@@ -28,9 +28,7 @@ fi
 
 MINUTE_COUNTER=0
 
-
 echo "$$" > $PIDFILE
-
 
 
 call_task()
@@ -52,12 +50,23 @@ call_task()
 
 task_bmxd()
 {
-	# bmxd mit fehler hat folgenden status
-	# BMX 0.3-freifunk-dresden rv, 10.200.4.123, LWS 20, PWS 100, OGI 1000ms, UT 49:17:02:22 (ms= ffffffff.ffff9f63), CPU 1.1
-
-	#check if bmxd is running several times, then it is likely bmxd is dead
 	test $(pidof bmxd | wc -w) -gt 5 && kill -9 $(pidof bmxd) && logger -t $TAG "bmxd: ERROR bmxd dead - bmxd killed"
+	# check 
+	WD_FILE=/tmp/state/bmxd.watchdog
+	MAX_BMXD_TIME=120
 
+	wd=0 # default
+	if [ -f $WD_FILE ]; then
+		wd=$(cat $WD_FILE)
+	fi	
+
+	cur=$(date '+%s')
+	d=$(( $cur - $wd))
+
+	if [ "$d" -gt $MAX_BMXD_TIME ]; then
+		logger -t $TAG "bmxd: kill bmxd (diff $d)"
+		killall -9 bmxd
+	fi
 }
 
 task_routing()
@@ -88,7 +97,7 @@ do
 	# call_task <interval-minutes> <script | function> [arguments...]
 
 	call_task 3 task_routing
-	call_task 2 task_bmxd
+	call_task 1 task_bmxd
 	call_task 5 /usr/lib/ddmesh/ddmesh-backbone.sh runcheck
 	call_task 5 /usr/lib/ddmesh/ddmesh-privnet.sh runcheck
 	call_task 1 /usr/lib/ddmesh/ddmesh-sysinfo.sh

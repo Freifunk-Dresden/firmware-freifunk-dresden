@@ -536,6 +536,11 @@ upgrade_7_0_1()
  true
 }
 
+upgrade_7_0_2()
+{
+ cp /rom/etc/config/firewall /etc/config/firewall
+}
+
 #upgrade_6_X_Y()
 #{
 # true

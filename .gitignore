@@ -4,3 +4,4 @@ coredumps/
 logs/
 final_output/
 upload-infos/
+*.o
