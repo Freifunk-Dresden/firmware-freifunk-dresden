@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "batman.h"
 #include "os.h"
@@ -31,6 +32,7 @@
 #include "metrics.h"
 #include "plugin.h"
 #include "schedule.h"
+
 //#include "avl.h"
 
 uint32_t My_pid = 0;
@@ -66,6 +68,18 @@ uint8_t on_the_fly = NO;
 
 uint32_t s_curr_avg_cpu_load = 0;
 
+void cb_watchdog(void *arg)
+{
+	FILE *fp = fopen("/tmp/state/bmxd.watchdog","w");
+	if(fp)
+	{
+  	fprintf(fp, "%lu\n", (unsigned long)time(NULL) );
+	  fclose(fp);
+	}
+	//register function AGAIN that updates unix time stamp to be used as watchdog
+	register_task(30000, cb_watchdog, NULL);
+}
+
 void batman(void)
 {
 	struct list_head *list_pos;
@@ -79,6 +93,9 @@ void batman(void)
 	on_the_fly = YES;
 
 	prof_start(PROF_all);
+
+  //stephan: register function that updates unix time stamp to be used as watchdog
+	cb_watchdog(NULL);
 
 	while (!is_aborted())
 	{
