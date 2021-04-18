@@ -1,3 +1,10 @@
+
+2021-04-00 7.0.2 
+--------------------------------------------------
+bmxd                      - add keep alive watchdog
+backbone                  - re-add wireguard interfaces to bmxd when bmxd has restarted
+firewall                  - enable lan gateway when router acts as public gateway 
+
 2021-02-13 7.0.1 (rc)
 --------------------------------------------------
 wifi                      - disable external wifi button
