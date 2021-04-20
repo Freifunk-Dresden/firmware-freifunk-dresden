@@ -714,24 +714,4 @@ struct plugin_v1 *vis_get_plugin_v1(void);
 
 #endif /*NOVIS*/
 
-#ifndef NOSRV
-
-#define ARG_SRV "service"
-#define ARG_SRV_SQN "seqno"
-
-// field accessor for service announcement extension packets
-#define EXT_SRV_FIELD_SEQNO def8
-#define EXT_SRV_FIELD_PORT d16.def16
-#define EXT_SRV_FIELD_ADDR d32.def32
-
-struct srv_orig_data
-{
-	int16_t srv_array_len;
-	struct ext_packet srv_array[];
-};
-
-struct plugin_v1 *srv_get_plugin_v1(void);
-
-#endif /*NOSRV*/
-
 #endif /* _BATMAN_BATMAN_H */

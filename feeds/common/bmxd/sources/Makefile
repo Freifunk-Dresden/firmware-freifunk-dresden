@@ -50,7 +50,6 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 # -DLESS_OPTIONS                                                - ~7K
 #
 # -DNOTUNNEL  		(only affects this node)		- ~23k
-# -DNOSRV  		(only affects this node)		- ~3k
 # -DNOVIS  		(only affects this node)		- ~2k
 
 # -DNODEPRECATED	(for backward compatibility)		- ~2k
@@ -72,9 +71,9 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 EXTRA_CFLAGS += -DSTEPHAN_NO_DYNAMIC_PLUGIN
 
 
-#EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNOSRV -DNODEBUGALL
+#EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNODEBUGALL
 # um viele debug traces zu bekommen (nur fuer entwicklung nutzen)
-EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNOSRV
+EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS
 
 #LDFLAGS +=	-Wl,-export-dynamic -ldl -g3
 LDFLAGS +=	-g3
