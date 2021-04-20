@@ -509,10 +509,6 @@ void init_plugin(void)
 		activate_plugin(pv1, PLUGIN_VERSION_01, NULL, NULL);
 #endif
 
-#ifndef NOSRV
-	if ((pv1 = srv_get_plugin_v1()) != NULL)
-		activate_plugin(pv1, PLUGIN_VERSION_01, NULL, NULL);
-#endif
 }
 
 void cleanup_plugin(void)

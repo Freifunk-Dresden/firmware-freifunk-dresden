@@ -35,9 +35,6 @@
 #define DBGL_ALL 4
 #define DBGL_PROFILE 5
 #define DBGL_UNUSED 6
-#ifndef NOSRV
-#define DBGL_SERVICES 7
-#endif
 #define DBGL_DETAILS 8
 #define DBGL_LINKS 10
 #define DBGL_TEST 11

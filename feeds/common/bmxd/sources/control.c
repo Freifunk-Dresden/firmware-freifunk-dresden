@@ -2966,12 +2966,6 @@ static int32_t opt_debug(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 			check_apply_parent_option(ADD, OPT_APPLY, 0, get_option(0, 0, ARG_STATUS), 0, cn);
 			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_LINKS), 0, cn);
 			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_ORIGINATORS), 0, cn);
-#ifndef NOSRV
-		}
-		else if (ival == DBGL_SERVICES)
-		{
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_SERVICES), 0, cn);
-#endif
 		}
 		else if (ival == DBGL_GATEWAYS)
 		{
@@ -3114,9 +3108,6 @@ static struct opt_type control_options[] =
 												 "	 3  : changes\n"
 												 "	 4  : verbose changes\n"
 												 "	 5  : profiling (depends on -DDEBUG_MALLOC -DMEMORY_USAGE -DPROFILE_DATA)\n"
-#ifndef NOSRV
-												 "	 7  : services\n"
-#endif
 												 "	 8  : details\n"
 												 "	 9  : announced networks and interfaces\n"
 												 "	10  : links\n"
