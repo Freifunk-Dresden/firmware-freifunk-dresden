@@ -25,7 +25,6 @@
 #include "batman.h"
 #include "os.h"
 #include "plugin.h"
-#include "hna.h"
 #include "schedule.h"
 
 SIMPEL_LIST(cb_fd_list);
@@ -499,11 +498,6 @@ void init_plugin(void)
 
 	register_options_array(plugin_options, sizeof(plugin_options));
 #endif //STEPHAN_NO_DYNAMIC_PLUGIN
-
-#ifndef NOHNA
-	if ((pv1 = hna_get_plugin_v1()) != NULL)
-		activate_plugin(pv1, PLUGIN_VERSION_01, NULL, NULL);
-#endif
 
 #ifndef NOVIS
 	if ((pv1 = vis_get_plugin_v1()) != NULL)

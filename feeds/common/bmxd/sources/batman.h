@@ -325,7 +325,6 @@ struct bat_packet_ogm
 
 #define EXT_TYPE_MIN 0
 #define EXT_TYPE_64B_GW 0
-#define EXT_TYPE_64B_HNA 1
 #define EXT_TYPE_64B_PIP 2
 #define EXT_TYPE_64B_SRV 3
 #define EXT_TYPE_64B_KEEP_RESERVED4 4

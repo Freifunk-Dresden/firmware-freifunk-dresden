@@ -40,7 +40,8 @@ uint32_t My_pid = 0;
 uint8_t ext_attribute[EXT_TYPE_MAX + 1] =
 		{
 				EXT_ATTR_KEEP,								// EXT_TYPE_64B_GW
-				0,														// EXT_TYPE_64B_HNA
+// hna is removed, but this is still used by older firmware versions in pakets
+				0,														// _removed_EXT_TYPE_64B_HNA
 				0,														// EXT_TYPE_64B_PIP
 				EXT_ATTR_KEEP,								// EXT_TYPE_64B_SRV
 				EXT_ATTR_KEEP,								// EXT_TYPE_64B_KEEP_RESERVED4
@@ -125,9 +126,6 @@ void batman(void)
 				check_apply_parent_option(ADD, OPT_APPLY, 0, get_option(0, 0, ARG_STATUS), 0, cn);
 				check_apply_parent_option(ADD, OPT_APPLY, 0, get_option(0, 0, ARG_LINKS), 0, cn);
 				check_apply_parent_option(ADD, OPT_APPLY, 0, get_option(0, 0, ARG_ORIGINATORS), 0, cn);
-#ifndef NOHNA
-				check_apply_parent_option(ADD, OPT_APPLY, 0, get_option(0, 0, ARG_HNAS), 0, cn);
-#endif
 				check_apply_parent_option(ADD, OPT_APPLY, 0, get_option(0, 0, ARG_GATEWAYS), 0, cn);
 #ifndef NOSRV
 				check_apply_parent_option(ADD, OPT_APPLY, 0, get_option(0, 0, ARG_SERVICES), 0, cn);
@@ -185,11 +183,8 @@ static void send_vis_packet(void *unused)
 	struct vis_if *vis = vis_if;
 	struct list_head *list_pos;
 	struct batman_if *batman_if;
-	//struct hna_node *hna_node;
-
 	struct link_node *link_node;
 	struct list_head *link_pos;
-
 	struct list_head *lndev_pos;
 
 	if (!vis || !vis->sock)
@@ -279,30 +274,6 @@ static void send_vis_packet(void *unused)
 
 		dbgf_all(DBGT_INFO, "interface %s (dev=%s)", ipStr(batman_if->if_addr), batman_if->dev);
 	}
-
-	/*
-#ifndef NOHNA
-	// hna announcements
-	struct hash_it_t *hashit = NULL;
-
-	// for all hna_hash_nodes...
-	while ( (hashit = hash_iterate( hna_hash, hashit )) ) {
-		struct hna_hash_node *hhn = hashit->bucket->data;
-
-		if ( hhn->status == HNA_HASH_NODE_MYONE ) {
-			vis_packet_size += sizeof(struct vis_data);
-
-			vis_packet = debugRealloc( vis_packet, vis_packet_size, 107 );
-
-			vis_data = (struct vis_data *)(vis_packet + vis_packet_size - sizeof(struct vis_data));
-
-			vis_data->ip = hhn->key.addr;
-			vis_data->data = hhn->key.KEY_FIELD_ANETMASK;
-			vis_data->type = DATA_TYPE_HNA;
-		}
-	}
-#endif
-	*/
 
 	if (vis_packet_size == sizeof(struct vis_packet))
 	{
