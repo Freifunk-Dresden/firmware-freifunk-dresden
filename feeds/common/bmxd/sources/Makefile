@@ -54,7 +54,6 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 # -DNOPARANOIA		(makes bug-hunting impossible)		- ~2k
 # -DEXTDEBUG		(this eats your cpu)			+ ~0k
 # -DTESTDEBUG		(testing syntax of __VA_ARGS__ dbg...() macros)
-# -DWITHUNUSED		(includes yet unused stuff)
 
 # to create coredumps on pc /var/crash) disable SIGSEGV handling
 #EXTRA_CFLAGS += -DSTEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
