@@ -64,9 +64,6 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 # to create coredumps on pc /var/crash) disable SIGSEGV handling
 #EXTRA_CFLAGS += -DSTEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
 
-# This disables dynamic plugin support
-EXTRA_CFLAGS += -DSTEPHAN_NO_DYNAMIC_PLUGIN
-
 #LDFLAGS +=	-Wl,-export-dynamic -ldl -g3
 LDFLAGS +=	-g3
 # -static

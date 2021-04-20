@@ -368,121 +368,6 @@ static void deactivate_plugin(void *p)
 	}
 }
 
-#ifndef STEPHAN_NO_DYNAMIC_PLUGIN
-static int8_t activate_dyn_plugin(const char *name)
-{
-	struct plugin_v1 *(*get_plugin_v1)(void) = NULL;
-
-	void *dlhandle;
-	struct plugin_v1 *pv1;
-	char dl_path[1000];
-
-	char *My_libs = getenv(BMX_ENV_LIB_PATH);
-
-	if (!name)
-		return FAILURE;
-
-	// dl_open sigfaults on some systems without reason.
-	// removing the dl files from BMX_DEF_LIB_PATH is a way to prevent calling dl_open.
-	// Therefore we restrict dl search to BMX_DEF_LIB_PATH and BMX_ENV_LIB_PATH and ensure that dl_open
-	// is only called if a file with the requested dl name could be found.
-
-	if (My_libs)
-		sprintf(dl_path, "%s/%s", My_libs, name);
-	else
-		sprintf(dl_path, "%s/%s", BMX_DEF_LIB_PATH, name);
-
-	dbgf_all(DBGT_INFO, "trying to load dl %s", dl_path);
-
-	int dl_tried = 0;
-
-	if (check_file(dl_path, NO, YES) == SUCCESS &&
-			(dl_tried = 1) && (dlhandle = dlopen(dl_path, RTLD_NOW)))
-	{
-		dbgf_all(DBGT_INFO, "succesfully loaded dynamic library %s", dl_path);
-	}
-	else
-	{
-		dbg(dl_tried ? DBGL_SYS : DBGL_CHANGES, dl_tried ? DBGT_ERR : DBGT_WARN,
-				"failed loading dl %s %s (maybe incompatible binary/lib versions?)",
-				dl_path, dl_tried ? dlerror() : "");
-
-		return FAILURE;
-	}
-
-	dbgf_all(DBGT_INFO, "survived dlopen()!");
-
-	typedef struct plugin_v1 *(*sdl_init_function_type)(void);
-
-	union
-	{
-		sdl_init_function_type func;
-		void *obj;
-	} alias;
-
-	alias.obj = dlsym(dlhandle, "get_plugin_v1");
-
-	if (!(get_plugin_v1 = alias.func))
-	{
-		dbgf(DBGL_SYS, DBGT_ERR, "dlsym( %s ) failed: %s", name, dlerror());
-		return FAILURE;
-	}
-
-	if (!(pv1 = get_plugin_v1()))
-	{
-		dbgf(DBGL_SYS, DBGT_ERR, "get_plugin_v1( %s ) failed", name);
-		return FAILURE;
-	}
-
-	if (is_plugin_active(pv1))
-		return SUCCESS;
-
-	if (activate_plugin(pv1, PLUGIN_VERSION_01, dlhandle, name) == FAILURE)
-	{
-		dbgf(DBGL_SYS, DBGT_ERR, "activate_plugin( %s ) failed", dl_path);
-		return FAILURE;
-	}
-
-	dbg(DBGL_CHANGES, DBGT_INFO,
-			"loading and activating %s dl %s succeeded",
-			My_libs ? "customized" : "default", dl_path);
-
-	return SUCCESS;
-}
-
-static int32_t opt_plugin(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
-{
-	dbgf_all(DBGT_INFO, "%s %d", opt_cmd2str[cmd], _save);
-
-	char tmp_name[MAX_PATH_SIZE] = "";
-
-	if (cmd == OPT_CHECK)
-	{
-		dbgf_all(DBGT_INFO, "about to load dl %s", patch->p_val);
-
-		if (wordlen(patch->p_val) + 1 >= MAX_PATH_SIZE || patch->p_val[0] == '/')
-			return FAILURE;
-
-		wordCopy(tmp_name, patch->p_val);
-
-		if (get_opt_parent_val(opt, tmp_name))
-			return SUCCESS;
-
-		if (activate_dyn_plugin(tmp_name) == FAILURE)
-			return FAILURE;
-	}
-
-	return SUCCESS;
-}
-
-static struct opt_type plugin_options[] =
-		{
-				//        ord parent long_name          shrt Attributes				*ival		min		max		default		*func,*syntax,*help
-
-				//order> config-file order to be loaded by config file, order < ARG_CONNECT oder to appera first in help text
-				{ODI, 2, 0, ARG_PLUGIN, 0, A_PMN, A_ADM, A_INI, A_CFA, A_ANY, 0, 0, 0, 0, opt_plugin,
-				 ARG_FILE_FORM, "load plugin. " ARG_FILE_FORM " must be in LD_LIBRARY_PATH or " BMX_ENV_LIB_PATH "\n	path (e.g. --plugin bmx_howto_plugin.so )\n"}};
-#endif //STEPHAN_NO_DYNAMIC_PLUGIN
 
 void init_plugin(void)
 {
@@ -492,12 +377,6 @@ void init_plugin(void)
 	struct plugin_v1 *pv1;
 
 	pv1 = NULL;
-#ifndef STEPHAN_NO_DYNAMIC_PLUGIN
-	// first try loading config plugin, if succesfull, continue loading optinal plugins depending on config
-	activate_dyn_plugin(BMX_LIB_UCI_CONFIG);
-
-	register_options_array(plugin_options, sizeof(plugin_options));
-#endif //STEPHAN_NO_DYNAMIC_PLUGIN
 
 #ifndef NOTUNNEL
 	if ((pv1 = tun_get_plugin_v1()) != NULL)
