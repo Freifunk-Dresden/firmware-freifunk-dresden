@@ -906,8 +906,7 @@ static int8_t is_valid_opt_ival(struct opt_type *opt, char *s, struct ctrl_node 
 
 /*
  * call given function for each applied option
- * thus: if several hna are active func() is called once for each
- */
+*/
 int8_t func_for_each_opt(struct ctrl_node *cn, void *data, char *func_name,
 												 int8_t (*func)(struct ctrl_node *cn, void *data, struct opt_type *opt, struct opt_parent *p, struct opt_child *c))
 {
@@ -2972,12 +2971,6 @@ static int32_t opt_debug(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 		else if (ival == DBGL_SERVICES)
 		{
 			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_SERVICES), 0, cn);
-#endif
-#ifndef NOHNA
-		}
-		else if (ival == DBGL_HNAS)
-		{
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_HNAS), 0, cn);
 #endif
 		}
 		else if (ival == DBGL_GATEWAYS)

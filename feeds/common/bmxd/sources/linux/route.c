@@ -136,18 +136,11 @@ static char *trackt2str(uint8_t t)
 		return "TRACK_NO";
 	else if (t == TRACK_STANDARD)
 		return "TRACK_STANDARD";
-	else if (t == TRACK_MY_HNA)
-		return "TRACK_MY_HNA";
-	else if (t == TRACK_MY_HNA)
-		return "TRACK_MY_NET";
 	else if (t == TRACK_MY_NET)
-		return "TRACK_MY_HNA";
+		return "TRACK_MY_NET";
 	else if (t == TRACK_OTHER_HOST)
 		return "TRACK_OTHER_HOST";
-	else if (t == TRACK_OTHER_HNA)
-		return "TRACK_OTHER_HNA";
 	else if (t == TRACK_TUNNEL)
-
 		return "TRACK_TUNNEL";
 
 	return "TRACK_ILLEGAL";

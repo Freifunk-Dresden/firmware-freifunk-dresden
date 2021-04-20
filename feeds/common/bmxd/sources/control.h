@@ -39,9 +39,6 @@
 #define DBGL_SERVICES 7
 #endif
 #define DBGL_DETAILS 8
-#ifndef NOHNA
-#define DBGL_HNAS 9
-#endif
 #define DBGL_LINKS 10
 #define DBGL_TEST 11
 #define DBGL_MAX 11

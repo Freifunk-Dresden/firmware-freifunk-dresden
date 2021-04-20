@@ -145,10 +145,8 @@ enum
 {
 	TRACK_NO,
 	TRACK_STANDARD, //basic rules to interfaces, host, and networks routing tables
-	TRACK_MY_HNA,
 	TRACK_MY_NET,
 	TRACK_OTHER_HOST,
-	TRACK_OTHER_HNA,
 	TRACK_TUNNEL
 };
 
@@ -189,10 +187,6 @@ void check_interfaces();
 void init_route(void);
 void init_route_args(void);
 void cleanup_route(void);
-
-/* hna.c */
-
-#define ARG_HNAS "hnas"
 
 /* tunnel.c */
 

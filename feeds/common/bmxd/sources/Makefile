@@ -22,7 +22,12 @@ SOURCE_MD5=	$(shell md5sum *.[ch] linux/*.[cp] posix/*.[cp] Makefile | md5sum | 
 REVISION_VERSION ="\" [md5:$(SOURCE_MD5)]\""
 
 
-CFLAGS += -pedantic -Wall -W -Wno-unused-parameter -Os -g3 -std=gnu99 -I./
+CFLAGS += -pedantic -Wall -W -Wno-unused-parameter -Wmaybe-uninitialized -std=gnu99 -I./
+# for release
+CFLAGS += -Os -g0
+# for debugging (coredumps)
+#CFLAGS += -Og -g3 -ggdb
+
 CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 #CFLAGS += -DDEBUG_MALLOC -DMEMORY_USAGE
 
@@ -51,7 +56,6 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 # -DNODEPRECATED	(for backward compatibility)		- ~2k
 
 # experimental or advanced defines (please dont touch):
-# -DNOHNA		(affects all nodes in network)		- ~6k
 # -DNOPARANOIA		(makes bug-hunting impossible)		- ~2k
 # -DEXTDEBUG		(this eats your cpu)			+ ~0k
 # -DTESTDEBUG		(testing syntax of __VA_ARGS__ dbg...() macros)
@@ -68,23 +72,23 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 EXTRA_CFLAGS += -DSTEPHAN_NO_DYNAMIC_PLUGIN
 
 
-#EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNOSRV -DNODEBUGALL -DNOHNA
+#EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNOSRV -DNODEBUGALL
 # um viele debug traces zu bekommen (nur fuer entwicklung nutzen)
-EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNOSRV -DNOHNA
+EXTRA_CFLAGS += -DNODEPRECATED -DNOVIS -DNOSRV
 
 #LDFLAGS +=	-Wl,-export-dynamic -ldl -g3
 LDFLAGS +=	-g3
 # -static
 # -pg
 
-SRC_C= batman.c originator.c hna.c schedule.c plugin.c list-batman.c allocate.c avl.c profile.c control.c metrics.c posix/posix.c posix/tunnel.c linux/route.c 
-SRC_H= batman.h originator.h hna.h schedule.h plugin.h list-batman.h allocate.h avl.h profile.h control.h metrics.h vis-types.h os.h
+SRC_C= batman.c originator.c schedule.c plugin.c list-batman.c allocate.c avl.c profile.c control.c metrics.c posix/posix.c posix/tunnel.c linux/route.c
+SRC_H= batman.h originator.h schedule.h plugin.h list-batman.h allocate.h avl.h profile.h control.h metrics.h vis-types.h os.h
 OBJS=  $(SRC_C:.c=.o)
 
 SBINDIR =       $(INSTALL_PREFIX)/usr/sbin
 BINARY_NAME=	bmxd
 
-all:	
+all:
 	$(MAKE) $(BINARY_NAME)
 	# further make targets: help, libs, build_all, strip[_libs|_all], install[_libs|_all], clean[_libs|_all]
 
@@ -104,7 +108,7 @@ $(BINARY_NAME):	$(OBJS) Makefile
 
 
 strip:	all
-	strip $(BINARY_NAME) 
+	strip $(BINARY_NAME)
 
 strip_libs: all libs
 	$(MAKE) -C lib strip
@@ -120,7 +124,7 @@ install_libs:
 	$(MAKE) -C lib install
 
 
-	
+
 clean:
 	rm -f $(BINARY_NAME) *.o posix/*.o linux/*.o
 
@@ -143,4 +147,3 @@ help:
 	# strip / strip_libs / strip_all	strip    bmxd / plugins / all
 	# install / install_libs / install_all	install  bmxd / plugins / all
 	# clean / clean_libs / clean_all	clean    bmxd / libs / all
-

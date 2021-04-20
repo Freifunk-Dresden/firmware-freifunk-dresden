@@ -97,20 +97,6 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 	addr_to_str((new_router ? new_router->nnkey_addr : 0), new_nh_str);
 	addr_to_str((orig_node->router ? orig_node->router->nnkey_addr : 0), old_nh_str);
 
-	/* update routing table and check for changed hna announcements */
-	// if (orig_node->router != new_router)
-	// {
-	// 	dbgf_all(DBGT_INFO, "change route to %-15s via %-15s %s %3d / %3d (prev. via %-15s %s %3d)",
-	// 					 orig_node->orig_str,
-	// 					 new_nh_str,
-	// 					 (new_router ? new_router->nnkey_iif->dev : "--"),
-	// 					 (new_router ? new_router->longtm_sqr.wa_val : 0),
-	// 					 orig_node->pws,
-	// 					 old_nh_str,
-	// 					 (orig_node->router ? orig_node->router->nnkey_iif->dev : "--"),
-	// 					 (orig_node->router ? orig_node->router->longtm_sqr.wa_val : 0));
-	// }
-
 	if (orig_node->router != new_router)
 	{
 		if (new_router)

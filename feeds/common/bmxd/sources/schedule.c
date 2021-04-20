@@ -471,7 +471,7 @@ static void aggregate_outstanding_ogms(void *unused)
  singlehomed bedeutet nur, dass der node nur ein interface hat.
  ist das nicht gesetzt, so werden OGMs an alle interfaces angehängt und dann später versendet.
 
- im original wird nur eine "grosse" OGM erzeugt (mit hna,gateway,...) und an alle interfaces mit
+ im original wird nur eine "grosse" OGM erzeugt (mit gateway,...) und an alle interfaces mit
  TTL 50 verschickt. "kleine" OGM enthalten nur die ip des interfaces und als einzige erweiterung
  die ip und seqno der grossen OGM. diese werden mit ttl=1 verschickt, so dass diese ip von den
  non-prim interfaces nicht im netz gestreut werden.
