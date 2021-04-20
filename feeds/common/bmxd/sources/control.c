@@ -695,19 +695,6 @@ static void free_init_string(void)
 	init_string = NULL;
 }
 
-#ifndef NODEPRECATED
-static int32_t opt_deprecated(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
-{
-	char c = opt->short_name;
-
-	if (cmd == OPT_ADJUST)
-		dbg(DBGL_SYS, DBGT_WARN, "option --%s%s%c%sis DEPRECATED and ignored!",
-				opt->long_name, c ? ", -" : "", c ? c : ' ', c ? " " : "");
-
-	return SUCCESS;
-}
-#endif
-
 int32_t get_tracked_network(struct opt_type *opt, struct opt_parent *patch, char *out, uint32_t *ip, int32_t *mask, struct ctrl_node *cn)
 {
 	struct opt_child *nc, *mc;
@@ -983,11 +970,6 @@ static void show_opts_help(uint8_t all_opts, uint8_t verbose, struct ctrl_node *
 		if (!(all_opts || opt->short_name))
 			continue;
 
-#ifndef NODEPRECATED
-		if (opt->call_custom_option == opt_deprecated)
-			continue;
-#endif
-
 		if (opt->long_name && opt->help && !opt->parent_name)
 		{
 			if (opt->short_name)
@@ -1019,11 +1001,6 @@ static void show_opts_help(uint8_t all_opts, uint8_t verbose, struct ctrl_node *
 
 			if (!c_opt->parent_name || !c_opt->help)
 				continue;
-
-#ifndef NODEPRECATED
-			if (c_opt->call_custom_option == opt_deprecated)
-				continue;
-#endif
 
 			if (c_opt->short_name)
 				snprintf(sn, 5, ", /%c", c_opt->short_name);
@@ -2874,22 +2851,6 @@ void wordCopy(char *out, char *in)
 	}
 }
 
-#ifndef NODEPRECATED
-static int32_t opt_uptime(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
-{
-	if (cmd == OPT_CHECK || cmd == OPT_APPLY)
-	{
-		if (patch->p_diff == DEL)
-			return FAILURE;
-
-		if (cmd == OPT_APPLY)
-			fake_start_time(strtol(patch->p_val, NULL, 10));
-	}
-
-	return SUCCESS;
-}
-#endif
-
 static int8_t show_info(struct ctrl_node *cn, void *data, struct opt_type *opt, struct opt_parent *p, struct opt_child *c)
 {
 	if (c)
@@ -3124,10 +3085,6 @@ static struct opt_type control_options[] =
 				 ARG_VALUE_FORM, "periodicity in ms with which client daemon in loop-mode refreshes debug information"},
 #endif
 
-#ifndef NODEPRECATED
-				{ODI, 3, 0, "batch_mode", 'b', A_PS0, A_ADM, A_INI, A_ARG, A_ANY, 0, 0, 0, 0, opt_deprecated, 0, 0},
-#endif
-
 				{ODI, 3, 0, ARG_CONNECT, 'c', A_PS0, A_ADM, A_INI, A_ARG, A_EAT, 0, 0, 0, 0, opt_connect,
 				 0, "set client mode. Connect and forward remaining args to main routing daemon"},
 
@@ -3141,16 +3098,6 @@ static struct opt_type control_options[] =
 #endif
 				{ODI, 5, 0, "dbg_mute_timeout", 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &dbg_mute_to, 0, 10000000, 100000, 0,
 				 ARG_VALUE_FORM, "set timeout in ms for muting frequent messages"},
-
-#ifndef NODEPRECATED
-
-				{ODI, 5, 0, "fake_uptime", 0, A_PS1, A_ADM, A_DYN, A_ARG, A_ANY, 0, MIN_UPTIME, MAX_UPTIME, 0, opt_uptime, 0, 0},
-
-				{ODI, 5, 0, "bmx_defaults", 0, A_PS0, A_ADM, A_INI, A_ARG, A_ANY, 0, 0, 0, 0, opt_deprecated, 0, 0},
-				{ODI, 5, 0, "generation_III", 0, A_PS0, A_ADM, A_INI, A_ARG, A_ANY, 0, 0, 0, 0, opt_deprecated, 0, 0},
-				{ODI, 5, 0, "graz_2007", 0, A_PS0, A_ADM, A_INI, A_ARG, A_ANY, 0, 0, 0, 0, opt_deprecated, 0, 0},
-				{ODI, 5, 0, "24c3", 0, A_PS0, A_ADM, A_INI, A_ARG, A_ANY, 0, 0, 0, 0, opt_deprecated, 0, 0},
-#endif
 
 				{ODI, 5, 0, ARG_QUIT, EOS_DELIMITER, A_PS0, A_USR, A_DYN, A_ARG, A_END, 0, 0, 0, 0, opt_quit, 0, 0}};
 

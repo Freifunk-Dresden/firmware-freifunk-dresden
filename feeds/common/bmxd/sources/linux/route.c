@@ -1794,33 +1794,6 @@ void check_interfaces()
 		update_interface_rules(IF_RULE_CHK_IPS);
 }
 
-#ifndef NODEPRECATED
-static int32_t opt_netx(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
-{
-	if (cmd == OPT_APPLY)
-	{
-		dbg(DBGL_SYS, DBGT_WARN, "option --%s is DEPRECATED! use config file  instead and configure %s, %s, %s, and %s separately!",
-				opt->long_name, ARG_BASE_PORT, ARG_RT_TABLE, ARG_RT_PRIO, ARG_GWTUN_NETW);
-
-		if (!strcmp(opt->long_name, ARG_NETA))
-		{
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_BASE_PORT), "14305", cn);
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_RT_TABLE), "144", cn);
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_RT_PRIO), "14500", cn);
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_GWTUN_NETW), "169.254.128.0/22", cn);
-		}
-		else if (!strcmp(opt->long_name, ARG_NETB))
-		{
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_BASE_PORT), "16305", cn);
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_RT_TABLE), "40", cn);
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_RT_PRIO), "400", cn);
-			check_apply_parent_option(ADD, OPT_APPLY, _save, get_option(0, 0, ARG_GWTUN_NETW), "169.254.160.0/22", cn);
-		}
-	}
-	return SUCCESS;
-}
-#endif
-
 static int32_t opt_policy_rt(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
 	if (cmd == OPT_APPLY)
@@ -1973,11 +1946,6 @@ static struct opt_type route_options[] =
 
 				{ODI, 4, 0, ARG_BASE_PORT, 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, &base_port, MIN_BASE_PORT, MAX_BASE_PORT, DEF_BASE_PORT, 0,
 				 ARG_VALUE_FORM, "set udp ports"},
-
-#ifndef NODEPRECATED
-				{ODI, 4, 0, ARG_NETA, 0, A_PS0, A_ADM, A_INI, A_ARG, A_ANY, 0, 0, 0, 0, opt_netx, 0, 0},
-				{ODI, 4, 0, ARG_NETB, 0, A_PS0, A_ADM, A_INI, A_ARG, A_ANY, 0, 0, 0, 0, opt_netx, 0, 0},
-#endif
 
 				{ODI, 4, 0, ARG_RT_PRIO, 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, &Rt_prio, MIN_RT_PRIO, MAX_RT_PRIO, DEF_RT_PRIO, 0,
 				 ARG_VALUE_FORM, "set preferences for iproute2-style rules to rt_table (see: man ip)"},

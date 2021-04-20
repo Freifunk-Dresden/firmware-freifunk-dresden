@@ -68,10 +68,6 @@ void update_batman_time(struct timeval *precise_tv);
 
 char *get_human_uptime(uint32_t reference, int more);
 
-#ifndef NODEPRECATED
-void fake_start_time(int32_t fake);
-#endif
-
 int32_t rand_num(uint32_t limit);
 
 int8_t is_aborted();
