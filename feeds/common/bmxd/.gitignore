@@ -1,0 +1,8 @@
+.gitignore
+bmxd
+qt*.config
+qt*.creator
+qt*.user
+qt*.files
+qt*.includes
+*.code-workspace
