@@ -124,10 +124,6 @@ extern int32_t plugin_data_registries[PLUGIN_DATA_SIZE];
 
 int32_t reg_plugin_data(uint8_t data_type);
 
-#ifdef WITHUNUSED
-void **get_plugin_data(void *data, uint8_t data_type, int32_t registry);
-#endif
-
 /**************************************
  *to be used by batman sceleton...
  */

@@ -1841,16 +1841,6 @@ static int32_t opt_if_soft(uint8_t cmd, uint8_t _save, struct opt_type *opt, str
 	return SUCCESS;
 }
 
-#ifdef WITHUNUSED
-static int32_t opt_if_hard(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
-{
-	if (cmd == OPT_APPLY)
-		if_conf_hard_changed = YES;
-
-	return SUCCESS;
-}
-#endif
-
 static int32_t opt_lws(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
 	if (cmd == OPT_APPLY)

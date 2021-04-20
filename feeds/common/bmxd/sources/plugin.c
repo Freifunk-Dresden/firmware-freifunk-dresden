@@ -250,23 +250,6 @@ int32_t reg_plugin_data(uint8_t data_type)
 	return (plugin_data_registries[data_type] - 1);
 }
 
-#ifdef WITHUNUSED
-void **get_plugin_data(void *data, uint8_t data_type, int32_t registry)
-{
-	if (data_type >= PLUGIN_DATA_SIZE || registry > plugin_data_registries[data_type])
-	{
-		cleanup_all(-500145);
-		//dbgf( DBGL_SYS, DBGT_ERR, "requested to deliver data for unknown registry !");
-		//return NULL;
-	}
-
-	if (data_type == PLUGIN_DATA_ORIG)
-		return &(((struct orig_node *)data)->plugin_data[registry]);
-
-	return NULL;
-}
-#endif
-
 static int is_plugin_active(void *plugin)
 {
 	struct list_head *list_pos;
