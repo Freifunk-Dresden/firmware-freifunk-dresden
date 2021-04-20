@@ -499,11 +499,6 @@ void init_plugin(void)
 	register_options_array(plugin_options, sizeof(plugin_options));
 #endif //STEPHAN_NO_DYNAMIC_PLUGIN
 
-#ifndef NOVIS
-	if ((pv1 = vis_get_plugin_v1()) != NULL)
-		activate_plugin(pv1, PLUGIN_VERSION_01, NULL, NULL);
-#endif
-
 #ifndef NOTUNNEL
 	if ((pv1 = tun_get_plugin_v1()) != NULL)
 		activate_plugin(pv1, PLUGIN_VERSION_01, NULL, NULL);

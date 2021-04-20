@@ -696,22 +696,5 @@ struct gw_client
 
 void batman(void);
 
-#ifndef NOVIS
-
-#include "vis-types.h"
-
-#define VIS_COMPAT_VERSION 23
-
-#define DEF_VIS_PORT 4307
-
-struct vis_if
-{
-	int32_t sock;
-	struct sockaddr_in addr;
-};
-
-struct plugin_v1 *vis_get_plugin_v1(void);
-
-#endif /*NOVIS*/
 
 #endif /* _BATMAN_BATMAN_H */
