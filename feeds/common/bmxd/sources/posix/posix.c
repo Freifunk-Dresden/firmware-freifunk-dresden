@@ -49,13 +49,6 @@ static int8_t stop = 0;
 static struct timeval start_time_tv;
 static struct timeval ret_tv, new_tv, diff_tv, acceptable_m_tv, acceptable_p_tv, max_tv = {0, (2000 * MAX_SELECT_TIMEOUT_MS)};
 
-#ifndef NODEPRECATED
-void fake_start_time(int32_t fake)
-{
-	start_time_tv.tv_sec -= fake;
-}
-#endif
-
 /* get_time functions MUST be called at least every 2*MAX_SELECT_TIMEOUT_MS to allow for properly working time-drift checks */
 
 /* overlaps after approximately 138 years */

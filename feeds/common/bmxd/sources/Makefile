@@ -50,7 +50,6 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 # -DLESS_OPTIONS                                                - ~7K
 #
 # -DNOTUNNEL  		(only affects this node)		- ~23k
-# -DNODEPRECATED	(for backward compatibility)		- ~2k
 
 # experimental or advanced defines (please dont touch):
 # -DNOPARANOIA		(makes bug-hunting impossible)		- ~2k
@@ -67,11 +66,6 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 
 # This disables dynamic plugin support
 EXTRA_CFLAGS += -DSTEPHAN_NO_DYNAMIC_PLUGIN
-
-
-#EXTRA_CFLAGS += -DNODEPRECATED -DNODEBUGALL
-# um viele debug traces zu bekommen (nur fuer entwicklung nutzen)
-EXTRA_CFLAGS += -DNODEPRECATED
 
 #LDFLAGS +=	-Wl,-export-dynamic -ldl -g3
 LDFLAGS +=	-g3
