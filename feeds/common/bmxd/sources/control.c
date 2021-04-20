@@ -2975,14 +2975,6 @@ static int32_t opt_help(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 	{
 		dbg_printf(cn, "BMX %s%s (compatibility version %i)\n",
 							 SOURCE_VERSION, (strncmp(REVISION_VERSION, "0", 1) != 0 ? REVISION_VERSION : ""), COMPAT_VERSION);
-
-#ifndef NOTRAILER
-	}
-	else if (!strcmp(opt->long_name, ARG_TRAILER))
-	{
-		print_animation();
-
-#endif
 	}
 	else
 	{
@@ -3051,10 +3043,6 @@ static struct opt_type control_options[] =
 
 				{ODI, 0, 0, ARG_VERSION, 'v', A_PS0, A_USR, A_DYI, A_ARG, A_ANY, 0, 0, 0, 0, opt_help,
 				 0, "show version"},
-#ifndef NOTRAILER
-				{ODI, 0, 0, ARG_TRAILER, 'V', A_PS0, A_USR, A_INI, A_ARG, A_END, 0, 0, 0, 0, opt_help,
-				 0, "show trailer"},
-#endif
 
 				{ODI, 0, 0, ARG_TEST, 0, A_PS0, A_ADM, A_DYI, A_ARG, A_ANY, &Testing, 0, 1, 0, 0,
 				 0, "test remaining args and provide feedback about projected success (without applying them)"},

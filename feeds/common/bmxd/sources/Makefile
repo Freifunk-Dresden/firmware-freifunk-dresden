@@ -45,7 +45,6 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 # -DPROFILE_DATA	(some realtime profiling)		+ ~3k
 
 # optional defines (you may disable these features if you dont need it):
-# -DNOTRAILER							- ~3K
 # -DNODEBUGALL							- ~13k
 # -DLESS_OPTIONS                                                - ~7K
 #

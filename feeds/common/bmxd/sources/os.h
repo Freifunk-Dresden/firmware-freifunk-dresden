@@ -36,10 +36,6 @@ enum
 
 void bat_wait(uint32_t sec, uint32_t msec);
 
-#ifndef NOTRAILER
-void print_animation(void);
-#endif
-
 int8_t send_udp_packet(unsigned char *packet_buff, int32_t packet_buff_len, struct sockaddr_in *dst, int32_t send_sock);
 
 void cleanup_all(int status);
