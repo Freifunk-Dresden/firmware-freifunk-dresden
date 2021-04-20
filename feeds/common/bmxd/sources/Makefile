@@ -56,10 +56,6 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 # -DTESTDEBUG		(testing syntax of __VA_ARGS__ dbg...() macros)
 # -DWITHUNUSED		(includes yet unused stuff)
 
-# remove all twt functions, as this would allocated memory also when
-# not using it (disabled by command line options of bmxd)
-# -DSTEPHAN_ENABLE_TWT
-
 # to create coredumps on pc /var/crash) disable SIGSEGV handling
 #EXTRA_CFLAGS += -DSTEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
 
