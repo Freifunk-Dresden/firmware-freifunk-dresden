@@ -69,7 +69,7 @@ LDFLAGS +=	-g3
 # -pg
 
 SRC_C= batman.c originator.c schedule.c plugin.c list-batman.c allocate.c avl.c profile.c control.c metrics.c posix/posix.c posix/tunnel.c linux/route.c
-SRC_H= batman.h originator.h schedule.h plugin.h list-batman.h allocate.h avl.h profile.h control.h metrics.h vis-types.h os.h
+SRC_H= batman.h originator.h schedule.h plugin.h list-batman.h allocate.h avl.h profile.h control.h metrics.h os.h
 OBJS=  $(SRC_C:.c=.o)
 
 SBINDIR =       $(INSTALL_PREFIX)/usr/sbin
