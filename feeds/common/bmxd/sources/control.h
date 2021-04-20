@@ -120,22 +120,6 @@ struct dbg_histogram
 	} while (0)
 #endif
 
-#ifdef EXTDEBUG
-#define dbgf_ext(dbgt, ...)                   \
-	do                                          \
-	{                                           \
-		if (__dbgf_all())                         \
-		{                                         \
-			_dbgf_all(dbgt, __func__, __VA_ARGS__); \
-		}                                         \
-	} while (0)
-#else
-#define dbgf_ext(...) \
-	{                   \
-		;                 \
-	}
-#endif
-
 #define dbgf(dbgl, dbgt, ...) \
 	;                           \
 	_dbgf(dbgl, dbgt, __func__, __VA_ARGS__);
@@ -165,7 +149,6 @@ void dbg_printf(struct ctrl_node *cn, char *last, ...);
 #define dbg_cn(cn, dbgl, dbgt, ...) printf(__VA_ARGS__)
 #define dbg_mute(check_len, dbgl, dbgt, ...) printf(__VA_ARGS__)
 #define dbgf_all(dbgt, ...) printf(__VA_ARGS__)
-#define dbgf_ext(dbgt, ...) printf(__VA_ARGS__)
 #define dbg_printf(cn, ...) printf(__VA_ARGS__)
 
 #endif

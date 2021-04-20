@@ -870,11 +870,6 @@ static int8_t validate_considered_order(struct orig_node *orig_node, SQ_TYPE seq
 		}
 		else if (((SQ_TYPE)(seqno - nn->last_considered_seqno)) > MAX_SEQNO - my_pws)
 		{
-			dbgf_ext(DBGT_WARN,
-							 "rcvd illegal SQN %d order from %s via %s %s (last considered sqn %d",
-							 seqno, orig_node->orig_str, ipStr(neigh), iif->dev,
-							 nn->last_considered_seqno);
-
 			return FAILURE;
 		}
 

@@ -1530,12 +1530,6 @@ int update_interface_rules(uint8_t cmd)
 			checksum ^= (checksum >> 6);
 		}
 
-		dbgf_ext(DBGT_INFO, "%15ju  %15ju  %10s %15s %15s %2d ",
-						 old_checksum, checksum,
-						 //                        ((uint32_t*)&(old_checksum))[0], ((uint32_t*)&(old_checksum))[1],
-						 //                        ((uint32_t*)&(checksum))[0], ((uint32_t*)&(checksum))[1],
-						 ifr->ifr_name, ipStr(bif.if_addr), ipStr(bif.if_netaddr), bif.if_prefix_length);
-
 		if (cmd == IF_RULE_CHK_IPS)
 			continue;
 
