@@ -150,7 +150,7 @@
 { "name":"", "filename":"openwrt-ath79-generic-netgear_wndr3700-initramfs-kernel.bin", "comment":""},
 { "name":"", "filename":"openwrt-ath79-generic-netgear_wndr3700-squashfs-factory.img", "comment":""},
 { "name":"", "filename":"openwrt-ath79-generic-netgear_wndr3700-squashfs-factory-NA.img", "comment":""},
-{ "name":"", "autoupdate":"0", "model":"wndr3700", "model2":"NETGEAR WNDR3700", "filename":"openwrt-ath79-generic-netgear_wndr3700-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"1", "model":"netgear,wndr3700", "model2":"Netgear WNDR3700", "filename":"openwrt-ath79-generic-netgear_wndr3700-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ath79-generic-netgear_wndr3700v2-initramfs-kernel.bin", "comment":""},
 { "name":"", "filename":"openwrt-ath79-generic-netgear_wndr3700v2-squashfs-factory.img", "comment":""},
 { "name":"", "autoupdate":"0", "model":"wndr3700", "model2":"NETGEAR WNDR3700v2", "filename":"openwrt-ath79-generic-netgear_wndr3700v2-squashfs-sysupgrade.bin", "comment":""},
