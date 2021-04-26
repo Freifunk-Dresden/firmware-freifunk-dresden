@@ -533,7 +533,7 @@ upgrade_6_4_6()
 
 upgrade_7_0_1()
 {
- true
+ uci set ddmesh.system.firmware_autoupdate=1
 }
 
 upgrade_7_0_2()

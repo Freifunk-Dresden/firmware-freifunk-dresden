@@ -14,13 +14,15 @@ toggle_ssid()
  # $1 - true if internet is present
 	json=$(wifi status)
 	# loop max through 3 interfaces
-	for r in 0 1; do
-		for i in 0 1 2; do
+	for radio in radio2g radio5g; do
+		for i in 0 1 2 3; do
 			unset wifi_dev
 			unset wifi_network
-			eval $(echo $json | jsonfilter -e wifi_dev=@.radio$r.interfaces[$i].ifname \
-				-e wifi_network=@.radio$r.interfaces[$i].config.network[0] \
-				-e wifi_ssid=@.radio$r.interfaces[$i].config.ssid)
+
+			eval $(echo $json | jsonfilter -e wifi_dev=@.${radio}.interfaces[$i].ifname \
+				-e wifi_network=@.${radio}.interfaces[$i].config.network[0] \
+				-e wifi_ssid=@.${radio}.interfaces[$i].config.ssid)
+
 			if [ "$wifi_network" = "wifi2" -a -n "$wifi_dev" ]; then
 				if [ "$1" = "true" ]; then
 					logger -s -t $TAG "$wifi_dev ssid: $wifi_ssid"
