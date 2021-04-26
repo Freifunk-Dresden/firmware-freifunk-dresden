@@ -153,7 +153,7 @@
 { "name":"", "autoupdate":"1", "model":"netgear,wndr3700", "model2":"Netgear WNDR3700", "filename":"openwrt-ath79-generic-netgear_wndr3700-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ath79-generic-netgear_wndr3700v2-initramfs-kernel.bin", "comment":""},
 { "name":"", "filename":"openwrt-ath79-generic-netgear_wndr3700v2-squashfs-factory.img", "comment":""},
-{ "name":"", "autoupdate":"0", "model":"wndr3700", "model2":"NETGEAR WNDR3700v2", "filename":"openwrt-ath79-generic-netgear_wndr3700v2-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"1", "model":"netgear,wndr3700v2", "model2":"Netgear WNDR3700v2", "filename":"openwrt-ath79-generic-netgear_wndr3700v2-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ath79-generic-tplink_archer-c60-v1-initramfs-kernel.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-tplink_archer-c60-v1-squashfs-factory.bin", "comment":"new file"},
 { "name":"", "autoupdate":"1", "model":"tplink,archer-c60-v1", "model2":"TP-Link Archer C60 v1", "filename":"openwrt-ath79-generic-tplink_archer-c60-v1-squashfs-sysupgrade.bin", "comment":"new file"},
