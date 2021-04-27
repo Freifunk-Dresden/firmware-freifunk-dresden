@@ -112,7 +112,7 @@
 { "name":"", "filename":"openwrt-ar71xx-generic-cpe210-v3-squashfs-factory.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"cpe210-v3", "model2":"TP-Link CPE210 v3.0", "filename":"openwrt-ar71xx-generic-cpe210-v3-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"fritz4020", "model2":"AVM FRITZ!Box 4020", "filename":"openwrt-ar71xx-generic-fritz4020-squashfs-sysupgrade.bin", "comment":""},
-{ "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-ar71xx-generic-fritz450e-squashfs-sysupgrade.bin", "comment":"new file"},
+{ "name":"", "autoupdate":"1", "model":"fritz450e", "model2":"AVM FRITZ!WLAN Repeater 450E", "filename":"openwrt-ar71xx-generic-fritz450e-squashfs-sysupgrade.bin", "comment":"new file"},
 { "name":"", "autoupdate":"1", "model":"gl-ar150", "model2":"GL.iNet GL-AR150", "filename":"openwrt-ar71xx-generic-gl-ar150-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"gl-ar300m", "model2":"GL.iNet GL-AR300M", "filename":"openwrt-ar71xx-generic-gl-ar300m-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"", "model2":"", "filename":"openwrt-ar71xx-generic-gl-ar300-squashfs-sysupgrade.bin", "comment":""},
