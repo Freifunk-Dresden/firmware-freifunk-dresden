@@ -190,7 +190,7 @@
 { "name":"", "autoupdate":"1", "model":"avm,fritzbox-4040", "model2":"AVM FRITZ!Box 4040", "filename":"openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"avm,fritzrepeater-1200", "model2":"AVM FRITZ!Repeater 1200", "filename":"openwrt-ipq40xx-generic-avm_fritzrepeater-1200-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-lantiq-xway-arcadyan_arv752dpw22-initramfs-kernel.bin", "comment":"new file"},
-{ "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-lantiq-xway-arcadyan_arv752dpw22-squashfs-sysupgrade.bin", "comment":"new file"},
+{ "name":"", "autoupdate":"1", "model":"arcadyan,arv752dpw22", "model2":"Arcor 803", "filename":"openwrt-lantiq-xway-arcadyan_arv752dpw22-squashfs-sysupgrade.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-lantiq-xway-arcadyan_arv8539pw22-initramfs-kernel.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"arcadyan,arv8539pw22", "model2":"Speedport W 504V Typ A", "filename":"openwrt-lantiq-xway-arcadyan_arv8539pw22-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-mpc85xx-p1020-hiveap-330-initramfs-kernel.bin", "comment":""},
