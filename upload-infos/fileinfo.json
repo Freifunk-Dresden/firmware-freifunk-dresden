@@ -182,7 +182,7 @@
 { "name":"", "autoupdate":"1", "model":"ubnt,unifiac-lite", "model2":"Ubiquiti UniFi-AC-LITE", "filename":"openwrt-ath79-generic-ubnt_unifiac-lite-squashfs-sysupgrade.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-ubnt_unifi-initramfs-kernel.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-ubnt_unifi-squashfs-factory.bin", "comment":"new file"},
-{ "name":"", "autoupdate":"1", "model":"unifi", "model2":"Ubiquiti UniFi", "filename":"openwrt-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin", "comment":"new file"},
+{ "name":"", "autoupdate":"1", "model":"ubnt,unifi", "model2":"Ubiquiti UniFi AP", "filename":"openwrt-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-wd_mynet-n750-initramfs-kernel.bin", "comment":"new file"},
 { "name":"", "filename":"openwrt-ath79-generic-wd_mynet-n750-squashfs-factory.bin", "comment":"new file"},
 { "name":"", "autoupdate":"1", "model":"wd,mynet-n750", "model2":"Western Digital My Net N750", "filename":"openwrt-ath79-generic-wd_mynet-n750-squashfs-sysupgrade.bin", "comment":"new file"},
