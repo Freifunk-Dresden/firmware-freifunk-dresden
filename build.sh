@@ -79,36 +79,35 @@ RUN_DIR=$(pwd)
 
 ############# progress bar ##########################
 
-function progressbar {
-  #######################################
-  # Display a progress bar
-  # Arguments:
-  #   $1 Current loop number
-  #   $2 max. no of loops (1005)
-  # Returns:
-  #   None
-  #######################################
+progressbar()
+{
+  _value=$1
+  _maxValue=$2
 
-  title="Progress :"
-  title_len=10
-
+  # get current number of terminal colums
   _cols=$(tput cols)
-  let _cols=$_cols-$title_len
 
-  # Process data
-  let _progress=(${1}*100/${2}*100)/100
-  let _done=(${_progress}*4)/10
-  let _left=$_cols-$_done-20
+  title="Progress: "
+  title_len=${#title}	# title length
 
-  # Build progressbar string lengths
-  _fill=$(printf "%${_done}s")
-  _empty=$(printf "%${_left}s")
+  let _progress=(${_value}*100/${_maxValue}*100)/100
+  progress_string="$(printf ' %3u%% (%u/%u)' $_progress $_value $_maxValue )"
+  progress_strlen=${#progress_string}
 
-  # 1.2 Build progressbar strings and print the progressbar line
-  # 1.2.1 Output example:
-  # 1.2.1.1 Progress : [########################################] 100%
-  printf "\r$title [${_fill// /#}${_empty// /-}] ${_progress}%% ($1/$2)"
-  # erase until end of line
+  # calulate length of bar 
+  let _cols=$_cols-$title_len-2-$progress_strlen
+  let _left=($_progress*${_cols})/100
+  let _right=$_cols-$_left
+
+  # progress bar string
+  _sleft="$(printf %${_left}s)"
+  _sleft="${_sleft// /#}"
+
+  _sright="$(printf %${_right}s)"
+  _sright="${_sright// /-}"
+  printf "${title}[${_sleft}${_sright}]${progress_string}"
+
+  # clear until end of line
   tput el
 }
 
@@ -119,6 +118,7 @@ clean_up()
 	if [ -n "$row" ]; then
 		printf "\\033[r\n"
 		tput cup $row 0
+		printf "\n"
 	fi
 	exit 0
 }
@@ -138,7 +138,7 @@ show_progress()
  tput cup 1 0
  tput el
 
- # print progress bar at top
+ # print progress bar at bottom 
  tput cup $(( $row - 1)) 0
  progressbar $_count $_max
 
@@ -932,6 +932,8 @@ EOM
 
 done
 
+show_progress $progress_counter $progress_max
+sleep 1
 clean_up
 
 echo -e $C_PURPLE".......... complete build finished ........................"$C_NONE
