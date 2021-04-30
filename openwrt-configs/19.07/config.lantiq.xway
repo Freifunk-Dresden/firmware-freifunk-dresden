@@ -83,7 +83,7 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_arcadyan_arv7518pw is not set
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_arcadyan_arv7519pw is not set
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_audiocodes_mp-252 is not set
-# CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_avm_fritz7312 is not set
+CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_avm_fritz7312=y
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_avm_fritz7320 is not set
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_bt_homehub-v2b is not set
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_bt_homehub-v3a is not set
@@ -120,10 +120,15 @@ CONFIG_DEFAULT_iwinfo=y
 CONFIG_DEFAULT_kmod-ath9k=y
 CONFIG_DEFAULT_kmod-gpio-button-hotplug=y
 CONFIG_DEFAULT_kmod-leds-gpio=y
+CONFIG_DEFAULT_kmod-ltq-adsl-ar9=y
+CONFIG_DEFAULT_kmod-ltq-adsl-ar9-fw-b=y
+CONFIG_DEFAULT_kmod-ltq-adsl-ar9-mei=y
 CONFIG_DEFAULT_kmod-ltq-adsl-danube=y
 CONFIG_DEFAULT_kmod-ltq-adsl-danube-fw-b=y
 CONFIG_DEFAULT_kmod-ltq-adsl-danube-mei=y
+CONFIG_DEFAULT_kmod-ltq-atm-ar9=y
 CONFIG_DEFAULT_kmod-ltq-atm-danube=y
+CONFIG_DEFAULT_kmod-ltq-deu-ar9=y
 CONFIG_DEFAULT_kmod-ltq-tapi=y
 CONFIG_DEFAULT_kmod-ltq-vmmc=y
 CONFIG_DEFAULT_kmod-owl-loader=y
@@ -1485,36 +1490,6 @@ CONFIG_PACKAGE_usign=y
 # CONFIG_PACKAGE_zram-swap is not set
 
 #
-# Administration
-#
-
-#
-# zabbix
-#
-# CONFIG_PACKAGE_zabbix-agentd is not set
-
-#
-# SSL support
-#
-# CONFIG_ZABBIX_OPENSSL is not set
-# CONFIG_ZABBIX_GNUTLS is not set
-CONFIG_ZABBIX_NOSSL=y
-# CONFIG_PACKAGE_zabbix-extra-mac80211 is not set
-# CONFIG_PACKAGE_zabbix-extra-network is not set
-# CONFIG_PACKAGE_zabbix-extra-wifi is not set
-# CONFIG_PACKAGE_zabbix-get is not set
-# CONFIG_PACKAGE_zabbix-proxy is not set
-# CONFIG_PACKAGE_zabbix-sender is not set
-# CONFIG_PACKAGE_zabbix-server is not set
-
-#
-# Database Software
-#
-# CONFIG_ZABBIX_MYSQL is not set
-CONFIG_ZABBIX_POSTGRESQL=y
-# CONFIG_PACKAGE_zabbix-server-frontend is not set
-
-#
 # Boot Loaders
 #
 # CONFIG_PACKAGE_u-boot-acmp252_nor is not set
@@ -1593,7 +1568,7 @@ CONFIG_PACKAGE_libuecc=y
 CONFIG_PACKAGE_nacl=y
 # CONFIG_PACKAGE_wshaper is not set
 CONFIG_PACKAGE_ddmesh-base=y
-# CONFIG_PACKAGE_wireguard is not set
+CONFIG_PACKAGE_wireguard=y
 CONFIG_PACKAGE_ddmesh-extra-modules=m
 CONFIG_PACKAGE_tcpdump=m
 # CONFIG_PACKAGE_ddmesh-lte is not set
@@ -2096,9 +2071,10 @@ CONFIG_PACKAGE_kmod-iptunnel4=y
 # CONFIG_PACKAGE_kmod-tcp-bbr is not set
 # CONFIG_PACKAGE_kmod-trelay is not set
 CONFIG_PACKAGE_kmod-tun=y
+CONFIG_PACKAGE_kmod-udptunnel4=y
 # CONFIG_PACKAGE_kmod-veth is not set
 # CONFIG_PACKAGE_kmod-vxlan is not set
-# CONFIG_PACKAGE_kmod-wireguard is not set
+CONFIG_PACKAGE_kmod-wireguard=y
 
 #
 # Other modules
@@ -2345,11 +2321,6 @@ CONFIG_PACKAGE_kmod-rt2x00-pci=y
 # CONFIG_PACKAGE_luac is not set
 
 #
-# PHP
-#
-# CONFIG_PACKAGE_php7 is not set
-
-#
 # Python
 #
 # CONFIG_PACKAGE_python-pip-conf is not set
@@ -2501,7 +2472,6 @@ CONFIG_OPENSSL_ENGINE=y
 #
 # database
 #
-# CONFIG_PACKAGE_libpq is not set
 # CONFIG_PACKAGE_libsqlite3 is not set
 # CONFIG_PACKAGE_argp-standalone is not set
 # CONFIG_PACKAGE_bluez-libs is not set
@@ -2510,7 +2480,6 @@ CONFIG_OPENSSL_ENGINE=y
 # CONFIG_PACKAGE_icu-data-tools is not set
 # CONFIG_PACKAGE_icu-full-data is not set
 # CONFIG_PACKAGE_jansson is not set
-# CONFIG_PACKAGE_libaio is not set
 # CONFIG_PACKAGE_libasm is not set
 # CONFIG_PACKAGE_libbfd is not set
 # CONFIG_PACKAGE_libblkid is not set
@@ -2536,9 +2505,7 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libext2fs is not set
 # CONFIG_PACKAGE_libf2fs is not set
 # CONFIG_PACKAGE_libfdisk is not set
-# CONFIG_PACKAGE_libfdt is not set
 # CONFIG_PACKAGE_libffi is not set
-# CONFIG_PACKAGE_libfreetype is not set
 # CONFIG_PACKAGE_libgdbm is not set
 # CONFIG_PACKAGE_libgmp is not set
 # CONFIG_PACKAGE_libical is not set
@@ -2549,14 +2516,12 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libintl-full is not set
 # CONFIG_PACKAGE_libiw is not set
 CONFIG_PACKAGE_libiwinfo=y
-# CONFIG_PACKAGE_libjpeg is not set
 CONFIG_PACKAGE_libjson-c=y
 # CONFIG_PACKAGE_libkmod is not set
 # CONFIG_PACKAGE_libltdl is not set
 # CONFIG_PACKAGE_liblua is not set
 CONFIG_PACKAGE_liblzo=y
-# CONFIG_PACKAGE_libmariadb is not set
-# CONFIG_PACKAGE_libmnl is not set
+CONFIG_PACKAGE_libmnl=y
 # CONFIG_PACKAGE_libmount is not set
 # CONFIG_PACKAGE_libncurses is not set
 # CONFIG_PACKAGE_libnetfilter-conntrack is not set
@@ -2585,10 +2550,6 @@ CONFIG_PACKAGE_libpcap=m
 # CONFIG_PCAP_HAS_USB is not set
 # CONFIG_PCAP_HAS_NETFILTER is not set
 # CONFIG_PACKAGE_libpci is not set
-# CONFIG_PACKAGE_libpcre is not set
-# CONFIG_PACKAGE_libpcre16 is not set
-# CONFIG_PACKAGE_libpcrecpp is not set
-# CONFIG_PACKAGE_libpng is not set
 # CONFIG_PACKAGE_libpopt is not set
 # CONFIG_PACKAGE_libreadline is not set
 # CONFIG_PACKAGE_libroxml is not set
@@ -2616,10 +2577,8 @@ CONFIG_PACKAGE_libustream-mbedtls=y
 # CONFIG_PACKAGE_libxml2 is not set
 CONFIG_PACKAGE_linux-atm=y
 # CONFIG_PACKAGE_p11-kit is not set
-# CONFIG_PACKAGE_pixman is not set
 # CONFIG_PACKAGE_terminfo is not set
 # CONFIG_PACKAGE_uclibcxx is not set
-# CONFIG_PACKAGE_uw-imap is not set
 # CONFIG_PACKAGE_zlib is not set
 
 #
@@ -2716,7 +2675,7 @@ CONFIG_PACKAGE_br2684ctl=y
 # CONFIG_PACKAGE_igmpproxy is not set
 # CONFIG_PACKAGE_ip-bridge is not set
 # CONFIG_PACKAGE_ip-full is not set
-# CONFIG_PACKAGE_ip-tiny is not set
+CONFIG_PACKAGE_ip-tiny=y
 # CONFIG_PACKAGE_lldpd is not set
 # CONFIG_PACKAGE_nstat is not set
 # CONFIG_PACKAGE_rdma is not set
@@ -2798,7 +2757,7 @@ CONFIG_OPENVPN_mbedtls_ENABLE_PF=y
 CONFIG_OPENVPN_mbedtls_ENABLE_SMALL=y
 # CONFIG_PACKAGE_openvpn-nossl is not set
 # CONFIG_PACKAGE_openvpn-openssl is not set
-# CONFIG_PACKAGE_wireguard-tools is not set
+CONFIG_PACKAGE_wireguard-tools=y
 
 #
 # WWAN
@@ -2843,10 +2802,6 @@ CONFIG_PACKAGE_iperf3=y
 # CONFIG_PACKAGE_iputils-tracepath is not set
 CONFIG_PACKAGE_iw=y
 # CONFIG_PACKAGE_iw-full is not set
-# CONFIG_PACKAGE_krb5-client is not set
-# CONFIG_PACKAGE_krb5-libs is not set
-# CONFIG_PACKAGE_krb5-server is not set
-# CONFIG_PACKAGE_krb5-server-extras is not set
 # CONFIG_PACKAGE_libipset is not set
 CONFIG_PACKAGE_ltq-adsl-app=y
 # CONFIG_PACKAGE_odhcpd is not set
@@ -2965,11 +2920,6 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_xfs-mkfs is not set
 
 #
-# Image Manipulation
-#
-# CONFIG_PACKAGE_jpeg-tools is not set
-
-#
 # Terminal
 #
 # CONFIG_PACKAGE_agetty is not set
@@ -2978,33 +2928,8 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_wall is not set
 
 #
-# Virtualization
-#
-
-#
-# Zoneinfo
-#
-# CONFIG_PACKAGE_zoneinfo-africa is not set
-# CONFIG_PACKAGE_zoneinfo-all is not set
-# CONFIG_PACKAGE_zoneinfo-asia is not set
-# CONFIG_PACKAGE_zoneinfo-atlantic is not set
-# CONFIG_PACKAGE_zoneinfo-australia-nz is not set
-# CONFIG_PACKAGE_zoneinfo-core is not set
-# CONFIG_PACKAGE_zoneinfo-europe is not set
-# CONFIG_PACKAGE_zoneinfo-india is not set
-# CONFIG_PACKAGE_zoneinfo-northamerica is not set
-# CONFIG_PACKAGE_zoneinfo-pacific is not set
-# CONFIG_PACKAGE_zoneinfo-poles is not set
-# CONFIG_PACKAGE_zoneinfo-simple is not set
-# CONFIG_PACKAGE_zoneinfo-southamerica is not set
-
-#
 # database
 #
-# CONFIG_PACKAGE_mariadb-common is not set
-# CONFIG_PACKAGE_pgsql-cli is not set
-# CONFIG_PACKAGE_pgsql-cli-extra is not set
-# CONFIG_PACKAGE_pgsql-server is not set
 # CONFIG_PACKAGE_sqlite3-cli is not set
 # CONFIG_PACKAGE_adb is not set
 # CONFIG_PACKAGE_bluez-daemon is not set
@@ -3017,8 +2942,6 @@ CONFIG_PACKAGE_bspatch=y
 # CONFIG_PACKAGE_dbus-utils is not set
 # CONFIG_PACKAGE_dmesg is not set
 # CONFIG_PACKAGE_dropbearconvert is not set
-# CONFIG_PACKAGE_dtc is not set
-# CONFIG_PACKAGE_fdt-utils is not set
 # CONFIG_PACKAGE_flock is not set
 # CONFIG_PACKAGE_fritz-caldata is not set
 # CONFIG_PACKAGE_fritz-tffs is not set
