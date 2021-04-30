@@ -128,7 +128,7 @@ case "$ARG1" in
 	;;
   check)
  	# connection check; if bmxd hangs, kill it
-	timeout -t 10 -s 9 $DAEMON -ci || killall -9 $DAEMON
+	timeout -t 10 -s 9 $DAEMON -ci >/dev/null || killall -9 $DAEMON
 
 	test -z "$(pidof $DAEMON)" && logger -s "$DAEMON not running - restart" && $0 restart && exit
 
