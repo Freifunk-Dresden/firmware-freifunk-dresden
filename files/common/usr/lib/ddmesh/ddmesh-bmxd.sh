@@ -8,7 +8,6 @@ DAEMON_PATH=/usr/bin
 
 test -x $DAEMON_PATH/$DAEMON || exit 0
 
-RUN_STATUS_FILE=/var/run/batman-status-running
 DB_PATH=/var/lib/ddmesh/bmxd
 STAT_DIR=/var/statistic
 
@@ -128,17 +127,17 @@ case "$ARG1" in
 	$DAEMON_PATH/$DAEMON -c dev=-$ARG2
 	;;
   check)
+ 	# connection check; if bmxd hangs, kill it
+	timeout -t 10 -s 9 $DAEMON -ci || killall -9 $DAEMON
+
 	test -z "$(pidof $DAEMON)" && logger -s "$DAEMON not running - restart" && $0 restart && exit
-	test -n "$(pidof $DAEMON)" && test ! -f "$RUN_STATUS_FILE" && (
-	touch $RUN_STATUS_FILE
+
 	$DAEMON_PATH/$DAEMON -c --gateways > $DB_PATH/gateways
 	$DAEMON_PATH/$DAEMON -c --links > $DB_PATH/links
 	$DAEMON_PATH/$DAEMON -c --originators > $DB_PATH/originators
 	$DAEMON_PATH/$DAEMON -c --status > $DB_PATH/status
 #	$DAEMON_PATH/$DAEMON -c --networks > $DB_PATH/networks
 	$DAEMON_PATH/$DAEMON -ci > $DB_PATH/info
-	rm $RUN_STATUS_FILE
-	)
 
 	;;
 

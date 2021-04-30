@@ -50,7 +50,6 @@ call_task()
 
 task_bmxd()
 {
-	test $(pidof bmxd | wc -w) -gt 5 && kill -9 $(pidof bmxd) && logger -t $TAG "bmxd: ERROR bmxd dead - bmxd killed"
 	# check 
 	WD_FILE=/tmp/state/bmxd.watchdog
 	MAX_BMXD_TIME=120
