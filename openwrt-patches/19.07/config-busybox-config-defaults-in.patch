@@ -1,5 +1,14 @@
---- buildroot/package/utils/busybox/Config-defaults.in.original	2019-09-15 19:17:29.811216595 +0200
-+++ buildroot/package/utils/busybox/Config-defaults.in	2019-09-15 19:29:50.381681392 +0200
+--- buildroot/package/utils/busybox/Config-defaults.in.original 2019-09-15 19:17:29.811216595 +0200
++++ buildroot/package/utils/busybox/Config-defaults.in  2019-09-15 19:29:50.381681392 +0200
+@@ -819,7 +819,7 @@
+ 	default y
+ config BUSYBOX_DEFAULT_TIMEOUT
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_TOUCH
+ 	bool
+ 	default y
 @@ -1309,7 +1309,7 @@
  	default 0
  config BUSYBOX_DEFAULT_CHPASSWD
