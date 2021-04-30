@@ -5,6 +5,7 @@ ARG2=$2
 
 DAEMON=bmxd
 DAEMON_PATH=/usr/bin
+TIMEOUT="$(which timeout)"
 
 test -x $DAEMON_PATH/$DAEMON || exit 0
 
@@ -129,7 +130,9 @@ case "$ARG1" in
   check)
  	# connection check; if bmxd hangs, kill it
 	# check for existance of "timeout" cmd, else bmxd will be killed every time
-	which timeout && timeout -t 10 -s 9 $DAEMON -c --status >/dev/null || killall -9 $DAEMON
+	if [ -n "$TIMEOUT" ]; then
+		$TIMEOUT -t 10 -s 9 $DAEMON -c --status >/dev/null || killall -9 $DAEMON 
+	fi
 
 	test -z "$(pidof $DAEMON)" && logger -s "$DAEMON not running - restart" && $0 restart && exit
 

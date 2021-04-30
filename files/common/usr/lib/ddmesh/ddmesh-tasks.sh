@@ -54,16 +54,19 @@ task_bmxd()
 	WD_FILE=/tmp/state/bmxd.watchdog
 	MAX_BMXD_TIME=120
 
-	wd=0 # default
+	cur=$(date '+%s')
+	wd=$cur # default,keep diff small after start
+
 	if [ -f $WD_FILE ]; then
 		wd=$(cat $WD_FILE)
 	fi	
 
-	cur=$(date '+%s')
 	d=$(( $cur - $wd))
 
 	if [ "$d" -gt $MAX_BMXD_TIME ]; then
 		logger -t $TAG "bmxd: kill bmxd (diff $d)"
+		# delete file, to reset timeout
+		rm $WD_FILE
 		killall -9 bmxd
 	fi
 }
