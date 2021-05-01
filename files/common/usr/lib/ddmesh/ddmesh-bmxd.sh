@@ -11,6 +11,8 @@ test -x $DAEMON_PATH/$DAEMON || exit 0
 
 DB_PATH=/var/lib/ddmesh/bmxd
 STAT_DIR=/var/statistic
+WD_FILE=/tmp/state/bmxd.watchdog
+TAG="bmxd"
 
 mkdir -p $DB_PATH
 mkdir -p $STAT_DIR
@@ -106,12 +108,6 @@ case "$ARG1" in
 	$0 start
 	;;
 
-  nightly)
-	logger -t bmx-nightly "bmxd restart bat0: $(ip addr show bat0 | grep 'inet')"
-	$0 stop
-	$0 start
-	;;
-
   gateway)
 	echo $DAEMON -c $GATEWAY_CLASS
 	$DAEMON_PATH/$DAEMON -c $GATEWAY_CLASS
@@ -127,14 +123,47 @@ case "$ARG1" in
   del_if)
 	$DAEMON_PATH/$DAEMON -c dev=-$ARG2
 	;;
-  check)
+  runcheck)
+	bmxd_restart=0
+
+	# watchdog timestamp check: bmxd present as process, but dead
+	# or present as zombi process "[bmxd]"
+	# devel: run "bmxd -lcd4&" more than 12 times will create this situation
+	MAX_BMXD_TIME=120
+	cur=$(date '+%s')
+	wd=$cur # default,keep diff small after start
+
+	if [ -f $WD_FILE ]; then
+		wd=$(cat $WD_FILE)
+	fi
+
+	d=$(( $cur - $wd))
+
+	if [ "$d" -gt $MAX_BMXD_TIME ]; then
+		logger -s -t "$TAG" "bmxd: kill bmxd (diff $d)"
+		# delete file, to reset timeout
+		rm $WD_FILE
+		killall -9 $DAEMON
+		bmxd_restart=1
+
+		
+	fi
  	# connection check; if bmxd hangs, kill it
 	# check for existance of "timeout" cmd, else bmxd will be killed every time
 	if [ -n "$TIMEOUT" ]; then
-		$TIMEOUT -s 9 10 $DAEMON -c --status >/dev/null || killall -9 $DAEMON 
+		$TIMEOUT -s 9 10 $DAEMON -c --status >/dev/null
+		if [ $? != 0 ]; then
+			logger -s -t "$TAG" "bmxd: connection failed"
+			killall -9 $DAEMON
+			bmxd_restart=1
+		fi
 	fi
 
-	test -z "$(pidof $DAEMON)" && logger -s "$DAEMON not running - restart" && $0 restart && exit
+	test $bmxd_restart = 1 && logger -s -t "$TAG" "$DAEMON not running - restart" && $0 restart
+
+	;;
+
+  update_infos)
 
 	$DAEMON_PATH/$DAEMON -c --gateways > $DB_PATH/gateways
 	$DAEMON_PATH/$DAEMON -c --links > $DB_PATH/links
@@ -146,7 +175,7 @@ case "$ARG1" in
 	;;
 
   *)
-	echo "Usage: $0 {start|stop|restart|gateway|no_gateway|check|add_if|del_if}" >&2
+	echo "Usage: $0 {start|stop|restart|gateway|no_gateway|runcheck|update_infos|add_if|del_if}" >&2
 	exit 1         ;;
 
 

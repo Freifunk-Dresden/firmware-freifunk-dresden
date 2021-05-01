@@ -54,29 +54,6 @@ task_wifi_scanfix()
 	/usr/sbin/iw dev $net_ifname scan >/dev/null
 }
 
-task_bmxd()
-{
-	# check 
-	WD_FILE=/tmp/state/bmxd.watchdog
-	MAX_BMXD_TIME=120
-
-	cur=$(date '+%s')
-	wd=$cur # default,keep diff small after start
-
-	if [ -f $WD_FILE ]; then
-		wd=$(cat $WD_FILE)
-	fi	
-
-	d=$(( $cur - $wd))
-
-	if [ "$d" -gt $MAX_BMXD_TIME ]; then
-		logger -t $TAG "bmxd: kill bmxd (diff $d)"
-		# delete file, to reset timeout
-		rm $WD_FILE
-		killall -9 bmxd
-	fi
-}
-
 task_routing()
 {
 	rules="$(ip rule | grep bat_route)"
@@ -105,12 +82,14 @@ do
 	# call_task <interval-minutes> <script | function> [arguments...]
 
 	call_task 3 task_routing
-	call_task 1 task_bmxd
 	call_task 7 task_wifi_scanfix
 	call_task 5 /usr/lib/ddmesh/ddmesh-backbone.sh runcheck
 	call_task 5 /usr/lib/ddmesh/ddmesh-privnet.sh runcheck
 	call_task 1 /usr/lib/ddmesh/ddmesh-sysinfo.sh
-	call_task 1 /usr/lib/ddmesh/ddmesh-bmxd.sh check
+
+	call_task 1 /usr/lib/ddmesh/ddmesh-bmxd.sh runcheck
+	call_task 1 /usr/lib/ddmesh/ddmesh-bmxd.sh update_infos
+
 	call_task 1 /usr/lib/ddmesh/ddmesh-backbone.sh update
 	call_task 3 /usr/lib/ddmesh/ddmesh-gateway-check.sh
 	call_task 5 /usr/lib/ddmesh/ddmesh-splash.sh autodisconnect
