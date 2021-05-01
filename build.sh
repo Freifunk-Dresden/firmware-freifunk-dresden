@@ -154,11 +154,6 @@ show_progress()
  tput cup $(( $row - 3)) 0
 }
 
-if [ "$_TERM" = "1" ]; then
-	trap clean_up SIGINT SIGTERM
-	trap show_progress WINCH 
-fi
-
 
 
 ############# build.sh functions ####################
@@ -462,6 +457,11 @@ else
 fi
 
 echo "### target-regex:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
+
+if [ "$_TERM" = "1" ]; then
+	trap clean_up SIGINT SIGTERM
+	trap show_progress WINCH 
+fi
 
 setup_buildroot ()
 {
