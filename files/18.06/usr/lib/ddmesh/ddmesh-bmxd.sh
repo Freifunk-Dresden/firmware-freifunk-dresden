@@ -102,7 +102,7 @@ case "$ARG1" in
 	killall -9 $DAEMON
 	;;
 
-  restart|force-reload)
+  restart)
 	$0 stop
 	sleep 1
 	$0 start
