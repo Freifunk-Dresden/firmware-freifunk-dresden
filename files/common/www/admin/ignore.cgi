@@ -102,7 +102,7 @@ cat<<EOM
 <br>
 <form name="form_firewall_update" action="ignore.cgi" method="post">
 <input name="form_action" value="firewall_update" type="hidden">
-<input type="submit" value="Aktualisiere Konfiguration">
+<input type="submit" value="Aktiviere Konfiguration">
 </form>
 EOM
 #end display_ignored_nodes
