@@ -1,4 +1,9 @@
 
+2021-04-00 7.0.3
+--------------------------------------------------
+bmxd                      - improvments to bmxd watchdog
+gui                       - minor text corrections
+
 2021-04-00 7.0.2 
 --------------------------------------------------
 bmxd                      - add keep alive watchdog
