@@ -1947,36 +1947,6 @@ CONFIG_PACKAGE_usign=y
 # CONFIG_PACKAGE_zram-swap is not set
 
 #
-# Administration
-#
-
-#
-# zabbix
-#
-# CONFIG_PACKAGE_zabbix-agentd is not set
-
-#
-# SSL support
-#
-# CONFIG_ZABBIX_OPENSSL is not set
-# CONFIG_ZABBIX_GNUTLS is not set
-CONFIG_ZABBIX_NOSSL=y
-# CONFIG_PACKAGE_zabbix-extra-mac80211 is not set
-# CONFIG_PACKAGE_zabbix-extra-network is not set
-# CONFIG_PACKAGE_zabbix-extra-wifi is not set
-# CONFIG_PACKAGE_zabbix-get is not set
-# CONFIG_PACKAGE_zabbix-proxy is not set
-# CONFIG_PACKAGE_zabbix-sender is not set
-# CONFIG_PACKAGE_zabbix-server is not set
-
-#
-# Database Software
-#
-# CONFIG_ZABBIX_MYSQL is not set
-CONFIG_ZABBIX_POSTGRESQL=y
-# CONFIG_PACKAGE_zabbix-server-frontend is not set
-
-#
 # Boot Loaders
 #
 
@@ -2793,11 +2763,6 @@ CONFIG_PACKAGE_MAC80211_MESH=y
 # CONFIG_PACKAGE_luac is not set
 
 #
-# PHP
-#
-# CONFIG_PACKAGE_php7 is not set
-
-#
 # Python
 #
 # CONFIG_PACKAGE_python-pip-conf is not set
@@ -2949,7 +2914,6 @@ CONFIG_OPENSSL_ENGINE=y
 #
 # database
 #
-# CONFIG_PACKAGE_libpq is not set
 # CONFIG_PACKAGE_libsqlite3 is not set
 # CONFIG_PACKAGE_argp-standalone is not set
 # CONFIG_PACKAGE_bluez-libs is not set
@@ -2958,7 +2922,6 @@ CONFIG_OPENSSL_ENGINE=y
 # CONFIG_PACKAGE_icu-data-tools is not set
 # CONFIG_PACKAGE_icu-full-data is not set
 # CONFIG_PACKAGE_jansson is not set
-# CONFIG_PACKAGE_libaio is not set
 # CONFIG_PACKAGE_libasm is not set
 # CONFIG_PACKAGE_libbfd is not set
 # CONFIG_PACKAGE_libblkid is not set
@@ -2984,9 +2947,7 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libext2fs is not set
 # CONFIG_PACKAGE_libf2fs is not set
 # CONFIG_PACKAGE_libfdisk is not set
-# CONFIG_PACKAGE_libfdt is not set
 # CONFIG_PACKAGE_libffi is not set
-# CONFIG_PACKAGE_libfreetype is not set
 # CONFIG_PACKAGE_libgdbm is not set
 # CONFIG_PACKAGE_libgmp is not set
 # CONFIG_PACKAGE_libical is not set
@@ -2997,13 +2958,11 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libintl-full is not set
 # CONFIG_PACKAGE_libiw is not set
 CONFIG_PACKAGE_libiwinfo=y
-# CONFIG_PACKAGE_libjpeg is not set
 CONFIG_PACKAGE_libjson-c=y
 # CONFIG_PACKAGE_libkmod is not set
 # CONFIG_PACKAGE_libltdl is not set
 # CONFIG_PACKAGE_liblua is not set
 # CONFIG_PACKAGE_liblzo is not set
-# CONFIG_PACKAGE_libmariadb is not set
 CONFIG_PACKAGE_libmnl=y
 # CONFIG_PACKAGE_libmount is not set
 # CONFIG_PACKAGE_libncurses is not set
@@ -3033,10 +2992,6 @@ CONFIG_PACKAGE_libpcap=y
 # CONFIG_PCAP_HAS_USB is not set
 # CONFIG_PCAP_HAS_NETFILTER is not set
 # CONFIG_PACKAGE_libpci is not set
-# CONFIG_PACKAGE_libpcre is not set
-# CONFIG_PACKAGE_libpcre16 is not set
-# CONFIG_PACKAGE_libpcrecpp is not set
-# CONFIG_PACKAGE_libpng is not set
 # CONFIG_PACKAGE_libpopt is not set
 # CONFIG_PACKAGE_libreadline is not set
 # CONFIG_PACKAGE_libroxml is not set
@@ -3064,10 +3019,8 @@ CONFIG_PACKAGE_libustream-mbedtls=y
 # CONFIG_PACKAGE_libxml2 is not set
 # CONFIG_PACKAGE_linux-atm is not set
 # CONFIG_PACKAGE_p11-kit is not set
-# CONFIG_PACKAGE_pixman is not set
 # CONFIG_PACKAGE_terminfo is not set
 # CONFIG_PACKAGE_uclibcxx is not set
-# CONFIG_PACKAGE_uw-imap is not set
 # CONFIG_PACKAGE_zlib is not set
 
 #
@@ -3280,10 +3233,6 @@ CONFIG_PACKAGE_iperf3=y
 # CONFIG_PACKAGE_iputils-tracepath is not set
 CONFIG_PACKAGE_iw=y
 # CONFIG_PACKAGE_iw-full is not set
-# CONFIG_PACKAGE_krb5-client is not set
-# CONFIG_PACKAGE_krb5-libs is not set
-# CONFIG_PACKAGE_krb5-server is not set
-# CONFIG_PACKAGE_krb5-server-extras is not set
 # CONFIG_PACKAGE_libipset is not set
 # CONFIG_PACKAGE_odhcpd is not set
 # CONFIG_PACKAGE_omcproxy is not set
@@ -3404,11 +3353,6 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_xfs-mkfs is not set
 
 #
-# Image Manipulation
-#
-# CONFIG_PACKAGE_jpeg-tools is not set
-
-#
 # Terminal
 #
 # CONFIG_PACKAGE_agetty is not set
@@ -3417,33 +3361,8 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_wall is not set
 
 #
-# Virtualization
-#
-
-#
-# Zoneinfo
-#
-# CONFIG_PACKAGE_zoneinfo-africa is not set
-# CONFIG_PACKAGE_zoneinfo-all is not set
-# CONFIG_PACKAGE_zoneinfo-asia is not set
-# CONFIG_PACKAGE_zoneinfo-atlantic is not set
-# CONFIG_PACKAGE_zoneinfo-australia-nz is not set
-# CONFIG_PACKAGE_zoneinfo-core is not set
-# CONFIG_PACKAGE_zoneinfo-europe is not set
-# CONFIG_PACKAGE_zoneinfo-india is not set
-# CONFIG_PACKAGE_zoneinfo-northamerica is not set
-# CONFIG_PACKAGE_zoneinfo-pacific is not set
-# CONFIG_PACKAGE_zoneinfo-poles is not set
-# CONFIG_PACKAGE_zoneinfo-simple is not set
-# CONFIG_PACKAGE_zoneinfo-southamerica is not set
-
-#
 # database
 #
-# CONFIG_PACKAGE_mariadb-common is not set
-# CONFIG_PACKAGE_pgsql-cli is not set
-# CONFIG_PACKAGE_pgsql-cli-extra is not set
-# CONFIG_PACKAGE_pgsql-server is not set
 # CONFIG_PACKAGE_sqlite3-cli is not set
 # CONFIG_PACKAGE_adb is not set
 # CONFIG_PACKAGE_bluez-daemon is not set
@@ -3456,8 +3375,6 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 # CONFIG_PACKAGE_dbus-utils is not set
 # CONFIG_PACKAGE_dmesg is not set
 # CONFIG_PACKAGE_dropbearconvert is not set
-# CONFIG_PACKAGE_dtc is not set
-# CONFIG_PACKAGE_fdt-utils is not set
 # CONFIG_PACKAGE_flock is not set
 # CONFIG_PACKAGE_fritz-caldata is not set
 # CONFIG_PACKAGE_fritz-tffs is not set
