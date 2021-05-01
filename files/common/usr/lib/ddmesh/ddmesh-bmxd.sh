@@ -158,6 +158,9 @@ case "$ARG1" in
 			bmxd_restart=1
 		fi
 	fi
+	# too many instances running (count no zombies)
+	bmxd_count=$(ps | awk '{ if(match($4,"Z")==0 && (match($5,"^bmxd$") || match($5,"^/usr/bin/bmxd$")) ){print $5}}' | wc -l)
+	test "$bmxd_count" -gt 4 && logger -s -t "$TAG" "bmxd: too many instances ($bmxd_count)" && bmxd_restart=1
 
 	test $bmxd_restart = 1 && logger -s -t "$TAG" "$DAEMON not running - restart" && $0 restart
 
