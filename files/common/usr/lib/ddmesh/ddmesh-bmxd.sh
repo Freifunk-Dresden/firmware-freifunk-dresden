@@ -131,7 +131,7 @@ case "$ARG1" in
 	# watchdog timestamp check: bmxd present as process, but dead
 	# or present as zombi process "[bmxd]"
 	# devel: run "bmxd -lcd4&" more than 12 times will create this situation
-	MAX_BMXD_TIME=120
+	MAX_BMXD_TIME=300
 	cur=$(date '+%s')
 	wd=$cur # default,keep diff small after start
 
