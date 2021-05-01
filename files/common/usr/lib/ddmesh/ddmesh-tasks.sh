@@ -47,6 +47,12 @@ call_task()
 
 
 #--------- user functions ----
+# still needed in 7.0.2 (openwrt 1806, ar71xx TP-Link TL-WR1043N/ND )
+task_wifi_scanfix()
+{
+	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
+	/usr/sbin/iw dev $net_ifname scan >/dev/null
+}
 
 task_bmxd()
 {
@@ -100,6 +106,7 @@ do
 
 	call_task 3 task_routing
 	call_task 1 task_bmxd
+	call_task 7 task_wifi_scanfix
 	call_task 5 /usr/lib/ddmesh/ddmesh-backbone.sh runcheck
 	call_task 5 /usr/lib/ddmesh/ddmesh-privnet.sh runcheck
 	call_task 1 /usr/lib/ddmesh/ddmesh-sysinfo.sh
