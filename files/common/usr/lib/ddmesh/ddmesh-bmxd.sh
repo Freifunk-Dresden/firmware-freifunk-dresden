@@ -131,7 +131,7 @@ case "$ARG1" in
  	# connection check; if bmxd hangs, kill it
 	# check for existance of "timeout" cmd, else bmxd will be killed every time
 	if [ -n "$TIMEOUT" ]; then
-		$TIMEOUT -t 10 -s 9 $DAEMON -c --status >/dev/null || killall -9 $DAEMON 
+		$TIMEOUT -s 9 10 $DAEMON -c --status >/dev/null || killall -9 $DAEMON 
 	fi
 
 	test -z "$(pidof $DAEMON)" && logger -s "$DAEMON not running - restart" && $0 restart && exit
