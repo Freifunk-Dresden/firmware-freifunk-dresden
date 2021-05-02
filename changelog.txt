@@ -3,6 +3,7 @@
 --------------------------------------------------
 bmxd                      - improvments to bmxd watchdog
 gui                       - minor text corrections
+ssh                       - add ssh-key (authorized_keys) support
 
 2021-04-00 7.0.2 
 --------------------------------------------------
