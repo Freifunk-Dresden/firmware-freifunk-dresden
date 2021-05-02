@@ -133,7 +133,7 @@ POST /geoloc HTTP/1.1
 User-Agent: Wget/1.17.1 (linux-gnu)
 Accept: */*
 Accept-Encoding: identity
-Host: api.main.freifunk-dresden.de
+Host: api.freifunk-dresden.de
 Connection: Keep-Alive
 Content-Type: application/json
 Content-Length: $SIZE
