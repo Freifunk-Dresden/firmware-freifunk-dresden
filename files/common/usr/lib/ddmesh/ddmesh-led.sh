@@ -25,9 +25,10 @@ echo "board: $boardname"
 eval $(ddmesh-utils-wifi-info.sh)
 
 #---- wifi2g
-for i in wifi wlan wlan2g ${wifi_status_radio2g_phy} usb
+# "link2" nanostation
+for i in wifi wlan wlan2g link2 ${wifi_status_radio2g_phy} usb
 do
-	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null)"
+	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
 done
 _led_wifi2g="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
@@ -35,15 +36,16 @@ _led_wifi2g="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
 #---- wifi5g
 for i in wlan5g ${wifi_status_radio5g_phy}
 do
-	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null)"
+	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
 done
 _led_wifi5g="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
 
 #---- status
-for i in system wps usb
+# "link1" nanostation
+for i in system info power wps usb link1
 do
-	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null)"
+	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
 done
 _led_status="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
