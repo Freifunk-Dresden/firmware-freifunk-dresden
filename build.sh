@@ -154,11 +154,6 @@ show_progress()
  tput cup $(( $row - 3)) 0
 }
 
-if [ "$_TERM" = "1" ]; then
-	trap clean_up SIGINT SIGTERM
-	trap show_progress WINCH 
-fi
-
 
 
 ############# build.sh functions ####################
@@ -463,6 +458,11 @@ fi
 
 echo "### target-regex:[$regex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
 
+if [ "$_TERM" = "1" ]; then
+	trap clean_up SIGINT SIGTERM
+	trap show_progress WINCH 
+fi
+
 setup_buildroot ()
 {
  buildroot=$1
@@ -529,15 +529,17 @@ setup_buildroot ()
 	rm -f $buildroot/dl
 	ln -s ../../$openwrt_dl_dir $buildroot/dl
 
+	# -------- common files -----------
 	# copy common files first
-	echo -e "$C_PURPLE copy rootfs $C_NONE: $C_GREEN common $C_NONE"
+	echo -e "${C_PURPLE}copy rootfs ${C_NONE}: ${C_GREEN} common ${C_NONE}"
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
 	cp -a $RUN_DIR/files/common/* $buildroot/files/
 
+	# -------- specific files -----------
 	# copy specific files over (may overwrite common)
-	echo -e "$C_PURPLE copy specific files $C_NONE: $C_GREEN $firmware_files $C_NONE"
-	test -d "$RUN_DIR/files/$firmware_files)" && cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
+	echo -e "${C_PURPLE}copy specific files ${C_NONE}: ${C_GREEN}${firmware_files}${C_NONE}"
+	test -d "$RUN_DIR/files/$firmware_files" && cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
 
 	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
 	mkdir -p $buildroot/files/etc
@@ -712,7 +714,6 @@ do
 	test -z "$filterred" && continue
 
 	if [ "$_TERM" = "1" ]; then
-		echo $progress_counter $progress_max
 		show_progress $progress_counter $progress_max
 		progress_counter=$(( $progress_counter + 1 ))
 		echo ""

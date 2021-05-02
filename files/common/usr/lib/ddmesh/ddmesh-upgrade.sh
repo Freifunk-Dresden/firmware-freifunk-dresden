@@ -541,10 +541,10 @@ upgrade_7_0_2()
  cp /rom/etc/config/firewall /etc/config/firewall
 }
 
-#upgrade_6_X_Y()
-#{
-# true
-#}
+upgrade_7_0_3()
+{
+ true
+}
 
 ##################################
 

@@ -150,16 +150,18 @@ case "$ARG1" in
 
 		
 	fi
+
  	# connection check; if bmxd hangs, kill it
 	# check for existance of "timeout" cmd, else bmxd will be killed every time
 	if [ -n "$TIMEOUT" ]; then
-		$TIMEOUT -s 9 10 $DAEMON -c --status >/dev/null
+		$TIMEOUT -t 10 -s 9 $DAEMON -c --status >/dev/null
 		if [ $? != 0 ]; then
 			logger -s -t "$TAG" "bmxd: connection failed"
 			killall -9 $DAEMON
 			bmxd_restart=1
 		fi
 	fi
+
 	# too many instances running (count no zombies)
 	bmxd_count=$(ps | awk '{ if(match($4,"Z")==0 && (match($5,"^bmxd$") || match($5,"^/usr/bin/bmxd$")) ){print $5}}' | wc -l)
 	test "$bmxd_count" -gt $bmxd_max_instances && logger -s -t "$TAG" "bmxd: too many instances ($bmxd_count/$bmxd_max_instances)" && bmxd_restart=1
