@@ -1,5 +1,10 @@
 
-2021-04-00 7.0.3
+2021-04-00 7.0.
+--------------------------------------------------
+gui                       - add option to control LEDs
+
+
+2021-05-2 7.0.3 (release)
 --------------------------------------------------
 bmxd                      - improvments to bmxd watchdog
 gui                       - minor text corrections
