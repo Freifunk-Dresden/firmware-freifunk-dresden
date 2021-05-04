@@ -20,7 +20,7 @@ FILENAME="$(basename $arg_filename)"
 
 RESPONSE="$(curl --insecure --form "form_action=upload" --form "filename=@\"$arg_filename\";filename=\"$FILENAME\"" https://$USER:$PASSWORD@$arg_ip/admin/firmware.cgi)"
 
-test "$?" != "0" && exit
+test "$?" != "0" && exit 1
 
 MD5_REMOTE=$(echo "$RESPONSE" | sed -n '/Firmware-MD5-Summe/{s#.*<td>\([0-9a-z]\+\)[ ]*</td>.*#\1#p}')
 
@@ -35,4 +35,5 @@ fi
 echo "flashing..."
 curl --insecure --form "form_action=flash" https://$USER:$PASSWORD@$arg_ip/admin/firmware.cgi >/dev/null
 
+exit 0
 
