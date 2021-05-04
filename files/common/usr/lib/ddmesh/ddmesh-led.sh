@@ -1,13 +1,16 @@
 #!/bin/ash
 # https://openwrt.org/docs/guide-user/base-system/led_configuration
 
-if [ -z "$1" ]; then
+ARG_LED="$1"
+ARG_CMD="$2"
+
+if [ -z "$ARG_CMD" ]; then
 	echo "ddmesh-led.sh <type> <value>"
 	echo "	type: wifi | status"
 	echo "	value:"
-	echo "		wifi:	off|alive|freifunk|gateway"
-	echo "		status: boot1|boot2|boot3|done"
-	echo "		wwan:	off|2g|3g|4g"
+	echo "		wifi:	off|on|alive|freifunk|gateway"
+	echo "		status: boot1|boot2|boot3|done|off|on"
+	echo "		wwan:	off|on|2g|3g|4g"
 	exit 0
 fi
 
@@ -87,12 +90,20 @@ echo "_led_wifi2g: $_led_wifi2g"
 echo "_led_wifi5g: $_led_wifi5g"
 echo "_led_wwan: $_led_wwan"
 
-case "$1" in
+case "$ARG_LED" in
 	wifi)	
+		case "$(uci -q get ddmesh.led.wifi)" in
+			on)	ARG_CMD="on" ;;
+			off)	ARG_CMD="off" ;;
+		esac
+
 		if [ -n "$_led_wifi2g" ]; then
-			case $2 in
+			case $ARG_CMD in
 				off)
 					led_off $_led_wifi2g
+					;;
+				on)
+					led_on $_led_wifi2g
 					;;
 				alive)
 					led_timer $_led_wifi2g 30 1000
@@ -106,9 +117,12 @@ case "$1" in
 			esac
 		fi
 		if [ -n "$_led_wifi5g" ]; then
-			case $2 in
+			case $ARG_CMD in
 				off)
 					led_off $_led_wifi5g
+					;;
+				on)
+					led_on $_led_wifi5g
 					;;
 				alive)
 					led_timer $_led_wifi5g 30 1000
@@ -123,24 +137,39 @@ case "$1" in
 		fi
 		;;
 	status)
+		case "$(uci -q get ddmesh.led.status)" in
+			on)	ARG_CMD="on" ;;
+			off)	ARG_CMD="off" ;;
+		esac
+
 		if [ -n "$_led_status" ]; then
-			case $2 in
+			case $ARG_CMD in
 				boot1) 	led_timer $_led_status 50 50
 					;;
 				boot2)	led_timer $_led_status 100 100
 					;;
 				boot3)	led_timer $_led_status 150 150
 					;;
-				done)  led_off $_led_status
+				done|off)  led_off $_led_status
+					;;
+				on)	led_on $_led_status
 					;;
 			esac
 		fi
 		;;
 	wwan)
+		case "$(uci -q get ddmesh.led.wwan)" in
+			on)	ARG_CMD="on" ;;
+			off)	ARG_CMD="off" ;;
+		esac
+
 		if [ -n "$_led_wwan" ]; then
-			case $2 in
+			case $ARG_CMD in
 				off)
 					led_off $_led_wwan
+					;;
+				on)
+					led_on $_led_wwan
 					;;
 				2g)
 					led_timer $_led_wwan 1000 1000

@@ -72,6 +72,12 @@ config boot 'boot'
 	option nightly_upgrade_running	0
 	option upgrade_running		0
 
+# on,off,status
+config led 'led'
+	option wwan 			''
+	option status			''
+	option wifi			''
+
 config log 'log'
 	option tasks			0
 
