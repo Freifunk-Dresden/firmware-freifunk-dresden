@@ -3,6 +3,8 @@
 USER=root
 PASSWORD=
 
+TIMEOUT=10
+
 arg_filename="$1"
 arg_ip="$2"
 
@@ -18,7 +20,7 @@ MD5_LOCAL=$(md5sum $arg_filename | awk '{print $1}')
 FILENAME="$(basename $arg_filename)"
 
 
-RESPONSE="$(curl --insecure --form "form_action=upload" --form "filename=@\"$arg_filename\";filename=\"$FILENAME\"" https://$USER:$PASSWORD@$arg_ip/admin/firmware.cgi)"
+RESPONSE="$(curl --connect-timeout $TIMEOUT --insecure --form "form_action=upload" --form "filename=@\"$arg_filename\";filename=\"$FILENAME\"" https://$USER:$PASSWORD@$arg_ip/admin/firmware.cgi)"
 
 test "$?" != "0" && exit 1
 
@@ -33,7 +35,7 @@ if [ "$MD5_LOCAL" != "$MD5_REMOTE" ]; then
 fi
 
 echo "flashing..."
-curl --insecure --form "form_action=flash" https://$USER:$PASSWORD@$arg_ip/admin/firmware.cgi >/dev/null
+curl --connect-timeout $TIMEOUT --insecure --form "form_action=flash" https://$USER:$PASSWORD@$arg_ip/admin/firmware.cgi >/dev/null
 
 exit 0
 
