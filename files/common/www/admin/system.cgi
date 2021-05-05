@@ -6,8 +6,8 @@ export TITLE="Verwaltung &gt; Konfiguration: System"
 
 #led
 if [ -z "$(uci -q get ddmesh.led)" ]; then
-	uci -q add ddmesh led
-	uci -q rename ddmesh.@led[-1]='led'
+	uci -q add ddmesh led >/dev/null
+	uci -q rename ddmesh.@led[-1]='led' >/dev/null
 fi
 
 . /usr/lib/www/page-pre.sh ${0%/*}
