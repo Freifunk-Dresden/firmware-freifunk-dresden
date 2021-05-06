@@ -80,9 +80,9 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_alfa-network_ap120c-ac is not set
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_asus_map-ac2200 is not set
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_asus_rt-ac58u is not set
-CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_avm_fritzbox-4040=y
+# CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_avm_fritzbox-4040 is not set
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_avm_fritzbox-7530 is not set
-# CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_avm_fritzrepeater-1200 is not set
+CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_avm_fritzrepeater-1200=y
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_avm_fritzrepeater-3000 is not set
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_meraki_mr33 is not set
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_compex_wpj428 is not set
@@ -116,8 +116,9 @@ CONFIG_DEFAULT_dnsmasq=y
 CONFIG_DEFAULT_dropbear=y
 CONFIG_DEFAULT_firewall=y
 CONFIG_DEFAULT_fritz-caldata=y
-CONFIG_DEFAULT_fritz-tffs=y
+CONFIG_DEFAULT_fritz-tffs-nand=y
 CONFIG_DEFAULT_fstools=y
+CONFIG_DEFAULT_ipq-wifi-avm_fritzrepeater-1200=y
 CONFIG_DEFAULT_iptables=y
 CONFIG_DEFAULT_iwinfo=y
 CONFIG_DEFAULT_kmod-ath10k-ct=y
@@ -1570,7 +1571,7 @@ CONFIG_ddmesh-mesh-wifi=y
 # CONFIG_PACKAGE_ipq-wifi-alfa-network_ap120c-ac is not set
 # CONFIG_PACKAGE_ipq-wifi-asus_map-ac2200 is not set
 # CONFIG_PACKAGE_ipq-wifi-avm_fritzbox-7530 is not set
-# CONFIG_PACKAGE_ipq-wifi-avm_fritzrepeater-1200 is not set
+CONFIG_PACKAGE_ipq-wifi-avm_fritzrepeater-1200=y
 # CONFIG_PACKAGE_ipq-wifi-avm_fritzrepeater-3000 is not set
 # CONFIG_PACKAGE_ipq-wifi-engenius_eap1300 is not set
 # CONFIG_PACKAGE_ipq-wifi-engenius_ens620ext is not set
