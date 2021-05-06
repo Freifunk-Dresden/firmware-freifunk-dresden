@@ -207,6 +207,12 @@
 		"subtarget":"generic"
 	},
 	{
+		"name":"ipq40xx.generic.fr-1200",
+		"target":"ipq40xx",
+		"subtarget":"generic",
+		"variant":"fr-1200"
+	},
+	{
 		"name":"bcm53xx.generic.arm",
 		"target":"bcm53xx",
 		"subtarget":"generic",
