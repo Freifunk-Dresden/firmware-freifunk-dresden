@@ -1,4 +1,4 @@
-######## m2runner ################
+######## m3runner ################
 
 # dl and workdir symlinks are removed by gitlab for each job
 # so I need to recreate this
@@ -27,7 +27,7 @@ m2:init:
     - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
     - /bin/true
   tags:
-  - m2runner
+  - m3runner
 
 m2:ar71xx.tiny:
   only:
@@ -38,7 +38,7 @@ m2:ar71xx.tiny:
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:ar71xx.generic:
   only:
@@ -49,7 +49,7 @@ m2:ar71xx.generic:
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.generic.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:ar71xx.nand:
   only:
@@ -60,7 +60,7 @@ m2:ar71xx.nand:
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.nand.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:x86.generic:
   only:
@@ -71,7 +71,7 @@ m2:x86.generic:
     - ln -s ~/mycache/workdir
     - ./build.sh x86.generic rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:x64.generic:
   only:
@@ -82,7 +82,7 @@ m2:x64.generic:
     - ln -s ~/mycache/workdir
     - ./build.sh x64.generic rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:ramips:
   only:
@@ -93,7 +93,7 @@ m2:ramips:
     - ln -s ~/mycache/workdir
     - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:ipq40xx:
   only:
@@ -104,7 +104,7 @@ m2:ipq40xx:
     - ln -s ~/mycache/workdir
     - ./build.sh ipq40xx.generic.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:lantiq:
   only:
@@ -115,7 +115,7 @@ m2:lantiq:
     - ln -s ~/mycache/workdir
     - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:ath79:
   only:
@@ -126,7 +126,7 @@ m2:ath79:
     - ln -s ~/mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:sunxi:
   only:
@@ -137,7 +137,7 @@ m2:sunxi:
     - ln -s ~/mycache/workdir
     - ./build.sh sunxi.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:mpc85xx:
   only:
@@ -148,7 +148,7 @@ m2:mpc85xx:
     - ln -s ~/mycache/workdir
     - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 
 m2:bcm53xx.generic.arm:
@@ -160,7 +160,7 @@ m2:bcm53xx.generic.arm:
     - ln -s ~/mycache/workdir
     - ./build.sh bcm53xx.generic.arm rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 m2:test:
   only:
@@ -169,7 +169,7 @@ m2:test:
   script:
     - echo "dummy"
   tags:
-  - m2runner
+  - m3runner
 
 m2:upload:
   only:
@@ -192,5 +192,5 @@ m2:upload:
 #    - dl
 #    - final_output
   tags:
-  - m2runner
+  - m3runner
 
