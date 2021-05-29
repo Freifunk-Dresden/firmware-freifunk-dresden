@@ -1,11 +1,11 @@
-######## m2runner ################
+######## m3runner ################
 
 # dl and workdir symlinks are removed by gitlab for each job
 # so I need to recreate this
 #  - ln -s ~/mycache/dl
 #  - ln -s ~/mycache/workdir
 
-m2tags:init:
+m3tags:init:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -29,9 +29,9 @@ m2tags:init:
     - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
     - /bin/true
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:ar71xx.tiny:
+m3tags:ar71xx.tiny:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -42,9 +42,9 @@ m2tags:ar71xx.tiny:
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:ar71xx.generic:
+m3tags:ar71xx.generic:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -55,9 +55,9 @@ m2tags:ar71xx.generic:
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.generic.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:ar71xx.nand:
+m3tags:ar71xx.nand:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -68,9 +68,9 @@ m2tags:ar71xx.nand:
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.nand.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:x86.generic:
+m3tags:x86.generic:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -81,9 +81,9 @@ m2tags:x86.generic:
     - ln -s ~/mycache/workdir
     - ./build.sh x86.generic rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:x64.generic:
+m3tags:x64.generic:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -94,9 +94,9 @@ m2tags:x64.generic:
     - ln -s ~/mycache/workdir
     - ./build.sh x64.generic rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:ramips:
+m3tags:ramips:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -107,9 +107,9 @@ m2tags:ramips:
     - ln -s ~/mycache/workdir
     - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:ipq40xx:
+m3tags:ipq40xx:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -120,9 +120,9 @@ m2tags:ipq40xx:
     - ln -s ~/mycache/workdir
     - ./build.sh ipq40xx.generic.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:lantiq:
+m3tags:lantiq:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -133,9 +133,9 @@ m2tags:lantiq:
     - ln -s ~/mycache/workdir
     - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:ath79:
+m3tags:ath79:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -146,9 +146,9 @@ m2tags:ath79:
     - ln -s ~/mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:sunxi:
+m3tags:sunxi:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -159,9 +159,9 @@ m2tags:sunxi:
     - ln -s ~/mycache/workdir
     - ./build.sh sunxi.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:mpc85xx:
+m3tags:mpc85xx:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -172,9 +172,9 @@ m2tags:mpc85xx:
     - ln -s ~/mycache/workdir
     - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:bcm53xx.arm.generic:
+m3tags:bcm53xx.arm.generic:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -185,10 +185,10 @@ m2tags:bcm53xx.arm.generic:
     - ln -s ~/mycache/workdir
     - ./build.sh bcm53xx.arm.generic rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m2runner
+  - m3runner
 
 
-m2tags:test:
+m3tags:test:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -197,9 +197,9 @@ m2tags:test:
   script:
     - echo "dummy"
   tags:
-  - m2runner
+  - m3runner
 
-m2tags:upload:
+m3tags:upload:
   only:
     # DO NOT UPLOAD for branch: R_FIRMWARE....
     - /^TESTING_FIRMWARE_/
