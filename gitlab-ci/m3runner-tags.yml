@@ -209,7 +209,7 @@ m3tags:upload:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./gen-upload.sh all
-    # gitlab-runner's public ssh key must added to ~/deploy-firmware/.ssh/authorized_keys. 
+    # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys. 
     # On download server there is a user "deploy-firmware" who owns the download directories.
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ([ -n "${FF_UPLOAD_DIR}" ] && rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/)
