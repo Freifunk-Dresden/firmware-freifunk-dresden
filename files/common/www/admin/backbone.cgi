@@ -176,10 +176,9 @@ show_accept()
 	else
 		if [ -n "$vkey" ]; then
 			IFS='	'
-			hs=$(wg show $wg_ifname latest-handshakes | grep "$vkey")
+			hs=$(wg show $wg_ifname latest-handshakes | grep "$vkey" | sed 's#.*\t##g')
 			if [ -n "$hs" ]; then
-				set $hs
-				diff=$(( $UTC - $2 ))
+				diff=$(( $UTC - $hs ))
 				[ $diff -lt $WG_HAND_SHAKE_TIME_S ] && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
 			else
 				CONNECTED=/images/no.png
@@ -227,10 +226,9 @@ show_outgoing()
 		connect_title=""
 	else
 		IFS='	'
-		hs=$(wg show $wg_ifname latest-handshakes | grep "$vkey")
+		hs=$(wg show $wg_ifname latest-handshakes | grep "$vkey" | sed 's#.*\t##g')
 		if [ -n "$hs" ]; then
-			set $hs
-			diff=$(( $UTC - $2 ))
+			diff=$(( $UTC - $hs ))
 			[ $diff -lt $WG_HAND_SHAKE_TIME_S ] && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
 		else
 			CONNECTED=/images/no.png
