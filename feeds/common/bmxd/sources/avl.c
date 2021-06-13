@@ -42,9 +42,9 @@ struct avl_node *avl_find(struct avl_tree *tree, void *key)
 
         // Search for a dead path or a matching entry
         while (an && (cmp = memcmp(an->key, key, tree->key_size)))
-  {
+        {
                 an = an->link[cmp < 0];
-  }
+        }
 
         return an;
 }
@@ -97,13 +97,14 @@ struct avl_node *avl_iterate(struct avl_tree *tree, struct avl_node *an)
         return NULL;
 }
 
-static struct avl_node *avl_create_node(void *key)
+static struct avl_node *avl_create_node(void *key, void *object)
 {
         struct avl_node *an = debugMalloc(sizeof(struct avl_node), 327);
 
         paranoia(-500189, !an);
         memset(an, 0, sizeof(struct avl_node));
         an->key = key;
+        an->object = object;
 
         return an;
 }
@@ -147,7 +148,7 @@ static struct avl_node *avl_rotate_double(struct avl_node *root, int dir)
         return avl_rotate_single(root, dir);
 }
 
-void avl_insert(struct avl_tree *tree, void *key)
+void avl_insert(struct avl_tree *tree, void *key, void *object)
 {
         if (tree->root)
         {
@@ -171,7 +172,7 @@ void avl_insert(struct avl_tree *tree, void *key)
                 }
 
                 /* Insert a new node at the bottom of the tree */
-                it->link[upd[top - 1]] = avl_create_node(key);
+                it->link[upd[top - 1]] = avl_create_node(key, object);
                 it->link[upd[top - 1]]->up = it;
 
                 paranoia(-500178, (it->link[upd[top - 1]] == NULL));
@@ -222,15 +223,18 @@ void avl_insert(struct avl_tree *tree, void *key)
         }
         else
         {
-                tree->root = avl_create_node(key);
+                tree->root = avl_create_node(key, object);
                 paranoia(-500179, (tree->root == NULL));
         }
 
         return;
 }
 
+// returns object
 void *avl_remove(struct avl_tree *tree, void *key)
 {
+ void *ret = NULL;
+
         struct avl_node *it = tree->root;
         struct avl_node *up[AVL_MAX_HEIGHT];
         int upd[AVL_MAX_HEIGHT], top = 0, cmp;
@@ -238,7 +242,9 @@ void *avl_remove(struct avl_tree *tree, void *key)
         paranoia(-500182, !it); // paranoia if not found
 
         //        while ((cmp = memcmp(it->key, key, tree->key_size)) ) {
-        while ((cmp = memcmp(it->key, key, tree->key_size)) || (it->link[0] && !memcmp(it->link[0]->key, key, tree->key_size)))
+        while ((cmp = memcmp(it->key, key, tree->key_size))
+              || (it->link[0]
+                  && !memcmp(it->link[0]->key, key, tree->key_size)))
         {
                 // Push direction and node onto stack
                 upd[top] = (cmp < 0);
@@ -250,7 +256,7 @@ void *avl_remove(struct avl_tree *tree, void *key)
         }
 
         // remember and return the found key. It might have been another one than intended
-        key = it->key;
+        ret = it->object;
 
         // Remove the node:
         if (!(it->link[0] && it->link[1]))
@@ -359,7 +365,7 @@ void *avl_remove(struct avl_tree *tree, void *key)
                 }
         }
 
-        return key;
+        return ret;
 }
 
 #ifdef AVL_DEBUG
@@ -476,7 +482,7 @@ void avl_debug(struct avl_tree *tree)
 static void avl_test()
 {
         struct avl_node *an = NULL;
-        AVL_TREE(t, sizeof(int));
+        struct avl_tree t = {sizeof(int), NULL}
 
         int i;
 

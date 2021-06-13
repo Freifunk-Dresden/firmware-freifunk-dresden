@@ -76,14 +76,13 @@ static int32_t my_asym_exp = DEF_ASYM_EXP;
 
 static SIMPEL_LIST(pifnb_list);
 SIMPEL_LIST(link_list);
-//struct avl_tree link_avl = {sizeof( uint32_t), NULL};
-AVL_TREE(link_avl, sizeof(uint32_t));
+
+struct avl_tree link_avl = {sizeof(uint32_t), NULL};
 
 struct batman_if *primary_if = NULL;
 uint32_t primary_addr = 0;
 
-//struct avl_tree orig_avl = {sizeof( uint32_t), NULL};
-AVL_TREE(orig_avl, sizeof(uint32_t));
+struct avl_tree orig_avl = {sizeof(uint32_t), NULL};
 
 LIST_ENTRY if_list;
 
@@ -94,8 +93,8 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 
 	dbgf_all(DBGT_INFO, " ");
 
-	addr_to_str((new_router ? new_router->nnkey_addr : 0), new_nh_str);
-	addr_to_str((orig_node->router ? orig_node->router->nnkey_addr : 0), old_nh_str);
+	addr_to_str((new_router ? new_router->key.addr : 0), new_nh_str);
+	addr_to_str((orig_node->router ? orig_node->router->key.addr : 0), old_nh_str);
 
 	if (orig_node->router != new_router)
 	{
@@ -107,9 +106,9 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 		/* route altered or deleted */
 		if (orig_node->router)
 		{
-			add_del_route(orig_node->orig, 32, orig_node->router->nnkey_addr, 0,
-										orig_node->router->nnkey_iif->if_index,
-										orig_node->router->nnkey_iif->dev,
+			add_del_route(orig_node->orig, 32, orig_node->router->key.addr, 0,
+										orig_node->router->key.iif->if_index,
+										orig_node->router->key.iif->dev,
 										RT_TABLE_HOSTS, RTN_UNICAST, DEL, TRACK_OTHER_HOST);
 		}
 
@@ -118,9 +117,9 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 		{
 			orig_node->rt_changes++;
 
-			add_del_route(orig_node->orig, 32, new_router->nnkey_addr, primary_addr,
-										new_router->nnkey_iif->if_index,
-										new_router->nnkey_iif->dev,
+			add_del_route(orig_node->orig, 32, new_router->key.addr, primary_addr,
+										new_router->key.iif->if_index,
+										new_router->key.iif->dev,
 										RT_TABLE_HOSTS, RTN_UNICAST, ADD, TRACK_OTHER_HOST);
 		}
 
@@ -138,14 +137,14 @@ static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
   OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 	{
 
-		if (!bif || bif == neigh_node->nnkey_iif)
+		if (!bif || bif == neigh_node->key.iif)
 		{
 			flush_sq_record(&neigh_node->longtm_sqr);
 			flush_sq_record(&neigh_node->recent_sqr);
 		}
 	}
 
-	if (!bif || (orig_node->router && orig_node->router->nnkey_iif == bif))
+	if (!bif || (orig_node->router && orig_node->router->key.iif == bif))
 	{
 		update_routes(orig_node, NULL);
 
@@ -154,19 +153,20 @@ static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
 
 }
 
-static struct neigh_node *init_neigh_node(struct orig_node *orig_node, uint32_t neigh, struct batman_if *iif, batman_time_t last_aware)
+static struct neigh_node *init_neigh_node(struct orig_node *orig_node,
+              uint32_t neigh, struct batman_if *iif, batman_time_t last_aware)
 {
 	dbgf_all(DBGT_INFO, " ");
 
 	struct neigh_node *neigh_node = debugMalloc(sizeof(struct neigh_node), 403);
 	memset(neigh_node, 0, sizeof(struct neigh_node));
 
-	neigh_node->nnkey_addr = neigh;
-	neigh_node->nnkey_iif = iif;
+	neigh_node->key.addr = neigh;
+	neigh_node->key.iif = iif;
 	neigh_node->last_aware = last_aware;
 
   OLInsertTailList(&orig_node->neigh_list_head, &neigh_node->list);
-	avl_insert(&orig_node->neigh_avl, neigh_node);
+	avl_insert(&orig_node->neigh_avl, &neigh_node->key, neigh_node);
 	return neigh_node;
 }
 
@@ -194,7 +194,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 	{
 		uint8_t probe = 0;
 
-		if ((tmp_neigh->nnkey_addr == mb->neigh) && (tmp_neigh->nnkey_iif == mb->iif))
+		if ((tmp_neigh->key.addr == mb->neigh) && (tmp_neigh->key.iif == mb->iif))
 		{
 			incm_rt = tmp_neigh;
 
@@ -298,9 +298,9 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 				 "longtm incm %3d  othr %3d",
 				 changed ? "NEW" : "OLD",
 				 on->orig_str,
-				 curr_rt ? ipStr(curr_rt->nnkey_addr) : "----",
-				 old_rt ? ipStr(old_rt->nnkey_addr) : "----",
-				 ipStr(incm_rt->nnkey_addr),
+				 curr_rt ? ipStr(curr_rt->key.addr) : "----",
+				 old_rt ? ipStr(old_rt->key.addr) : "----",
+				 ipStr(incm_rt->key.addr),
 				 LCB ? " LCB" : "!LCB",
 				 RCB ? " RCB" : "!RCB",
 				 RXB ? " RXB" : "!RXB",
@@ -462,7 +462,7 @@ static void free_link_node(struct orig_node *orig_node, struct batman_if *bif)
 			dbgf_all(DBGT_INFO, "purging link_node %16s ", orig_node->orig_str);
 
 			list_del(list_prev, list_pos, &link_list);
-			avl_remove(&link_avl, /*(uint32_t*)*/ orig_node->link_node);
+			avl_remove(&link_avl, /*(uint32_t*)*/ &orig_node->link_node->orig_addr);
 
 			debugFree(orig_node->link_node, 1428);
 
@@ -515,7 +515,7 @@ static void init_link_node(struct orig_node *orig_node)
 	INIT_LIST_HEAD_FIRST(ln->lndev_list);
 
 	list_add_tail(&ln->list, &link_list);
-	avl_insert(&link_avl, ln);
+	avl_insert(&link_avl, &ln->orig_addr, ln);
 }
 
 static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, SQ_TYPE ogm_seqno)
@@ -530,7 +530,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, S
 							 "drop OGM %-15s  via %4s NB %-15s  with old SQN %5i  "
 							 "(prev %5i  lounge-margin %2i  pws %3d  lvld %llu) !",
 							 orig_node->orig_str,
-							 (orig_node->router && orig_node->router->nnkey_addr == neigh) ? "best" : "altn",
+							 (orig_node->router && orig_node->router->key.addr == neigh) ? "best" : "altn",
 							 ipStr(neigh),
 							 ogm_seqno,
 							 orig_node->last_valid_sqn,
@@ -829,11 +829,11 @@ static int8_t validate_considered_order(struct orig_node *orig_node, SQ_TYPE seq
 {
 	struct neigh_node_key key = {neigh, iif};
 	struct avl_node *an = avl_find(&orig_node->neigh_avl, &key);
-	struct neigh_node *nn = an ? (struct neigh_node *)an->key : NULL;
+	struct neigh_node *nn = an ? (struct neigh_node *)an->object : NULL;
 
 	if (nn)
 	{
-		paranoia(-500198, (nn->nnkey_addr != neigh || nn->nnkey_iif != iif));
+		paranoia(-500198, (nn->key.addr != neigh || nn->key.iif != iif));
 
 		nn->last_aware = batman_time;
 
@@ -864,7 +864,7 @@ struct orig_node *get_orig_node(uint32_t addr, uint8_t create)
 	prof_start(PROF_get_orig_node);
 	struct avl_node *an = avl_find(&orig_avl, &addr);
 
-	struct orig_node *orig_node = an ? (struct orig_node *)an->key : NULL;
+	struct orig_node *orig_node = an ? (struct orig_node *)an->object : NULL;
 
 	if (!create)
 	{
@@ -883,7 +883,8 @@ struct orig_node *get_orig_node(uint32_t addr, uint8_t create)
 	memset(orig_node, 0, (sizeof(struct orig_node) + (plugin_data_registries[PLUGIN_DATA_ORIG] * sizeof(void *))));
 
   OLInitializeListHead(&orig_node->neigh_list_head);
-	AVL_INIT_TREE(orig_node->neigh_avl, sizeof(struct neigh_node_key));
+	orig_node->neigh_avl.root = NULL;
+	orig_node->neigh_avl.key_size = sizeof(struct neigh_node_key);
 
 	addr_to_str(addr, orig_node->orig_str);
 	dbgf_all(DBGT_INFO, "creating new originator: %s with %d plugin_data_registries",
@@ -897,7 +898,7 @@ struct orig_node *get_orig_node(uint32_t addr, uint8_t create)
 
 	upd_wavg(&orig_node->ogi_wavg, DEF_OGI, OGI_WAVG_EXP);
 
-	avl_insert(&orig_avl, /*(uint32_t*)*/ orig_node);
+	avl_insert(&orig_avl, /*(uint32_t*)*/ &orig_node->orig, orig_node);
 
 	cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_CREATE);
 
@@ -919,7 +920,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 	/* for all origins... */
 	uint32_t orig_ip = 0;
 
-	while ((orig_node = (struct orig_node *)((an = avl_next(&orig_avl, &orig_ip)) ? an->key : NULL)))
+	while ((orig_node = (struct orig_node *)((an = avl_next(&orig_avl, &orig_ip)) ? an->object : NULL)))
 	{
 		orig_ip = orig_node->orig;
 
@@ -937,14 +938,16 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			if (!bif && (!curr_time || !orig_node->pog_refcnt))
 				cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_DESTROY);
 
-			// for all neighbours towards this originator ...
+			//remove all neighbours of this originator ...
       OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 			{
-				if (!bif || (neigh_node->nnkey_iif == bif))
+				if (!bif || (neigh_node->key.iif == bif))
 				{
           LIST_ENTRY *prev = OLGetPrev(neigh_node);
           OLRemoveEntry(neigh_node);
-					avl_remove(&orig_node->neigh_avl, neigh_node);
+
+					//remove neighbour also from avl tree
+					avl_remove(&orig_node->neigh_avl, &neigh_node->key);
 
 					debugFree(neigh_node, 1403);
           neigh_node = (struct neigh_node *)prev;
@@ -1019,7 +1022,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 				if (LESS_U32((neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))), curr_time) &&
 						orig_node->router != neigh_node)
 				{
-					addr_to_str(neigh_node->nnkey_addr, neigh_str);
+					addr_to_str(neigh_node->key.addr, neigh_str);
 					dbgf_all(DBGT_INFO,
 									 "Neighbour timeout: originator %s, neighbour: %s, last_aware %u",
 									 orig_node->orig_str, neigh_str, neigh_node->last_aware);
@@ -1027,7 +1030,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
           LIST_ENTRY *prev = OLGetPrev(neigh_node);
           OLRemoveEntry(neigh_node);
 
-					avl_remove(&orig_node->neigh_avl, neigh_node);
+					avl_remove(&orig_node->neigh_avl, &neigh_node->key);
 
 					debugFree(neigh_node, 1403);
           neigh_node = (struct neigh_node *)prev;
@@ -1311,10 +1314,10 @@ void process_ogm(struct msg_buff *mb)
 		dbgf_all(DBGT_INFO, //as long as incoming link is not bidirectional,...
 						 "new_rt %s for %s is zero or differs from installed rt %s  "
 						 "(old_rt %s  rcvd vi %s %s",
-						 ipStr(new_router ? new_router->nnkey_addr : 0),
+						 ipStr(new_router ? new_router->key.addr : 0),
 						 orig_node->orig_str,
-						 ipStr(orig_node->router ? orig_node->router->nnkey_addr : 0),
-						 ipStr(old_router ? old_router->nnkey_addr : 0), mb->neigh_str, mb->iif->dev);
+						 ipStr(orig_node->router ? orig_node->router->key.addr : 0),
+						 ipStr(old_router ? old_router->key.addr : 0), mb->neigh_str, mb->iif->dev);
 	}
 
 	// new_router can be zero !!!
@@ -1380,7 +1383,7 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 										 "knownSince lsqn(diff) lvld pws ~ogi cpu hop\n");
 			uint32_t orig_ip = 0;
 
-			while ((orig_node = (struct orig_node *)((an = avl_next(&orig_avl, &orig_ip)) ? an->key : NULL)))
+			while ((orig_node = (struct orig_node *)((an = avl_next(&orig_avl, &orig_ip)) ? an->object : NULL)))
 			{
 				orig_ip = orig_node->orig;
 
@@ -1388,23 +1391,13 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 				{
 					continue;
 				}
-				/*
-                                struct orig_node *onn = get_orig_node( orig_node->router->addr, NO );
-
-                                if ( !onn  ||  !onn->last_valid_time  ||  !onn->router )
-                                        continue;
-                                 */
-				/*
-				int estimated_rcvd = (( (100 * orig_node->router->accepted_sqr.wa_val)/PROBE_TO100 )+99) /
-					(((tq_power( tq_rate( onn, onn->router->iif, PROBE_RANGE ), PROBE_RANGE ) )/PROBE_TO100)+1);
-*/
 
 				nodes_count++;
 				batman_count++;
 
 				dbg_printf(cn, "%-15s %-10s %-15s %3i %3i  %s %5i %3i %5i %3i %4i %3i %3i\n",
-									 orig_node->orig_str, orig_node->router->nnkey_iif->dev,
-									 ipStr(orig_node->router->nnkey_addr),
+									 orig_node->orig_str, orig_node->router->key.iif->dev,
+									 ipStr(orig_node->router->key.addr),
 									 orig_node->router->longtm_sqr.wa_val / PROBE_TO100,
 									 orig_node->router->recent_sqr.wa_val / PROBE_TO100,
 									 //				            estimated_rcvd > 100 ? 100 : estimated_rcvd,
@@ -1459,27 +1452,13 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 			uint32_t orig_ip = 0;
 			struct link_node *ln;
 
-			while ((ln = (struct link_node *)((an = avl_next(&link_avl, &orig_ip)) ? an->key : NULL)))
+			while ((ln = (struct link_node *)((an = avl_next(&link_avl, &orig_ip)) ? an->object : NULL)))
 			{
 				orig_ip = ln->orig_addr;
-
-				/*
-			struct list_head *link_pos;
-			list_for_each( link_pos, &link_list ) {
-				struct link_node *ln = list_entry(link_pos, struct link_node, list);
-*/
-
 				orig_node = ln->orig_node;
 
 				if (!orig_node->router)
 					continue;
-
-				/*
-				struct orig_node *onn = get_orig_node( orig_node->router->addr, NO );
-
-				if ( !onn  ||  !onn->last_valid_time  ||  !onn->router )
-					continue;
-*/
 
 				struct list_head *lndev_pos;
 
@@ -1517,31 +1496,25 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 
 			uint32_t orig_ip = 0;
 
-			while ((orig_node = (struct orig_node *)((an = avl_next(&orig_avl, &orig_ip)) ? an->key : NULL)))
+			while ((orig_node = (struct orig_node *)((an = avl_next(&orig_avl, &orig_ip)) ? an->object : NULL)))
 			{
 				orig_ip = orig_node->orig;
 
 				if (!orig_node->router || orig_node->primary_orig_node != orig_node)
 					continue;
 
-				/*
-				struct orig_node *onn = get_orig_node( orig_node->router->addr, NO );
-
-				if ( !onn  ||  !onn->last_valid_time  ||  !onn->router )
-					continue;
-*/
 				dbg_printf(cn, "%-15s (%3i) %15s [%10s] ",
 									 orig_node->orig_str,
 									 orig_node->router->longtm_sqr.wa_val / PROBE_TO100,
-									 ipStr(orig_node->router->nnkey_addr),
-									 orig_node->router->nnkey_iif->dev);
+									 ipStr(orig_node->router->key.addr),
+									 orig_node->router->key.iif->dev);
 
         OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 				{
-					if (neigh_node->nnkey_addr != orig_node->router->nnkey_addr)
+					if (neigh_node->key.addr != orig_node->router->key.addr)
 					{
 						dbg_printf(cn, " %15s (%3i)",
-											 ipStr(neigh_node->nnkey_addr),
+											 ipStr(neigh_node->key.addr),
 											 neigh_node->longtm_sqr.wa_val / PROBE_TO100);
 					}
 				}

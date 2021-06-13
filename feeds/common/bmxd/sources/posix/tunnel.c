@@ -1280,7 +1280,7 @@ static int32_t opt_gateways(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 
 			dbg_printf(cn, "%s %-15s %15s %3i, %i%s/%i%s, reliability: %i, tunnel %s, %s \n",
 								 (gwc_args && curr_gateway == gw_node) ? "=>" : "  ",
-								 ipStr(on->orig), ipStr(on->router->nnkey_addr),
+								 ipStr(on->orig), ipStr(on->router->key.addr),
 								 gw_node->orig_node->router->longtm_sqr.wa_val / PROBE_TO100,
 								 download_speed > 2048 ? download_speed / 1024 : download_speed,
 								 download_speed > 2048 ? "MBit" : "KBit",

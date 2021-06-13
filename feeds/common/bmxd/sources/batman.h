@@ -512,7 +512,7 @@ struct batman_if
 
 struct orig_node /* structure for orig_list maintaining nodes of mesh */
 {
-	uint32_t orig; /* this must be the first four bytes! otherwise avl or hash functionality do not work */
+	uint32_t orig; /* avl key / this must be the first four bytes! otherwise avl or hash functionality do not work */
 
 	struct neigh_node *router; /* the neighbor which is the currently best_next_hop */
 
@@ -593,7 +593,7 @@ struct link_node_dev
  */
 struct link_node
 {
-	uint32_t orig_addr;
+	uint32_t orig_addr; // avl key
 
 	struct list_head list;
 
@@ -612,10 +612,9 @@ struct neigh_node_key
 /* Every OG has one ore several neigh_nodes. */
 struct neigh_node
 {
-  LIST_ENTRY list;
+	LIST_ENTRY list;
 	struct neigh_node_key key;
-#define nnkey_addr key.addr
-#define nnkey_iif key.iif
+
 
 	batman_time_t last_aware; /* when last packet via this neighbour was received */
 
