@@ -827,18 +827,15 @@ static int tq_power(int tq_rate_value, int range)
 
 static int8_t validate_considered_order(struct orig_node *orig_node, SQ_TYPE seqno, uint8_t ttl, uint32_t neigh, struct batman_if *iif)
 {
-	struct neigh_node_key *key ;
+	struct neigh_node_key key ;
 	struct avl_node *an;
 	struct neigh_node *nn;
 
-	key = debugMalloc(sizeof(struct neigh_node_key), 0);
-	paranoia(-500398, !key);
-
-	key->addr = neigh;
-	key->iif = iif;
-	an = avl_find(&orig_node->neigh_avl, key);
+	memset(&key,0,sizeof(struct neigh_node_key)); //needed by valgrind
+	key.addr = neigh;
+	key.iif = iif;
+	an = avl_find(&orig_node->neigh_avl, &key);
 	nn = an ? (struct neigh_node *)an->object : NULL;
-	debugFree(key, 0);
 
 	if (nn)
 	{
