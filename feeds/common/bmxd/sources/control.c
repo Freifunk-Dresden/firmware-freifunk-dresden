@@ -942,7 +942,7 @@ int8_t func_for_each_opt(struct ctrl_node *cn, void *data, char *func_name,
 	return SUCCESS;
 }
 
-static void show_opts_help(uint8_t all_opts, uint8_t verbose, struct ctrl_node *cn)
+static void show_opts_help(struct ctrl_node *cn)
 {
 	if (!cn)
 		return;
@@ -951,13 +951,8 @@ static void show_opts_help(uint8_t all_opts, uint8_t verbose, struct ctrl_node *
 	dbg_printf(cn, "Usage: %s [LONGOPT[=[%c]VAL]] | [-SHORTOPT[SHORTOPT...] [[%c]VAL]] ...\n",
 						 prog_name, ARG_RESET_CHAR, ARG_RESET_CHAR);
 	dbg_printf(cn, "  e.g. %s dev=eth0 dev=wlan0         # to start daemon on interface eth0 and wlan0\n", prog_name);
-	dbg_printf(cn, "  e.g. %s plugin=bmx_http_info.so -X # to show verbose help of bmxd and its' plugin\n", prog_name);
-
-	dbg_printf(cn, "  e.g. %s -c -a 192.200.200.1/24     # to connect to running bmxd and announce given network\n", prog_name);
-	dbg_printf(cn, "  e.g. %s -c -a -192.200.200.1/24    # to connect and stop announcing given network\n", prog_name);
 	dbg_printf(cn, "  e.g. %s -cid8                      # to connect and show configured options and connevtivity\n", prog_name);
 	dbg_printf(cn, "\n");
-	//dbg_printf(cn, "\nValid options are:\n" );
 
 	struct list_head *list_pos;
 
@@ -966,9 +961,6 @@ static void show_opts_help(uint8_t all_opts, uint8_t verbose, struct ctrl_node *
 		struct list_head *pos;
 		struct opt_type *opt = (struct opt_type *)list_entry(list_pos, struct opt_data, list);
 		char sn[5], st[3 * MAX_ARG_SIZE], defaults[100];
-
-		if (!(all_opts || opt->short_name))
-			continue;
 
 		if (opt->long_name && opt->help && !opt->parent_name)
 		{
@@ -986,9 +978,7 @@ static void show_opts_help(uint8_t all_opts, uint8_t verbose, struct ctrl_node *
 				defaults[0] = '\0';
 
 			dbg_printf(cn, "\n%-40s %s\n", st, defaults);
-
-			if (verbose)
-				dbg_printf(cn, "	%s\n", opt->help);
+			dbg_printf(cn, "	%s\n", opt->help);
 		}
 		else if (!opt->long_name && opt->help)
 		{
@@ -1016,23 +1006,15 @@ static void show_opts_help(uint8_t all_opts, uint8_t verbose, struct ctrl_node *
 				defaults[0] = '\0';
 
 			dbg_printf(cn, "%-40s %s\n", st, defaults);
-
-			if (verbose)
-				dbg_printf(cn, "	        %s\n", c_opt->help);
+			dbg_printf(cn, "	        %s\n", c_opt->help);
 		}
 	}
 
 	dbg_printf(cn, "\n");
-
-	if (all_opts)
-	{
-		dbg_printf(cn, "Environment variables (e.g. sudo %s=/usr/src/bmx/lib %s -d3 eth0:bmx ):\n",
+	dbg_printf(cn, "Environment variables (e.g. sudo %s=/usr/src/bmx/lib %s -d3 eth0:bmx ):\n",
 							 BMX_ENV_LIB_PATH, prog_name);
-
-		dbg_printf(cn, "\t%s\n", BMX_ENV_LIB_PATH);
-		dbg_printf(cn, "\t%s\n", BMX_ENV_DEBUG);
-	}
-
+	dbg_printf(cn, "\t%s\n", BMX_ENV_LIB_PATH);
+	dbg_printf(cn, "\t%s\n", BMX_ENV_DEBUG);
 	dbg_printf(cn, "\n");
 }
 
@@ -2955,21 +2937,9 @@ static int32_t opt_help(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 	if (!cn)
 		return FAILURE;
 
-	if (!strcmp(opt->long_name, ARG_VERBOSE_HELP))
+	if (!strcmp(opt->long_name, ARG_HELP))
 	{
-		show_opts_help(NO, YES, cn);
-	}
-	else if (!strcmp(opt->long_name, ARG_HELP))
-	{
-		show_opts_help(NO, NO, cn);
-	}
-	else if (!strcmp(opt->long_name, ARG_VERBOSE_EXP))
-	{
-		show_opts_help(YES, YES, cn);
-	}
-	else if (!strcmp(opt->long_name, ARG_EXP))
-	{
-		show_opts_help(YES, NO, cn);
+		show_opts_help(cn);
 	}
 	else if (!strcmp(opt->long_name, ARG_VERSION))
 	{
@@ -2978,7 +2948,7 @@ static int32_t opt_help(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 	}
 	else
 	{
-		show_opts_help(NO, NO, cn);
+		show_opts_help(cn);
 	}
 
 	if (!on_the_fly)
@@ -3030,16 +3000,7 @@ static struct opt_type control_options[] =
 				 0, "\nGeneral configuration options:"},
 
 				{ODI, 0, 0, ARG_HELP, 'h', A_PS0, A_USR, A_DYI, A_ARG, A_END, 0, 0, 0, 0, opt_help,
-				 0, "summarize help"},
-
-				{ODI, 0, 0, ARG_VERBOSE_HELP, 'H', A_PS0, A_USR, A_DYI, A_ARG, A_END, 0, 0, 0, 0, opt_help,
-				 0, "show help"},
-
-				{ODI, 0, 0, ARG_EXP, 'x', A_PS0, A_USR, A_DYI, A_ARG, A_END, 0, 0, 0, 0, opt_help,
-				 0, "summarize advanced and experimental options"},
-
-				{ODI, 0, 0, ARG_VERBOSE_EXP, 'X', A_PS0, A_USR, A_DYI, A_ARG, A_END, 0, 0, 0, 0, opt_help,
-				 0, "show advanced and experimental options"},
+				 0, "help"},
 
 				{ODI, 0, 0, ARG_VERSION, 'v', A_PS0, A_USR, A_DYI, A_ARG, A_ANY, 0, 0, 0, 0, opt_help,
 				 0, "show version"},

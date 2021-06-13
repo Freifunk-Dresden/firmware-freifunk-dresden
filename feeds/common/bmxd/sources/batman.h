@@ -188,8 +188,6 @@ extern uint32_t My_pid;
 
 #define ARG_HELP "help"
 #define ARG_VERBOSE_HELP "verbose_help"
-#define ARG_EXP "exp_help"
-#define ARG_VERBOSE_EXP "verbose_exp_help"
 
 #define ARG_VERSION "version"
 #define ARG_TRAILER "trailer"
