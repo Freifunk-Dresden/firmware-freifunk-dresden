@@ -51,7 +51,7 @@ clean()
 
 # Run the Valgrind tool called toolname, e.g. memcheck, cachegrind, callgrind, helgrind, drd, massif,
 # dhat, lackey, none, exp-sgcheck, exp-bbv, etc.
-VALGRIND_OPT="--show-error-list=yes --tool=memcheck --leak-check=full -s"
+VALGRIND_OPT="--tool=memcheck --show-error-list=yes --leak-check=full -s --track-origins=yes --show-leak-kinds=all"
 
 case "$1" in
 	server)
