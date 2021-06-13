@@ -827,9 +827,18 @@ static int tq_power(int tq_rate_value, int range)
 
 static int8_t validate_considered_order(struct orig_node *orig_node, SQ_TYPE seqno, uint8_t ttl, uint32_t neigh, struct batman_if *iif)
 {
-	struct neigh_node_key key = {neigh, iif};
-	struct avl_node *an = avl_find(&orig_node->neigh_avl, &key);
-	struct neigh_node *nn = an ? (struct neigh_node *)an->object : NULL;
+	struct neigh_node_key *key ;
+	struct avl_node *an;
+	struct neigh_node *nn;
+
+	key = debugMalloc(sizeof(struct neigh_node_key), 0);
+	paranoia(-500398, !key);
+
+	key->addr = neigh;
+	key->iif = iif;
+	an = avl_find(&orig_node->neigh_avl, key);
+	nn = an ? (struct neigh_node *)an->object : NULL;
+	debugFree(key, 0);
 
 	if (nn)
 	{
@@ -966,7 +975,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 
 				set_primary_orig(orig_node, 0);
 
-				avl_remove(&orig_avl, /*(uint32_t*)*/ orig_node);
+				avl_remove(&orig_avl, /*(uint32_t*)*/ &orig_node->orig);
 
 				debugFree(orig_node, 1402);
 			}

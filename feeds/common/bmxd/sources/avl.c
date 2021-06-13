@@ -37,12 +37,20 @@
 
 struct avl_node *avl_find(struct avl_tree *tree, void *key)
 {
-        struct avl_node *an = tree->root;
+        struct avl_node *an;
         int cmp;
 
+        if(!tree || !tree->root || !key)
+        {return NULL;}
+
+        an = tree->root;
+
         // Search for a dead path or a matching entry
-        while (an && (cmp = memcmp(an->key, key, tree->key_size)))
+        //while (an && (cmp = memcmp(an->key, key, tree->key_size)))
+        while (an)
         {
+                cmp = memcmp(an->key, key, tree->key_size);
+                if(cmp == 0) break;
                 an = an->link[cmp < 0];
         }
 
@@ -475,170 +483,5 @@ void avl_debug(struct avl_tree *tree)
         dbg_mem[depth_max * width * AVL_DBG_COL_CHARS] = 0;
 
         printf("\n-----\n%s\n-----\n", dbg_mem);
-}
-#endif
-
-#ifdef AVL_TEST
-static void avl_test()
-{
-        struct avl_node *an = NULL;
-        struct avl_tree t = {sizeof(int), NULL}
-
-        int i;
-
-        struct p
-        {
-                int i;
-                int v;
-        };
-        struct p *p;
-
-        for (i = 0; i <= 19; i++)
-        {
-                p = debugMalloc(sizeof(struct p), 999);
-                p->i = i;
-                p->v = 0;
-                avl_insert(&t, p);
-        }
-
-        for (i = 19; i >= 10; i--)
-        {
-                p = avl_remove(&t, &i);
-                printf(" removed %d/%d\n", p->i, p->v);
-                debugFree(p, 1999);
-        }
-
-        for (i = 9; i >= 0; i--)
-        {
-                p = debugMalloc(sizeof(struct p), 999);
-                p->i = i;
-                p->v = 1;
-                avl_insert(&t, p);
-        }
-
-        for (i = 5; i <= 15; i++)
-        {
-                p = debugMalloc(sizeof(struct p), 999);
-                p->i = i;
-                p->v = 2;
-                avl_insert(&t, p);
-        }
-
-        for (i = 3; i <= 9; i++)
-        {
-                p = debugMalloc(sizeof(struct p), 999);
-                p->i = 2;
-                p->v = i;
-                avl_insert(&t, p);
-        }
-
-        printf("\navl_iterate():\n");
-        i = 0;
-        an = NULL;
-        while ((an = avl_iterate(&t, an)))
-        {
-                p = ((struct p *)(an->key));
-                if (i > p->i)
-                        printf("\nERROR %d > %d \n", i, p->i);
-                i = p->i;
-                printf("%3d/%1d ", p->i, p->v);
-        }
-        printf("\n");
-
-#ifdef AVL_DEBUG
-        printf("avl_debug():\n");
-        avl_debug(&t);
-#endif
-
-        for (i = 9; i >= 3; i--)
-        {
-                int v = 2;
-                if ((p = avl_remove(&t, &v)))
-                {
-                        printf(" removed %d/%d\n", p->i, p->v);
-                        debugFree(p, 1999);
-                }
-        }
-
-        for (i = 9; i >= 0; i--)
-        {
-                if ((p = avl_remove(&t, &i)))
-                {
-                        printf(" removed %d/%d\n", p->i, p->v);
-                        debugFree(p, 1999);
-                }
-        }
-
-        for (i = 0; i <= 19; i++)
-        {
-                if ((p = avl_remove(&t, &i)))
-                {
-                        printf(" removed %d/%d\n", p->i, p->v);
-                        debugFree(p, 1999);
-                }
-                else
-                {
-                        printf(" failed rm %d\n", i);
-                }
-        }
-
-        /*        for (i = 20; i >= 0; i--) {
-                p = debugMalloc(sizeof ( struct p), 999);
-                p->i = i;
-                p->v = 5;
-                avl_insert(&t, p);
-        }
-*/
-
-        i = 0;
-
-        printf("\n");
-
-        printf("\navl_next():\n");
-
-        int32_t j = 0;
-        while ((an = avl_next(&t, &j)))
-        {
-                p = ((struct p *)(an->key));
-                j = p->i;
-                if (i > p->i)
-                        printf("\nERROR %d > %d \n", i, p->i);
-
-                i = p->i;
-
-                printf("N%4d/%1d ", p->i, p->v);
-
-                if (i % 10 == 0)
-                        printf("\n");
-        }
-
-        printf("\navl_iterate():\n");
-        i = 0;
-        while ((an = avl_iterate(&t, an)))
-        {
-                p = ((struct p *)(an->key));
-                if (i > p->i)
-                        printf("\nERROR %d > %d \n", i, p->i);
-                i = p->i;
-                printf("%3d/%1d ", p->i, p->v);
-        }
-        printf("\n");
-
-#ifdef AVL_DEBUG
-        printf("avl_debug():\n");
-        avl_debug(&t);
-#endif
-
-        while (t.root)
-        {
-                p = (struct p *)t.root->key;
-                p = avl_remove(&t, p);
-                printf(" removed %d/%d\n", p->i, p->v);
-                debugFree(p, 1999);
-        }
-
-        printf("\n");
-
-        cleanup_all(CLEANUP_SUCCESS);
 }
 #endif
