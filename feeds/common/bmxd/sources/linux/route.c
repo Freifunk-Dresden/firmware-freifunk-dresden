@@ -621,16 +621,10 @@ static void flush_routes_rules(int8_t is_rule)
 				if (is_rule)
 				{
 					add_del_rule(dest, mask, rtm->rtm_table, prio, iif, rule_type, DEL, TRACK_NO);
-
-//					dbg(DBGL_SYS, DBGT_WARN, "flushing orphan rule type %d dest? %s/%d  table %d  prio %d",
-//							rule_type, ipStr(dest), mask, rtm->rtm_table, prio);
 				}
 				else
 				{
 					add_del_route(dest, mask, router, 0, oif, "unknown", rtm->rtm_table, rtm->rtm_type, DEL, TRACK_NO);
-
-//					dbg(DBGL_SYS, DBGT_WARN, "flushing orphan route to %s  via %s  type %d  table %d",
-//							ipStr(dest), ipStr(router), rtm->rtm_type, rtm->rtm_table);
 				}
 			}
 		}
@@ -918,11 +912,9 @@ static char *get_ip4conf_buffer(struct ifconf *ifc)
 
 static int is_batman_if(char *dev, struct batman_if **bif)
 {
-	struct list_head *if_pos = NULL;
-
-	list_for_each(if_pos, &if_list)
+  OLForEach(batman_if, struct batman_if, if_list)
 	{
-		(*bif) = list_entry(if_pos, struct batman_if, list);
+    (*bif) = batman_if;
 
 		if (wordsEqual((*bif)->dev, dev))
 			return YES;
@@ -1236,19 +1228,6 @@ static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, 
 		prev_pos = &tmp_rn->list;
 	}
 
-	// if (track_t == TRACK_NO ||
-	// 		(del && !first_found_rn) ||
-	// 		(del && found_rns != 1) ||
-	// 		(!del && found_rns > 0))
-	// {
-	// 	dbg((track_t == TRACK_NO || (del && !first_found_rn)) ? DBGL_SYS : DBGL_ALL,
-	// 			(track_t == TRACK_NO || (del && !first_found_rn)) ? DBGT_ERR : DBGT_INFO,
-	// 			"  %s route to %-15s via %-15s  src %s  dev %s table %d  %s  "
-	// 			"%s has %d (%d exact) matches",
-	// 			del ? "del" : "add", ipStr(dest), ipStr(gw), ipStr(src), dev, rt_table,
-	// 			rt2str(rta_type), trackt2str(track_t), found_rns, (first_found_rn ? 1 : 0));
-	// }
-
 	if (track_t == TRACK_NO)
 		return YES;
 
@@ -1305,14 +1284,6 @@ void add_del_route(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32
 
 	if (track_route_and_proceed(dest, mask, gw, src, ifi, dev, rt_table, rta_type, del, track_t) == NO)
 		return;
-
-	// if (track_t != TRACK_OTHER_HOST)
-	// {
-	// 	dbg(DBGL_CHANGES, DBGT_INFO,
-	// 			" %s route to %15s/%-2d  table %d  via %-15s  dev %-10s ifi %2d  %s %s",
-	// 			del ? "del" : "add",
-	// 			ipStr(dest), mask, rt_table, ipStr(gw), dev, ifi, rt2str(rta_type), trackt2str(track_t));
-	// }
 
 	if (gw == dest)
 		my_router = 0;
@@ -1672,7 +1643,6 @@ void if_deactivate(struct batman_if *bif)
 
 void check_interfaces()
 {
-	struct list_head *list_pos;
 	uint8_t cb_conf_hooks = NO;
 
 	dbgf_all(DBGT_INFO, " ");
@@ -1682,7 +1652,7 @@ void check_interfaces()
 	//Do we need this? There was an interface attribute which change is not catched by ifevent_sk ??
 	register_task(5000, check_interfaces, NULL);
 
-	if (list_empty(&if_list))
+  if (OLIsListEmpty(&if_list))
 	{
 		dbg(DBGL_SYS, DBGT_ERR, "No interfaces specified");
 		cleanup_all(CLEANUP_FAILURE);
@@ -1690,9 +1660,8 @@ void check_interfaces()
 
 	Mtu_min = MAX_MTU;
 
-	list_for_each(list_pos, &if_list)
+  OLForEach(bif, struct batman_if, if_list)
 	{
-		struct batman_if *bif = list_entry(list_pos, struct batman_if, list);
 
 		if ((bif->if_active) && (!is_interface_up(bif->dev)))
 		{
@@ -1728,11 +1697,13 @@ void check_interfaces()
 
 		if ((!bif->if_active) && (is_interface_up(bif->dev)))
 		{
-			struct list_head *tmp_pos;
+//se: allow enabling interfaces
+//original is enabled.
+#if 1
 			struct batman_if *tmp_bif = NULL;
-			list_for_each(tmp_pos, &if_list)
+      OLForEach(b, struct batman_if, if_list)
 			{
-				tmp_bif = list_entry(list_pos, struct batman_if, list);
+        tmp_bif = b;
 
 				if (!wordsEqual(tmp_bif->dev, bif->dev) && tmp_bif->if_active && tmp_bif->if_addr == bif->if_addr)
 				{
@@ -1744,11 +1715,14 @@ void check_interfaces()
 			}
 
 			if (!tmp_bif)
+#endif //se:
 			{
 				if (on_the_fly)
+        {
 					dbg_mute(50, DBGL_SYS, DBGT_INFO,
 									 "detected valid but disabled dev: %s ! Activating now...", bif->dev);
 
+        }
 				if_activate(bif);
 			}
 		}
@@ -1776,7 +1750,7 @@ void check_interfaces()
 			dbg(DBGL_SYS, DBGT_WARN,
 					"not using interface %s (retrying later): interface not ready", bif->dev);
 		}
-	}
+  } // loop
 
 	if_conf_soft_changed = NO;
 	if_conf_hard_changed = NO;

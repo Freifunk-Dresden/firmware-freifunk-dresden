@@ -35,8 +35,6 @@ void update_lounged_metric(uint8_t probe, uint8_t lounge_size, SQ_TYPE sqn_incm,
 {
 	SQ_TYPE sq_upd;
 
-	//	dbgf_all( DBGT_INFO, "probe=%d, lounge_size=%d, sqn_incm=%d, sqn_max=%d, ws=%d ", probe, lounge_size, sqn_incm, sqn_max, ws );
-
 	if (probe)
 		sq_upd = sqn_incm;
 

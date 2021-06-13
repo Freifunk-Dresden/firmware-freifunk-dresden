@@ -103,7 +103,14 @@ static uint32_t pref_gateway = 0;
 #define IP_LEASE_TIMEOUT (1 * ONE_MINUTE)
 
 #define MAX_TUNNEL_IP_REQUESTS 60			 //12
-#define TUNNEL_IP_REQUEST_TIMEOUT 1000 // msec
+
+//SE: timeout wurde von 1000 auf 5000 erhoeht. dieser wert wird als Schutz vor ueberflutung
+//mit tunnel ip requets definert und ist die minimale zeit zwischen neuen tunnel ip requests.
+//das ist notwendig wenn die erste anfrage gestellt wird, da ein reply vom gateway server langer
+//dauern kann und bis dahin die aktuelle lease time und lease dauer noch 0 ist.
+//bei ganz viel nutzern (schnorrstrasse dresden), die gleichzeitig eine anfrage mache, fuert das
+//zu ganz vielen anfragen.
+#define TUNNEL_IP_REQUEST_TIMEOUT 5000 // msec
 
 #define DEF_TUN_PERSIST 1
 

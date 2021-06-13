@@ -17,6 +17,8 @@
  *
  */
 
+#include "objlist.h"
+
 #define MIN_UPTIME 0
 #define MAX_UPTIME 2147383 /*(((TP32/1000)/2)-100) /1000 to talk about seconds and not ms, /2 to not render scheduled events outdated, -100 to be save */
 #define DEF_UPTIME 0
@@ -39,13 +41,10 @@
 #define DBGL_LINKS 10
 #define DBGL_TEST 11
 #define DBGL_MAX 11
-#define DBGL_INVALID 12
 
 typedef uint64_t batman_time_t;
 
 extern int unix_sock;
-
-extern struct list_head_first ctrl_list;
 
 #define ARG_PEDANTIC_CMDCHECK "pedantic_cmd_check"
 
@@ -68,7 +67,7 @@ enum
 
 struct ctrl_node
 {
-	struct list_head list;
+	LIST_ENTRY entry;
 	int fd;
 	void (*cn_fd_handler)(struct ctrl_node *);
 	batman_time_t closing_stamp;
@@ -76,14 +75,15 @@ struct ctrl_node
 	int8_t dbgl;
 };
 
-extern struct list_head_first dbgl_clients[DBGL_MAX + 1];
+extern LIST_ENTRY ctrl_list;
 
 struct dbgl_node
 {
-	struct list_head list;
+	LIST_ENTRY entry;
 	struct ctrl_node *cn;
 };
 
+extern LIST_ENTRY dbgl_clients[];
 // muting does not help if a changing value like time or seqno occurs durig the first DBG_HIST_TEXT_SIZE bytes
 #define DBG_HIST_TEXT_SIZE 80
 #define DBG_HIST_SIZE 20
@@ -164,7 +164,6 @@ struct ctrl_node *create_ctrl_node(int fd, void (*cn_fd_handler)(struct ctrl_nod
 
 #define MAX_UNIX_MSG_SIZE 2000
 
-extern struct list_head_first opt_list;
 
 /* opt_t types (Parent/Child, Single/Multiple, 0/1/N-arguments) */
 #define A_PS0 0x01
@@ -206,28 +205,20 @@ extern char *opt_cmd2str[];
 
 struct opt_child
 {
-	struct list_head list;
-
+	LIST_ENTRY list;
 	struct opt_type *c_opt; // key,  pointing to related opt_type
 	struct opt_parent *parent_instance;
-
 	char *c_val;
-
 	uint8_t p_diff; //ADD, DEL, NOP
-
 	char *c_ref;
 };
 
 struct opt_parent
 {
-	struct list_head list;
-
-	struct list_head_first childs_instance_list;
-
+	LIST_ENTRY list;
+	LIST_ENTRY childs_instance_list;
 	char *p_val; //key
-
 	uint8_t p_diff; //ADD, DEL, NOP
-
 	char *p_ref;
 };
 
@@ -238,13 +229,11 @@ struct opt_parent
 
 struct opt_data
 {
-	struct list_head list;
+	LIST_ENTRY list;
 
 	struct opt_type *parent_opt; //REMOVE THIS and use casting instead !
-
-	struct list_head_first childs_type_list; //if this opt is a section type, then further sub-opts types can be listed here
-
-	struct list_head_first parents_instance_list; //
+	LIST_ENTRY childs_type_list; //if this opt is a section type, then further sub-opts types can be listed here
+	LIST_ENTRY parents_instance_list;
 	uint16_t found_parents;
 };
 

@@ -85,7 +85,7 @@ uint32_t primary_addr = 0;
 //struct avl_tree orig_avl = {sizeof( uint32_t), NULL};
 AVL_TREE(orig_avl, sizeof(uint32_t));
 
-SIMPEL_LIST(if_list);
+LIST_ENTRY if_list;
 
 static void update_routes(struct orig_node *orig_node, struct neigh_node *new_router)
 {
@@ -132,14 +132,11 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 
 static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
 {
-	struct list_head *neigh_pos /*, *neigh_temp, *neigh_prev */;
-	struct neigh_node *neigh_node = NULL;
 
 	dbgf_all(DBGT_INFO, "%s", ipStr(orig_node->orig));
 
-	list_for_each(neigh_pos, &orig_node->neigh_list)
+  OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 	{
-		neigh_node = list_entry(neigh_pos, struct neigh_node, list);
 
 		if (!bif || bif == neigh_node->nnkey_iif)
 		{
@@ -155,41 +152,20 @@ static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
 		cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_FLUSH);
 	}
 
-	/*
- * plugins must be called with PLUGIN_CB_ORIG_FLUSH and PLUGIN_CB_ORIG_DESRTROY
- * before orig_node->router can be destroyed:
- *
-        neigh_prev = (struct list_head *) & orig_node->neigh_list;
-        // for all neighbours towards this originator ...
-
-        list_for_each_safe(neigh_pos, neigh_temp, &orig_node->neigh_list) {
-                neigh_node = list_entry(neigh_pos, struct neigh_node, list);
-
-                if (!bif || (neigh_node->iif == bif)) {
-                        list_del(neigh_prev, neigh_pos, &orig_node->neigh_list);
-
-                        debugFree(neigh_node, 1403);
-
-                } else {
-                        neigh_prev = &neigh_node->list;
-                }
-        }
-*/
 }
 
-static struct neigh_node *init_neigh_node(struct orig_node *orig_node, uint32_t neigh, struct batman_if *iif, uint16_t seqno, batman_time_t last_aware)
+static struct neigh_node *init_neigh_node(struct orig_node *orig_node, uint32_t neigh, struct batman_if *iif, batman_time_t last_aware)
 {
 	dbgf_all(DBGT_INFO, " ");
 
 	struct neigh_node *neigh_node = debugMalloc(sizeof(struct neigh_node), 403);
 	memset(neigh_node, 0, sizeof(struct neigh_node));
-	INIT_LIST_HEAD(&neigh_node->list);
 
 	neigh_node->nnkey_addr = neigh;
 	neigh_node->nnkey_iif = iif;
 	neigh_node->last_aware = last_aware;
 
-	list_add_tail(&neigh_node->list, &orig_node->neigh_list);
+  OLInsertTailList(&orig_node->neigh_list_head, &neigh_node->list);
 	avl_insert(&orig_node->neigh_avl, neigh_node);
 	return neigh_node;
 }
@@ -198,8 +174,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 {
 	prof_start(PROF_update_originator);
 
-	struct list_head *neigh_pos;
-	struct neigh_node *incm_rt = NULL, *tmp_neigh = NULL;
+  struct neigh_node *incm_rt = NULL;
 	struct neigh_node *curr_rt = on->router;
 	struct neigh_node *old_rt;
 	struct bat_packet_ogm *ogm = mb->bp.ogm;
@@ -215,11 +190,9 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 		on->first_valid_sec = batman_time_sec;
 
 	// find incoming_neighbor and purge outdated SQNs of alternative next hops
-	list_for_each(neigh_pos, &on->neigh_list)
+  OLForEach(tmp_neigh, struct neigh_node, on->neigh_list_head)
 	{
 		uint8_t probe = 0;
-
-		tmp_neigh = list_entry(neigh_pos, struct neigh_node, list);
 
 		if ((tmp_neigh->nnkey_addr == mb->neigh) && (tmp_neigh->nnkey_iif == mb->iif))
 		{
@@ -878,7 +851,7 @@ static int8_t validate_considered_order(struct orig_node *orig_node, SQ_TYPE seq
 		return SUCCESS;
 	}
 
-	nn = init_neigh_node(orig_node, neigh, iif, seqno, batman_time);
+	nn = init_neigh_node(orig_node, neigh, iif, batman_time);
 
 	nn->last_considered_seqno = seqno;
 	nn->last_considered_ttl = ttl;
@@ -909,7 +882,7 @@ struct orig_node *get_orig_node(uint32_t addr, uint8_t create)
 	orig_node = debugMalloc((sizeof(struct orig_node) + (plugin_data_registries[PLUGIN_DATA_ORIG] * sizeof(void *))), 402);
 	memset(orig_node, 0, (sizeof(struct orig_node) + (plugin_data_registries[PLUGIN_DATA_ORIG] * sizeof(void *))));
 
-	INIT_LIST_HEAD_FIRST(orig_node->neigh_list);
+  OLInitializeListHead(&orig_node->neigh_list_head);
 	AVL_INIT_TREE(orig_node->neigh_avl, sizeof(struct neigh_node_key));
 
 	addr_to_str(addr, orig_node->orig_str);
@@ -920,17 +893,7 @@ struct orig_node *get_orig_node(uint32_t addr, uint8_t create)
 	orig_node->last_aware = batman_time;
 	orig_node->router = NULL;
 	orig_node->link_node = NULL;
-	//	orig_node->path_lounge = my_path_lounge;
 	orig_node->pws = my_pws;
-	//        orig_node->path_hystere = my_path_hystere;
-	//        orig_node->late_penalty = my_late_penalty;
-	//        orig_node->hop_penalty = my_hop_penalty;
-	//        orig_node->asym_weight = my_asym_weight;
-	//        orig_node->asym_exp = my_asym_exp;
-	//        orig_node->rcnt_pws = my_rcnt_pws;
-	//        orig_node->rcnt_lounge = my_rcnt_lounge;
-	//        orig_node->rcnt_hystere = my_rcnt_hystere;
-	//        orig_node->rcnt_fk = my_rcnt_fk;
 
 	upd_wavg(&orig_node->ogi_wavg, DEF_OGI, OGI_WAVG_EXP);
 
@@ -945,10 +908,8 @@ struct orig_node *get_orig_node(uint32_t addr, uint8_t create)
 void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 {
 	prof_start(PROF_purge_originator);
-	struct list_head *neigh_pos, *neigh_temp, *neigh_prev;
 	struct orig_node *orig_node = NULL;
 	struct avl_node *an;
-	struct neigh_node *neigh_node;
 	static char neigh_str[ADDR_STR_LEN];
 
 	dbgf_all(DBGT_INFO, "%llu %s", (unsigned long long)curr_time, bif ? bif->dev : "???");
@@ -976,22 +937,17 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			if (!bif && (!curr_time || !orig_node->pog_refcnt))
 				cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_DESTROY);
 
-			neigh_prev = (struct list_head *)&orig_node->neigh_list;
 			// for all neighbours towards this originator ...
-			list_for_each_safe(neigh_pos, neigh_temp, &orig_node->neigh_list)
+      OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 			{
-				neigh_node = list_entry(neigh_pos, struct neigh_node, list);
-
 				if (!bif || (neigh_node->nnkey_iif == bif))
 				{
-					list_del(neigh_prev, neigh_pos, &orig_node->neigh_list);
+          LIST_ENTRY *prev = OLGetPrev(neigh_node);
+          OLRemoveEntry(neigh_node);
 					avl_remove(&orig_node->neigh_avl, neigh_node);
 
 					debugFree(neigh_node, 1403);
-				}
-				else
-				{
-					neigh_prev = &neigh_node->list;
+          neigh_node = (struct neigh_node *)prev;
 				}
 			}
 
@@ -1056,13 +1012,10 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 
 			/* purge outdated neighbor nodes, except our best-ranking neighbor */
 
-			neigh_prev = (struct list_head *)&orig_node->neigh_list;
 
 			/* for all neighbours towards this originator ... */
-			list_for_each_safe(neigh_pos, neigh_temp, &orig_node->neigh_list)
+      OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 			{
-				neigh_node = list_entry(neigh_pos, struct neigh_node, list);
-
 				if (LESS_U32((neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))), curr_time) &&
 						orig_node->router != neigh_node)
 				{
@@ -1071,15 +1024,13 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 									 "Neighbour timeout: originator %s, neighbour: %s, last_aware %u",
 									 orig_node->orig_str, neigh_str, neigh_node->last_aware);
 
-					list_del(neigh_prev, neigh_pos, &orig_node->neigh_list);
+          LIST_ENTRY *prev = OLGetPrev(neigh_node);
+          OLRemoveEntry(neigh_node);
 
 					avl_remove(&orig_node->neigh_avl, neigh_node);
 
 					debugFree(neigh_node, 1403);
-				}
-				else
-				{
-					neigh_prev = &neigh_node->list;
+          neigh_node = (struct neigh_node *)prev;
 				}
 			}
 		}
@@ -1148,7 +1099,6 @@ void process_ogm(struct msg_buff *mb)
 {
 	prof_start(PROF_process_ogm);
 
-	struct list_head *list_pos;
 	struct orig_node *orig_node, *orig_node_neigh;
 	struct link_node_dev *lndev = NULL;
 
@@ -1178,9 +1128,8 @@ void process_ogm(struct msg_buff *mb)
 		goto process_ogm_end;
 	}
 
-	list_for_each(list_pos, &if_list)
+  OLForEach(bif, struct batman_if, if_list)
 	{
-		struct batman_if *bif = list_entry(list_pos, struct batman_if, list);
 		//eine ogm, die das interface nicht verlassen hat und gleich hier zurück gespiegelt wird
 		//könnte passieren wenn es ein loopback ist.
 		if (neigh == bif->if_addr)
@@ -1560,9 +1509,6 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 		}
 		else if (!strcmp(opt->long_name, ARG_ROUTES))
 		{
-			struct list_head *neigh_pos;
-			struct neigh_node *neigh_node;
-
 			dbg_printf(cn, "%-16s brc %16s [%10s]  %20s ... [MainIF/IP: %s/%s, UT: %s]\n",
 								 "Originator", "Nexthop", "outgoingIF", "Potential nexthops",
 								 primary_if ? primary_if->dev : "--",
@@ -1590,10 +1536,8 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 									 ipStr(orig_node->router->nnkey_addr),
 									 orig_node->router->nnkey_iif->dev);
 
-				list_for_each(neigh_pos, &orig_node->neigh_list)
+        OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 				{
-					neigh_node = list_entry(neigh_pos, struct neigh_node, list);
-
 					if (neigh_node->nnkey_addr != orig_node->router->nnkey_addr)
 					{
 						dbg_printf(cn, " %15s (%3i)",
@@ -1618,14 +1562,11 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 
 static int32_t opt_dev_show(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	struct list_head *pos;
 
 	if (cmd == OPT_APPLY)
 	{
-		list_for_each(pos, &if_list)
+    OLForEach(bif, struct batman_if, if_list)
 		{
-			struct batman_if *bif = list_entry(pos, struct batman_if, list);
-
 			dbg_cn(cn, DBGL_ALL, DBGT_NONE, "%-10s %5d %8s %15s/%-2d  brc %-15s  SQN %5d  TTL %2d  %11s  %8s  %11s",
 						 bif->dev,
 						 bif->if_index,
@@ -1645,7 +1586,6 @@ static int32_t opt_dev_show(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 
 static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	struct list_head *list_pos, *list_tmp, *list_prev;
 	struct batman_if *bif = NULL;
 
 	struct batman_if test_bif;
@@ -1663,13 +1603,11 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 			return FAILURE;
 		}
 
-		list_prev = (struct list_head *)&if_list;
-		list_for_each_safe(list_pos, list_tmp, &if_list)
+    OLForEach(tmp_bif, struct batman_if, if_list)
 		{
-			bif = list_entry(list_pos, struct batman_if, list);
+      bif = tmp_bif;
 			if (wordsEqual(bif->dev, patch->p_val))
 				break;
-			list_prev = list_pos;
 			bif = NULL;
 		}
 
@@ -1690,9 +1628,12 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 
 				remove_outstanding_ogms(bif);
 
-				list_del(list_prev, list_pos, &if_list);
+        LIST_ENTRY *prev = OLGetPrev(bif);
+
+        OLRemoveEntry(bif);
 
 				debugFree(bif, 1214);
+        bif = (struct batman_if *)prev;
 
 				return SUCCESS;
 			}
@@ -1710,12 +1651,10 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 				bif = debugMalloc(sizeof(struct batman_if), 206);
 				memset(bif, 0, sizeof(struct batman_if));
 
-				INIT_LIST_HEAD(&bif->list);
+				if (OLIsListEmpty(&if_list))
+				{	primary_if = bif;	}
 
-				if (list_empty(&if_list))
-					primary_if = bif;
-
-				list_add_tail(&bif->list, &if_list);
+        OLInsertTailList(&if_list, &bif->entry);
 			}
 			else
 			{
@@ -1751,10 +1690,8 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 		if (cmd == OPT_CHECK)
 			return SUCCESS;
 
-		list_for_each(list_pos, &patch->childs_instance_list)
+    OLForEach(c, struct opt_child, patch->childs_instance_list)
 		{
-			struct opt_child *c = list_entry(list_pos, struct opt_child, list);
-
 			int32_t val = c->c_val ? strtol(c->c_val, NULL, 10) : -1;
 
 			if (!strcmp(c->c_opt->long_name, ARG_DEV_TTL))
@@ -1773,6 +1710,8 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 			{
 				bif->if_linklayer_conf = val;
 				bif->if_conf_hard_changed = YES;
+        //set linklayer also when changing argument
+        bif->if_linklayer = val;
 			}
 			else if (!strcmp(c->c_opt->long_name, ARG_DEV_HIDE))
 			{
@@ -1814,15 +1753,16 @@ static int32_t opt_purge(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 
 static int32_t opt_seqno(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	struct list_head *list_pos;
-
 	if (cmd == OPT_REGISTER)
 	{
 		my_seqno = rand_num(MAX_SEQNO);
 	}
 	else if (cmd == OPT_APPLY)
 	{
-		list_for_each(list_pos, &if_list)(list_entry(list_pos, struct batman_if, list))->if_seqno = my_seqno;
+    OLForEach(batman_if, struct batman_if, if_list)
+    {
+      batman_if->if_seqno = my_seqno;
+    }
 	}
 
 	return SUCCESS;
@@ -1963,5 +1903,6 @@ static struct opt_type originator_options[] =
 
 void init_originator(void)
 {
+  OLInitializeListHead(&if_list);
 	register_options_array(originator_options, sizeof(originator_options));
 }

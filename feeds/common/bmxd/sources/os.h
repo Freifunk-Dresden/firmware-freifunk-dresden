@@ -20,9 +20,11 @@
 #ifndef _BATMAN_OS_H
 #define _BATMAN_OS_H
 
-#define timercpy(d, a)       \
-	(d)->tv_sec = (a)->tv_sec; \
-	(d)->tv_usec = (a)->tv_usec;
+#define timercpy(d, a)           \
+  {                              \
+    (d)->tv_sec = (a)->tv_sec;   \
+    (d)->tv_usec = (a)->tv_usec; \
+  }
 
 /* posix.c */
 

@@ -42,7 +42,9 @@ struct avl_node *avl_find(struct avl_tree *tree, void *key)
 
         // Search for a dead path or a matching entry
         while (an && (cmp = memcmp(an->key, key, tree->key_size)))
+  {
                 an = an->link[cmp < 0];
+  }
 
         return an;
 }

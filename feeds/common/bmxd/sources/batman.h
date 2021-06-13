@@ -26,6 +26,7 @@
 #include <linux/if.h>
 
 #include "list-batman.h"
+#include "objlist.h"
 #include "control.h"
 #include "allocate.h"
 #include "profile.h"
@@ -174,10 +175,6 @@ extern uint32_t My_pid;
 // e.g. sudo BMX_LIB_PATH="$(pwd)/lib" ./bmxd -d3 eth0:bmx
 #define BMX_ENV_DEBUG "BMX_DEBUG"
 
-#ifndef STEPHAN_NOSERVICES
-#define ARG_SERVICES "services"
-#endif
-
 #define SOME_ADDITIONAL_SIZE 0 /*100*/
 #define IEEE80211_HDR_SIZE 24
 #define LLC_HDR_SIZE 8
@@ -201,7 +198,6 @@ extern uint32_t My_pid;
 #define ARG_DEV_ANTDVSTY "ant_diversity"
 #define ARG_DEV_LL "linklayer"
 #define ARG_DEV_HIDE "hide"
-//#define ARG_DEV_ANNOUNCE	"announce"
 
 #define VAL_DEV_LL_LO 0
 #define VAL_DEV_LL_LAN 1
@@ -235,7 +231,7 @@ extern uint32_t My_pid;
 #define IS_ASOCIAL 0x00004000
 
 //#define BATMAN_TIME_START 4294367 //2147183 //5min vor overflow
-extern batman_time_t batman_time;
+extern batman_time_t batman_time; //milli seconds
 extern batman_time_t batman_time_sec;
 
 extern uint8_t on_the_fly;
@@ -424,7 +420,7 @@ struct msg_buff
 
 struct send_node /* structure for send_list maintaining packets to be (re-)broadcasted */
 {
-	struct list_head list;
+  LIST_ENTRY entry;
 	batman_time_t send_time;
 	int16_t send_bucket;
 	uint8_t iteration;
@@ -440,7 +436,7 @@ struct send_node /* structure for send_list maintaining packets to be (re-)broad
 
 struct task_node
 {
-	struct list_head list;
+  LIST_ENTRY entry;
 	batman_time_t expire;
 	void (*task)(void *fpara); // pointer to the function to be executed
 	void *data;								 //NULL or pointer to data to be given to function. Data will be freed after functio is called.
@@ -448,7 +444,7 @@ struct task_node
 
 struct batman_if
 {
-	struct list_head list;
+  LIST_ENTRY entry;
 	char dev[IFNAMSIZ + 1];
 	char dev_phy[IFNAMSIZ + 1];
 	char if_ip_str[ADDR_STR_LEN];
@@ -522,7 +518,7 @@ struct orig_node /* structure for orig_list maintaining nodes of mesh */
 
 	char orig_str[ADDR_STR_LEN];
 
-	struct list_head_first neigh_list;
+  LIST_ENTRY neigh_list_head;
 	struct avl_tree neigh_avl;
 
 	batman_time_t last_aware;			 /* when last valid ogm via  this node was received */
@@ -540,24 +536,11 @@ struct orig_node /* structure for orig_list maintaining nodes of mesh */
 	struct orig_node *primary_orig_node;
 	int16_t pog_refcnt;
 
-	//	uint8_t  last_accept_largest_ttl;  /* largest (best) TTL received with last sequence number */
 	uint8_t last_path_ttl;
 
 	uint8_t ogx_flag;
 	uint8_t pws;
-	//	uint8_t  path_lounge;
 	uint8_t ogm_misc;
-
-	//	uint8_t path_hystere;
-	//	uint8_t late_penalty;
-	//	uint8_t hop_penalty;
-	//	uint8_t asym_weight;
-
-	//	uint8_t rcnt_pws;
-	//	uint8_t rcnt_lounge;
-	//	uint8_t rcnt_hystere;
-	//	uint8_t rcnt_fk;
-
 	uint32_t ogi_wavg;
 	uint32_t rt_changes;
 
@@ -588,9 +571,6 @@ struct sq_record
 	SQ_TYPE wa_set_sqn;		// SQN which has been applied (if equals wa_pos) then wa_unscaled MUST NOT be set again!
 	uint32_t wa_unscaled; // unscaled summary value of processed SQNs
 	uint32_t wa_val;			// scaled and representative value of processed SQNs
-
-	//	uint8_t sqn_entry_queue[SQN_LOUNGE_SIZE];	// cache for greatest rcvd SQNs waiting to be processed
-	//	SQ_TYPE sqn_entry_queue_tip;			// the greatest SQN rcvd so fare
 };
 
 struct link_node_dev
@@ -632,13 +612,11 @@ struct neigh_node_key
 /* Every OG has one ore several neigh_nodes. */
 struct neigh_node
 {
+  LIST_ENTRY list;
 	struct neigh_node_key key;
 #define nnkey_addr key.addr
 #define nnkey_iif key.iif
-	//	uint32_t nnkey_addr;
-	//	struct batman_if *nnkey_iif;
 
-	struct list_head list;
 	batman_time_t last_aware; /* when last packet via this neighbour was received */
 
 	SQ_TYPE last_considered_seqno;
@@ -679,7 +657,6 @@ struct gw_node
 	struct orig_node *orig_node;
 	uint16_t unavail_factor;
 	batman_time_t last_failure;
-	//	uint32_t deleted;
 };
 
 struct gw_client

@@ -137,7 +137,7 @@ extern uint32_t primary_addr;
 //extern struct hashtable_t *orig_hash;
 extern struct avl_tree orig_avl;
 
-extern struct list_head_first if_list;
+extern LIST_ENTRY if_list;
 
 extern struct list_head_first link_list;
 extern struct avl_tree link_avl;

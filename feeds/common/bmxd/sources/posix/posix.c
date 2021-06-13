@@ -39,10 +39,6 @@
 #include "schedule.h"
 //#include "avl.h"
 
-#define timercpy(d, a)       \
-	(d)->tv_sec = (a)->tv_sec; \
-	(d)->tv_usec = (a)->tv_usec;
-
 static int8_t stop = 0;
 
 //static clock_t start_time;
@@ -67,19 +63,11 @@ void update_batman_time(struct timeval *precise_tv)
 	{
 		timersub(&new_tv, &acceptable_p_tv, &diff_tv);
 		timeradd(&start_time_tv, &diff_tv, &start_time_tv);
-
-		//		dbg( DBGL_SYS, DBGT_WARN,
-		//		     "critical system time drift detected: ++ca %ld s, %ld us! Correcting reference!",
-		//		     diff_tv.tv_sec, diff_tv.tv_usec );
 	}
 	else if (timercmp(&new_tv, &acceptable_m_tv, <))
 	{
 		timersub(&acceptable_m_tv, &new_tv, &diff_tv);
 		timersub(&start_time_tv, &diff_tv, &start_time_tv);
-
-		//		dbg( DBGL_SYS, DBGT_WARN,
-		//		     "critical system time drift detected: --ca %ld s, %ld us! Correcting reference!",
-		//		     diff_tv.tv_sec, diff_tv.tv_usec );
 	}
 
 	timersub(&new_tv, &start_time_tv, &ret_tv);
@@ -299,20 +287,23 @@ void cleanup_all(int status)
 
 		cleanup_route();
 
-		struct list_head *list_pos, *list_tmp;
-		list_for_each_safe(list_pos, list_tmp, &if_list)
+    //clear/remove all interfaces
+    OLForEach(bif, struct batman_if, if_list)
 		{
-			struct batman_if *bif = list_entry(list_pos, struct batman_if, list);
 
 			if (bif->if_active)
+      {
 				if_deactivate(bif);
+      }
 
 			remove_outstanding_ogms(bif);
 
-			list_del((struct list_head *)&if_list, list_pos, &if_list);
+      LIST_ENTRY *prev = OLGetPrev(bif);
+      OLRemoveEntry(bif);
 
 			//debugFree(bif->own_ogm_out, 1209);
 			debugFree(bif, 1214);
+      bif = (struct batman_if *)prev;
 		}
 
 		// last, close debugging system and check for forgotten resources...
