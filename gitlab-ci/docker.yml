@@ -3,7 +3,7 @@
 # re-create symlinks because gitlab removes it before starting each single job.
 # /builds/dl is an empty directory created during docker image creation.
 # This directory is used as mount point to pass in /mycache from host machine.
-# I use this to avoid downloading/cloning from openwrt.org for each commit 
+# I use this to avoid downloading/cloning from openwrt.org for each commit
 # to gitlab.freifunk-dresden.de
 # "before_script" can be global or local to a job. but
 # but then it is same as if I put the command just before build command.
@@ -23,7 +23,7 @@ docker:init:
     - /^T_FIRMWARE_.*$/
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
-  stage: init 
+  stage: init
   script:
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
@@ -97,7 +97,7 @@ docker:ar71xx.nand:
   - docker
 
 
-docker:x86:
+docker:x86.generic:
   except:
     - schedules
     - master
@@ -116,7 +116,7 @@ docker:x86:
   tags:
   - docker
 
-docker:x64:
+docker:x64.generic:
   except:
     - schedules
     - master
@@ -281,13 +281,12 @@ docker:gen-upload-test:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: deploy
-  needs: ["docker:ar71xx.tiny","docker:ar71xx.generic","docker:ar71xx.nand","docker:x86","docker:x64","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx"]
+  needs: ["docker:ar71xx.tiny","docker:ar71xx.generic","docker:ar71xx.nand","docker:x86.generic","docker:x64.generic","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx","docker:bcm53xx.generic.arm"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./gen-upload.sh all 
+    - ./gen-upload.sh all
   tags:
   - docker
-
