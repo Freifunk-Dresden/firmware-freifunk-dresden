@@ -899,9 +899,9 @@ static char *get_ip4conf_buffer(struct ifconf *ifc)
 
 static int is_batman_if(char *dev, struct batman_if **bif)
 {
-  OLForEach(batman_if, struct batman_if, if_list)
+	OLForEach(batman_if, struct batman_if, if_list)
 	{
-    (*bif) = batman_if;
+		(*bif) = batman_if;
 
 		if (wordsEqual((*bif)->dev, dev))
 			return YES;
@@ -1624,7 +1624,7 @@ void check_interfaces()
 	//Do we need this? There was an interface attribute which change is not catched by ifevent_sk ??
 	register_task(5000, check_interfaces, NULL);
 
-  if (OLIsListEmpty(&if_list))
+	if (OLIsListEmpty(&if_list))
 	{
 		dbg(DBGL_SYS, DBGT_ERR, "No interfaces specified");
 		cleanup_all(CLEANUP_FAILURE);
@@ -1632,7 +1632,7 @@ void check_interfaces()
 
 	Mtu_min = MAX_MTU;
 
-  OLForEach(bif, struct batman_if, if_list)
+	OLForEach(bif, struct batman_if, if_list)
 	{
 
 		if ((bif->if_active) && (!is_interface_up(bif->dev)))
@@ -1673,9 +1673,9 @@ void check_interfaces()
 //original is enabled.
 #if 1
 			struct batman_if *tmp_bif = NULL;
-      OLForEach(b, struct batman_if, if_list)
+			OLForEach(b, struct batman_if, if_list)
 			{
-        tmp_bif = b;
+				tmp_bif = b;
 
 				if (!wordsEqual(tmp_bif->dev, bif->dev) && tmp_bif->if_active && tmp_bif->if_addr == bif->if_addr)
 				{
@@ -1690,11 +1690,10 @@ void check_interfaces()
 #endif //se:
 			{
 				if (on_the_fly)
-        {
+				{
 					dbg_mute(50, DBGL_SYS, DBGT_INFO,
 									 "detected valid but disabled dev: %s ! Activating now...", bif->dev);
-
-        }
+				}
 				if_activate(bif);
 			}
 		}
@@ -1722,7 +1721,7 @@ void check_interfaces()
 			dbg(DBGL_SYS, DBGT_WARN,
 					"not using interface %s (retrying later): interface not ready", bif->dev);
 		}
-  } // loop
+	} // loop
 
 	if_conf_soft_changed = NO;
 	if_conf_hard_changed = NO;
@@ -1851,7 +1850,7 @@ static int32_t opt_throw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 			throw_node->netmask = mask;
 
 			OLInitializeListHead(&throw_node->list);
-			OLInsertTailList(&throw_list,&throw_node->list);
+			OLInsertTailList(&throw_list, &throw_node->list);
 		}
 
 		if (on_the_fly)
@@ -1865,7 +1864,7 @@ static int32_t opt_throw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 	}
 	else if (cmd == OPT_UNREGISTER)
 	{
-		while(!OLIsListEmpty(&throw_list))
+		while (!OLIsListEmpty(&throw_list))
 		{
 			debugFree(OLRemoveHeadList(&throw_list), 1224);
 		}
@@ -1933,6 +1932,10 @@ void init_route_args(void)
 
 void init_route(void)
 {
+	OLInitializeListHead(&rules_list);
+	OLInitializeListHead(&routes_list);
+	OLInitializeListHead(&throw_list);
+
 	if ((nl_sk = open_netlink_socket()) <= 0)
 		cleanup_all(-500067);
 

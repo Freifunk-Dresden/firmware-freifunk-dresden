@@ -102,7 +102,7 @@ static uint32_t pref_gateway = 0;
 
 #define IP_LEASE_TIMEOUT (1 * ONE_MINUTE)
 
-#define MAX_TUNNEL_IP_REQUESTS 60			 //12
+#define MAX_TUNNEL_IP_REQUESTS 60 //12
 
 //SE: timeout wurde von 1000 auf 5000 erhoeht. dieser wert wird als Schutz vor ueberflutung
 //mit tunnel ip requets definert und ist die minimale zeit zwischen neuen tunnel ip requests.
@@ -123,18 +123,18 @@ static int32_t tun_orig_registry = FAILURE;
 
 static LIST_ENTRY gw_list;
 
-#define TP_VERS(v) (((v)>>4) & 0xf)
-#define TP_TYPE(v) ((v) & 0xf)
+#define TP_VERS(v) (((v) >> 4) & 0xf)
+#define TP_TYPE(v) ((v)&0xf)
 
 struct tun_packet
 {
-  unsigned char start; //[7:4]version; [3:0]type
+	unsigned char start; //[7:4]version; [3:0]type
 	union
 	{
 		unsigned char ip_packet[MAX_MTU];
 		struct iphdr iphdr;
 	} u;
-} __attribute__((packed));  // use "packed" structure to avoid compiler padding bytes inserted
+} __attribute__((packed)); // use "packed" structure to avoid compiler padding bytes inserted
 
 // MAX_MTU is used for ip_packet buffer size in struct tun_packet
 // 1 byte for struct tun_packet::start
@@ -617,7 +617,7 @@ static void gwc_recv_tun(int32_t fd_in)
 		return;
 	}
 
-  // read data from bat0 interface and send version+type+u.ip_packet as udp packet
+	// read data from bat0 interface and send version+type+u.ip_packet as udp packet
 	while (r++ < 30 && (tp_data_len = read(gwc_args->tun_fd, tp.u.ip_packet, sizeof(tp.u.ip_packet) /*TBD: why -2 here? */)) > 0)
 	{
 		tp_len = tp_data_len + sizeof(tp.start);
@@ -628,7 +628,7 @@ static void gwc_recv_tun(int32_t fd_in)
 			continue;
 		}
 
-		tp.start = (COMPAT_VERSION<<4) | TUNNEL_DATA; //version|type
+		tp.start = (COMPAT_VERSION << 4) | TUNNEL_DATA; //version|type
 
 		if (gwc_args->my_tun_addr == 0)
 		{
@@ -867,7 +867,7 @@ static void gws_recv_udp(int32_t fd_in)
 		return;
 	}
 
-  // receive udp package (type+version+u.ip_packet) and
+	// receive udp package (type+version+u.ip_packet) and
 	while ((tp_len = recvfrom(gws_args->sock, (unsigned char *)&tp.start, TX_DP_SIZE, 0, (struct sockaddr *)&addr, &addr_len)) > 0)
 	{
 		if (tp_len < (int32_t)sizeof(tp.start))
@@ -1138,7 +1138,7 @@ static void cb_choose_gw(void *unused)
 		return;
 	}
 
-  OLForEach(gw_node, struct gw_node, gw_list)
+	OLForEach(gw_node, struct gw_node, gw_list)
 	{
 		if (gw_node->unavail_factor > MAX_GW_UNAVAIL_FACTOR)
 			gw_node->unavail_factor = MAX_GW_UNAVAIL_FACTOR;
@@ -1523,6 +1523,11 @@ struct plugin_v1 *tun_get_plugin_v1(void)
 	tun_plugin_v1.cb_plugin_handler[PLUGIN_CB_ORIG_DESTROY] = cb_tun_orig_flush;
 
 	return &tun_plugin_v1;
+}
+
+void init_tunnel(void)
+{
+	OLInitializeListHead(&gw_list);
 }
 
 #endif

@@ -81,21 +81,21 @@ int32_t Client_mode = NO; //this one must be initialized manually!
 
 static void remove_dbgl_node(struct ctrl_node *cn)
 {
-  int8_t i;
+	int8_t i;
 
-  for (i = DBGL_MIN; i <= DBGL_MAX; i++)
-  {
-    OLForEach(pEntry, LIST_ENTRY, dbgl_clients[i])
-    {
-      if (((struct dbgl_node *)pEntry)->cn == cn)
-      {
-        OLRemoveEntry(pEntry);
-        debugFree(pEntry, 218);
-        cn->dbgl = DBGL_UNUSED;
-        break;
-      }
-    }
-  }
+	for (i = DBGL_MIN; i <= DBGL_MAX; i++)
+	{
+		OLForEach(pEntry, LIST_ENTRY, dbgl_clients[i])
+		{
+			if (((struct dbgl_node *)pEntry)->cn == cn)
+			{
+				OLRemoveEntry(pEntry);
+				debugFree(pEntry, 218);
+				cn->dbgl = DBGL_UNUSED;
+				break;
+			}
+		}
+	}
 }
 
 static void add_dbgl_node(struct ctrl_node *cn, int dbgl)
@@ -222,11 +222,11 @@ struct ctrl_node *create_ctrl_node(int fd, void (*cn_fd_handler)(struct ctrl_nod
 {
 	struct ctrl_node *cn = debugMalloc(sizeof(struct ctrl_node), 201);
 	memset(cn, 0, sizeof(struct ctrl_node));
-  OLInsertTailList(&ctrl_list, &(cn->entry));
+	OLInsertTailList(&ctrl_list, &(cn->entry));
 
 	cn->fd = fd;
 	cn->cn_fd_handler = cn_fd_handler;
-  cn->dbgl = DBGL_UNUSED;
+	cn->dbgl = DBGL_UNUSED;
 	cn->authorized = authorized;
 
 	return cn;
@@ -234,7 +234,7 @@ struct ctrl_node *create_ctrl_node(int fd, void (*cn_fd_handler)(struct ctrl_nod
 
 void close_ctrl_node(uint8_t cmd, struct ctrl_node *ctrl_node)
 {
-  OLForEach(cn, struct ctrl_node, ctrl_list)
+	OLForEach(cn, struct ctrl_node, ctrl_list)
 	{
 
 		if ((cmd == CTRL_CLOSE_ERROR || cmd == CTRL_CLOSE_SUCCESS || cmd == CTRL_CLOSE_DELAY) && cn == ctrl_node)
@@ -276,10 +276,10 @@ void close_ctrl_node(uint8_t cmd, struct ctrl_node *ctrl_node)
 				change_selects();
 			}
 
-      LIST_ENTRY *prev = OLGetPrev(cn);
-      OLRemoveEntry(cn);
+			PLIST_ENTRY prev = OLGetPrev(cn);
+			OLRemoveEntry(cn);
 			debugFree(cn, 1201);
-      cn = (struct ctrl_node *)prev;
+			cn = (struct ctrl_node *)prev;
 		}
 	}
 }
@@ -495,35 +495,35 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 
 	if (dbgl == DBGL_ALL)
 	{
-    if (!OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
+		if (!OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
 			dbgl_out[i++] = DBGL_ALL;
 	}
 	else if (dbgl == DBGL_CHANGES)
 	{
-    if (!OLIsListEmpty(&dbgl_clients[DBGL_CHANGES]))
+		if (!OLIsListEmpty(&dbgl_clients[DBGL_CHANGES]))
 			dbgl_out[i++] = DBGL_CHANGES;
-    if (!OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
+		if (!OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
 			dbgl_out[i++] = DBGL_ALL;
 	}
 	else if (dbgl == DBGL_TEST)
 	{
-    if (!OLIsListEmpty(&dbgl_clients[DBGL_TEST]))
+		if (!OLIsListEmpty(&dbgl_clients[DBGL_TEST]))
 			dbgl_out[i++] = DBGL_TEST;
-    if (!OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
+		if (!OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
 			dbgl_out[i++] = DBGL_ALL;
 	}
 	else if (dbgl == DBGL_PROFILE)
 	{
-    if (!OLIsListEmpty(&dbgl_clients[DBGL_PROFILE]))
+		if (!OLIsListEmpty(&dbgl_clients[DBGL_PROFILE]))
 			dbgl_out[i++] = DBGL_PROFILE;
 	}
 	else if (dbgl == DBGL_SYS)
 	{
-    if (!OLIsListEmpty(&dbgl_clients[DBGL_SYS]))
+		if (!OLIsListEmpty(&dbgl_clients[DBGL_SYS]))
 			dbgl_out[i++] = DBGL_SYS;
-    if (!OLIsListEmpty(&dbgl_clients[DBGL_CHANGES]))
+		if (!OLIsListEmpty(&dbgl_clients[DBGL_CHANGES]))
 			dbgl_out[i++] = DBGL_CHANGES;
-    if (!OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
+		if (!OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
 			dbgl_out[i++] = DBGL_ALL;
 
 		if (check_len)
@@ -551,7 +551,7 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 		if (level == DBGL_SYS && mute_dbgl_sys == DBG_HIST_MUTED)
 			continue;
 
-    OLForEach(dn, struct dbgl_node, dbgl_clients[DBGL_ALL])
+		OLForEach(dn, struct dbgl_node, dbgl_clients[DBGL_ALL])
 		{
 
 			if (!dn->cn || dn->cn->fd <= 0)
@@ -636,7 +636,7 @@ void _dbgf_all(int8_t dbgt, char const *f, char *last, ...)
 
 uint8_t __dbgf_all(void)
 {
-  if (debug_level != DBGL_ALL && OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
+	if (debug_level != DBGL_ALL && OLIsListEmpty(&dbgl_clients[DBGL_ALL]))
 		return NO;
 
 	return YES;
@@ -876,13 +876,13 @@ static int8_t is_valid_opt_ival(struct opt_type *opt, char *s, struct ctrl_node 
 int8_t func_for_each_opt(struct ctrl_node *cn, void *data, char *func_name,
 												 int8_t (*func)(struct ctrl_node *cn, void *data, struct opt_type *opt, struct opt_parent *p, struct opt_child *c))
 {
-  OLForEach(opt, struct opt_type, opt_list)
+	OLForEach(opt, struct opt_type, opt_list)
 	{
 
 		if (/* !opt->help  || we are also interested in uncommented configurations*/ !opt->long_name)
 			continue;
 
-    OLForEach(p, struct opt_parent, opt->d.parents_instance_list)
+		OLForEach(p, struct opt_parent, opt->d.parents_instance_list)
 		{
 
 			if ((*func)(cn, data, opt, p, NULL) == FAILURE)
@@ -894,7 +894,7 @@ int8_t func_for_each_opt(struct ctrl_node *cn, void *data, char *func_name,
 				return FAILURE;
 			}
 
-      OLForEach(c, struct opt_child, p->childs_instance_list)
+			OLForEach(c, struct opt_child, p->childs_instance_list)
 			{
 
 				if ((*func)(cn, data, opt, p, c) == FAILURE)
@@ -924,7 +924,7 @@ static void show_opts_help(struct ctrl_node *cn)
 	dbg_printf(cn, "  e.g. %s -cid8                      # to connect and show configured options and connevtivity\n", prog_name);
 	dbg_printf(cn, "\n");
 
-  OLForEach(opt, struct opt_type, opt_list)
+	OLForEach(opt, struct opt_type, opt_list)
 	{
 		char sn[5], st[3 * MAX_ARG_SIZE], defaults[100];
 
@@ -951,7 +951,7 @@ static void show_opts_help(struct ctrl_node *cn)
 			dbg_printf(cn, "\n%s \n", opt->help);
 		}
 
-    OLForEach(c_opt, struct opt_type, opt->d.childs_type_list)
+		OLForEach(c_opt, struct opt_type, opt->d.childs_type_list)
 		{
 
 			if (!c_opt->parent_name || !c_opt->help)
@@ -977,7 +977,7 @@ static void show_opts_help(struct ctrl_node *cn)
 
 	dbg_printf(cn, "\n");
 	dbg_printf(cn, "Environment variables (e.g. sudo %s=/usr/src/bmx/lib %s -d3 eth0:bmx ):\n",
-							 BMX_ENV_LIB_PATH, prog_name);
+						 BMX_ENV_LIB_PATH, prog_name);
 	dbg_printf(cn, "\t%s\n", BMX_ENV_LIB_PATH);
 	dbg_printf(cn, "\t%s\n", BMX_ENV_DEBUG);
 	dbg_printf(cn, "\n");
@@ -986,7 +986,6 @@ static void show_opts_help(struct ctrl_node *cn)
 void register_option(struct opt_type *opt)
 {
 	dbgf_all(DBGT_INFO, "%s", (opt && opt->long_name) ? opt->long_name : "");
-
 
 	// these are the valid combinations:
 	if (!(
@@ -1017,14 +1016,14 @@ void register_option(struct opt_type *opt)
 
 	if (opt->parent_name)
 	{
-    struct opt_type *tmp_opt = NULL;
-    OLForEach(tmp, struct opt_type, opt_list)
+		struct opt_type *tmp_opt = NULL;
+		OLForEach(tmp, struct opt_type, opt_list)
 		{
-      if (tmp->long_name == opt->parent_name)
-      {
-        tmp_opt = tmp;
+			if (tmp->long_name == opt->parent_name)
+			{
+				tmp_opt = tmp;
 				break;
-      }
+			}
 		}
 
 		if (opt->opt_t != A_CS1 || !tmp_opt || tmp_opt->opt_t != A_PMN)
@@ -1032,35 +1031,35 @@ void register_option(struct opt_type *opt)
 
 		opt->d.parent_opt = tmp_opt;
 
-    OLInitializeListHead(&opt->d.list);
-    OLInsertTailList(&tmp_opt->d.childs_type_list, &opt->d.list);
+		OLInitializeListHead(&opt->d.list);
+		OLInsertTailList(&tmp_opt->d.childs_type_list, &opt->d.list);
 	}
 	else
 	{
-    int inserted = 0;
-    OLInitializeListHead(&opt->d.list);
-    OLInitializeListHead(&opt->d.childs_type_list);
-    OLInitializeListHead(&opt->d.parents_instance_list);
+		int inserted = 0;
+		OLInitializeListHead(&opt->d.list);
+		OLInitializeListHead(&opt->d.childs_type_list);
+		OLInitializeListHead(&opt->d.parents_instance_list);
 
-    //insert option sorted
+		//insert option sorted
 		if (opt->order)
 		{
-      //run through sorted list and find new position
-      OLForEach(tmp_opt, struct opt_type, opt_list)
+			//run through sorted list and find new position
+			OLForEach(tmp_opt, struct opt_type, opt_list)
 			{
 
 				if (tmp_opt->order > opt->order)
 				{
-          //add new option before current
-          OLInsertTailList((PLIST_ENTRY)tmp_opt, &opt->d.list);
-          inserted = 1;
+					//add new option before current
+					OLInsertTailList((PLIST_ENTRY)tmp_opt, &opt->d.list);
+					inserted = 1;
 					break;
 				}
 			}
 		}
 
-    if (!inserted)
-      OLInsertTailList(&opt_list, &opt->d.list);
+		if (!inserted)
+			OLInsertTailList(&opt_list, &opt->d.list);
 	}
 
 	if (opt->call_custom_option && ((opt->call_custom_option)(OPT_REGISTER, 0, opt, 0, 0)) == FAILURE)
@@ -1073,7 +1072,7 @@ void register_option(struct opt_type *opt)
 
 failure:
 
-  dbgf(DBGL_SYS, DBGT_ERR, "invalid data,  option %c %s",
+	dbgf(DBGL_SYS, DBGT_ERR, "invalid data,  option %c %s",
 			 (opt && opt->short_name) ? opt->short_name : '?', (opt && opt->long_name) ? opt->long_name : "??");
 
 	paranoia(-500091, YES);
@@ -1084,7 +1083,7 @@ static void remove_option(struct opt_type *opt)
 
 	del_opt_parent(opt, NULL);
 
-  OLForEach(tmp_opt, struct opt_type, opt_list)
+	OLForEach(tmp_opt, struct opt_type, opt_list)
 	{
 
 		if (opt == tmp_opt)
@@ -1095,7 +1094,7 @@ static void remove_option(struct opt_type *opt)
 				dbgf(DBGL_SYS, DBGT_ERR, "%s failed!", opt->long_name);
 			}
 
-      OLRemoveEntry(tmp_opt);
+			OLRemoveEntry(tmp_opt);
 			return;
 		}
 	}
@@ -1114,20 +1113,10 @@ void register_options_array(struct opt_type *fixed_options, int size)
 		register_option(&(fixed_options[i++]));
 }
 
-/*
-void remove_options_array ( struct opt_type *fixed_options ) {
-	int i = 0;
-
-	while ( fixed_options[i].long_name != NULL || fixed_options[i].help != NULL )
-		remove_option( &(fixed_options[i++]) );
-
-}
-*/
-
 struct opt_type *get_option(struct opt_type *parent_opt, uint8_t short_opt, char *sin)
 {
 	int32_t len = 0;
-  PLIST_ENTRY list;
+	PLIST_ENTRY list;
 	struct opt_type *opt = NULL;
 	char *equalp = NULL;
 	char s[MAX_ARG_SIZE] = "";
@@ -1155,10 +1144,10 @@ struct opt_type *get_option(struct opt_type *parent_opt, uint8_t short_opt, char
 
 	dbgf_all(DBGT_INFO, "searching %s", s);
 
-  //list is a pointer, but macro needs the object self
-  OLForEach(tmp_opt, struct opt_type, *list)
+	//list is a pointer, but macro needs the object self
+	OLForEach(tmp_opt, struct opt_type, *list)
 	{
-    opt = tmp_opt;
+		opt = tmp_opt;
 
 		if (!opt->long_name)
 			continue;
@@ -1207,7 +1196,7 @@ struct opt_child *get_opt_child(struct opt_type *opt, struct opt_parent *p)
 
 	paranoia(-500119, (!p));
 
-  OLForEach(c, struct opt_child, p->childs_instance_list)
+	OLForEach(c, struct opt_child, p->childs_instance_list)
 	{
 
 		if (c->c_opt == opt)
@@ -1250,22 +1239,21 @@ static void del_opt_child_save(struct opt_child *c)
 
 	set_opt_child_val(c, NULL);
 	set_opt_child_ref(c, NULL);
-
 }
 
 static void del_opt_child(struct opt_parent *p, struct opt_type *opt)
 {
-  OLForEach(c, struct opt_child, p->childs_instance_list)
+	OLForEach(c, struct opt_child, p->childs_instance_list)
 	{
 
 		if (!opt || c->c_opt == opt)
-    {
-      LIST_ENTRY *prev = OLGetPrev(c);
-      del_opt_child_save(c);
-      OLRemoveEntry(c);
-      debugFree(c, 1787);
-      c = (struct opt_child*) prev;
-    }
+		{
+			PLIST_ENTRY prev = OLGetPrev(c);
+			del_opt_child_save(c);
+			OLRemoveEntry(c);
+			debugFree(c, 1787);
+			c = (struct opt_child *)prev;
+		}
 	}
 }
 
@@ -1273,11 +1261,11 @@ static struct opt_child *add_opt_child(struct opt_type *opt, struct opt_parent *
 {
 	struct opt_child *c = debugMalloc(sizeof(struct opt_child), 787);
 	memset(c, 0, sizeof(struct opt_child));
-  OLInitializeListHead(&c->list);
+	OLInitializeListHead(&c->list);
 
 	c->c_opt = opt;
 	c->parent_instance = p;
-  OLInsertTailList(&p->childs_instance_list, &c->list);
+	OLInsertTailList(&p->childs_instance_list, &c->list);
 
 	return c;
 }
@@ -1314,12 +1302,12 @@ struct opt_parent *add_opt_parent(struct opt_type *opt)
 {
 	struct opt_parent *p = debugMalloc(sizeof(struct opt_parent), 777);
 	memset(p, 0, sizeof(struct opt_parent));
-  OLInitializeListHead(&p->list);
-  OLInitializeListHead(&p->childs_instance_list);
+	OLInitializeListHead(&p->list);
+	OLInitializeListHead(&p->childs_instance_list);
 
 	opt->d.found_parents++;
 
-  OLInsertTailList(&opt->d.parents_instance_list, &p->list);
+	OLInsertTailList(&opt->d.parents_instance_list, &p->list);
 
 	return p;
 }
@@ -1333,22 +1321,21 @@ static void del_opt_parent_save(struct opt_type *opt, struct opt_parent *p)
 
 	set_opt_parent_val(p, NULL);
 	set_opt_parent_ref(p, NULL);
-
 }
 
 void del_opt_parent(struct opt_type *opt, struct opt_parent *parent)
 {
-  OLForEach(p, struct opt_parent, opt->d.parents_instance_list)
+	OLForEach(p, struct opt_parent, opt->d.parents_instance_list)
 	{
 
 		if (!parent || p == parent)
-    {
-      LIST_ENTRY *prev = OLGetPrev(p);
-      del_opt_parent_save(opt, p);
-      OLRemoveEntry(p);
-      debugFree(p, 1777);
-      p = (struct opt_parent *) prev;
-    }
+		{
+			PLIST_ENTRY prev = OLGetPrev(p);
+			del_opt_parent_save(opt, p);
+			OLRemoveEntry(p);
+			debugFree(p, 1777);
+			p = (struct opt_parent *)prev;
+		}
 	}
 }
 
@@ -1359,7 +1346,7 @@ struct opt_parent *get_opt_parent_val(struct opt_type *opt, char *val)
 
 	paranoia(-500117, ((opt->opt_t == A_PS0 || opt->opt_t == A_PS1) && opt->d.found_parents > 1));
 
-  OLForEach(p, struct opt_parent, opt->d.parents_instance_list)
+	OLForEach(p, struct opt_parent, opt->d.parents_instance_list)
 	{
 
 		if (!val || wordsEqual(p->p_val, val))
@@ -1376,7 +1363,7 @@ struct opt_parent *get_opt_parent_ref(struct opt_type *opt, char *ref)
 
 	paranoia(-500116, ((opt->opt_t == A_PS0 || opt->opt_t == A_PS1) && opt->d.found_parents > 1));
 
-  OLForEach(p, struct opt_parent, opt->d.parents_instance_list)
+	OLForEach(p, struct opt_parent, opt->d.parents_instance_list)
 	{
 
 		if (ref && wordsEqual(p->p_ref, ref))
@@ -1394,7 +1381,7 @@ static struct opt_parent *dup_opt_parent(struct opt_type *opt, struct opt_parent
 
 	dup_p->p_diff = p->p_diff;
 
-  OLForEach(c, struct opt_child, p->childs_instance_list)
+	OLForEach(c, struct opt_child, p->childs_instance_list)
 	{
 
 		struct opt_child *dup_c = add_opt_child(c->c_opt, dup_p);
@@ -1419,7 +1406,7 @@ int32_t check_apply_parent_option(uint8_t del, uint8_t cmd, uint8_t _save, struc
 {
 	int32_t ret;
 
-  //add null pointer check
+	//add null pointer check
 	paranoia(-500102, ((cmd != OPT_CHECK && cmd != OPT_APPLY) || !opt || opt->parent_name));
 
 	struct opt_parent *p = add_opt_parent(&Patch_opt);
@@ -1538,7 +1525,7 @@ static int32_t cleanup_patch(struct opt_type *opt, struct opt_parent *patch, str
 	{
 		struct opt_parent *p_track = NULL;
 
-    OLForEach(c, struct opt_child, patch->childs_instance_list)
+		OLForEach(c, struct opt_child, patch->childs_instance_list)
 		{
 			struct opt_child *c_track = NULL;
 			uint8_t c_del = c->c_val ? ADD : DEL;
@@ -1553,11 +1540,11 @@ static int32_t cleanup_patch(struct opt_type *opt, struct opt_parent *patch, str
 			if ((c_del && !c_track) ||
 					(!c_del && c_track && wordsEqual(c_track->c_val, c->c_val)))
 			{
-        LIST_ENTRY *prev = OLGetPrev(c);
-        del_opt_child_save(c);
-        OLRemoveEntry(c);
-        debugFree(c, 1787);
-        c = (struct opt_child*) prev;
+				PLIST_ENTRY prev = OLGetPrev(c);
+				del_opt_child_save(c);
+				OLRemoveEntry(c);
+				debugFree(c, 1787);
+				c = (struct opt_child *)prev;
 			}
 		}
 
@@ -1801,7 +1788,7 @@ static int32_t call_opt_apply(uint8_t cmd, uint8_t save, struct opt_type *opt, s
 	if (cleanup_patch(opt, patch, cn) == FAILURE)
 		goto call_opt_apply_error;
 
-  if (patch->p_diff == NOP && OLIsListEmpty(&(patch->childs_instance_list)))
+	if (patch->p_diff == NOP && OLIsListEmpty(&(patch->childs_instance_list)))
 	{
 		del_opt_parent(&Patch_opt, patch);
 		return SUCCESS;
@@ -1977,7 +1964,7 @@ static int32_t track_opt_parent(uint8_t cmd, uint8_t save, struct opt_type *p_op
 
 		if (p_track)
 		{
-      OLForEach(c_patch, struct opt_child, p_patch->childs_instance_list)
+			OLForEach(c_patch, struct opt_child, p_patch->childs_instance_list)
 			{
 				uint8_t changed_child = NO;
 				char *save_val = p_track->p_ref ? p_track->p_ref : p_track->p_val;
@@ -2196,7 +2183,7 @@ int respect_opt_order(uint8_t test, int8_t last, int8_t next, struct opt_type *o
 	if (last == next)
 		return next;
 
-  OLForEach(opt, struct opt_type, opt_list)
+	OLForEach(opt, struct opt_type, opt_list)
 	{
 
 		if (load && opt->order >= last + 1 && opt->order <= next)
@@ -2977,24 +2964,23 @@ void init_control(void)
 {
 	int i;
 
-  for (i = DBGL_MIN; i <= DBGL_MAX; i++)
-  {
-    OLInitializeListHead(&dbgl_clients[i]);
-  }
+	for (i = DBGL_MIN; i <= DBGL_MAX; i++)
+	{
+		OLInitializeListHead(&dbgl_clients[i]);
+	}
 
-  OLInitializeListHead(&ctrl_list);
-  OLInitializeListHead(&opt_list);
+	OLInitializeListHead(&ctrl_list);
+	OLInitializeListHead(&opt_list);
 	char *d = getenv(BMX_ENV_DEBUG);
 	if (d && strtol(d, NULL, 10) >= DBGL_MIN && strtol(d, NULL, 10) <= DBGL_MAX)
 		debug_level = strtol(d, NULL, 10);
 
-
 	openlog("bmx", LOG_PID, LOG_DAEMON);
 
 	memset(&Patch_opt, 0, sizeof(struct opt_type));
-  OLInitializeListHead(&Patch_opt.d.list);
-  OLInitializeListHead(&Patch_opt.d.childs_type_list);
-  OLInitializeListHead(&Patch_opt.d.parents_instance_list);
+	OLInitializeListHead(&Patch_opt.d.list);
+	OLInitializeListHead(&Patch_opt.d.childs_type_list);
+	OLInitializeListHead(&Patch_opt.d.parents_instance_list);
 
 	register_options_array(control_options, sizeof(control_options));
 }
@@ -3003,8 +2989,8 @@ void cleanup_config(void)
 {
 	del_opt_parent(&Patch_opt, NULL);
 
-  while (!OLIsListEmpty(&opt_list))
-    remove_option((struct opt_type *) OLGetNext(&opt_list));
+	while (!OLIsListEmpty(&opt_list))
+		remove_option((struct opt_type *)OLGetNext(&opt_list));
 
 	free_init_string();
 }
@@ -3021,16 +3007,16 @@ void cleanup_control(void)
 
 	unix_sock = 0;
 
-  //remove all cn (ctrl_node) from client lists
+	//remove all cn (ctrl_node) from client lists
 
 	for (i = DBGL_MIN; i <= DBGL_MAX; i++)
 	{
-    while (!OLIsListEmpty(&dbgl_clients[i]))
-    {
-      debugFree(OLRemoveHeadList(&dbgl_clients[i]), 218);
+		while (!OLIsListEmpty(&dbgl_clients[i]))
+		{
+			debugFree(OLRemoveHeadList(&dbgl_clients[i]), 218);
+		}
 	}
-  }
 
-  //free cn after clearing dbgl_clients
-  close_ctrl_node(CTRL_PURGE_ALL, 0);
+	//free cn after clearing dbgl_clients
+	close_ctrl_node(CTRL_PURGE_ALL, 0);
 }

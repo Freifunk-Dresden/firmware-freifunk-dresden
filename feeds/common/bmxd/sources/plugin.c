@@ -28,9 +28,9 @@
 #include "schedule.h"
 
 LIST_ENTRY cb_fd_list;
-static LIST_ENTRY	cb_packet_list;
-static LIST_ENTRY	cb_ogm_list;
-static LIST_ENTRY	plugin_list;
+static LIST_ENTRY cb_packet_list;
+static LIST_ENTRY cb_ogm_list;
+static LIST_ENTRY plugin_list;
 
 struct cb_snd_ext snd_ext_hooks[EXT_TYPE_MAX + 1];
 
@@ -152,7 +152,7 @@ int32_t cb_ogm_hooks(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_
 
 	struct cb_ogm_node *prev_con = NULL;
 
-  OLForEach(con, struct cb_ogm_node, cb_ogm_list)
+	OLForEach(con, struct cb_ogm_node, cb_ogm_list)
 	{
 		if (prev_con)
 		{
@@ -304,10 +304,9 @@ static void deactivate_plugin(void *p)
 	}
 
 	struct plugin_node *pn;
-	for( pn = (struct plugin_node *) OLGetNext(&plugin_list);
-			! OLIsListEmpty(&plugin_list);
-			pn = (struct plugin_node *) OLGetNext(&plugin_list)
-	)
+	for (pn = (struct plugin_node *)OLGetNext(&plugin_list);
+			 !OLIsListEmpty(&plugin_list);
+			 pn = (struct plugin_node *)OLGetNext(pn))
 	{
 		if (pn->plugin == p)
 		{
@@ -327,14 +326,19 @@ static void deactivate_plugin(void *p)
 				debugFree(pn->dlname, 1316);
 
 			debugFree(pn, 1312);
-			pn = (struct plugin_node *) entry;
+			pn = (struct plugin_node *)entry;
 		}
 	}
 }
 
-
 void init_plugin(void)
 {
+
+	OLInitializeListHead(&cb_fd_list);
+	OLInitializeListHead(&cb_packet_list);
+	OLInitializeListHead(&cb_ogm_list);
+	OLInitializeListHead(&plugin_list);
+
 	set_snd_ext_hook(0, NULL, YES);		 //ensure correct initialization of extension hooks
 	reg_plugin_data(PLUGIN_DATA_SIZE); // ensure correct initialization of plugin_data
 
@@ -346,17 +350,15 @@ void init_plugin(void)
 	if ((pv1 = tun_get_plugin_v1()) != NULL)
 		activate_plugin(pv1, PLUGIN_VERSION_01, NULL, NULL);
 #endif
-
 }
 
 void cleanup_plugin(void)
 {
-	struct plugin_node * pn;
+	struct plugin_node *pn;
 
 	while (!OLIsListEmpty(&plugin_list))
 	{
-		pn = (struct plugin_node *) OLRemoveHeadList(&plugin_list);
+		pn = (struct plugin_node *)OLRemoveHeadList(&plugin_list);
 		deactivate_plugin(pn->plugin);
 	}
-
 }
