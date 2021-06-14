@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BMXD_DEBUG_LEVEL=4
+BMXD_DEBUG_LEVEL=0
 PrimeDEV="bmx_prime"
 PIP="10.200.99.99"
 LinkDEV="br-bmx0"				# empty bridge
@@ -17,9 +17,11 @@ fi
 
 usage()
 {
-	echo "Usage: $(basename) [server | client]"
+	echo "Usage: $(basename) [server | client | setup-if | clean-if]"
 	echo "server - run bmxd in forground (-d${BMXD_DEBUG_LEVEL})"
 	echo "client - run bmxd as client (-lcd${BMXD_DEBUG_LEVEL})"
+	echo "setup-if - only setup interfaces"
+	echo "clean-if - delete interfaces"
 }
 
 setup()
@@ -53,14 +55,21 @@ clean()
 # dhat, lackey, none, exp-sgcheck, exp-bbv, etc.
 VALGRIND_OPT="--tool=memcheck --show-error-list=yes --leak-check=full -s --track-origins=yes --show-leak-kinds=all"
 
+# https://baptiste-wicht.com/posts/2011/09/profile-c-application-with-callgrind-kcachegrind.html
+VALGRIND_OPT="--tool=callgrind"
+
 case "$1" in
 	server)
 		setup
-		valgrind ${VALGRIND_OPT} ./sources/bmxd -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1
+		CMD="./sources/bmxd -r3 -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1"
+		echo "cmd: ${CMD}"
+		valgrind ${VALGRIND_OPT} ${CMD}
 		clean
 		;;
 	client)
 		valgrind ${VALGRIND_OPT} ./sources/bmxd -lcd${BMXD_DEBUG_LEVEL}
 		;;
+	setup-if)  setup;;
+	clean-if)  clean;;
 	*) usage; exit 1 ;;
 esac

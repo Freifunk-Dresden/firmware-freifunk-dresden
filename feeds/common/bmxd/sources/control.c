@@ -1085,7 +1085,6 @@ static void remove_option(struct opt_type *opt)
 
 	OLForEach(tmp_opt, struct opt_type, opt_list)
 	{
-
 		if (opt == tmp_opt)
 		{
 			if (!opt->parent_name && opt->call_custom_option &&

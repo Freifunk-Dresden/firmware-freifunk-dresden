@@ -1181,7 +1181,7 @@ error:
 	if_deactivate(bif);
 }
 
-static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32_t ifi, char *dev,
+static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src,
 																			int16_t rt_table, int16_t rta_type, int8_t del, int8_t track_t)
 {
 	struct routes_node *first_found_rn = NULL;
@@ -1260,7 +1260,7 @@ void add_del_route(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32
 	if ((!throw_rules) && (rta_type == RTN_THROW))
 		return;
 
-	if (track_route_and_proceed(dest, mask, gw, src, ifi, dev, rt_table, rta_type, del, track_t) == NO)
+	if (track_route_and_proceed(dest, mask, gw, src, rt_table, rta_type, del, track_t) == NO)
 		return;
 
 	if (gw == dest)
@@ -1271,7 +1271,7 @@ void add_del_route(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32
 
 	dbgf_all(DBGT_INFO, "%s %s to %s/%i via %s (table %i - %s src %s )",
 					 del ? "del" : "add",
-					 rt2str(rta_type), ipStr(dest), mask, ipStr(gw), rt_table, dev, ipStr(src));
+					 rt2str(rta_type), ipStr(dest), mask, ipStr(gw), rt_table, dev?dev:"NULL", ipStr(src));
 
 	memset(&nladdr, 0, sizeof(struct sockaddr_nl));
 	memset(&req, 0, sizeof(req));

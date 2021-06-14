@@ -250,6 +250,7 @@ static int activate_plugin(void *p, int32_t version, void *dlhandle, const char 
 	if (p == NULL || version != PLUGIN_VERSION_01)
 		return FAILURE;
 
+ // check if already present in list
 	if (is_plugin_active(p))
 		return FAILURE;
 
@@ -296,21 +297,12 @@ static int activate_plugin(void *p, int32_t version, void *dlhandle, const char 
 
 static void deactivate_plugin(void *p)
 {
-	if (!is_plugin_active(p))
-	{
-		cleanup_all(-500190);
-		//dbg( DBGL_SYS, DBGT_ERR, "deactivate_plugin(): requested to deactivate inactive plugin !");
-		//return;
-	}
-
-	struct plugin_node *pn;
-	for (pn = (struct plugin_node *)OLGetNext(&plugin_list);
-			 !OLIsListEmpty(&plugin_list);
-			 pn = (struct plugin_node *)OLGetNext(pn))
+	// when removing entries, I can modify lndev (because OLForEach() is a macro)
+	OLForEach(pn, struct plugin_node, plugin_list)
 	{
 		if (pn->plugin == p)
 		{
-			PLIST_ENTRY entry = OLGetPrev(pn);
+			PLIST_ENTRY prev = OLGetPrev(pn);
 
 			OLRemoveEntry(pn);
 
@@ -326,7 +318,7 @@ static void deactivate_plugin(void *p)
 				debugFree(pn->dlname, 1316);
 
 			debugFree(pn, 1312);
-			pn = (struct plugin_node *)entry;
+			pn = (struct plugin_node *)prev;
 		}
 	}
 }
@@ -358,7 +350,7 @@ void cleanup_plugin(void)
 
 	while (!OLIsListEmpty(&plugin_list))
 	{
-		pn = (struct plugin_node *)OLRemoveHeadList(&plugin_list);
+		pn = (struct plugin_node *)OLGetNext(&plugin_list);
 		deactivate_plugin(pn->plugin);
 	}
 }

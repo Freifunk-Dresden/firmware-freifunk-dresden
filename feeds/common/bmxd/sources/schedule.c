@@ -177,7 +177,6 @@ uint32_t whats_next(void)
 
 	OLForEach(tn, struct task_node, task_list)
 	{
-
 		if (LSEQ_U32(tn->expire, batman_time))
 		{
 			OLRemoveEntry(tn);

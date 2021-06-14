@@ -107,9 +107,10 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 		/* route altered or deleted */
 		if (orig_node->router)
 		{
+
 			add_del_route(orig_node->orig, 32, orig_node->router->key.addr, 0,
-										orig_node->router->key.iif->if_index,
-										orig_node->router->key.iif->dev,
+										orig_node->router->key.iif ? orig_node->router->key.iif->if_index : 0,
+										orig_node->router->key.iif ? orig_node->router->key.iif->dev : NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, DEL, TRACK_OTHER_HOST);
 		}
 
@@ -119,8 +120,8 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 			orig_node->rt_changes++;
 
 			add_del_route(orig_node->orig, 32, new_router->key.addr, primary_addr,
-										new_router->key.iif->if_index,
-										new_router->key.iif->dev,
+										new_router->key.iif ? new_router->key.iif->if_index : 0,
+										new_router->key.iif ? new_router->key.iif->dev: NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, ADD, TRACK_OTHER_HOST);
 		}
 
@@ -406,27 +407,23 @@ static int8_t init_pifnb_node(struct orig_node *orig_node)
 
 static void free_link_node(struct orig_node *orig_node, struct batman_if *bif)
 {
-
-	struct link_node_dev *lndev;
-
 	dbgf_all(DBGT_INFO, "of orig %s", orig_node->orig_str);
 
 	paranoia(-500010, (orig_node->link_node == NULL)); //free_link_node(): requested to free non-existing link_node
 
-	for (lndev = (struct link_node_dev *)OLGetNext(&orig_node->link_node->lndev_list);
-			 !OLIsListEmpty(&orig_node->link_node->lndev_list);
-			 lndev = (struct link_node_dev *)OLGetNext(lndev))
+	// when removing entries, I can modify lndev (because OLForEach() is a macro)
+	OLForEach(lndev, struct link_node_dev, orig_node->link_node->lndev_list)
 	{
 		if (!bif || lndev->bif == bif)
 		{
-			PLIST_ENTRY list = OLGetPrev(lndev);
+			PLIST_ENTRY prev = OLGetPrev(lndev);
 
 			dbgf_all(DBGT_INFO, "purging lndev %16s %10s %s",
 							 orig_node->orig_str, lndev->bif->dev, lndev->bif->if_ip_str);
 
 			OLRemoveEntry(lndev);
 			debugFree(lndev, 1429);
-			lndev = (struct link_node_dev *)list; //reset to previous entry, so for-loop can try to get new next entry
+			lndev = (struct link_node_dev *)prev; //reset to previous entry, so for-loop can try to get new next entry
 																						//after the one, that was just deleted
 		}
 	}
@@ -938,21 +935,19 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			{
 				uint8_t free_ln = YES;
 
-				struct link_node_dev *lndev;
-				for (lndev = (struct link_node_dev *)OLGetNext(&orig_node->link_node->lndev_list);
-						 !OLIsListEmpty(&orig_node->link_node->lndev_list);
-						 lndev = (struct link_node_dev *)OLGetNext(lndev))
+				// when removing entries, I can modify lndev (because OLForEach() is a macro)
+				OLForEach(lndev, struct link_node_dev, orig_node->link_node->lndev_list)
 				{
 					if (LESS_U32((lndev->last_lndev + (1000 * ((batman_time_t)purge_to))), curr_time))
 					{
-						PLIST_ENTRY entry = OLGetPrev(lndev);
+						PLIST_ENTRY prev = OLGetPrev(lndev);
 
 						dbgf(DBGL_CHANGES, DBGT_INFO,
 								 "purging lndev %16s %10s %s",
 								 orig_node->orig_str, lndev->bif->dev, lndev->bif->if_ip_str);
 						OLRemoveEntry(lndev);
 						debugFree(lndev, 1429);
-						lndev = (struct link_node_dev *)entry;
+						lndev = (struct link_node_dev *)prev;
 					}
 					else
 					{
@@ -981,7 +976,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 									 "Neighbour timeout: originator %s, neighbour: %s, last_aware %u",
 									 orig_node->orig_str, neigh_str, neigh_node->last_aware);
 
-					LIST_ENTRY *prev = OLGetPrev(neigh_node);
+					PLIST_ENTRY prev = OLGetPrev(neigh_node);
 					OLRemoveEntry(neigh_node);
 
 					avl_remove(&orig_node->neigh_avl, &neigh_node->key);
