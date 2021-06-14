@@ -56,7 +56,8 @@ clean()
 VALGRIND_OPT="--tool=memcheck --show-error-list=yes --leak-check=full -s --track-origins=yes --show-leak-kinds=all"
 
 # https://baptiste-wicht.com/posts/2011/09/profile-c-application-with-callgrind-kcachegrind.html
-VALGRIND_OPT="--tool=callgrind"
+# apt install kcachegrind graphviz
+#VALGRIND_OPT="--tool=callgrind"
 
 case "$1" in
 	server)

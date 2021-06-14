@@ -25,7 +25,6 @@
 #include <netinet/in.h>
 #include <linux/if.h>
 
-#include "list-batman.h"
 #include "objlist.h"
 #include "control.h"
 #include "allocate.h"
