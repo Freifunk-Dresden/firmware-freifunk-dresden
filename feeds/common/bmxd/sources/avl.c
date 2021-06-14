@@ -263,7 +263,7 @@ void *avl_remove(struct avl_tree *tree, void *key)
                         return NULL;
         }
 
-        // remember and return the found key. It might have been another one than intended
+        // remember and return the found object. It might have been another one than intended
         ret = it->object;
 
         // Remove the node:
@@ -309,6 +309,7 @@ void *avl_remove(struct avl_tree *tree, void *key)
 
                 // Swap data
                 it->key = heir->key;
+                it->object = heir->object;
 
                 // Unlink successor and fix parent
                 up[top - 1]->link[(up[top - 1] == it)] = heir->link[1];
