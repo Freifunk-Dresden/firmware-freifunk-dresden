@@ -19,7 +19,7 @@ m3:init:
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
-    
+
   # dont delete dl, it is not so important to have different old version for
   # one packges, but it will reduce download overhead from external servers
   # every night. so just only delete workdirs to always have a clean build
@@ -33,6 +33,7 @@ m3:ar71xx.tiny:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -44,6 +45,7 @@ m3:ar71xx.generic:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -55,6 +57,7 @@ m3:ar71xx.nand:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -66,6 +69,7 @@ m3:x86.generic:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -77,6 +81,7 @@ m3:x64.generic:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -88,6 +93,7 @@ m3:ramips:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -99,6 +105,7 @@ m3:ipq40xx:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -110,6 +117,7 @@ m3:lantiq:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -121,6 +129,7 @@ m3:ath79:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -132,6 +141,7 @@ m3:sunxi:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -143,6 +153,7 @@ m3:mpc85xx:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -155,6 +166,7 @@ m3:bcm53xx.generic.arm:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -166,6 +178,7 @@ m3:test:
   only:
     - master
   stage: test
+  needs: ["m3:ar71xx.tiny","m3:ar71xx.generic","m3:ar71xx.nand","m3:x86","m3:x64","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx", "m3:bcm53xx.generic.arm"]
   script:
     - echo "dummy"
   tags:
@@ -175,11 +188,12 @@ m3:upload:
   only:
     - master
   stage: deploy
+  needs: ["m3:ar71xx.tiny","m3:ar71xx.generic","m3:ar71xx.nand","m3:x86","m3:x64","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx", "m3:bcm53xx.generic.arm"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./gen-upload.sh all
-    # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys. 
+    # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys.
     # On download server there is a user "deploy-firmware" who owns the download directories.
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ([ -n "${FF_UPLOAD_DIR}" ] && rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/)
@@ -193,4 +207,3 @@ m3:upload:
 #    - final_output
   tags:
   - m3runner
-
