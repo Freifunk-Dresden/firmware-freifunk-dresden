@@ -22,7 +22,7 @@
 
 #define ARG_PLUGIN "plugin"
 
-extern struct list_head_first cb_fd_list;
+extern LIST_ENTRY cb_fd_list;
 
 enum
 {
@@ -50,7 +50,7 @@ struct plugin_v1
 
 struct plugin_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	int32_t version;
 	void *plugin;
 	struct plugin_v1 *plugin_v1;
@@ -60,28 +60,28 @@ struct plugin_node
 
 struct cb_ogm_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	int32_t cb_type;
 	int32_t (*cb_ogm_handler)(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router);
 };
 
 struct cb_fd_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	int32_t fd;
 	void (*cb_fd_handler)(int32_t fd);
 };
 
 struct cb_packet_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	int32_t packet_type;
 	void (*cb_packet_handler)(struct msg_buff *mb);
 };
 
 struct cb_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	int32_t cb_type;
 	void (*cb_handler)(void);
 };

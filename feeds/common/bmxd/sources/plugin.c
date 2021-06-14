@@ -27,10 +27,10 @@
 #include "plugin.h"
 #include "schedule.h"
 
-SIMPEL_LIST(cb_fd_list);
-static SIMPEL_LIST(cb_packet_list);
-static SIMPEL_LIST(cb_ogm_list);
-static SIMPEL_LIST(plugin_list);
+LIST_ENTRY cb_fd_list;
+static LIST_ENTRY cb_packet_list;
+static LIST_ENTRY cb_ogm_list;
+static LIST_ENTRY plugin_list;
 
 struct cb_snd_ext snd_ext_hooks[EXT_TYPE_MAX + 1];
 
@@ -38,13 +38,10 @@ int32_t plugin_data_registries[PLUGIN_DATA_SIZE];
 
 void cb_plugin_hooks(void *data, int32_t cb_id)
 {
-	struct list_head *list_pos;
-	struct plugin_node *pn, *prev_pn = NULL;
+	struct plugin_node *prev_pn = NULL;
 
-	list_for_each(list_pos, &plugin_list)
+	OLForEach(pn, struct plugin_node, plugin_list)
 	{
-		pn = list_entry(list_pos, struct plugin_node, list);
-
 		if (prev_pn && prev_pn->plugin_v1 && prev_pn->plugin_v1->cb_plugin_handler[cb_id])
 			(*(prev_pn->plugin_v1->cb_plugin_handler[cb_id]))(data);
 
@@ -55,10 +52,8 @@ void cb_plugin_hooks(void *data, int32_t cb_id)
 		(*(prev_pn->plugin_v1->cb_plugin_handler[cb_id]))(data);
 }
 
-static int32_t add_del_thread_hook(int32_t cb_type, void (*cb_handler)(void), int8_t del, struct list_head *cb_list)
+static int32_t add_del_thread_hook(int32_t cb_type, void (*cb_handler)(void), int8_t del, PLIST_ENTRY cb_list)
 {
-	struct list_head *list_pos, *tmp_pos, *prev_pos = cb_list;
-	struct cb_node *cbn;
 
 	if (!cb_type || !cb_handler)
 	{
@@ -67,15 +62,13 @@ static int32_t add_del_thread_hook(int32_t cb_type, void (*cb_handler)(void), in
 		//return FAILURE;
 	}
 
-	list_for_each_safe(list_pos, tmp_pos, cb_list)
+	OLForEach(cbn, struct cb_node, *cb_list)
 	{
-		cbn = list_entry(list_pos, struct cb_node, list);
-
 		if (cb_type == cbn->cb_type && cb_handler == cbn->cb_handler)
 		{
 			if (del)
 			{
-				list_del(prev_pos, list_pos, ((struct list_head_first *)cb_list));
+				OLRemoveEntry(cbn);
 				debugFree(cbn, 1315);
 				return SUCCESS;
 			}
@@ -85,10 +78,6 @@ static int32_t add_del_thread_hook(int32_t cb_type, void (*cb_handler)(void), in
 				//dbgf( DBGL_SYS, DBGT_ERR, "cb_hook for cb_type %d and cb_handler already registered", cb_type );
 				//return FAILURE;
 			}
-		}
-		else
-		{
-			prev_pos = &cbn->list;
 		}
 	}
 
@@ -100,13 +89,14 @@ static int32_t add_del_thread_hook(int32_t cb_type, void (*cb_handler)(void), in
 	}
 	else
 	{
+		struct cb_node *cbn;
 		cbn = debugMalloc(sizeof(struct cb_node), 315);
 		memset(cbn, 0, sizeof(struct cb_node));
-		INIT_LIST_HEAD(&cbn->list);
+		OLInitializeListHead(&cbn->list);
 
 		cbn->cb_type = cb_type;
 		cbn->cb_handler = cb_handler;
-		list_add_tail(&cbn->list, ((struct list_head_first *)cb_list));
+		OLInsertTailList(cb_list, &cbn->list);
 
 		return SUCCESS;
 	}
@@ -114,7 +104,7 @@ static int32_t add_del_thread_hook(int32_t cb_type, void (*cb_handler)(void), in
 
 int32_t set_fd_hook(int32_t fd, void (*cb_fd_handler)(int32_t fd), int8_t del)
 {
-	int32_t ret = add_del_thread_hook(fd, (void (*)(void))cb_fd_handler, del, (struct list_head *)&cb_fd_list);
+	int32_t ret = add_del_thread_hook(fd, (void (*)(void))cb_fd_handler, del, &cb_fd_list);
 
 	change_selects();
 	return ret;
@@ -122,7 +112,7 @@ int32_t set_fd_hook(int32_t fd, void (*cb_fd_handler)(int32_t fd), int8_t del)
 
 int32_t set_packet_hook(int32_t packet_type, void (*cb_packet_handler)(struct msg_buff *mb), int8_t del)
 {
-	return add_del_thread_hook(packet_type, (void (*)(void))cb_packet_handler, del, (struct list_head *)&cb_packet_list);
+	return add_del_thread_hook(packet_type, (void (*)(void))cb_packet_handler, del, &cb_packet_list);
 }
 
 //notify interested plugins of rcvd packet...
@@ -130,14 +120,11 @@ int32_t set_packet_hook(int32_t packet_type, void (*cb_packet_handler)(struct ms
 // TODO: find solution to prevent this ???
 uint32_t cb_packet_hooks(int32_t packet_type, struct msg_buff *mb)
 {
-	struct list_head *list_pos;
-	struct cb_packet_node *cpn, *prev_cpn = NULL;
+	struct cb_packet_node *prev_cpn = NULL;
 	int calls = 0;
 
-	list_for_each(list_pos, &cb_packet_list)
+	OLForEach(cpn, struct cb_packet_node, cb_packet_list)
 	{
-		cpn = list_entry(list_pos, struct cb_packet_node, list);
-
 		if (prev_cpn && prev_cpn->packet_type == packet_type)
 		{
 			(*(prev_cpn->cb_packet_handler))(mb);
@@ -156,20 +143,17 @@ uint32_t cb_packet_hooks(int32_t packet_type, struct msg_buff *mb)
 
 int32_t set_ogm_hook(int32_t (*cb_ogm_handler)(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router), int8_t del)
 {
-	return add_del_thread_hook(1, (void (*)(void))cb_ogm_handler, del, (struct list_head *)&cb_ogm_list);
+	return add_del_thread_hook(1, (void (*)(void))cb_ogm_handler, del, &cb_ogm_list);
 }
 
 int32_t cb_ogm_hooks(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router)
 {
 	prof_start(PROF_cb_ogm_hooks);
 
-	struct list_head *list_pos;
-	struct cb_ogm_node *con, *prev_con = NULL;
+	struct cb_ogm_node *prev_con = NULL;
 
-	list_for_each(list_pos, &cb_ogm_list)
+	OLForEach(con, struct cb_ogm_node, cb_ogm_list)
 	{
-		con = list_entry(list_pos, struct cb_ogm_node, list);
-
 		if (prev_con)
 		{
 			if (((*(prev_con->cb_ogm_handler))(mb, oCtx, old_router)) == CB_OGM_REJECT)
@@ -252,11 +236,9 @@ int32_t reg_plugin_data(uint8_t data_type)
 
 static int is_plugin_active(void *plugin)
 {
-	struct list_head *list_pos;
-
-	list_for_each(list_pos, &plugin_list)
+	OLForEach(pn, struct plugin_node, plugin_list)
 	{
-		if (((struct plugin_node *)(list_entry(list_pos, struct plugin_node, list)))->plugin == plugin)
+		if (pn->plugin == plugin)
 			return YES;
 	}
 
@@ -268,6 +250,7 @@ static int activate_plugin(void *p, int32_t version, void *dlhandle, const char 
 	if (p == NULL || version != PLUGIN_VERSION_01)
 		return FAILURE;
 
+ // check if already present in list
 	if (is_plugin_active(p))
 		return FAILURE;
 
@@ -289,14 +272,14 @@ static int activate_plugin(void *p, int32_t version, void *dlhandle, const char 
 
 		struct plugin_node *pn = debugMalloc(sizeof(struct plugin_node), 312);
 		memset(pn, 0, sizeof(struct plugin_node));
-		INIT_LIST_HEAD(&pn->list);
+		OLInitializeListHead(&pn->list);
 
 		pn->version = PLUGIN_VERSION_01;
 		pn->plugin_v1 = pv1;
 		pn->plugin = p;
 		pn->dlhandle = dlhandle;
 
-		list_add_tail(&pn->list, &plugin_list);
+		OLInsertTailList(&plugin_list, &pn->list);
 
 		dbgf_all(DBGT_INFO, "%s SUCCESS", pn->plugin_v1->plugin_name);
 
@@ -314,22 +297,14 @@ static int activate_plugin(void *p, int32_t version, void *dlhandle, const char 
 
 static void deactivate_plugin(void *p)
 {
-	if (!is_plugin_active(p))
+	// when removing entries, I can modify lndev (because OLForEach() is a macro)
+	OLForEach(pn, struct plugin_node, plugin_list)
 	{
-		cleanup_all(-500190);
-		//dbg( DBGL_SYS, DBGT_ERR, "deactivate_plugin(): requested to deactivate inactive plugin !");
-		//return;
-	}
-
-	struct list_head *list_pos, *tmp_pos, *prev_pos = (struct list_head *)&plugin_list;
-
-	list_for_each_safe(list_pos, tmp_pos, &plugin_list)
-	{
-		struct plugin_node *pn = list_entry(list_pos, struct plugin_node, list);
-
 		if (pn->plugin == p)
 		{
-			list_del(prev_pos, list_pos, &plugin_list);
+			PLIST_ENTRY prev = OLGetPrev(pn);
+
+			OLRemoveEntry(pn);
 
 			if (pn->version != PLUGIN_VERSION_01)
 				cleanup_all(-500098);
@@ -343,17 +318,19 @@ static void deactivate_plugin(void *p)
 				debugFree(pn->dlname, 1316);
 
 			debugFree(pn, 1312);
-		}
-		else
-		{
-			prev_pos = &pn->list;
+			pn = (struct plugin_node *)prev;
 		}
 	}
 }
 
-
 void init_plugin(void)
 {
+
+	OLInitializeListHead(&cb_fd_list);
+	OLInitializeListHead(&cb_packet_list);
+	OLInitializeListHead(&cb_ogm_list);
+	OLInitializeListHead(&plugin_list);
+
 	set_snd_ext_hook(0, NULL, YES);		 //ensure correct initialization of extension hooks
 	reg_plugin_data(PLUGIN_DATA_SIZE); // ensure correct initialization of plugin_data
 
@@ -365,11 +342,15 @@ void init_plugin(void)
 	if ((pv1 = tun_get_plugin_v1()) != NULL)
 		activate_plugin(pv1, PLUGIN_VERSION_01, NULL, NULL);
 #endif
-
 }
 
 void cleanup_plugin(void)
 {
-	while (!list_empty(&plugin_list))
-		deactivate_plugin(((struct plugin_node *)(list_entry((&plugin_list)->next, struct plugin_node, list)))->plugin);
+	struct plugin_node *pn;
+
+	while (!OLIsListEmpty(&plugin_list))
+	{
+		pn = (struct plugin_node *)OLGetNext(&plugin_list);
+		deactivate_plugin(pn->plugin);
+	}
 }

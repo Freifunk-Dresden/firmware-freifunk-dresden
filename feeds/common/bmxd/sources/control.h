@@ -362,7 +362,6 @@ extern int (*save_config_cb)(uint8_t del, struct opt_type *opt, char *parent, ch
 extern int (*derive_config)(char *reference, char *derivation, struct ctrl_node *cn);
 
 void register_option(struct opt_type *opt);
-//void remove_option( struct opt_type *opt );
 void register_options_array(struct opt_type *fixed_options, int size);
 
 extern int32_t Load_config;

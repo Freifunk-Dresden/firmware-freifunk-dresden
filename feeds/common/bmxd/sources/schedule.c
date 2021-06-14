@@ -70,8 +70,6 @@ static void check_selects(void)
 	if (changed_readfds == 0)
 		return;
 
-	struct list_head *list_pos;
-
 	dbgf_all(DBGT_INFO, "%d select fds changed... ", changed_readfds);
 
 	changed_readfds = 0;
@@ -87,7 +85,7 @@ static void check_selects(void)
 
 	FD_SET(unix_sock, &receive_wait_set);
 
-  OLForEach(cn, struct ctrl_node, ctrl_list)
+	OLForEach(cn, struct ctrl_node, ctrl_list)
 	{
 		if (cn->fd > 0 && cn->fd != STDOUT_FILENO)
 		{
@@ -97,7 +95,7 @@ static void check_selects(void)
 		}
 	}
 
-  OLForEach(bif, struct batman_if, if_list)
+	OLForEach(bif, struct batman_if, if_list)
 	{
 		if (bif->if_active && bif->if_linklayer != VAL_DEV_LL_LO)
 		{
@@ -118,12 +116,9 @@ static void check_selects(void)
 		}
 	}
 
-	list_for_each(list_pos, &cb_fd_list)
+	OLForEach(cdn, struct cb_fd_node, cb_fd_list)
 	{
-		struct cb_fd_node *cdn = list_entry(list_pos, struct cb_fd_node, list);
-
 		receive_max_sock = MAX(receive_max_sock, cdn->fd);
-
 		FD_SET(cdn->fd, &receive_wait_set);
 	}
 }
@@ -139,40 +134,38 @@ void register_task(uint32_t timeout, void (*task)(void *), void *data)
 	tn->task = task;
 	tn->data = data;
 
-  int inserted = 0;
-  OLForEach(tmp_tn, struct task_node, task_list)
+	int inserted = 0;
+	OLForEach(tmp_tn, struct task_node, task_list)
 	{
 
 		if (GREAT_U32(tmp_tn->expire, tn->expire))
 		{
-      OLInsertTailList((PLIST_ENTRY)tmp_tn, (PLIST_ENTRY)tn);
-      inserted = 1;
+			OLInsertTailList((PLIST_ENTRY)tmp_tn, (PLIST_ENTRY)tn);
+			inserted = 1;
 			break;
 		}
-
 	}
 
-  if (!inserted)
-    OLInsertTailList(&task_list, (PLIST_ENTRY)tn);
+	if (!inserted)
+		OLInsertTailList(&task_list, (PLIST_ENTRY)tn);
 }
 
 void remove_task(void (*task)(void *), void *data)
 {
-  OLForEach(tn, struct task_node, task_list)
+	OLForEach(tn, struct task_node, task_list)
 	{
 
 		if (tn->task == task && tn->data == data)
 		{
-      LIST_ENTRY *prev = OLGetPrev(tn);
-      OLRemoveEntry(tn);
+			LIST_ENTRY *prev = OLGetPrev(tn);
+			OLRemoveEntry(tn);
 
 			if (tn->data)
-      {
+			{
 				debugFree(tn->data, 1109);
-
-      }
+			}
 			debugFree(tn, 1109);
-      tn = (struct task_node *)prev;
+			tn = (struct task_node *)prev;
 		}
 	}
 }
@@ -182,20 +175,18 @@ uint32_t whats_next(void)
 
 	paranoia(-500175, sim_paranoia);
 
-  OLForEach(tn, struct task_node, task_list)
+	OLForEach(tn, struct task_node, task_list)
 	{
-
 		if (LSEQ_U32(tn->expire, batman_time))
 		{
-      OLRemoveEntry(tn);
+			OLRemoveEntry(tn);
 
 			(*(tn->task))(tn->data);
 
 			if (tn->data)
-      {
+			{
 				debugFree(tn->data, 1109);
-
-      }
+			}
 			debugFree(tn, 1109);
 
 			return 0;
@@ -220,7 +211,7 @@ static void send_aggregated_ogms(void)
 	/* broadcast via lan interfaces first */
 	for (iftype = VAL_DEV_LL_LAN; iftype <= VAL_DEV_LL_WLAN; iftype++)
 	{
-    OLForEach(bif, struct batman_if, if_list)
+		OLForEach(bif, struct batman_if, if_list)
 		{
 
 			dbgf_all(DBGT_INFO, "dev: %s, linklayer %d iftype %d len %d min_len %d...",
@@ -266,7 +257,7 @@ void debug_send_list(struct ctrl_node *cn)
 
 	dbg_printf(cn, "Outstanding OGM for sending: \n");
 
-  OLForEach(send_node, struct send_node, send_list)
+	OLForEach(send_node, struct send_node, send_list)
 	{
 		struct bat_packet_ogm *ogm = send_node->ogm;
 
@@ -338,14 +329,14 @@ void remove_outstanding_ogms(struct batman_if *bif)
 	if (!bif)
 		return;
 
-  OLForEach(send_node, struct send_node, send_list)
+	OLForEach(send_node, struct send_node, send_list)
 	{
 		if (send_node->if_outgoing == bif)
 		{
-      LIST_ENTRY *prev = OLGetPrev(send_node);
-      OLRemoveEntry(send_node);
+			LIST_ENTRY *prev = OLGetPrev(send_node);
+			OLRemoveEntry(send_node);
 			debugFree(send_node, 1502);
-      send_node = (struct send_node *)prev;
+			send_node = (struct send_node *)prev;
 		}
 	}
 }
@@ -364,7 +355,7 @@ static void aggregate_outstanding_ogms(void *unused)
 	// ensuring that aggreg_interval is really an upper boundary
 	register_task(aggr_interval - 1 - rand_num(aggr_interval / 10), aggregate_outstanding_ogms, NULL);
 
-  OLForEach(send_node, struct send_node, send_list)
+	OLForEach(send_node, struct send_node, send_list)
 	{
 		if (GREAT_U32(send_node->send_time, batman_time))
 			break; // for now we are done,
@@ -396,9 +387,9 @@ static void aggregate_outstanding_ogms(void *unused)
 		else
 		{
 			if (send_node->send_bucket == 0)
-      {
+			{
 				send_node->send_bucket = ((int32_t)(rand_num(100)));
-      }
+			}
 
 			// keep care to not aggregate more packets than would fit into max packet size
 			aggregated_size += send_node->ogm_buff_len;
@@ -476,10 +467,10 @@ static void aggregate_outstanding_ogms(void *unused)
 			}
 			else if (!unidirectional && ttl > 0)
 			{
-					struct bat_packet_ogm *ogm;
+				struct bat_packet_ogm *ogm;
 
-        OLForEach(bif, struct batman_if, if_list)
-        {
+				OLForEach(bif, struct batman_if, if_list)
+				{
 
 					if (!bif->if_active)
 						continue;
@@ -549,10 +540,10 @@ static void aggregate_outstanding_ogms(void *unused)
 		// remove all the finished packets from send_list
 		if (send_node_done)
 		{
-      LIST_ENTRY *prev = OLGetPrev(send_node);
-      OLRemoveEntry(send_node);
+			LIST_ENTRY *prev = OLGetPrev(send_node);
+			OLRemoveEntry(send_node);
 			debugFree(send_node, 1502);
-      send_node = (struct send_node *)prev;
+			send_node = (struct send_node *)prev;
 		}
 	}
 
@@ -563,7 +554,7 @@ static void aggregate_outstanding_ogms(void *unused)
 		dbgf_all(DBGT_INFO, "max aggregated size %d", aggregated_size);
 	}
 
-  OLForEach(bif, struct batman_if, if_list)
+	OLForEach(bif, struct batman_if, if_list)
 	{
 		if (bif->aggregation_len != sizeof(struct bat_header))
 		{
@@ -718,21 +709,20 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	/* change sequence number to network order */
 	sn->ogm->ogm_seqno = htons(sn->ogm->ogm_seqno);
 
-  int inserted = 0;
-  OLForEach(send_packet_tmp, struct send_node, send_list)
+	int inserted = 0;
+	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
 
 		if (GREAT_U32(send_packet_tmp->send_time, sn->send_time))
 		{
-      OLInsertTailList((PLIST_ENTRY)send_packet_tmp, (PLIST_ENTRY)sn);
-      inserted = 1;
+			OLInsertTailList((PLIST_ENTRY)send_packet_tmp, (PLIST_ENTRY)sn);
+			inserted = 1;
 			break;
 		}
-
 	}
 
-  if (!inserted)
-    OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
+	if (!inserted)
+		OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
 
 	prof_stop(PROF_schedule_rcvd_ogm);
 }
@@ -1008,7 +998,6 @@ void wait4Event(uint32_t timeout)
 
 	batman_time_t return_time = batman_time + timeout;
 	struct timeval tv;
-	struct list_head *list_pos;
 	int selected;
 	fd_set tmp_wait_set;
 
@@ -1092,9 +1081,9 @@ loop4Event:
 		}
 
 		// check for received packets...
-    OLForEach(bif, struct batman_if, if_list)
+		OLForEach(bif, struct batman_if, if_list)
 		{
-      mb->iif = bif;
+			mb->iif = bif;
 
 			if (mb->iif->if_linklayer == VAL_DEV_LL_LO)
 				continue;
@@ -1218,10 +1207,8 @@ loop4Event:
 	loop4ActivePlugins:
 
 		// check active plugins...
-		list_for_each(list_pos, &cb_fd_list)
+		OLForEach(cdn, struct cb_fd_node, cb_fd_list)
 		{
-			struct cb_fd_node *cdn = list_entry(list_pos, struct cb_fd_node, list);
-
 			if (FD_ISSET(cdn->fd, &tmp_wait_set))
 			{
 				FD_CLR(cdn->fd, &tmp_wait_set);
@@ -1253,7 +1240,7 @@ loop4Event:
 
 	loop4ActiveClients:
 		// check for all connected control clients...
-    OLForEach(client, struct ctrl_node, ctrl_list)
+		OLForEach(client, struct ctrl_node, ctrl_list)
 		{
 			if (FD_ISSET(client->fd, &tmp_wait_set))
 			{
@@ -1378,27 +1365,23 @@ void schedule_own_ogm(struct batman_if *bif)
 
 	sn->ogm->ogm_misc = MIN(s_curr_avg_cpu_load, 255);
 
-  int inserted = 0;
-  OLForEach(send_packet_tmp, struct send_node, send_list)
+	int inserted = 0;
+	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
 
 		if (GREAT_U32(send_packet_tmp->send_time, sn->send_time))
 		{
-      OLInsertTailList((PLIST_ENTRY)send_packet_tmp, (PLIST_ENTRY)sn);
-      inserted = 1;
+			OLInsertTailList((PLIST_ENTRY)send_packet_tmp, (PLIST_ENTRY)sn);
+			inserted = 1;
 			break;
 		}
-
 	}
 
-  if (!inserted)
-    OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
+	if (!inserted)
+		OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
 
-  struct list_head *list_pos;
-	list_for_each(list_pos, &link_list)
+	OLForEach(ln, struct link_node, link_list)
 	{
-		struct link_node *ln = list_entry(list_pos, struct link_node, list);
-
 		struct link_node_dev *lndev = get_lndev(ln, bif, NO /*create*/);
 
 		if (lndev)
@@ -1442,8 +1425,8 @@ static struct opt_type schedule_options[] =
 
 void init_schedule(void)
 {
-  OLInitializeListHead(&send_list);
-  OLInitializeListHead(&task_list);
+	OLInitializeListHead(&send_list);
+	OLInitializeListHead(&task_list);
 	memset(&my_pip_extension_packet, 0, sizeof(struct ext_packet));
 	my_pip_extension_packet.EXT_FIELD_MSG = YES;
 	my_pip_extension_packet.EXT_FIELD_TYPE = EXT_TYPE_64B_PIP;
@@ -1461,21 +1444,20 @@ void start_schedule(void)
 
 void cleanup_schedule(void)
 {
-  while (!OLIsListEmpty(&send_list))
+	while (!OLIsListEmpty(&send_list))
 	{
-    PLIST_ENTRY entry = OLRemoveHeadList(&send_list);
-    debugFree(entry, 1106);
+		PLIST_ENTRY entry = OLRemoveHeadList(&send_list);
+		debugFree(entry, 1106);
 	}
 
-  while (!OLIsListEmpty(&task_list))
+	while (!OLIsListEmpty(&task_list))
 	{
-    struct task_node * tn = (struct task_node *)OLRemoveHeadList(&task_list);
+		struct task_node *tn = (struct task_node *)OLRemoveHeadList(&task_list);
 
 		if (tn->data)
-    {
+		{
 			debugFree(tn->data, 1109);
-
-    }
+		}
 		debugFree(tn, 1109);
 	}
 

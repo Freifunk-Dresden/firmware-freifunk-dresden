@@ -114,7 +114,7 @@ extern int Mtu_min;
 
 struct routes_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	uint32_t dest;
 	uint16_t netmask;
 	uint16_t rt_table;
@@ -124,7 +124,7 @@ struct routes_node
 
 struct rules_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	uint32_t prio;
 	char *iif;
 	uint32_t network;

@@ -39,6 +39,8 @@
 #include "schedule.h"
 //#include "avl.h"
 
+void init_tunnel(void); //defined in tunnel.c
+
 static int8_t stop = 0;
 
 //static clock_t start_time;
@@ -359,7 +361,7 @@ int main(int argc, char *argv[])
 
 	init_route();
 
-	//	init_control();
+	init_tunnel();
 
 	init_route_args();
 

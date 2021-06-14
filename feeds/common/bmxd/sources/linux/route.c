@@ -90,9 +90,9 @@ static int rt_sock = 0;
 
 static int32_t forward_orig = -1, if_rp_filter_all_orig = -1, if_rp_filter_default_orig = -1, if_send_redirects_all_orig = -1, if_send_redirects_default_orig = -1;
 
-static SIMPEL_LIST(rules_list);
-static SIMPEL_LIST(routes_list);
-static SIMPEL_LIST(throw_list);
+static LIST_ENTRY rules_list;
+static LIST_ENTRY routes_list;
+static LIST_ENTRY throw_list;
 
 uint8_t if_conf_soft_changed = NO; // temporary enabled to trigger changed interface configuration
 uint8_t if_conf_hard_changed = NO; // temporary enabled to trigger changed interface configuration
@@ -194,17 +194,13 @@ static int rt_macro_to_table(int rt_macro)
 static int8_t track_rule_and_proceed(uint32_t network, int16_t mask, int16_t rt_table, uint32_t prio, char *iif,
 																		 int16_t rule_type, int8_t del, int8_t track_t)
 {
-	struct list_head *list_pos, *tmp_pos, *first_found_pos = NULL, *first_found_prev = NULL;
-	struct list_head *prev_pos = (struct list_head *)&rules_list;
 	struct rules_node *first_found_rn = NULL;
 	uint32_t found_rns = 0;
 
 	paranoia(-500176, (!del && track_t == TRACK_NO));
 
-	list_for_each_safe(list_pos, tmp_pos, &rules_list)
+	OLForEach(tmp_rn, struct rules_node, rules_list)
 	{
-		struct rules_node *tmp_rn = list_entry(list_pos, struct rules_node, list);
-
 		if (tmp_rn->network == network &&
 				tmp_rn->netmask == mask &&
 				tmp_rn->rt_table == rt_table &&
@@ -217,14 +213,10 @@ static int8_t track_rule_and_proceed(uint32_t network, int16_t mask, int16_t rt_
 			if (!first_found_rn && (tmp_rn->track_t == track_t || track_t == TRACK_NO))
 			{
 				first_found_rn = tmp_rn;
-				first_found_pos = list_pos;
-				first_found_prev = prev_pos;
 			}
 
 			found_rns++;
 		}
-
-		prev_pos = &tmp_rn->list;
 	}
 
 	if ((track_t == TRACK_NO) ||
@@ -247,7 +239,7 @@ static int8_t track_rule_and_proceed(uint32_t network, int16_t mask, int16_t rt_
 	{
 		if (first_found_rn)
 		{
-			list_del(first_found_prev, first_found_pos, &rules_list);
+			OLRemoveEntry(first_found_rn);
 			debugFree(first_found_rn, 1741);
 
 			if (found_rns > 1)
@@ -262,7 +254,7 @@ static int8_t track_rule_and_proceed(uint32_t network, int16_t mask, int16_t rt_
 	{
 		struct rules_node *tmp_rn = debugMalloc(sizeof(struct rules_node), 741);
 		memset(tmp_rn, 0, sizeof(struct rules_node));
-		INIT_LIST_HEAD(&tmp_rn->list);
+		OLInitializeListHead(&tmp_rn->list);
 
 		tmp_rn->network = network;
 		tmp_rn->netmask = mask;
@@ -272,7 +264,7 @@ static int8_t track_rule_and_proceed(uint32_t network, int16_t mask, int16_t rt_
 		tmp_rn->rta_type = rule_type;
 		tmp_rn->track_t = track_t;
 
-		list_add_tail(&tmp_rn->list, &rules_list);
+		OLInsertTailList(&rules_list, &tmp_rn->list);
 
 		if (found_rns > 0)
 			return NO;
@@ -419,12 +411,10 @@ static void flush_tracked_rules(int8_t track_type)
 {
 	dbgf_all(DBGT_INFO, "%s", trackt2str(track_type));
 
-	struct list_head *list_pos;
-	struct rules_node *rn, *p_rn = NULL;
+	struct rules_node *p_rn = NULL;
 
-	list_for_each(list_pos, &rules_list)
+	OLForEach(rn, struct rules_node, rules_list)
 	{
-		rn = list_entry(list_pos, struct rules_node, list);
 
 		if (p_rn)
 			add_del_rule(p_rn->network, p_rn->netmask,
@@ -445,13 +435,10 @@ static void flush_tracked_routes(int8_t track_type)
 {
 	dbgf_all(DBGT_INFO, "%s", trackt2str(track_type));
 
-	struct list_head *list_pos;
-	struct routes_node *rn, *p_rn = NULL;
+	struct routes_node *p_rn = NULL;
 
-	list_for_each(list_pos, &routes_list)
+	OLForEach(rn, struct routes_node, routes_list)
 	{
-		rn = list_entry(list_pos, struct routes_node, list);
-
 		if (p_rn)
 			add_del_route(p_rn->dest, p_rn->netmask, 0, 0, 0, 0,
 										p_rn->rt_table, p_rn->rta_type, DEL, p_rn->track_t);
@@ -912,9 +899,9 @@ static char *get_ip4conf_buffer(struct ifconf *ifc)
 
 static int is_batman_if(char *dev, struct batman_if **bif)
 {
-  OLForEach(batman_if, struct batman_if, if_list)
+	OLForEach(batman_if, struct batman_if, if_list)
 	{
-    (*bif) = batman_if;
+		(*bif) = batman_if;
 
 		if (wordsEqual((*bif)->dev, dev))
 			return YES;
@@ -1194,20 +1181,16 @@ error:
 	if_deactivate(bif);
 }
 
-static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32_t ifi, char *dev,
+static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src,
 																			int16_t rt_table, int16_t rta_type, int8_t del, int8_t track_t)
 {
-	struct list_head *list_pos, *tmp_pos, *prev_pos = (struct list_head *)&routes_list;
-	struct list_head *first_found_pos = NULL, *first_found_prev = NULL;
 	struct routes_node *first_found_rn = NULL;
 	uint32_t found_rns = 0;
 
 	paranoia(-500177, (!del && track_t == TRACK_NO));
 
-	list_for_each_safe(list_pos, tmp_pos, &routes_list)
+	OLForEach(tmp_rn, struct routes_node, routes_list)
 	{
-		struct routes_node *tmp_rn = list_entry(list_pos, struct routes_node, list);
-
 		if (tmp_rn->dest == dest &&
 				tmp_rn->netmask == mask &&
 				tmp_rn->rt_table == rt_table &&
@@ -1218,14 +1201,9 @@ static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, 
 			if (!first_found_rn && (tmp_rn->track_t == track_t || track_t == TRACK_NO))
 			{
 				first_found_rn = tmp_rn;
-				first_found_pos = list_pos;
-				first_found_prev = prev_pos;
 			}
-
 			found_rns++;
 		}
-
-		prev_pos = &tmp_rn->list;
 	}
 
 	if (track_t == TRACK_NO)
@@ -1238,7 +1216,7 @@ static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, 
 	}
 	else if (del && first_found_rn)
 	{
-		list_del(first_found_prev, first_found_pos, &routes_list);
+		OLRemoveEntry(first_found_rn);
 		debugFree(first_found_rn, 1742);
 
 		if (found_rns > 1)
@@ -1248,7 +1226,7 @@ static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, 
 	{
 		struct routes_node *tmp_rn = debugMalloc(sizeof(struct routes_node), 742);
 		memset(tmp_rn, 0, sizeof(struct routes_node));
-		INIT_LIST_HEAD(&tmp_rn->list);
+		OLInitializeListHead(&tmp_rn->list);
 
 		tmp_rn->dest = dest;
 		tmp_rn->netmask = mask;
@@ -1256,7 +1234,7 @@ static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, 
 		tmp_rn->rta_type = rta_type;
 		tmp_rn->track_t = track_t;
 
-		list_add_tail(&tmp_rn->list, &routes_list);
+		OLInsertTailList(&routes_list, &tmp_rn->list);
 
 		if (found_rns > 0)
 			return NO;
@@ -1282,7 +1260,7 @@ void add_del_route(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32
 	if ((!throw_rules) && (rta_type == RTN_THROW))
 		return;
 
-	if (track_route_and_proceed(dest, mask, gw, src, ifi, dev, rt_table, rta_type, del, track_t) == NO)
+	if (track_route_and_proceed(dest, mask, gw, src, rt_table, rta_type, del, track_t) == NO)
 		return;
 
 	if (gw == dest)
@@ -1293,7 +1271,7 @@ void add_del_route(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32
 
 	dbgf_all(DBGT_INFO, "%s %s to %s/%i via %s (table %i - %s src %s )",
 					 del ? "del" : "add",
-					 rt2str(rta_type), ipStr(dest), mask, ipStr(gw), rt_table, dev, ipStr(src));
+					 rt2str(rta_type), ipStr(dest), mask, ipStr(gw), rt_table, dev?dev:"NULL", ipStr(src));
 
 	memset(&nladdr, 0, sizeof(struct sockaddr_nl));
 	memset(&req, 0, sizeof(req));
@@ -1435,8 +1413,6 @@ int update_interface_rules(uint8_t cmd)
 
 	struct batman_if *batman_if;
 
-	struct list_head *throw_pos;
-	struct throw_node *throw_node;
 	uint32_t no_netmask;
 
 	if (cmd != IF_RULE_CHK_IPS)
@@ -1506,10 +1482,8 @@ int update_interface_rules(uint8_t cmd)
 
 		uint8_t add_this_rule = YES;
 
-		list_for_each(throw_pos, &throw_list)
+		OLForEach(throw_node, struct throw_node, throw_list)
 		{
-			throw_node = list_entry(throw_pos, struct throw_node, list);
-
 			no_netmask = htonl(0xFFFFFFFF << (32 - throw_node->netmask));
 
 			if (((throw_node->addr & no_netmask) == (bif.if_netaddr & no_netmask)))
@@ -1551,10 +1525,8 @@ int update_interface_rules(uint8_t cmd)
 
 	if (cmd != IF_RULE_CHK_IPS)
 	{
-		list_for_each(throw_pos, &throw_list)
+		OLForEach(throw_node, struct throw_node, throw_list)
 		{
-			throw_node = list_entry(throw_pos, struct throw_node, list);
-
 			add_del_route(throw_node->addr, throw_node->netmask,
 										0, 0, 0, "unknown", RT_TABLE_HOSTS, RTN_THROW, ADD, TRACK_MY_NET);
 			add_del_route(throw_node->addr, throw_node->netmask,
@@ -1652,7 +1624,7 @@ void check_interfaces()
 	//Do we need this? There was an interface attribute which change is not catched by ifevent_sk ??
 	register_task(5000, check_interfaces, NULL);
 
-  if (OLIsListEmpty(&if_list))
+	if (OLIsListEmpty(&if_list))
 	{
 		dbg(DBGL_SYS, DBGT_ERR, "No interfaces specified");
 		cleanup_all(CLEANUP_FAILURE);
@@ -1660,7 +1632,7 @@ void check_interfaces()
 
 	Mtu_min = MAX_MTU;
 
-  OLForEach(bif, struct batman_if, if_list)
+	OLForEach(bif, struct batman_if, if_list)
 	{
 
 		if ((bif->if_active) && (!is_interface_up(bif->dev)))
@@ -1701,9 +1673,9 @@ void check_interfaces()
 //original is enabled.
 #if 1
 			struct batman_if *tmp_bif = NULL;
-      OLForEach(b, struct batman_if, if_list)
+			OLForEach(b, struct batman_if, if_list)
 			{
-        tmp_bif = b;
+				tmp_bif = b;
 
 				if (!wordsEqual(tmp_bif->dev, bif->dev) && tmp_bif->if_active && tmp_bif->if_addr == bif->if_addr)
 				{
@@ -1718,11 +1690,10 @@ void check_interfaces()
 #endif //se:
 			{
 				if (on_the_fly)
-        {
+				{
 					dbg_mute(50, DBGL_SYS, DBGT_INFO,
 									 "detected valid but disabled dev: %s ! Activating now...", bif->dev);
-
-        }
+				}
 				if_activate(bif);
 			}
 		}
@@ -1750,7 +1721,7 @@ void check_interfaces()
 			dbg(DBGL_SYS, DBGT_WARN,
 					"not using interface %s (retrying later): interface not ready", bif->dev);
 		}
-  } // loop
+	} // loop
 
 	if_conf_soft_changed = NO;
 	if_conf_hard_changed = NO;
@@ -1801,7 +1772,6 @@ static int32_t opt_throw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 	int32_t mask;
 	char tmp[30];
 	struct throw_node *throw_node = NULL;
-	struct list_head *throw_tmp, *throw_pos;
 
 	if (cmd == OPT_ADJUST || cmd == OPT_CHECK || cmd == OPT_APPLY)
 	{
@@ -1836,13 +1806,13 @@ static int32_t opt_throw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 			}
 		}
 
-		struct list_head *prev_pos = (struct list_head *)&throw_list;
-		list_for_each_safe(throw_pos, throw_tmp, &throw_list)
+		OLForEach(throw_node_tmp, struct throw_node, throw_list)
 		{
-			throw_node = list_entry(throw_pos, struct throw_node, list);
+			throw_node = throw_node_tmp;
+
 			if (throw_node->addr == ip && throw_node->netmask == mask)
 				break;
-			prev_pos = &throw_node->list;
+
 			throw_node = NULL;
 		}
 
@@ -1861,8 +1831,8 @@ static int32_t opt_throw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 
 		if (patch->p_diff == DEL || patch->p_diff == NOP)
 		{
-			list_del(prev_pos, throw_pos, &throw_list);
-			debugFree(throw_pos, 1224);
+			OLRemoveEntry(throw_node);
+			debugFree(throw_node, 1224);
 		}
 
 		if (patch->p_diff == NOP)
@@ -1876,11 +1846,11 @@ static int32_t opt_throw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 		{
 			throw_node = debugMalloc(sizeof(struct throw_node), 224);
 			memset(throw_node, 0, sizeof(struct throw_node));
-			INIT_LIST_HEAD(&throw_node->list);
-			list_add_tail(&throw_node->list, &throw_list);
-
 			throw_node->addr = ip;
 			throw_node->netmask = mask;
+
+			OLInitializeListHead(&throw_node->list);
+			OLInsertTailList(&throw_list, &throw_node->list);
 		}
 
 		if (on_the_fly)
@@ -1894,11 +1864,9 @@ static int32_t opt_throw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struc
 	}
 	else if (cmd == OPT_UNREGISTER)
 	{
-		list_for_each_safe(throw_pos, throw_tmp, &throw_list)
+		while (!OLIsListEmpty(&throw_list))
 		{
-			list_del((struct list_head *)&throw_list, throw_pos, &throw_list);
-
-			debugFree(throw_pos, 1224);
+			debugFree(OLRemoveHeadList(&throw_list), 1224);
 		}
 	}
 
@@ -1964,6 +1932,10 @@ void init_route_args(void)
 
 void init_route(void)
 {
+	OLInitializeListHead(&rules_list);
+	OLInitializeListHead(&routes_list);
+	OLInitializeListHead(&throw_list);
+
 	if ((nl_sk = open_netlink_socket()) <= 0)
 		cleanup_all(-500067);
 

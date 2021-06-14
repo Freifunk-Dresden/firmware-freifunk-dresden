@@ -30,9 +30,10 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 
 CFLAGS += -pedantic -Wall -W -Wno-unused-parameter -Wmaybe-uninitialized -std=gnu99 -I./
 # for release
-CFLAGS += -Os -g0
-# for debugging (coredumps)
-#CFLAGS += -Og -g3 -ggdb
+#CFLAGS += -Os -g0
+
+# for debugging (coredumps) / valgrind
+CFLAGS += -Og -g3 -ggdb
 
 
 #CFLAGS += -DDEBUG_MALLOC -DMEMORY_USAGE
@@ -43,8 +44,8 @@ LDFLAGS +=	-g3
 # -static
 # -pg
 
-SRC_C= batman.c originator.c schedule.c plugin.c list-batman.c allocate.c avl.c profile.c control.c metrics.c posix/posix.c posix/tunnel.c linux/route.c
-SRC_H= batman.h originator.h schedule.h plugin.h list-batman.h allocate.h avl.h profile.h control.h metrics.h os.h
+SRC_C= objlist.c batman.c originator.c schedule.c plugin.c allocate.c avl.c profile.c control.c metrics.c posix/posix.c posix/tunnel.c linux/route.c
+SRC_H= objlist.h batman.h originator.h schedule.h plugin.h allocate.h avl.h profile.h control.h metrics.h os.h
 OBJS=  $(SRC_C:.c=.o)
 
 BINARY_NAME=	bmxd

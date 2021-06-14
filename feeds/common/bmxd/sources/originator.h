@@ -139,7 +139,7 @@ extern struct avl_tree orig_avl;
 
 extern LIST_ENTRY if_list;
 
-extern struct list_head_first link_list;
+extern LIST_ENTRY link_list;
 extern struct avl_tree link_avl;
 
 struct orig_node *get_orig_node(uint32_t addr, uint8_t create);
