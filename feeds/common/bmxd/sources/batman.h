@@ -30,6 +30,7 @@
 #include "allocate.h"
 #include "profile.h"
 #include "avl.h"
+#include "objlist.h"
 
 /***
  *
