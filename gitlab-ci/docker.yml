@@ -47,6 +47,7 @@ docker:ar71xx.tiny:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -66,6 +67,7 @@ docker:ar71xx.generic:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -84,6 +86,7 @@ docker:ar71xx.nand:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -103,6 +106,7 @@ docker:x86:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -121,6 +125,7 @@ docker:x64:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -140,6 +145,7 @@ docker:ramips:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -159,6 +165,7 @@ docker:lantiq:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -177,6 +184,7 @@ docker:ath79:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -195,6 +203,7 @@ docker:ipq40xx:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -213,6 +222,7 @@ docker:sunxi:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -231,6 +241,7 @@ docker:mpc85xx:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: build
+  needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
@@ -250,7 +261,8 @@ docker:gen-upload-test:
     - /^T_FIRMWARE_.*$/
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
-  stage: deploy 
+  stage: deploy
+  needs: ["docker:ar71xx.tiny","docker:ar71xx.generic","docker:ar71xx.nand","docker:x86","docker:x64","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
