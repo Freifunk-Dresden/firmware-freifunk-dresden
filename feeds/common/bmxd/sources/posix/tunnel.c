@@ -121,7 +121,7 @@ static uint32_t my_gw_addr = 0;
 
 static int32_t tun_orig_registry = FAILURE;
 
-static SIMPEL_LIST(gw_list);
+static LIST_ENTRY gw_list;
 
 #define TP_VERS(v) (((v)>>4) & 0xf)
 #define TP_TYPE(v) ((v) & 0xf)
@@ -454,15 +454,12 @@ static unsigned char get_gw_class(int down, int up)
 
 static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, struct ext_packet *gw_array)
 {
-	struct list_head *gw_pos, *gw_tmp, *gw_prev = (struct list_head *)&gw_list;
 	struct gw_node *gw_node;
 	int download_speed, upload_speed;
 	struct tun_orig_data *tuno = orig_node->plugin_data[tun_orig_registry];
 
-	list_for_each_safe(gw_pos, gw_tmp, &gw_list)
+	OLForEach(gw_node, struct gw_node, gw_list)
 	{
-		gw_node = list_entry(gw_pos, struct gw_node, list);
-
 		if (gw_node->orig_node == orig_node)
 		{
 			dbg(DBGL_CHANGES, DBGT_INFO,
@@ -480,11 +477,12 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 			{
 				debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
 
-				tuno = orig_node->plugin_data[tun_orig_registry] = NULL;
+				tuno = NULL;
+				orig_node->plugin_data[tun_orig_registry] = NULL;
 
 				if (!gw_array)
 				{
-					list_del(gw_prev, gw_pos, &gw_list);
+					OLRemoveEntry(gw_node);
 					debugFree(gw_node, 1103);
 					dbg(DBGL_CHANGES, DBGT_INFO, "Gateway %s removed from gateway list", orig_node->orig_str);
 				}
@@ -509,10 +507,6 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 
 			return;
 		}
-		else
-		{
-			gw_prev = &gw_node->list;
-		}
 	}
 
 	if (gw_array && !tuno)
@@ -532,7 +526,7 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 
 		gw_node = debugMalloc(sizeof(struct gw_node), 103);
 		memset(gw_node, 0, sizeof(struct gw_node));
-		INIT_LIST_HEAD(&gw_node->list);
+		OLInitializeListHead(&gw_node->list);
 
 		gw_node->orig_node = orig_node;
 
@@ -547,7 +541,7 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 		gw_node->unavail_factor = 0;
 		gw_node->last_failure = batman_time;
 
-		list_add_tail(&gw_node->list, &gw_list);
+		OLInsertTailList(&gw_list, &gw_node->list);
 
 		return;
 	}
@@ -1128,8 +1122,7 @@ static void cb_tun_orig_flush(void *data)
 
 static void cb_choose_gw(void *unused)
 {
-	struct list_head *pos;
-	struct gw_node *gw_node, *tmp_curr_gw = NULL;
+	struct gw_node *tmp_curr_gw = NULL;
 	/* TBD: check the calculations of this variables for overflows */
 	uint8_t max_gw_class = 0;
 	uint32_t best_wa_val = 0;
@@ -1145,10 +1138,8 @@ static void cb_choose_gw(void *unused)
 		return;
 	}
 
-	list_for_each(pos, &gw_list)
+  OLForEach(gw_node, struct gw_node, gw_list)
 	{
-		gw_node = list_entry(pos, struct gw_node, list);
-
 		if (gw_node->unavail_factor > MAX_GW_UNAVAIL_FACTOR)
 			gw_node->unavail_factor = MAX_GW_UNAVAIL_FACTOR;
 
@@ -1251,14 +1242,12 @@ static int32_t opt_gateways(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 {
 	uint16_t batman_count = 0;
 
-	struct list_head *orig_pos;
-	struct gw_node *gw_node;
 	int download_speed, upload_speed;
 
 	if (cmd != OPT_APPLY)
 		return SUCCESS;
 
-	if (list_empty(&gw_list))
+	if (OLIsListEmpty(&gw_list))
 	{
 		dbg_printf(cn, "No gateways in range ...  preferred gateway: %s \n", ipStr(pref_gateway));
 	}
@@ -1266,10 +1255,8 @@ static int32_t opt_gateways(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 	{
 		dbg_printf(cn, "%12s     %15s   #         preferred gateway: %s \n", "Originator", "bestNextHop", ipStr(pref_gateway));
 
-		list_for_each(orig_pos, &gw_list)
+		OLForEach(gw_node, struct gw_node, gw_list)
 		{
-			gw_node = list_entry(orig_pos, struct gw_node, list);
-
 			struct orig_node *on = gw_node->orig_node;
 			struct tun_orig_data *tuno = on->plugin_data[tun_orig_registry];
 

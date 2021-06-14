@@ -74,8 +74,8 @@ static int32_t my_hop_penalty = DEF_HOP_PENALTY;
 
 static int32_t my_asym_exp = DEF_ASYM_EXP;
 
-static SIMPEL_LIST(pifnb_list);
-SIMPEL_LIST(link_list);
+static LIST_ENTRY pifnb_list;
+LIST_ENTRY link_list;
 
 struct avl_tree link_avl = {sizeof(uint32_t), NULL};
 
@@ -341,30 +341,16 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 
 static void free_pifnb_node(struct orig_node *orig_node)
 {
-	struct pifnb_node *pn;
-	struct list_head *pifnb_pos, *pifnb_pos_tmp, *prev_list_head;
-
 	paranoia(-500013, (!orig_node->id4him)); //free_pifnb_node(): requested to free pifnb_node with id4him of zero
 
-	prev_list_head = (struct list_head *)&pifnb_list;
-
-	list_for_each_safe(pifnb_pos, pifnb_pos_tmp, &pifnb_list)
+	OLForEach(pn, struct pifnb_node, pifnb_list)
 	{
-		pn = list_entry(pifnb_pos, struct pifnb_node, list);
-
 		if (pn->pog == orig_node)
 		{
-			list_del(prev_list_head, pifnb_pos, &pifnb_list);
-
+			OLRemoveEntry(pn);
 			orig_node->id4him = 0;
-
 			debugFree(pn, 1429);
-
 			break;
-		}
-		else
-		{
-			prev_list_head = &pn->list;
 		}
 	}
 
@@ -373,20 +359,17 @@ static void free_pifnb_node(struct orig_node *orig_node)
 
 static int8_t init_pifnb_node(struct orig_node *orig_node)
 {
-	struct pifnb_node *pn_tmp = NULL;
-	struct list_head *list_pos, *prev_list_head;
+	struct pifnb_node *pn_tmp2 = NULL;
 	uint16_t id4him = 1;
 
 	paranoia(-500011, (orig_node->id4him != 0)); //init_pifnb_node(): requested to init already existing pifnb_node
 
 	dbgf_all(DBGT_INFO, " %16s ", orig_node->orig_str);
 
-	prev_list_head = (struct list_head *)&pifnb_list;
-
-	list_for_each(list_pos, &pifnb_list)
+  PLIST_ENTRY prev_list = &pifnb_list;
+	OLForEach(pn_tmp, struct pifnb_node, pifnb_list)
 	{
-		pn_tmp = list_entry(list_pos, struct pifnb_node, list);
-
+		pn_tmp2 = pn_tmp;
 		if (pn_tmp->pog->id4him > id4him)
 			break;
 
@@ -397,104 +380,87 @@ static int8_t init_pifnb_node(struct orig_node *orig_node)
 			dbgf(DBGL_SYS, DBGT_ERR, "Max numbers of pifnb_nodes reached!");
 			return FAILURE;
 		}
-
-		prev_list_head = &pn_tmp->list;
-
-		pn_tmp = NULL;
+		prev_list = &pn_tmp->list;
+		pn_tmp2 = NULL;
 	}
 
 	struct pifnb_node *pn = debugMalloc(sizeof(struct pifnb_node), 429);
 	memset(pn, 0, sizeof(struct pifnb_node));
-	INIT_LIST_HEAD(&pn->list);
+	OLInitializeListHead(&pn->list);
 	pn->pog = orig_node;
 	orig_node->id4him = id4him;
 
 	dbgf_all(DBGT_INFO, "%16s -> id4him %d", orig_node->orig_str, id4him);
 
-	if (pn_tmp)
-		list_add_before(prev_list_head, list_pos, &pn->list);
-
-	else if ((pn_tmp == NULL) || (pn_tmp->pog->id4him <= orig_node->id4him))
-		list_add_tail(&pn->list, &pifnb_list);
+	if (pn_tmp2)
+	{
+		OLInsertHeadList(&pn->list, prev_list);
+	}
+	else if ((pn_tmp2 == NULL) || (pn_tmp2->pog->id4him <= orig_node->id4him))
+	{
+		OLInsertTailList(&pn->list, &pifnb_list);
+	}
 
 	return SUCCESS;
 }
 
 static void free_link_node(struct orig_node *orig_node, struct batman_if *bif)
 {
-	struct link_node *ln;
-	struct list_head *list_pos, *list_tmp, *list_prev;
+
+  struct link_node_dev * lndev;
 
 	dbgf_all(DBGT_INFO, "of orig %s", orig_node->orig_str);
 
 	paranoia(-500010, (orig_node->link_node == NULL)); //free_link_node(): requested to free non-existing link_node
 
-	ln = orig_node->link_node;
 
-	list_prev = (struct list_head *)&ln->lndev_list;
-
-	list_for_each_safe(list_pos, list_tmp, &ln->lndev_list)
+	for( lndev = (struct link_node_dev*)OLGetNext(&orig_node->link_node->lndev_list);
+			 !OLIsListEmpty(&orig_node->link_node->lndev_list);
+			 lndev = (struct link_node_dev*)OLGetNext(&orig_node->link_node->lndev_list)
+	)
 	{
-		struct link_node_dev *lndev = list_entry(list_pos, struct link_node_dev, list);
-
 		if (!bif || lndev->bif == bif)
 		{
+			PLIST_ENTRY list = OLGetPrev(lndev);
+
 			dbgf_all(DBGT_INFO, "purging lndev %16s %10s %s",
 							 orig_node->orig_str, lndev->bif->dev, lndev->bif->if_ip_str);
 
-			list_del(list_prev, list_pos, &ln->lndev_list);
-			debugFree(list_pos, 1429);
-		}
-		else
-		{
-			list_prev = list_pos;
+			OLRemoveEntry(lndev);
+			debugFree(lndev, 1429);
+			lndev = (struct link_node_dev*) list; //reset to previous entry, so for-loop can try to get new next entry
+			//after the one, that was just deleted
 		}
 	}
 
-	list_prev = (struct list_head *)&link_list;
-
-	list_for_each_safe(list_pos, list_tmp, &link_list)
+	OLForEach(ln, struct link_node, link_list)
 	{
-		ln = list_entry(list_pos, struct link_node, list);
-
-		if (ln->orig_node == orig_node && list_empty(&ln->lndev_list))
+		if (ln->orig_node == orig_node && OLIsListEmpty(&ln->lndev_list))
 		{
 			dbgf_all(DBGT_INFO, "purging link_node %16s ", orig_node->orig_str);
 
-			list_del(list_prev, list_pos, &link_list);
+			OLRemoveEntry(ln);
+
 			avl_remove(&link_avl, /*(uint32_t*)*/ &orig_node->link_node->orig_addr);
-
 			debugFree(orig_node->link_node, 1428);
-
 			orig_node->link_node = NULL;
-
 			break;
-		}
-		else
-		{
-			list_prev = list_pos;
 		}
 	}
 }
 
 static void flush_link_node_seqnos(void)
 {
-	struct list_head *ln_pos, *lndev_pos, *lndev_tmp;
-	struct link_node *ln = NULL;
-
-	list_for_each(ln_pos, &link_list)
+  OLForEach(ln, struct link_node, link_list)
 	{
-		ln = list_entry(ln_pos, struct link_node, list);
-
-		list_for_each_safe(lndev_pos, lndev_tmp, &ln->lndev_list)
+		while(!OLIsListEmpty(&ln->lndev_list))
 		{
-			struct link_node_dev *lndev = list_entry(lndev_pos, struct link_node_dev, list);
+			struct link_node_dev* lndev = (struct link_node_dev*) OLRemoveHeadList(&ln->lndev_list);
 
 			dbgf(DBGL_CHANGES, DBGT_INFO, "purging lndev %16s %10s %s",
 					 ln->orig_node->orig_str, lndev->bif->dev, lndev->bif->if_ip_str);
 
-			list_del((struct list_head *)&ln->lndev_list, lndev_pos, &ln->lndev_list);
-			debugFree(lndev_pos, 1429);
+			debugFree(lndev, 1429);
 		}
 	}
 }
@@ -507,14 +473,15 @@ static void init_link_node(struct orig_node *orig_node)
 
 	ln = orig_node->link_node = debugMalloc(sizeof(struct link_node), 428);
 	memset(ln, 0, sizeof(struct link_node));
-	INIT_LIST_HEAD(&ln->list);
+	OLInitializeListHead(&ln->list);
 
 	ln->orig_node = orig_node;
 	ln->orig_addr = orig_node->orig;
 
-	INIT_LIST_HEAD_FIRST(ln->lndev_list);
+	OLInitializeListHead(&ln->lndev_list);
 
-	list_add_tail(&ln->list, &link_list);
+	OLInsertTailList(&link_list, &ln->list);
+
 	avl_insert(&link_avl, &ln->orig_addr, ln);
 }
 
@@ -762,14 +729,12 @@ static void update_rq_link(struct orig_node *orig_node, SQ_TYPE sqn, struct batm
 
 	paranoia(-500156, !orig_node->link_node);
 
-	struct list_head *lndev_pos;
-	struct link_node_dev *lndev, *this_lndev = NULL;
+	struct link_node_dev *this_lndev = NULL;
 
 	dbgf_all(DBGT_INFO, "[%10s %3s %3s %3s]", "dev", "RTQ", "RQ", "TQ");
 
-	list_for_each(lndev_pos, &orig_node->link_node->lndev_list)
+	OLForEach(lndev, struct link_node_dev, orig_node->link_node->lndev_list)
 	{
-		lndev = list_entry(lndev_pos, struct link_node_dev, list);
 
 		dbgf_all(DBGT_INFO, "[%10s %3i %3i %3i] before", lndev->bif->dev,
 						 (((lndev->rtq_sqr.wa_val)) / PROBE_TO100),
@@ -798,18 +763,6 @@ static void update_rq_link(struct orig_node *orig_node, SQ_TYPE sqn, struct batm
 		if (probe)
 			this_lndev->last_lndev = batman_time;
 	}
-
-	//orig_node->link_node->last_rq_sqn = in_seqno;
-
-	/*
-	list_for_each( lndev_pos, &orig_node->link_node->lndev_list ) {
-		lndev = list_entry( lndev_pos, struct link_node_dev, list );
-		dbgf_all( DBGT_INFO, "[%10s %3i %3i %3i] afterwards", lndev->bif->dev,
-				(((lndev->rtq_sqr.wa_val))/PROBE_TO100),
-				(((lndev->rq_sqr.wa_val))/PROBE_TO100),
-				(((tq_rate( orig_node, lndev->bif, PROBE_RANGE )))/PROBE_TO100)  );
-	}
-	*/
 
 	return;
 }
@@ -987,27 +940,26 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			{
 				uint8_t free_ln = YES;
 
-				struct list_head *lndev_pos, *lndev_tmp;
-				struct list_head *lndev_prev = (struct list_head *)&orig_node->link_node->lndev_list;
-
-				list_for_each_safe(lndev_pos, lndev_tmp, &orig_node->link_node->lndev_list)
+				struct link_node_dev * lndev;
+				for( lndev = ( struct link_node_dev *) OLGetNext(&orig_node->link_node->lndev_list);
+					 ! OLIsListEmpty(&orig_node->link_node->lndev_list);
+					 lndev = ( struct link_node_dev *) OLGetNext(&orig_node->link_node->lndev_list)
+				)
 				{
-					//uint8_t free_lndev = YES;
-
-					struct link_node_dev *lndev = list_entry(lndev_pos, struct link_node_dev, list);
-
 					if (LESS_U32((lndev->last_lndev + (1000 * ((batman_time_t)purge_to))), curr_time))
 					{
+						PLIST_ENTRY entry = OLGetPrev(lndev);
+
 						dbgf(DBGL_CHANGES, DBGT_INFO,
 								 "purging lndev %16s %10s %s",
 								 orig_node->orig_str, lndev->bif->dev, lndev->bif->if_ip_str);
-						list_del(lndev_prev, lndev_pos, &orig_node->link_node->lndev_list);
+						OLRemoveEntry(lndev);
 						debugFree(lndev, 1429);
+						lndev = ( struct link_node_dev *) entry;
 					}
 					else
 					{
 						free_ln = NO;
-						lndev_prev = lndev_pos;
 					}
 				}
 
@@ -1052,13 +1004,10 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 
 struct link_node_dev *get_lndev(struct link_node *ln, struct batman_if *bif, uint8_t create)
 {
-	struct list_head *lndev_pos;
 	struct link_node_dev *lndev;
 
-	list_for_each(lndev_pos, &ln->lndev_list)
+	OLForEach(lndev, struct link_node_dev, ln->lndev_list)
 	{
-		lndev = list_entry(lndev_pos, struct link_node_dev, list);
-
 		if (lndev->bif == bif)
 			return lndev;
 	}
@@ -1070,13 +1019,13 @@ struct link_node_dev *get_lndev(struct link_node *ln, struct batman_if *bif, uin
 
 	memset(lndev, 0, sizeof(struct link_node_dev));
 
-	INIT_LIST_HEAD(&lndev->list);
+	OLInitializeListHead(&lndev->list);
 	lndev->bif = bif;
 
 	dbgf(DBGL_CHANGES, DBGT_INFO, "creating new lndev %16s %10s %s",
 			 ln->orig_node->orig_str, bif->dev, bif->if_ip_str);
 
-	list_add_tail(&lndev->list, &ln->lndev_list);
+	OLInsertTailList(&ln->lndev_list, &lndev->list);
 
 	return lndev;
 }
@@ -1466,12 +1415,8 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 				if (!orig_node->router)
 					continue;
 
-				struct list_head *lndev_pos;
-
-				list_for_each(lndev_pos, &ln->lndev_list)
+				OLForEach(lndev, struct link_node_dev, ln->lndev_list)
 				{
-					struct link_node_dev *lndev = list_entry(lndev_pos, struct link_node_dev, list);
-
 					rq = lndev->rq_sqr.wa_val;
 					tq = tq_rate(orig_node, lndev->bif, PROBE_RANGE);
 					rtq = lndev->rtq_sqr.wa_val;

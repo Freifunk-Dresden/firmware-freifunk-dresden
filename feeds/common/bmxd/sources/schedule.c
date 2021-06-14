@@ -70,8 +70,6 @@ static void check_selects(void)
 	if (changed_readfds == 0)
 		return;
 
-	struct list_head *list_pos;
-
 	dbgf_all(DBGT_INFO, "%d select fds changed... ", changed_readfds);
 
 	changed_readfds = 0;
@@ -118,12 +116,9 @@ static void check_selects(void)
 		}
 	}
 
-	list_for_each(list_pos, &cb_fd_list)
+	OLForEach(cdn, struct cb_fd_node, cb_fd_list)
 	{
-		struct cb_fd_node *cdn = list_entry(list_pos, struct cb_fd_node, list);
-
 		receive_max_sock = MAX(receive_max_sock, cdn->fd);
-
 		FD_SET(cdn->fd, &receive_wait_set);
 	}
 }
@@ -1008,7 +1003,6 @@ void wait4Event(uint32_t timeout)
 
 	batman_time_t return_time = batman_time + timeout;
 	struct timeval tv;
-	struct list_head *list_pos;
 	int selected;
 	fd_set tmp_wait_set;
 
@@ -1218,10 +1212,8 @@ loop4Event:
 	loop4ActivePlugins:
 
 		// check active plugins...
-		list_for_each(list_pos, &cb_fd_list)
+		OLForEach(cdn, struct cb_fd_node, cb_fd_list)
 		{
-			struct cb_fd_node *cdn = list_entry(list_pos, struct cb_fd_node, list);
-
 			if (FD_ISSET(cdn->fd, &tmp_wait_set))
 			{
 				FD_CLR(cdn->fd, &tmp_wait_set);
@@ -1394,11 +1386,8 @@ void schedule_own_ogm(struct batman_if *bif)
   if (!inserted)
     OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
 
-  struct list_head *list_pos;
-	list_for_each(list_pos, &link_list)
+	OLForEach(ln, struct link_node, link_list)
 	{
-		struct link_node *ln = list_entry(list_pos, struct link_node, list);
-
 		struct link_node_dev *lndev = get_lndev(ln, bif, NO /*create*/);
 
 		if (lndev)

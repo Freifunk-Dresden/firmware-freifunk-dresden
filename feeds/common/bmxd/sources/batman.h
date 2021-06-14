@@ -575,7 +575,7 @@ struct sq_record
 
 struct link_node_dev
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	batman_time_t last_lndev;
 	struct batman_if *bif;
 
@@ -593,13 +593,12 @@ struct link_node_dev
  */
 struct link_node
 {
+	LIST_ENTRY list;
 	uint32_t orig_addr; // avl key
-
-	struct list_head list;
 
 	struct orig_node *orig_node;
 
-	struct list_head_first lndev_list; // list with one link_node_dev element per link
+	LIST_ENTRY lndev_list; // list with one link_node_dev element per link
 };
 
 struct neigh_node_key
@@ -630,7 +629,7 @@ struct neigh_node
 /* list element to store all the disabled tunnel rule netmasks */
 struct throw_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	uint32_t addr;
 	uint8_t netmask;
 };
@@ -638,13 +637,13 @@ struct throw_node
 /* list element for fast access to all neighboring nodes' primary interface originators */
 struct pifnb_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	struct orig_node *pog;
 };
 
 struct srv_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	uint32_t srv_addr;
 	uint16_t srv_port;
 	uint8_t srv_seqno;
@@ -652,7 +651,7 @@ struct srv_node
 
 struct gw_node
 {
-	struct list_head list;
+	LIST_ENTRY list;
 	struct orig_node *orig_node;
 	uint16_t unavail_factor;
 	batman_time_t last_failure;
