@@ -30,10 +30,10 @@ CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
 
 CFLAGS += -pedantic -Wall -W -Wno-unused-parameter -Wmaybe-uninitialized -std=gnu99 -I./
 # for release
-#CFLAGS += -Os -g0
+CFLAGS += -Os -g0
 
 # for debugging (coredumps) / valgrind
-CFLAGS += -Og -g3 -ggdb
+#CFLAGS += -Og -g3 -ggdb
 
 
 #CFLAGS += -DDEBUG_MALLOC -DMEMORY_USAGE
