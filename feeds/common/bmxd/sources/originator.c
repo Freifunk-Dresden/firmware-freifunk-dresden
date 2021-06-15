@@ -1341,7 +1341,7 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 				nodes_count++;
 				batman_count++;
 
-				dbg_printf(cn, "%-15s %-10s %-15s %3i %3i  %s %5i %3i %5i %3i %4i %3i %3i\n",
+				dbg_printf(cn, "%-15s %-15s %-15s %3i %3i  %s %5i %3i %5i %3i %4i %3i %3i\n",
 									 orig_node->orig_str, orig_node->router->key.iif->dev,
 									 ipStr(orig_node->router->key.addr),
 									 orig_node->router->longtm_sqr.wa_val / PROBE_TO100,
