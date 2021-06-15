@@ -63,7 +63,8 @@ case "$1" in
 	server)
 		setup
 		CMD="./sources/bmxd -r3 -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1"
-		echo "cmd: ${CMD}"
+		echo "valgrind: [${VALGRIND_OPT}]"
+		echo "cmd: [${CMD}]"
 		valgrind ${VALGRIND_OPT} ${CMD}
 		clean
 		;;
