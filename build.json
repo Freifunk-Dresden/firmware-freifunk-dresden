@@ -5,7 +5,7 @@
 #   files (variants) are placed in exisiting directory.
 #
 #       Example for device specific:
-#               ramips.mt7621.ubiquiti-edgerouter-x
+#               ramips.mt7621.ubnt-edge
 #
 #   If no variant is set, then platform directory is deleted before.
 #   So consider order and definition of variants when specifying targets!
@@ -134,7 +134,7 @@
 		"variant":"generic"
 	},
 	{
-		"name":"ramips.mt7621.ubiquiti-edgerouter-x",
+		"name":"ramips.mt7621.ubnt-edge",
 		"target":"ramips",
 		"subtarget":"mt7621",
 		"variant":"ubiquiti-edgerouter-x"	# specific target (overwrites previous generic only for this device)
