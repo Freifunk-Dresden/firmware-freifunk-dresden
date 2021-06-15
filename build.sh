@@ -250,12 +250,16 @@ listTargets()
 	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
 	target_dir="$buildroot/bin/targets/$_target/$_subtarget"
+
 	if [ -f "${target_dir}/${compile_status_file}" ]; then
-		eval $(cat "${target_dir}/${compile_status_file}" | jq '"compile_state_data=\(.date);compile_status=\(.status)"')
+	#echo "${target_dir}/${compile_status_file}"
+		eval $(cat "${target_dir}/${compile_status_file}" | jq $OPT '"compile_state_data=\"\(.date)\";compile_status=\(.status)"')
+	else
+		compile_status=1
 	fi
 
 	cstatus="${C_RED}-${C_NONE}"
-	test "compile_status" = "0" && cstatus="${C_GREEN}+${C_NONE}"
+	test "$compile_status" = "0" && cstatus="${C_GREEN}+${C_NONE}"
  	printf  $cstatus" %-36.36s | %-8.8s | %-10.10s | %-8.8s | %-8.8s | %-8.8s | %-7.7s | (%s)\n" "${_config_name}" "${_openwrt_rev:0:7}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches" "$compile_state_date"
 
 	targetIdx=$(( targetIdx + 1 ))
