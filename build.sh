@@ -359,7 +359,7 @@ setup_dynamic_firmware_config()
 if [ -z "$1" ]; then
 	# create a simple menu
 	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) list | search <string> | clean | feed-revisions | (target | all  [menuconfig ] [rerun] [ <make params ...> ])"
+	echo "usage: $(basename $0) list | search <string> | clean | feed-revisions | (target | all | failed [menuconfig ] [rerun] [ <make params ...> ])"
 	echo " list             - lists all available targets"
 	echo " list-targets     - lists only target names for usage in IDE"
 	echo " search           - search specific router (target)"
@@ -369,6 +369,7 @@ if [ -z "$1" ]; then
 	echo " target           - target to build (can have regex)"
 	echo "          that are defined by build.json. use 'list' for supported targets."
 	echo "          'all'                   - builds all targets"
+	echo "          'failed'                - builds only previously failed or not built targets"
 	echo "          'ramips.*'              - builds all ramips targets only"
 	echo "          'ramips.rt305x.generic' - builds exact this target"
 	echo "          '^rt30.*'               - builds all that start with 'rt30'"
@@ -436,6 +437,12 @@ else
 	# last value will become DEFAULT
 	targetRegex="$1"
 	shift
+
+	if [ "$targetRegex" = "failed" ]; then
+		ARG_CompiledFailedOnly=1
+		targetRegex=".*"
+	fi
+
 
 	if [ "$targetRegex" = "all" ]; then
 		targetRegex=".*"
@@ -664,6 +671,8 @@ do
 	filterred=$(echo $config_name | sed -n "/$targetRegex/p")
 	test -z "$filterred" && continue
 
+
+  # only enable progressbar for tty
 	if [ "$_TERM" = "1" ]; then
 		show_progress $progress_counter $progress_max
 		progress_counter=$(( $progress_counter + 1 ))
@@ -747,6 +756,21 @@ do
 	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
 	target_dir="$RUN_DIR/$buildroot/bin/targets/$_target/$_subtarget"
+
+
+	# get compile status
+	if [ "$ARG_CompiledFailedOnly" = "1" ]; then
+		if [ -f "${target_dir}/${compile_status_file}" ]; then
+			eval $(cat "${target_dir}/${compile_status_file}" | jq $OPT '"compile_status=\(.status)"')
+		else
+			compile_status=1
+		fi
+		# ignore successfull targetes
+		test "$compile_status" = "0" && continue;
+	fi
+
+	# reset compile status
+	rm -f ${target_dir}/${compile_status_file}
 
 	openwrt_dl_dir="$DL_DIR"
 	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector_patches"
