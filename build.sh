@@ -36,7 +36,7 @@ OPENWRT_PATCHES_DIR=openwrt-patches
 OPENWRT_PATCHES_TARGET_DIR=openwrt-patches-target
 DDMESH_STATUS_DIR=".ddmesh"	# used to store build infos like openwrt_patches_target states
 DDMESH_PATCH_STATUS_DIR="$DDMESH_STATUS_DIR/patches-applied"
-compile_status_file="compile_status.json"
+compile_status_file="compile-status.json"
 
 # -------------------------------------------------------------------
 
@@ -742,7 +742,7 @@ do
 	# (see git log --abbrev-commit)
 	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
-	target_dir="$buildroot/bin/targets/$_target/$_subtarget"
+	target_dir="$RUN_DIR/$buildroot/bin/targets/$_target/$_subtarget"
 
 	openwrt_dl_dir="$DL_DIR"
 	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector_patches"
@@ -910,7 +910,7 @@ EOM
 
 	# write build status which is displayed by "build.sh list"
 	# , \"\":\"\"
-  echo "{\"config\":\"${_config_name}, \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${target_dir}/${compile_status_file}"
+  echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${target_dir}/${compile_status_file}"
 
 	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
