@@ -1,12 +1,9 @@
 #!/bin/bash
-tabs 4
+
 
 #usage: see below
 SCRIPT_VERSION="11"
 
-
-#echo "ACHTUNG: aktuell stuerst firmware auf ubnt geraeten ab. Daher habe ich erstmal das bauen hier deaktiviert."
-#exit 1
 
 # gitlab variables
 # FF_REGISTERKEY_PREFIX
@@ -175,13 +172,8 @@ p
 
 listTargets()
 {
-
  OPT="--raw-output" # do not excape values
  cleanJson=$(getTargetsJson)
-
-#echo $cleanJson
-#exit
-
 
  # first read default
  entry=$(echo "$cleanJson" | jq ".[0]")
