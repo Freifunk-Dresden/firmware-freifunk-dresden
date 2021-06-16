@@ -19,7 +19,7 @@ m3:init:
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
-    
+
   # dont delete dl, it is not so important to have different old version for
   # one packges, but it will reduce download overhead from external servers
   # every night. so just only delete workdirs to always have a clean build
@@ -167,7 +167,9 @@ m3:test:
     - master
   stage: test
   script:
-    - echo "dummy"
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh list
   tags:
   - m3runner
 
@@ -179,7 +181,7 @@ m3:upload:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./gen-upload.sh all
-    # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys. 
+    # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys.
     # On download server there is a user "deploy-firmware" who owns the download directories.
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ([ -n "${FF_UPLOAD_DIR}" ] && rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/)
@@ -193,4 +195,3 @@ m3:upload:
 #    - final_output
   tags:
   - m3runner
-

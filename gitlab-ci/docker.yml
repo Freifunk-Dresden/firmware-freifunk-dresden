@@ -3,7 +3,7 @@
 # re-create symlinks because gitlab removes it before starting each single job.
 # /builds/dl is an empty directory created during docker image creation.
 # This directory is used as mount point to pass in /mycache from host machine.
-# I use this to avoid downloading/cloning from openwrt.org for each commit 
+# I use this to avoid downloading/cloning from openwrt.org for each commit
 # to gitlab.freifunk-dresden.de
 # "before_script" can be global or local to a job. but
 # but then it is same as if I put the command just before build command.
@@ -23,7 +23,7 @@ docker:init:
     - /^T_FIRMWARE_.*$/
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
-  stage: init 
+  stage: init
   script:
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
@@ -250,13 +250,13 @@ docker:gen-upload-test:
     - /^T_FIRMWARE_.*$/
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
-  stage: deploy 
+  stage: deploy
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./gen-upload.sh all 
+    - ./gen-upload.sh all
+    - ./build.sh list
   tags:
   - docker
-
