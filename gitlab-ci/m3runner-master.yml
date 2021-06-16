@@ -33,6 +33,7 @@ m3:ar71xx.tiny:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -44,6 +45,7 @@ m3:ar71xx.generic:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -55,6 +57,7 @@ m3:ar71xx.nand:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -66,6 +69,7 @@ m3:x86.generic:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -77,6 +81,7 @@ m3:x64.generic:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -88,6 +93,7 @@ m3:ramips:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -99,6 +105,7 @@ m3:ipq40xx:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -110,6 +117,7 @@ m3:lantiq:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -121,6 +129,7 @@ m3:ath79:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -132,6 +141,7 @@ m3:sunxi:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -143,6 +153,7 @@ m3:mpc85xx:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -155,6 +166,7 @@ m3:bcm53xx.generic.arm:
   only:
     - master
   stage: build
+  needs: ["m3:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -166,6 +178,7 @@ m3:test:
   only:
     - master
   stage: test
+  needs: ["m3:ar71xx.tiny","m3:ar71xx.generic","m3:ar71xx.nand","m3:x86.generic","m3:x64.generic","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx", "m3:bcm53xx.generic.arm"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -177,6 +190,7 @@ m3:upload:
   only:
     - master
   stage: deploy
+  needs: ["m3:ar71xx.tiny","m3:ar71xx.generic","m3:ar71xx.nand","m3:x86.generic","m3:x64.generic","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx", "m3:bcm53xx.generic.arm"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
