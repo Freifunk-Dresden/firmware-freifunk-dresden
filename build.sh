@@ -81,41 +81,45 @@ progressbar()
   _value=$1
   _maxValue=$2
 
-  # get current number of terminal colums
-  _cols=$(tput cols)
+	if [ "$_TERM" = "1" ]; then
+		# get current number of terminal colums
+		_cols=$(tput cols)
 
-  title="Progress: "
-  title_len=${#title}	# title length
+		title="Progress: "
+		title_len=${#title}	# title length
 
-  let _progress=(${_value}*100/${_maxValue}*100)/100
-  progress_string="$(printf ' %3u%% (%u/%u)' $_progress $_value $_maxValue )"
-  progress_strlen=${#progress_string}
+		let _progress=(${_value}*100/${_maxValue}*100)/100
+		progress_string="$(printf ' %3u%% (%u/%u)' $_progress $_value $_maxValue )"
+		progress_strlen=${#progress_string}
 
-  # calulate length of bar
-  let _cols=$_cols-$title_len-2-$progress_strlen
-  let _left=($_progress*${_cols})/100
-  let _right=$_cols-$_left
+		# calulate length of bar
+		let _cols=$_cols-$title_len-2-$progress_strlen
+		let _left=($_progress*${_cols})/100
+		let _right=$_cols-$_left
 
-  # progress bar string
-  _sleft="$(printf %${_left}s)"
-  _sleft="${_sleft// /#}"
+		# progress bar string
+		_sleft="$(printf %${_left}s)"
+		_sleft="${_sleft// /#}"
 
-  _sright="$(printf %${_right}s)"
-  _sright="${_sright// /-}"
-  printf "${title}[${_sleft}${_sright}]${progress_string}"
+		_sright="$(printf %${_right}s)"
+		_sright="${_sright// /-}"
+		printf "${title}[${_sleft}${_sright}]${progress_string}"
 
-  # clear until end of line
-  tput el
+		# clear until end of line
+		tput el
+	fi
 }
 
 # clean up screen and
 clean_up()
 {
-	# reset region
-	if [ -n "$row" ]; then
-		printf "\\033[r\n"
-		tput cup $row 0
-		printf "\n"
+	if [ "$_TERM" = "1" ]; then
+		# reset region
+		if [ -n "$row" ]; then
+			printf "\\033[r\n"
+			tput cup $row 0
+			printf "\n"
+		fi
 	fi
 	exit 0
 }
@@ -123,32 +127,34 @@ clean_up()
 
 show_progress()
 {
- # dont overwrite last value, when no parameter was given (window resize signal)
- [ -n "$1" ] && _count=$1
- [ -n "$2" ] && _max=$2
+	if [ "$_TERM" = "1" ]; then
+		# dont overwrite last value, when no parameter was given (window resize signal)
+		[ -n "$1" ] && _count=$1
+		[ -n "$2" ] && _max=$2
 
- [ "$_max" -eq 0 ] && return
+		[ "$_max" -eq 0 ] && return
 
- row=$(tput lines)
+		row=$(tput lines)
 
- # empty second line
- tput cup 1 0
- tput el
+		# empty second line
+		tput cup 1 0
+		tput el
 
- # print progress bar at bottom
- tput cup $(( $row - 1)) 0
- progressbar $_count $_max
+		# print progress bar at bottom
+		tput cup $(( $row - 1)) 0
+		progressbar $_count $_max
 
- # print empty line above
- tput cup $(( $row - 2)) 0
- tput el
+		# print empty line above
+		tput cup $(( $row - 2)) 0
+		tput el
 
- # define scroll region before setting cursor. else it would overwrite progress bar
- # leave out second row parameter to use max
- printf "\\033[0;%dr" $(( $row - 2 ))
+		# define scroll region before setting cursor. else it would overwrite progress bar
+		# leave out second row parameter to use max
+		printf "\\033[0;%dr" $(( $row - 2 ))
 
- # set cursor into last line of region
- tput cup $(( $row - 3)) 0
+		# set cursor into last line of region
+		tput cup $(( $row - 3)) 0
+	fi
 }
 
 
