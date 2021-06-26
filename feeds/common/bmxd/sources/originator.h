@@ -152,3 +152,4 @@ struct link_node_dev *get_lndev(struct link_node *ln, struct batman_if *bif, uin
 
 void process_ogm(struct msg_buff *mb);
 void init_originator(void);
+void cleanup_originator(void);

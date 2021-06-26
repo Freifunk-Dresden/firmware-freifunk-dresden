@@ -34,7 +34,7 @@
 
 static int32_t my_seqno;
 
-char * gw_scirpt_name = NULL;
+char *gw_scirpt_name = NULL;
 
 int32_t my_pws = DEF_PWS;
 
@@ -87,8 +87,6 @@ uint32_t primary_addr = 0;
 
 struct avl_tree orig_avl = {sizeof(uint32_t), NULL};
 
-
-
 static void update_routes(struct orig_node *orig_node, struct neigh_node *new_router)
 {
 	prof_start(PROF_update_routes);
@@ -123,7 +121,7 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 
 			add_del_route(orig_node->orig, 32, new_router->key.addr, primary_addr,
 										new_router->key.iif ? new_router->key.iif->if_index : 0,
-										new_router->key.iif ? new_router->key.iif->dev: NULL,
+										new_router->key.iif ? new_router->key.iif->dev : NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, ADD, TRACK_OTHER_HOST);
 		}
 
@@ -385,7 +383,7 @@ static int8_t init_pifnb_node(struct orig_node *orig_node)
 			// neues (pn->list) soll for gefundenen eingehangt werden
 			OLInsertTailList(&pn_tmp->list, &pn->list);
 			inserted = 1;
-			break;  //new entry should be inserted before current (pn_tmp2 != NULL)
+			break; //new entry should be inserted before current (pn_tmp2 != NULL)
 		}
 
 		id4him++;
@@ -406,7 +404,7 @@ static int8_t init_pifnb_node(struct orig_node *orig_node)
 	if (!inserted)
 	{
 		// pn->list angehangt werden, da es die groesste id4him hat
-    OLInsertTailList(&pifnb_list, &pn->list);
+		OLInsertTailList(&pifnb_list, &pn->list);
 	}
 
 	return SUCCESS;
@@ -1716,17 +1714,17 @@ static int32_t opt_gw_script(uint8_t cmd, uint8_t _save, struct opt_type *opt, s
 		}
 
 		// free old memory
-		if(gw_scirpt_name)
-		{	free(gw_scirpt_name);	}
+		if (gw_scirpt_name)
+		{
+			free(gw_scirpt_name);
+		}
 
 		// alloc
-		gw_scirpt_name = malloc(len+1);
-		if(gw_scirpt_name)
+		gw_scirpt_name = malloc(len + 1);
+		if (gw_scirpt_name)
 		{
 			strcpy(gw_scirpt_name, patch->p_val);
 		}
-
-
 	}
 
 	return SUCCESS;
@@ -1852,4 +1850,13 @@ void init_originator(void)
 	OLInitializeListHead(&link_list);
 
 	register_options_array(originator_options, sizeof(originator_options));
+}
+
+void cleanup_originator(void)
+{
+	if (gw_scirpt_name)
+	{
+		free(gw_scirpt_name);
+		gw_scirpt_name = NULL;
+	}
 }

@@ -282,12 +282,11 @@ void cleanup_all(int status)
 		purge_orig(0, NULL);
 
 		cleanup_plugin();
-
 		cleanup_config(); //cleanup_init()
-
 		cleanup_route();
+		cleanup_originator();
 
-    //clear/remove all interfaces
+	    //clear/remove all interfaces
     OLForEach(bif, struct batman_if, if_list)
 		{
 
