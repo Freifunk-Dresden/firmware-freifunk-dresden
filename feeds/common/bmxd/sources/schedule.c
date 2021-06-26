@@ -445,7 +445,7 @@ static void aggregate_outstanding_ogms(void *unused)
 */
 			/* rebroadcast only to allow neighbor to detect bidirectional link */
 			if (send_node->if_outgoing->if_active &&
-					send_node->iteration <= send_node->if_outgoing->if_ant_diversity &&
+					send_node->iteration <= 1 &&
 					directlink &&
 					!cloned &&
 					(unidirectional || ttl == 0))
@@ -497,7 +497,7 @@ static void aggregate_outstanding_ogms(void *unused)
 
 					memcpy(ogm, send_node->ogm, send_node->ogm_buff_len);
 
-					if (send_node->iteration > bif->if_ant_diversity)
+					if (send_node->iteration > 1)
 						ogm->flags |= CLONED_FLAG;
 
 					if ((directlink) && (send_node->if_outgoing == bif))

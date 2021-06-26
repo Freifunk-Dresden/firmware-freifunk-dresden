@@ -45,9 +45,6 @@
 typedef uint64_t batman_time_t;
 
 extern int unix_sock;
-
-#define ARG_PEDANTIC_CMDCHECK "pedantic_cmd_check"
-
 extern int32_t Client_mode;
 
 #define CONNECTION_END_STR "$"
@@ -166,10 +163,10 @@ struct ctrl_node *create_ctrl_node(int fd, void (*cn_fd_handler)(struct ctrl_nod
 
 
 /* opt_t types (Parent/Child, Single/Multiple, 0/1/N-arguments) */
-#define A_PS0 0x01
-#define A_PS1 0x02
-#define A_PMN 0x14
-#define A_CS1 0x22
+#define A_PS0 0x01 // parent, signle (one per command line), no args
+#define A_PS1 0x02 // parent, single, one argument
+#define A_PMN 0x14 // parent, multiple, n arguments
+#define A_CS1 0x22 // client, single, one argument
 
 /* auth_t types */
 #define A_ADM 0x10

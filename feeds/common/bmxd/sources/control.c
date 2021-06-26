@@ -45,17 +45,9 @@ static char run_dir[MAX_PATH_SIZE] = DEF_RUN_DIR;
 static int32_t debug_level = -1;
 static int32_t dbg_mute_to;
 
-#define MIN_LOOP_PERIOD 100
-#define MAX_LOOP_PERIOD 10000
 #define DEF_LOOP_PERIOD 1000
-static int32_t loop_period = DEF_LOOP_PERIOD;
 
 static int32_t loop_mode;
-
-#define MIN_PEDANT_CHK NO
-#define MAX_PEDANT_CHK YES
-#define DEF_PEDANT_CHK NO
-static int32_t pedantic_check = DEF_PEDANT_CHK;
 
 int unix_sock = 0;
 
@@ -1709,7 +1701,7 @@ static int32_t _opt_connect(uint8_t cmd, struct opt_type *opt, struct ctrl_node 
 			unix_sock = 0;
 
 			if (loop_mode && !is_aborted())
-				bat_wait(loop_period / 1000, loop_period % 1000);
+				bat_wait(DEF_LOOP_PERIOD / 1000, DEF_LOOP_PERIOD % 1000);
 
 		} while (loop_mode && !is_aborted());
 
@@ -2023,17 +2015,6 @@ static int32_t track_opt_parent(uint8_t cmd, uint8_t save, struct opt_type *p_op
 								 c_patch->c_opt->long_name, c_patch->c_val ? ' ' : '-', c_patch->c_val);
 			}
 		}
-
-		// be pedantic only after startup (!on_the_fly) and not reload-config (!save)
-		if (!changed && on_the_fly && save && pedantic_check)
-		{
-			dbg_cn(cn, DBGL_SYS, DBGT_ERR, "--%s %s already configured",
-						 p_opt->long_name, p_patch->p_val);
-
-			// actually here we can be pedantic or not because cleanup_patch()
-			// have already checked for double applied options
-			return FAILURE;
-		}
 	}
 
 	return SUCCESS;
@@ -2142,16 +2123,6 @@ call_option_failure:
 				 patch ? patch->p_diff : -1,
 				 ad, opt->ival ? *(opt->ival) : 0, opt->imin, opt->imax, opt->idef,
 				 opt_cmd2str[cmd], opt->opt_t, on_the_fly, wordlen(in));
-
-	/* This results in too much side effects. And MUST be handled by calling function like apply_stream_opts()
-	if ( !on_the_fly  &&  !pedantic_cmd_check  &&  ( cmd == OPT_PATCH || cmd == OPT_ADJUST || cmd == OPT_CHECK || cmd == OPT_APPLY ) ) {
-		dbg( DBGL_SYS, DBGT_ERR,
-		"ignored SYNTAX ERROR in startup configuration due to disabled --%s! FIX YOUR CONFIG NOW !!",
-		ARG_PEDANTIC_CMDCHECK );
-
-		return SUCCESS;
-	}
-	*/
 
 	return FAILURE;
 }
@@ -2938,22 +2909,13 @@ static struct opt_type control_options[] =
 				{ODI, 3, 0, "loop_mode", 'l', A_PS0, A_ADM, A_INI, A_ARG, A_ANY, &loop_mode, 0, 1, 0, 0,
 				 0, "put client daemon in loop mode to periodically refresh debug information"},
 
-#ifndef LESS_OPTIONS
-				{ODI, 3, 0, "loop_period", 0, A_PS1, A_ADM, A_INI, A_ARG, A_ANY, &loop_period, MIN_LOOP_PERIOD, MAX_LOOP_PERIOD, DEF_LOOP_PERIOD, 0,
-				 ARG_VALUE_FORM, "periodicity in ms with which client daemon in loop-mode refreshes debug information"},
-#endif
-
 				{ODI, 3, 0, ARG_CONNECT, 'c', A_PS0, A_ADM, A_INI, A_ARG, A_EAT, 0, 0, 0, 0, opt_connect,
 				 0, "set client mode. Connect and forward remaining args to main routing daemon"},
 
 				//order=5: so when used during startup it also shows the config-file options
 				{ODI, 5, 0, ARG_SHOW_CHANGED, 'i', A_PS0, A_ADM, A_DYI, A_ARG, A_ANY, 0, 0, 0, 0, opt_show_info,
 				 0, "inform about configured options"},
-#ifndef LESS_OPTIONS
-				{ODI, 5, 0, ARG_PEDANTIC_CMDCHECK, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &pedantic_check, MIN_PEDANT_CHK, MAX_PEDANT_CHK, DEF_PEDANT_CHK, 0,
-				 ARG_VALUE_FORM, "disable/enable pedantic checking of command-line parameters and context -\n"
-												 "	( e.g. fail setting a parameter without changing it)"},
-#endif
+
 				{ODI, 5, 0, "dbg_mute_timeout", 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &dbg_mute_to, 0, 10000000, 100000, 0,
 				 ARG_VALUE_FORM, "set timeout in ms for muting frequent messages"},
 
