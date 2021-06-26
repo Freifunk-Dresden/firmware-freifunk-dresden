@@ -85,9 +85,10 @@ case "$ARG1" in
 
 	#default start with no gatway.will be updated by gateway_check.sh
 	#SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"
-	SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
+	SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --script /usr/lib/bmxd/bmxd-gateway.sh"
 	TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre --one-way-tunnel 1"
 	TUNING_OPTS="--purge_timeout 20"
+
 	DAEMON_OPTS="$SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
 
 
