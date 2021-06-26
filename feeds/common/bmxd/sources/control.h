@@ -95,60 +95,39 @@ struct dbg_histogram
 	char text[DBG_HIST_TEXT_SIZE];
 };
 
-#ifndef TESTDEBUG
-
 #define DBG_HIST_NEW 0x00
 #define DBG_HIST_MUTING 0x01
 #define DBG_HIST_MUTED 0x02
 
 #ifdef NODEBUGALL
-#define dbgf_all(...) \
-	{                   \
-		;                 \
-	}
+	#define dbgf_all(...) 
 #else
-#define dbgf_all(dbgt, ...)                   \
-	do                                          \
-	{                                           \
-		if (__dbgf_all())                         \
-		{                                         \
-			_dbgf_all(dbgt, __func__, __VA_ARGS__); \
-		}                                         \
-	} while (0)
+	#define dbgf_all(dbgt, ...)                   \
+		do                                          \
+		{                                           \
+			if (__dbgf_all())                         \
+			{                                         \
+				_dbgf_all(dbgt, __func__, __VA_ARGS__); \
+			}                                         \
+		} while (0)
+
+	void _dbgf_all(int8_t dbgt, char const *f, char *last, ...);
+	uint8_t __dbgf_all(void);
 #endif
 
-#define dbgf(dbgl, dbgt, ...) \
-	;                           \
-	_dbgf(dbgl, dbgt, __func__, __VA_ARGS__);
-#define dbgf_cn(cn, dbgl, dbgt, ...) \
-	;                                  \
-	_dbgf_cn(cn, dbgl, dbgt, __func__, __VA_ARGS__);
+#define dbgf(dbgl, dbgt, ...) _dbgf(dbgl, dbgt, __func__, __VA_ARGS__);
+#define dbgf_cn(cn, dbgl, dbgt, ...) _dbgf_cn(cn, dbgl, dbgt, __func__, __VA_ARGS__);
+void _dbgf(int8_t dbgl, int8_t dbgt, char const *f, char *last, ...);
+void _dbgf_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char const *f, char *last, ...);
 
 void dbg(int8_t dbgl, int8_t dbgt, char *last, ...);
-void _dbgf(int8_t dbgl, int8_t dbgt, char const *f, char *last, ...);
 void dbg_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char *last, ...);
-void _dbgf_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char const *f, char *last, ...);
 void dbg_mute(uint32_t check_len, int8_t dbgl, int8_t dbgt, char *last, ...);
-void _dbgf_all(int8_t dbgt, char const *f, char *last, ...);
-uint8_t __dbgf_all(void);
+
+
 
 void dbg_printf(struct ctrl_node *cn, char *last, ...);
 
-#else
-
-#define dbgf(dbgl, dbgt, ...) \
-	;                           \
-	printf(__VA_ARGS__)
-#define dbgf_cn(cn, dbgl, dbgt, ...) \
-	;                                  \
-	printf(__VA_ARGS__)
-#define dbg(dbgl, dbgt, ...) printf(__VA_ARGS__)
-#define dbg_cn(cn, dbgl, dbgt, ...) printf(__VA_ARGS__)
-#define dbg_mute(check_len, dbgl, dbgt, ...) printf(__VA_ARGS__)
-#define dbgf_all(dbgt, ...) printf(__VA_ARGS__)
-#define dbg_printf(cn, ...) printf(__VA_ARGS__)
-
-#endif
 
 void accept_ctrl_node(void);
 void handle_ctrl_node(struct ctrl_node *cn);

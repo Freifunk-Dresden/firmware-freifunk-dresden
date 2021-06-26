@@ -345,8 +345,6 @@ void handle_ctrl_node(struct ctrl_node *cn)
 	return;
 }
 
-#ifndef TESTDEBUG
-
 // returns DBG_HIST_NEW, DBG_HIST_MUTING, or  DBG_HIST_MUTED
 static uint8_t check_dbg_history(int8_t dbgl, char *s, uint32_t expire, uint16_t check_len)
 {
@@ -617,6 +615,7 @@ void dbg_mute(uint32_t check_len, int8_t dbgl, int8_t dbgt, char *last, ...)
 	debug_output(check_len, dbg_mute_to, 0, dbgl, dbgt, 0, dbg_string_out);
 }
 
+#ifndef NODEBUGALL
 void _dbgf_all(int8_t dbgt, char const *f, char *last, ...)
 {
 	va_list ap;
@@ -633,7 +632,9 @@ uint8_t __dbgf_all(void)
 
 	return YES;
 }
-#endif
+#endif //NODEBUGALL
+
+
 
 int (*load_config_cb)(uint8_t test, struct opt_type *opt, struct ctrl_node *cn) = NULL;
 
