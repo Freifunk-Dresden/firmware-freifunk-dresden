@@ -28,7 +28,6 @@
 #define DBGT_WARN 2
 #define DBGT_ERR 3
 
-//extern int debug_level;
 #define DBGL_MIN 0
 #define DBGL_SYS 0
 #define DBGL_ROUTES 1
@@ -100,7 +99,7 @@ struct dbg_histogram
 #define DBG_HIST_MUTED 0x02
 
 #ifdef NODEBUGALL
-	#define dbgf_all(...) 
+	#define dbgf_all(...)
 #else
 	#define dbgf_all(dbgt, ...)                   \
 		do                                          \
@@ -131,7 +130,7 @@ void dbg_printf(struct ctrl_node *cn, char *last, ...);
 
 void accept_ctrl_node(void);
 void handle_ctrl_node(struct ctrl_node *cn);
-void close_ctrl_node(uint8_t cmd, struct ctrl_node *cn);
+void close_ctrl_node(uint8_t cmd, struct ctrl_node *ctrl_node);
 struct ctrl_node *create_ctrl_node(int fd, void (*cn_fd_handler)(struct ctrl_node *), uint8_t authorized);
 
 #define REFERENCE_KEY_WORD "ref:"
@@ -307,7 +306,7 @@ enum opt_cmd
 // fd may be set (>0) or not (=0)
 // cmd==OPT_SET_POST / OPT_POST:
 //	s MBZ, return value is SUCCESS or FAILURE
-int32_t call_option(uint8_t del, uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *parent, char *in, struct ctrl_node *cn);
+int32_t call_option(uint8_t ad, uint8_t cmd, uint8_t save, struct opt_type *opt, struct opt_parent *patch, char *in, struct ctrl_node *cn);
 
 int32_t check_apply_parent_option(uint8_t del, uint8_t cmd, uint8_t _save, struct opt_type *opt, char *in, struct ctrl_node *cn);
 
@@ -329,7 +328,7 @@ int8_t func_for_each_opt(struct ctrl_node *cn, void *data, char *func_name,
 
 int respect_opt_order(uint8_t test, int8_t last, int8_t next, struct opt_type *on, uint8_t load_config, uint8_t cmd, struct ctrl_node *cn);
 
-int8_t apply_stream_opts(char *s, char *fallback_opt, uint8_t dryrun, uint8_t load_cfg, struct ctrl_node *cn);
+int8_t apply_stream_opts(char *s, char *fallback_opt, uint8_t cmd, uint8_t load_cfg, struct ctrl_node *cn);
 
 extern int (*load_config_cb)(uint8_t test, struct opt_type *opt, struct ctrl_node *cn);
 

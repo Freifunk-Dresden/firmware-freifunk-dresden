@@ -135,8 +135,6 @@ void bat_wait(uint32_t sec, uint32_t msec)
 
 	//update_batman_time( NULL ); //this will cause critical system time drift message from the client
 	//dbgf_all( DBGT_INFO, "bat_wait(): done");
-
-	return;
 }
 
 
@@ -170,8 +168,8 @@ static unsigned char BitsSetTable256[256];
 static void init_set_bits_table256(void)
 {
 	BitsSetTable256[0] = 0;
-	int i;
-	for (i = 0; i < 256; i++)
+
+    for (int i = 0; i < 256; i++)
 	{
 		BitsSetTable256[i] = (i & 1) + BitsSetTable256[i / 2];
 	}
@@ -190,7 +188,7 @@ uint8_t get_set_bits(uint32_t v)
 
 int8_t send_udp_packet(unsigned char *packet_buff, int32_t packet_buff_len, struct sockaddr_in *dst, int32_t send_sock)
 {
-	int status;
+    int status = 0;
 
 	dbgf_all(DBGT_INFO, "len %d", packet_buff_len);
 
@@ -338,11 +336,6 @@ int main(int argc, char *argv[])
 	update_batman_time(NULL);
 
 	My_pid = getpid();
-
-	/*	char *d = getenv(BMX_ENV_DEBUG);
-	if ( d  &&  strtol(d, NULL , 10) >= DBGL_MIN  &&  strtol(d, NULL , 10) <= DBGL_MAX )
-		debug_level = strtol(d, NULL , 10);
-*/
 
 	srand(My_pid);
 

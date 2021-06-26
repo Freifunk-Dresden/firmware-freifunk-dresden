@@ -42,7 +42,7 @@
 
 static char run_dir[MAX_PATH_SIZE] = DEF_RUN_DIR;
 
-static int32_t debug_level = -1;
+static int8_t debug_level = -1;
 static int32_t dbg_mute_to;
 
 #define DEF_LOOP_PERIOD 1000
@@ -73,9 +73,7 @@ int32_t Client_mode = NO; //this one must be initialized manually!
 
 static void remove_dbgl_node(struct ctrl_node *cn)
 {
-	int8_t i;
-
-	for (i = DBGL_MIN; i <= DBGL_MAX; i++)
+	for (int i = DBGL_MIN; i <= DBGL_MAX; i++)
 	{
 		OLForEach(pEntry, LIST_ENTRY, dbgl_clients[i])
 		{
@@ -90,7 +88,7 @@ static void remove_dbgl_node(struct ctrl_node *cn)
 	}
 }
 
-static void add_dbgl_node(struct ctrl_node *cn, int dbgl)
+static void add_dbgl_node(struct ctrl_node *cn, int8_t dbgl)
 {
 	if (!cn || dbgl < DBGL_MIN || dbgl > DBGL_MAX)
 		return;
@@ -110,7 +108,7 @@ static void add_dbgl_node(struct ctrl_node *cn, int dbgl)
 
 static int daemonize()
 {
-	int fd;
+	int fd = 0;
 
 	switch (fork())
 	{
@@ -252,10 +250,11 @@ void close_ctrl_node(uint8_t cmd, struct ctrl_node *ctrl_node)
 
 			return;
 		}
-		else if ((cmd == CTRL_CLOSE_STRAIGHT && cn == ctrl_node) ||
-						 (cmd == CTRL_PURGE_ALL) ||
-						 (cmd == CTRL_CLEANUP && cn->closing_stamp && /* cn->fd <= 0  && */
-							GREAT_U32(batman_time, cn->closing_stamp + CTRL_CLOSING_TIMEOUT)))
+
+		if ((cmd == CTRL_CLOSE_STRAIGHT && cn == ctrl_node) ||
+				(cmd == CTRL_PURGE_ALL) ||
+				(cmd == CTRL_CLEANUP && cn->closing_stamp && /* cn->fd <= 0  && */
+				 GREAT_U32(batman_time, cn->closing_stamp + CTRL_CLOSING_TIMEOUT)))
 		{
 			if (cn->fd > 0 && cn->fd != STDOUT_FILENO)
 			{
@@ -280,7 +279,7 @@ void accept_ctrl_node(void)
 {
 	struct sockaddr addr;
 	socklen_t addr_size = sizeof(struct sockaddr);
-	int32_t unix_opts;
+	int32_t unix_opts = 0;
 
 	int fd = accept(unix_sock, (struct sockaddr *)&addr, &addr_size);
 
@@ -341,15 +340,15 @@ void handle_ctrl_node(struct ctrl_node *cn)
 		//stephan: remove debug print on closed and already freed cn
 		//bmxd crashed when bmxd -cd4
 	}
-
-	return;
 }
 
 // returns DBG_HIST_NEW, DBG_HIST_MUTING, or  DBG_HIST_MUTED
 static uint8_t check_dbg_history(int8_t dbgl, char *s, uint32_t expire, uint16_t check_len)
 {
 	static int r = 0;
-	int i, unused_i, h;
+	int i = 0;
+	int unused_i = 0;
+	int h = 0;
 
 	check_len = MIN(check_len, DBG_HIST_TEXT_SIZE);
 
@@ -382,8 +381,7 @@ static uint8_t check_dbg_history(int8_t dbgl, char *s, uint32_t expire, uint16_t
 				if (dbgl_history[h][i].catched == 2)
 					return DBG_HIST_MUTING;
 
-				else
-					return DBG_HIST_MUTED;
+				return DBG_HIST_MUTED;
 			}
 
 			dbgl_history[h][i].print_stamp = batman_time;
@@ -422,7 +420,8 @@ void dbg_printf(struct ctrl_node *cn, char *last, ...)
 		return;
 
 	static char s[MAX_DBG_STR_SIZE + 1];
-	ssize_t w, out = 0;
+	ssize_t w = 0;
+	ssize_t out = 0;
 	int i = 1;
 
 	va_list ap;
@@ -464,7 +463,8 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 	static char *dbgt2str[] = {"", "INFO  ", "WARN  ", "ERROR "};
 
 	int16_t dbgl_out[DBGL_MAX + 1];
-	int i = 0, j;
+	int i = 0;
+	int j = 0;
 
 	uint8_t mute_dbgl_sys = DBG_HIST_NEW;
 	uint8_t mute_dbgl_changes = DBG_HIST_NEW;
@@ -634,8 +634,6 @@ uint8_t __dbgf_all(void)
 }
 #endif //NODEBUGALL
 
-
-
 int (*load_config_cb)(uint8_t test, struct opt_type *opt, struct ctrl_node *cn) = NULL;
 
 int (*save_config_cb)(uint8_t del, struct opt_type *opt, char *parent, char *val, struct ctrl_node *cn) = NULL;
@@ -644,9 +642,10 @@ int (*derive_config)(char *reference, char *derivation, struct ctrl_node *cn) = 
 
 void get_init_string(int g_argc, char **g_argv)
 {
-	uint32_t size = 1, dbg_init_out = 0;
-	int i;
-	char *dbg_init_str;
+	uint32_t size = 1;
+	uint32_t dbg_init_out = 0;
+	int i = 0;
+	char *dbg_init_str = NULL;
 
 	for (i = 0; i < g_argc; i++)
 		size += (1 + strlen(g_argv[i]));
