@@ -36,8 +36,9 @@ toggle_ssid()
 	done
 }
 
-# bmxd calles it with: gateway,del,IP
-# boot and wan hotplug: init
+# script is called by:
+# - bmxd calles it with: gateway,del,IP
+# - boot and wan hotplug: init
 case $1 in
 	gateway)
 		logger -s -t $TAG "GATEWAY"
