@@ -934,7 +934,7 @@ EOM
 
 	# run make command
 	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
-	time -p make -j$((nproc)) $BUILD_PARAMS
+	time -p make -j$(nproc) $BUILD_PARAMS
 	error=$?
 	echo "make ret: $error"
 
