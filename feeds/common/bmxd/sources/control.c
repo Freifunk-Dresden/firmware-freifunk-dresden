@@ -71,6 +71,17 @@ LIST_ENTRY opt_list;
 
 int32_t Client_mode = NO; //this one must be initialized manually!
 
+static int mapSyslogPrio(int8_t dbgt)
+{
+	switch(dbgt)
+	{
+		case DBGT_INFO: return LOG_INFO;
+		case DBGT_WARN: return LOG_WARNING;
+		case DBGT_ERR:  return LOG_ERR;
+		default: return LOG_NOTICE;
+	}
+}
+
 static void remove_dbgl_node(struct ctrl_node *cn)
 {
 	for (int i = DBGL_MIN; i <= DBGL_MAX; i++)
@@ -440,7 +451,7 @@ void dbg_printf(struct ctrl_node *cn, char *last, ...)
 		{
 			if (cn->dbgl != DBGL_ALL)
 			{
-				syslog(LOG_ERR, "failed %d times writing %d instead of %d/%d bytes (%s)! Giving up: %s\n",
+				syslog(mapSyslogPrio(DBGT_ERR), "failed %d times writing %d instead of %d/%d bytes (%s)! Giving up: %s\n",
 							 i, (int)w, (int)strlen(s + out), (int)strlen(s), strerror(errno), s + out);
 			}
 
@@ -478,7 +489,7 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 			printf("[%d %8llu] %s%s%s%s\n", My_pid, (unsigned long long)batman_time, dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
 
 		if (dbgl == DBGL_SYS)
-			syslog(LOG_ERR, "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
+			syslog(mapSyslogPrio(dbgt), "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
 
 		return;
 	}
@@ -520,10 +531,10 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 			mute_dbgl_sys = check_dbg_history(DBGL_SYS, s, expire, check_len);
 
 		if (mute_dbgl_sys != DBG_HIST_MUTED)
-			syslog(LOG_ERR, "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
+			syslog(mapSyslogPrio(dbgt), "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
 
 		if (mute_dbgl_sys == DBG_HIST_MUTING)
-			syslog(LOG_ERR, "%smuting further messages (with equal first %d bytes) for at most %d seconds\n",
+			syslog(mapSyslogPrio(dbgt), "%smuting further messages (with equal first %d bytes) for at most %d seconds\n",
 						 dbgt2str[DBGT_WARN], check_len, expire / 1000);
 	}
 
