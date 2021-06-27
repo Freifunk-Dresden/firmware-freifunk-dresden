@@ -60,7 +60,7 @@ case "$ARG1" in
 	WAN_IF="br-mesh_wan"
 
 	brctl addbr $PRIMARY_IF
-	ip addr add $_ddmesh_ip/$_ddmesh_netpre broadcast $_ddmesh_broadcast dev $PRIMARY_IF
+	ip addr add $_ddmesh_ip/32 broadcast $_ddmesh_broadcast dev $PRIMARY_IF
 	ip link set dev $PRIMARY_IF up
 
 	_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1 dev=$LAN_IF /linklayer 1 dev=$WAN_IF /linklayer 1"
@@ -86,8 +86,8 @@ case "$ARG1" in
 	#default start with no gatway.will be updated by gateway_check.sh
 	#SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"
 	SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
-	TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre --one-way-tunnel 1"
-	TUNING_OPTS="--purge_timeout 20"
+	TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre"
+	TUNING_OPTS="--purge_timeout 20 --gateway_hysteresis 100 --script /usr/lib/bmxd/bmxd-gateway.sh"
 	DAEMON_OPTS="$SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
 
 

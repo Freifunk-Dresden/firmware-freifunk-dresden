@@ -45,12 +45,6 @@
 #include "plugin.h"
 #include "schedule.h"
 
-//nach dem umschalten auf ein neues gateway können noch für eine bestehende verbindung
-//packete eintreffen.
-#define STEPHAN_ALLOW_TUNNEL_PAKETS
-
-#define ARG_ONE_WAY_TUNNEL "one_way_tunnel"
-static int32_t one_way_tunnel;
 
 #define ARG_GW_HYSTERESIS "gateway_hysteresis"
 #define MIN_GW_HYSTERE 1
@@ -184,7 +178,6 @@ struct gws_args
 #define EXT_GW_FIELD_GWADDR d32.def32
 
 // the flags for gw extension messsage gwtypes:
-#define TWO_WAY_TUNNEL_FLAG 0x01
 #define ONE_WAY_TUNNEL_FLAG 0x02
 
 struct tun_orig_data
@@ -240,16 +233,18 @@ static void del_dev_tun(int32_t fd, char *tun_name, uint32_t tun_ip, char const 
 }
 
 //stephan: begin
-void call_script(char *pArg1, char *pArg2)
+void call_script(char *pCmd)
 {
-	static char cmd[256];			//mache es static, da ich nicht weiss, wie gross die stacksize ist
-	static char old_arg1[25]; //mache es static, da ich nicht weiss, wie gross die stacksize ist
+	#define SCRIPT_CMD_SIZE 256
+	static char cmd[SCRIPT_CMD_SIZE];			//mache es static, da ich nicht weiss, wie gross die stacksize ist
+	static char old_cmd[25]; //mache es static, da ich nicht weiss, wie gross die stacksize ist
 
-	if (strcmp(pArg1, old_arg1))
+	if (gw_scirpt_name && strcmp(pCmd, old_cmd))
 	{
-		sprintf(cmd, "/usr/lib/bmxd/bmxd-gateway.sh %s %s", pArg1, pArg2);
+		snprintf(cmd, SCRIPT_CMD_SIZE, "%s %s", gw_scirpt_name, pCmd);
+		cmd[SCRIPT_CMD_SIZE-1] = '\0';
 		UNUSED_RETVAL(system(cmd));
-		strcpy(old_arg1, pArg1);
+		strcpy(old_cmd, pCmd);
 	}
 }
 //stephan: end
@@ -463,15 +458,12 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 		if (gw_node->orig_node == orig_node)
 		{
 			dbg(DBGL_CHANGES, DBGT_INFO,
-					"Gateway class of originator %s changed from %i to %i, port %d, addr %s, "
-					"new supported tunnel types %s, %s",
+					"Gateway class of originator %s changed from %i to %i, port %d, addr %s",
 					orig_node->orig_str,
 					tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS : 0,
 					gw_array ? gw_array[0].EXT_GW_FIELD_GWFLAGS : 0,
 					tuno ? ntohs(tuno->tun_array[0].EXT_GW_FIELD_GWPORT) : 0,
-					ipStr(tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWADDR : 0),
-					gw_array ? ((gw_array[0].EXT_GW_FIELD_GWTYPES & TWO_WAY_TUNNEL_FLAG) ? "TWT" : "-") : "-",
-					gw_array ? ((gw_array[0].EXT_GW_FIELD_GWTYPES & ONE_WAY_TUNNEL_FLAG) ? "OWT" : "-") : "-");
+					ipStr(tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWADDR : 0));
 
 			if (tuno)
 			{
@@ -513,16 +505,14 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 	{
 		get_gw_speeds(gw_array->EXT_GW_FIELD_GWFLAGS, &download_speed, &upload_speed);
 
-		dbg(DBGL_CHANGES, DBGT_INFO, "found new gateway %s, announced by %s -> class: %i - %i%s/%i%s, new supported tunnel types %s, %s",
+		dbg(DBGL_CHANGES, DBGT_INFO, "found new gateway %s, announced by %s -> class: %i - %i%s/%i%s",
 				ipStr(gw_array->EXT_GW_FIELD_GWADDR),
 				orig_node->orig_str,
 				gw_array->EXT_GW_FIELD_GWFLAGS,
 				(download_speed > 2048 ? download_speed / 1024 : download_speed),
 				(download_speed > 2048 ? "MBit" : "KBit"),
 				(upload_speed > 2048 ? upload_speed / 1024 : upload_speed),
-				(upload_speed > 2048 ? "MBit" : "KBit"),
-				((gw_array->EXT_GW_FIELD_GWTYPES & TWO_WAY_TUNNEL_FLAG) ? "TWT" : "-"),
-				((gw_array->EXT_GW_FIELD_GWTYPES & ONE_WAY_TUNNEL_FLAG) ? "OWT" : "-"));
+				(upload_speed > 2048 ? "MBit" : "KBit")	);
 
 		gw_node = debugMalloc(sizeof(struct gw_node), 103);
 		memset(gw_node, 0, sizeof(struct gw_node));
@@ -581,8 +571,6 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 			routing_class == 3 &&
 			tuno &&
 			tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS &&
-			(tuno->tun_array[0].EXT_GW_FIELD_GWTYPES &
-			 ((one_way_tunnel ? ONE_WAY_TUNNEL_FLAG : 0))) &&
 			curr_gateway->orig_node != on &&
 			((pref_gateway == on->orig) ||
 			 (pref_gateway != curr_gateway->orig_node->orig &&
@@ -685,7 +673,7 @@ static void gwc_cleanup(void)
 		if (gwc_args->my_tun_addr)
 		{
 			add_del_route(0, 0, 0, 0, gwc_args->tun_ifi, gwc_args->tun_dev, RT_TABLE_TUNNEL, RTN_UNICAST, DEL, TRACK_TUNNEL);
-			call_script("del", "gwc_cleanup");
+			call_script("del");
 		}
 
 		if (gwc_args->tun_fd)
@@ -709,8 +697,6 @@ static void gwc_cleanup(void)
 
 static int8_t gwc_init(void)
 {
-	uint8_t which_tunnel_max = 0;
-
 	dbgf(DBGL_CHANGES, DBGT_INFO, " ");
 
 	if (probe_tun() == FAILURE)
@@ -730,12 +716,6 @@ static int8_t gwc_init(void)
 
 	struct orig_node *on = curr_gateway->orig_node;
 	struct tun_orig_data *tuno = on->plugin_data[tun_orig_registry];
-
-	if (!(tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & (one_way_tunnel ? ONE_WAY_TUNNEL_FLAG : 0)))
-	{
-		dbgf(DBGL_SYS, DBGT_ERR, "curr_gateway does not support desired tunnel type!");
-		goto gwc_init_failure;
-	}
 
 	memset(&tp, 0, sizeof(tp));
 
@@ -762,14 +742,7 @@ static int8_t gwc_init(void)
 
 	gwc_args->mtu_min = Mtu_min;
 
-	if (one_way_tunnel > which_tunnel_max && (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & ONE_WAY_TUNNEL_FLAG))
-	{
-		gwc_args->tunnel_type = ONE_WAY_TUNNEL_FLAG;
-		which_tunnel_max = one_way_tunnel;
-	}
-
-	if (which_tunnel_max == 0)
-		goto gwc_init_failure;
+	gwc_args->tunnel_type = ONE_WAY_TUNNEL_FLAG;
 
 	update_interface_rules(IF_RULE_SET_TUNNEL);
 
@@ -834,7 +807,7 @@ static int8_t gwc_init(void)
 		addr_to_str(gwc_args->my_tun_addr, gwc_args->my_tun_str);
 
 		add_del_route(0, 0, 0, 0, gwc_args->tun_ifi, gwc_args->tun_dev, RT_TABLE_TUNNEL, RTN_UNICAST, ADD, TRACK_TUNNEL);
-		call_script(gwc_args->gw_str, "gwc_init");
+		call_script(gwc_args->gw_str);
 
 		// critical syntax: may be used for nameserver updates
 		dbg(DBGL_CHANGES, DBGT_INFO, "GWT: GW-client tunnel init succeeded - type: 1WT  dev: %s  IP: %s  MTU: %d",
@@ -940,7 +913,7 @@ static void gws_cleanup(void)
 		debugFree(gws_args, 1223);
 		gws_args = NULL;
 
-		call_script("del", "gws_cleanup");
+		call_script("del");
 	}
 }
 
@@ -972,7 +945,7 @@ static int32_t gws_init(void)
 
 	gws_args->netmask = gw_tunnel_netmask;
 	gws_args->port = my_gw_port;
-	gws_args->owt = one_way_tunnel;
+	gws_args->owt = 1; //one-way-tunnel
 	gws_args->mtu_min = Mtu_min;
 	gws_args->my_tun_ip = gw_tunnel_prefix;
 	gws_args->my_tun_netmask = htonl(0xFFFFFFFF << (32 - (gws_args->netmask)));
@@ -1038,10 +1011,8 @@ static int32_t gws_init(void)
 	my_gw_ext_array->EXT_FIELD_MSG = YES;
 	my_gw_ext_array->EXT_FIELD_TYPE = EXT_TYPE_64B_GW;
 
-	my_gw_ext_array->EXT_GW_FIELD_GWFLAGS = one_way_tunnel ? Gateway_class : 0;
-	my_gw_ext_array->EXT_GW_FIELD_GWTYPES = Gateway_class
-																							? (one_way_tunnel ? ONE_WAY_TUNNEL_FLAG : 0)
-																							: 0;
+	my_gw_ext_array->EXT_GW_FIELD_GWFLAGS = Gateway_class;
+	my_gw_ext_array->EXT_GW_FIELD_GWTYPES = Gateway_class ? ONE_WAY_TUNNEL_FLAG : 0;
 
 	my_gw_ext_array->EXT_GW_FIELD_GWPORT = htons(my_gw_port);
 	my_gw_ext_array->EXT_GW_FIELD_GWADDR = my_gw_addr;
@@ -1052,7 +1023,7 @@ static int32_t gws_init(void)
 	dbg(DBGL_CHANGES, DBGT_INFO, "GWT: GW-server tunnel init succeeded - dev: %s  IP: %s/%d  MTU: %d",
 			gws_args->tun_dev, ipStr(gws_args->my_tun_ip), gws_args->netmask, gws_args->mtu_min);
 
-	call_script("gateway", "gws_init");
+	call_script("gateway");
 
 	return SUCCESS;
 
@@ -1069,14 +1040,12 @@ gws_init_failure:
 static void cb_tun_conf_changed(void *unused)
 {
 	static int32_t prev_routing_class = 0;
-	static int32_t prev_one_way_tunnel = 0;
 	static int32_t prev_gateway_class = 0;
 	static uint32_t prev_primary_ip = 0;
 	static int32_t prev_mtu_min = 0;
 	static struct gw_node *prev_curr_gateway = NULL;
 
-	if (prev_one_way_tunnel != one_way_tunnel ||
-			prev_primary_ip != primary_addr ||
+	if (prev_primary_ip != primary_addr ||
 			prev_mtu_min != Mtu_min ||
 			prev_curr_gateway != curr_gateway ||
 			(prev_routing_class ? 1 : 0) != (routing_class ? 1 : 0) ||
@@ -1089,7 +1058,7 @@ static void cb_tun_conf_changed(void *unused)
 		if (gwc_args)
 			gwc_cleanup();
 
-		if (primary_addr && one_way_tunnel)
+		if (primary_addr)
 		{
 			if (routing_class && curr_gateway)
 			{
@@ -1101,7 +1070,6 @@ static void cb_tun_conf_changed(void *unused)
 			}
 		}
 
-		prev_one_way_tunnel = one_way_tunnel;
 		prev_primary_ip = primary_addr;
 		prev_mtu_min = Mtu_min;
 		prev_curr_gateway = curr_gateway;
@@ -1154,11 +1122,6 @@ static void cb_choose_gw(void *unused)
 		struct tun_orig_data *tuno = on->plugin_data[tun_orig_registry];
 
 		if (!on->router || !tuno)
-		{
-			continue;
-		}
-
-		if (!(tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & (one_way_tunnel ? ONE_WAY_TUNNEL_FLAG : 0)))
 		{
 			continue;
 		}
@@ -1265,7 +1228,7 @@ static int32_t opt_gateways(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 
 			get_gw_speeds(tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS, &download_speed, &upload_speed);
 
-			dbg_printf(cn, "%s %-15s %15s %3i, %i%s/%i%s, reliability: %i, tunnel %s, %s \n",
+			dbg_printf(cn, "%s %-15s %15s %3i, %i%s/%i%s, reliability: %i\n",
 								 (gwc_args && curr_gateway == gw_node) ? "=>" : "  ",
 								 ipStr(on->orig), ipStr(on->router->key.addr),
 								 gw_node->orig_node->router->longtm_sqr.wa_val / PROBE_TO100,
@@ -1273,9 +1236,7 @@ static int32_t opt_gateways(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 								 download_speed > 2048 ? "MBit" : "KBit",
 								 upload_speed > 2048 ? upload_speed / 1024 : upload_speed,
 								 upload_speed > 2048 ? "MBit" : "KBit",
-								 gw_node->unavail_factor,
-								 (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & TWO_WAY_TUNNEL_FLAG) ? "2WT" : "-",
-								 (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & ONE_WAY_TUNNEL_FLAG) ? "1WT" : "-");
+								 gw_node->unavail_factor );
 
 			batman_count++;
 		}
@@ -1459,11 +1420,6 @@ static struct opt_type tunnel_options[] = {
 
 		{ODI, 5, 0, ARG_GW_CLASS, 'g', A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_gw_class,
 		 ARG_VALUE_FORM "[/VAL]", "set GW up- & down-link class (e.g. 5mbit/1024kbit)"},
-
-		{ODI, 5, 0, ARG_ONE_WAY_TUNNEL, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &one_way_tunnel, 0, 4, 1, 0,
-		 ARG_VALUE_FORM, "set preference for one-way-tunnel (OWT) mode over other tunnel modes:\n"
-										 "	For GW nodes: 0 disables OWT mode, a larger value enables this mode.\n"
-										 "	For GW-client nodes: 0 disables OWT mode, a larger value sets the preference for this mode."},
 
 		{ODI, 4, 0, ARG_GWTUN_NETW, 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, 0, 0, 0, 0, opt_gwtun_netw,
 		 ARG_PREFIX_FORM, "set network used by gateway nodes\n"},

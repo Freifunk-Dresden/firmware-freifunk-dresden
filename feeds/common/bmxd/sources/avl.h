@@ -52,21 +52,10 @@ struct avl_tree
 
 struct avl_node *avl_find(struct avl_tree *tree, void *key);
 struct avl_node *avl_next(struct avl_tree *tree, void *key);
-struct avl_node *avl_iterate(struct avl_tree *tree, struct avl_node *it);
+
 
 void avl_insert(struct avl_tree *tree, void *key, void *object);
 void *avl_remove(struct avl_tree *tree, void *key);
 
-#ifdef AVL_DEBUG
-struct avl_iterator
-{
-	struct avl_node *up[AVL_MAX_HEIGHT];
-	int upd[AVL_MAX_HEIGHT];
-	int top;
-};
-
-struct avl_node *avl_iter(struct avl_tree *tree, struct avl_iterator *it);
-void avl_debug(struct avl_tree *tree);
-#endif
 
 #endif

@@ -49,6 +49,9 @@ void OLInsertHeadList(IN PLIST_ENTRY ListHead, IN PLIST_ENTRY Entry)
 /**
   Inserts <i>Entry</i> right before <i>ListHead</i>. <i>ListHead</i> may
   be any list entry.
+  - List is a ring list, therefor I insert the new before head. so it is the
+  last entry in the list.
+  - when ListHead is an entry of the list, then new entry will be inserted before that
   @param  ListHead point where Entry should be inserted before
   @param  Entry   Entry to insert<p>
     @see  OLInsertHeadList(),
@@ -57,7 +60,6 @@ void OLInsertHeadList(IN PLIST_ENTRY ListHead, IN PLIST_ENTRY Entry)
 */
 void OLInsertTailList(IN PLIST_ENTRY ListHead, IN PLIST_ENTRY Entry)
 {
-  // inserts Entry after last first entry in list
   Entry->next = ListHead;
   Entry->prev = ListHead->prev;
 

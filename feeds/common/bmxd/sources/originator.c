@@ -34,6 +34,8 @@
 
 static int32_t my_seqno;
 
+char *gw_scirpt_name = NULL;
+
 int32_t my_pws = DEF_PWS;
 
 int32_t local_lws = DEF_LWS;
@@ -85,8 +87,6 @@ uint32_t primary_addr = 0;
 
 struct avl_tree orig_avl = {sizeof(uint32_t), NULL};
 
-
-
 static void update_routes(struct orig_node *orig_node, struct neigh_node *new_router)
 {
 	prof_start(PROF_update_routes);
@@ -121,7 +121,7 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 
 			add_del_route(orig_node->orig, 32, new_router->key.addr, primary_addr,
 										new_router->key.iif ? new_router->key.iif->if_index : 0,
-										new_router->key.iif ? new_router->key.iif->dev: NULL,
+										new_router->key.iif ? new_router->key.iif->dev : NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, ADD, TRACK_OTHER_HOST);
 		}
 
@@ -360,46 +360,51 @@ static void free_pifnb_node(struct orig_node *orig_node)
 
 static int8_t init_pifnb_node(struct orig_node *orig_node)
 {
-	struct pifnb_node *pn_tmp2 = NULL;
 	uint16_t id4him = 1;
 
 	paranoia(-500011, (orig_node->id4him != 0)); //init_pifnb_node(): requested to init already existing pifnb_node
 
 	dbgf_all(DBGT_INFO, " %16s ", orig_node->orig_str);
 
-	PLIST_ENTRY prev_list = &pifnb_list;
+	struct pifnb_node *pn = debugMalloc(sizeof(struct pifnb_node), 429);
+	memset(pn, 0, sizeof(struct pifnb_node));
+	OLInitializeListHead(&pn->list);
+	pn->pog = orig_node; // copy pointer !!! orig_node is held in more than one lists.
+
+	// looking for a unused id4him value. start with 1 and check if this
+	// value is already in list. list is sorted by id4him values, so when
+	// a node was found with a higer id4him -> use this id4him
+	// When the new id4him is already used, then increment it.
+	int inserted = 0;
 	OLForEach(pn_tmp, struct pifnb_node, pifnb_list)
 	{
-		pn_tmp2 = pn_tmp;
 		if (pn_tmp->pog->id4him > id4him)
-			break;
+		{
+			// neues (pn->list) soll for gefundenen eingehangt werden
+			OLInsertTailList(&pn_tmp->list, &pn->list);
+			inserted = 1;
+			break; //new entry should be inserted before current (pn_tmp2 != NULL)
+		}
 
 		id4him++;
 
 		if (id4him >= MAX_ID4HIM)
 		{
 			dbgf(DBGL_SYS, DBGT_ERR, "Max numbers of pifnb_nodes reached!");
+			debugFree(pn, 429);
 			return FAILURE;
 		}
-		prev_list = &pn_tmp->list;
-		pn_tmp2 = NULL;
 	}
 
-	struct pifnb_node *pn = debugMalloc(sizeof(struct pifnb_node), 429);
-	memset(pn, 0, sizeof(struct pifnb_node));
-	OLInitializeListHead(&pn->list);
-	pn->pog = orig_node;
+	// set id4him in orig object. the loop uses a pointer (pog) which is the same object.
 	orig_node->id4him = id4him;
 
 	dbgf_all(DBGT_INFO, "%16s -> id4him %d", orig_node->orig_str, id4him);
 
-	if (pn_tmp2)
+	if (!inserted)
 	{
-		OLInsertHeadList(&pn->list, prev_list);
-	}
-	else if ((pn_tmp2 == NULL) || (pn_tmp2->pog->id4him <= orig_node->id4him))
-	{
-		OLInsertTailList(&pn->list, &pifnb_list);
+		// pn->list angehangt werden, da es die groesste id4him hat
+		OLInsertTailList(&pifnb_list, &pn->list);
 	}
 
 	return SUCCESS;
@@ -1599,7 +1604,6 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 			// some configurable interface values - initialized to unspecified:
 			bif->if_ttl_conf = -1;
 			bif->if_send_clones_conf = -1;
-			bif->if_ant_diversity_conf = -1;
 			bif->if_linklayer_conf = -1;
 			bif->if_singlehomed_conf = -1;
 		}
@@ -1618,10 +1622,6 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 			else if (!strcmp(c->c_opt->long_name, ARG_DEV_CLONE))
 			{
 				bif->if_send_clones_conf = val;
-			}
-			else if (!strcmp(c->c_opt->long_name, ARG_DEV_ANTDVSTY))
-			{
-				bif->if_ant_diversity_conf = val;
 			}
 			else if (!strcmp(c->c_opt->long_name, ARG_DEV_LL))
 			{
@@ -1701,6 +1701,35 @@ static int32_t opt_lws(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 	return SUCCESS;
 }
 
+static int32_t opt_gw_script(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
+{
+	if (cmd == OPT_APPLY)
+	{
+		// check arg size
+		size_t len = strlen(patch->p_val);
+		if (len < 5 || len > 200) // at least 5 and max 200 characters for path
+		{
+			dbg_cn(cn, DBGL_SYS, DBGT_ERR, "E: script name length (5-200)");
+			return FAILURE;
+		}
+
+		// free old memory
+		if (gw_scirpt_name)
+		{
+			free(gw_scirpt_name);
+		}
+
+		// alloc
+		gw_scirpt_name = malloc(len + 1);
+		if (gw_scirpt_name)
+		{
+			strcpy(gw_scirpt_name, patch->p_val);
+		}
+	}
+
+	return SUCCESS;
+}
+
 static struct opt_type originator_options[] =
 		{
 				//        ord parent long_name          shrt Attributes				*ival		min		max		default		*func,*syntax,*help
@@ -1729,15 +1758,6 @@ static struct opt_type originator_options[] =
 
 				{ODI, 5, ARG_DEV, ARG_DEV_CLONE, 'c', A_CS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, MIN_WL_CLONES, MAX_WL_CLONES, DEF_WL_CLONES, opt_dev,
 				 ARG_VALUE_FORM, "broadcast OGMs per ogm-interval with given probability (e.g. 200% will broadcast the same OGM twice)"},
-
-				/* Antenna-diversity support for bmxd seems working but unfortunately there are few wireless drivers which support
-	 * my understanding of the typical antenna-diversity implementation. This is what I hoped (maybe I am wrong):
-	 * - The RX-antenna is detected on-the-fly on a per-packet basis by comparing
-	 *   the rcvd signal-strength via each antenna during reception of the phy-preamble.
-	 * - The TX-antenna is determined per MAC-address based on the last detected best RX-antenna for this MAC.
-	 * - Broadcast packets should be send round-robin like via each enabled TX-antenna (e.g. alternating via ant1 and ant2). */
-				{ODI, 5, ARG_DEV, ARG_DEV_ANTDVSTY, 0, A_CS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 1, 2, 1, opt_dev,
-				 ARG_VALUE_FORM, 0 /*"set number of broadcast antennas (e.g. for antenna-diversity use /d=2 /c=400 aggreg_interval=100)"*/},
 
 				{ODI, 5, ARG_DEV, ARG_DEV_HIDE, 'h', A_CS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 1, 0, opt_dev,
 				 ARG_VALUE_FORM, "disable/enable hiding of OGMs generated to non link-neighboring nodes. Default for non-primary interfaces"},
@@ -1816,7 +1836,12 @@ static struct opt_type originator_options[] =
 				 ARG_VALUE_FORM, "set time-to-live (TTL) for OGMs of primary interface"},
 
 				{ODI, 5, 0, "flush_all", 0, A_PS0, A_ADM, A_DYN, A_ARG, A_ANY, 0, 0, 0, 0, opt_purge,
-				 0, "purge all neighbors and routes on the fly"}};
+				 0, "purge all neighbors and routes on the fly"},
+
+				{ODI, 5, 0, ARG_GW_SCRIPT, 0, A_PS1, A_ADM, A_INI, A_ARG, A_ANY, 0, 0, 0, 0, opt_gw_script,
+				 "<script-file>", "called on gw selection"}
+
+};
 
 void init_originator(void)
 {
@@ -1825,4 +1850,13 @@ void init_originator(void)
 	OLInitializeListHead(&link_list);
 
 	register_options_array(originator_options, sizeof(originator_options));
+}
+
+void cleanup_originator(void)
+{
+	if (gw_scirpt_name)
+	{
+		free(gw_scirpt_name);
+		gw_scirpt_name = NULL;
+	}
 }

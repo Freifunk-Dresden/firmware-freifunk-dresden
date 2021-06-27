@@ -42,20 +42,12 @@
 
 static char run_dir[MAX_PATH_SIZE] = DEF_RUN_DIR;
 
-static int32_t debug_level = -1;
+static int8_t debug_level = -1;
 static int32_t dbg_mute_to;
 
-#define MIN_LOOP_PERIOD 100
-#define MAX_LOOP_PERIOD 10000
 #define DEF_LOOP_PERIOD 1000
-static int32_t loop_period = DEF_LOOP_PERIOD;
 
 static int32_t loop_mode;
-
-#define MIN_PEDANT_CHK NO
-#define MAX_PEDANT_CHK YES
-#define DEF_PEDANT_CHK NO
-static int32_t pedantic_check = DEF_PEDANT_CHK;
 
 int unix_sock = 0;
 
@@ -79,11 +71,20 @@ LIST_ENTRY opt_list;
 
 int32_t Client_mode = NO; //this one must be initialized manually!
 
+static int mapSyslogPrio(int8_t dbgt)
+{
+	switch(dbgt)
+	{
+		case DBGT_INFO: return LOG_INFO;
+		case DBGT_WARN: return LOG_WARNING;
+		case DBGT_ERR:  return LOG_ERR;
+		default: return LOG_NOTICE;
+	}
+}
+
 static void remove_dbgl_node(struct ctrl_node *cn)
 {
-	int8_t i;
-
-	for (i = DBGL_MIN; i <= DBGL_MAX; i++)
+	for (int i = DBGL_MIN; i <= DBGL_MAX; i++)
 	{
 		OLForEach(pEntry, LIST_ENTRY, dbgl_clients[i])
 		{
@@ -98,7 +99,7 @@ static void remove_dbgl_node(struct ctrl_node *cn)
 	}
 }
 
-static void add_dbgl_node(struct ctrl_node *cn, int dbgl)
+static void add_dbgl_node(struct ctrl_node *cn, int8_t dbgl)
 {
 	if (!cn || dbgl < DBGL_MIN || dbgl > DBGL_MAX)
 		return;
@@ -118,7 +119,7 @@ static void add_dbgl_node(struct ctrl_node *cn, int dbgl)
 
 static int daemonize()
 {
-	int fd;
+	int fd = 0;
 
 	switch (fork())
 	{
@@ -260,10 +261,11 @@ void close_ctrl_node(uint8_t cmd, struct ctrl_node *ctrl_node)
 
 			return;
 		}
-		else if ((cmd == CTRL_CLOSE_STRAIGHT && cn == ctrl_node) ||
-						 (cmd == CTRL_PURGE_ALL) ||
-						 (cmd == CTRL_CLEANUP && cn->closing_stamp && /* cn->fd <= 0  && */
-							GREAT_U32(batman_time, cn->closing_stamp + CTRL_CLOSING_TIMEOUT)))
+
+		if ((cmd == CTRL_CLOSE_STRAIGHT && cn == ctrl_node) ||
+				(cmd == CTRL_PURGE_ALL) ||
+				(cmd == CTRL_CLEANUP && cn->closing_stamp && /* cn->fd <= 0  && */
+				 GREAT_U32(batman_time, cn->closing_stamp + CTRL_CLOSING_TIMEOUT)))
 		{
 			if (cn->fd > 0 && cn->fd != STDOUT_FILENO)
 			{
@@ -288,7 +290,7 @@ void accept_ctrl_node(void)
 {
 	struct sockaddr addr;
 	socklen_t addr_size = sizeof(struct sockaddr);
-	int32_t unix_opts;
+	int32_t unix_opts = 0;
 
 	int fd = accept(unix_sock, (struct sockaddr *)&addr, &addr_size);
 
@@ -349,17 +351,15 @@ void handle_ctrl_node(struct ctrl_node *cn)
 		//stephan: remove debug print on closed and already freed cn
 		//bmxd crashed when bmxd -cd4
 	}
-
-	return;
 }
-
-#ifndef TESTDEBUG
 
 // returns DBG_HIST_NEW, DBG_HIST_MUTING, or  DBG_HIST_MUTED
 static uint8_t check_dbg_history(int8_t dbgl, char *s, uint32_t expire, uint16_t check_len)
 {
 	static int r = 0;
-	int i, unused_i, h;
+	int i = 0;
+	int unused_i = 0;
+	int h = 0;
 
 	check_len = MIN(check_len, DBG_HIST_TEXT_SIZE);
 
@@ -392,8 +392,7 @@ static uint8_t check_dbg_history(int8_t dbgl, char *s, uint32_t expire, uint16_t
 				if (dbgl_history[h][i].catched == 2)
 					return DBG_HIST_MUTING;
 
-				else
-					return DBG_HIST_MUTED;
+				return DBG_HIST_MUTED;
 			}
 
 			dbgl_history[h][i].print_stamp = batman_time;
@@ -432,7 +431,8 @@ void dbg_printf(struct ctrl_node *cn, char *last, ...)
 		return;
 
 	static char s[MAX_DBG_STR_SIZE + 1];
-	ssize_t w, out = 0;
+	ssize_t w = 0;
+	ssize_t out = 0;
 	int i = 1;
 
 	va_list ap;
@@ -451,7 +451,7 @@ void dbg_printf(struct ctrl_node *cn, char *last, ...)
 		{
 			if (cn->dbgl != DBGL_ALL)
 			{
-				syslog(LOG_ERR, "failed %d times writing %d instead of %d/%d bytes (%s)! Giving up: %s\n",
+				syslog(mapSyslogPrio(DBGT_ERR), "failed %d times writing %d instead of %d/%d bytes (%s)! Giving up: %s\n",
 							 i, (int)w, (int)strlen(s + out), (int)strlen(s), strerror(errno), s + out);
 			}
 
@@ -474,7 +474,8 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 	static char *dbgt2str[] = {"", "INFO  ", "WARN  ", "ERROR "};
 
 	int16_t dbgl_out[DBGL_MAX + 1];
-	int i = 0, j;
+	int i = 0;
+	int j = 0;
 
 	uint8_t mute_dbgl_sys = DBG_HIST_NEW;
 	uint8_t mute_dbgl_changes = DBG_HIST_NEW;
@@ -488,7 +489,7 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 			printf("[%d %8llu] %s%s%s%s\n", My_pid, (unsigned long long)batman_time, dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
 
 		if (dbgl == DBGL_SYS)
-			syslog(LOG_ERR, "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
+			syslog(mapSyslogPrio(dbgt), "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
 
 		return;
 	}
@@ -530,10 +531,10 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 			mute_dbgl_sys = check_dbg_history(DBGL_SYS, s, expire, check_len);
 
 		if (mute_dbgl_sys != DBG_HIST_MUTED)
-			syslog(LOG_ERR, "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
+			syslog(mapSyslogPrio(dbgt), "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
 
 		if (mute_dbgl_sys == DBG_HIST_MUTING)
-			syslog(LOG_ERR, "%smuting further messages (with equal first %d bytes) for at most %d seconds\n",
+			syslog(mapSyslogPrio(dbgt), "%smuting further messages (with equal first %d bytes) for at most %d seconds\n",
 						 dbgt2str[DBGT_WARN], check_len, expire / 1000);
 	}
 
@@ -625,6 +626,7 @@ void dbg_mute(uint32_t check_len, int8_t dbgl, int8_t dbgt, char *last, ...)
 	debug_output(check_len, dbg_mute_to, 0, dbgl, dbgt, 0, dbg_string_out);
 }
 
+#ifndef NODEBUGALL
 void _dbgf_all(int8_t dbgt, char const *f, char *last, ...)
 {
 	va_list ap;
@@ -641,7 +643,7 @@ uint8_t __dbgf_all(void)
 
 	return YES;
 }
-#endif
+#endif //NODEBUGALL
 
 int (*load_config_cb)(uint8_t test, struct opt_type *opt, struct ctrl_node *cn) = NULL;
 
@@ -651,9 +653,10 @@ int (*derive_config)(char *reference, char *derivation, struct ctrl_node *cn) = 
 
 void get_init_string(int g_argc, char **g_argv)
 {
-	uint32_t size = 1, dbg_init_out = 0;
-	int i;
-	char *dbg_init_str;
+	uint32_t size = 1;
+	uint32_t dbg_init_out = 0;
+	int i = 0;
+	char *dbg_init_str = NULL;
 
 	for (i = 0; i < g_argc; i++)
 		size += (1 + strlen(g_argv[i]));
@@ -1709,7 +1712,7 @@ static int32_t _opt_connect(uint8_t cmd, struct opt_type *opt, struct ctrl_node 
 			unix_sock = 0;
 
 			if (loop_mode && !is_aborted())
-				bat_wait(loop_period / 1000, loop_period % 1000);
+				bat_wait(DEF_LOOP_PERIOD / 1000, DEF_LOOP_PERIOD % 1000);
 
 		} while (loop_mode && !is_aborted());
 
@@ -2023,17 +2026,6 @@ static int32_t track_opt_parent(uint8_t cmd, uint8_t save, struct opt_type *p_op
 								 c_patch->c_opt->long_name, c_patch->c_val ? ' ' : '-', c_patch->c_val);
 			}
 		}
-
-		// be pedantic only after startup (!on_the_fly) and not reload-config (!save)
-		if (!changed && on_the_fly && save && pedantic_check)
-		{
-			dbg_cn(cn, DBGL_SYS, DBGT_ERR, "--%s %s already configured",
-						 p_opt->long_name, p_patch->p_val);
-
-			// actually here we can be pedantic or not because cleanup_patch()
-			// have already checked for double applied options
-			return FAILURE;
-		}
 	}
 
 	return SUCCESS;
@@ -2142,16 +2134,6 @@ call_option_failure:
 				 patch ? patch->p_diff : -1,
 				 ad, opt->ival ? *(opt->ival) : 0, opt->imin, opt->imax, opt->idef,
 				 opt_cmd2str[cmd], opt->opt_t, on_the_fly, wordlen(in));
-
-	/* This results in too much side effects. And MUST be handled by calling function like apply_stream_opts()
-	if ( !on_the_fly  &&  !pedantic_cmd_check  &&  ( cmd == OPT_PATCH || cmd == OPT_ADJUST || cmd == OPT_CHECK || cmd == OPT_APPLY ) ) {
-		dbg( DBGL_SYS, DBGT_ERR,
-		"ignored SYNTAX ERROR in startup configuration due to disabled --%s! FIX YOUR CONFIG NOW !!",
-		ARG_PEDANTIC_CMDCHECK );
-
-		return SUCCESS;
-	}
-	*/
 
 	return FAILURE;
 }
@@ -2938,22 +2920,13 @@ static struct opt_type control_options[] =
 				{ODI, 3, 0, "loop_mode", 'l', A_PS0, A_ADM, A_INI, A_ARG, A_ANY, &loop_mode, 0, 1, 0, 0,
 				 0, "put client daemon in loop mode to periodically refresh debug information"},
 
-#ifndef LESS_OPTIONS
-				{ODI, 3, 0, "loop_period", 0, A_PS1, A_ADM, A_INI, A_ARG, A_ANY, &loop_period, MIN_LOOP_PERIOD, MAX_LOOP_PERIOD, DEF_LOOP_PERIOD, 0,
-				 ARG_VALUE_FORM, "periodicity in ms with which client daemon in loop-mode refreshes debug information"},
-#endif
-
 				{ODI, 3, 0, ARG_CONNECT, 'c', A_PS0, A_ADM, A_INI, A_ARG, A_EAT, 0, 0, 0, 0, opt_connect,
 				 0, "set client mode. Connect and forward remaining args to main routing daemon"},
 
 				//order=5: so when used during startup it also shows the config-file options
 				{ODI, 5, 0, ARG_SHOW_CHANGED, 'i', A_PS0, A_ADM, A_DYI, A_ARG, A_ANY, 0, 0, 0, 0, opt_show_info,
 				 0, "inform about configured options"},
-#ifndef LESS_OPTIONS
-				{ODI, 5, 0, ARG_PEDANTIC_CMDCHECK, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &pedantic_check, MIN_PEDANT_CHK, MAX_PEDANT_CHK, DEF_PEDANT_CHK, 0,
-				 ARG_VALUE_FORM, "disable/enable pedantic checking of command-line parameters and context -\n"
-												 "	( e.g. fail setting a parameter without changing it)"},
-#endif
+
 				{ODI, 5, 0, "dbg_mute_timeout", 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &dbg_mute_to, 0, 10000000, 100000, 0,
 				 ARG_VALUE_FORM, "set timeout in ms for muting frequent messages"},
 

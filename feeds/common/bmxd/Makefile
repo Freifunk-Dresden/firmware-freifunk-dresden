@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bmxd
-PKG_VERSION:=0.4
+PKG_VERSION:=0.6
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
@@ -20,7 +20,7 @@ define Package/bmxd
   DEFAULT:=y
   DEPENDS:=
   TITLE:=BMXD-Routing Protocol
-  URL:=http://download.ddmesh.de/
+#  URL:=https://gitlab.freifunk-dresden.de/
   SUBMENU:=Packages
 endef
 

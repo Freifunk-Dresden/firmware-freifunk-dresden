@@ -28,7 +28,6 @@
 #define DBGT_WARN 2
 #define DBGT_ERR 3
 
-//extern int debug_level;
 #define DBGL_MIN 0
 #define DBGL_SYS 0
 #define DBGL_ROUTES 1
@@ -45,9 +44,6 @@
 typedef uint64_t batman_time_t;
 
 extern int unix_sock;
-
-#define ARG_PEDANTIC_CMDCHECK "pedantic_cmd_check"
-
 extern int32_t Client_mode;
 
 #define CONNECTION_END_STR "$"
@@ -98,64 +94,43 @@ struct dbg_histogram
 	char text[DBG_HIST_TEXT_SIZE];
 };
 
-#ifndef TESTDEBUG
-
 #define DBG_HIST_NEW 0x00
 #define DBG_HIST_MUTING 0x01
 #define DBG_HIST_MUTED 0x02
 
 #ifdef NODEBUGALL
-#define dbgf_all(...) \
-	{                   \
-		;                 \
-	}
+	#define dbgf_all(...)
 #else
-#define dbgf_all(dbgt, ...)                   \
-	do                                          \
-	{                                           \
-		if (__dbgf_all())                         \
-		{                                         \
-			_dbgf_all(dbgt, __func__, __VA_ARGS__); \
-		}                                         \
-	} while (0)
+	#define dbgf_all(dbgt, ...)                   \
+		do                                          \
+		{                                           \
+			if (__dbgf_all())                         \
+			{                                         \
+				_dbgf_all(dbgt, __func__, __VA_ARGS__); \
+			}                                         \
+		} while (0)
+
+	void _dbgf_all(int8_t dbgt, char const *f, char *last, ...);
+	uint8_t __dbgf_all(void);
 #endif
 
-#define dbgf(dbgl, dbgt, ...) \
-	;                           \
-	_dbgf(dbgl, dbgt, __func__, __VA_ARGS__);
-#define dbgf_cn(cn, dbgl, dbgt, ...) \
-	;                                  \
-	_dbgf_cn(cn, dbgl, dbgt, __func__, __VA_ARGS__);
+#define dbgf(dbgl, dbgt, ...) _dbgf(dbgl, dbgt, __func__, __VA_ARGS__);
+#define dbgf_cn(cn, dbgl, dbgt, ...) _dbgf_cn(cn, dbgl, dbgt, __func__, __VA_ARGS__);
+void _dbgf(int8_t dbgl, int8_t dbgt, char const *f, char *last, ...);
+void _dbgf_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char const *f, char *last, ...);
 
 void dbg(int8_t dbgl, int8_t dbgt, char *last, ...);
-void _dbgf(int8_t dbgl, int8_t dbgt, char const *f, char *last, ...);
 void dbg_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char *last, ...);
-void _dbgf_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char const *f, char *last, ...);
 void dbg_mute(uint32_t check_len, int8_t dbgl, int8_t dbgt, char *last, ...);
-void _dbgf_all(int8_t dbgt, char const *f, char *last, ...);
-uint8_t __dbgf_all(void);
+
+
 
 void dbg_printf(struct ctrl_node *cn, char *last, ...);
 
-#else
-
-#define dbgf(dbgl, dbgt, ...) \
-	;                           \
-	printf(__VA_ARGS__)
-#define dbgf_cn(cn, dbgl, dbgt, ...) \
-	;                                  \
-	printf(__VA_ARGS__)
-#define dbg(dbgl, dbgt, ...) printf(__VA_ARGS__)
-#define dbg_cn(cn, dbgl, dbgt, ...) printf(__VA_ARGS__)
-#define dbg_mute(check_len, dbgl, dbgt, ...) printf(__VA_ARGS__)
-#define dbgf_all(dbgt, ...) printf(__VA_ARGS__)
-#define dbg_printf(cn, ...) printf(__VA_ARGS__)
-
-#endif
 
 void accept_ctrl_node(void);
 void handle_ctrl_node(struct ctrl_node *cn);
-void close_ctrl_node(uint8_t cmd, struct ctrl_node *cn);
+void close_ctrl_node(uint8_t cmd, struct ctrl_node *ctrl_node);
 struct ctrl_node *create_ctrl_node(int fd, void (*cn_fd_handler)(struct ctrl_node *), uint8_t authorized);
 
 #define REFERENCE_KEY_WORD "ref:"
@@ -166,10 +141,10 @@ struct ctrl_node *create_ctrl_node(int fd, void (*cn_fd_handler)(struct ctrl_nod
 
 
 /* opt_t types (Parent/Child, Single/Multiple, 0/1/N-arguments) */
-#define A_PS0 0x01
-#define A_PS1 0x02
-#define A_PMN 0x14
-#define A_CS1 0x22
+#define A_PS0 0x01 // parent, signle (one per command line), no args
+#define A_PS1 0x02 // parent, single, one argument
+#define A_PMN 0x14 // parent, multiple, n arguments
+#define A_CS1 0x22 // client, single, one argument
 
 /* auth_t types */
 #define A_ADM 0x10
@@ -331,7 +306,7 @@ enum opt_cmd
 // fd may be set (>0) or not (=0)
 // cmd==OPT_SET_POST / OPT_POST:
 //	s MBZ, return value is SUCCESS or FAILURE
-int32_t call_option(uint8_t del, uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *parent, char *in, struct ctrl_node *cn);
+int32_t call_option(uint8_t ad, uint8_t cmd, uint8_t save, struct opt_type *opt, struct opt_parent *patch, char *in, struct ctrl_node *cn);
 
 int32_t check_apply_parent_option(uint8_t del, uint8_t cmd, uint8_t _save, struct opt_type *opt, char *in, struct ctrl_node *cn);
 
@@ -353,7 +328,7 @@ int8_t func_for_each_opt(struct ctrl_node *cn, void *data, char *func_name,
 
 int respect_opt_order(uint8_t test, int8_t last, int8_t next, struct opt_type *on, uint8_t load_config, uint8_t cmd, struct ctrl_node *cn);
 
-int8_t apply_stream_opts(char *s, char *fallback_opt, uint8_t dryrun, uint8_t load_cfg, struct ctrl_node *cn);
+int8_t apply_stream_opts(char *s, char *fallback_opt, uint8_t cmd, uint8_t load_cfg, struct ctrl_node *cn);
 
 extern int (*load_config_cb)(uint8_t test, struct opt_type *opt, struct ctrl_node *cn);
 

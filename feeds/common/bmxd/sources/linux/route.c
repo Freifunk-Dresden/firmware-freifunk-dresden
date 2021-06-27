@@ -970,13 +970,8 @@ static void if_reconfigure_soft(struct batman_if *bif)
 		bif->if_singlehomed = YES;
 	}
 
-	bif->if_ant_diversity = 1;
-
 	if (bif->if_send_clones_conf != -1)
 		bif->if_send_clones = bif->if_send_clones_conf;
-
-	if (bif->if_ant_diversity_conf != -1)
-		bif->if_ant_diversity = bif->if_ant_diversity_conf;
 
 	if (bif->if_ttl_conf != -1)
 		bif->if_ttl = bif->if_ttl_conf;

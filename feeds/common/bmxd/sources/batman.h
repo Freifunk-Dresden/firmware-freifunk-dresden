@@ -108,12 +108,7 @@ enum ADGSN
 //#define TYPE_OF_WORD unsigned long /* you should choose something big, if you don't want to waste cpu */
 //#define WORD_BIT_SIZE ( sizeof(TYPE_OF_WORD) * 8 )
 
-#define UNUSED_RETVAL(x) \
-	{                      \
-		if (x)               \
-		{                    \
-		};                   \
-	}
+#define UNUSED_RETVAL(x) do { if(x){} } while(0)
 
 #define TP32 4294967296
 #define OV32 2147483647
@@ -192,10 +187,12 @@ extern uint32_t My_pid;
 #define ARG_TEST "test"
 #define ARG_SHOW_CHANGED "options"
 
+#define ARG_GW_SCRIPT "script"
+extern char * gw_scirpt_name;
+
 #define ARG_DEV "dev"
 #define ARG_DEV_TTL "ttl"
 #define ARG_DEV_CLONE "clone"
-#define ARG_DEV_ANTDVSTY "ant_diversity"
 #define ARG_DEV_LL "linklayer"
 #define ARG_DEV_HIDE "hide"
 
@@ -501,9 +498,6 @@ struct batman_if
 
 	int16_t if_send_clones_conf;
 	int16_t if_send_clones;
-
-	int16_t if_ant_diversity_conf;
-	int16_t if_ant_diversity;
 
 	int8_t if_singlehomed_conf;
 	int8_t if_singlehomed;

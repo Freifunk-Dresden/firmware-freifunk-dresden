@@ -23,7 +23,6 @@ REVISION_VERSION ="\" [md5:$(SOURCE_MD5)]\""
 
 # experimental or advanced defines (please dont touch):
 # -DNOPARANOIA		(makes bug-hunting impossible)		- ~2k
-# -DTESTDEBUG		(testing syntax of __VA_ARGS__ dbg...() macros)
 
 
 CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
@@ -37,7 +36,6 @@ CFLAGS += -Os -g0
 
 
 #CFLAGS += -DDEBUG_MALLOC -DMEMORY_USAGE
-#CFLAGS += -DTESTDEBUG
 #CFLAGS += -DNODEBUGALL
 
 LDFLAGS +=	-g3
