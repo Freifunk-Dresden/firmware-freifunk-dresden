@@ -442,6 +442,7 @@ else
 
 
 	if [ "$targetRegex" = "all" ]; then
+		ARG_TARET_ALL=1
 		targetRegex=".*"
 	fi
 
@@ -650,6 +651,10 @@ if [ $progress_max -eq 0 ]; then
 	exit 1
 fi
 
+# if "all" target is selected, then remove all compile status files
+test "${ARG_TARET_ALL}" = "1" && find $WORK_DIR/*/bin/ -name "${compile_status_file}" -delete
+
+
 # build loop, run through all targets listed in build.json
 targetIdx=1	# index 0 holds default values
 while true
@@ -669,7 +674,7 @@ do
 	test -z "$filterred" && continue
 
 
-  # only enable progressbar for tty
+	# only enable progressbar for tty
 	if [ "$_TERM" = "1" ]; then
 		show_progress $progress_counter $progress_max
 		progress_counter=$(( $progress_counter + 1 ))
@@ -929,7 +934,7 @@ EOM
 
 	# run make command
 	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
-	time -p make $BUILD_PARAMS
+	time -p make -j$((nproc)) $BUILD_PARAMS
 	error=$?
 	echo "make ret: $error"
 
