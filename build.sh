@@ -80,30 +80,64 @@ progressbar()
 {
   _value=$1
   _maxValue=$2
+  _marker=$3
 
-	if [ "$_TERM" = "1" ]; then
+	if [ "$_TERM" = "1" -a -n "$_value" -a -n "$_maxValue" ]; then
 		# get current number of terminal colums
-		_cols=$(tput cols)
+		cols=$(tput cols)
 
 		title="Progress: "
 		title_len=${#title}	# title length
 
-		let _progress=(${_value}*100/${_maxValue}*100)/100
+		let _progress=(${_value}*100/${_maxValue})
 		progress_string="$(printf ' %3u%% (%u/%u)' $_progress $_value $_maxValue )"
 		progress_strlen=${#progress_string}
 
 		# calulate length of bar
-		let _cols=$_cols-$title_len-2-$progress_strlen
-		let _left=($_progress*${_cols})/100
-		let _right=$_cols-$_left
+		len=$(( cols - title_len - 2 - progress_strlen))
 
-		# progress bar string
-		_sleft="$(printf %${_left}s)"
-		_sleft="${_sleft// /#}"
+		charsPerValue=$(( len / _maxValue))
+		# make len multiple of charsPerValue
+		len=$(( charsPerValue * _maxValue))
+		charSteps=$((len / charsPerValue))
 
-		_sright="$(printf %${_right}s)"
-		_sright="${_sright// /-}"
-		printf "${title}[${_sleft}${_sright}]${progress_string}"
+
+		# reduce len by number of _maxValue, because 
+		# marker are inserted into _bar which makes it
+		# longer again.
+		# consider length marker string
+		if [ -n "${_marker}" ]; then
+			len=$((len - (charSteps*${#_marker})))
+			charsPerValue=$((charsPerValue-${#_marker}))
+		fi
+		absCharPos=$((charsPerValue * _value))
+
+
+		_bar=""
+		pos=0
+		nextMarkerPos=$charsPerValue
+		while [ $pos -lt $len ] 
+		do
+			pos=$((pos + 1))
+		
+			if [ $pos -le $absCharPos ]; then
+				_bar="${_bar}#"
+			else
+				_bar="${_bar}-"
+			fi
+
+			[ $pos -ge $len ] && break;
+
+			if [ -n "${_marker}" -a $pos -eq $nextMarkerPos ]; then
+				_bar="${_bar}${_marker}"
+				nextMarkerPos=$(( nextMarkerPos + charsPerValue))
+			fi
+
+		done
+
+
+		# construct complete bar
+		printf "%s[%s]%s" "${title}" "${_bar}" "${progress_string}"
 
 		# clear until end of line
 		tput el
@@ -132,7 +166,8 @@ show_progress()
 		[ -n "$1" ] && _count=$1
 		[ -n "$2" ] && _max=$2
 
-		[ "$_max" -eq 0 ] && return
+		[ -z "$_count" ] && return	
+		[ -z "$_max" -o "$_max" -eq 0 ] && return
 
 		row=$(tput lines)
 
@@ -142,7 +177,7 @@ show_progress()
 
 		# print progress bar at bottom
 		tput cup $(( $row - 1)) 0
-		progressbar $_count $_max
+		progressbar $_count $_max "|"
 
 		# print empty line above
 		tput cup $(( $row - 2)) 0
@@ -680,7 +715,6 @@ do
 		progress_counter=$(( $progress_counter + 1 ))
 		echo ""
 	fi
-
 
 	# check each config variable and use defaults when no value was defined
 	echo -e "${C_YELLOW}process configuration${C_NONE}"
