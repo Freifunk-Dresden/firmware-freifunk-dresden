@@ -96,15 +96,14 @@ char *get_human_uptime(uint32_t reference, int more)
 
 	if (more)
 	{
-		sprintf(ut, "%2i:%i%i:%i%i:%i%i (ms= %lx.%08lx)",
+		sprintf(ut, "%2i:%i%i:%i%i:%i%i",
 						(int)(((batman_time_sec - reference) / 86400)),
 						(int)(((batman_time_sec - reference) % 86400) / 36000) % 10,
 						(int)(((batman_time_sec - reference) % 86400) / 3600) % 10,
 						(int)(((batman_time_sec - reference) % 3600) / 600) % 10,
 						(int)(((batman_time_sec - reference) % 3600) / 60) % 10,
 						(int)(((batman_time_sec - reference) % 60) / 10) % 10,
-						(int)(((batman_time_sec - reference) % 60)) % 10,
-						(unsigned long)((batman_time >> 32) & 0xffffffff), (unsigned long)(batman_time & 0xffffffff));
+						(int)(((batman_time_sec - reference) % 60)) % 10);
 	}
 	else
 	{
