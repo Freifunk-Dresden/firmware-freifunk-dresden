@@ -38,7 +38,7 @@ CFLAGS += -Os -g0
 #CFLAGS += -DDEBUG_MALLOC -DMEMORY_USAGE
 #CFLAGS += -DNODEBUGALL
 
-LDFLAGS +=	-g3
+#LDFLAGS = 
 # -static
 # -pg
 
@@ -52,13 +52,13 @@ all:
 	$(MAKE) $(BINARY_NAME)
 
 $(BINARY_NAME):	$(OBJS) Makefile
-	$(CC)  $(OBJS) -o $@  $(LDFLAGS) $(EXTRA_LDFLAGS)
+	$(CC)  $(OBJS) -o $@  $(LDFLAGS)
 
 %.o:	%.c %.h Makefile $(SRC_H)
-	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o:	%.c Makefile $(SRC_H)
-	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
 strip:	all
