@@ -974,7 +974,8 @@ EOM
 
 	# write build status which is displayed by "build.sh list"
 	# , \"\":\"\"
-  echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${target_dir}/${compile_status_file}"
+	mkdir -p ${target_dir}
+	echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${target_dir}/${compile_status_file}"
 
 	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
@@ -1001,7 +1002,7 @@ EOM
 		exit 1
 	fi
 
-	echo -e "${C_PURPLE}images created in${C_NONE} ${C_GREEN}${target_dir}...${C_NONE}"
+	echo -e "${C_PURPLE}images created in${C_NONE} ${C_GREEN}${target_dir}${C_NONE}"
 
 done
 
