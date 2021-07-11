@@ -1,15 +1,20 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 MAINTAINER stephan@freifunk-dresden.de
 
 
-RUN apt-get update && \
-        apt-get full-upgrade -y && \
-        apt-get install -y nodejs git build-essential devscripts debhelper \
+RUN apt-get update && apt-get full-upgrade -y
+
+# installing tzdata requires user input normally.
+# to avoid blocking tzdata must be installed differently
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata 
+
+RUN apt-get install -y nodejs git build-essential devscripts debhelper \
                 dh-systemd python python3 dh-python libssl-dev libncurses5-dev unzip \
                 gawk zlib1g-dev subversion gcc-multilib flex gettext curl \
                 wget time rsync jq \
-                python-pip python-pathlib python-pathlib2 python-scandir && \
-        apt-get clean
+                python3-pip python3-pypathlib python-pathlib2 python-scandir \
+		automake autoconf m4 
+RUN apt-get clean
 
 # only used when starting container by our self (not by gitlab)
 # gitlab runner makes ONLY a bind mount to workdir and works a root user
