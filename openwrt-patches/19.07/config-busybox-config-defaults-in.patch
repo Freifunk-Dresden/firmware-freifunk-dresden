@@ -1,5 +1,6 @@
---- buildroot/package/utils/busybox/Config-defaults.in.original 2019-09-15 19:17:29.811216595 +0200
-+++ buildroot/package/utils/busybox/Config-defaults.in  2019-09-15 19:29:50.381681392 +0200
+diff -Naur --suppress-blank-empty --strip-trailing-cr package.orig/utils/busybox/Config-defaults.in package/utils/busybox/Config-defaults.in
+--- buildroot/package.orig/utils/busybox/Config-defaults.in	2021-07-11 13:24:29.651020974 +0200
++++ buildroot/package/utils/busybox/Config-defaults.in	2021-07-11 14:01:54.911714413 +0200
 @@ -819,7 +819,7 @@
  	default y
  config BUSYBOX_DEFAULT_TIMEOUT
@@ -66,7 +67,15 @@
  config BUSYBOX_DEFAULT_FEATURE_SWAPONOFF_LABEL
  	bool
  	default n
-@@ -2360,7 +2360,7 @@
+@@ -2158,7 +2158,6 @@
+ 	default n
+ config BUSYBOX_DEFAULT_FEATURE_IPV6
+ 	bool
+-	default y if IPV6
+ 	default n
+ config BUSYBOX_DEFAULT_FEATURE_UNIX_LOCAL
+ 	bool
+@@ -2360,7 +2359,7 @@
  	default "/etc/iproute2"
  config BUSYBOX_DEFAULT_FEATURE_IP_TUNNEL
  	bool
@@ -75,7 +84,7 @@
  config BUSYBOX_DEFAULT_FEATURE_IP_RULE
  	bool
  	default y
-@@ -2735,7 +2735,7 @@
+@@ -2735,7 +2734,7 @@
  	default n
  config BUSYBOX_DEFAULT_PSTREE
  	bool
@@ -84,7 +93,7 @@
  config BUSYBOX_DEFAULT_PWDX
  	bool
  	default n
-@@ -2882,7 +2882,7 @@
+@@ -2882,7 +2881,7 @@
  	default y
  config BUSYBOX_DEFAULT_ASH_OPTIMIZE_FOR_SIZE
  	bool
