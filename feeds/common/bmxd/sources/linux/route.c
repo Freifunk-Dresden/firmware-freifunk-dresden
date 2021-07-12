@@ -1664,9 +1664,9 @@ void check_interfaces()
 
 		if ((!bif->if_active) && (is_interface_up(bif->dev)))
 		{
-//se: allow enabling interfaces
+//se: allow enabling interfaces (I disable this code to allow all interfaces with same IP)
 //original is enabled.
-#if 1
+#if 0
 			struct batman_if *tmp_bif = NULL;
 			OLForEach(b, struct batman_if, if_list)
 			{
