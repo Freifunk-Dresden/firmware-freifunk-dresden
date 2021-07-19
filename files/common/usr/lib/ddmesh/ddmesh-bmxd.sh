@@ -26,13 +26,14 @@ touch $DB_PATH/status
 touch $DB_PATH/networks	# network ids
 touch $STAT_DIR/gateway_usage
 
+GATEWAY_HYSTERESIS="20"
 
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
 if [ "$ARG1" = "start" -o "$ARG1" = "no_gateway" ]; then
 	ROUTING_CLASS="$(uci -q get ddmesh.bmxd.routing_class)"
 	ROUTING_CLASS="${ROUTING_CLASS:-3}"
-	ROUTING_CLASS="-r $ROUTING_CLASS --gateway_hysteresis 20"
+	ROUTING_CLASS="-r $ROUTING_CLASS --gateway_hysteresis $GATEWAY_HYSTERESIS"
 fi
 
 if [ "$ARG1" = "start" -o "$ARG1" = "gateway" ]; then
@@ -87,7 +88,7 @@ case "$ARG1" in
 	#SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"
 	SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 	TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre"
-	TUNING_OPTS="--purge_timeout 20 --gateway_hysteresis 100 --script /usr/lib/bmxd/bmxd-gateway.sh"
+	TUNING_OPTS="--purge_timeout 20 --gateway_hysteresis $GATEWAY_HYSTERESIS --script /usr/lib/bmxd/bmxd-gateway.sh"
 
 	DAEMON_OPTS="$SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
 
