@@ -485,7 +485,7 @@ static void init_link_node(struct orig_node *orig_node)
 	avl_insert(&link_avl, &ln->orig_addr, ln);
 }
 
-static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, SQ_TYPE ogm_seqno)
+static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, char * ndev, SQ_TYPE ogm_seqno)
 {
 	// this originator IP is somehow known..(has ever been valid)
 	if (orig_node->last_valid_time || orig_node->last_valid_sqn)
@@ -514,9 +514,9 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, S
 				LESS_U32(batman_time, (orig_node->last_valid_time + (1000 * dad_to))))
 		{
 			dbg_mute(26, DBGL_SYS, DBGT_WARN,
-							 "DAD-alert! %s  via NB %s  with out-of-range SQN %i  lounge-margin %i "
-							 "lvld %i  at %llu  dad_to %d  wavg %d  Reinit in %d s",
-							 orig_node->orig_str, ipStr(neigh), ogm_seqno, my_path_lounge,
+							 "DAD-alert! %s  via NB %s (%s); SQN %i out-of-range;  lounge-margin %i "
+							 "(last valid SQN %i  at %llu)  dad_to %d  wavg %d  Reinit in %d s",
+							 orig_node->orig_str, ipStr(neigh),ndev?ndev:"NULL", ogm_seqno, my_path_lounge,
 							 orig_node->last_valid_sqn, (unsigned long long)orig_node->last_valid_time,
 							 dad_to, WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP),
 							 ((orig_node->last_valid_time + (1000 * dad_to)) - batman_time) / 1000);
@@ -597,7 +597,7 @@ static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff
 		}
 
 		if (pip->EXT_PIP_FIELD_PIPSEQNO && //remain compatible to COMPAT_VERSION 10
-				validate_orig_seqno(orig_node->primary_orig_node, 0, ntohs(pip->EXT_PIP_FIELD_PIPSEQNO)) == FAILURE)
+				validate_orig_seqno(orig_node->primary_orig_node, 0, "", ntohs(pip->EXT_PIP_FIELD_PIPSEQNO)) == FAILURE)
 		{
 			dbg(DBGL_SYS, DBGT_WARN, "validation primary originator %15s failed",
 					ipStr(orig_node->primary_orig_node->orig));
@@ -1184,7 +1184,11 @@ void process_ogm(struct msg_buff *mb)
 	mb->orig_node = orig_node =
 			(oCtx & IS_DIRECT_NEIGH) ? orig_node_neigh : get_orig_node(ogm->orig, YES /*create*/);
 
-	if (validate_orig_seqno(orig_node, neigh, ogm->ogm_seqno) == FAILURE)
+	char *ndev = NULL;
+	if(orig_node_neigh && orig_node_neigh->router && orig_node_neigh->router->key.iif)
+	{ndev = orig_node_neigh->router->key.iif->dev;}
+
+	if (validate_orig_seqno(orig_node, neigh, ndev, ogm->ogm_seqno) == FAILURE)
 	{
 		dbgf_all(DBGT_WARN, "drop OGM: %15s, via NB %15s, SQN %i\n",
 						 ipStr(ogm->orig), mb->neigh_str, ogm->ogm_seqno);
