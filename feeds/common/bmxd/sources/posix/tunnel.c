@@ -1412,7 +1412,7 @@ static struct opt_type tunnel_options[] = {
 										 "	2 -> permanently select most stable GW accoridng to measurement \n"
 										 "	3 -> dynamically switch to most stable GW"},
 
-		{ODI, 5, 0, ARG_GW_HYSTERESIS, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &gw_hysteresis, MIN_GW_HYSTERE, MIN_GW_HYSTERE, DEF_GW_HYSTERE, 0,
+		{ODI, 5, 0, ARG_GW_HYSTERESIS, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &gw_hysteresis, MIN_GW_HYSTERE, MAX_GW_HYSTERE, DEF_GW_HYSTERE, 0,
 		 ARG_VALUE_FORM, "set number of additional rcvd OGMs before changing to more stable GW (only relevant for -r3 GW-clients)"},
 
 		{ODI, 5, 0, "preferred_gateway", 'p', A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_rt_pref,
