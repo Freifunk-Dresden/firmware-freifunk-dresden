@@ -524,13 +524,6 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 			return FAILURE;
 		}
 	}
-	else
-	{
-		// init orig sqns to reasonable values
-		//stephan: init values
-		orig_node->last_valid_sqn = ogm_seqno;
-		orig_node->last_valid_time = batman_time;
-	}
 
 	return SUCCESS;
 }
