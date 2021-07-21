@@ -490,15 +490,22 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 	// this originator IP is somehow known..(has ever been valid)
 	if (orig_node->last_valid_time || orig_node->last_valid_sqn)
 	{
+		//my_path_lounge ist aktuell auf 8 gesetzt. heisst, dass nur ogm verworfen werden, bei dennen die
+		// seqno mind 1+8 alt sind. alle anderen werden noch weiter verarbeitet, da diese ueber andere
+		// interfaces kommen koennen und damit die qualitat uber diese 8 berechnet wird und das routing
+		// gesteuert wird.
+		// grob: wenn last_valid_sqn neuer ist als aktuelle, dann verwerfen.
+		//
 		if ((uint16_t)(ogm_seqno + my_path_lounge - orig_node->last_valid_sqn) >
 				MAX_SEQNO - orig_node->pws)
 		{
 			dbg_mute(25, DBGL_CHANGES, DBGT_WARN,
-							 "drop OGM %-15s  via %4s NB %-15s  with old SQN %5i  "
+							 "drop OGM %-15s  via %4s NB %-15s (%s) with old SQN %5i  "
 							 "(prev %5i  lounge-margin %2i  pws %3d  lvld %llu) !",
 							 orig_node->orig_str,
 							 (orig_node->router && orig_node->router->key.addr == neigh) ? "best" : "altn",
 							 ipStr(neigh),
+							 ndev?ndev:"NULL",
 							 ogm_seqno,
 							 orig_node->last_valid_sqn,
 							 my_path_lounge, orig_node->pws, (unsigned long long)orig_node->last_valid_time);
@@ -506,6 +513,15 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 			return FAILURE;
 		}
 
+// das funktioniert nicht richig, da auch gueltige eigene ogms ueber interfaces (mit bmx_prime inteface ip
+// oder auch ip vom link interface).
+// DAD (duplicate ip) wenn ich eine ogm bekomme, wo ich fuer die ip/node bereits eine andere seqno
+// habe, die nicht innerhalb von pws oder my_path_lounge (keine ahnung welches fenster) liegt.
+// also irgendwie nicht neuer ist, als die gespeicherte.
+// DAD aber genauso nur machen, wenn meine gespeicherte seqno nicht zu alt ist. damit wurde dann
+// neue ogms wieder zugelassen mit anderen seqno.
+#if 0
+//original:
 		if ( // if seqno is more than 10 times out of dad timeout
 				((uint16_t)(ogm_seqno + my_path_lounge - orig_node->last_valid_sqn)) >
 						(my_path_lounge +
@@ -523,6 +539,46 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 
 			return FAILURE;
 		}
+#else
+//stephan
+	// gibt es einen knoten mit gleicher ip, so ist sehr wahrscheinlich die sequenznummer sehr verschieden
+	// zur letzten. Wie oben, betrachte ich aber nur kuerzlich empfangene ogms.
+	//Denn: aeltere ogms wurde bedeuten, dass ein knoten mit gleicher ip keine ogms mehr schickt und
+	// dann diese ip wieder zugelassen werden muss.
+	//Aber: bei dem vergleich muss ich auch my_path_lounge alte sqn beachten. es koennen my_path_lounge
+	//     aeltere (vergangene sqn) ogms einreffen, die kein DAD verusachen duerfen.
+
+	// seqnoDiff is the positiv delta considering wrapping.
+  int32_t seqnoDiff = 	(int32_t)ogm_seqno + my_path_lounge >= orig_node->last_valid_sqn
+											? (int32_t)ogm_seqno + my_path_lounge - orig_node->last_valid_sqn
+											: (int32_t)MAX_SEQNO - (int32_t)orig_node->last_valid_sqn + ogm_seqno;
+
+
+	const uint16_t MIN_DAD_SEQNO_DIFF = 100;
+
+		if(    LESS_U32(batman_time, (orig_node->last_valid_time + (1000 * dad_to)))	// check ogm alter
+			  // check seqno und erlaube minds die my_path_lounge (da diese ogms alle die gleichen sein koennten - gleiche seqno)
+			  && seqnoDiff > MIN_DAD_SEQNO_DIFF
+
+				// check IP against all IPs of this node. consider only ips from other nodes
+				&& neigh 															// neigh is zero if called from validate_primary_orig
+				&& orig_node->orig != neigh 					// must not be IP from my own secondary interfaces
+				&& orig_node->orig != primary_addr  	// and not my primary IP
+		)
+		{
+			dbg_mute(26, DBGL_SYS, DBGT_WARN,
+							 "DAD-alert! %s  via NB %s (%s); SQN %i out-of-range;  lounge-margin %i "
+							 "(last valid SQN %i  at %llu, diff:%i)  dad_to %d  wavg %d  Reinit in %d s",
+							 orig_node->orig_str, ipStr(neigh), ndev?ndev:"NULL", ogm_seqno, my_path_lounge,
+							 orig_node->last_valid_sqn, (unsigned long long)orig_node->last_valid_time,
+							 seqnoDiff,
+							 dad_to, WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP),
+							 ((orig_node->last_valid_time + (1000 * dad_to)) - batman_time) / 1000);
+
+			return FAILURE;
+		}
+
+#endif
 	}
 
 	return SUCCESS;
