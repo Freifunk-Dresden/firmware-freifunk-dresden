@@ -302,6 +302,7 @@ case "$1" in
 				secret_file="/tmp/wg.pki"
 				echo $secret > $secret_file
 				ip link add $tbbwg_ifname type wireguard
+				ip link set $tbbwg_ifname mtu 1320
 				ip addr add "$local_wg_ip/32" dev $tbbwg_ifname
 				wg set $tbbwg_ifname private-key $secret_file
 
