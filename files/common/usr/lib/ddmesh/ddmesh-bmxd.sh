@@ -26,7 +26,7 @@ touch $DB_PATH/status
 touch $DB_PATH/networks	# network ids
 touch $STAT_DIR/gateway_usage
 
-GATEWAY_HYSTERESIS="20"
+GATEWAY_HYSTERESIS="100"
 
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
@@ -68,7 +68,7 @@ case "$ARG1" in
 
     # needed during async boot
     /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
-    
+
 	#add wifi, if hotplug event did occur before starting bmxd
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 	if [ -n "$net_ifname" ]; then
@@ -150,7 +150,7 @@ case "$ARG1" in
 		killall -9 $DAEMON
 		bmxd_restart=1
 
-		
+
 	fi
  	# connection check; if bmxd hangs, kill it
 	# check for existance of "timeout" cmd, else bmxd will be killed every time
