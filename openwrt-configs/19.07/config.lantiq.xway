@@ -84,7 +84,7 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_arcadyan_arv7519pw is not set
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_audiocodes_mp-252 is not set
 CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_avm_fritz7312=y
-# CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_avm_fritz7320 is not set
+CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_avm_fritz7320=y
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_bt_homehub-v2b is not set
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_bt_homehub-v3a is not set
 # CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_buffalo_wbmr-hp-g300h-a is not set
