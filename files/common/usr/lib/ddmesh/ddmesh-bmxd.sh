@@ -167,7 +167,6 @@ case "$ARG1" in
 		# delete file, to reset timeout
 		rm $WD_FILE
 		killall -9 $DAEMON
-		
 		bmxd_restart=1
 
 
