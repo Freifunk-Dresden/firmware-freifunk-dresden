@@ -46,7 +46,7 @@ CONFIG_TARGET_ramips=y
 # CONFIG_TARGET_ramips_rt288x is not set
 CONFIG_TARGET_ramips_rt305x=y
 # CONFIG_TARGET_ramips_rt3883 is not set
-# CONFIG_TARGET_MULTI_PROFILE is not set
+CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ramips_rt305x_Default is not set
 # CONFIG_TARGET_ramips_rt305x_DEVICE_px-4885-4M is not set
 # CONFIG_TARGET_ramips_rt305x_DEVICE_px-4885-8M is not set
@@ -86,7 +86,7 @@ CONFIG_TARGET_ramips_rt305x=y
 # CONFIG_TARGET_ramips_rt305x_DEVICE_dir-600-b1 is not set
 # CONFIG_TARGET_ramips_rt305x_DEVICE_dir-610-a1 is not set
 # CONFIG_TARGET_ramips_rt305x_DEVICE_dir-615-d is not set
-CONFIG_TARGET_ramips_rt305x_DEVICE_dir-615-h1=y
+# CONFIG_TARGET_ramips_rt305x_DEVICE_dir-615-h1 is not set
 # CONFIG_TARGET_ramips_rt305x_DEVICE_dir-620-a1 is not set
 # CONFIG_TARGET_ramips_rt305x_DEVICE_dir-620-d1 is not set
 # CONFIG_TARGET_ramips_rt305x_DEVICE_dwr-512-b is not set
@@ -154,11 +154,122 @@ CONFIG_TARGET_ramips_rt305x_DEVICE_dir-615-h1=y
 # CONFIG_TARGET_ramips_rt305x_DEVICE_kn is not set
 # CONFIG_TARGET_ramips_rt305x_DEVICE_nbg-419n is not set
 # CONFIG_TARGET_ramips_rt305x_DEVICE_nbg-419n2 is not set
+
+#
+# Target Devices
+#
+# CONFIG_TARGET_ALL_PROFILES is not set
+# CONFIG_TARGET_PER_DEVICE_ROOTFS is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_px-4885-4M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_px-4885-8M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_carambola is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_a5-v11 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_air3gii is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_w502u is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_ALL02393G is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_all0256n-4M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_all0256n-8M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_all5002 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_all5003 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_asl26555-8M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_asl26555-16M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_freestation5 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_atp-52b is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_awapn2403 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_awm002-evb-4M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_awm002-evb-8M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_rt-g32-b1 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_rt-n10-plus is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_rt-n13u is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wl-330n is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wl-330n3g is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wr6202 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_mr-102n is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_hw550-3g is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_f5d8235-v2 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_f7c027 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_whr-g300n is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dap-1350 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_DCS930 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_DCS930LB1 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-300-b1 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-300-b7 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-320-b1 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-600-b1 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-610-a1 is not set
+CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-615-d=y
+CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-615-h1=y
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-620-a1 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-620-d1 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dwr-512-b is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wizard8800 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_3g-6200n is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_3g-6200nl is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_esr-9753 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_fonera20n is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_mpr-a1 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_mpr-a2 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_broadway is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_hlk-rm04 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_ht-tm02 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_d105 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_hg255d is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_m2m is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_jhr-n805r is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_jhr-n825r is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_jhr-n926r is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_mofi3500-3gn is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_nw718 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wnce2001 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_bc2 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wt1520-4M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wt1520-8M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_nixcore-x1-16M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_nixcore-x1-8M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_miniembplug is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_miniembwifi is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_psr-680w is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_mzk-dp150n is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_mzk-w300nh2 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_mzk-wdpr is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_ip2202 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_m3 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_m4-4M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_m4-8M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_x5 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_x8 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_pwh2004 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_v22rw-2x2 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_rt5350f-olinuxino is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_rt5350f-olinuxino-evb is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_WL-341V3 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wl-351 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_sl-r7205 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wcr-150gn is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_rut5xx is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_3g150b is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_3g300m is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_w150m is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_w306r-v20 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_tew-638apb-v2 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_tew-714tru is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_ur-326n4g is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_ur-336un is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_vocore-16M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_vocore-8M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_ncs601w is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wizfi630a is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wr512-3gn-4M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wr512-3gn-8M is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_xdxrn502j is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_zorlik_zl5900v2 is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_kn is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_nbg-419n is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_nbg-419n2 is not set
 CONFIG_HAS_SUBTARGETS=y
 CONFIG_HAS_DEVICES=y
 CONFIG_TARGET_BOARD="ramips"
 CONFIG_TARGET_SUBTARGET="rt305x"
-CONFIG_TARGET_PROFILE="DEVICE_dir-615-h1"
 CONFIG_TARGET_ARCH_PACKAGES="mipsel_24kc"
 CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mno-branch-likely -mips32r2 -mtune=24kc"
 CONFIG_CPU_TYPE="24kc"
