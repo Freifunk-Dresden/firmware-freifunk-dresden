@@ -11,12 +11,10 @@ GEO_LAST=/var/geoloc-last
 GEO_CURR=/var/geoloc-current
 touch $GEO_CURR $GEO_LAST
 
-test -n "$1" && eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
-
 # remove my own macs from scan
 bssid="$(uci get credentials.wifi_2g.bssid)"
 own_macs=$(iwinfo | awk '/Access Point/{printf("%s ", gensub(/.*Access Point: /,"",$0))} END{printf("'$bssid'")}')
-
+# echo "one_macs:[$own_macs]"
 # remove stored macs
 user_macs=''
 store_ignore_macs() {
@@ -33,7 +31,7 @@ scan()
 {
   "considerIp": "false",
   "wifiAccessPoints": [
-$(iwinfo $net_ifname scan | awk '
+$(iwinfo wifi2ap scan | awk '
 BEGIN{
 	split(ENVIRON["ignore_macs"],ignore_macs);
 }
@@ -87,6 +85,7 @@ check_update_allowed()
  do
 	eval $(echo "$r" | jsonfilter -e mac='@.macAddress' -e signal='@.signalStrength')
 	echo "$mac $signal" >> $GEO_CURR
+#	echo "$mac $signal"
  done
 
  # check if new list still contains mac from old list
