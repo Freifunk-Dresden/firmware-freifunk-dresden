@@ -63,7 +63,7 @@ export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+
 			if(a[1]==$1) { stat=a[2]; break; }
 		}
 		close(statfile)
-		p=ENVIRON["preferred"]
+		p="^" ENVIRON["preferred"] "$"
 		pref = p && match($1,p) ? "<img src=\"/images/yes.png\">" : ""
  		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",c,pref,img,stat,getnode($1),$1,$1,$2,$3,$3,rest);
 		if(c==1)c=2;else c=1;
