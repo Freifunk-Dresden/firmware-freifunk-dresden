@@ -434,7 +434,7 @@ fi
 if [ "$1" = "feed-revisions" ]; then
 
 	REPOS="https://git.openwrt.org/feed/packages.git"
-	REPOS="$REPOS https://git.openwrt.org/project/luci.git"
+	# REPOS="$REPOS https://git.openwrt.org/project/luci.git"
 	REPOS="$REPOS https://git.openwrt.org/feed/routing.git"
 	REPOS="$REPOS https://git.openwrt.org/feed/telephony.git"
 
