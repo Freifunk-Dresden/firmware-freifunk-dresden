@@ -18,6 +18,7 @@
  */
 
 #include <stdio.h>
+#include <limits.h>
 #include <string.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
@@ -548,13 +549,19 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 	//Aber: bei dem vergleich muss ich auch my_path_lounge alte sqn beachten. es koennen my_path_lounge
 	//     aeltere (vergangene sqn) ogms einreffen, die kein DAD verusachen duerfen.
 
-	// seqnoDiff is the positive delta considering wrapping.
-  int32_t seqnoDiff = 	 (int32_t)ogm_seqno  - (int32_t)orig_node->last_valid_sqn;
+	// maximal difference between seqno and last_valid_sqn. This is a very low number, so that
+	// it is easy to detect data type 16bit wrapping
 	const uint16_t MIN_DAD_SEQNO_DIFF = 100 + my_path_lounge;
 
-		if(    batman_time < (orig_node->last_valid_time + (1000 * dad_to))	// check ogm alter in [ms]
+	// seqnoDiff is the positive delta considering wrapping.
+	uint16_t seqnoDiff = ogm_seqno >= orig_node->last_valid_sqn
+											? ogm_seqno - orig_node->last_valid_sqn
+											: ( USHRT_MAX - orig_node->last_valid_sqn) + ogm_seqno;
+
+
+		if(    batman_time < (orig_node->last_valid_time + (1000 * dad_to))	//time check ogm alter in [ms]
 			  // check seqno und erlaube minds die my_path_lounge (da diese ogms alle die gleichen sein koennten - gleiche seqno)
-			  && abs(seqnoDiff) > MIN_DAD_SEQNO_DIFF
+			  && seqnoDiff > MIN_DAD_SEQNO_DIFF
 
 				// check IP against all IPs of this node. consider only ips from other nodes
 				&& neigh 															// neigh is zero if called from validate_primary_orig
