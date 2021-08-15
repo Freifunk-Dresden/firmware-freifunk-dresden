@@ -138,7 +138,7 @@ void register_task(uint32_t timeout, void (*task)(void *), void *data)
 	OLForEach(tmp_tn, struct task_node, task_list)
 	{
 
-		if (GREAT_U32(tmp_tn->expire, tn->expire))
+		if ( tmp_tn->expire > tn->expire )
 		{
 			OLInsertTailList((PLIST_ENTRY)tmp_tn, (PLIST_ENTRY)tn);
 			inserted = 1;
@@ -177,7 +177,7 @@ uint32_t whats_next(void)
 
 	OLForEach(tn, struct task_node, task_list)
 	{
-		if (LSEQ_U32(tn->expire, batman_time))
+		if (tn->expire <= batman_time)
 		{
 			OLRemoveEntry(tn);
 
@@ -357,7 +357,7 @@ static void aggregate_outstanding_ogms(void *unused)
 
 	OLForEach(send_node, struct send_node, send_list)
 	{
-		if (GREAT_U32(send_node->send_time, batman_time))
+		if ( send_node->send_time > batman_time )
 			break; // for now we are done,
 
 		if (aggregated_size > (int32_t)sizeof(struct bat_header) &&
@@ -481,14 +481,14 @@ static void aggregate_outstanding_ogms(void *unused)
 
 					if (
 							// power-save mode enabled:
-							ogi_pwrsave > my_ogi &&
-							// we alone:
-							GREAT_U32(batman_time, bif->if_last_link_activity + COMMON_OBSERVATION_WINDOW) &&
-							( // not yet time for a neighbor-discovery hardbeat?:
+							ogi_pwrsave > my_ogi
+							&&  batman_time > ( bif->if_last_link_activity + COMMON_OBSERVATION_WINDOW)
+							&&	( // not yet time for a neighbor-discovery hardbeat?:
 									send_node->own_if == 0 ||
 									send_node->if_outgoing != bif ||
-									LSEQ_U32(batman_time, bif->if_next_pwrsave_hardbeat)))
-						continue;
+									batman_time <= bif->if_next_pwrsave_hardbeat)
+						 )
+						 { continue; }
 
 					if ((send_node->send_bucket + 100) < bif->if_send_clones)
 						send_node_done = NO;
@@ -568,15 +568,17 @@ static void aggregate_outstanding_ogms(void *unused)
 		{
 			schedule_own_ogm(bif);
 
-			if (GREAT_U32(batman_time, bif->if_next_pwrsave_hardbeat))
+			if ( batman_time > bif->if_next_pwrsave_hardbeat )
+			{
 				bif->if_next_pwrsave_hardbeat = batman_time + ((uint32_t)(ogi_pwrsave));
+			}
 
 			bif->send_own = 0;
 		}
 
 		// this timestamp may become invalid after U32 wrap-around
-		if (GREAT_U32(batman_time, bif->if_last_link_activity + (2 * COMMON_OBSERVATION_WINDOW)))
-			bif->if_last_link_activity = batman_time - COMMON_OBSERVATION_WINDOW;
+		if ( batman_time > (bif->if_last_link_activity + (2 * COMMON_OBSERVATION_WINDOW)) )
+		{	bif->if_last_link_activity = batman_time - COMMON_OBSERVATION_WINDOW; }
 	}
 
 	prof_stop(PROF_send_outstanding_ogms);
@@ -713,7 +715,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
 
-		if (GREAT_U32(send_packet_tmp->send_time, sn->send_time))
+		if ( send_packet_tmp->send_time > sn->send_time )
 		{
 			OLInsertTailList((PLIST_ENTRY)send_packet_tmp, (PLIST_ENTRY)sn);
 			inserted = 1;
@@ -1005,7 +1007,7 @@ loop4Event:
 
 	prof_stop(PROF_wait4Event_5);
 
-	while (GREAT_U32(return_time, batman_time))
+	while ( return_time > batman_time )
 	{
 		prof_start(PROF_wait4Event_select);
 
@@ -1050,7 +1052,7 @@ loop4Event:
 		if (selected == 0)
 		{
 			//Often select returns just a few milliseconds before being scheduled
-			if (LESS_U32(return_time, (batman_time + 10)))
+			if ( return_time < (batman_time + 10) )
 			{
 				//cheating time :-)
 				batman_time = return_time;
@@ -1058,7 +1060,6 @@ loop4Event:
 				goto wait4Event_end;
 			}
 
-			//if ( LESS_U32( return_time, batman_time ) )
 			dbg_mute(50, DBGL_CHANGES, DBGT_WARN,
 							 "select() returned %d without reason!! return_time %llu, curr_time %llu",
 							 selected, return_time, batman_time);
@@ -1299,8 +1300,9 @@ void schedule_own_ogm(struct batman_if *bif)
 
 	sn->send_time = bif->if_seqno_schedule + my_ogi;
 
-	if (LESS_U32(sn->send_time, batman_time) ||
-			GREAT_U32(sn->send_time, batman_time + my_ogi))
+	if (   sn->send_time < batman_time
+			|| sn->send_time > (batman_time + my_ogi)
+		 )
 	{
 		dbg_mute(50, DBGL_SYS, DBGT_WARN,
 						 "strange own OGM schedule, rescheduling IF %10s SQN %d from %llu to %llu. "
@@ -1369,7 +1371,7 @@ void schedule_own_ogm(struct batman_if *bif)
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
 
-		if (GREAT_U32(send_packet_tmp->send_time, sn->send_time))
+		if ( send_packet_tmp->send_time > sn->send_time )
 		{
 			OLInsertTailList((PLIST_ENTRY)send_packet_tmp, (PLIST_ENTRY)sn);
 			inserted = 1;

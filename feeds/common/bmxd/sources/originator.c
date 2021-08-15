@@ -527,7 +527,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 						(my_path_lounge +
 						 ((1000 * dad_to) / MIN(WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP), MIN_OGI))) &&
 				// but we have received an ogm in less than timeout sec
-				LESS_U32(batman_time, (orig_node->last_valid_time + (1000 * dad_to))))
+				batman_time < (orig_node->last_valid_time + (1000 * dad_to)))
 		{
 			dbg_mute(26, DBGL_SYS, DBGT_WARN,
 							 "DAD-alert! %s  via NB %s (%s); SQN %i out-of-range;  lounge-margin %i "
@@ -549,10 +549,10 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 	//     aeltere (vergangene sqn) ogms einreffen, die kein DAD verusachen duerfen.
 
 	// seqnoDiff is the positive delta considering wrapping.
-  int16_t seqnoDiff = 	 (int16_t)ogm_seqno  - (int16_t)orig_node->last_valid_sqn;
+  int32_t seqnoDiff = 	 (int32_t)ogm_seqno  - (int32_t)orig_node->last_valid_sqn;
 	const uint16_t MIN_DAD_SEQNO_DIFF = 100 + my_path_lounge;
 
-		if(    LESS_U32(batman_time, (orig_node->last_valid_time + (1000 * dad_to)))	// check ogm alter
+		if(    batman_time < (orig_node->last_valid_time + (1000 * dad_to))	// check ogm alter in [ms]
 			  // check seqno und erlaube minds die my_path_lounge (da diese ogms alle die gleichen sein koennten - gleiche seqno)
 			  && abs(seqnoDiff) > MIN_DAD_SEQNO_DIFF
 
@@ -563,15 +563,14 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 		)
 		{
 			dbg_mute(26, DBGL_SYS, DBGT_WARN,
-							 "DAD-alert! %s  via NB %s (%s); SQN %i out-of-range;  lounge-margin %i, "
+							 "DAD-alert! %s  via NB %s (%s), OGM SQN %i out-of-range: lounge-margin %i, "
                "batman_time %llu,"
-							 "(last valid SQN %i  at %llu, diff:%d)  dad_to %d  wavg %d  Reinit in %d s",
+							 "(last valid SQN %i  at %llu, SQNdiff:%ld)  dad_to %d  wavg %d",
 							 orig_node->orig_str, ipStr(neigh), ndev?ndev:"NULL", ogm_seqno, my_path_lounge,
                batman_time,
 							 orig_node->last_valid_sqn, (unsigned long long)orig_node->last_valid_time,
 							 seqnoDiff,
-							 dad_to, WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP),
-							 ((orig_node->last_valid_time + (1000 * dad_to)) - batman_time) / 1000);
+							 dad_to, WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP));
 
 			return FAILURE;
 		}
@@ -932,7 +931,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 
 		dbgf_all(DBGT_INFO, "%llu %s %s", (unsigned long long)curr_time, bif ? bif->dev : "???", orig_node->orig_str);
 
-		if (!curr_time || bif || LESS_U32(orig_node->last_aware + (1000 * ((batman_time_t)purge_to)), curr_time))
+		if (!curr_time || bif || (orig_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time )
 		{
 			/* purge outdated originators completely */
 
@@ -990,7 +989,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 				// when removing entries, I can modify lndev (because OLForEach() is a macro)
 				OLForEach(lndev, struct link_node_dev, orig_node->link_node->lndev_list)
 				{
-					if (LESS_U32((lndev->last_lndev + (1000 * ((batman_time_t)purge_to))), curr_time))
+					if ( (lndev->last_lndev + (1000 * ((batman_time_t)purge_to))) < curr_time )
 					{
 						PLIST_ENTRY prev = OLGetPrev(lndev);
 
@@ -1012,7 +1011,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			}
 
 			/* purge outdated PrimaryInterFace NeighBor Identifier */
-			if (orig_node->id4him && LESS_U32((orig_node->last_pog_link + (1000 * ((batman_time_t)purge_to))), curr_time))
+			if (orig_node->id4him && (orig_node->last_pog_link + (1000 * ((batman_time_t)purge_to))) < curr_time)
 				free_pifnb_node(orig_node);
 
 			/* purge outdated neighbor nodes, except our best-ranking neighbor */
@@ -1020,8 +1019,9 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			/* for all neighbours towards this originator ... */
 			OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 			{
-				if (LESS_U32((neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))), curr_time) &&
-						orig_node->router != neigh_node)
+				if (    (neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time
+				     &&	orig_node->router != neigh_node
+					 )
 				{
 					addr_to_str(neigh_node->key.addr, neigh_str);
 					dbgf_all(DBGT_INFO,
@@ -1266,7 +1266,7 @@ void process_ogm(struct msg_buff *mb)
 		oCtx |= IS_NEW;
 
 		// estimating average originaotr interval of this node
-		if (orig_node->last_valid_time && LESS_U32(orig_node->last_valid_time, batman_time))
+		if (orig_node->last_valid_time && orig_node->last_valid_time < batman_time )
 		{
 			if (((SQ_TYPE)(ogm->ogm_seqno - (orig_node->last_wavg_sqn + 1))) < orig_node->pws)
 			{

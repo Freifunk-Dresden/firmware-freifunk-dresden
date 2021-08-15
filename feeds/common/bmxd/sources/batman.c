@@ -108,7 +108,7 @@ void batman(void)
 			wait4Event(MIN(wait, MAX_SELECT_TIMEOUT_MS));
 
 		// The regular tasks...
-		if (LESS_U32(regular_timeout + 1000, batman_time))
+		if ( (regular_timeout + 1000) < batman_time )
 		{
 			purge_orig(batman_time, NULL);
 
@@ -133,7 +133,7 @@ void batman(void)
 			regular_timeout = batman_time;
 		}
 
-		if (LESS_U32(statistic_timeout + 5000, batman_time))
+		if ( (statistic_timeout + 5000) < batman_time )
 		{
 			// check for corrupted memory..
 			checkIntegrity();

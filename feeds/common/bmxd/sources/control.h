@@ -19,10 +19,6 @@
 
 #include "objlist.h"
 
-#define MIN_UPTIME 0
-#define MAX_UPTIME 2147383 /*(((TP32/1000)/2)-100) /1000 to talk about seconds and not ms, /2 to not render scheduled events outdated, -100 to be save */
-#define DEF_UPTIME 0
-
 #define DBGT_NONE 0
 #define DBGT_INFO 1
 #define DBGT_WARN 2

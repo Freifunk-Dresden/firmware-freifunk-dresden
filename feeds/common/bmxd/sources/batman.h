@@ -110,30 +110,7 @@ enum ADGSN
 
 #define UNUSED_RETVAL(x) do { if(x){} } while(0)
 
-#define TP32 4294967296
 #define OV32 2147483647
-#define TP16 65536
-#define OV16 32767
-#define TP8 256
-#define OV8 127
-
-/*
-#define LESS_SQ( a, b )  ( ((uint16_t)( (a) - (b) ) ) >  OV16 )
-#define LSEQ_SQ( a, b )  ( ((uint16_t)( (b) - (a) ) ) <= OV16 )
-#define GREAT_SQ( a, b ) ( ((uint16_t)( (b) - (a) ) ) >  OV16 )
-#define GRTEQ_SQ( a, b ) ( ((uint16_t)( (a) - (b) ) ) <= OV16 )
-*/
-
-/*
-#define LESS_U32( a, b )  ( ((uint32_t)( (a) - (b) ) ) >  OV32 )
-#define LSEQ_U32( a, b )  ( ((uint32_t)( (b) - (a) ) ) <= OV32 )
-#define GREAT_U32( a, b ) ( ((uint32_t)( (b) - (a) ) ) >  OV32 )
-#define GRTEQ_U32( a, b ) ( ((uint32_t)( (a) - (b) ) ) <= OV32 )
-*/
-#define LESS_U32(a, b) ((a) < (b))
-#define LSEQ_U32(a, b) ((a) <= (b))
-#define GREAT_U32(a, b) ((a) > (b))
-#define GRTEQ_U32(a, b) ((a) >= (b))
 
 #define MAX(a, b) ((a > b) ? (a) : (b))
 #define MIN(a, b) ((a < b) ? (a) : (b))

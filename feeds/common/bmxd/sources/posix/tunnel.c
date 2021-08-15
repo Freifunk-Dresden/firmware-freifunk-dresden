@@ -646,7 +646,7 @@ static void gwc_recv_tun(int32_t fd_in)
 			// dbgf_all( DBGT_INFO "Send data to gateway %s, len %d", gw_str, tp_len );
 		}
 		else /*if ( gwc_args->last_invalidip_warning == 0 ||
-		            LESS_U32((gwc_args->last_invalidip_warning + WARNING_PERIOD), batman_time) )*/
+		            (gwc_args->last_invalidip_warning + WARNING_PERIOD) < batman_time) )*/
 		{
 			//gwc_args->last_invalidip_warning = batman_time;
 			dbg_mute(60, DBGL_CHANGES, DBGT_ERR,
@@ -1112,8 +1112,9 @@ static void cb_choose_gw(void *unused)
 			gw_node->unavail_factor = MAX_GW_UNAVAIL_FACTOR;
 
 		/* ignore this gateway if recent connection attempts were unsuccessful */
-		if (GREAT_U32(
-						(gw_node->unavail_factor * gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) + gw_node->last_failure, batman_time))
+		if (     ((gw_node->unavail_factor * gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) + gw_node->last_failure)
+		      >  batman_time
+			 )
 		{
 			continue;
 		}
