@@ -102,7 +102,7 @@ progressbar()
 		charSteps=$((len / charsPerValue))
 
 
-		# reduce len by number of _maxValue, because 
+		# reduce len by number of _maxValue, because
 		# marker are inserted into _bar which makes it
 		# longer again.
 		# consider length marker string
@@ -116,10 +116,10 @@ progressbar()
 		_bar=""
 		pos=0
 		nextMarkerPos=$charsPerValue
-		while [ $pos -lt $len ] 
+		while [ $pos -lt $len ]
 		do
 			pos=$((pos + 1))
-		
+
 			if [ $pos -le $absCharPos ]; then
 				_bar="${_bar}#"
 			else
@@ -166,7 +166,7 @@ show_progress()
 		[ -n "$1" ] && _count=$1
 		[ -n "$2" ] && _max=$2
 
-		[ -z "$_count" ] && return	
+		[ -z "$_count" ] && return
 		[ -z "$_max" -o "$_max" -eq 0 ] && return
 
 		row=$(tput lines)
@@ -576,31 +576,41 @@ setup_buildroot ()
 			done
 		fi
 	else
-		echo -e $C_PURPLE"Buildroot [$buildroot] already present"$C_NONE
+		echo -e "${C_PURPLE}Buildroot [$buildroot]${C_NONE} already present"
 	fi
 
-	echo -e $C_PURPLE"create dl directory/links"$C_NONE
+	echo -n -e $C_PURPLE"create dl directory/links"$C_NONE": "
 	rm -f $buildroot/dl
 	ln -s ../../$openwrt_dl_dir $buildroot/dl
+	echo "done."
 
 	# -------- common files -----------
 	# copy common files first
-	echo -e "${C_PURPLE}copy rootfs ${C_NONE}: ${C_GREEN} common ${C_NONE}"
+	echo -n -e "${C_PURPLE}copy rootfs ${C_NONE}: ${C_GREEN} common ${C_NONE}: "
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
 	cp -a $RUN_DIR/files/common/* $buildroot/files/
+	echo " done."
 
 	# -------- specific files -----------
 	# copy specific files over (may overwrite common)
-	echo -e "${C_PURPLE}copy specific files ${C_NONE}: ${C_GREEN}${firmware_files}${C_NONE}"
-	test -d "$RUN_DIR/files/$firmware_files" && cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
+	echo -n -e "${C_PURPLE}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
+	if [ -n "${firmware_files}" -a -d "$RUN_DIR/files/${firmware_files}" ]; then
+		cp -a $RUN_DIR/files/${firmware_files}/* $buildroot/files/
+		echo "done."
+	else
+		echo "no specific files."
+	fi
 
-	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
+	echo -n -e $C_PURPLE"create rootfs/etc/built_info file: "$C_NONE
 	mkdir -p $buildroot/files/etc
 	> $buildroot/files/etc/built_info
+	echo "done."
 
 	# more dynamic changes
+	echo -n -e $C_PURPLE"setup dynamic firmware config: "$C_NONE
 	setup_dynamic_firmware_config "$buildroot/files"
+  echo "done."
 
 	echo "----- generate built_info ----"
 	git_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
