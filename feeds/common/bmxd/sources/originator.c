@@ -542,19 +542,25 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 		}
 #else
 //stephan
+	// Idee:
 	// gibt es einen knoten mit gleicher ip, so ist sehr wahrscheinlich die sequenznummer sehr verschieden
-	// zur letzten. Wie oben, betrachte ich aber nur kuerzlich empfangene ogms.
-	//Denn: aeltere ogms wuerde bedeuten, dass ein knoten mit gleicher ip keine ogms mehr schickt und
-	// dann diese ip wieder zugelassen werden muss.
-	//Aber: bei dem vergleich muss ich auch my_path_lounge alte sqn beachten. es koennen my_path_lounge
-	//     aeltere (vergangene sqn) ogms einreffen, die kein DAD verusachen duerfen.
+	// zur letzten sqn ist.
+	// Wie oben, betrachte ich aber nur  kuerzlich empfangene ogms (batman_time).
+	// Wenn zwei knoten gleiche ip haben, dann kommen die OGMs auch zeitlich gleichzeitlich an.
+	// Dann habe ich einen IP Konflikt und ogm werden ignoriert.
+	//
+	// "last_valid" wird nur aktualisert, wenn eine OGM keinen Konflikt erzeugte und gueltig war.
+	// Wurden OGMs dad_to Sekunden lang ignoriert, werden diese wieder zuglassen. Entweder
+	// hat sich der IP Konflikt aufgeloest, oder tritt erneut ein. dann wurden aber zwischenzeitlich
+	// "last_valid" aktualisert und ogms werden wieder fuer dad_to Sekunden ignoriert.
 
 	// maximal difference between seqno and last_valid_sqn. This is a very low number, so that
 	// it is easy to detect data type 16bit wrapping
 	const uint16_t MIN_DAD_SEQNO_DIFF = 100 + my_path_lounge;
 
+
 	// seqnoDiff is the positive delta considering wrapping.
-	uint16_t seqnoDiff = ogm_seqno >= orig_node->last_valid_sqn
+	int32_t seqnoDiff =   ogm_seqno >= orig_node->last_valid_sqn
 											? ogm_seqno - orig_node->last_valid_sqn
 											: ( USHRT_MAX - orig_node->last_valid_sqn) + ogm_seqno;
 
@@ -579,7 +585,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 							 seqnoDiff,
 							 dad_to, WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP));
 
-			return FAILURE;
+	//		return FAILURE;
 		}
 
 #endif
