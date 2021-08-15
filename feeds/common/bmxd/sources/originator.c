@@ -563,9 +563,11 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 		)
 		{
 			dbg_mute(26, DBGL_SYS, DBGT_WARN,
-							 "DAD-alert! %s  via NB %s (%s); SQN %i out-of-range;  lounge-margin %i "
+							 "DAD-alert! %s  via NB %s (%s); SQN %i out-of-range;  lounge-margin %i, "
+               "batman_time %llu,"
 							 "(last valid SQN %i  at %llu, diff:%d)  dad_to %d  wavg %d  Reinit in %d s",
 							 orig_node->orig_str, ipStr(neigh), ndev?ndev:"NULL", ogm_seqno, my_path_lounge,
+               batman_time,
 							 orig_node->last_valid_sqn, (unsigned long long)orig_node->last_valid_time,
 							 seqnoDiff,
 							 dad_to, WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP),
