@@ -554,16 +554,16 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 	// hat sich der IP Konflikt aufgeloest, oder tritt erneut ein. dann wurden aber zwischenzeitlich
 	// "last_valid" aktualisert und ogms werden wieder fuer dad_to Sekunden ignoriert.
 
-	// maximal difference between seqno and last_valid_sqn. This is a very low number, so that
-	// it is easy to detect data type 16bit wrapping
-	const uint16_t MIN_DAD_SEQNO_DIFF = 100 + my_path_lounge;
-
+	// maximal difference between seqno and last_valid_sqn.
+	const uint16_t MIN_DAD_SEQNO_DIFF = 100;
 
 	// seqnoDiff is the positive delta considering wrapping.
-	int32_t seqnoDiff =   ogm_seqno >= orig_node->last_valid_sqn
-											? ogm_seqno - orig_node->last_valid_sqn
-											: ( USHRT_MAX - orig_node->last_valid_sqn) + ogm_seqno;
-
+	int32_t _seqno = ogm_seqno + my_path_lounge;
+	if( _seqno >= USHRT_MAX) _seqno -= USHRT_MAX; // on wrap: shift it back (evt.) ins negative
+	
+	int32_t seqnoDiff =   _seqno >= orig_node->last_valid_sqn
+											?	_seqno >= orig_node->last_valid_sqn
+											: (USHRT_MAX - orig_node->last_valid_sqn) + _seqno;
 
 		if(    batman_time < (orig_node->last_valid_time + (1000 * dad_to))	//time check ogm alter in [ms]
 			  // check seqno und erlaube minds die my_path_lounge (da diese ogms alle die gleichen sein koennten - gleiche seqno)
