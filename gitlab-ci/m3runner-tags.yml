@@ -200,7 +200,7 @@ m3tags:bcm53xx.generic.arm:
   - m3runner
 
 
-m3tags:openwrt.v21.ath79:
+m3tags:21.ath79:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -210,10 +210,23 @@ m3tags:openwrt.v21.ath79:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh openwrt.v21.ath79 rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh 21.ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m3runner
 
+m3tags:master.ath79:
+  only:
+    - /^R_FIRMWARE_/
+    - /^TESTING_FIRMWARE_/
+    - /^T_FIRMWARE_/
+  stage: build
+  needs: ["m3tags:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh master.ath79.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m3runner
 
 m3tags:test:
   only:

@@ -174,7 +174,7 @@ m3:bcm53xx.generic.arm:
   tags:
   - m3runner
 
-m3:openwrt.v21.ath79:
+m3:21.ath79:
   only:
     - master
   stage: build
@@ -182,7 +182,19 @@ m3:openwrt.v21.ath79:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh openwrt.v21.ath79 rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh 21.ath79.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - m3runner
+
+m3:master.ath79:
+  only:
+    - master
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh master.ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - m3runner
 

@@ -1,0 +1,25 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr libs.ori/mbedtls/patches/900-mbedtls-2.6.0-rsa-1024.patch libs/mbedtls/patches/900-mbedtls-2.6.0-rsa-1024.patch
+--- buildroot/package/libs/mbedtls/patches/900-mbedtls-2.6.0-rsa-1024.patch	1970-01-01 01:00:00.000000000 +0100
++++ buildroot/package/libs/mbedtls/patches/900-mbedtls-2.6.0-rsa-1024.patch	2017-11-07 01:35:07.153284867 +0100
+@@ -0,0 +1,21 @@
++diff -Naur --suppress-blank-empty --strip-trailing-cr mbedtls-2.6.0.ori/library/x509_crt.c mbedtls-2.6.0/library/x509_crt.c
++--- mbedtls-2.16.11.ori/library/x509_crt.c	2017-08-22 17:24:49.000000000 +0200
+++++ mbedtls-2.16.11/library/x509_crt.c	2017-11-07 01:25:11.326897775 +0100
++@@ -131,7 +131,7 @@
++     MBEDTLS_X509_ID_FLAG( MBEDTLS_MD_SHA512 ),
++     0xFFFFFFF, /* Any PK alg    */
++     0xFFFFFFF, /* Any curve     */
++-    2048,
+++    1024,
++ };
++
++ /*
++@@ -156,7 +156,7 @@
++ #else
++     0,
++ #endif
++-    2048,
+++    1024,
++ };
++
++ /*

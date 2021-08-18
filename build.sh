@@ -354,6 +354,7 @@ numberOfTargets()
  do
  	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
 	[ "$entry" = "null" ] &&  break	# last entry
+
 	config_name=$(echo $entry | jq $OPT '.name')
 	[ -z "${config_name}" ] && break
 

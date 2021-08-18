@@ -84,7 +84,7 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr package.orig/utils/busybox
  config BUSYBOX_DEFAULT_FEATURE_IP_RULE
  	bool
  	default y
-@@ -2777,7 +2776,7 @@
+@@ -2771,7 +2770,7 @@
  	default n
  config BUSYBOX_DEFAULT_PSTREE
  	bool
@@ -93,7 +93,7 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr package.orig/utils/busybox
  config BUSYBOX_DEFAULT_PWDX
  	bool
  	default n
-@@ -2927,7 +2926,7 @@
+@@ -2921,7 +2920,7 @@
  	default y
  config BUSYBOX_DEFAULT_ASH_OPTIMIZE_FOR_SIZE
  	bool

@@ -270,7 +270,7 @@ docker:bcm53xx.generic.arm:
   tags:
   - docker
 
-docker:openwrt.v21.ath79:
+docker:master.ath79:
   except:
     - schedules
     - master
@@ -285,7 +285,26 @@ docker:openwrt.v21.ath79:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh openwrt.v21.ath79 rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh master.ath79.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - docker
+
+docker:21.ath79:
+  except:
+    - schedules
+    - master
+    - /^yaro-.*$/
+    - /^T_FIRMWARE_.*$/
+    - /^TESTING_FIRMWARE_.*$/
+    - /^R_FIRMWARE_.*$/
+  stage: build
+  needs: ["docker:init"]
+  script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
+    - ./build.sh 21.ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
