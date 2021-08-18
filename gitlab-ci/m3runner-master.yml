@@ -186,18 +186,6 @@ m3:21.ath79:
   tags:
   - m3runner
 
-m3:master.ath79:
-  only:
-    - master
-  stage: build
-  needs: ["m3:init"]
-  script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-    - ./build.sh master.ath79.* rerun -j"$(( $(nproc) + 1))"
-  tags:
-  - m3runner
-
 
 m3:test:
   only:

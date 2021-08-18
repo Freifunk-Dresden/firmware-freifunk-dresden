@@ -224,6 +224,7 @@
 		"subtarget":"p1020"
 	},
 #----------------------openwrt 21.02-----------------------------------------------------------------------------------------
+# created for new target : Joy-IT JT-OR750i
 	{
 		"name":"21.ath79.generic",	# can be any name
 		"target":"ath79",

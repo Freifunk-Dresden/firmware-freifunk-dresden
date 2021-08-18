@@ -13,10 +13,10 @@ CONFIG_TARGET_ath79=y
 # CONFIG_TARGET_bcm47xx is not set
 # CONFIG_TARGET_bcm4908 is not set
 # CONFIG_TARGET_bcm63xx is not set
-# CONFIG_TARGET_bmips is not set
 # CONFIG_TARGET_octeon is not set
 # CONFIG_TARGET_gemini is not set
 # CONFIG_TARGET_mpc85xx is not set
+# CONFIG_TARGET_imx6 is not set
 # CONFIG_TARGET_mxs is not set
 # CONFIG_TARGET_lantiq is not set
 # CONFIG_TARGET_malta is not set
@@ -28,13 +28,11 @@ CONFIG_TARGET_ath79=y
 # CONFIG_TARGET_at91 is not set
 # CONFIG_TARGET_tegra is not set
 # CONFIG_TARGET_layerscape is not set
-# CONFIG_TARGET_imx6 is not set
 # CONFIG_TARGET_octeontx is not set
 # CONFIG_TARGET_oxnas is not set
 # CONFIG_TARGET_armvirt is not set
 # CONFIG_TARGET_ipq40xx is not set
 # CONFIG_TARGET_ipq806x is not set
-# CONFIG_TARGET_ipq807x is not set
 # CONFIG_TARGET_realtek is not set
 # CONFIG_TARGET_rockchip is not set
 # CONFIG_TARGET_arc770 is not set
@@ -82,7 +80,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e130n-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e313ac is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e314n-v2 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e375ac is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e5 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-e560ac is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_comfast_cf-ew72 is not set
@@ -92,7 +89,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_compex_wpj344-16m is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_compex_wpj531-16m is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_compex_wpj563 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_devolo_dlan-pro-1200plus-ac is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_devolo_dvl1200e is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_devolo_dvl1200i is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_devolo_dvl1750c is not set
@@ -140,7 +136,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_glinet_gl-ar750 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_glinet_gl-mifi is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_glinet_gl-usb150 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_glinet_gl-x300b is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_glinet_gl-x750 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_hak5_lan-turtle is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_hak5_packet-squirrel is not set
@@ -156,7 +151,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_meraki_mr12 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_meraki_mr16 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_mercury_mw4530r-v1 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_nec_wf1200cr is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_nec_wg1200cr is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_nec_wg800hp is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_netgear_ex6400 is not set
@@ -172,8 +166,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_ocedo_koala is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_ocedo_raccoon is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_ocedo_ursus is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_openmesh_a40 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_openmesh_a60 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_openmesh_mr600-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_openmesh_mr600-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_openmesh_mr900-v1 is not set
@@ -198,8 +190,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_pisen_wmm003n is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_plasmacloud_pa300 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_plasmacloud_pa300e is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_qca_ap143-8m is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_qca_ap143-16m is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_qihoo_c301 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_qxwlan_e1700ac-v2-16m is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_qxwlan_e1700ac-v2-8m is not set
@@ -219,7 +209,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_sitecom_wlr-7100 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_sitecom_wlr-8100 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_telco_t1 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_teltonika_rut230-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_teltonika_rut955 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_teltonika_rut955-h7v3c0 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_trendnet_tew-823dru is not set
@@ -227,12 +216,10 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_wd_mynet-n750 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_wd_mynet-wifi-rangeextender is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_winchannel_wb2000 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_xiaomi_aiot-ac2350 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_xiaomi_mi-router-4q is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_yuncore_a770 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_yuncore_a782 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_yuncore_xd4200 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_ziking_cpe46b is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_zbtlink_zbt-wd323 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_zyxel_nbg6616 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_archer-a7-v5 is not set
@@ -274,7 +261,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_re450-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_re450-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_re450-v3 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_tplink_re455-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-mr6400-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wdr3500-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wdr3600-v1 is not set
@@ -298,12 +284,10 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr710n-v2.1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr810n-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr810n-v2 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr841hp-v3 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr842n-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr842n-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr842n-v3 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr902ac-v1 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr941hp-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_wbs210-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_wbs210-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_wbs510-v1 is not set
@@ -331,9 +315,7 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_ubnt_picostation-m is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_ubnt_powerbeam-5ac-500 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_ubnt_powerbeam-5ac-gen2 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_ubnt_powerbeam-m-xw is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_ubnt_powerbridge-m is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_ubnt_rocket-5ac-lite is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_ubnt_rocket-m is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_ubnt_routerstation is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_ubnt_routerstation-pro is not set
@@ -385,7 +367,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e130n-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e313ac is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e314n-v2 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e375ac is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e5 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e560ac is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-ew72 is not set
@@ -412,7 +393,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-842-c2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-842-c3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-859-a1 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_devolo_dlan-pro-1200plus-ac is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_devolo_magic-2-wifi is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_devolo_dvl1200e is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_devolo_dvl1200i is not set
@@ -443,7 +423,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-ar750 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-mifi is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-usb150 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-x300b is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-x750 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_hak5_lan-turtle is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_hak5_packet-squirrel is not set
@@ -459,7 +438,6 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_meraki_mr12 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_meraki_mr16 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_mercury_mw4530r-v1 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_nec_wf1200cr is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_nec_wg1200cr is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_nec_wg800hp is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_ex6400 is not set
@@ -475,8 +453,6 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ocedo_koala is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ocedo_raccoon is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ocedo_ursus is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_openmesh_a40 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_openmesh_a60 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_openmesh_mr1750-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_openmesh_mr1750-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_openmesh_mr600-v1 is not set
@@ -502,8 +478,6 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_pcs_cr3000 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_pcs_cr5000 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_qihoo_c301 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_qca_ap143-16m is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_qca_ap143-8m is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_qxwlan_e1700ac-v2-16m is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_qxwlan_e1700ac-v2-8m is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_qxwlan_e558-v2-16m is not set
@@ -522,7 +496,6 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_sitecom_wlr-7100 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_sitecom_wlr-8100 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_telco_t1 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_teltonika_rut230-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_teltonika_rut955 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_teltonika_rut955-h7v3c0 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c6-v2-us is not set
@@ -564,7 +537,6 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_re450-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_re450-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_re450-v3 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_re455-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-mr6400-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr3500-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr3600-v1 is not set
@@ -588,12 +560,10 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr710n-v2.1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr810n-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr810n-v2 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr841hp-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr842n-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr842n-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr842n-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr902ac-v1 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr941hp-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_wbs210-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_wbs210-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_wbs510-v1 is not set
@@ -622,9 +592,7 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_picostation-m is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_powerbeam-5ac-500 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_powerbeam-5ac-gen2 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_powerbeam-m-xw is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_powerbridge-m is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_rocket-5ac-lite is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_rocket-m is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_routerstation is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_routerstation-pro is not set
@@ -640,13 +608,11 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_wd_mynet-n750 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_wd_mynet-wifi-rangeextender is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_winchannel_wb2000 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_xiaomi_aiot-ac2350 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_xiaomi_mi-router-4q is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_yuncore_a770 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_yuncore_a782 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_yuncore_xd4200 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_zbtlink_zbt-wd323 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ziking_cpe46b is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_zyxel_nbg6616 is not set
 # end of Target Devices
 
@@ -692,7 +658,6 @@ CONFIG_DEFAULT_uclient-fetch=y
 CONFIG_DEFAULT_urandom-seed=y
 CONFIG_DEFAULT_urngd=y
 CONFIG_DEFAULT_wpad-basic-wolfssl=y
-CONFIG_HAS_TESTING_KERNEL=y
 CONFIG_AUDIO_SUPPORT=y
 CONFIG_GPIO_SUPPORT=y
 CONFIG_PCI_SUPPORT=y
@@ -756,7 +721,6 @@ CONFIG_SIGNATURE_CHECK=y
 #
 # General build options
 #
-# CONFIG_TESTING_KERNEL is not set
 # CONFIG_DISPLAY_SUPPORT is not set
 # CONFIG_BUILD_PATENTED is not set
 # CONFIG_BUILD_NLS is not set
@@ -973,7 +937,6 @@ CONFIG_EXTRA_GCC_CONFIG_OPTIONS=""
 # CONFIG_SJLJ_EXCEPTIONS is not set
 # CONFIG_INSTALL_GFORTRAN is not set
 CONFIG_GDB=y
-# CONFIG_GDB_PYTHON is not set
 CONFIG_USE_MUSL=y
 CONFIG_SSP_SUPPORT=y
 CONFIG_BINUTILS_VERSION_2_34=y
@@ -1129,8 +1092,8 @@ CONFIG_BUSYBOX_DEFAULT_FEATURE_SEAMLESS_GZ=y
 CONFIG_BUSYBOX_DEFAULT_GUNZIP=y
 CONFIG_BUSYBOX_DEFAULT_ZCAT=y
 # CONFIG_BUSYBOX_DEFAULT_FEATURE_GUNZIP_LONG_OPTIONS is not set
-# CONFIG_BUSYBOX_DEFAULT_BUNZIP2 is not set
-# CONFIG_BUSYBOX_DEFAULT_BZCAT is not set
+CONFIG_BUSYBOX_DEFAULT_BUNZIP2=y
+CONFIG_BUSYBOX_DEFAULT_BZCAT=y
 # CONFIG_BUSYBOX_DEFAULT_UNLZMA is not set
 # CONFIG_BUSYBOX_DEFAULT_LZCAT is not set
 # CONFIG_BUSYBOX_DEFAULT_LZMA is not set
@@ -1831,9 +1794,11 @@ CONFIG_BUSYBOX_DEFAULT_NETMSG=y
 CONFIG_BUSYBOX_DEFAULT_NETSTAT=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_NETSTAT_WIDE=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_NETSTAT_PRG=y
-CONFIG_BUSYBOX_DEFAULT_NSLOOKUP=y
-CONFIG_BUSYBOX_DEFAULT_FEATURE_NSLOOKUP_BIG=y
+# CONFIG_BUSYBOX_DEFAULT_NSLOOKUP is not set
+# CONFIG_BUSYBOX_DEFAULT_FEATURE_NSLOOKUP_BIG is not set
 # CONFIG_BUSYBOX_DEFAULT_FEATURE_NSLOOKUP_LONG_OPTIONS is not set
+CONFIG_BUSYBOX_DEFAULT_NSLOOKUP_OPENWRT=y
+# CONFIG_BUSYBOX_DEFAULT_FEATURE_NSLOOKUP_OPENWRT_LONG_OPTIONS is not set
 CONFIG_BUSYBOX_DEFAULT_NTPD=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_NTPD_SERVER=y
 # CONFIG_BUSYBOX_DEFAULT_FEATURE_NTPD_CONF is not set
@@ -2247,20 +2212,16 @@ CONFIG_PACKAGE_libiwinfo-data=y
 # CONFIG_PACKAGE_amdgpu-firmware is not set
 # CONFIG_PACKAGE_ar3k-firmware is not set
 # CONFIG_PACKAGE_ath10k-board-qca4019 is not set
-# CONFIG_PACKAGE_ath10k-board-qca9377 is not set
 CONFIG_PACKAGE_ath10k-board-qca9887=y
 # CONFIG_PACKAGE_ath10k-board-qca9888 is not set
 # CONFIG_PACKAGE_ath10k-board-qca988x is not set
 # CONFIG_PACKAGE_ath10k-board-qca9984 is not set
 # CONFIG_PACKAGE_ath10k-board-qca99x0 is not set
-# CONFIG_PACKAGE_ath10k-board-qca99x0-2g is not set
-# CONFIG_PACKAGE_ath10k-board-qca99x0-5g is not set
 # CONFIG_PACKAGE_ath10k-firmware-qca4019 is not set
 # CONFIG_PACKAGE_ath10k-firmware-qca4019-ct is not set
 # CONFIG_PACKAGE_ath10k-firmware-qca4019-ct-full-htt is not set
 # CONFIG_PACKAGE_ath10k-firmware-qca4019-ct-htt is not set
 # CONFIG_PACKAGE_ath10k-firmware-qca6174 is not set
-# CONFIG_PACKAGE_ath10k-firmware-qca9377 is not set
 # CONFIG_PACKAGE_ath10k-firmware-qca9887 is not set
 CONFIG_PACKAGE_ath10k-firmware-qca9887-ct=y
 # CONFIG_PACKAGE_ath10k-firmware-qca9887-ct-full-htt is not set
@@ -2285,9 +2246,12 @@ CONFIG_PACKAGE_ath10k-firmware-qca9887-ct=y
 # CONFIG_PACKAGE_bnx2-firmware is not set
 # CONFIG_PACKAGE_bnx2x-firmware is not set
 # CONFIG_PACKAGE_brcmfmac-firmware-4329-sdio is not set
+# CONFIG_PACKAGE_brcmfmac-firmware-43362-sdio is not set
+# CONFIG_PACKAGE_brcmfmac-firmware-43430-sdio is not set
 # CONFIG_PACKAGE_brcmfmac-firmware-43430-sdio-rpi-3b is not set
 # CONFIG_PACKAGE_brcmfmac-firmware-43430-sdio-rpi-zero-w is not set
 # CONFIG_PACKAGE_brcmfmac-firmware-43430a0-sdio is not set
+# CONFIG_PACKAGE_brcmfmac-firmware-43455-sdio is not set
 # CONFIG_PACKAGE_brcmfmac-firmware-43455-sdio-rpi-3b-plus is not set
 # CONFIG_PACKAGE_brcmfmac-firmware-43455-sdio-rpi-4b is not set
 # CONFIG_PACKAGE_brcmfmac-firmware-43602a1-pcie is not set
@@ -2441,8 +2405,10 @@ CONFIG_PACKAGE_kmod-crypto-gf128=y
 CONFIG_PACKAGE_kmod-crypto-ghash=y
 CONFIG_PACKAGE_kmod-crypto-hash=y
 CONFIG_PACKAGE_kmod-crypto-hmac=y
+# CONFIG_PACKAGE_kmod-crypto-hw-geode is not set
 # CONFIG_PACKAGE_kmod-crypto-hw-hifn-795x is not set
 # CONFIG_PACKAGE_kmod-crypto-hw-padlock is not set
+# CONFIG_PACKAGE_kmod-crypto-hw-talitos is not set
 # CONFIG_PACKAGE_kmod-crypto-kpp is not set
 CONFIG_PACKAGE_kmod-crypto-lib-blake2s=y
 CONFIG_PACKAGE_kmod-crypto-lib-chacha20=y
@@ -2456,6 +2422,7 @@ CONFIG_PACKAGE_kmod-crypto-manager=y
 # CONFIG_PACKAGE_kmod-crypto-misc is not set
 CONFIG_PACKAGE_kmod-crypto-null=y
 # CONFIG_PACKAGE_kmod-crypto-pcbc is not set
+CONFIG_PACKAGE_kmod-crypto-pcompress=y
 # CONFIG_PACKAGE_kmod-crypto-rmd160 is not set
 CONFIG_PACKAGE_kmod-crypto-rng=y
 CONFIG_PACKAGE_kmod-crypto-seqiv=y
@@ -2464,6 +2431,7 @@ CONFIG_PACKAGE_kmod-crypto-sha256=y
 # CONFIG_PACKAGE_kmod-crypto-sha512 is not set
 # CONFIG_PACKAGE_kmod-crypto-test is not set
 # CONFIG_PACKAGE_kmod-crypto-user is not set
+# CONFIG_PACKAGE_kmod-crypto-wq is not set
 # CONFIG_PACKAGE_kmod-crypto-xcbc is not set
 # CONFIG_PACKAGE_kmod-crypto-xts is not set
 # CONFIG_PACKAGE_kmod-cryptodev is not set
@@ -2553,7 +2521,6 @@ CONFIG_PACKAGE_kmod-hwmon-core=y
 # CONFIG_PACKAGE_kmod-i2c-algo-pca is not set
 # CONFIG_PACKAGE_kmod-i2c-algo-pcf is not set
 # CONFIG_PACKAGE_kmod-i2c-core is not set
-# CONFIG_PACKAGE_kmod-i2c-designware-pci is not set
 # CONFIG_PACKAGE_kmod-i2c-gpio is not set
 # CONFIG_PACKAGE_kmod-i2c-mux is not set
 # CONFIG_PACKAGE_kmod-i2c-mux-gpio is not set
@@ -2620,13 +2587,10 @@ CONFIG_PACKAGE_kmod-hwmon-core=y
 #
 # LED modules
 #
-# CONFIG_PACKAGE_kmod-input-leds is not set
 # CONFIG_PACKAGE_kmod-leds-gpio is not set
 # CONFIG_PACKAGE_kmod-leds-pca963x is not set
 # CONFIG_PACKAGE_kmod-leds-reset is not set
-# CONFIG_PACKAGE_kmod-leds-uleds is not set
 # CONFIG_PACKAGE_kmod-ledtrig-activity is not set
-# CONFIG_PACKAGE_kmod-ledtrig-audio is not set
 # CONFIG_PACKAGE_kmod-ledtrig-gpio is not set
 # CONFIG_PACKAGE_kmod-ledtrig-oneshot is not set
 # CONFIG_PACKAGE_kmod-ledtrig-transient is not set
@@ -2759,7 +2723,6 @@ CONFIG_PACKAGE_kmod-nf-reject=y
 # CONFIG_PACKAGE_kmod-ifb is not set
 # CONFIG_PACKAGE_kmod-igb is not set
 # CONFIG_PACKAGE_kmod-igc is not set
-# CONFIG_PACKAGE_kmod-ipvlan is not set
 # CONFIG_PACKAGE_kmod-ixgbe is not set
 # CONFIG_PACKAGE_kmod-ixgbevf is not set
 # CONFIG_PACKAGE_kmod-libphy is not set
@@ -2777,7 +2740,6 @@ CONFIG_PACKAGE_kmod-nf-reject=y
 # CONFIG_PACKAGE_kmod-phy-broadcom is not set
 # CONFIG_PACKAGE_kmod-phy-realtek is not set
 # CONFIG_PACKAGE_kmod-phylink is not set
-# CONFIG_PACKAGE_kmod-qlcnic is not set
 # CONFIG_PACKAGE_kmod-r6040 is not set
 # CONFIG_PACKAGE_kmod-r8169 is not set
 # CONFIG_PACKAGE_kmod-sfc is not set
@@ -2955,7 +2917,6 @@ CONFIG_PACKAGE_kmod-gpio-button-hotplug=y
 # CONFIG_PACKAGE_kmod-usb-gadget-eth is not set
 # CONFIG_PACKAGE_kmod-usb-gadget-hid is not set
 # CONFIG_PACKAGE_kmod-usb-gadget-mass-storage is not set
-# CONFIG_PACKAGE_kmod-usb-gadget-ncm is not set
 # CONFIG_PACKAGE_kmod-usb-gadget-serial is not set
 # CONFIG_PACKAGE_kmod-usb-hid is not set
 # CONFIG_PACKAGE_kmod-usb-hid-cp2112 is not set
@@ -3319,6 +3280,7 @@ CONFIG_OPENSSL_WITH_PSK=y
 #
 CONFIG_OPENSSL_ENGINE=y
 # CONFIG_OPENSSL_ENGINE_BUILTIN is not set
+# CONFIG_OPENSSL_WITH_GOST is not set
 # CONFIG_PACKAGE_libopenssl-afalg is not set
 # CONFIG_PACKAGE_libopenssl-conf is not set
 # CONFIG_PACKAGE_libopenssl-devcrypto is not set
@@ -3339,7 +3301,6 @@ CONFIG_OPENSSL_ENGINE=y
 CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libbpf is not set
 # CONFIG_PACKAGE_libbsd is not set
-# CONFIG_PACKAGE_libcap is not set
 # CONFIG_PACKAGE_libcharset is not set
 # CONFIG_PACKAGE_libcomerr is not set
 # CONFIG_PACKAGE_libctf is not set
@@ -3403,6 +3364,7 @@ CONFIG_PACKAGE_libpcap=y
 # CONFIG_PACKAGE_libpcre is not set
 # CONFIG_PACKAGE_libpcre16 is not set
 # CONFIG_PACKAGE_libpcre32 is not set
+# CONFIG_PACKAGE_libpcrecpp is not set
 # CONFIG_PACKAGE_libpopt is not set
 # CONFIG_PACKAGE_libprotobuf-c is not set
 # CONFIG_PACKAGE_libreadline is not set
@@ -3411,6 +3373,7 @@ CONFIG_PACKAGE_libpcap=y
 # CONFIG_PACKAGE_libsemanage is not set
 # CONFIG_PACKAGE_libsepol is not set
 # CONFIG_PACKAGE_libsmartcols is not set
+# CONFIG_PACKAGE_libsocks is not set
 # CONFIG_PACKAGE_libsodium is not set
 # CONFIG_PACKAGE_libss is not set
 # CONFIG_PACKAGE_libssh2 is not set
@@ -3544,6 +3507,7 @@ CONFIG_OPENLDAP_DEBUG=y
 #
 # CONFIG_PACKAGE_devlink is not set
 # CONFIG_PACKAGE_genl is not set
+# CONFIG_PACKAGE_igmpproxy is not set
 # CONFIG_PACKAGE_ip-bridge is not set
 # CONFIG_PACKAGE_ip-full is not set
 CONFIG_PACKAGE_ip-tiny=y
@@ -3645,6 +3609,8 @@ CONFIG_OPENVPN_mbedtls_ENABLE_SMALL=y
 #
 # Web Servers/Proxies
 #
+# CONFIG_PACKAGE_sockd is not set
+# CONFIG_PACKAGE_socksify is not set
 CONFIG_PACKAGE_uhttpd=y
 # CONFIG_PACKAGE_uhttpd-mod-lua is not set
 # CONFIG_PACKAGE_uhttpd-mod-ubus is not set
@@ -3697,7 +3663,6 @@ CONFIG_PACKAGE_wpad-mesh-openssl=y
 # CONFIG_PACKAGE_bpftool-minimal is not set
 # CONFIG_PACKAGE_chat is not set
 # CONFIG_PACKAGE_ethtool is not set
-# CONFIG_PACKAGE_ethtool-full is not set
 # CONFIG_PACKAGE_gre is not set
 CONFIG_PACKAGE_iperf3=y
 # CONFIG_PACKAGE_iperf3-ssl is not set
@@ -3711,7 +3676,6 @@ CONFIG_PACKAGE_iw=y
 # CONFIG_PACKAGE_omcproxy is not set
 # CONFIG_PACKAGE_ppp is not set
 # CONFIG_PACKAGE_ppp-multilink is not set
-# CONFIG_PACKAGE_rpcapd is not set
 # CONFIG_PACKAGE_rssileds is not set
 # CONFIG_PACKAGE_soloscli is not set
 # CONFIG_PACKAGE_tcpdump-mini is not set
@@ -3889,7 +3853,6 @@ CONFIG_PACKAGE_libjson-script=y
 CONFIG_STRACE_NONE=y
 # CONFIG_STRACE_LIBDW is not set
 # CONFIG_STRACE_LIBUNWIND is not set
-# CONFIG_PACKAGE_ucode is not set
 # CONFIG_PACKAGE_ugps is not set
 # CONFIG_PACKAGE_unshare is not set
 # CONFIG_PACKAGE_usb-modeswitch is not set
