@@ -46,7 +46,7 @@ define Package/$(PKG_NAME)-base/config
 			help
 				Create fastd tunnel to backbone servers.
 
-		config PACKAGE_wireguard
+		config PACKAGE_wireguard-tools
 			# menu point is displayed when dependings are set
 			depends on PACKAGE_ddmesh-base
 			tristate "wireguard"
