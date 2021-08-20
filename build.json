@@ -222,6 +222,41 @@
 		"name":"mpc85xx.p1020",
 		"target":"mpc85xx",
 		"subtarget":"p1020"
+	},
+#----------------------openwrt 21.02-----------------------------------------------------------------------------------------
+# created for new target : Joy-IT JT-OR750i
+	{
+		"name":"21.ath79.generic",	# can be any name
+		"target":"ath79",
+		"subtarget":"generic",
+		"openwrt_rev":"134ac824c5a154edbbe1c581bcbc42d265dc20c0", # (HEAD, tag: v21.02.0-rc4)
+		"selector-config":"21.02",		# used to select config
+		"selector-feeds":"21.02",		# used to select feeds
+		"selector-patches":"21.02",		# used to select patches
+		"selector-files":"21.02",
+		"packages":[ ],
+		"feeds" : [
+				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
+				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"a55103240"}, # 21.02
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"8d93475"}    # 21.02
+			  ]
+	},
+#------------------------master---------------------------------------------------------------------------------------------
+	{
+		"name":"master.ath79.generic",	# can be any name
+		"target":"ath79",
+		"subtarget":"generic",
+		"openwrt_rev":"master", # 
+		"selector-config":"master",		# used to select config
+		"selector-feeds":"master",		# used to select feeds
+		"selector-patches":"master",		# used to select patches
+		"selector-files":"master",
+		"packages":[ ],
+		"feeds" : [
+				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
+				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"master"},
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"master"}
+			  ]
 	}
  ]
 }

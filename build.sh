@@ -2,7 +2,7 @@
 
 
 #usage: see below
-SCRIPT_VERSION="11"
+SCRIPT_VERSION="12"
 
 
 # gitlab variables
@@ -29,6 +29,7 @@ PLATFORMS_JSON="build.json"
 DL_DIR=dl
 WORK_DIR=workdir
 CONFIG_DIR=openwrt-configs
+CONFIG_DEFAULT_FILE="default.config"
 OPENWRT_PATCHES_DIR=openwrt-patches
 OPENWRT_PATCHES_TARGET_DIR=openwrt-patches-target
 DDMESH_STATUS_DIR=".ddmesh"	# used to store build infos like openwrt_patches_target states
@@ -145,8 +146,9 @@ progressbar()
 }
 
 # clean up screen and
-clean_up()
+clean_up_exit()
 {
+  EXIT="$1"
 	if [ "$_TERM" = "1" ]; then
 		# reset region
 		if [ -n "$row" ]; then
@@ -155,7 +157,7 @@ clean_up()
 			printf "\n"
 		fi
 	fi
-	exit 0
+	exit ${EXIT:=0} 
 }
 
 
@@ -352,6 +354,7 @@ numberOfTargets()
  do
  	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
 	[ "$entry" = "null" ] &&  break	# last entry
+
 	config_name=$(echo $entry | jq $OPT '.name')
 	[ -z "${config_name}" ] && break
 
@@ -451,7 +454,6 @@ if [ "$1" = "feed-revisions" ]; then
 		git log -1 --oneline --until="$_date"
 		cd $p
 	done
-
 	exit 0
 fi
 
@@ -513,7 +515,7 @@ fi
 echo "### target-regex:[$targetRegex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
 
 if [ "$_TERM" = "1" ]; then
-	trap clean_up SIGINT SIGTERM
+	trap clean_up_exit SIGINT SIGTERM
 	trap show_progress WINCH
 fi
 
@@ -543,7 +545,7 @@ setup_buildroot ()
 		mkdir -p "$buildroot"
 		if [ ! -d "$buildroot" ]; then
 			echo "Error: '$buildroot' could not be created. exit."
-			exit 1
+			clean_up_exit 1
 		fi
 
 		#check if we have already downloaded the openwrt revision
@@ -692,8 +694,7 @@ progress_max=$(numberOfTargets "$targetRegex")
 
 if [ $progress_max -eq 0 ]; then
  	echo "no target found"
-	clean_up
-	exit 1
+	clean_up_exit 1
 fi
 
 # if "all" target is selected, then remove all compile status files
@@ -831,7 +832,7 @@ do
 	# create feed config from build.json
 	if [ "$_feeds" = "null" ]; then
 	 	echo -e $C_RED"Error: no feeds specified"$C_NONE
-		exit 1
+		clean_up_exit 1
 	fi
 
 	feedConfFileName="$buildroot/feeds.conf"
@@ -939,7 +940,7 @@ EOM
 					touch $DDMESH_PATCH_STATUS_DIR/$entry
 				else
 					printf " -> "$C_RED"failed"$C_NONE"\n"
-					exit 1
+					clean_up_exit 1
 				fi
 			else
 					printf " -> already applied\n"
@@ -953,15 +954,40 @@ EOM
 	echo -e $C_PURPLE"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
 				# create a new config
-	cp $RUN_DIR/$config_file .config
+		
+	DEFAULT_CONFIG="${RUN_DIR}/${CONFIG_DIR}/${_selector_config}/${CONFIG_DEFAULT_FILE}"
+	# check if config exists, if not uses default as basis
+	if [ ! -f "${RUN_DIR}/${config_file}" ]; then
+		echo -e "${C_PURPLE}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
+	
+		if [ ! -f ${DEFAULT_CONFIG} ]; then
+			echo -e "${C_RED}ERROR: NO Default Config:${C_NONE} [${DEFAULT_CONFIG}]"
+			clean_up_exit 1
+		fi
+	
+		# copy config only to buildroot, not as specific config. 
+		# specific configs should be created only from menuconfig
+		
+		cp ${DEFAULT_CONFIG} .config 
+		MENUCONFIG=1
+	else
+		# copy specific config
+		cp $RUN_DIR/$config_file .config
+	fi
+
 
 
 	if [ "$MENUCONFIG" = "1" ]; then
-		echo -e $C_PURPLE"run menuconfig"$C_NONE
-		make menuconfig
-		echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
-		cp .config $RUN_DIR/$config_file
-		exit 0
+
+		echo -e "${C_PURPLE}run menuconfig${C_NONE}"
+		make menuconfig 
+		echo ""
+		# check if menuconfig has changed config. only then copy it to specific config
+		diff -q .config ${DEFAULT_CONFIG} || {
+			echo -e "${C_PURPLE}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+			cp .config ${RUN_DIR}/${config_file}
+		}
+		clean_up_exit 0
 	fi
 
 	# run defconfig to correct config dependencies if those have changed.
@@ -998,10 +1024,10 @@ EOM
 			error=$?
 			if [ $error -ne 0 ]; then
 				echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
-				exit 1
+				clean_up_exit 1
 			fi
 		else
-			exit 1
+			clean_up_exit 1
 		fi
 	fi
 
@@ -1009,7 +1035,7 @@ EOM
 	if [ ! -d "${target_dir}" ]; then
 		echo -e "${C_RED}Error: build error - generated directory not found${C_NONE}"
 		echo "     ${target_dir}"
-		exit 1
+		clean_up_exit 1
 	fi
 
 	echo -e "${C_PURPLE}images created in${C_NONE} ${C_GREEN}${target_dir}${C_NONE}"
@@ -1018,7 +1044,9 @@ done
 
 show_progress $progress_counter $progress_max
 sleep 1
-clean_up
 
 echo -e $C_PURPLE".......... complete build finished ........................"$C_NONE
 echo ""
+
+clean_up_exit 0
+

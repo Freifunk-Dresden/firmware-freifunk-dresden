@@ -1,0 +1,13 @@
+--- buildroot/Makefile.ori	2021-08-19 00:01:59.836151627 +0200
++++ buildroot/Makefile	2021-08-19 00:03:41.844180076 +0200
+@@ -50,6 +50,10 @@
+
+ prepare: $(target/stamp-compile)
+
++# Freifunk: used by build.sh
++lightclean: FORCE
++	rm -rf $(BUILD_DIR) $(STAGING_DIR) $(BUILD_LOG_DIR) $(TOPDIR)/staging_dir/packages
++
+ clean: FORCE
+ 	rm -rf $(BUILD_DIR) $(STAGING_DIR) $(BIN_DIR) $(OUTPUT_DIR)/packages/$(ARCH_PACKAGES) $(BUILD_LOG_DIR) $(TOPDIR)/staging_dir/packages
+

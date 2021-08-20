@@ -1,0 +1,104 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr package.orig/utils/busybox/Config-defaults.in package/utils/busybox/Config-defaults.in
+--- buildroot/package.orig/utils/busybox/Config-defaults.in	2021-07-11 13:24:29.651020974 +0200
++++ buildroot/package/utils/busybox/Config-defaults.in	2021-07-11 14:01:54.911714413 +0200
+@@ -825,7 +825,7 @@
+ 	default y
+ config BUSYBOX_DEFAULT_TIMEOUT
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_TOUCH
+ 	bool
+ 	default y
+@@ -1321,7 +1321,7 @@
+ 	default 0
+ config BUSYBOX_DEFAULT_CHPASSWD
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_FEATURE_DEFAULT_PASSWD_ALGO
+ 	string
+ 	default "md5"
+@@ -1363,7 +1363,7 @@
+ 	default y
+ config BUSYBOX_DEFAULT_FEATURE_PASSWD_WEAK_CHECK
+ 	bool
+-	default y
++	default n
+ config BUSYBOX_DEFAULT_SU
+ 	bool
+ 	default n
+@@ -1660,7 +1660,7 @@
+ 	default n
+ config BUSYBOX_DEFAULT_MKSWAP
+ 	bool
+-	default y
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_MKSWAP_UUID
+ 	bool
+ 	default n
+@@ -1687,7 +1687,7 @@
+ 	default n
+ config BUSYBOX_DEFAULT_FEATURE_MOUNT_CIFS
+ 	bool
+-	default y
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_MOUNT_FLAGS
+ 	bool
+ 	default y
+@@ -1762,16 +1762,16 @@
+ 	default n
+ config BUSYBOX_DEFAULT_SWAPON
+ 	bool
+-	default y
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_SWAPON_DISCARD
+ 	bool
+-	default y
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_SWAPON_PRI
+ 	bool
+-	default y
++	default n
+ config BUSYBOX_DEFAULT_SWAPOFF
+ 	bool
+-	default y
++	default n
+ config BUSYBOX_DEFAULT_FEATURE_SWAPONOFF_LABEL
+ 	bool
+ 	default n
+@@ -2185,7 +2185,6 @@
+ 	default n
+ config BUSYBOX_DEFAULT_FEATURE_IPV6
+ 	bool
+-	default y if IPV6
+ 	default n
+ config BUSYBOX_DEFAULT_FEATURE_UNIX_LOCAL
+ 	bool
+@@ -2399,7 +2398,7 @@
+ 	default "/etc/iproute2"
+ config BUSYBOX_DEFAULT_FEATURE_IP_TUNNEL
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_FEATURE_IP_RULE
+ 	bool
+ 	default y
+@@ -2771,7 +2770,7 @@
+ 	default n
+ config BUSYBOX_DEFAULT_PSTREE
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_PWDX
+ 	bool
+ 	default n
+@@ -2921,7 +2920,7 @@
+ 	default y
+ config BUSYBOX_DEFAULT_ASH_OPTIMIZE_FOR_SIZE
+ 	bool
+-	default n
++	default y
+ config BUSYBOX_DEFAULT_ASH_INTERNAL_GLOB
+ 	bool
+ 	default y
