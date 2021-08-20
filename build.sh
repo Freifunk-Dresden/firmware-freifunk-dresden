@@ -2,7 +2,7 @@
 
 
 #usage: see below
-SCRIPT_VERSION="12"
+SCRIPT_VERSION="13"
 
 
 # gitlab variables
@@ -408,7 +408,8 @@ if [ -z "$1" ]; then
 	echo "          'ramips.*'              - builds all ramips targets only"
 	echo "          'ramips.rt305x.generic' - builds exact this target"
 	echo "          '^rt30.*'               - builds all that start with 'rt30'"
-	echo "          'ramips.mt7621.generic|ar71xx.tiny.lowmem' - builds two targets"
+	echo "          'ramips.mt7621.generic ar71xx.tiny.lowmem' - space or pipe separates targets"
+	echo "          'ramips.mt7621.generic | ar71xx.tiny.lowmem' "
 	echo ""
 	echo " menuconfig       - displays configuration menu"
 	echo " rerun            - enables a second compilation with make option 'V=s'"
@@ -487,6 +488,8 @@ else
 	chars='[/$]'
 	targetRegex=${targetRegex//$chars/}
 
+	# replace any "space" with '|'. space can be used as separator lile '|'
+	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#|#g')
 	# add '\' to each '|’
 	targetRegex=${targetRegex//|/\\|}
 
