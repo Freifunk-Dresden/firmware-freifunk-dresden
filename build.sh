@@ -488,12 +488,17 @@ else
 		targetRegex=".*"
 	fi
 
+
 	# remove invalid characters: '/','$'
 	chars='[/$]'
 	targetRegex=${targetRegex//$chars/}
 
+	# remove leading and trailing spaces
+	targetRegex=$(echo "${targetRegex}" | sed 's#[ 	]\+$##;s#^[ 	]\+##')
+
 	# replace any "space" with '|'. space can be used as separator lile '|'
 	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#|#g')
+
 	# add '\' to each '|’
 	targetRegex=${targetRegex//|/\\|}
 
