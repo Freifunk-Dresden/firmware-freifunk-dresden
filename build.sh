@@ -431,6 +431,10 @@ if [ "$1" = "list-targets" ]; then
 fi
 
 if [ "$1" = "search" ]; then
+	if [ -z "$2" ]; then
+		echo "Error: missing parameter"
+		exit 1
+	fi
 	search_target $2
 	exit 0
 fi
@@ -986,7 +990,7 @@ EOM
 		make menuconfig 
 		echo ""
 		# check if menuconfig has changed config. only then copy it to specific config
-		diff -q .config ${DEFAULT_CONFIG} || {
+		diff -q .config ${DEFAULT_CONFIG} 2>/dev/null || {
 			echo -e "${C_PURPLE}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
 			cp .config ${RUN_DIR}/${config_file}
 		}
