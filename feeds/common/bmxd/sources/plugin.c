@@ -28,7 +28,6 @@
 #include "schedule.h"
 
 LIST_ENTRY cb_fd_list;
-static LIST_ENTRY cb_packet_list;
 static LIST_ENTRY cb_ogm_list;
 static LIST_ENTRY plugin_list;
 
@@ -110,36 +109,6 @@ int32_t set_fd_hook(int32_t fd, void (*cb_fd_handler)(int32_t fd), int8_t del)
 	return ret;
 }
 
-int32_t set_packet_hook(int32_t packet_type, void (*cb_packet_handler)(struct msg_buff *mb), int8_t del)
-{
-	return add_del_thread_hook(packet_type, (void (*)(void))cb_packet_handler, del, &cb_packet_list);
-}
-
-//notify interested plugins of rcvd packet...
-// THIS MAY CRASH when one plugin unregisteres two packet_hooks while being called with cb_packet_handler()
-// TODO: find solution to prevent this ???
-uint32_t cb_packet_hooks(int32_t packet_type, struct msg_buff *mb)
-{
-	struct cb_packet_node *prev_cpn = NULL;
-	int calls = 0;
-
-	OLForEach(cpn, struct cb_packet_node, cb_packet_list)
-	{
-		if (prev_cpn && prev_cpn->packet_type == packet_type)
-		{
-			(*(prev_cpn->cb_packet_handler))(mb);
-
-			calls++;
-		}
-
-		prev_cpn = cpn;
-	}
-
-	if (prev_cpn && prev_cpn->packet_type == packet_type)
-		(*(prev_cpn->cb_packet_handler))(mb);
-
-	return calls;
-}
 
 int32_t set_ogm_hook(int32_t (*cb_ogm_handler)(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router), int8_t del)
 {
@@ -327,7 +296,6 @@ void init_plugin(void)
 {
 
 	OLInitializeListHead(&cb_fd_list);
-	OLInitializeListHead(&cb_packet_list);
 	OLInitializeListHead(&cb_ogm_list);
 	OLInitializeListHead(&plugin_list);
 

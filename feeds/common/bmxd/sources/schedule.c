@@ -646,7 +646,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 		return;
 	}
 
-	if (!(((mb->bp.ogm)->ogm_ttl == 1 && directlink) || (mb->bp.ogm)->ogm_ttl > 1))
+	if (!(((mb->ogm)->ogm_ttl == 1 && directlink) || (mb->ogm)->ogm_ttl > 1))
 	{
 		dbgf_all(DBGT_INFO, "ttl exceeded");
 		prof_stop(PROF_schedule_rcvd_ogm);
@@ -664,7 +664,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	sn->ogm_buff_len = sizeof(struct bat_packet_ogm) + snd_ext_total_len;
 	sn->ogm = (struct bat_packet_ogm *)sn->_attached_ogm_buff;
 
-	memcpy(sn->ogm, mb->bp.ogm, sizeof(struct bat_packet_ogm));
+	memcpy(sn->ogm, mb->ogm, sizeof(struct bat_packet_ogm));
 
 	/* primary-interface-extension messages do not need to be rebroadcastes */
 	/* other extension messages only if not unidirectional and ttl > 1 */
@@ -744,7 +744,7 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 			((struct bat_packet_ogm *)pos)->ogm_seqno =
 					ntohs(((struct bat_packet_ogm *)pos)->ogm_seqno);
 
-			mb->bp.ogm = (struct bat_packet_ogm *)pos;
+			mb->ogm = (struct bat_packet_ogm *)pos;
 
 			/* process optional extension messages */
 
@@ -784,7 +784,7 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 						dbg_mute(75, DBGL_SYS, DBGT_ERR,
 										 "Drop packet! Rcvd incompatible extension message order: "
 										 "via NB %s  OG? %s  size? %i, ext_type %d",
-										 mb->neigh_str, ipStr(mb->bp.ogm->orig),
+										 mb->neigh_str, ipStr(mb->ogm->orig),
 										 udp_len, ((struct ext_packet *)(ext_a + ext_p))->EXT_FIELD_TYPE);
 
 						prof_stop(PROF_strip_packet);
@@ -830,36 +830,26 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 			}
 
 			dbgf_all(DBGT_INFO,
-							 "rcvd OGM: flags. %X, remaining bytes %d", (mb->bp.ogm)->flags, udp_len);
-
-			/* prepare for next ogm and attached extension messages */
-			udp_len = udp_len - ((((struct bat_packet_common *)pos)->bat_size) << 2);
-			pos = pos + ((((struct bat_packet_common *)pos)->bat_size) << 2);
+							 "rcvd OGM: flags. %X, remaining bytes %d", (mb->ogm)->flags, udp_len);
 
 			process_ogm(mb);
 		}
 		else
 		{
-			mb->bp.bpc = (struct bat_packet_common *)pos;
-
-			if (cb_packet_hooks(((struct bat_packet_common *)pos)->bat_type, mb) == 0)
-			{
-				dbg_mute(47, DBGL_CHANGES, DBGT_WARN,
-								 "Drop single unkown bat_type via NB %s, bat_type %X, size %i,  "
-								 "OG? %s, remaining len %d. Maybe you need an update",
-								 mb->neigh_str,
-								 ((struct bat_packet_common *)pos)->bat_type,
-								 (((struct bat_packet_common *)pos)->bat_size) << 2,
-								 ipStr(((struct bat_packet_ogm *)pos)->orig), udp_len);
-			}
-
-			udp_len = udp_len - ((((struct bat_packet_common *)pos)->bat_size) << 2);
-
-			pos = pos + ((((struct bat_packet_common *)pos)->bat_size) << 2);
+			dbg_mute(47, DBGL_CHANGES, DBGT_WARN,
+								"Drop single unkown bat_type via NB %s, bat_type %X, size %i,  "
+								"OG? %s, remaining len %d. Maybe you need an update",
+								mb->neigh_str,
+								((struct bat_packet_common *)pos)->bat_type,
+								(((struct bat_packet_common *)pos)->bat_size) << 2,
+								ipStr(((struct bat_packet_ogm *)pos)->orig), udp_len);
 		}
 
-		continue;
-	}
+		/* prepare for next ogm and attached extension messages */
+		udp_len = udp_len - ((((struct bat_packet_common *)pos)->bat_size) << 2);
+		pos = pos + ((((struct bat_packet_common *)pos)->bat_size) << 2);
+
+	} //while
 
 	prof_stop(PROF_strip_packet);
 }

@@ -225,31 +225,6 @@ int8_t send_udp_packet(unsigned char *packet_buff, int32_t packet_buff_len, stru
 	return 0;
 }
 
-#ifdef STEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
-static void segmentation_fault(int32_t sig)
-{
-	signal(SIGSEGV, SIG_DFL);
-
-	dbg(DBGL_SYS, DBGT_ERR, "SIGSEGV received, try cleaning up (%s%s)...",
-			SOURCE_VERSION, (strncmp(REVISION_VERSION, "0", 1) != 0 ? REVISION_VERSION : ""));
-
-	if (!on_the_fly)
-		dbg(DBGL_SYS, DBGT_ERR,
-				"check up-to-dateness of bmx libs in default lib path %s or customized lib path defined by %s !",
-				BMX_DEF_LIB_PATH, BMX_ENV_LIB_PATH);
-
-	cleanup_all(CLEANUP_RETURN);
-
-	dbg(DBGL_SYS, DBGT_ERR, "raising SIGSEGV again ...");
-
-	errno = 0;
-	if (raise(SIGSEGV))
-	{
-		dbg(DBGL_SYS, DBGT_ERR, "raising SIGSEGV failed: %s...", strerror(errno));
-	}
-}
-#endif // STEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
-
 void cleanup_all(int status)
 {
 	static int cleaning_up = NO;
@@ -341,9 +316,6 @@ int main(int argc, char *argv[])
 	signal(SIGINT, handler);
 	signal(SIGTERM, handler);
 	signal(SIGPIPE, SIG_IGN);
-#ifdef STEPHAN_ENABLE_SEGMENTATION_FAULT_HANDLING
-	signal(SIGSEGV, segmentation_fault);
-#endif
 
 	init_control();
 

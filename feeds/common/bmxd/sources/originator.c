@@ -77,6 +77,11 @@ static int32_t my_hop_penalty = DEF_HOP_PENALTY;
 
 static int32_t my_asym_exp = DEF_ASYM_EXP;
 
+//SE: network filter
+static uint32_t network_prefix;
+static uint32_t network_netmask;
+
+
 static LIST_ENTRY pifnb_list;
 LIST_ENTRY link_list;
 LIST_ENTRY if_list;
@@ -179,7 +184,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 	struct neigh_node *incm_rt = NULL;
 	struct neigh_node *curr_rt = on->router;
 	struct neigh_node *old_rt;
-	struct bat_packet_ogm *ogm = mb->bp.ogm;
+	struct bat_packet_ogm *ogm = mb->ogm;
 
 	old_rt = curr_rt;
 	uint32_t max_othr_longtm_val = 0;
@@ -560,7 +565,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 	// seqnoDiff is the positive delta considering wrapping.
 	int32_t _seqno = ogm_seqno + my_path_lounge;
 	if( _seqno >= USHRT_MAX) _seqno -= USHRT_MAX; // on wrap: shift it back (evt.) ins negative
-	
+
 	int32_t seqnoDiff =   _seqno >= orig_node->last_valid_sqn
 											?	_seqno >= orig_node->last_valid_sqn
 											: (USHRT_MAX - orig_node->last_valid_sqn) + _seqno;
@@ -585,7 +590,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 							 seqnoDiff,
 							 dad_to, WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP));
 
-	//		return FAILURE;
+			return FAILURE; // ignore ogm
 		}
 
 #endif
@@ -1118,7 +1123,7 @@ void process_ogm(struct msg_buff *mb)
 
 	struct batman_if *iif = mb->iif;
 	uint32_t neigh = mb->neigh;
-	struct bat_packet_ogm *ogm = mb->bp.ogm;
+	struct bat_packet_ogm *ogm = mb->ogm;
 
 	uint16_t oCtx = 0;
 
@@ -1141,6 +1146,14 @@ void process_ogm(struct msg_buff *mb)
 						 ipStr(ogm->orig), ogm->ogm_pws);
 		goto process_ogm_end;
 	}
+
+//SE: check that IP matchs the ip network
+	if ( (ogm->orig & network_netmask) != ( network_prefix & network_netmask) )
+	{
+		dbg_mute(30, DBGL_SYS, DBGT_WARN, "drop OGM: %s does not match network !", ipStr(ogm->orig));
+		goto process_ogm_end;
+	}
+
 
 	OLForEach(bif, struct batman_if, if_list)
 	{
@@ -1794,6 +1807,40 @@ static int32_t opt_gw_script(uint8_t cmd, uint8_t _save, struct opt_type *opt, s
 	return SUCCESS;
 }
 
+
+static int32_t opt_netw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
+{
+	uint32_t ip = 0;
+	int32_t mask = 0;
+
+	if (cmd == OPT_REGISTER)
+	{
+		inet_pton(AF_INET, DEF_NETW_PREFIX, &network_prefix);
+		// convert netmask /16 to binary, so I can easily check later
+		network_netmask = htonl(0xFFFFFFFF << (32 - DEF_NETW_MASK));
+	}
+	else if (cmd == OPT_CHECK || cmd == OPT_APPLY)
+	{
+		if (str2netw(patch->p_val, &ip, '/', cn, &mask, 32) == FAILURE ||
+				mask < MIN_NETW_MASK || mask > MAX_NETW_MASK)
+			return FAILURE;
+
+		if (ip != validate_net_mask(ip, mask, cmd == OPT_CHECK ? cn : 0))
+			return FAILURE;
+
+		if (cmd == OPT_APPLY)
+		{
+			network_prefix = ip;
+			// convert netmask /16 to binary, so I can easily check later
+			network_netmask = htonl(0xFFFFFFFF << (32 - mask));
+		}
+	}
+
+	return SUCCESS;
+}
+
+
+
 static struct opt_type originator_options[] =
 		{
 				//        ord parent long_name          shrt Attributes				*ival		min		max		default		*func,*syntax,*help
@@ -1815,6 +1862,10 @@ static struct opt_type originator_options[] =
 
 				{ODI, 5, 0, ARG_DEV, 0, A_PMN, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_dev,
 				 "<interface-name>", "add or change device or its configuration, options for specified device are:"},
+
+//SE: network filter
+				{ODI, 4, 0, ARG_NETW, 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, 0, 0, 0, 0, opt_netw,
+		 			ARG_PREFIX_FORM, "only accept OGM from network\n"},
 
 #ifndef LESS_OPTIONS
 				{ODI, 5, ARG_DEV, ARG_DEV_TTL, 't', A_CS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, MIN_TTL, MAX_TTL, DEF_TTL, opt_dev,

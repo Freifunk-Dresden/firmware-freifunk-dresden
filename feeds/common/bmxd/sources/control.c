@@ -981,13 +981,6 @@ static void show_opts_help(struct ctrl_node *cn)
 			dbg_printf(cn, "	        %s\n", c_opt->help);
 		}
 	}
-
-	dbg_printf(cn, "\n");
-	dbg_printf(cn, "Environment variables (e.g. sudo %s=/usr/src/bmx/lib %s -d3 eth0:bmx ):\n",
-						 BMX_ENV_LIB_PATH, prog_name);
-	dbg_printf(cn, "\t%s\n", BMX_ENV_LIB_PATH);
-	dbg_printf(cn, "\t%s\n", BMX_ENV_DEBUG);
-	dbg_printf(cn, "\n");
 }
 
 void register_option(struct opt_type *opt)
@@ -2947,9 +2940,6 @@ void init_control(void)
 
 	OLInitializeListHead(&ctrl_list);
 	OLInitializeListHead(&opt_list);
-	char *d = getenv(BMX_ENV_DEBUG);
-	if (d && strtol(d, NULL, 10) >= DBGL_MIN && strtol(d, NULL, 10) <= DBGL_MAX)
-		debug_level = strtol(d, NULL, 10);
 
 	openlog("bmx", LOG_PID, LOG_DAEMON);
 

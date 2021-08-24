@@ -142,10 +142,6 @@ enum ADGSN
 #define DEF_RUN_DIR "/var/run/bmx"
 
 extern uint32_t My_pid;
-#define BMX_ENV_LIB_PATH "BMX_LIB_PATH"
-#define BMX_DEF_LIB_PATH "/usr/lib"
-// e.g. sudo BMX_LIB_PATH="$(pwd)/lib" ./bmxd -d3 eth0:bmx
-#define BMX_ENV_DEBUG "BMX_DEBUG"
 
 #define SOME_ADDITIONAL_SIZE 0 /*100*/
 #define IEEE80211_HDR_SIZE 24
@@ -237,8 +233,6 @@ struct bat_header
 } __attribute__((packed));
 
 #define BAT_TYPE_OGM 0x00 // originator message
-#define BAT_TYPE_UPM 0x01 // unicast link-probe message
-#define BAT_TYPE_ ...
 
 struct bat_packet_common
 {
@@ -287,7 +281,7 @@ struct bat_packet_ogm
 	uint8_t prev_hop_id;
 	SQ_TYPE ogm_seqno;
 
-	uint32_t orig;
+	uint32_t orig;  //ip address of node that sent the ogm
 
 } __attribute__((packed));
 
@@ -372,11 +366,7 @@ struct msg_buff
 	uint8_t unicast;
 
 	//filled by strip_packet()
-	union
-	{
-		struct bat_packet_common *bpc;
-		struct bat_packet_ogm *ogm;
-	} bp;
+	struct bat_packet_ogm *ogm;
 
 	struct ext_packet *rcv_ext_array[EXT_TYPE_MAX + 1];
 	uint16_t rcv_ext_len[EXT_TYPE_MAX + 1];
