@@ -1150,7 +1150,7 @@ void process_ogm(struct msg_buff *mb)
 //SE: check that IP matchs the ip network
 	if ( (ogm->orig & network_netmask) != ( network_prefix & network_netmask) )
 	{
-		dbg_mute(30, DBGL_SYS, DBGT_WARN, "drop OGM: %s does not match network !", ipStr(ogm->orig));
+		dbg_mute(30, DBGL_SYS, DBGT_WARN, "drop OGM: %s does not match network [%s/%x] !", ipStr(ogm->orig), ipStr(network_prefix), network_netmask);
 		goto process_ogm_end;
 	}
 
@@ -1817,22 +1817,28 @@ static int32_t opt_netw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 	{
 		inet_pton(AF_INET, DEF_NETW_PREFIX, &network_prefix);
 		// convert netmask /16 to binary, so I can easily check later
+
 		network_netmask = htonl(0xFFFFFFFF << (32 - DEF_NETW_MASK));
 	}
 	else if (cmd == OPT_CHECK || cmd == OPT_APPLY)
 	{
 		if (str2netw(patch->p_val, &ip, '/', cn, &mask, 32) == FAILURE ||
 				mask < MIN_NETW_MASK || mask > MAX_NETW_MASK)
+		{
 			return FAILURE;
+		}
 
 		if (ip != validate_net_mask(ip, mask, cmd == OPT_CHECK ? cn : 0))
+		{
 			return FAILURE;
+		}
 
 		if (cmd == OPT_APPLY)
 		{
 			network_prefix = ip;
 			// convert netmask /16 to binary, so I can easily check later
 			network_netmask = htonl(0xFFFFFFFF << (32 - mask));
+//			dbg_printf(cn, "OPT_APPLY: str: %s, mask:%x -> %x\n", patch->p_val, mask, network_netmask);
 		}
 	}
 
@@ -1863,8 +1869,8 @@ static struct opt_type originator_options[] =
 				{ODI, 5, 0, ARG_DEV, 0, A_PMN, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_dev,
 				 "<interface-name>", "add or change device or its configuration, options for specified device are:"},
 
-//SE: network filter
-				{ODI, 4, 0, ARG_NETW, 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, 0, 0, 0, 0, opt_netw,
+//SE: network filter; can be set dynamically
+				{ODI, 5, 0, ARG_NETW, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, 0, 0, 0, 0, opt_netw,
 		 			ARG_PREFIX_FORM, "only accept OGM from network\n"},
 
 #ifndef LESS_OPTIONS

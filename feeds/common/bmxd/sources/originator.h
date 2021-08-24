@@ -134,9 +134,9 @@ extern int32_t wl_clones;
 //SE: add network
 #define ARG_NETW "network"
 #define MIN_NETW_MASK 8
-#define MAX_NETW_MASK 8
-#define DEF_NETW_PREFIX "10.200.0.0"
-#define DEF_NETW_MASK   16
+#define MAX_NETW_MASK 24
+#define DEF_NETW_PREFIX "10.0.0.0"
+#define DEF_NETW_MASK   8					// primary ip and non-primary
 
 
 extern struct batman_if *primary_if;
