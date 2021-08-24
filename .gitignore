@@ -5,3 +5,4 @@ logs/
 final_output/
 upload-infos/
 *.o
+docs/_build/
