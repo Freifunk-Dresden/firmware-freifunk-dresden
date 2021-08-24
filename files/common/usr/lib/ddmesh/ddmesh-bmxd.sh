@@ -85,9 +85,9 @@ case "$ARG1" in
 	fi
 
 	#add dyn interfaces (add_if_wifi, add_if_wire)
-	IFS=' 
+	IFS='
 	'
-	for line in $(cat ${DYN_IFACES_FILE}) 
+	for line in $(cat ${DYN_IFACES_FILE})
 	do
 		# split ifname and linklayer
 		_IF="$_IF dev=${line%,*} /linklayer ${line#*,}"
@@ -96,11 +96,12 @@ case "$ARG1" in
 
 	#default start with no gatway.will be updated by gateway_check.sh
 	#SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"
+	NETWORK_OPTS="--network $_ddmesh_fullnet"
 	SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 	TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre"
 	TUNING_OPTS="--purge_timeout 20 --gateway_hysteresis $GATEWAY_HYSTERESIS --script /usr/lib/bmxd/bmxd-gateway.sh"
 
-	DAEMON_OPTS="$SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
+	DAEMON_OPTS="$NETWORK_OPTS $SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
 
 
 
@@ -186,7 +187,7 @@ case "$ARG1" in
 	test "$bmxd_count" -gt $bmxd_max_instances && logger -s -t "$TAG" "bmxd: too many instances ($bmxd_count/$bmxd_max_instances)" && bmxd_restart=1
 
 	if [ "$bmxd_restart" = 1 ]; then
-		logger -s -t "$TAG" "$DAEMON not running - restart" 
+		logger -s -t "$TAG" "$DAEMON not running - restart"
 		$0 restart
 	fi
 
