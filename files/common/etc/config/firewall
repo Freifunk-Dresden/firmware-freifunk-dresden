@@ -35,7 +35,7 @@ config zone 'zone_wifi2'
 	option forward 'REJECT'
 	option masq '0'
 	option mtu_fix '1'
-	list subnet '100.64.0.0/16'
+	list subnet '100.64.0.0/10'
 
 #interface is not brought up by network system, because it is created not by openwrt network environment.
 #it is created by fastd
@@ -620,4 +620,3 @@ config rule 'wanicmp'
 
 config include
 	option path '/etc/firewall.user'
-

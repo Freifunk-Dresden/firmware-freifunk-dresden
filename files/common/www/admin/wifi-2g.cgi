@@ -86,12 +86,11 @@ function checkInput()
 <tr><th>Freifunk-DHCP Roaming:</th>
 <td><input name="form_wifi2_roaming" TYPE="CHECKBOX"
 $(if [ "$_ddmesh_wifi2roaming" != "1" ];then echo ' disabled';fi)
-VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" ];then echo ' checked="checked"';fi)>Aktiviert Roaming when possible.</td></tr>
+VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" ];then echo ' checked="checked"';fi)> Aktiviert Roaming wenn m&ouml;glich (Knotennummer < 32767).</td></tr>
 
 <tr><th>Freifunk-DHCP Bereich:</th>
 <td><input name="form_wifi_dncp" size="32" type="text" value="$_ddmesh_wifi2dhcpstart - $_ddmesh_wifi2dhcpend" disabled> <br/>
-Der Bereich <b>nach</b> $_ddmesh_wifi2ip bis <b>vor</b> $_ddmesh_wifi2dhcpstart kann an Ger&auml;te fest vergeben werden.<br/>
-Ist der Splash aktiv, m&uuml;ssen MAC Adressen manuell hinzugef&uuml;gt werden (<a href="/admin/splash.cgi">Splash</a>).</td>
+Der Bereich von <b>$_ddmesh_wifi2FixIpStart</b> bis <b>$_ddmesh_wifi2FixIpEnd</b> kann an Ger&auml;te fest vergeben werden.
 </tr>
 
 <tr><th>Kanal:</th>

@@ -99,7 +99,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	meshnet		= "10.200.0.0/16"
 	linknet		= "10.201.0.0/16"
 	fullnet		= "10.200.0.0/15"
-	wifi2net	= "100.64.0.0/16"
+	wifi2net	= "100.64.0.0/10"
 	wifi2ip		= "100.64.0.1"
 
 	# ----- new wifi2 ip calulation with roaming
@@ -137,13 +137,17 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	b2 = or(0x40, and( rshift(_roaming_node, 9), 0x3f))
 	b3 = and(rshift(_roaming_node, 1), 0xff)
 	b4 = and(lshift(_roaming_node, 7), 0x80)
-	b4min = b4 + 1		# erste client IP
-	b4max = b4 + 126	# letzte client IP, da bei max knoten 32767 die broadcast ip
+	b4FixIpStart	= b4 + 1		# very start for ip range
+	b4FixIpEnd 		= b4 + 10		# very start for ip range
+	b4min = b4FixIpEnd + 1		# dhcp start; keep some room for portforwardings
+	b4max = b4 + 126	# dhcp end; letzte client IP, da bei max knoten 32767 die broadcast ip
 										# noch moeglich sein muss
 
 	wifi2roaming 		= _roaming
+	wifi2FixIpStart	= b1"."b2"."b3"."b4FixIpStart
+	wifi2FixIpEnd		= b1"."b2"."b3"."b4FixIpEnd
 	wifi2dhcpstart	= b1"."b2"."b3"."b4min
-	wifi2dhcpnum		= 126
+	wifi2dhcpnum		= b4max - b4min + 1
 	wifi2dhcpend		= b1"."b2"."b3"."b4max
 	wifi2broadcast	= "100.127.255.255"
 	wifi2netmask		= "255.192.0.0"
@@ -174,6 +178,8 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	print "export _ddmesh_wifi2net=\""wifi2net"\""
 	print "export _ddmesh_wifi2ip=\""wifi2ip"\""
 	print "export _ddmesh_wifi2roaming=\""wifi2roaming"\""
+	print "export _ddmesh_wifi2FixIpStart=\""wifi2FixIpStart"\""
+	print "export _ddmesh_wifi2FixIpEnd=\""wifi2FixIpEnd"\""
 	print "export _ddmesh_wifi2dhcpstart=\""wifi2dhcpstart"\""
 	print "export _ddmesh_wifi2dhcpnum=\""wifi2dhcpnum"\""
 	print "export _ddmesh_wifi2dhcpend=\""wifi2dhcpend"\""

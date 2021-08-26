@@ -24,6 +24,9 @@ test "$previous_version" = "$current_version" && {
 	exit 0
 }
 
+node=$(uci get ddmesh.system.node)
+eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+
 run_upgrade()
 {
  #grep versions from this file (see below)
@@ -495,10 +498,10 @@ upgrade_6_4_2()
  uci set ddmesh.network.wifi_ch_5g_outdoor_max=140
  uci set ddmesh.network.mesh_mode='adhoc+mesh'
  if [ -n "$(uci -q get network.wifi)" ]; then
-	uci -q rename network.wifi='wifi_adhoc' 
+	uci -q rename network.wifi='wifi_adhoc'
  fi
  if [ -z "$(uci -q get credentials.network)" ]; then
-	uci add credentials network             
+	uci add credentials network
 	uci rename credentials.@network[-1]='network'
 	uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
  fi
@@ -544,6 +547,12 @@ upgrade_7_0_2()
 upgrade_7_0_3()
 {
  true
+}
+
+upgrade_7_1_0()
+{
+	uci del_list firewall.zone_wifi.subnet
+	uci add_list firewall.zone_wifi.subnet="$_ddmesh_wifi2net"
 }
 
 ##################################
