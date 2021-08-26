@@ -3,6 +3,8 @@
 LOGGER_TAG="ddmesh-wifi"
 
 node=$(uci get ddmesh.system.node)
+eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+
 setup_wireless()
 {
  rm -f /etc/config/wireless
@@ -106,19 +108,23 @@ setup_wireless()
 
 
  # - wifi2 - 2G
-
- if [ "$(uci -q get ddmesh.network.custom_essid)" = "1" ]; then
-	custom="$(uci -q get ddmesh.network.essid_ap)"
-	if [ -n "$(echo "$custom" | sed 's#^ *$##')" ]; then
-		essid2="$(uci -q get ddmesh.system.community):$(uci get ddmesh.network.essid_ap)"
-		essid5="$(uci -q get ddmesh.system.community) 5GHz:$(uci get ddmesh.network.essid_ap)"
-	else
-		essid2="$(uci -q get ddmesh.system.community)"
-		essid5="$(uci -q get ddmesh.system.community) 5GHz"
-	fi
+ if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" -a "$_ddmesh_wifi2roaming" = "1" ]; then
+	essid2="$(uci -q get ddmesh.system.community)"
+	essid5="$(uci -q get ddmesh.system.community) 5GHz"
  else
-	essid2="$(uci -q get ddmesh.system.community) [$node]"
-	essid5="$(uci -q get ddmesh.system.community) 5GHz [$node]"
+	if [ "$(uci -q get ddmesh.network.custom_essid)" = "1" ]; then
+		custom="$(uci -q get ddmesh.network.essid_ap)"
+		if [ -n "$(echo "$custom" | sed 's#^ *$##')" ]; then
+			essid2="$(uci -q get ddmesh.system.community):$(uci get ddmesh.network.essid_ap)"
+			essid5="$(uci -q get ddmesh.system.community) 5GHz:$(uci get ddmesh.network.essid_ap)"
+		else
+			essid2="$(uci -q get ddmesh.system.community)"
+			essid5="$(uci -q get ddmesh.system.community) 5GHz"
+		fi
+	else
+		essid2="$(uci -q get ddmesh.system.community) [$node]"
+		essid5="$(uci -q get ddmesh.system.community) 5GHz [$node]"
+	fi
  fi
 
  test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface

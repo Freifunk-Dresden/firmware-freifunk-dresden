@@ -56,9 +56,9 @@ function checkInput()
 	{
 		var key = document.getElementById('id_wifi3_key').value;
 		var ssid = document.getElementById('id_wifi3_ssid').value;
-		if(   ssid === undefined 
-		   || ( security && 
-			( key === undefined || key.length < 8 
+		if(   ssid === undefined
+		   || ( security &&
+			( key === undefined || key.length < 8
 			  || !checkWifiKey(document.getElementById('id_wifi3_key').value)))
 		  )
 		{
@@ -82,6 +82,11 @@ function checkInput()
 <tr><th>Freifunk-Netzmaske:</th>
 <td><input name="form_wifi_netmask" size="32" type="text" value="$_ddmesh_netmask" disabled></td>
 </tr>
+
+<tr><th>Freifunk-DHCP Roaming:</th>
+<td><input name="form_wifi2_roaming" TYPE="CHECKBOX"
+$(if [ "$_ddmesh_wifi2roaming" != "1" ];then echo ' disabled';fi)
+VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" ];then echo ' checked="checked"';fi)>Aktiviert Roaming when possible.</td></tr>
 
 <tr><th>Freifunk-DHCP Bereich:</th>
 <td><input name="form_wifi_dncp" size="32" type="text" value="$_ddmesh_wifi2dhcpstart - $_ddmesh_wifi2dhcpend" disabled> <br/>
@@ -168,7 +173,7 @@ else #query string
 			uci set ddmesh.network.essid_ap="$(uhttpd -d "$form_wifi_ap_ssid")"
 			uci set ddmesh.network.custom_essid="$form_wifi_custom_essid"
 			uci set ddmesh.network.wifi_slow_rates="$form_wifi_slow_rates"
-
+			uci set ddmesh.network.wifi2_roaming_enabled="$form_wifi2_roaming"
 			uci set ddmesh.network.wifi3_2g_enabled="$form_wifi3_enabled"
 			# avoid clearing values when disabled
 			if [ "$form_wifi3_enabled" = 1 ]; then
