@@ -44,10 +44,12 @@ uint8_t ext_attribute[EXT_TYPE_MAX + 1] =
 // hna is removed, but this is still used by older firmware versions in pakets
 				0,														// _removed_EXT_TYPE_64B_HNA
 				0,														// EXT_TYPE_64B_PIP
-				EXT_ATTR_KEEP,								// EXT_TYPE_64B_SRV
+				EXT_ATTR_KEEP,								// EXT_TYPE_64B_NETID
+
+//stephan: alle die hier folgen, werden nicht verwendet (reserivert)
 				EXT_ATTR_KEEP,								// EXT_TYPE_64B_KEEP_RESERVED4
 				0,														// EXT_TYPE_64B_DROP_RESERVED5
-				EXT_ATTR_TLV | EXT_ATTR_KEEP, // EXT_TYPE_TLV_KEEP_LOUNGE_REQ
+				EXT_ATTR_TLV | EXT_ATTR_KEEP, // EXT_TYPE_TLV_KEEP_RESERVED6
 				EXT_ATTR_TLV,									// EXT_TYPE_TLV_DROP_RESERVED7
 				EXT_ATTR_KEEP,								// EXT_TYPE_64B_KEEP_RESERVED8
 				0,														// EXT_TYPE_64B_DROP_RESERVED9

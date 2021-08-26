@@ -288,10 +288,38 @@ struct bat_packet_ogm
 #define EXT_TYPE_MIN 0
 #define EXT_TYPE_64B_GW 0
 #define EXT_TYPE_64B_PIP 2
-#define EXT_TYPE_64B_SRV 3
+
+/*Stephan:
+Die extensions werden am ende einer OGM angehängt. bmxd prueft ob diese
+behalten werden wenn eine OGM empfangen wird (also weiter gesendet
+(EXT_ATTR_KEEP) oder rausgeschmissen wird).
+Dazu gibt es das globale array ext_attribute[]
+Das passiert in schedule.c::strip_packet() zeile 760ff
+
+Fuer die networkid muss ich also was einbauen wie my_pip_extension.
+EXT_ATTR_KEEP ist schon mal dafür in ext_attribute[] definiert.
+Ebenso das Macro, um in der struct ext_packet auf den wert zu zugreifen.
+
+"EXT_NETID_FIELD_ID"
+
+Devel-info:
+suche nach, als anhaltspunkt:
+ 	memset(&my_pip_extension_packet, 0, sizeof(struct ext_packet));
+	my_pip_extension_packet.EXT_FIELD_MSG = YES;
+	my_pip_extension_packet.EXT_FIELD_TYPE = EXT_TYPE_64B_PIP;
+
+*/
+//stephan create new extension (we can use maximal 15)
+#ifdef ENABLE_NETID
+	#define EXT_TYPE_64B_NETID 3		//struct ext_packet has has
+#endif //ENABLE_NETID
+
+//SE: die namen der defines spielen nur die konfigurierent attribute
+//    aus dem globalen array "ext_attribute[]" wider.
+//
 #define EXT_TYPE_64B_KEEP_RESERVED4 4
 #define EXT_TYPE_64B_DROP_RESERVED5 5
-#define EXT_TYPE_TLV_KEEP_LOUNGE_REQ 6
+#define EXT_TYPE_TLV_KEEP_RESERVED6 6
 #define EXT_TYPE_TLV_DROP_RESERVED7 7
 #define EXT_TYPE_64B_KEEP_RESERVED8 8
 #define EXT_TYPE_64B_DROP_RESERVED9 9
@@ -302,6 +330,7 @@ struct bat_packet_ogm
 #define EXT_TYPE_TLV_KEEP_RESERVED14 14
 #define EXT_TYPE_TLV_DROP_RESERVED15 15
 #define EXT_TYPE_MAX 15
+
 
 #define EXT_ATTR_TLV 0x01	 /* extension message is TLV type */
 #define EXT_ATTR_KEEP 0x02 /* re-propagate extension message (even if unknown) */
@@ -321,6 +350,11 @@ struct ext_packet
 #define EXT_PIP_FIELD_RES1 def8
 #define EXT_PIP_FIELD_PIPSEQNO d16.def16
 #define EXT_PIP_FIELD_ADDR d32.def32
+
+// stephan
+#ifdef ENABLE_NETID
+	#define EXT_NETID_FIELD_ID d32.def32	//I need 4 bytes
+#endif 	//ENABLE_NETID
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 	unsigned int ext_related : 2; // may be used by the related message type
