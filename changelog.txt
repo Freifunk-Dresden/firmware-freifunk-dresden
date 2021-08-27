@@ -1,7 +1,21 @@
 
-2021-04-00 7.0.
+2021-04-00 7.1.0
 --------------------------------------------------
 gui                       - add option to control LEDs
+wifi                      - add light roaming (hotspot should use same gateway and should
+                            have same data transfer power, else roaming could select slow
+                            access points but with stronger wifi signal)
+gui-wifi                  - let display wifi scan page competely and start scanning afterwards
+splash                    - hide splash if not used (will be removed in future)
+bmxd                      - add network filter to ignore packages from invalid network
+                            ip range
+                          - remove unused code
+                          - some improvments on duplicate address detection
+sysinfo                   - add wg_pubkey and roaming flag
+gui-syslog                - change color for wifi related entries (red to some other)
+build-system              - fix some configuration dependencies
+                          - add default openwrt config as basis for creating new config files
+                          - some other build script improvments
 
 
 2021-05-2 7.0.3 (release)
