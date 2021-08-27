@@ -646,7 +646,7 @@ static void gwc_recv_tun(int32_t fd_in)
 			// dbgf_all( DBGT_INFO "Send data to gateway %s, len %d", gw_str, tp_len );
 		}
 		else /*if ( gwc_args->last_invalidip_warning == 0 ||
-		            LESS_U32((gwc_args->last_invalidip_warning + WARNING_PERIOD), batman_time) )*/
+		            (gwc_args->last_invalidip_warning + WARNING_PERIOD) < batman_time) )*/
 		{
 			//gwc_args->last_invalidip_warning = batman_time;
 			dbg_mute(60, DBGL_CHANGES, DBGT_ERR,
@@ -1112,8 +1112,9 @@ static void cb_choose_gw(void *unused)
 			gw_node->unavail_factor = MAX_GW_UNAVAIL_FACTOR;
 
 		/* ignore this gateway if recent connection attempts were unsuccessful */
-		if (GREAT_U32(
-						(gw_node->unavail_factor * gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) + gw_node->last_failure, batman_time))
+		if (     ((gw_node->unavail_factor * gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) + gw_node->last_failure)
+		      >  batman_time
+			 )
 		{
 			continue;
 		}
@@ -1412,7 +1413,7 @@ static struct opt_type tunnel_options[] = {
 										 "	2 -> permanently select most stable GW accoridng to measurement \n"
 										 "	3 -> dynamically switch to most stable GW"},
 
-		{ODI, 5, 0, ARG_GW_HYSTERESIS, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &gw_hysteresis, MIN_GW_HYSTERE, MIN_GW_HYSTERE, DEF_GW_HYSTERE, 0,
+		{ODI, 5, 0, ARG_GW_HYSTERESIS, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &gw_hysteresis, MIN_GW_HYSTERE, MAX_GW_HYSTERE, DEF_GW_HYSTERE, 0,
 		 ARG_VALUE_FORM, "set number of additional rcvd OGMs before changing to more stable GW (only relevant for -r3 GW-clients)"},
 
 		{ODI, 5, 0, "preferred_gateway", 'p', A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_rt_pref,

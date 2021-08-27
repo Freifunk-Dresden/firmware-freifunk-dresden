@@ -264,8 +264,10 @@ void close_ctrl_node(uint8_t cmd, struct ctrl_node *ctrl_node)
 
 		if ((cmd == CTRL_CLOSE_STRAIGHT && cn == ctrl_node) ||
 				(cmd == CTRL_PURGE_ALL) ||
-				(cmd == CTRL_CLEANUP && cn->closing_stamp && /* cn->fd <= 0  && */
-				 GREAT_U32(batman_time, cn->closing_stamp + CTRL_CLOSING_TIMEOUT)))
+				(cmd == CTRL_CLEANUP
+				  && cn->closing_stamp /* cn->fd <= 0  && */
+				  && batman_time > (cn->closing_stamp + CTRL_CLOSING_TIMEOUT))
+			 )
 		{
 			if (cn->fd > 0 && cn->fd != STDOUT_FILENO)
 			{
@@ -384,8 +386,8 @@ static uint8_t check_dbg_history(int8_t dbgl, char *s, uint32_t expire, uint16_t
 				dbgl_history[h][i].expire == expire &&
 				!memcmp(s, dbgl_history[h][i].text, MIN(check_len, strlen(s))))
 		{
-			if (LESS_U32(batman_time, dbgl_history[h][i].print_stamp + expire) &&
-					GRTEQ_U32(batman_time, dbgl_history[h][i].print_stamp))
+			if (    batman_time < (dbgl_history[h][i].print_stamp + expire)
+			    &&	batman_time >= dbgl_history[h][i].print_stamp)
 			{
 				dbgl_history[h][i].catched++;
 
@@ -400,10 +402,12 @@ static uint8_t check_dbg_history(int8_t dbgl, char *s, uint32_t expire, uint16_t
 			return DBG_HIST_NEW;
 		}
 
-		if (unused_i == -1 &&
-				(dbgl_history[h][i].catched == 0 ||
-				 !(LESS_U32(batman_time, dbgl_history[h][i].print_stamp + expire) &&
-					 GRTEQ_U32(batman_time, dbgl_history[h][i].print_stamp))))
+		if (   unused_i == -1
+		    && (     dbgl_history[h][i].catched == 0
+				     || !( batman_time < (dbgl_history[h][i].print_stamp + expire) &&
+					         batman_time >= dbgl_history[h][i].print_stamp)
+				)
+			 )
 		{
 			unused_i = i;
 		}
@@ -977,13 +981,6 @@ static void show_opts_help(struct ctrl_node *cn)
 			dbg_printf(cn, "	        %s\n", c_opt->help);
 		}
 	}
-
-	dbg_printf(cn, "\n");
-	dbg_printf(cn, "Environment variables (e.g. sudo %s=/usr/src/bmx/lib %s -d3 eth0:bmx ):\n",
-						 BMX_ENV_LIB_PATH, prog_name);
-	dbg_printf(cn, "\t%s\n", BMX_ENV_LIB_PATH);
-	dbg_printf(cn, "\t%s\n", BMX_ENV_DEBUG);
-	dbg_printf(cn, "\n");
 }
 
 void register_option(struct opt_type *opt)
@@ -2943,9 +2940,6 @@ void init_control(void)
 
 	OLInitializeListHead(&ctrl_list);
 	OLInitializeListHead(&opt_list);
-	char *d = getenv(BMX_ENV_DEBUG);
-	if (d && strtol(d, NULL, 10) >= DBGL_MIN && strtol(d, NULL, 10) <= DBGL_MAX)
-		debug_level = strtol(d, NULL, 10);
 
 	openlog("bmx", LOG_PID, LOG_DAEMON);
 

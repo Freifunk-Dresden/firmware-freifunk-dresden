@@ -116,6 +116,7 @@ config network 'network'
 	option	wifi_slow_rates		0
 	option	wifi2_dhcplease		'5m'
 	option	wifi2_isolate		'1'
+	option  wifi2_roaming_enabled	'0'
 	option	mesh_mode		'adhoc+mesh' #adhoc,mesh,adhoc+mesh
 	option	lan_local_internet	'0'
 	option	speed_down		'200000'

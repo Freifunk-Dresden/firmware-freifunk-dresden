@@ -7,14 +7,18 @@ export TITLE="Infos &gt; Status"
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 getairtime() {
-let ACT=$(echo "$1" | cut -d',' -f1)
-let BUS=$(echo "$1" | cut -d',' -f2)
-let REC=$(echo "$1" | cut -d',' -f3)
-let TRA=$(echo "$1" | cut -d',' -f4)
-busy=$(printf %.2f "$((10000 * $BUS / $ACT ))"e-2 )
-rx=$(printf %.2f "$((10000 * $REC / $ACT ))"e-2 )
-tx=$(printf %.2f "$((10000 * $TRA / $ACT ))"e-2 )
-echo "Busy: "$busy"% Rx: "$rx"% Tx: "$tx"%"
+if [ -n "$1" ]; then
+	let ACT=$(echo "$1" | cut -d',' -f1)
+	let BUS=$(echo "$1" | cut -d',' -f2)
+	let REC=$(echo "$1" | cut -d',' -f3)
+	let TRA=$(echo "$1" | cut -d',' -f4)
+	busy=$(printf %.2f "$((10000 * $BUS / $ACT ))"e-2 )
+	rx=$(printf %.2f "$((10000 * $REC / $ACT ))"e-2 )
+	tx=$(printf %.2f "$((10000 * $TRA / $ACT ))"e-2 )
+	echo "Busy: "$busy"% Rx: "$rx"% Tx: "$tx"%"
+else
+	echo "Busy: 0% Rx: 0% Tx: 0%"
+fi
 }
 
 cat<<EOF
@@ -31,8 +35,12 @@ cat<<EOF
 <tr><th>Ger&auml;teinfo:</th><td><b>Model:</b> $model ($model2) - <b>CPU:</b> $(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p') - <b>Board:</b> $(cat /tmp/sysinfo/board_name)</td></tr>
 <tr><th>Firmware-Version:</th><td>Freifunk Dresden Edition $(cat /etc/version) / $DISTRIB_DESCRIPTION</td></tr>
 <tr><th>Freier Speicher:</th><td>$(cat /proc/meminfo | grep MemFree | cut -d':' -f2) von $(cat /proc/meminfo | grep MemTotal | cut -d':' -f2)</td></tr>
-<tr><th>WIFI AirTime:</th><td>2Ghz: $(getairtime $wifi_status_radio2g_airtime)</td></tr>
 EOF
+ if [ ! -z "$wifi_status_radio2g_airtime" ];then
+	echo "<tr><th><td> 2Ghz:"
+	getairtime $wifi_status_radio2g_airtime
+	echo "</td></tr>"
+ fi
  if [ ! -z "$wifi_status_radio5g_airtime" ];then
 	echo "<tr><th><td> 5Ghz:"
 	getairtime $wifi_status_radio5g_airtime

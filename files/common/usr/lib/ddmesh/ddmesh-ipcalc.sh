@@ -3,10 +3,9 @@
 #     0 -   256   vserver
 #   900 -   999   temp Knoten, bei Inbetriebnahme
 #  1000           spezial:start point for registrator
-#  1001 - 50999   Knotennummer für Firmware: vergeben durch registrator
-# 51000 - 59999   Knotennummer für eigen Aufgebaute Knoten
-# 60000 - 65278   Reserviert
-# 65279           broadcast (10.200.255.255)
+#  1001 - 50999   Knotennummer fuer Firmware: vergeben durch registrator
+# 51000 - 59999   Knotennummer fuer eigen aufgebaute Knoten
+# 60000 - 65767   Reserviert
 ##############################################
 export NODE_MIN=1001
 export NODE_MAX=59999
@@ -17,13 +16,13 @@ export ARG2="$2"
 if [ "$ARG1" = "" ]
 then
 	echo ""
-	echo "ddmesh-ipcalc.sh (awk) Stephan Enderlein (c) 2017 V5"
+	echo "ddmesh-ipcalc.sh (awk) Stephan Enderlein (c) 2021 V6"
 	echo ""
 	echo "Calculates all the addresses for the ddmesh freifunk node"
 	echo "usage: ddmesh-ipcalc.sh [-t] [-n node] | [ipv4 ip]"
 	echo "-t        run ipcalc test"
-	echo "-n node   0- calulate ip"
-	echo "<ipv4 ip>      caluclate node"
+	echo "-n node   calculates ip addresses"
+	echo "<ipv4 ip> calculates node"
 	echo ""
 	exit 1
 fi
@@ -100,14 +99,59 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	meshnet		= "10.200.0.0/16"
 	linknet		= "10.201.0.0/16"
 	fullnet		= "10.200.0.0/15"
-	wifi2net	= "100.64.0.0/16"
+	wifi2net	= "100.64.0.0/10"
 	wifi2ip		= "100.64.0.1"
-	# ipcalc.sh 100.64.0.1/16 100.64.100.1 39933
-	wifi2dhcpstart	= "100.64.100.1"
-	wifi2dhcpnum	= "39933" # ends 100.64.255.254
-	wifi2dhcpend	= "100.64.255.254"
-	wifi2broadcast	= "100.64.255.255"
-	wifi2netmask	= "255.255.0.0"
+
+	# ----- new wifi2 ip calulation with roaming
+	# 100.64.0.0/10       01100100.01-000000.00000000.0-0000000
+	# 100.127.0.0/10      01100100.01-111111.00000000.0-0000000
+	# clients/knoten                                    ^^^^^^^ (7bit-128 clients)
+	# knotennummer                    ^^^^^^ ^^^^^^^^ ^ (15bit - 32768 knotennummern)
+	#
+	#
+	# knoten 0
+	#  min client: # 01100100.01-000000.00000000.0-0000001
+	#  max client: # 01100100.01-000000.00000000.0-1111110
+	#
+	# knoten 32767
+	#  min client: # 01100100.01-111111.11111111.1-0000001
+	#  max client: # 01100100.01-111111.11111111.1-1111110
+	#
+	# network   100.127.0.0     # 01100100.01-000000.00000000.0-0000000
+	# broadcast 100.127.255.255 # 01100100.01-111111.11111111.1-1111111
+  # netmask   255.
+	# Roaming only upto node 32766.
+	# Calulated values for number 32767 (highest possible number)
+	# are used for all nodes above 32766. Those nodes must not support
+	# roaming (using ssid "Freifunk Dresden")
+
+	_roaming=1
+	_roaming_node = node	# node used to calulate wifi2dhcp
+	if ( _roaming_node > 32766 )
+	{
+		_roaming_node=32767
+		_roaming=0
+	}
+
+	b1 = 100
+	b2 = or(0x40, and( rshift(_roaming_node, 9), 0x3f))
+	b3 = and(rshift(_roaming_node, 1), 0xff)
+	b4 = and(lshift(_roaming_node, 7), 0x80)
+	b4FixIpStart	= b4 + 1		# very start for ip range
+	b4FixIpEnd 		= b4 + 10		# very start for ip range
+	b4min = b4FixIpEnd + 1		# dhcp start; keep some room for portforwardings
+	b4max = b4 + 126	# dhcp end; letzte client IP, da bei max knoten 32767 die broadcast ip
+										# noch moeglich sein muss
+
+	wifi2roaming 		= _roaming
+	wifi2FixIpStart	= b1"."b2"."b3"."b4FixIpStart
+	wifi2FixIpEnd		= b1"."b2"."b3"."b4FixIpEnd
+	wifi2dhcpstart	= b1"."b2"."b3"."b4min
+	wifi2dhcpnum		= b4max - b4min + 1
+	wifi2dhcpend		= b1"."b2"."b3"."b4max
+	wifi2broadcast	= "100.127.255.255"
+	wifi2netmask		= "255.192.0.0"
+
 
 
 	print "export _ddmesh_min=\""ENVIRON["NODE_MIN"]"\""
@@ -133,6 +177,9 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	print "export _ddmesh_fullnet=\""fullnet"\""
 	print "export _ddmesh_wifi2net=\""wifi2net"\""
 	print "export _ddmesh_wifi2ip=\""wifi2ip"\""
+	print "export _ddmesh_wifi2roaming=\""wifi2roaming"\""
+	print "export _ddmesh_wifi2FixIpStart=\""wifi2FixIpStart"\""
+	print "export _ddmesh_wifi2FixIpEnd=\""wifi2FixIpEnd"\""
 	print "export _ddmesh_wifi2dhcpstart=\""wifi2dhcpstart"\""
 	print "export _ddmesh_wifi2dhcpnum=\""wifi2dhcpnum"\""
 	print "export _ddmesh_wifi2dhcpend=\""wifi2dhcpend"\""

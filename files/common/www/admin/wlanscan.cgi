@@ -10,9 +10,10 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Access Points (Automatische Aktualisierung)</legend>
 <div id="ajax_wlan">
+Scanning...
 EOM
 
-/www/admin/ajax-wlan.cgi no-html-header
+#/www/admin/ajax-wlan.cgi no-html-header
 
 cat<<EOM
 </div>

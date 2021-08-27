@@ -20,7 +20,7 @@ if [ "$INTERFACE" = "wifi_adhoc" -o "$INTERFACE" = "wifi_mesh2g" -o "$INTERFACE"
 
 	if [ "$ACTION" = "ifup" ]; then
 		logger -t "$TAG" "$TAG2: add [$ifname] to bmxd"
-		/usr/lib/ddmesh/ddmesh-bmxd.sh add_if $ifname
+		/usr/lib/ddmesh/ddmesh-bmxd.sh add_if_wifi $ifname
 	fi
 	if [ "$ACTION" = "ifdown" ]; then
 		logger -t "$TAG" "$TAG2: remove [$ifname] from bmxd"

@@ -1,3 +1,4 @@
+# https://openwrt.org/docs/guide-developer/dependencies
 
 include $(TOPDIR)/rules.mk
 
@@ -18,7 +19,8 @@ define Package/$(PKG_NAME)-base
 		+ddns-scripts +ddns-scripts_no-ip_com \
 		+iptables \
 		+px5g-mbedtls \
-		+iperf3
+		+iperf3 \
+		+PACKAGE_wireguard:kmod-ipip
 
   TITLE:=Meta package to select all needed basic packages
 endef
@@ -43,14 +45,7 @@ define Package/$(PKG_NAME)-base/config
 			depends on PACKAGE_ddmesh-base
 			tristate "fastd"
 			help
-				need for backbone connections.
-
-		config PACKAGE_wireguard
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-base
-			tristate "wireguard"
-			help
-				need for backbone connections.
+				Create fastd tunnel to backbone servers.
 
 		# use SYMBOL of package that should be selected
 		config PACKAGE_bmxd
@@ -93,14 +88,12 @@ define Package/$(PKG_NAME)-wifi
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
 	# to enable basic wifi, kmod-mac80211 is needed
-	# wpa-cli is used to set depending on whether router has internet or not.
 	#
-	# If wpa-mini is not selected wpa-cli will not appear in menu. And because of this
-	# complete package ddmesh-wifi will also not be visible.
+	# If wpa-basic is not selected wpa-cli will not appear in menu. And because of this
+	# the complete package "ddmesh-wifi" will also not be visible.
 	# only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
 	# This simply just selects wpa-cli without hiding current packet
-  DEPENDS:= $(PKG_NAME)-base \
-		+iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli
+  DEPENDS:= +iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
 endef
@@ -117,8 +110,7 @@ define Package/$(PKG_NAME)-usb-storage
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-  DEPENDS:= $(PKG_NAME)-base \
-		+kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
+  DEPENDS:= 	+kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
 		+kmod-fs-vfat \
 		+block-mount
 
@@ -136,8 +128,7 @@ define Package/$(PKG_NAME)-lte
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
   # usb umts/lte sticks has storage device. but I is normally not needed.
-  DEPENDS:= $(PKG_NAME)-base \
-		+kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
+  DEPENDS:= 	+kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
 		+kmod-usb-ledtrig-usbport +kmod-usb-storage \
 		+usb-modeswitch \
                 +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
@@ -270,12 +261,6 @@ define Package/$(PKG_NAME)-extra-modules/config
 			help
 				Create openvpn tunnel used by router as public gateway.
 
-		config PACKAGE_wireguard
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-extra-modules
-			tristate "wireguard"
-			help
-				Create wireguard tunnel used by router as public gateway.
 
 		config PACKAGE_feinstaubsensor
 			# menu point is displayed when dependings are set

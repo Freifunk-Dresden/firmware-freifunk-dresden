@@ -58,7 +58,7 @@
  * Global Variables and definitions
  */
 
-#define SOURCE_VERSION "0.6-freifunk-dresden"
+#define SOURCE_VERSION "0.7-freifunk-dresden"
 
 #define COMPAT_VERSION 10
 
@@ -110,30 +110,7 @@ enum ADGSN
 
 #define UNUSED_RETVAL(x) do { if(x){} } while(0)
 
-#define TP32 4294967296
 #define OV32 2147483647
-#define TP16 65536
-#define OV16 32767
-#define TP8 256
-#define OV8 127
-
-/*
-#define LESS_SQ( a, b )  ( ((uint16_t)( (a) - (b) ) ) >  OV16 )
-#define LSEQ_SQ( a, b )  ( ((uint16_t)( (b) - (a) ) ) <= OV16 )
-#define GREAT_SQ( a, b ) ( ((uint16_t)( (b) - (a) ) ) >  OV16 )
-#define GRTEQ_SQ( a, b ) ( ((uint16_t)( (a) - (b) ) ) <= OV16 )
-*/
-
-/*
-#define LESS_U32( a, b )  ( ((uint32_t)( (a) - (b) ) ) >  OV32 )
-#define LSEQ_U32( a, b )  ( ((uint32_t)( (b) - (a) ) ) <= OV32 )
-#define GREAT_U32( a, b ) ( ((uint32_t)( (b) - (a) ) ) >  OV32 )
-#define GRTEQ_U32( a, b ) ( ((uint32_t)( (a) - (b) ) ) <= OV32 )
-*/
-#define LESS_U32(a, b) ((a) < (b))
-#define LSEQ_U32(a, b) ((a) <= (b))
-#define GREAT_U32(a, b) ((a) > (b))
-#define GRTEQ_U32(a, b) ((a) >= (b))
 
 #define MAX(a, b) ((a > b) ? (a) : (b))
 #define MIN(a, b) ((a < b) ? (a) : (b))
@@ -165,10 +142,6 @@ enum ADGSN
 #define DEF_RUN_DIR "/var/run/bmx"
 
 extern uint32_t My_pid;
-#define BMX_ENV_LIB_PATH "BMX_LIB_PATH"
-#define BMX_DEF_LIB_PATH "/usr/lib"
-// e.g. sudo BMX_LIB_PATH="$(pwd)/lib" ./bmxd -d3 eth0:bmx
-#define BMX_ENV_DEBUG "BMX_DEBUG"
 
 #define SOME_ADDITIONAL_SIZE 0 /*100*/
 #define IEEE80211_HDR_SIZE 24
@@ -260,8 +233,6 @@ struct bat_header
 } __attribute__((packed));
 
 #define BAT_TYPE_OGM 0x00 // originator message
-#define BAT_TYPE_UPM 0x01 // unicast link-probe message
-#define BAT_TYPE_ ...
 
 struct bat_packet_common
 {
@@ -310,17 +281,45 @@ struct bat_packet_ogm
 	uint8_t prev_hop_id;
 	SQ_TYPE ogm_seqno;
 
-	uint32_t orig;
+	uint32_t orig;  //ip address of node that sent the ogm
 
 } __attribute__((packed));
 
 #define EXT_TYPE_MIN 0
 #define EXT_TYPE_64B_GW 0
 #define EXT_TYPE_64B_PIP 2
-#define EXT_TYPE_64B_SRV 3
+
+/*Stephan:
+Die extensions werden am ende einer OGM angehängt. bmxd prueft ob diese
+behalten werden wenn eine OGM empfangen wird (also weiter gesendet
+(EXT_ATTR_KEEP) oder rausgeschmissen wird).
+Dazu gibt es das globale array ext_attribute[]
+Das passiert in schedule.c::strip_packet() zeile 760ff
+
+Fuer die networkid muss ich also was einbauen wie my_pip_extension.
+EXT_ATTR_KEEP ist schon mal dafür in ext_attribute[] definiert.
+Ebenso das Macro, um in der struct ext_packet auf den wert zu zugreifen.
+
+"EXT_NETID_FIELD_ID"
+
+Devel-info:
+suche nach, als anhaltspunkt:
+ 	memset(&my_pip_extension_packet, 0, sizeof(struct ext_packet));
+	my_pip_extension_packet.EXT_FIELD_MSG = YES;
+	my_pip_extension_packet.EXT_FIELD_TYPE = EXT_TYPE_64B_PIP;
+
+*/
+//stephan create new extension (we can use maximal 15)
+#ifdef ENABLE_NETID
+	#define EXT_TYPE_64B_NETID 3		//struct ext_packet has has
+#endif //ENABLE_NETID
+
+//SE: die namen der defines spielen nur die konfigurierent attribute
+//    aus dem globalen array "ext_attribute[]" wider.
+//
 #define EXT_TYPE_64B_KEEP_RESERVED4 4
 #define EXT_TYPE_64B_DROP_RESERVED5 5
-#define EXT_TYPE_TLV_KEEP_LOUNGE_REQ 6
+#define EXT_TYPE_TLV_KEEP_RESERVED6 6
 #define EXT_TYPE_TLV_DROP_RESERVED7 7
 #define EXT_TYPE_64B_KEEP_RESERVED8 8
 #define EXT_TYPE_64B_DROP_RESERVED9 9
@@ -331,6 +330,7 @@ struct bat_packet_ogm
 #define EXT_TYPE_TLV_KEEP_RESERVED14 14
 #define EXT_TYPE_TLV_DROP_RESERVED15 15
 #define EXT_TYPE_MAX 15
+
 
 #define EXT_ATTR_TLV 0x01	 /* extension message is TLV type */
 #define EXT_ATTR_KEEP 0x02 /* re-propagate extension message (even if unknown) */
@@ -350,6 +350,11 @@ struct ext_packet
 #define EXT_PIP_FIELD_RES1 def8
 #define EXT_PIP_FIELD_PIPSEQNO d16.def16
 #define EXT_PIP_FIELD_ADDR d32.def32
+
+// stephan
+#ifdef ENABLE_NETID
+	#define EXT_NETID_FIELD_ID d32.def32	//I need 4 bytes
+#endif 	//ENABLE_NETID
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 	unsigned int ext_related : 2; // may be used by the related message type
@@ -395,11 +400,7 @@ struct msg_buff
 	uint8_t unicast;
 
 	//filled by strip_packet()
-	union
-	{
-		struct bat_packet_common *bpc;
-		struct bat_packet_ogm *ogm;
-	} bp;
+	struct bat_packet_ogm *ogm;
 
 	struct ext_packet *rcv_ext_array[EXT_TYPE_MAX + 1];
 	uint16_t rcv_ext_len[EXT_TYPE_MAX + 1];

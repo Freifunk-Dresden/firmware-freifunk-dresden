@@ -45,7 +45,7 @@ BEGIN {t=1;}
 	tag1=gensub(/(.*\.err)/,"<font color=\"red\">\\1</font>","",tag1);
 	tag2=gensub(/(kernel)/,"<font color=\"blue\">\\1</font>","",tag2);
 	tag2=gensub(/(netifd)/,"<font color=\"purple\">\\1</font>","",tag2);
-	tag2=gensub(/(hostapd|wpa_.*|mac80211)/,"<font color=\"#ff2a2a\">\\1</font>","",tag2);
+	tag2=gensub(/(hostapd|wpa_.*|mac80211)/,"<font color=\"#8f8f0f\">\\1</font>","",tag2);
 
 	line=gensub(/(br-mesh_lan|br-mesh_wan|(br|mesh)[-_](lan|wan|wifi)[0-9a-z]*|mesh[25]g-80211s)/,"<font color=\"#000088\">\\1</font>","",line);
 	line=gensub(/(.*hotplug.*)/,"<font color=\"#006655\">\\1</font>","",line);

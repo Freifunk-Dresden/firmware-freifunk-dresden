@@ -2,7 +2,7 @@
 
 
 #usage: see below
-SCRIPT_VERSION="12"
+SCRIPT_VERSION="13"
 
 
 # gitlab variables
@@ -103,7 +103,7 @@ progressbar()
 		charSteps=$((len / charsPerValue))
 
 
-		# reduce len by number of _maxValue, because 
+		# reduce len by number of _maxValue, because
 		# marker are inserted into _bar which makes it
 		# longer again.
 		# consider length marker string
@@ -117,10 +117,10 @@ progressbar()
 		_bar=""
 		pos=0
 		nextMarkerPos=$charsPerValue
-		while [ $pos -lt $len ] 
+		while [ $pos -lt $len ]
 		do
 			pos=$((pos + 1))
-		
+
 			if [ $pos -le $absCharPos ]; then
 				_bar="${_bar}#"
 			else
@@ -168,7 +168,7 @@ show_progress()
 		[ -n "$1" ] && _count=$1
 		[ -n "$2" ] && _max=$2
 
-		[ -z "$_count" ] && return	
+		[ -z "$_count" ] && return
 		[ -z "$_max" -o "$_max" -eq 0 ] && return
 
 		row=$(tput lines)
@@ -408,7 +408,8 @@ if [ -z "$1" ]; then
 	echo "          'ramips.*'              - builds all ramips targets only"
 	echo "          'ramips.rt305x.generic' - builds exact this target"
 	echo "          '^rt30.*'               - builds all that start with 'rt30'"
-	echo "          'ramips.mt7621.generic|ar71xx.tiny.lowmem' - builds two targets"
+	echo "          'ramips.mt7621.generic ar71xx.tiny.lowmem' - space or pipe separates targets"
+	echo "          'ramips.mt7621.generic | ar71xx.tiny.lowmem' "
 	echo ""
 	echo " menuconfig       - displays configuration menu"
 	echo " rerun            - enables a second compilation with make option 'V=s'"
@@ -430,6 +431,10 @@ if [ "$1" = "list-targets" ]; then
 fi
 
 if [ "$1" = "search" ]; then
+	if [ -z "$2" ]; then
+		echo "Error: missing parameter"
+		exit 1
+	fi
 	search_target $2
 	exit 0
 fi
@@ -437,7 +442,7 @@ fi
 if [ "$1" = "feed-revisions" ]; then
 
 	REPOS="https://git.openwrt.org/feed/packages.git"
-	REPOS="$REPOS https://git.openwrt.org/project/luci.git"
+	# REPOS="$REPOS https://git.openwrt.org/project/luci.git"
 	REPOS="$REPOS https://git.openwrt.org/feed/routing.git"
 	REPOS="$REPOS https://git.openwrt.org/feed/telephony.git"
 
@@ -483,9 +488,16 @@ else
 		targetRegex=".*"
 	fi
 
+
 	# remove invalid characters: '/','$'
 	chars='[/$]'
 	targetRegex=${targetRegex//$chars/}
+
+	# remove leading and trailing spaces
+	targetRegex=$(echo "${targetRegex}" | sed 's#[ 	]\+$##;s#^[ 	]\+##')
+
+	# replace any "space" with '|'. space can be used as separator lile '|'
+	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#|#g')
 
 	# add '\' to each '|’
 	targetRegex=${targetRegex//|/\\|}
@@ -578,31 +590,41 @@ setup_buildroot ()
 			done
 		fi
 	else
-		echo -e $C_PURPLE"Buildroot [$buildroot] already present"$C_NONE
+		echo -e "${C_PURPLE}Buildroot [$buildroot]${C_NONE} already present"
 	fi
 
-	echo -e $C_PURPLE"create dl directory/links"$C_NONE
+	echo -n -e $C_PURPLE"create dl directory/links"$C_NONE": "
 	rm -f $buildroot/dl
 	ln -s ../../$openwrt_dl_dir $buildroot/dl
+	echo "done."
 
 	# -------- common files -----------
 	# copy common files first
-	echo -e "${C_PURPLE}copy rootfs ${C_NONE}: ${C_GREEN} common ${C_NONE}"
+	echo -n -e "${C_PURPLE}copy rootfs ${C_NONE}: ${C_GREEN} common ${C_NONE}: "
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
 	cp -a $RUN_DIR/files/common/* $buildroot/files/
+	echo " done."
 
 	# -------- specific files -----------
 	# copy specific files over (may overwrite common)
-	echo -e "${C_PURPLE}copy specific files ${C_NONE}: ${C_GREEN}${firmware_files}${C_NONE}"
-	test -d "$RUN_DIR/files/$firmware_files" && cp -a $RUN_DIR/files/$firmware_files/* $buildroot/files/
+	echo -n -e "${C_PURPLE}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
+	if [ -n "${firmware_files}" -a -d "$RUN_DIR/files/${firmware_files}" ]; then
+		cp -a $RUN_DIR/files/${firmware_files}/* $buildroot/files/
+		echo "done."
+	else
+		echo "no specific files."
+	fi
 
-	echo -e $C_PURPLE"create rootfs/etc/built_info file"$C_NONE
+	echo -n -e $C_PURPLE"create rootfs/etc/built_info file: "$C_NONE
 	mkdir -p $buildroot/files/etc
 	> $buildroot/files/etc/built_info
+	echo "done."
 
 	# more dynamic changes
+	echo -n -e $C_PURPLE"setup dynamic firmware config: "$C_NONE
 	setup_dynamic_firmware_config "$buildroot/files"
+  echo "done."
 
 	echo "----- generate built_info ----"
 	git_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
@@ -973,7 +995,7 @@ EOM
 		make menuconfig 
 		echo ""
 		# check if menuconfig has changed config. only then copy it to specific config
-		diff -q .config ${DEFAULT_CONFIG} || {
+		diff -q .config ${DEFAULT_CONFIG} 2>/dev/null || {
 			echo -e "${C_PURPLE}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
 			cp .config ${RUN_DIR}/${config_file}
 		}

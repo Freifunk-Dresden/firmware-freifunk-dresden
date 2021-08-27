@@ -123,6 +123,7 @@ callback_outgoing_fastd_config ()
 	fi
 }
 
+# only ipip tunnel
 callback_outgoing_wireguard_interfaces ()
 {
 	local config="$1"
@@ -155,10 +156,11 @@ callback_outgoing_wireguard_interfaces ()
 		ip addr add $local_wgX_ip broadcast $_ddmesh_broadcast dev $sub_ifname
 		ip link set $sub_ifname up
 
-		bmxd -c dev=$sub_ifname /linklayer 1
+		/usr/lib/ddmesh/ddmesh-bmxd.sh add_if_wire $sub_ifname
 	fi
 }
 
+# wg tunnel + ipip tunnel
 callback_incomming_wireguard ()
 {
 	local config="$1"
@@ -187,12 +189,13 @@ callback_incomming_wireguard ()
 		ip addr add $local_wgX_ip broadcast $_ddmesh_broadcast dev $sub_ifname
 		ip link set $sub_ifname up
 
-		bmxd -c dev=$sub_ifname /linklayer 1
+		/usr/lib/ddmesh/ddmesh-bmxd.sh add_if_wire $sub_ifname
 
 		wg set $tbbwg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32
 	fi
 }
 
+# only wg tunnel
 callback_outgoing_wireguard_connection ()
 {
 	local config="$1"
@@ -218,9 +221,6 @@ callback_outgoing_wireguard_connection ()
 		local remote_wg_ip=$_ddmesh_wireguard_ip
 		wg set $tbbwg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 
-		# if bmxd was restarted re-add interface
-		sub_ifname="${wg_ifname/+/}${node}"
-		bmxd -c dev=$sub_ifname /linklayer 1
 	fi
 }
 
@@ -337,7 +337,8 @@ case "$1" in
 		$0 update
 		;;
 
-	update)
+	update) # called by ddmesh-tasks.sh
+
 		# try to resolv and update wg config. wg does not interrupt connection
 		# when there is no change
 

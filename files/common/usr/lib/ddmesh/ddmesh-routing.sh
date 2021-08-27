@@ -6,27 +6,27 @@ test -z "$_ddmesh_ip" && eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get dd
 setup()
 { # $1 - add | del
 
-#priority 99 is used for ping gateway check
+# priority 99 is used for ping gateway check
 
-#speedtest through gateway tunnel:
-#router is client: 169.254.x.y allow packets going to bat0
-#router is gatway: 169.254.x.y allow packets going to bat0
+# speedtest through gateway tunnel:
+# router is client: 169.254.x.y allow packets going to bat0
+# router is gatway: 169.254.x.y allow packets going to bat0
 ip rule $1 to 169.254.0.0/16 table bat_default priority 301
 ip rule $1 to 169.254.0.0/16 table main priority 302
 
-#byepass private ranges (not freifunk ranges)
+# byepass private ranges (not freifunk ranges)
 ip rule $1 to 192.168.0.0/16 table main priority 310
 ip rule $1 to 172.16.0.0/12 table main priority 320
 ip rule add to $_ddmesh_wireguard_network/$_ddmesh_netpre lookup main prio 330
 
-#bypass wifi2
-ip rule $1 to 100.64.0.0/16 table main priority 350
+# byepass wifi2
+ip rule $1 to $_ddmesh_wifi2net table main priority 350
 
 # public dns is filled by openvpn up.sh
 ip rule $1 lookup public_dns priority 360
 
-#route local and lan traffic through own internet gateway
-#route public traffic via second table (KEEP ORDER!)
+# route local and lan traffic through own internet gateway
+# route public traffic via second table (KEEP ORDER!)
 ip rule $1 iif $(uci get network.loopback.ifname) table local_gateway priority 400
 test "$(uci -q get ddmesh.network.lan_local_internet)" = "1" && ip rule $1 iif br-lan table local_gateway priority 401
 ip rule $1 table public_gateway priority 410

@@ -52,8 +52,7 @@
 		"feeds" : [
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"ce5a4eaea2"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"02b4dbf"},
-				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"6e019c94d"}
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"02b4dbf"}
 			  ],
 
 		# install addional packages from feeds (see feeds.conf)
@@ -77,9 +76,7 @@
 		"feeds" : [
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
-				{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"204293a76"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"},
-				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"9167e30"}
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
 			  ]
 	},
 	{
@@ -95,9 +92,7 @@
 		"feeds" : [
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
-				{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"204293a76"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"},
-				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"9167e30"}
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
 			  ]
 	},
 	{
@@ -159,9 +154,7 @@
 		"feeds" : [
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
-				{"type":"src-git", 	"name":"luci",		"src":"https://git.openwrt.org/project/luci.git",	"rev":"204293a76"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"},
-				{"type":"src-git", 	"name":"telephony",	"src":"https://git.openwrt.org/feed/telephony.git",	"rev":"9167e30"}
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
 			  ]
 	},
 	{
@@ -240,23 +233,23 @@
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"a55103240"}, # 21.02
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"8d93475"}    # 21.02
 			  ]
-	},
-#------------------------master---------------------------------------------------------------------------------------------
-	{
-		"name":"master.ath79.generic",	# can be any name
-		"target":"ath79",
-		"subtarget":"generic",
-		"openwrt_rev":"master", # 
-		"selector-config":"master",		# used to select config
-		"selector-feeds":"master",		# used to select feeds
-		"selector-patches":"master",		# used to select patches
-		"selector-files":"master",
-		"packages":[ ],
-		"feeds" : [
-				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
-				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"master"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"master"}
-			  ]
 	}
+#------------------------master---------------------------------------------------------------------------------------------
+#	,{
+#		"name":"master.ath79.generic",	# can be any name
+#		"target":"ath79",
+#		"subtarget":"generic",
+#		"openwrt_rev":"master", # 
+#		"selector-config":"master",		# used to select config
+#		"selector-feeds":"master",		# used to select feeds
+#		"selector-patches":"master",		# used to select patches
+#		"selector-files":"master",
+#		"packages":[ ],
+#		"feeds" : [
+#				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
+#				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"master"},
+#				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"master"}
+#			  ]
+#	}
  ]
 }

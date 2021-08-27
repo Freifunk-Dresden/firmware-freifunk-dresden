@@ -8,6 +8,7 @@ SYSINFO_MOBILE_GEOLOC=/var/geoloc-mobile.json
 > $OUTPUT
 
 BMXD_DB_PATH=/var/lib/ddmesh/bmxd
+
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 test -z "$_ddmesh_node" && exit
 
@@ -16,7 +17,6 @@ vpn=vpn0
 gwt=bat0
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
-
 eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
 eval $(cat /etc/openwrt_release)
 
@@ -74,6 +74,16 @@ model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 
 # first search system type. if not use model name. exit after first cpu core
 cpu_info="$(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p')"
+
+if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" -a "$_ddmesh_wifi2roaming" = "1" ]; then
+	roaming=1
+else
+	roaming=0
+fi
+
+if [ -n "$(which wg)" ]; then
+	wg_public_key=$(uci get credentials.backbone_secret.wireguard_key | wg pubkey)
+fi
 
 function parseWifiDump()
 {
@@ -167,7 +177,7 @@ function parseWifiDump()
 			# s12 counts unlimited time
 
 			# write back statfile
-			printf("%s %d\n", m, mac[m]) > statfile 
+			printf("%s %d\n", m, mac[m]) > statfile
 
 			#printf("%s %s %s %s %s %s %s %s %s %s %s %s %s,\n", m, s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10], s[11], s[12])
 
@@ -194,7 +204,7 @@ function parseWifiDump()
 
 cat << EOM >> $OUTPUT
 {
- "version":"16",
+ "version":"17",
  "timestamp":"$(date +'%s')",
  "data":{
 
@@ -229,6 +239,7 @@ $(cat /var/resolv.conf.final| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserve
 			"cpucount":"$(grep -c ^processor /proc/cpuinfo)",
 			"bmxd" : "$(cat $BMXD_DB_PATH/status)",
 			"essid":"$(uci get wireless.wifi2_2g.ssid)",
+			"wifi_roaming" : "$roaming",
 			"node_type":"$node_type",
 			"splash":$splash,
 			"email_notification":$email_notification,
@@ -246,6 +257,7 @@ $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 			"domain":"$_ddmesh_domain",
 			"ip":"$_ddmesh_ip",
 			"fastd_pubkey":"$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)",
+			"wg_pubkey":"$wg_public_key",
 			"network_id":"$(uci get ddmesh.network.mesh_network_id)"
 		},
 		"gps":{

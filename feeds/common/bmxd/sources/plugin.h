@@ -95,8 +95,6 @@ struct cb_snd_ext
 // called function may remove itself
 int32_t set_fd_hook(int32_t fd, void (*cb_fd_handler)(int32_t fd), int8_t del);
 
-int32_t set_packet_hook(int32_t packet_type, void (*cb_packet_handler)(struct msg_buff *mb), int8_t del);
-
 #define CB_OGM_ACCEPT 0
 #define CB_OGM_REJECT -1
 
@@ -133,8 +131,8 @@ void cleanup_plugin(void);
 //void cb_config_hooks( void );
 void cb_plugin_hooks(void *data, int32_t cb_id);
 
-//returns number of called packet hooks for this packet_type
-uint32_t cb_packet_hooks(int32_t packet_type, struct msg_buff *mb);
+// //returns number of called packet hooks for this packet_type
+// uint32_t cb_packet_hooks(int32_t packet_type, struct msg_buff *mb);
 
 //return value FAILURE means that ogm or extension header is inacceptible and must be dropped !
 int32_t cb_ogm_hooks(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router);

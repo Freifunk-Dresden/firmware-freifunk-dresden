@@ -12,6 +12,7 @@ test -x $DAEMON_PATH/$DAEMON || exit 0
 DB_PATH=/var/lib/ddmesh/bmxd
 STAT_DIR=/var/statistic
 WD_FILE=/tmp/state/bmxd.watchdog
+DYN_IFACES_FILE=/tmp/state/bmxd.dyn-ifaces
 TAG="bmxd"
 # maximal parallel instances (used internally and gui)
 bmxd_max_instances=5
@@ -26,13 +27,14 @@ touch $DB_PATH/status
 touch $DB_PATH/networks	# network ids
 touch $STAT_DIR/gateway_usage
 
+GATEWAY_HYSTERESIS="100"
 
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
 if [ "$ARG1" = "start" -o "$ARG1" = "no_gateway" ]; then
 	ROUTING_CLASS="$(uci -q get ddmesh.bmxd.routing_class)"
 	ROUTING_CLASS="${ROUTING_CLASS:-3}"
-	ROUTING_CLASS="-r $ROUTING_CLASS --gateway_hysteresis 20"
+	ROUTING_CLASS="-r $ROUTING_CLASS --gateway_hysteresis $GATEWAY_HYSTERESIS"
 fi
 
 if [ "$ARG1" = "start" -o "$ARG1" = "gateway" ]; then
@@ -65,9 +67,9 @@ case "$ARG1" in
 
 	_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1 dev=$LAN_IF /linklayer 1 dev=$WAN_IF /linklayer 1"
 
-    # needed during async boot
-    /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
-    
+	# needed during async boot, state changes then
+	/usr/lib/ddmesh/ddmesh-utils-network-info.sh update
+
 	#add wifi, if hotplug event did occur before starting bmxd
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 	if [ -n "$net_ifname" ]; then
@@ -82,14 +84,24 @@ case "$ARG1" in
 		_IF="$_IF dev=$net_ifname /linklayer 2"
 	fi
 
+	#add dyn interfaces (add_if_wifi, add_if_wire)
+	IFS='
+	'
+	for line in $(cat ${DYN_IFACES_FILE})
+	do
+		# split ifname and linklayer
+		_IF="$_IF dev=${line%,*} /linklayer ${line#*,}"
+	done
+	unset IFS
 
 	#default start with no gatway.will be updated by gateway_check.sh
 	#SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"
+	NETWORK_OPTS="--network $_ddmesh_fullnet"
 	SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 	TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre"
-	TUNING_OPTS="--purge_timeout 20 --gateway_hysteresis 100 --script /usr/lib/bmxd/bmxd-gateway.sh"
+	TUNING_OPTS="--purge_timeout 20 --gateway_hysteresis $GATEWAY_HYSTERESIS --script /usr/lib/bmxd/bmxd-gateway.sh"
 
-	DAEMON_OPTS="$SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
+	DAEMON_OPTS="$NETWORK_OPTS $SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
 
 
 
@@ -103,6 +115,8 @@ case "$ARG1" in
   stop)
 	echo "Stopping $DAEMON: "
 	killall -9 $DAEMON
+	# reset dns back to local, else not reachable dns will still be used
+	/usr/lib/bmxd/bmxd-gateway.sh del
 	;;
 
   restart)
@@ -120,11 +134,18 @@ case "$ARG1" in
 	echo $DAEMON -c $ROUTING_CLASS
 	$DAEMON_PATH/$DAEMON -c $ROUTING_CLASS
 	;;
-  add_if)
+  add_if_wifi)
 	$DAEMON_PATH/$DAEMON -c dev=$ARG2 /linklayer 2
+	echo "${ARG2},2" >> $DYN_IFACES_FILE
+	;;
+  add_if_wire)
+	$DAEMON_PATH/$DAEMON -c dev=$ARG2 /linklayer 1
+	echo "${ARG2},1" >> $DYN_IFACES_FILE
 	;;
   del_if)
 	$DAEMON_PATH/$DAEMON -c dev=-$ARG2
+	# remove interface
+	sed -i "/^${ARG2},/d" $DYN_IFACES_FILE
 	;;
   runcheck)
 	bmxd_restart=0
@@ -143,13 +164,13 @@ case "$ARG1" in
 	d=$(( $cur - $wd))
 
 	if [ "$d" -gt $MAX_BMXD_TIME ]; then
-		logger -s -t "$TAG" "bmxd: kill bmxd (diff $d)"
+		logger -s -t "$TAG" "bmxd: kill bmxd (diff $d, cur=$cur, wd=$wd)"
 		# delete file, to reset timeout
 		rm $WD_FILE
 		killall -9 $DAEMON
 		bmxd_restart=1
 
-		
+
 	fi
  	# connection check; if bmxd hangs, kill it
 	# check for existance of "timeout" cmd, else bmxd will be killed every time
@@ -165,7 +186,10 @@ case "$ARG1" in
 	bmxd_count=$(ps | awk '{ if(match($4,"Z")==0 && (match($5,"^bmxd$") || match($5,"^/usr/bin/bmxd$")) ){print $5}}' | wc -l)
 	test "$bmxd_count" -gt $bmxd_max_instances && logger -s -t "$TAG" "bmxd: too many instances ($bmxd_count/$bmxd_max_instances)" && bmxd_restart=1
 
-	test $bmxd_restart = 1 && logger -s -t "$TAG" "$DAEMON not running - restart" && $0 restart
+	if [ "$bmxd_restart" = 1 ]; then
+		logger -s -t "$TAG" "$DAEMON not running - restart"
+		$0 restart
+	fi
 
 	;;
 
@@ -181,7 +205,7 @@ case "$ARG1" in
 	;;
 
   *)
-	echo "Usage: $0 {start|stop|restart|gateway|no_gateway|runcheck|update_infos|add_if|del_if}" >&2
+	echo "Usage: $0 {start|stop|restart|gateway|no_gateway|runcheck|update_infos|add_if_wifi|add_if_wire|del_if}" >&2
 	exit 1         ;;
 
 

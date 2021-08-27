@@ -18,6 +18,7 @@
  */
 
 #include <stdio.h>
+#include <limits.h>
 #include <string.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
@@ -75,6 +76,11 @@ static int32_t my_asym_weight = DEF_ASYM_WEIGHT;
 static int32_t my_hop_penalty = DEF_HOP_PENALTY;
 
 static int32_t my_asym_exp = DEF_ASYM_EXP;
+
+//SE: network filter
+static uint32_t network_prefix;
+static uint32_t network_netmask;
+
 
 static LIST_ENTRY pifnb_list;
 LIST_ENTRY link_list;
@@ -178,7 +184,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 	struct neigh_node *incm_rt = NULL;
 	struct neigh_node *curr_rt = on->router;
 	struct neigh_node *old_rt;
-	struct bat_packet_ogm *ogm = mb->bp.ogm;
+	struct bat_packet_ogm *ogm = mb->ogm;
 
 	old_rt = curr_rt;
 	uint32_t max_othr_longtm_val = 0;
@@ -485,20 +491,27 @@ static void init_link_node(struct orig_node *orig_node)
 	avl_insert(&link_avl, &ln->orig_addr, ln);
 }
 
-static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, SQ_TYPE ogm_seqno)
+static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, char * ndev, SQ_TYPE ogm_seqno)
 {
 	// this originator IP is somehow known..(has ever been valid)
 	if (orig_node->last_valid_time || orig_node->last_valid_sqn)
 	{
+		//my_path_lounge ist aktuell auf 8 gesetzt. heisst, dass nur ogm verworfen werden, bei dennen die
+		// seqno mind 1+8 alt sind. alle anderen werden noch weiter verarbeitet, da diese ueber andere
+		// interfaces kommen koennen und damit die qualitat uber diese 8 berechnet wird und das routing
+		// gesteuert wird.
+		// grob: wenn last_valid_sqn neuer ist als aktuelle, dann verwerfen.
+		//
 		if ((uint16_t)(ogm_seqno + my_path_lounge - orig_node->last_valid_sqn) >
 				MAX_SEQNO - orig_node->pws)
 		{
 			dbg_mute(25, DBGL_CHANGES, DBGT_WARN,
-							 "drop OGM %-15s  via %4s NB %-15s  with old SQN %5i  "
+							 "drop OGM %-15s  via %4s NB %-15s (%s) with old SQN %5i  "
 							 "(prev %5i  lounge-margin %2i  pws %3d  lvld %llu) !",
 							 orig_node->orig_str,
 							 (orig_node->router && orig_node->router->key.addr == neigh) ? "best" : "altn",
 							 ipStr(neigh),
+							 ndev?ndev:"NULL",
 							 ogm_seqno,
 							 orig_node->last_valid_sqn,
 							 my_path_lounge, orig_node->pws, (unsigned long long)orig_node->last_valid_time);
@@ -506,30 +519,81 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, S
 			return FAILURE;
 		}
 
+// das funktioniert nicht richig, da auch gueltige eigene ogms ueber interfaces (mit bmx_prime inteface ip
+// oder auch ip vom link interface).
+// DAD (duplicate ip) wenn ich eine ogm bekomme, wo ich fuer die ip/node bereits eine andere seqno
+// habe, die nicht innerhalb von pws oder my_path_lounge (keine ahnung welches fenster) liegt.
+// also irgendwie nicht neuer ist, als die gespeicherte.
+// DAD aber genauso nur machen, wenn meine gespeicherte seqno nicht zu alt ist. damit wurde dann
+// neue ogms wieder zugelassen mit anderen seqno.
+#if 0
+//original:
 		if ( // if seqno is more than 10 times out of dad timeout
 				((uint16_t)(ogm_seqno + my_path_lounge - orig_node->last_valid_sqn)) >
 						(my_path_lounge +
 						 ((1000 * dad_to) / MIN(WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP), MIN_OGI))) &&
 				// but we have received an ogm in less than timeout sec
-				LESS_U32(batman_time, (orig_node->last_valid_time + (1000 * dad_to))))
+				batman_time < (orig_node->last_valid_time + (1000 * dad_to)))
 		{
 			dbg_mute(26, DBGL_SYS, DBGT_WARN,
-							 "DAD-alert! %s  via NB %s  with out-of-range SQN %i  lounge-margin %i "
-							 "lvld %i  at %llu  dad_to %d  wavg %d  Reinit in %d s",
-							 orig_node->orig_str, ipStr(neigh), ogm_seqno, my_path_lounge,
+							 "DAD-alert! %s  via NB %s (%s); SQN %i out-of-range;  lounge-margin %i "
+							 "(last valid SQN %i  at %llu)  dad_to %d  wavg %d  Reinit in %d s",
+							 orig_node->orig_str, ipStr(neigh),ndev?ndev:"NULL", ogm_seqno, my_path_lounge,
 							 orig_node->last_valid_sqn, (unsigned long long)orig_node->last_valid_time,
 							 dad_to, WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP),
 							 ((orig_node->last_valid_time + (1000 * dad_to)) - batman_time) / 1000);
 
 			return FAILURE;
 		}
-	}
-	else
-	{
-		// init orig sqns to reasonable values
-		//stephan: init values
-		orig_node->last_valid_sqn = ogm_seqno;
-		orig_node->last_valid_time = batman_time;
+#else
+//stephan
+	// Idee:
+	// gibt es einen knoten mit gleicher ip, so ist sehr wahrscheinlich die sequenznummer sehr verschieden
+	// zur letzten sqn ist.
+	// Wie oben, betrachte ich aber nur  kuerzlich empfangene ogms (batman_time).
+	// Wenn zwei knoten gleiche ip haben, dann kommen die OGMs auch zeitlich gleichzeitlich an.
+	// Dann habe ich einen IP Konflikt und ogm werden ignoriert.
+	//
+	// "last_valid" wird nur aktualisert, wenn eine OGM keinen Konflikt erzeugte und gueltig war.
+	// Wurden OGMs dad_to Sekunden lang ignoriert, werden diese wieder zuglassen. Entweder
+	// hat sich der IP Konflikt aufgeloest, oder tritt erneut ein. dann wurden aber zwischenzeitlich
+	// "last_valid" aktualisert und ogms werden wieder fuer dad_to Sekunden ignoriert.
+
+	// maximal difference between seqno and last_valid_sqn.
+	const uint16_t MIN_DAD_SEQNO_DIFF = 100;
+
+	// seqnoDiff is the positive delta considering wrapping.
+	int32_t _seqno = ogm_seqno + my_path_lounge;
+	if( _seqno >= USHRT_MAX) _seqno -= USHRT_MAX; // on wrap: shift it back (evt.) ins negative
+
+	int32_t seqnoDiff =   _seqno >= orig_node->last_valid_sqn
+											?	_seqno >= orig_node->last_valid_sqn
+											: (USHRT_MAX - orig_node->last_valid_sqn) + _seqno;
+
+		if(    batman_time < (orig_node->last_valid_time + (1000 * dad_to))	//time check ogm alter in [ms]
+			  // check seqno und erlaube minds die my_path_lounge (da diese ogms alle die gleichen sein koennten - gleiche seqno)
+			  && seqnoDiff > MIN_DAD_SEQNO_DIFF
+
+				// check IP against all IPs of this node. consider only ips from other nodes
+				&& neigh 															// neigh is zero if called from validate_primary_orig
+				&& orig_node->orig != neigh 					// must not be IP from my own secondary interfaces
+				&& orig_node->orig != primary_addr  	// and not my primary IP
+		)
+		{
+			dbg_mute(26, DBGL_SYS, DBGT_WARN,
+							 "DAD-alert! %s  via NB %s (%s), OGM SQN %i out-of-range: lounge-margin %i, "
+               "batman_time %llu,"
+							 "(last valid SQN %i  at %llu, SQNdiff:%ld)  dad_to %d  wavg %d",
+							 orig_node->orig_str, ipStr(neigh), ndev?ndev:"NULL", ogm_seqno, my_path_lounge,
+               batman_time,
+							 orig_node->last_valid_sqn, (unsigned long long)orig_node->last_valid_time,
+							 seqnoDiff,
+							 dad_to, WAVG(orig_node->ogi_wavg, OGI_WAVG_EXP));
+
+			return FAILURE; // ignore ogm
+		}
+
+#endif
 	}
 
 	return SUCCESS;
@@ -597,7 +661,7 @@ static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff
 		}
 
 		if (pip->EXT_PIP_FIELD_PIPSEQNO && //remain compatible to COMPAT_VERSION 10
-				validate_orig_seqno(orig_node->primary_orig_node, 0, ntohs(pip->EXT_PIP_FIELD_PIPSEQNO)) == FAILURE)
+				validate_orig_seqno(orig_node->primary_orig_node, 0, "", ntohs(pip->EXT_PIP_FIELD_PIPSEQNO)) == FAILURE)
 		{
 			dbg(DBGL_SYS, DBGT_WARN, "validation primary originator %15s failed",
 					ipStr(orig_node->primary_orig_node->orig));
@@ -885,7 +949,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 
 		dbgf_all(DBGT_INFO, "%llu %s %s", (unsigned long long)curr_time, bif ? bif->dev : "???", orig_node->orig_str);
 
-		if (!curr_time || bif || LESS_U32(orig_node->last_aware + (1000 * ((batman_time_t)purge_to)), curr_time))
+		if (!curr_time || bif || (orig_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time )
 		{
 			/* purge outdated originators completely */
 
@@ -943,7 +1007,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 				// when removing entries, I can modify lndev (because OLForEach() is a macro)
 				OLForEach(lndev, struct link_node_dev, orig_node->link_node->lndev_list)
 				{
-					if (LESS_U32((lndev->last_lndev + (1000 * ((batman_time_t)purge_to))), curr_time))
+					if ( (lndev->last_lndev + (1000 * ((batman_time_t)purge_to))) < curr_time )
 					{
 						PLIST_ENTRY prev = OLGetPrev(lndev);
 
@@ -965,7 +1029,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			}
 
 			/* purge outdated PrimaryInterFace NeighBor Identifier */
-			if (orig_node->id4him && LESS_U32((orig_node->last_pog_link + (1000 * ((batman_time_t)purge_to))), curr_time))
+			if (orig_node->id4him && (orig_node->last_pog_link + (1000 * ((batman_time_t)purge_to))) < curr_time)
 				free_pifnb_node(orig_node);
 
 			/* purge outdated neighbor nodes, except our best-ranking neighbor */
@@ -973,8 +1037,9 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			/* for all neighbours towards this originator ... */
 			OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 			{
-				if (LESS_U32((neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))), curr_time) &&
-						orig_node->router != neigh_node)
+				if (    (neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time
+				     &&	orig_node->router != neigh_node
+					 )
 				{
 					addr_to_str(neigh_node->key.addr, neigh_str);
 					dbgf_all(DBGT_INFO,
@@ -1058,7 +1123,7 @@ void process_ogm(struct msg_buff *mb)
 
 	struct batman_if *iif = mb->iif;
 	uint32_t neigh = mb->neigh;
-	struct bat_packet_ogm *ogm = mb->bp.ogm;
+	struct bat_packet_ogm *ogm = mb->ogm;
 
 	uint16_t oCtx = 0;
 
@@ -1081,6 +1146,14 @@ void process_ogm(struct msg_buff *mb)
 						 ipStr(ogm->orig), ogm->ogm_pws);
 		goto process_ogm_end;
 	}
+
+//SE: check that IP matchs the ip network
+	if ( (ogm->orig & network_netmask) != ( network_prefix & network_netmask) )
+	{
+		dbg_mute(30, DBGL_SYS, DBGT_WARN, "drop OGM: %s does not match network [%s/%x] !", ipStr(ogm->orig), ipStr(network_prefix), network_netmask);
+		goto process_ogm_end;
+	}
+
 
 	OLForEach(bif, struct batman_if, if_list)
 	{
@@ -1184,7 +1257,11 @@ void process_ogm(struct msg_buff *mb)
 	mb->orig_node = orig_node =
 			(oCtx & IS_DIRECT_NEIGH) ? orig_node_neigh : get_orig_node(ogm->orig, YES /*create*/);
 
-	if (validate_orig_seqno(orig_node, neigh, ogm->ogm_seqno) == FAILURE)
+	char *ndev = NULL;
+	if(orig_node_neigh && orig_node_neigh->router && orig_node_neigh->router->key.iif)
+	{ndev = orig_node_neigh->router->key.iif->dev;}
+
+	if (validate_orig_seqno(orig_node, neigh, ndev, ogm->ogm_seqno) == FAILURE)
 	{
 		dbgf_all(DBGT_WARN, "drop OGM: %15s, via NB %15s, SQN %i\n",
 						 ipStr(ogm->orig), mb->neigh_str, ogm->ogm_seqno);
@@ -1215,7 +1292,7 @@ void process_ogm(struct msg_buff *mb)
 		oCtx |= IS_NEW;
 
 		// estimating average originaotr interval of this node
-		if (orig_node->last_valid_time && LESS_U32(orig_node->last_valid_time, batman_time))
+		if (orig_node->last_valid_time && orig_node->last_valid_time < batman_time )
 		{
 			if (((SQ_TYPE)(ogm->ogm_seqno - (orig_node->last_wavg_sqn + 1))) < orig_node->pws)
 			{
@@ -1730,6 +1807,46 @@ static int32_t opt_gw_script(uint8_t cmd, uint8_t _save, struct opt_type *opt, s
 	return SUCCESS;
 }
 
+
+static int32_t opt_netw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
+{
+	uint32_t ip = 0;
+	int32_t mask = 0;
+
+	if (cmd == OPT_REGISTER)
+	{
+		inet_pton(AF_INET, DEF_NETW_PREFIX, &network_prefix);
+		// convert netmask /16 to binary, so I can easily check later
+
+		network_netmask = htonl(0xFFFFFFFF << (32 - DEF_NETW_MASK));
+	}
+	else if (cmd == OPT_CHECK || cmd == OPT_APPLY)
+	{
+		if (str2netw(patch->p_val, &ip, '/', cn, &mask, 32) == FAILURE ||
+				mask < MIN_NETW_MASK || mask > MAX_NETW_MASK)
+		{
+			return FAILURE;
+		}
+
+		if (ip != validate_net_mask(ip, mask, cmd == OPT_CHECK ? cn : 0))
+		{
+			return FAILURE;
+		}
+
+		if (cmd == OPT_APPLY)
+		{
+			network_prefix = ip;
+			// convert netmask /16 to binary, so I can easily check later
+			network_netmask = htonl(0xFFFFFFFF << (32 - mask));
+//			dbg_printf(cn, "OPT_APPLY: str: %s, mask:%x -> %x\n", patch->p_val, mask, network_netmask);
+		}
+	}
+
+	return SUCCESS;
+}
+
+
+
 static struct opt_type originator_options[] =
 		{
 				//        ord parent long_name          shrt Attributes				*ival		min		max		default		*func,*syntax,*help
@@ -1751,6 +1868,10 @@ static struct opt_type originator_options[] =
 
 				{ODI, 5, 0, ARG_DEV, 0, A_PMN, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_dev,
 				 "<interface-name>", "add or change device or its configuration, options for specified device are:"},
+
+//SE: network filter; can be set dynamically
+				{ODI, 4, 0, ARG_NETW, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, 0, 0, 0, 0, opt_netw,
+		 			ARG_PREFIX_FORM, "only accept OGM from network\n"},
 
 #ifndef LESS_OPTIONS
 				{ODI, 5, ARG_DEV, ARG_DEV_TTL, 't', A_CS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, MIN_TTL, MAX_TTL, DEF_TTL, opt_dev,
