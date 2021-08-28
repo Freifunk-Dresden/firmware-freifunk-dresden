@@ -173,6 +173,8 @@ else #query string
 			uci set ddmesh.network.custom_essid="$form_wifi_custom_essid"
 			uci set ddmesh.network.wifi_slow_rates="$form_wifi_slow_rates"
 			uci set ddmesh.network.wifi2_roaming_enabled="$form_wifi2_roaming"
+			[ "$form_wifi2_roaming" = "1" ] && uci get ddmesh.system.disable_splash='1'
+
 			uci set ddmesh.network.wifi3_2g_enabled="$form_wifi3_enabled"
 			# avoid clearing values when disabled
 			if [ "$form_wifi3_enabled" = 1 ]; then
