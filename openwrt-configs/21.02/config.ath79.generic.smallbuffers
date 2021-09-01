@@ -347,10 +347,10 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_allnet_all-wap02860ac is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_arduino_yun is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_aruba_ap-105 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_avm_fritz4020=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_avm_fritz4020 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_avm_fritz1750e is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_avm_fritz300e is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_avm_fritz450e=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_avm_fritz450e is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_avm_fritzdvbc is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_belkin_f9j1108-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_belkin_f9k1115-v2 is not set
@@ -362,11 +362,11 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_avm_fritz450e=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_buffalo_wzr-hp-g300nh-s is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_buffalo_wzr-hp-g302h-a1a0 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_buffalo_wzr-hp-g450h is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e110n-v2=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e110n-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e120a-v3 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e130n-v2=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e130n-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e313ac is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e314n-v2=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e314n-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e5 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e560ac is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-ew72 is not set
@@ -386,7 +386,7 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_comfast_cf-e314n-v2=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dap-3662-a1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dch-g020-a1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-505 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-825-b1=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-825-b1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-825-c1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-835-a1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-842-c1 is not set
@@ -417,9 +417,9 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_dlink_dir-825-b1=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_etactica_eg200 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_6408 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_6416 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-ar150=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-ar300m-lite=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-ar300m16=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-ar150 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-ar300m-lite is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-ar300m16 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-ar750 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-mifi is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-usb150 is not set
@@ -433,7 +433,7 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-ar300m16=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_iodata_wn-ac1600dgr2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_iodata_wn-ag300dgr is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_jjplus_ja76pf2 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_librerouter_librerouter-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_meraki_mr12 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_meraki_mr16 is not set
@@ -442,14 +442,14 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_joyit_jt-or750i=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_nec_wg800hp is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_ex6400 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_ex7300 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wndr3700=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wndr3700-v2=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wndr3700 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wndr3700-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wndr3800 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wndr3800ch is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wndrmac-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wndrmac-v2 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wnr2200-16m=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wnr2200-8m=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wnr2200-16m is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wnr2200-8m is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ocedo_koala is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ocedo_raccoon is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ocedo_ursus is not set
@@ -502,33 +502,33 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_netgear_wnr2200-8m=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-a7-v5 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c2-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c25-v1 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c5-v1=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c5-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c58-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c59-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c59-v2 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c6-v2=y
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c60-v1 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c60-v2 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c6-v2 is not set
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c60-v1=y
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c60-v2=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c60-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c7-v1 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c7-v2=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c7-v4=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c7-v5=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c7-v2 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c7-v4 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c7-v5 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-d50-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-d7-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-d7b-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe210-v1 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe210-v2=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe210-v3=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe220-v2=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe220-v3=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe210-v2 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe210-v3 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe220-v2 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe220-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe510-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe510-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe510-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe610-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe610-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_eap225-v3 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_eap225-outdoor-v1=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_eap225-outdoor-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_eap225-wall-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_eap245-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_eap245-v3 is not set
@@ -539,23 +539,23 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_eap225-outdoor-v1=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_re450-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-mr6400-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr3500-v1 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr3600-v1=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr4300-v1=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr3600-v1 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr4300-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr4300-v1-il is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr4310-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr4900-v2 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr7500-v3=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr7500-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wpa8630-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wpa8630p-v2-int is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wpa8630p-v2.0-eu is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wpa8630p-v2.1-eu is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043n-v5=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043n-v5 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v1 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v2=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v3=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v4=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v2 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v3 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v4 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1045nd-v2 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr2543-v1=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr2543-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr710n-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr710n-v2.1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr810n-v1 is not set
@@ -593,19 +593,19 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr2543-v1=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_powerbeam-5ac-500 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_powerbeam-5ac-gen2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_powerbridge-m is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_rocket-m=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_rocket-m is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_routerstation is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_routerstation-pro is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifi=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-lite=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifi is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-lite is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-lr is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-mesh is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-mesh-pro is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-pro is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifi-ap-outdoor-plus=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifi-ap-outdoor-plus is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifi-ap-pro is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_wallys_dr531 is not set
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_wd_mynet-n750=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_wd_mynet-n750 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_wd_mynet-wifi-rangeextender is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_winchannel_wb2000 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_xiaomi_mi-router-4q is not set
@@ -624,30 +624,21 @@ CONFIG_TARGET_ARCH_PACKAGES="mips_24kc"
 CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mno-branch-likely -mips32r2 -mtune=24kc"
 CONFIG_CPU_TYPE="24kc"
 CONFIG_LINUX_5_4=y
-CONFIG_DEFAULT_ath10k-firmware-qca9887-ct=y
 CONFIG_DEFAULT_ath10k-firmware-qca9888-ct=y
-CONFIG_DEFAULT_ath10k-firmware-qca988x-ct=y
 CONFIG_DEFAULT_base-files=y
 CONFIG_DEFAULT_busybox=y
 CONFIG_DEFAULT_ca-bundle=y
 CONFIG_DEFAULT_dnsmasq=y
 CONFIG_DEFAULT_dropbear=y
 CONFIG_DEFAULT_firewall=y
-CONFIG_DEFAULT_fritz-tffs=y
 CONFIG_DEFAULT_fstools=y
 CONFIG_DEFAULT_ip6tables=y
 CONFIG_DEFAULT_iptables=y
 CONFIG_DEFAULT_iwinfo=y
-CONFIG_DEFAULT_kmod-ath10k-ct=y
+CONFIG_DEFAULT_kmod-ath10k-ct-smallbuffers=y
 CONFIG_DEFAULT_kmod-ath9k=y
 CONFIG_DEFAULT_kmod-gpio-button-hotplug=y
 CONFIG_DEFAULT_kmod-ipt-offload=y
-CONFIG_DEFAULT_kmod-leds-reset=y
-CONFIG_DEFAULT_kmod-owl-loader=y
-CONFIG_DEFAULT_kmod-usb-chipidea2=y
-CONFIG_DEFAULT_kmod-usb-ledtrig-usbport=y
-CONFIG_DEFAULT_kmod-usb-ohci=y
-CONFIG_DEFAULT_kmod-usb2=y
 CONFIG_DEFAULT_libc=y
 CONFIG_DEFAULT_libgcc=y
 CONFIG_DEFAULT_libustream-wolfssl=y
@@ -660,7 +651,6 @@ CONFIG_DEFAULT_opkg=y
 CONFIG_DEFAULT_ppp=y
 CONFIG_DEFAULT_ppp-mod-pppoe=y
 CONFIG_DEFAULT_procd=y
-CONFIG_DEFAULT_rssileds=y
 CONFIG_DEFAULT_swconfig=y
 CONFIG_DEFAULT_uboot-envtools=y
 CONFIG_DEFAULT_uci=y

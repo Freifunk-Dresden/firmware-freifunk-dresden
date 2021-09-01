@@ -30,7 +30,8 @@
 							#      	a set of routers when selecting "multiple devices"
 							#	via "make menuconfig"
 
-		"openwrt_rev":"b12284a14ce90d77c9b0e77876454e173be5bea6", # v19.07.6
+#		"openwrt_rev":"b12284a14ce90d77c9b0e77876454e173be5bea6", # v19.07.6
+"openwrt_rev":"134ac824c5a154edbbe1c581bcbc42d265dc20c0", # (HEAD, tag: v21.02.0-rc4)
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
 							# Note that selecting some packages as module could have
@@ -39,29 +40,40 @@
 							# This value is added to config file name
 							# Example value could be : "lowmem" or "ram32mbyte"
 
-		"selector-config":"19.07",		# used to select config
-		"selector-files":"",			# used to select files
-		"selector-feeds":"19.07",		# used to select feeds
-		"selector-patches":"19.07",		# used to select patches
+#		"selector-config":"19.07",		# used to select config
+#		"selector-files":"",			# used to select files
+#		"selector-feeds":"19.07",		# used to select feeds
+#		"selector-patches":"19.07",		# used to select patches
+"selector-config":"21.02",		# used to select config
+"selector-feeds":"21.02",		# used to select feeds
+"selector-patches":"21.02",		# used to select patches
+"selector-files":"21.02",
 
 		# generates the feeds/feeds-[selector].conf
 		# for short commit value use: git log --abbrev-commit
 
 
 		# Versions: tagged on openwrt v19.07.6
-		"feeds" : [
-				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
-				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"ce5a4eaea2"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"02b4dbf"}
-			  ],
+#		"feeds" : [
+#				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
+#				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"ce5a4eaea2"},
+#				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"02b4dbf"}
+#			  ],
+"feeds" : [
+	{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
+	{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"a55103240"}, # 21.02
+	{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"8d93475"}    # 21.02
+  ],
 
 		# install addional packages from feeds (see feeds.conf)
-		"packages":["libpam","libcap","libgnutls","libopenldap",
-				"libidn2","libssh2","libnetsnmp",
-				"libcap", "jansson", "kmod-cryptodev", "liblzma" ],
+#		"packages":["libpam","libcap","libgnutls","libopenldap",
+#				"libidn2","libssh2","libnetsnmp",
+#				"libcap", "jansson", "kmod-cryptodev", "liblzma" ],
+"packages":["libpam", "libnetsnmp"],
 		# apply additional target patches
 		"target-patches":[""]
 	},
+
 # ------------- specific targets ------------------------------
 	{
 		"name":"ar71xx.tiny.lowmem",	# can be any name
@@ -77,7 +89,10 @@
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
-			  ]
+			  ],
+		"packages":["libpam","libcap","libgnutls","libopenldap",
+				"libidn2","libssh2","libnetsnmp",
+				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
 	{
 		"name":"ar71xx.generic.lowmem",	# can be any name
@@ -93,24 +108,27 @@
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
-			  ]
+			  ],
+		"packages":["libpam","libcap","libgnutls","libopenldap",
+				"libidn2","libssh2","libnetsnmp",
+				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
 	{
 		"name":"ar71xx.generic",
 		"target":"ar71xx",
 		"subtarget":"generic"
 	},
-	{
-		"name":"ar71xx.generic.gl-mifi",
-		"target":"ar71xx",
-		"subtarget":"generic",
-		"variant":"gl-mifi"
-	},
-	{
-		"name":"ar71xx.nand",
-		"target":"ar71xx",
-		"subtarget":"nand"
-	},
+#	{
+#		"name":"ar71xx.generic.gl-mifi",
+#		"target":"ar71xx",
+#		"subtarget":"generic",
+#		"variant":"gl-mifi"
+#	},
+#	{
+#		"name":"ar71xx.nand",
+#		"target":"ar71xx",
+#		"subtarget":"nand"
+#	},
 	{
 		"name":"x86.generic",
 		"target":"x86",
@@ -155,7 +173,10 @@
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
-			  ]
+			  ],
+		"packages":["libpam","libcap","libgnutls","libopenldap",
+				"libidn2","libssh2","libnetsnmp",
+				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
 	{
 		"name":"lantiq.xrx200",
@@ -178,8 +199,19 @@
 	{
 		"name":"ath79.generic",
 		"target":"ath79",
+		"subtarget":"generic"
+#		"target-patches":["device1-comfast-e314n.patch", "device2-comfast-comfast-e130n.patch"]
+	},
+	{
+		"name":"ath79.generic.gl-mifi",
+		"target":"ath79",
 		"subtarget":"generic",
-		"target-patches":["device1-comfast-e314n.patch", "device2-comfast-comfast-e130n.patch"]
+		"variant":"gl-mifi"
+	},
+	{
+		"name":"ath79.nand",
+		"target":"ath79",
+		"subtarget":"nand"
 	},
 	{
 		"name":"ath79.generic.smallbuffers",
