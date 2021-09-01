@@ -23,15 +23,14 @@
 	{
 		"name":"default",			# currently just an unused name (only displayed)
 							# if following blocks do not specifiy there own value
-		"target":"ar71xx",
+		"target":"ath79",
 		"subtarget":"generic",
 		"variant":"",				# used to distinguish different configs
 							# e.g. 	could be name of a router or
 							#      	a set of routers when selecting "multiple devices"
 							#	via "make menuconfig"
 
-#		"openwrt_rev":"b12284a14ce90d77c9b0e77876454e173be5bea6", # v19.07.6
-"openwrt_rev":"134ac824c5a154edbbe1c581bcbc42d265dc20c0", # (HEAD, tag: v21.02.0-rc4)
+		"openwrt_rev":"134ac824c5a154edbbe1c581bcbc42d265dc20c0", # (HEAD, tag: v21.02.0-rc4)
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
 							# Note that selecting some packages as module could have
@@ -40,30 +39,20 @@
 							# This value is added to config file name
 							# Example value could be : "lowmem" or "ram32mbyte"
 
-#		"selector-config":"19.07",		# used to select config
-#		"selector-files":"",			# used to select files
-#		"selector-feeds":"19.07",		# used to select feeds
-#		"selector-patches":"19.07",		# used to select patches
-"selector-config":"21.02",		# used to select config
-"selector-feeds":"21.02",		# used to select feeds
-"selector-patches":"21.02",		# used to select patches
-"selector-files":"21.02",
+		"selector-config":"21.02",		# used to select config
+		"selector-feeds":"21.02",		# used to select feeds
+		"selector-patches":"21.02",		# used to select patches
+		"selector-files":"21.02",
 
 		# generates the feeds/feeds-[selector].conf
 		# for short commit value use: git log --abbrev-commit
 
 
-		# Versions: tagged on openwrt v19.07.6
-#		"feeds" : [
-#				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
-#				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"ce5a4eaea2"},
-#				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"02b4dbf"}
-#			  ],
-"feeds" : [
-	{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
-	{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"a55103240"}, # 21.02
-	{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"8d93475"}    # 21.02
-  ],
+		"feeds" : [
+			{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
+			{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"a55103240"}, # 21.02
+			{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"8d93475"}    # 21.02
+		  ],
 
 		# install addional packages from feeds (see feeds.conf)
 #		"packages":["libpam","libcap","libgnutls","libopenldap",
@@ -113,22 +102,6 @@
 				"libidn2","libssh2","libnetsnmp",
 				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
-	{
-		"name":"ar71xx.generic",
-		"target":"ar71xx",
-		"subtarget":"generic"
-	},
-#	{
-#		"name":"ar71xx.generic.gl-mifi",
-#		"target":"ar71xx",
-#		"subtarget":"generic",
-#		"variant":"gl-mifi"
-#	},
-#	{
-#		"name":"ar71xx.nand",
-#		"target":"ar71xx",
-#		"subtarget":"nand"
-#	},
 	{
 		"name":"x86.generic",
 		"target":"x86",
