@@ -80,8 +80,12 @@ RUN_DIR=$(pwd)
 progressbar()
 {
   _value=$1
-  _maxValue=$2
-  _marker=$3
+	shift
+  _maxValue=$1
+	shift
+  _marker=$1
+	shift
+	_char_array=("$@")	# get all other strings and create array again
 
 	if [ "$_TERM" = "1" -a -n "$_value" -a -n "$_maxValue" ]; then
 		# get current number of terminal colums
@@ -117,12 +121,14 @@ progressbar()
 		_bar=""
 		pos=0
 		nextMarkerPos=$charsPerValue
+		barCharIdx=0
 		while [ $pos -lt $len ]
 		do
 			pos=$((pos + 1))
 
 			if [ $pos -le $absCharPos ]; then
-				_bar="${_bar}#"
+#				_bar="${_bar}#"
+				_bar="${_bar}${_char_array[$barCharIdx]}"
 			else
 				_bar="${_bar}-"
 			fi
@@ -132,6 +138,7 @@ progressbar()
 			if [ -n "${_marker}" -a $pos -eq $nextMarkerPos ]; then
 				_bar="${_bar}${_marker}"
 				nextMarkerPos=$(( nextMarkerPos + charsPerValue))
+				barCharIdx=$((barCharIdx +1 ))
 			fi
 
 		done
@@ -157,7 +164,7 @@ clean_up_exit()
 			printf "\n"
 		fi
 	fi
-	exit ${EXIT:=0} 
+	exit ${EXIT:=0}
 }
 
 
@@ -166,7 +173,10 @@ show_progress()
 	if [ "$_TERM" = "1" ]; then
 		# dont overwrite last value, when no parameter was given (window resize signal)
 		[ -n "$1" ] && _count=$1
-		[ -n "$2" ] && _max=$2
+		shift
+		[ -n "$1" ] && _max=$1
+		shift
+		[ -n "$1" ] && _bar_char_array=("$@")	# get all other strings and create array again
 
 		[ -z "$_count" ] && return
 		[ -z "$_max" -o "$_max" -eq 0 ] && return
@@ -179,7 +189,7 @@ show_progress()
 
 		# print progress bar at bottom
 		tput cup $(( $row - 1)) 0
-		progressbar $_count $_max "|"
+		progressbar $_count $_max "|" ${_bar_char_array[@]}		# pass last array as separate parameters
 
 		# print empty line above
 		tput cup $(( $row - 2)) 0
@@ -700,7 +710,7 @@ if [ -n "$entry" ]; then
 fi
 
 
-# prepare progress bar
+# ------------- prepare progress bar -----------------------------------
 progress_counter=0
 progress_max=$(numberOfTargets "$targetRegex")
 
@@ -708,12 +718,21 @@ if [ $progress_max -eq 0 ]; then
  	echo "no target found"
 	clean_up_exit 1
 fi
+# progbar_char holds the current count character for each build.
+# this means that each target can display a different character in progressbar to show the
+# build status.
+# example: |####|.....|*****|
+# hier I use '#' - success;
+#            '.' - nothing compiled yet (default defined in progressbar
+#            'i' - ignored (not yet done or no config or when only building "failed" targets)
+#            'E' - error
+#
+unset progbar_char_array
 
 # if "all" target is selected, then remove all compile status files
 test "${ARG_TARET_ALL}" = "1" && find $WORK_DIR/*/bin/ -name "${compile_status_file}" -delete
 
-
-# build loop, run through all targets listed in build.json
+# ---------------- build loop, run through all targets listed in build.json -----------------
 targetIdx=1	# index 0 holds default values
 while true
 do
@@ -734,7 +753,7 @@ do
 
 	# only enable progressbar for tty
 	if [ "$_TERM" = "1" ]; then
-		show_progress $progress_counter $progress_max
+		show_progress $progress_counter $progress_max ${progbar_char_array[@]}
 		progress_counter=$(( $progress_counter + 1 ))
 		echo ""
 	fi
@@ -927,19 +946,19 @@ EOM
 
 	#try to apply target patches
 	mkdir -p $DDMESH_PATCH_STATUS_DIR
-        echo -e $C_PURPLE"apply target patches"$C_NONE
-        idx=0
-        while true
-        do
+	echo -e $C_PURPLE"apply target patches"$C_NONE
+	idx=0
+	while true
+	do
 		# check if all patches was processed
 		test -z "$_target_patches" && break
 
-                # use OPT to prevent jq from adding ""
-                entry="$(echo $_target_patches | jq $OPT .[$idx])"
-                test "$entry" = "null" && break
-                test -z "$entry"  && break
+		# use OPT to prevent jq from adding ""
+		entry="$(echo $_target_patches | jq $OPT .[$idx])"
+		test "$entry" = "null" && break
+		test -z "$entry"  && break
 
-                idx=$(( idx + 1 ))
+		idx=$(( idx + 1 ))
 
 		# check patch
 		if [ -f $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ]; then
@@ -960,28 +979,36 @@ EOM
 		else
 			echo -e $C_RED"Warning: patch [$_selector_patches/$entry] not found!"$C_NONE
 		fi
-        done
+	done
 
 	#copy after installing feeds, because .config will be overwritten by default config
 	echo -e $C_PURPLE"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
 				# create a new config
-		
+
 	DEFAULT_CONFIG="${RUN_DIR}/${CONFIG_DIR}/${_selector_config}/${CONFIG_DEFAULT_FILE}"
 	# check if config exists, if not uses default as basis
 	if [ ! -f "${RUN_DIR}/${config_file}" ]; then
-		echo -e "${C_PURPLE}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
-	
-		if [ ! -f ${DEFAULT_CONFIG} ]; then
-			echo -e "${C_RED}ERROR: NO Default Config:${C_NONE} [${DEFAULT_CONFIG}]"
-			clean_up_exit 1
+		if [ "$MENUCONFIG" = "1" ]; then
+			echo -e "${C_PURPLE}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
+
+			if [ ! -f ${DEFAULT_CONFIG} ]; then
+				echo -e "${C_RED}ERROR: NO Default Config:${C_NONE} [${DEFAULT_CONFIG}]"
+				clean_up_exit 1
+			fi
+
+			# copy config only to buildroot, not as specific config.
+			# specific configs should be created only from menuconfig
+
+			cp ${DEFAULT_CONFIG} .config
+			echo -e "${C_RED}ERROR: NO Config:${C_NONE} [${config_file}]"
+
+		else
+			# no config and no menuconfig -> continue with next target
+			progbar_char_array[$((progress_counter-1))]="i"
+			continue
+
 		fi
-	
-		# copy config only to buildroot, not as specific config. 
-		# specific configs should be created only from menuconfig
-		
-		cp ${DEFAULT_CONFIG} .config 
-		MENUCONFIG=1
 	else
 		# copy specific config
 		cp $RUN_DIR/$config_file .config
@@ -992,7 +1019,7 @@ EOM
 	if [ "$MENUCONFIG" = "1" ]; then
 
 		echo -e "${C_PURPLE}run menuconfig${C_NONE}"
-		make menuconfig 
+		make menuconfig
 		echo ""
 		# check if menuconfig has changed config. only then copy it to specific config
 		diff -q .config ${DEFAULT_CONFIG} 2>/dev/null || {
@@ -1027,6 +1054,7 @@ EOM
 
 	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
+		progbar_char_array[$((progress_counter-1))]="E"
 
 		echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_config_name}" $C_NONE
 
@@ -1038,9 +1066,10 @@ EOM
 				echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
 				clean_up_exit 1
 			fi
-		else
-			clean_up_exit 1
 		fi
+		# ignore error and continue with next target
+		echo -e $C_RED"Error: ignore build error"$C_NONE "at target" $C_YELLOW and continue "${_config_name}" $C_NONE
+		continue
 	fi
 
 	# check if we have file
@@ -1049,16 +1078,16 @@ EOM
 		echo "     ${target_dir}"
 		clean_up_exit 1
 	fi
-
+	# success status
+	progbar_char_array[$((progress_counter-1))]="+"
 	echo -e "${C_PURPLE}images created in${C_NONE} ${C_GREEN}${target_dir}${C_NONE}"
 
 done
 
-show_progress $progress_counter $progress_max
+show_progress $progress_counter $progress_max ${progbar_char_array[@]}
 sleep 1
 
 echo -e $C_PURPLE".......... complete build finished ........................"$C_NONE
 echo ""
 
 clean_up_exit 0
-
