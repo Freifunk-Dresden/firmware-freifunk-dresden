@@ -1005,7 +1005,7 @@ EOM
 
 		else
 			# no config and no menuconfig -> continue with next target
-			progbar_char_array[$((progress_counter-1))]="i"
+			progbar_char_array[$((progress_counter-1))]="."
 			continue
 
 		fi
