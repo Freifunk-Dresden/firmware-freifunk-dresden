@@ -166,7 +166,7 @@ config backbone_client
 	option	public_key 		''
 
 config backbone_client
-	option 	host			'vpn12.freifunk-dresden.de'
+	option 	host			'vpn8.freifunk-dresden.de'
 	option 	port			'5002'
 	option	public_key 		''
 
