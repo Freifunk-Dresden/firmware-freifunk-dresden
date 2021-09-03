@@ -1,0 +1,24 @@
+#
+# reserved values
+#
+255	local
+254	main
+253	default
+0	unspec
+
+#
+# local
+#
+251	public_gateway
+250	local_gateway
+#249	ping
+248	vpn
+247	unreachable
+246	fallback_gateway
+245	public_dns
+
+#batman
+64	bat_route
+66	bat_default
+
+

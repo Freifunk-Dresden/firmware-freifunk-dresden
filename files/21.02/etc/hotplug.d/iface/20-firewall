@@ -1,0 +1,11 @@
+#!/bin/sh
+
+test -f /tmp/freifunk-running || exit 0
+
+TAG="ddmesh-hotplug-iface"
+TAG2="20-firewall"
+
+logger -t "$TAG" "$TAG2: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
+[ ifup = "$ACTION" -o ifdown = "$ACTION" ] && {
+	[ "wan" = "$INTERFACE" -o "lan" = "$INTERFACE" -o "wifi2" = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-firewall-addons.sh firewall-update
+}

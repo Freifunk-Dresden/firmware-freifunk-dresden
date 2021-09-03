@@ -1,0 +1,19 @@
+
+config service 'dyndns'
+	option enabled '0'
+	option use_syslog '3'
+	option service_name 'dyndns.org'
+	option ip_source 'web'
+	option ip_url 'http://checkip.dyndns.org'
+	option check_interval '10'
+	option check_unit 'minutes'
+	option force_interval '30'
+	option force_unit 'days'
+	option update_url ''
+	option username ''
+	option password ''
+	option domain ''
+
+
+config ddns 'global'
+

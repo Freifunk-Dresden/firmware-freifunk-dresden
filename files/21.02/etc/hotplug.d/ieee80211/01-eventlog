@@ -1,0 +1,5 @@
+#!/bin/sh
+
+TAG="ddmesh-hotplug-ieee80211"
+logger -t "$TAG" "event: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
+

@@ -1,0 +1,3 @@
+#!/bin/sh
+TAG="ddmesh-hotplug-iface"
+logger -t "$TAG" "event: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"

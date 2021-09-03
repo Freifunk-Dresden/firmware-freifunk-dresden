@@ -1,0 +1,3 @@
+#disable dnsmasq reload when interface setting change
+#it would disturb current dhcp leases when tbb+ interfaces or bat+
+#change

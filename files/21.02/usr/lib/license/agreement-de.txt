@@ -1,0 +1,38 @@
+                    [ Nutzungsbedingungen ] - Deutsch
+
+1. Allgemeines
+--------------
+Das offene und freie drahtlose Freifunk.net wird von Freiwilligen betrieben ("Betreiber"), die die nötigen Geräte und Internet-Anschlüsse ("Infrastruktur") auf eigene Kosten zur Verfügung stellen. Diese Nutzungsbestimmungen regeln die Inanspruchnahme des Freifunk.net durch die Teilnehmer, welche sich mittels Computer, Handheld o.a. ("Endgerät") mit dem Freifunk.net verbinden.
+
+2. Zugang
+---------
+Der Zugang zum Freifunk.net wird nicht garantiert. Er kann jederzeit und ohne Angabe von Gründen unterbrochen oder für bestimmte Endgeräte und Teilnehmer gesperrt werden. Der Zugang und die notwendigen Daten zum Verbinden mit dem Netz werden durch die Knoten definiert und per DHCP oder ähnlichen Protokollen an die Endgeräte übertragen. Das Verwenden von alten, ungültigen oder selbst definierten Daten (z.B. IP Adresse) ist nicht gestattet, da diese das Netz stören oder beschädigen können. Durch die Funktionsweise des Netzes ist es nicht vorhersehbar, welcher Router für den Internetzugang verwendet wird.
+
+3. Gesetzlich verbotene Handlungen
+----------------------------------
+Der Teilnehmer verpflichtet sich, keine Handlungen vorzunehmen bzw. Handlungen zu unterlassen, welche gesetzliche Bestimmungen oder die Rechte anderer verletzen.
+
+4. Gesetzlich verbotene Inhalte
+-------------------------------
+Der Teilnehmer verpflichtet sich, keine Inhalte über das Freifunk.net zu übertragen, welche gegen geltendes Recht verstossen.
+
+5. Verantwortung
+----------------
+Die Betreiber des Freifunk.net Netzwerkes sind nicht verantwortlich für die übertragenen Daten oder durch Missbrauch entstandenen Schäden. Sie stellen nur das Netzwerk und Zugang zum Netz bereit. Die Verantwortung trägt der Nutzer, der mit dem Endgerät das Netz nutzt, welcher diese Nutzungsbestimmungen akzepiert hat. Wer sich Zugang zum Netz verschafft, ohne die Nutzungsbedingungen zu akzeptieren, macht sich strafbar.
+
+6. Datenprotokollierung
+-----------------------
+Netzwerk/Router speichert keine Daten, sondern leitet diese nur über Router weiter. Ebenso werden keine Logindaten gespeichert. Es werden nur die MAC Adresse des Endgerätes im RAM des Zugangsknoten (Router) gepeichert, um den Zugang über den jeweiligen Router zuermöglichen. Es ist jedoch möglich bei Verdacht des Missbrauches (z.B. illegaler Datenaustausch, Surfen auf illegalen Seiten, Austausch von kopiergeschützen Inhalten und anderes, was gegen geltendes Recht verstößt) auf Verlangen Daten entsprechend technischer Möglichkeiten zu speichern, die dann weitergegeben werden.
+
+7. Fair Use Policy
+------------------
+Der Teilnehmer verpflichtet sich, das Freifunk.net nicht in einer Weise zu beanspruchen, welche die Infrastruktur, das Freifunk.net selbst, dessen Betreiber oder andere Teilnehmer beinträchtigt.
+
+8. Sicherheit
+-------------
+Das Freifunk.net ist, wie das Internet, unverschlüsselt und offen. Jeder Teilnehmer ist selbst für die Sicherheit seiner Verbindungen und seiner Endgeräte verantwortlich.
+
+9. Haftungsauschluss
+--------------------
+Die Betreiber lehnen jede Haftung für Datenverlust, unbefugter Zugriff auf Endgeräte, Schäden an Endgeräten oder finanzielle Verluste die ein Teilnehmer durch die Nutzung des Freifunk.net erleidet ab.
+

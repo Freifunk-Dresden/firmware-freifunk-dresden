@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#first factory boot check
+if [ ! -f /etc/config/ddmesh ]; then logger -t ddmesh "ddmesh not ready - ignore dhcp event" ; exit; fi
+
+logger -t DHCP "cmd:$1  mac:$2 ip:$3 hostname:$4"
+
+#ignore refresh
+test "$1" = "old" && exit 0
+
+F=/var/log/dnsmasq.log
+
+#truncate log
+touch $F
+cp $F $F.tmp
+tail -500 $F.tmp >$F
+rm -f $F.tmp
+
+test "$1" = "del" && /usr/lib/ddmesh/ddmesh-splash.sh delmac $2
+
+echo [$(date "+%a %d.%m.%Y %T")] cmd=$1 mac=$2 ip=$3 hostname=$4 >> $F

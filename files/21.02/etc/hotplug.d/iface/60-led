@@ -1,0 +1,12 @@
+#!/bin/sh
+# update "status" led when wifi (adhoc) is down/up
+
+test -f /tmp/freifunk-running || exit 0
+
+[ ifdown = "$ACTION" ] && {
+	[ wifi = "$INTERFACE" -o wifi2 = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-led.sh wifi off
+}
+
+[ ifup = "$ACTION" ] && {
+	[ wifi = "$INTERFACE" -o wifi2 = "$INTERFACE" ] && /usr/lib/ddmesh/ddmesh-led.sh wifi alive
+}
