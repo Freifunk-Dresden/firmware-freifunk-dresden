@@ -12,7 +12,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)-base
   CATEGORY:=ddmesh
   DEFAULT:=y
-  DEPENDS:=	+kmod-ledtrig-timer +kmod-tun +libmbedtls +libustream-mbedtls \
+  DEPENDS:=	+kmod-tun +libmbedtls +libustream-mbedtls \
 		+uhttpd \
 		+bmxd +freifunk-upload \
 		+ddns-scripts +ddns-scripts_no-ip_com \

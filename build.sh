@@ -997,11 +997,8 @@ EOM
 				clean_up_exit 1
 			fi
 
-			# copy config only to buildroot, not as specific config.
-			# specific configs should be created only from menuconfig
-
-			cp ${DEFAULT_CONFIG} .config
-			echo -e "${C_RED}ERROR: NO Config:${C_NONE} [${config_file}]"
+			# remove any old config from build root
+			rm -f .config
 
 		else
 			# no config and no menuconfig -> continue with next target
@@ -1021,11 +1018,26 @@ EOM
 		echo -e "${C_PURPLE}run menuconfig${C_NONE}"
 		make menuconfig
 		echo ""
-		# check if menuconfig has changed config. only then copy it to specific config
-		diff -q .config ${DEFAULT_CONFIG} 2>/dev/null || {
-			echo -e "${C_PURPLE}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
-			cp .config ${RUN_DIR}/${config_file}
-		}
+
+		# default config contains important modifications after openwrt has created a config from scratch
+		# or user has enabled some unsupported features by freifunk.
+		# All invalid settings are overwritten by just appending the default config.
+		# see https://openwrt.org/docs/guide-developer/build-system/use-buildsystem
+		# The default config is generated with those steps:
+		# 1. cd workdir/buildroot
+		# 2. rm .config
+		# 3. unselect all unwanted configuration that should be removed from (e.g. IPV6,PPP,....)
+		# 4. run ./scripts/diffconfig.sh firmware/openwrt-configs/21.02/default.config
+
+		echo -e "${C_PURPLE}post-overwrite configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+		cat ${DEFAULT_CONFIG} >> .config
+		# cleanup config finally
+		echo -e "${C_PURPLE}reprocess configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+		make defconfig
+
+		echo -e "${C_PURPLE}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+		cp .config ${RUN_DIR}/${config_file}
+
 		clean_up_exit 0
 	fi
 
@@ -1035,7 +1047,8 @@ EOM
 	make defconfig
 
 	# make clean because openwrt could fail building targets after building different targets before
-	# but keep generated directories (ddmesh-makefile-lightclean.patch)
+	# but keep generated directories (ddmesh-makefile-lightclean.patch).
+	# It keeps generated images and packages.
 	make lightclean
 
 	echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
