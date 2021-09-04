@@ -20,7 +20,7 @@
         {
             "label": "upload current file",
             "type": "shell",
-            "command": "eval scp ${file} root@${input:targetIp}:/$(echo '${relativeFile}' | sed 's#files/common##' )",
+            "command": "eval scp ${file} root@${input:targetIp}:/$(echo '${relativeFile}' | sed 's#files/[^/]*/##' )",
             "problemMatcher": [
             ],
             "presentation": {
