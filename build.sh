@@ -509,14 +509,14 @@ else
 	# replace any "space" with '|'. space can be used as separator lile '|'
 	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#|#g')
 
-	# add '\' to each '|â€™
+	# add '\' to each '|'™
 	targetRegex=${targetRegex//|/\\|}
 
 	# append '$' to targetRegex, to ensure that 'ar71xx.generic.xyz' is not built
 	# when 'ar71xx.generic' was specified. Use 'ar71xx.generic.*' if both
 	# targets should be created
 
-	targetRegex="$targetRegex\$"
+	targetRegex="^$targetRegex\$"
 	echo "targetRegex:[$targetRegex]"
 
 	#check if next argument is "menuconfig"
