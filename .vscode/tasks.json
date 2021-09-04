@@ -47,9 +47,6 @@
 "failed",
 "ar71xx.tiny.lowmem",
 "ar71xx.generic.lowmem",
-"ar71xx.generic",
-"ar71xx.generic.gl-mifi",
-"ar71xx.nand",
 "x86.generic",
 "x64.generic",
 "ramips.mt7621.generic",
@@ -60,12 +57,13 @@
 "lantiq.xway",
 "sunxi.cortexa7.generic",
 "ath79.generic",
+"ath79.generic.gl-mifi",
+"ath79.nand",
 "ath79.generic.smallbuffers",
 "ipq40xx.generic",
 "ipq40xx.generic.fr-1200",
 "bcm53xx.generic.arm",
-"mpc85xx.p1020"
-            ]
+"mpc85xx.p1020            ]"
         }
     ]
 }
