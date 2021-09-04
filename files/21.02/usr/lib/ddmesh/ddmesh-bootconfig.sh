@@ -278,6 +278,54 @@ EOM
 	# set own freifunk default ip
 	uci set network.lan.ipaddr='192.168.222.1'
 
+} # config_boot_step1
+
+#############################################################################
+# update configuration depending on new ddmesh settings
+config_update() {
+
+	#ONLY uci settings, to ensure not flashing on every boot
+	#function called when node is valid, to setup all settings depending on node
+	#or other updates of system generated configs
+
+	#set hostname
+	uci set system.@system[0].hostname="$_ddmesh_hostname"
+	uci set system.@system[0].timezone="CET-1CEST,M3.5.0,M10.5.0/3"
+
+	#syslog
+	uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
+
+	#############################################################################
+	# setup backbone clients
+	#############################################################################
+	for i in $(seq 0 4)
+	do
+		host="$(uci -q get ddmesh.@backbone_client[$i].host)"
+		fastd_pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
+		if [ -n "$host" -a -z "$fastd_pubkey" ]; then
+			uci -q del ddmesh.@backbone_client[$i].password
+			uci -q set ddmesh.@backbone_client[$i].port="5002"
+			#lookup key
+			for k in $(seq 1 30)
+			do
+				kk=$(( $k - 1))
+				h=$(uci -q get credentials.@backbone[$kk].host)
+				if [ "$h" = "$host" ]; then
+					uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
+					break;
+				fi
+			done
+		fi
+	done
+
+	#############################################################################
+	# setup lan
+	# Interface for "lan" is initally  set in /etc/config/network
+	# tbb is a bridge used by mesh-on-lan
+	#############################################################################
+	uci set network.lan.stp=1
+	uci set network.lan.bridge_empty=1
+
 	# openwrt 21 creates per default br-lan (config device + interface lan)
 	# and wan (no bridge). setting wan type to 'bridge' does not work anymore
 	# There is no way to get assotiated real interfaces names from any api. Those names can change
@@ -285,83 +333,41 @@ EOM
 	# Only solution is copy the names
 	# lan has its device section
 	uci set network.lan.ll_ifname=$(get_lower_ifname "br-lan")
-	# wan is normal interface
-	uci set network.wan.ll_ifname=$(uci get network.wan.device)
 
-	#reconfigure wan as bridge
-	uci add network device
-	uci set network.@device[-1].name='br-wan'
-	uci set network.@device[-1].type='bridge'
-	uci add_list network.@device[-1].ports=$(uci get network.wan.ll_ifname)
-	uci set network.wan.device='br-wan'
+	# reconfigure wan as bridge if needed
+	if [ -n "$(uci -q get network.wan)" ]; then
+		if [ -z "$(uci -q get network.device_wan)" ]; then
+			# copy ifname
+			uci set network.wan.ll_ifname=$(uci -q get network.wan.device)
 
-} # config_boot_step1
+			# create device section
+			uci add network device
+			uci rename network.@device[-1]='device_wan'
+			uci set network.device_wan.name='br-wan'
+			uci set network.device_wan.type='bridge'
+			uci add_list network.device_wan.ports=$(uci get network.wan.ll_ifname)
+			uci set network.wan.device='br-wan'
+		fi
 
-#############################################################################
-# update configuration depending on new ddmesh settings
-config_update() {
+		uci set network.wan.stp=1
+		uci set network.wan.bridge_empty=1
+		# force_link always up. else netifd reconfigures wan/mesh_wan because
+		# of hotplug events
+		uci set network.wan.force_link=1
 
- #ONLY uci settings, to ensure not flashing on every boot
- #function called when node is valid, to setup all settings depending on node
- #or other updates of system generated configs
+		# delete wan ip config and set it to static, to avoid ip conflicts with lan when udhcpc
+		# and to avoid creating iptables rules for wan that might block lan connections
+		if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ]; then
+			uci del network.wan.ipaddr
+			uci del network.wan.netmask
+			uci del network.wan.gateway
+			uci del network.wan.dns
+			uci set network.wan.proto='static'
+		fi
 
- #set hostname
- uci set system.@system[0].hostname="$_ddmesh_hostname"
- uci set system.@system[0].timezone="CET-1CEST,M3.5.0,M10.5.0/3"
 
- #syslog
- uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
-
- #############################################################################
- # setup backbone clients
- #############################################################################
- for i in $(seq 0 4)
- do
-	host="$(uci -q get ddmesh.@backbone_client[$i].host)"
-	fastd_pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
-	if [ -n "$host" -a -z "$fastd_pubkey" ]; then
-		uci -q del ddmesh.@backbone_client[$i].password
-		uci -q set ddmesh.@backbone_client[$i].port="5002"
-		#lookup key
-		for k in $(seq 1 30)
-		do
-			kk=$(( $k - 1))
-			h=$(uci -q get credentials.@backbone[$kk].host)
-			if [ "$h" = "$host" ]; then
-				uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
-				break;
-			fi
-		done
 	fi
-done
 
- #############################################################################
- # setup lan
- # Interface for "lan" is initally  set in /etc/config/network
- # tbb is a bridge used by mesh-on-lan
- #############################################################################
- uci set network.lan.stp=1
- uci set network.lan.bridge_empty=1
-
- #wan as bridge for mesh_on_wan support
- test -n "$(uci -q get network.wan)" && {
- 	uci set network.wan.stp=1
-	uci set network.wan.bridge_empty=1
-	# force_link always up. else netifd reconfigures wan/mesh_wan because
-	# of hotplug events
-	uci set network.wan.force_link=1
-
-
-	# delete wan ip config and set it to static, to avoid ip conflicts with lan when udhcpc
-	# and to avoid creating iptables rules for wan that might block lan connections
-	if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ]; then
-		uci del network.wan.ipaddr
-		uci del network.wan.netmask
-		uci del network.wan.gateway
-		uci del network.wan.dns
-		uci set network.wan.proto='static'
-	fi
- }
 
  test -z "$(uci -q get network.mesh_lan)" && {
  	uci add network interface
