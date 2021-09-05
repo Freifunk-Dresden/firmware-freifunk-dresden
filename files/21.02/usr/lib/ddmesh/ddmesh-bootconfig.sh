@@ -355,48 +355,34 @@ config_update() {
 			test -z "$dev_name" && dev_name=$(uci -q get network.${NET}.device)
 			dev_config=$(get_device_section_ifname "$dev_name")
 
-			# set new device name
-			uci set network.${NET}.device="br-${NET}"
-
-			echo "dev_name:$dev_name"
-			echo "dev_config:$dev_config"
+			echo "dev_name:$dev_name / dev_config:$dev_config"
 
 			# if no dev_config found, create one
 			if [ -z "$dev_config" ]; then
-
 				dev_config="device_${NET}"
 				echo "create device ${dev_config}"
 
-				# device (or ifname) contains lowlevel name
-				uci set network.${NET}.ll_ifname="$dev_name"
-
 				# create device section
 				uci add network device
-				uci rename network.@device[-1]="device_${NET}"
-				uci set network.${dev_config}.name="br-${NET}"
-				uci set network.${dev_config}.type='bridge'
-				uci add_list network.${dev_config}.ports="$dev_name"
-
-			else
-				echo "found device ${dev_config}"
-
-				# when this is a bridge then I have to read the ports to get ifname
-				# else the name itself is the ifname
-				dev_type=$(uci -q get network.${dev_config}.type)
-				echo "dev_type:$dev_type"
-
-				if [ "$dev_type" = "bridge" ]; then
-					# it is a bridge, read ifname from there
-					uci set network.${NET}.ll_ifname=$(uci -q get network.${dev_config}.ports)
-				else
-					# configure as bridge (dev_name is lowlevel name)
-					echo "reconfigure device as bridge"
-					uci set network.${NET}.ll_ifname="$dev_name"
-					uci set network.${dev_config}.name="br-${NET}"
-					uci set network.${dev_config}.type='bridge'
-					uci add_list network.${dev_config}.ports="$dev_name"
-				fi
+				uci rename network.@device[-1]="${dev_config}"
 			fi
+
+			# when this is a bridge then I have to read the ports to get ifname
+			# else the name itself is the ifname
+			dev_type=$(uci -q get network.${dev_config}.type)
+			if [ "$dev_type" = "bridge" ]; then
+				# it is a bridge, read ifname from there
+				dev_name=$(uci -q get network.${dev_config}.ports)
+			fi
+
+			# configure as bridge (dev_name is lowlevel name)
+			echo "confgure device ${dev_config}"
+			uci set network.${NET}.device="br-${NET}"
+			uci set network.${NET}.ll_ifname="$dev_name"
+			uci set network.${dev_config}.name="br-${NET}"
+			uci set network.${dev_config}.type='bridge'
+			uci -q delete network.${dev_config}.ports
+			uci add_list network.${dev_config}.ports="$dev_name"
 
 			uci set network.${NET}.stp=1
 			uci set network.${NET}.bridge_empty=1
