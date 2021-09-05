@@ -343,7 +343,7 @@ config_update() {
 	# reconfigure lan as bridge if needed
 	for NET in lan wan
 	do
-echo "NET:$NET"
+		echo "NET:$NET"
 		if [ -n "$(uci -q get network.${NET})" ]; then
 			# openwrt 21 uses device and inferface sections.
 			# /etc/config/network needs to be checked and changed from interface only to
@@ -358,14 +358,15 @@ echo "NET:$NET"
 			# set new device name
 			uci set network.${NET}.device="br-${NET}"
 
-echo dev_name:$dev_name
-echo dev_config:$dev_config
+			echo "dev_name:$dev_name"
+			echo "dev_config:$dev_config"
 
 			# if no dev_config found, create one
 			if [ -z "$dev_config" ]; then
 
 				dev_config="device_${NET}"
-echo create device ${dev_config}
+				echo "create device ${dev_config}"
+
 				# device (or ifname) contains lowlevel name
 				uci set network.${NET}.ll_ifname="$dev_name"
 
@@ -377,17 +378,19 @@ echo create device ${dev_config}
 				uci add_list network.${dev_config}.ports="$dev_name"
 
 			else
-echo found device ${dev_config}
+				echo "found device ${dev_config}"
+
 				# when this is a bridge then I have to read the ports to get ifname
 				# else the name itself is the ifname
 				dev_type=$(uci -q get network.${dev_config}.type)
-echo dev_type:$dev_type
+				echo "dev_type:$dev_type"
+
 				if [ "$dev_type" = "bridge" ]; then
 					# it is a bridge, read ifname from there
 					uci set network.${NET}.ll_ifname=$(uci -q get network.${dev_config}.ports)
 				else
 					# configure as bridge (dev_name is lowlevel name)
-echo reconfigure device as bridge
+					echo "reconfigure device as bridge"
 					uci set network.${NET}.ll_ifname="$dev_name"
 					uci set network.${dev_config}.name="br-${NET}"
 					uci set network.${dev_config}.type='bridge'
@@ -406,7 +409,7 @@ echo reconfigure device as bridge
 
 		fi
 	done
-echo "done--------------"
+echo "-"
 
 	test -z "$(uci -q get network.mesh_lan)" && {
 		uci add network interface
