@@ -48,6 +48,23 @@ get_lower_ifname()
 	config_foreach cb_device device "$device"
 }
 
+# returns device section for interface
+get_device_section_ifname()
+{
+	local device="$1"
+	cb_device()
+	{
+		local config="$1"
+		local var_name
+		config_get var_name "$config" name
+		if [ "$2" = "$var_name" ]; then
+			echo "$config"
+		fi
+	}
+
+	config_load network
+	config_foreach cb_device device "$device"
+}
 
 
 
@@ -323,308 +340,326 @@ config_update() {
 	# Interface for "lan" is initally  set in /etc/config/network
 	# tbb is a bridge used by mesh-on-lan
 	#############################################################################
-	uci set network.lan.stp=1
-	uci set network.lan.bridge_empty=1
+	# reconfigure lan as bridge if needed
+	for NET in lan wan
+	do
+echo "NET:$NET"
+		if [ -n "$(uci -q get network.${NET})" ]; then
+			# openwrt 21 uses device and inferface sections.
+			# /etc/config/network needs to be checked and changed from interface only to
+			# device+interface configuration, as creating wan bridges do only work this way.
+			# Some devices (ubnt-edge) already have device section to define different mac addresses.
 
-	# openwrt 21 creates per default br-lan (config device + interface lan)
-	# and wan (no bridge). setting wan type to 'bridge' does not work anymore
-	# There is no way to get assotiated real interfaces names from any api. Those names can change
-	# from router to router.
-	# Only solution is copy the names
-	# lan has its device section
-	uci set network.lan.ll_ifname=$(get_lower_ifname "br-lan")
+			# search for device-section. ifname was renamed to device (but it is uncertain which is used)
+			dev_name=$(uci -q get network.${NET}.ifname)
+			test -z "$dev_name" && dev_name=$(uci -q get network.${NET}.device)
+			dev_config=$(get_device_section_ifname "$dev_name")
 
-	# reconfigure wan as bridge if needed
-	if [ -n "$(uci -q get network.wan)" ]; then
-		if [ -z "$(uci -q get network.device_wan)" ]; then
-			# copy ifname
-			uci set network.wan.ll_ifname=$(uci -q get network.wan.device)
+			# delete old ifname and set new device name
+			uci delete network.${NET}.ifname
+			uci set network.${NET}.device="br-${NET}"
 
-			# create device section
-			uci add network device
-			uci rename network.@device[-1]='device_wan'
-			uci set network.device_wan.name='br-wan'
-			uci set network.device_wan.type='bridge'
-			uci add_list network.device_wan.ports=$(uci get network.wan.ll_ifname)
-			uci set network.wan.device='br-wan'
+echo dev_name:$dev_name
+echo dev_config:$dev_config
+
+			# if no dev_config found, create one
+			if [ -z "$dev_config" ]; then
+echo create
+				dev_config="device_${NET}"
+
+				# device (or ifname) contains lowlevel name
+				uci set network.${NET}.ll_ifname="$dev_name"
+
+				# create device section
+				uci add network device
+				uci rename network.@device[-1]="device_${NET}"
+				uci set network.${dev_config}.name="br-${NET}"
+				uci set network.${dev_config}.type='bridge'
+				uci add_list network.${dev_config}.ports="$dev_name"
+
+			else
+				# when this is a bridge then I have to read the ports to get ifname
+				# else the name itself is the ifname
+				dev_type=$(uci -q get network.${dev_config}.type)
+echo dev_type:$dev_name
+				if [ "$dev_type" = "bridge" ]; then
+					# it is a bridge, read ifname from there
+					uci set network.${NET}.ll_ifname=$(uci -q get network.${dev_config}.ports)
+				else
+					# configure as bridge (dev_name is lowlevel name)
+echo reconfigure device as bridge
+					uci set network.${NET}.ll_ifname="$dev_name"
+					uci set network.${dev_config}.name="br-${NET}"
+					uci set network.${dev_config}.type='bridge'
+					uci add_list network.${dev_config}.ports="$dev_name"
+				fi
+			fi
+
+			uci set network.${NET}.stp=1
+			uci set network.${NET}.bridge_empty=1
+			# force_link always up. else netifd reconfigures wan/mesh_wan because
+			# of hotplug events
+			uci set network.${NET}.force_link=1
 		fi
+	done
+echo "done--------------"
 
-		uci set network.wan.stp=1
-		uci set network.wan.bridge_empty=1
-		# force_link always up. else netifd reconfigures wan/mesh_wan because
-		# of hotplug events
-		uci set network.wan.force_link=1
+	test -z "$(uci -q get network.mesh_lan)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='mesh_lan'
+	}
+	uci set network.mesh_lan.bridge_empty=1
+	uci set network.mesh_lan.ipaddr="$_ddmesh_nonprimary_ip"
+	uci set network.mesh_lan.netmask="$_ddmesh_netmask"
+	uci set network.mesh_lan.broadcast="$_ddmesh_broadcast"
+	uci set network.mesh_lan.proto='static'
+	uci set network.mesh_lan.type='bridge'
+	uci set network.mesh_lan.stp=1
 
-		# delete wan ip config and set it to static, to avoid ip conflicts with lan when udhcpc
-		# and to avoid creating iptables rules for wan that might block lan connections
-		if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ]; then
-			uci del network.wan.ipaddr
-			uci del network.wan.netmask
-			uci del network.wan.gateway
-			uci del network.wan.dns
-			uci set network.wan.proto='static'
-		fi
-
-
-	fi
-
-
- test -z "$(uci -q get network.mesh_lan)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='mesh_lan'
- }
- uci set network.mesh_lan.bridge_empty=1
- uci set network.mesh_lan.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.mesh_lan.netmask="$_ddmesh_netmask"
- uci set network.mesh_lan.broadcast="$_ddmesh_broadcast"
- uci set network.mesh_lan.proto='static'
- uci set network.mesh_lan.type='bridge'
- uci set network.mesh_lan.stp=1
-
- test -z "$(uci -q get network.mesh_wan)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='mesh_wan'
- }
- uci set network.mesh_wan.bridge_empty=1
- uci set network.mesh_wan.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.mesh_wan.netmask="$_ddmesh_netmask"
- uci set network.mesh_wan.broadcast="$_ddmesh_broadcast"
- uci set network.mesh_wan.proto='static'
- uci set network.mesh_wan.type='bridge'
- uci set network.mesh_wan.stp=1
+	test -z "$(uci -q get network.mesh_wan)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='mesh_wan'
+	}
+	uci set network.mesh_wan.bridge_empty=1
+	uci set network.mesh_wan.ipaddr="$_ddmesh_nonprimary_ip"
+	uci set network.mesh_wan.netmask="$_ddmesh_netmask"
+	uci set network.mesh_wan.broadcast="$_ddmesh_broadcast"
+	uci set network.mesh_wan.proto='static'
+	uci set network.mesh_wan.type='bridge'
+	uci set network.mesh_wan.stp=1
 
  # add network modem with qmi protocol
  test -z "$(uci -q get network.wwan)" && {
-	uci add network interface
-	uci rename network.@interface[-1]='wwan'
- }
- # must be wwan0
- uci set network.wwan.ifname='wwan0'
- uci set network.wwan.proto='qmi'
- uci set network.wwan.apn="$(uci -q get ddmesh.network.wwan_apn)"
- uci set network.wwan.pincode="$(uci -q get ddmesh.network.wwan_pincode)"
- uci set network.wwan.device='/dev/cdc-wdm0'
- uci set network.wwan.autoconnect='1'
- uci set network.wwan.pdptype='IP'	# IPv4 only
- uci set network.wwan.delay='30' 	# wait for SIMCard being ready
- uci set network.wwan.metric='50'	# avoids overwriting WAN default route
+		uci add network interface
+		uci rename network.@interface[-1]='wwan'
+	}
+	# must be wwan0
+	uci set network.wwan.ifname='wwan0'
+	uci set network.wwan.proto='qmi'
+	uci set network.wwan.apn="$(uci -q get ddmesh.network.wwan_apn)"
+	uci set network.wwan.pincode="$(uci -q get ddmesh.network.wwan_pincode)"
+	uci set network.wwan.device='/dev/cdc-wdm0'
+	uci set network.wwan.autoconnect='1'
+	uci set network.wwan.pdptype='IP'	# IPv4 only
+	uci set network.wwan.delay='30' 	# wait for SIMCard being ready
+	uci set network.wwan.metric='50'	# avoids overwriting WAN default route
 
- wwan_modes=""
- test "$(uci -q get ddmesh.network.wwan_4g)" = "1" && wwan_modes="$wwan_modes,lte"
- test "$(uci -q get ddmesh.network.wwan_3g)" = "1" && wwan_modes="$wwan_modes,umts"
- test "$(uci -q get ddmesh.network.wwan_2g)" = "1" && wwan_modes="$wwan_modes,gsm"
- wwan_modes="${wwan_modes#,}"
- wwan_modes="${wwan_modes:-lte,umts}"
- uci set network.wwan.modes="$wwan_modes"
+	wwan_modes=""
+	test "$(uci -q get ddmesh.network.wwan_4g)" = "1" && wwan_modes="$wwan_modes,lte"
+	test "$(uci -q get ddmesh.network.wwan_3g)" = "1" && wwan_modes="$wwan_modes,umts"
+	test "$(uci -q get ddmesh.network.wwan_2g)" = "1" && wwan_modes="$wwan_modes,gsm"
+	wwan_modes="${wwan_modes#,}"
+	wwan_modes="${wwan_modes:-lte,umts}"
+	uci set network.wwan.modes="$wwan_modes"
 
- wwan_mode_preferred="$(uci -q get ddmesh.network.wwan_mode_preferred)"
- uci set network.wwan.preference="$wwan_mode_preferred"
+	wwan_mode_preferred="$(uci -q get ddmesh.network.wwan_mode_preferred)"
+	uci set network.wwan.preference="$wwan_mode_preferred"
 
- uci -q del firewall.zone_wan.network	# delete "option"
- uci -q add_list firewall.zone_wan.network='wan'
- # helper network, to setup firewall rules for wwan network.
- # openwrt is not relible to setup wwan0 rules in fw
- test -z "$(uci -q get network.wwan_helper)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='wwan_helper'
- }
- uci set network.wwan_helper.ifname="wwan+"
- uci set network.wwan_helper.proto='static'
- uci -q add_list firewall.zone_wan.network='wwan_helper'
-
-
- #############################################################################
- # setup wifi
- # Interfaces for "wifi" and "wifi2" are created by wireless subsystem and
- # assigned to this networks
- #############################################################################
- test -z "$(uci -q get network.wifi_adhoc)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='wifi_adhoc'
- }
- uci set network.wifi_adhoc.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi_adhoc.netmask="$_ddmesh_netmask"
- uci set network.wifi_adhoc.broadcast="$_ddmesh_broadcast"
- uci set network.wifi_adhoc.proto='static'
-
- test -z "$(uci -q get network.wifi_mesh2g)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='wifi_mesh2g'
- }
- uci set network.wifi_mesh2g.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi_mesh2g.netmask="$_ddmesh_netmask"
- uci set network.wifi_mesh2g.broadcast="$_ddmesh_broadcast"
- uci set network.wifi_mesh2g.proto='static'
-
- test -z "$(uci -q get network.wifi_mesh5g)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='wifi_mesh5g'
- }
- uci set network.wifi_mesh5g.ipaddr="$_ddmesh_nonprimary_ip"
- uci set network.wifi_mesh5g.netmask="$_ddmesh_netmask"
- uci set network.wifi_mesh5g.broadcast="$_ddmesh_broadcast"
- uci set network.wifi_mesh5g.proto='static'
-
- test -z "$(uci -q get network.wifi2)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='wifi2'
- }
- uci set network.wifi2.ipaddr="$_ddmesh_wifi2ip"
- uci set network.wifi2.netmask="$_ddmesh_wifi2netmask"
- uci set network.wifi2.broadcast="$_ddmesh_wifi2broadcast"
- uci set network.wifi2.proto='static'
- uci set network.wifi2.type='bridge'
- uci set network.wifi2.stp=1
- #don't store dns for wifi2 to avoid adding it to resolv.conf
-
- #############################################################################
- # setup tbb_fastd/wg network assigned to a firewall zone (mesh) for an interface
- # that is not controlled by openwrt.
- # Bringing up tbb+ failes, but firewall rules are created anyway
- # got this information by testing, because openwrt feature to add non-controlled
- # interfaces (via netifd) was not working.
- #############################################################################
- test -z "$(uci -q get network.tbb_fastd)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='tbb_fastd'
- }
- uci set network.tbb_fastd.ifname='tbb_fastd'
- uci set network.tbb_fastd.proto='static'
-
- # wireguard tunnel
- test -z "$(uci -q get network.tbbwg)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='tbbwg'
- }
- uci set network.tbbwg.ifname='tbbwg+'
- uci set network.tbbwg.ipaddr="$_ddmesh_wireguard_ip"
- uci set network.tbbwg.netmask="$_ddmesh_netmask"
- uci set network.tbbwg.proto='static'
-
- # wireguard ipip
- test -z "$(uci -q get network.tbb_wg)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='tbb_wg'
- }
- # "+" is needed to create firewall rules for all tbb_wg+... ifaces
- uci set network.tbb_wg.ifname='tbb_wg+'
- uci set network.tbb_wg.proto='static'
-
- #bmxd bat zone
- test -z "$(uci -q get network.bat)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='bat'
- }
- uci set network.bat.ifname="bat+"
- uci set network.bat.proto='static'
-
- #openvpn zone
- test -z "$(uci -q get network.vpn)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='vpn'
- }
- uci set network.vpn.ifname="vpn+"
- uci set network.vpn.proto='static'
-
- #######################################################################
- # add other interfaces to system but do not create firewall rules for them.
- # this allows to request all interfaces via ddmesh-utils-network-info.sh
- # Interfaces "priv" and "tbb_fastd/tbb_wg" are created by fastd
- #
- #######################################################################
-
- #privnet zone: it is bridged to br-lan (see /etc/fastd/privnet-cmd.sh)
- test -z "$(uci -q get network.privnet)" && {
- 	uci add network interface
- 	uci rename network.@interface[-1]='privnet'
- }
- uci set network.privnet.ifname="priv"
- uci set network.privnet.proto='static'
+	uci -q del firewall.zone_wan.network	# delete "option"
+	uci -q add_list firewall.zone_wan.network='wan'
+	# helper network, to setup firewall rules for wwan network.
+	# openwrt is not relible to setup wwan0 rules in fw
+	test -z "$(uci -q get network.wwan_helper)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='wwan_helper'
+	}
+	uci set network.wwan_helper.device="wwan+"
+	uci set network.wwan_helper.proto='static'
+	uci -q add_list firewall.zone_wan.network='wwan_helper'
 
 
- #############################################################################
- # setup firewall
- #############################################################################
+	#############################################################################
+	# setup wifi
+	# Interfaces for "wifi" and "wifi2" are created by wireless subsystem and
+	# assigned to this networks
+	#############################################################################
+	test -z "$(uci -q get network.wifi_adhoc)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='wifi_adhoc'
+	}
+	uci set network.wifi_adhoc.ipaddr="$_ddmesh_nonprimary_ip"
+	uci set network.wifi_adhoc.netmask="$_ddmesh_netmask"
+	uci set network.wifi_adhoc.broadcast="$_ddmesh_broadcast"
+	uci set network.wifi_adhoc.proto='static'
 
- eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask))
- lan_net=$NETWORK
- lan_pre=$PREFIX
+	test -z "$(uci -q get network.wifi_mesh2g)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='wifi_mesh2g'
+	}
+	uci set network.wifi_mesh2g.ipaddr="$_ddmesh_nonprimary_ip"
+	uci set network.wifi_mesh2g.netmask="$_ddmesh_netmask"
+	uci set network.wifi_mesh2g.broadcast="$_ddmesh_broadcast"
+	uci set network.wifi_mesh2g.proto='static'
 
- # add source net to zone to avoid fake source ip attacks
- # except for lan and wan, to allow internet ip going to gw
- # if bmxd one-way-tunnel is used, we must accept inet
- uci delete firewall.zone_wifi2.subnet
- uci add_list firewall.zone_wifi2.subnet="$_ddmesh_wifi2net"
+	test -z "$(uci -q get network.wifi_mesh5g)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='wifi_mesh5g'
+	}
+	uci set network.wifi_mesh5g.ipaddr="$_ddmesh_nonprimary_ip"
+	uci set network.wifi_mesh5g.netmask="$_ddmesh_netmask"
+	uci set network.wifi_mesh5g.broadcast="$_ddmesh_broadcast"
+	uci set network.wifi_mesh5g.proto='static'
 
- # firewall rules for user enabled services
- uci -q del firewall.wanssh
- test "$(uci -q get ddmesh.system.wanssh)" = "1" && {
- 	uci add firewall rule
- 	uci rename firewall.@rule[-1]='wanssh'
- 	uci set firewall.@rule[-1].name="Allow-wan-ssh"
-	uci set firewall.@rule[-1].src="wan"
-	uci set firewall.@rule[-1].proto="tcp"
-	uci set firewall.@rule[-1].dest_port="22"
-	uci set firewall.@rule[-1].target="ACCEPT"
-#	uci set firewall.@rule[-1].family="ipv4"
- }
- uci -q del firewall.meshssh
- test "$(uci -q get ddmesh.system.meshssh)" = "1" && {
- 	uci add firewall rule
- 	uci rename firewall.@rule[-1]='meshssh'
- 	uci set firewall.@rule[-1].name="Allow-mesh-ssh"
-	uci set firewall.@rule[-1].src="mesh"
-	uci set firewall.@rule[-1].proto="tcp"
-	uci set firewall.@rule[-1].dest_port="22"
-	uci set firewall.@rule[-1].target="ACCEPT"
-#	uci set firewall.@rule[-1].family="ipv4"
- }
- uci -q del firewall.wifi2ssh
- test "$(uci -q get ddmesh.system.meshssh)" = "1" && {
- 	uci add firewall rule
- 	uci rename firewall.@rule[-1]='wifi2ssh'
- 	uci set firewall.@rule[-1].name="Allow-wifi2-ssh"
-	uci set firewall.@rule[-1].src="wifi2"
-	uci set firewall.@rule[-1].proto="tcp"
-	uci set firewall.@rule[-1].dest_port="22"
-	uci set firewall.@rule[-1].target="ACCEPT"
-#	uci set firewall.@rule[-1].family="ipv4"
- }
- uci -q del firewall.wanhttp
- test "$(uci -q get ddmesh.system.wanhttp)" = "1" && {
- 	uci add firewall rule
- 	uci rename firewall.@rule[-1]='wanhttp'
- 	uci set firewall.@rule[-1].name="Allow-wan-http"
-	uci set firewall.@rule[-1].src="wan"
-	uci set firewall.@rule[-1].proto="tcp"
-	uci set firewall.@rule[-1].dest_port="80"
-	uci set firewall.@rule[-1].target="ACCEPT"
-#	uci set firewall.@rule[-1].family="ipv4"
- }
- uci -q del firewall.wanhttps
- test "$(uci -q get ddmesh.system.wanhttps)" = "1" && {
- 	uci add firewall rule
- 	uci rename firewall.@rule[-1]='wanhttps'
- 	uci set firewall.@rule[-1].name="Allow-wan-https"
-	uci set firewall.@rule[-1].src="wan"
-	uci set firewall.@rule[-1].proto="tcp"
-	uci set firewall.@rule[-1].dest_port="443"
-	uci set firewall.@rule[-1].target="ACCEPT"
-#	uci set firewall.@rule[-1].family="ipv4"
- }
- uci -q del firewall.wanicmp
- test "$(uci -q get ddmesh.system.wanicmp)" = "1" && {
- 	uci add firewall rule
- 	uci rename firewall.@rule[-1]='wanicmp'
- 	uci set firewall.@rule[-1].name="Allow-wan-icmp"
-	uci set firewall.@rule[-1].src="wan"
-	uci set firewall.@rule[-1].proto="icmp"
-	uci set firewall.@rule[-1].target="ACCEPT"
-#	uci set firewall.@rule[-1].family="ipv4"
- }
+	test -z "$(uci -q get network.wifi2)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='wifi2'
+	}
+	uci set network.wifi2.ipaddr="$_ddmesh_wifi2ip"
+	uci set network.wifi2.netmask="$_ddmesh_wifi2netmask"
+	uci set network.wifi2.broadcast="$_ddmesh_wifi2broadcast"
+	uci set network.wifi2.proto='static'
+	uci set network.wifi2.type='bridge'
+	uci set network.wifi2.stp=1
+	#don't store dns for wifi2 to avoid adding it to resolv.conf
+
+	#############################################################################
+	# setup tbb_fastd/wg network assigned to a firewall zone (mesh) for an interface
+	# that is not controlled by openwrt.
+	# Bringing up tbb+ failes, but firewall rules are created anyway
+	# got this information by testing, because openwrt feature to add non-controlled
+	# interfaces (via netifd) was not working.
+	#############################################################################
+	test -z "$(uci -q get network.tbb_fastd)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='tbb_fastd'
+	}
+	uci set network.tbb_fastd.device='tbb_fastd'
+	uci set network.tbb_fastd.proto='static'
+
+	# wireguard tunnel
+	test -z "$(uci -q get network.tbbwg)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='tbbwg'
+	}
+	uci set network.tbbwg.device='tbbwg+'
+	uci set network.tbbwg.ipaddr="$_ddmesh_wireguard_ip"
+	uci set network.tbbwg.netmask="$_ddmesh_netmask"
+	uci set network.tbbwg.proto='static'
+
+	# wireguard ipip
+	test -z "$(uci -q get network.tbb_wg)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='tbb_wg'
+	}
+	# "+" is needed to create firewall rules for all tbb_wg+... ifaces
+	uci set network.tbb_wg.device='tbb_wg+'
+	uci set network.tbb_wg.proto='static'
+
+	#bmxd bat zone
+	test -z "$(uci -q get network.bat)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='bat'
+	}
+	uci set network.bat.device="bat+"
+	uci set network.bat.proto='static'
+
+	#openvpn zone
+	test -z "$(uci -q get network.vpn)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='vpn'
+	}
+	uci set network.vpn.device="vpn+"
+	uci set network.vpn.proto='static'
+
+	#######################################################################
+	# add other interfaces to system but do not create firewall rules for them.
+	# this allows to request all interfaces via ddmesh-utils-network-info.sh
+	# Interfaces "priv" and "tbb_fastd/tbb_wg" are created by fastd
+	#
+	#######################################################################
+
+	#privnet zone: it is bridged to br-lan (see /etc/fastd/privnet-cmd.sh)
+	test -z "$(uci -q get network.privnet)" && {
+		uci add network interface
+		uci rename network.@interface[-1]='privnet'
+	}
+	uci set network.privnet.device="priv"
+	uci set network.privnet.proto='static'
 
 
- /usr/lib/ddmesh/ddmesh-dnsmasq.sh configure
+	#############################################################################
+	# setup firewall
+	#############################################################################
+
+	eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask))
+	lan_net=$NETWORK
+	lan_pre=$PREFIX
+
+	# add source net to zone to avoid fake source ip attacks
+	# except for lan and wan, to allow internet ip going to gw
+	# if bmxd one-way-tunnel is used, we must accept inet
+	uci delete firewall.zone_wifi2.subnet
+	uci add_list firewall.zone_wifi2.subnet="$_ddmesh_wifi2net"
+
+	# firewall rules for user enabled services
+	uci -q del firewall.wanssh
+	test "$(uci -q get ddmesh.system.wanssh)" = "1" && {
+		uci add firewall rule
+		uci rename firewall.@rule[-1]='wanssh'
+		uci set firewall.@rule[-1].name="Allow-wan-ssh"
+		uci set firewall.@rule[-1].src="wan"
+		uci set firewall.@rule[-1].proto="tcp"
+		uci set firewall.@rule[-1].dest_port="22"
+		uci set firewall.@rule[-1].target="ACCEPT"
+		#	uci set firewall.@rule[-1].family="ipv4"
+	}
+	uci -q del firewall.meshssh
+	test "$(uci -q get ddmesh.system.meshssh)" = "1" && {
+		uci add firewall rule
+		uci rename firewall.@rule[-1]='meshssh'
+		uci set firewall.@rule[-1].name="Allow-mesh-ssh"
+		uci set firewall.@rule[-1].src="mesh"
+		uci set firewall.@rule[-1].proto="tcp"
+		uci set firewall.@rule[-1].dest_port="22"
+		uci set firewall.@rule[-1].target="ACCEPT"
+		#	uci set firewall.@rule[-1].family="ipv4"
+	}
+	uci -q del firewall.wifi2ssh
+	test "$(uci -q get ddmesh.system.meshssh)" = "1" && {
+		uci add firewall rule
+		uci rename firewall.@rule[-1]='wifi2ssh'
+		uci set firewall.@rule[-1].name="Allow-wifi2-ssh"
+		uci set firewall.@rule[-1].src="wifi2"
+		uci set firewall.@rule[-1].proto="tcp"
+		uci set firewall.@rule[-1].dest_port="22"
+		uci set firewall.@rule[-1].target="ACCEPT"
+		#	uci set firewall.@rule[-1].family="ipv4"
+	}
+	uci -q del firewall.wanhttp
+	test "$(uci -q get ddmesh.system.wanhttp)" = "1" && {
+		uci add firewall rule
+		uci rename firewall.@rule[-1]='wanhttp'
+		uci set firewall.@rule[-1].name="Allow-wan-http"
+		uci set firewall.@rule[-1].src="wan"
+		uci set firewall.@rule[-1].proto="tcp"
+		uci set firewall.@rule[-1].dest_port="80"
+		uci set firewall.@rule[-1].target="ACCEPT"
+		#	uci set firewall.@rule[-1].family="ipv4"
+	}
+	uci -q del firewall.wanhttps
+	test "$(uci -q get ddmesh.system.wanhttps)" = "1" && {
+		uci add firewall rule
+		uci rename firewall.@rule[-1]='wanhttps'
+		uci set firewall.@rule[-1].name="Allow-wan-https"
+		uci set firewall.@rule[-1].src="wan"
+		uci set firewall.@rule[-1].proto="tcp"
+		uci set firewall.@rule[-1].dest_port="443"
+		uci set firewall.@rule[-1].target="ACCEPT"
+		#	uci set firewall.@rule[-1].family="ipv4"
+	}
+	uci -q del firewall.wanicmp
+	test "$(uci -q get ddmesh.system.wanicmp)" = "1" && {
+		uci add firewall rule
+		uci rename firewall.@rule[-1]='wanicmp'
+		uci set firewall.@rule[-1].name="Allow-wan-icmp"
+		uci set firewall.@rule[-1].src="wan"
+		uci set firewall.@rule[-1].proto="icmp"
+		uci set firewall.@rule[-1].target="ACCEPT"
+		#	uci set firewall.@rule[-1].family="ipv4"
+	}
+
+
+	/usr/lib/ddmesh/ddmesh-dnsmasq.sh configure
 
 }
 
@@ -828,7 +863,7 @@ case "$boot_step" in
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
 
 			sleep 5 # no sync, it might modify flash
-			reboot
+echo			reboot
 
 			#stop boot process
 			exit 1

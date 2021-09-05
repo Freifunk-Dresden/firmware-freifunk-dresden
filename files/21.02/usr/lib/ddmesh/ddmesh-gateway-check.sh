@@ -141,7 +141,7 @@ printf 'LAN:%s via %s\n' "$default_lan_ifname" "$default_lan_gateway"
 
 #network_is_up vpn && {
 true && {
-	_ifname=$(uci get network.vpn.ifname | sed 's#+##')
+	_ifname=$(uci get network.vpn.device | sed 's#+##')
 	default_vpn_ifname=$(ip route | sed -n "/default via [0-9.]\+ dev $_ifname/{s#.*dev \([^ 	]\+\).*#\1#p}")
 	default_vpn_gateway=$(ip route | sed -n "/default via [0-9.]\+ dev $_ifname/{s#.*via \([0-9.]\+\).*#\1#p}")
 	if [ -n "$default_vpn_gateway" -a -n "$default_vpn_ifname" ]; then

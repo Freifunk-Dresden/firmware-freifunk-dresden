@@ -10,7 +10,7 @@ fi
 . /usr/lib/www/page-functions.sh
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
-# get model                                                              
+# get model
 eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
 export model="$(echo $model | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 export model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
@@ -19,7 +19,7 @@ export model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 #check if access comes from disabled network and we have access to "Verwalten" enabled
 in_ifname="$(ip ro get $REMOTE_ADDR | sed -n '1,2s#.*dev[ ]\+\([^ ]\+\).*#\1#p')"
 enable_setup=1
-test ! "$(uci get ddmesh.system.wansetup)" = "1" && test "$in_ifname" = "$(uci get network.wan.ifname)" && enable_setup=0
+test ! "$(uci get ddmesh.system.wansetup)" = "1" && test "$in_ifname" = "$(uci get network.wan.device)" && enable_setup=0
 if [ "$(uci get ddmesh.system.meshsetup)" != "1" ]; then
 	test "$in_ifname" = "$wifi_adhoc_ifname" && enable_setup=0
 	test "$in_ifname" = "$wifi_mesh_ifname" && enable_setup=0
