@@ -355,8 +355,7 @@ echo "NET:$NET"
 			test -z "$dev_name" && dev_name=$(uci -q get network.${NET}.device)
 			dev_config=$(get_device_section_ifname "$dev_name")
 
-			# delete old ifname and set new device name
-			uci delete network.${NET}.ifname
+			# set new device name
 			uci set network.${NET}.device="br-${NET}"
 
 echo dev_name:$dev_name
@@ -364,9 +363,9 @@ echo dev_config:$dev_config
 
 			# if no dev_config found, create one
 			if [ -z "$dev_config" ]; then
-echo create
-				dev_config="device_${NET}"
 
+				dev_config="device_${NET}"
+echo create device ${dev_config}
 				# device (or ifname) contains lowlevel name
 				uci set network.${NET}.ll_ifname="$dev_name"
 
@@ -378,10 +377,11 @@ echo create
 				uci add_list network.${dev_config}.ports="$dev_name"
 
 			else
+echo found device ${dev_config}
 				# when this is a bridge then I have to read the ports to get ifname
 				# else the name itself is the ifname
 				dev_type=$(uci -q get network.${dev_config}.type)
-echo dev_type:$dev_name
+echo dev_type:$dev_type
 				if [ "$dev_type" = "bridge" ]; then
 					# it is a bridge, read ifname from there
 					uci set network.${NET}.ll_ifname=$(uci -q get network.${dev_config}.ports)
@@ -397,9 +397,13 @@ echo reconfigure device as bridge
 
 			uci set network.${NET}.stp=1
 			uci set network.${NET}.bridge_empty=1
-			# force_link always up. else netifd reconfigures wan/mesh_wan because
-			# of hotplug events
+			# force_link always up. else netifd reconfigures wan/mesh_wan because of hotplug events
 			uci set network.${NET}.force_link=1
+
+			# delete obsolete
+			uci -q delete network.${NET}.ifname
+			uci -q delete network.${NET}.type
+
 		fi
 	done
 echo "done--------------"
