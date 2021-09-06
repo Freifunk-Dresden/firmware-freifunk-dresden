@@ -337,35 +337,25 @@ config_update() {
 
 			# search for device-section. ifname was renamed to device (but it is uncertain which is used)
 			dev_name=$(uci -q get network.${NET}.ifname)
-echo "a dev_name=$dev_name"
 			test -z "$dev_name" && dev_name=$(uci -q get network.${NET}.device)
-echo "b dev_name=$dev_name"
-
 			dev_config="device_${NET}"
 
 			# get ll_ifname.
 			# - if interface section type is bridge (old format) -> ll_ifname=dev_name
 			# - if type is other then check for device section
 			dev_type=$(uci -q get network.${NET}.type)
-echo dev_type=$dev_type
 			if [ "$dev_type" = "bridge" ]; then
 				ll_ifname="$dev_name"
-echo A
 			else
 				check_dev_config=$(get_device_section_ifname "$dev_name")
-echo check_dev_config=$check_dev_config
 				dev_type=$(uci -q get network.${check_dev_config}.type)
-echo dev_type=$dev_type
 				# if no device section dev_name is ll_ifname
 				if [ -n "$check_dev_config" -a "$dev_type" = "bridge" ]; then
-echo B
 					ll_ifname=$(uci -q get network.${check_dev_config}.ports)
 					# there is a valid device section configured as bridge
 					# use this name
 					dev_config="$check_dev_config"
-echo newdev_config=$dev_config
 				else
-echo C
 					ll_ifname="$dev_name"
 				fi
 			fi
@@ -877,7 +867,7 @@ case "$boot_step" in
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
 
 			sleep 5 # no sync, it might modify flash
-echo			reboot
+			reboot
 
 			#stop boot process
 			exit 1
