@@ -24,30 +24,6 @@ LOGGER_TAG="ddmesh-boot"
 /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
-# returns ports from network device
-get_lower_ifname()
-{
-	local device="$1"
-	cb_ports()
-	{
-		echo "$1"
-	}
-
-	cb_device()
-	{
-		local config="$1"
-		local var_name
-		config_get var_name "$config" name
-		if [ "$2" = "$var_name" ]; then
-			# <config> <list-name>
-			config_list_foreach "$config" "ports" cb_ports
-		fi
-	}
-
-	config_load network
-	config_foreach cb_device device "$device"
-}
-
 # returns device section for interface
 get_device_section_ifname()
 {
@@ -347,51 +323,96 @@ config_update() {
 		if [ -n "$(uci -q get network.${NET})" ]; then
 			# openwrt 21 uses device and inferface sections.
 			# /etc/config/network needs to be checked and changed from interface only to
-			# device+interface configuration, as creating wan bridges do only work this way.
+			# device+interface configuration, as creating wan bridges do only work the old way.
 			# Some devices (ubnt-edge) already have device section to define different mac addresses.
+			# interface section and device section are bound via "device" name.
+			# non-bridge interface or a bridge interface can have its device section.
+			# the device section can be used to define mac addresses for that interface.
+			# In case of a bridge (br-lan) the corresponding device section (name="br-lan") can define
+			# mac address for the bridge. The bridge is assigned further interfaces (eth0.2) which also
+			# can have its own device section. This is important, because those low-level interfaces
+			# must have different mac addresses. often mac addr of eth0 is assigned to both switch/vlan
+			# interfaces. But if we (freifunk) use a lan bridge cable between WAN and LAN we have two
+			# different interfaces ip, but same mac address. This brings networking down.
 
 			# search for device-section. ifname was renamed to device (but it is uncertain which is used)
 			dev_name=$(uci -q get network.${NET}.ifname)
+echo "a dev_name=$dev_name"
 			test -z "$dev_name" && dev_name=$(uci -q get network.${NET}.device)
-			dev_config=$(get_device_section_ifname "$dev_name")
+echo "b dev_name=$dev_name"
 
-			echo "dev_name:$dev_name / dev_config:$dev_config"
+			dev_config="device_${NET}"
 
-			# if no dev_config found, create one
-			if [ -z "$dev_config" ]; then
-				dev_config="device_${NET}"
-				echo "create device ${dev_config}"
+			# get ll_ifname.
+			# - if interface section type is bridge (old format) -> ll_ifname=dev_name
+			# - if type is other then check for device section
+			dev_type=$(uci -q get network.${NET}.type)
+echo dev_type=$dev_type
+			if [ "$dev_type" = "bridge" ]; then
+				ll_ifname="$dev_name"
+echo A
+			else
+				check_dev_config=$(get_device_section_ifname "$dev_name")
+echo check_dev_config=$check_dev_config
+				dev_type=$(uci -q get network.${check_dev_config}.type)
+echo dev_type=$dev_type
+				# if no device section dev_name is ll_ifname
+				if [ -n "$check_dev_config" -a "$dev_type" = "bridge" ]; then
+echo B
+					ll_ifname=$(uci -q get network.${check_dev_config}.ports)
+					# there is a valid device section configured as bridge
+					# use this name
+					dev_config="$check_dev_config"
+echo newdev_config=$dev_config
+				else
+echo C
+					ll_ifname="$dev_name"
+				fi
+			fi
+			echo "dev_config:$dev_config"
+			echo "dev_name:$dev_name -> ll_ifname:$ll_ifname"
 
-				# create device section
+			# check if we have a device section for lan/wan.
+			# dev_config could be "device_${NET}" or defined by openwrt if it has created
+			# a valid corresponding device section with type "bridge"
+			if [ -z "$(uci -q get network.${dev_config})" ]; then
+				echo "create device section ${dev_config} for br-${NET}"
 				uci add network device
 				uci rename network.@device[-1]="${dev_config}"
 			fi
 
-			# when this is a bridge then I have to read the ports to get ifname
-			# else the name itself is the ifname
-			dev_type=$(uci -q get network.${dev_config}.type)
-			if [ "$dev_type" = "bridge" ]; then
-				# it is a bridge, read ifname from there
-				dev_name=$(uci -q get network.${dev_config}.ports)
-			fi
-
 			# configure as bridge (dev_name is lowlevel name)
-			echo "confgure device ${dev_config}"
+			echo "configure: ${dev_config}"
 			uci set network.${NET}.device="br-${NET}"
-			uci set network.${NET}.ll_ifname="$dev_name"
+			uci set network.${NET}.ll_ifname="$ll_ifname"
 			uci set network.${dev_config}.name="br-${NET}"
 			uci set network.${dev_config}.type='bridge'
+			uci set network.${dev_config}.stp=1
+			uci set network.${dev_config}.bridge_empty=1
 			uci -q delete network.${dev_config}.ports
-			uci add_list network.${dev_config}.ports="$dev_name"
+			uci add_list network.${dev_config}.ports="$ll_ifname"
 
-			uci set network.${NET}.stp=1
-			uci set network.${NET}.bridge_empty=1
 			# force_link always up. else netifd reconfigures wan/mesh_wan because of hotplug events
 			uci set network.${NET}.force_link=1
 
 			# delete obsolete
 			uci -q delete network.${NET}.ifname
 			uci -q delete network.${NET}.type
+			uci -q delete network.${NET}.stp
+			uci -q delete network.${NET}.bridge_empty
+
+			# ensure that ll interfaces (eth0.1 and eth0.2) have different mac addresses
+			# check if a device section exists for those interfaces
+			dev_config=$(get_device_section_ifname "$ll_ifname")
+			if [ -z "${dev_config}" ]; then
+				dev_config="ll_device_${NET}"
+				echo "create device ${dev_config} for $ll_ifname"
+				uci add network device
+				uci rename network.@device[-1]="${dev_config}"
+				uci set network.${dev_config}.name="$ll_ifname"
+#				mac=
+#				uci set network.${dev_config}.macaddr="$mac"
+			fi
 
 		fi
 	done
