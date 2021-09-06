@@ -59,23 +59,18 @@ _led_wwan=""
 
 case "$platform" in
 
-	ar71xx)
-		case  "$boardname" in
-			gl-mifi) 	_led_wwan="$(uci -q get system.led_wwan.sysfs)"
-				 	test -z "$_led_wwan" && _led_wwan="gl-mifi:green:net"
-					_led_status="$(uci -q get system.led_wan.sysfs)"
-					;;
-		esac
-		;;
-	
 	ath79)
 		case  "$boardname" in
 			"ubnt,unifi")	_led_wifi2g="ubnt:orange:dome"
 					_led_status="ubnt:green:dome"
 					;;
+			"gl-mifi") 	_led_wwan="$(uci -q get system.led_wwan.sysfs)"
+				 	test -z "$_led_wwan" && _led_wwan="gl-mifi:green:net"
+					_led_status="$(uci -q get system.led_wan.sysfs)"
+					;;
 		esac
 		;;
-		
+
 	lantiq|ipq40xx)
 		case  "$boardname" in
 			*)
@@ -91,7 +86,7 @@ echo "_led_wifi5g: $_led_wifi5g"
 echo "_led_wwan: $_led_wwan"
 
 case "$ARG_LED" in
-	wifi)	
+	wifi)
 		case "$(uci -q get ddmesh.led.wifi)" in
 			on)	ARG_CMD="on" ;;
 			off)	ARG_CMD="off" ;;
@@ -187,4 +182,3 @@ case "$ARG_LED" in
 	*)	echo "invalid param"
 		;;
 esac
-
