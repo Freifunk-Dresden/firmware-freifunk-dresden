@@ -19,7 +19,7 @@ define Package/$(PKG_NAME)-base
 		+iptables \
 		+px5g-mbedtls \
 		+iperf3 \
-		+PACKAGE_wireguard:kmod-ipip \
+		+PACKAGE_wireguard-tools:kmod-ipip \
 		+PACKAGE_fastd:nacl \
 		+PACKAGE_fastd:libuecc
 
