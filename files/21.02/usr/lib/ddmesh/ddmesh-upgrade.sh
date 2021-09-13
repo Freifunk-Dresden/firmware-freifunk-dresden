@@ -557,7 +557,7 @@ upgrade_7_1_0()
 
 upgrade_7_1_1()
 {
-	for i in lo lan wan wwan_helper bat tbb_fastd tbbwg tbb_wg vpn privnet
+	for i in loopback lan wan wwan_helper bat tbb_fastd tbbwg tbb_wg vpn privnet
 	do
 		uci rename network.${i}.ifname=device
 	done
