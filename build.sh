@@ -981,8 +981,6 @@ EOM
 		fi
 	done
 
-	#copy after installing feeds, because .config will be overwritten by default config
-	echo -e $C_PURPLE"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
 				# create a new config
 
@@ -1002,12 +1000,14 @@ EOM
 
 		else
 			# no config and no menuconfig -> continue with next target
+			echo -e $C_PURPLE"no configuration, continue with next target if any$C_NONE"
 			progbar_char_array[$((progress_counter-1))]="."
 			continue
 
 		fi
 	else
 		# copy specific config
+		echo -e $C_PURPLE"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 		cp $RUN_DIR/$config_file .config
 	fi
 
