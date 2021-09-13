@@ -103,6 +103,26 @@
 				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
 	{
+		"name":"ramips.rt305x.tiny.lowmem",	# can be any name
+		"target":"ramips",
+		"subtarget":"rt305x",
+		"variant":"tiny",
+		"openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
+		"openwrt_variant":"lowmem",
+		"selector-config":"18.06",		# used to select config
+		"selector-feeds":"18.06",		# used to select feeds
+		"selector-patches":"18.06",		# used to select patches
+		"selector-files":"18.06",
+		"feeds" : [
+				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
+				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
+				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
+			  ],
+		"packages":["libpam","libcap","libgnutls","libopenldap",
+				"libidn2","libssh2","libnetsnmp",
+				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
+	},
+	{
 		"name":"x86.generic",
 		"target":"x86",
 		"subtarget":"generic"
@@ -130,26 +150,6 @@
 		"target":"ramips",
 		"subtarget":"mt76x8",
 		"variant":"generic"
-	},
-	{
-		"name":"ramips.rt305x.tiny.lowmem",	# can be any name
-		"target":"ramips",
-		"subtarget":"rt305x",
-		"variant":"tiny",
-		"openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
-		"openwrt_variant":"lowmem",
-		"selector-config":"18.06",		# used to select config
-		"selector-feeds":"18.06",		# used to select feeds
-		"selector-patches":"18.06",		# used to select patches
-		"selector-files":"18.06",
-		"feeds" : [
-				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
-				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
-			  ],
-		"packages":["libpam","libcap","libgnutls","libopenldap",
-				"libidn2","libssh2","libnetsnmp",
-				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
 	{
 		"name":"lantiq.xrx200",
