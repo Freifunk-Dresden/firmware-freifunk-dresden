@@ -58,12 +58,16 @@
 #		"packages":["libpam","libcap","libgnutls","libopenldap",
 #				"libidn2","libssh2","libnetsnmp",
 #				"libcap", "jansson", "kmod-cryptodev", "liblzma" ],
-"packages":["libpam", "libnetsnmp"],
+		"packages":["libpam", "libnetsnmp"],
+
 		# apply additional target patches
 		"target-patches":[""]
 	},
 
-# ------------- specific targets ------------------------------
+# =================== specific targets =======================================================
+
+
+# ---------- openwrt 18 -----------------------------------------------------------------------
 	{
 		"name":"ar71xx.tiny.lowmem",	# can be any name
 		"target":"ar71xx",
@@ -122,6 +126,7 @@
 				"libidn2","libssh2","libnetsnmp",
 				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
+# ---------- openwrt 21 -----------------------------------------------------------------------
 	{
 		"name":"x86.generic",
 		"target":"x86",
@@ -130,8 +135,8 @@
 	{
 		"name":"x64.generic",
 		"target":"x86",
-		"subtarget":"64",
-		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
+		"subtarget":"64"
+#,		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
 	},
 	{
 		"name":"ramips.mt7621.generic",
@@ -154,9 +159,9 @@
 	{
 		"name":"lantiq.xrx200",
 		"target":"lantiq",
-		"subtarget":"xrx200",
-		"openwrt_variant":"patchset-1",
-		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
+		"subtarget":"xrx200"
+#	,	"openwrt_variant":"patchset-1",
+#		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
 	},
 	{
 		"name":"lantiq.xway",
@@ -173,7 +178,6 @@
 		"name":"ath79.generic",
 		"target":"ath79",
 		"subtarget":"generic"
-#		"target-patches":["device1-comfast-e314n.patch", "device2-comfast-comfast-e130n.patch"]
 	},
 	{
 		"name":"ath79.generic.gl-mifi",
@@ -192,13 +196,6 @@
 		"subtarget":"generic",
 		"variant":"smallbuffers"
 	},
-#	{
-#		"name":"ath79.tiny.wireguard.lowmem",
-#		"target":"ath79",
-#		"subtarget":"tiny",
-#		"variant":"wireguard",
-#		"openwrt_variant":"lowmem"
-#	},
 	{	# created for fritzbox 4040
 		"name":"ipq40xx.generic",
 		"target":"ipq40xx",
@@ -221,25 +218,8 @@
 		"target":"mpc85xx",
 		"subtarget":"p1020"
 	}
-#----------------------openwrt 21.02-----------------------------------------------------------------------------------------
-# created for new target : Joy-IT JT-OR750i
-#	,{
-#		"name":"21.ath79.generic",	# can be any name
-#		"target":"ath79",
-#		"subtarget":"generic",
-#		"openwrt_rev":"134ac824c5a154edbbe1c581bcbc42d265dc20c0", # (HEAD, tag: v21.02.0-rc4)
-#		"selector-config":"21.02",		# used to select config
-#		"selector-feeds":"21.02",		# used to select feeds
-#		"selector-patches":"21.02",		# used to select patches
-#		"selector-files":"21.02",
-#		"packages":[ ],
-#		"feeds" : [
-#				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
-#				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"a55103240"}, # 21.02
-#				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"8d93475"}    # 21.02
-#			  ]
-#	}
-#------------------------master---------------------------------------------------------------------------------------------
+
+# ---------- master 21 -----------------------------------------------------------------------
 #	,{
 #		"name":"master.ath79.generic",	# can be any name
 #		"target":"ath79",
@@ -256,5 +236,7 @@
 #				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"master"}
 #			  ]
 #	}
+
+
  ]
 }
