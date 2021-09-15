@@ -847,7 +847,10 @@ do
 			compile_status=1
 		fi
 		# ignore successfull targetes
-		test "$compile_status" = "0" && continue;
+		test "$compile_status" = "0" && {
+			progbar_char_array[$((progress_counter-1))]="~"
+			continue;
+		}
 	fi
 
 	# reset compile status
