@@ -128,14 +128,16 @@
 	},
 # ---------- openwrt 21 -----------------------------------------------------------------------
 	{
-		"name":"x86.generic",
+		"name":"x86.generic.offloader",
 		"target":"x86",
-		"subtarget":"generic"
+		"subtarget":"generic",
+		"variant":"offloader"
 	},
 	{
-		"name":"x64.generic",
+		"name":"x86.64.offloader",
 		"target":"x86",
-		"subtarget":"64"
+		"subtarget":"64",
+		"variant":"offloader"
 #,		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
 	},
 	{
@@ -145,10 +147,10 @@
 		"variant":"generic"
 	},
 	{
-		"name":"ramips.mt7621.ubnt-edge",
+		"name":"ramips.mt7621.offloader",
 		"target":"ramips",
 		"subtarget":"mt7621",
-		"variant":"ubiquiti-edgerouter-x"	# specific target (overwrites previous generic only for this device)
+		"variant":"offloader"	# specific target (overwrites previous generic only for this device)
 	},
 	{
 		"name":"ramips.mt76x8.generic",
@@ -169,10 +171,10 @@
 		"subtarget":"xway"
 	},
 	{	# created for Orange Pi R1
-		"name":"sunxi.cortexa7.generic",
+		"name":"sunxi.cortexa7.offloader",
 		"target":"sunxi",
 		"subtarget":"cortexa7",
-		"variant":"generic"
+		"variant":"offloader"
 	},
 	{
 		"name":"ath79.generic",

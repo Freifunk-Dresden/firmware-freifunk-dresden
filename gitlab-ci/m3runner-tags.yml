@@ -31,7 +31,7 @@ m3tags:init:
   tags:
   - m3runner
 
-m3tags:ar71xx.tiny:
+m3tags:ar71xx.tiny.lowmem:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -45,7 +45,7 @@ m3tags:ar71xx.tiny:
   tags:
   - m3runner
 
-m3tags:ar71xx.generic:
+m3tags:ar71xx.generic.lowmem:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -55,11 +55,11 @@ m3tags:ar71xx.generic:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.generic.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
   tags:
   - m3runner
 
-m3tags:ar71xx.nand:
+m3tags:x86.generic.offloader:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -69,11 +69,11 @@ m3tags:ar71xx.nand:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.nand.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh x86.generic.offloader rerun -j"$(( $(nproc) + 1))"
   tags:
   - m3runner
 
-m3tags:x86.generic:
+m3tags:x86.64.offloader:
   only:
     - /^R_FIRMWARE_/
     - /^TESTING_FIRMWARE_/
@@ -83,21 +83,7 @@ m3tags:x86.generic:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh x86.generic rerun -j"$(( $(nproc) + 1))"
-  tags:
-  - m3runner
-
-m3tags:x64.generic:
-  only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^T_FIRMWARE_/
-  stage: build
-  needs: ["m3tags:init"]
-  script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-    - ./build.sh x64.generic rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh x86.64.offloader rerun -j"$(( $(nproc) + 1))"
   tags:
   - m3runner
 
@@ -195,7 +181,7 @@ m3tags:bcm53xx.generic.arm:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh bcm53xx.arm.generic rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh bcm53xx.generic.arm rerun -j"$(( $(nproc) + 1))"
   tags:
   - m3runner
 
@@ -220,7 +206,7 @@ m3tags:test:
     - /^TESTING_FIRMWARE_/
     - /^T_FIRMWARE_/
   stage: test
-  needs: ["m3tags:ar71xx.tiny","m3tags:ar71xx.generic","m3tags:ar71xx.nand","m3tags:x86.generic","m3tags:x64.generic","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx", "m3tags:bcm53xx.generic.arm"]
+  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.generic.offloader","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx", "m3tags:bcm53xx.generic.arm"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -234,7 +220,7 @@ m3tags:upload:
     - /^TESTING_FIRMWARE_/
     - /^T_FIRMWARE_/
   stage: deploy
-  needs: ["m3tags:ar71xx.tiny","m3tags:ar71xx.generic","m3tags:ar71xx.nand","m3tags:x86.generic","m3tags:x64.generic","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx", "m3tags:bcm53xx.generic.arm"]
+  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.generic.offloader","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx", "m3tags:bcm53xx.generic.arm"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
