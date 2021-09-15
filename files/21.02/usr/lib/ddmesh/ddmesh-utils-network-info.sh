@@ -101,7 +101,15 @@ if [ $ARG = "update" -o ! -f "$CACHE_DATA" ]; then
 
 	#if net_name matches requested network, stay in this entry
 
-		[ "$net_available" = 1 ] && net_iface_present=1
+		if [ "$net_available" = 1 ]; then
+			# check if ll_ifname is really present
+			ll_ifname="$(uci -q get network.${net_name}.ll_ifname)"
+			if [ -n "$ll_ifname" ]; then
+				ip link show dev ${ll_ifname} 2>/dev/null >/dev/null && net_iface_present=1
+			else
+				net_iface_present=1
+			fi
+		fi
 
 		#calculate rest
 		[ "$net_up" = "1" ] &&  [ -n "$net_ipaddr" ] && {
