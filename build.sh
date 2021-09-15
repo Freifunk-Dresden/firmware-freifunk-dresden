@@ -754,9 +754,12 @@ do
 	# only enable progressbar for tty
 	if [ "$_TERM" = "1" ]; then
 		show_progress $progress_counter $progress_max ${progbar_char_array[@]}
-		progress_counter=$(( $progress_counter + 1 ))
 		echo ""
 	fi
+	# increment counter (needed also when no progressbar is displayed, because the 
+	# status is set despite of the usage of the progbar_char_array. This avoids
+	# the need of checking every time whether the progressbar is used or not
+	progress_counter=$(( $progress_counter + 1 ))
 
 	# check each config variable and use defaults when no value was defined
 	echo -e "${C_YELLOW}process configuration${C_NONE}"
