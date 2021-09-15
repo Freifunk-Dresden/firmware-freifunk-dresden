@@ -408,32 +408,46 @@ config_update() {
 	done
 echo "-"
 
-	test -z "$(uci -q get network.mesh_lan)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='mesh_lan'
-	}
-	uci set network.mesh_lan.bridge_empty=1
-	uci set network.mesh_lan.ipaddr="$_ddmesh_nonprimary_ip"
-	uci set network.mesh_lan.netmask="$_ddmesh_netmask"
-	uci set network.mesh_lan.broadcast="$_ddmesh_broadcast"
-	uci set network.mesh_lan.proto='static'
-	uci set network.mesh_lan.type='bridge'
-	uci set network.mesh_lan.stp=1
+	# create empty bridges
+	for NET in mesh_lan mesh_wan
+	do
+		echo "NET:$NET"
 
-	test -z "$(uci -q get network.mesh_wan)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='mesh_wan'
-	}
-	uci set network.mesh_wan.bridge_empty=1
-	uci set network.mesh_wan.ipaddr="$_ddmesh_nonprimary_ip"
-	uci set network.mesh_wan.netmask="$_ddmesh_netmask"
-	uci set network.mesh_wan.broadcast="$_ddmesh_broadcast"
-	uci set network.mesh_wan.proto='static'
-	uci set network.mesh_wan.type='bridge'
-	uci set network.mesh_wan.stp=1
+		test -z "$(uci -q get network.${NET})" && {
+			uci add network interface
+			uci rename network.@interface[-1]="${NET}"
+		}
+		uci set network.${NET}.device="br-${NET}"
+		uci set network.${NET}.ipaddr="$_ddmesh_nonprimary_ip"
+		uci set network.${NET}.netmask="$_ddmesh_netmask"
+		uci set network.${NET}.broadcast="$_ddmesh_broadcast"
+		uci set network.${NET}.proto='static'
+		uci set network.${NET}.force_link=1
 
- # add network modem with qmi protocol
- test -z "$(uci -q get network.wwan)" && {
+		dev_config="device_${NET}"
+		if [ -z "$(uci -q get network.${dev_config})" ]; then
+			echo "create device section ${dev_config} for br-${NET}"
+			uci add network device
+			uci rename network.@device[-1]="${dev_config}"
+		fi
+
+		# configure as bridge (dev_name is lowlevel name)
+		echo "configure: ${dev_config}"
+		uci set network.${dev_config}.name="br-${NET}"
+		uci set network.${dev_config}.type='bridge'
+		uci set network.${dev_config}.stp=1
+		uci set network.${dev_config}.bridge_empty=1
+		uci -q delete network.${dev_config}.ports
+
+		# delete obsolete
+		uci -q delete network.${NET}.ifname
+		uci -q delete network.${NET}.type
+		uci -q delete network.${NET}.stp
+		uci -q delete network.${NET}.bridge_empty
+	done
+
+	# add network modem with qmi protocol
+	test -z "$(uci -q get network.wwan)" && {
 		uci add network interface
 		uci rename network.@interface[-1]='wwan'
 	}
@@ -504,17 +518,40 @@ echo "-"
 	uci set network.wifi_mesh5g.broadcast="$_ddmesh_broadcast"
 	uci set network.wifi_mesh5g.proto='static'
 
-	test -z "$(uci -q get network.wifi2)" && {
+	# wifi ap bridge (wireless will add interfaces to this bridge)
+	NET="wifi2"
+	echo "NET:$NET"
+	test -z "$(uci -q get network.${NET})" && {
 		uci add network interface
-		uci rename network.@interface[-1]='wifi2'
+		uci rename network.@interface[-1]="${NET}"
 	}
-	uci set network.wifi2.ipaddr="$_ddmesh_wifi2ip"
-	uci set network.wifi2.netmask="$_ddmesh_wifi2netmask"
-	uci set network.wifi2.broadcast="$_ddmesh_wifi2broadcast"
-	uci set network.wifi2.proto='static'
-	uci set network.wifi2.type='bridge'
-	uci set network.wifi2.stp=1
+	uci set network.${NET}.device="br-${NET}"
+	uci set network.${NET}.ipaddr="$_ddmesh_wifi2ip"
+	uci set network.${NET}.netmask="$_ddmesh_wifi2netmask"
+	uci set network.${NET}.broadcast="$_ddmesh_wifi2broadcast"
+	uci set network.${NET}.proto='static'
+	uci set network.${NET}.force_link=1
 	#don't store dns for wifi2 to avoid adding it to resolv.conf
+
+	dev_config="device_${NET}"
+	if [ -z "$(uci -q get network.${dev_config})" ]; then
+		echo "create device section ${dev_config} for br-${NET}"
+		uci add network device
+		uci rename network.@device[-1]="${dev_config}"
+	fi
+	# configure as bridge (dev_name is lowlevel name)
+	echo "configure: ${dev_config}"
+	uci set network.${dev_config}.name="br-${NET}"
+	uci set network.${dev_config}.type='bridge'
+	uci set network.${dev_config}.stp=1
+	uci set network.${dev_config}.bridge_empty=1
+	uci -q delete network.${dev_config}.ports
+
+	# delete obsolete
+	uci -q delete network.${NET}.ifname
+	uci -q delete network.${NET}.type
+	uci -q delete network.${NET}.stp
+	uci -q delete network.${NET}.bridge_empty
 
 	#############################################################################
 	# setup tbb_fastd/wg network assigned to a firewall zone (mesh) for an interface
