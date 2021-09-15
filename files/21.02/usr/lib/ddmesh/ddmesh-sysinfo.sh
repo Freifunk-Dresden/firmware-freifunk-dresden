@@ -256,9 +256,11 @@ $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 			"node":"$_ddmesh_node",
 			"domain":"$_ddmesh_domain",
 			"ip":"$_ddmesh_ip",
-			"fastd_pubkey":"$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)",
-			"wg_pubkey":"$wg_public_key",
 			"network_id":"$(uci get ddmesh.network.mesh_network_id)"
+		},
+		"backbone":{
+			"fastd_pubkey":"$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)",
+			"wg_pubkey":"$wg_public_key"
 		},
 		"gps":{
 			"latitude":$gps_lat,
