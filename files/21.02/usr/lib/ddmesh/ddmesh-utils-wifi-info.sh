@@ -31,8 +31,16 @@ do
 	dev_path=$(uci -q get wireless.@wifi-device[$idx].path)
 	[ -z "$dev_path" ] && break
 
-	phy=$(ls /sys/devices/$dev_path/ieee80211/)
-	dev=$(ls /sys/devices/$dev_path/net/ | sed -n '1p')
+	devpath="/sys/devices/${dev_path}"
+	# check if path exists. if not prepend "platform". Somehow openwrt21 does not
+	# add "platform" for ramips boards
+	if [ ! -d "${devpath}" ]; then
+		devpath="/sys/devices/platform/${dev_path}"
+	fi
+	[ -d "${devpath}" ] || break;
+
+	phy=$(ls ${devpath}/ieee80211/)
+	dev=$(ls ${devpath}/net/ | sed -n '1p')
 
 	unset freq2 
 	unset freq5
