@@ -28,7 +28,7 @@ setup_ethernet()
 {
 	#############################################################################
 	# setup lan
-	# Interface for "lan" is initally  set in /etc/config/network
+	# Interface for "lan" is initially  set in /etc/config/network
 	# tbb is a bridge used by mesh-on-lan
 	#############################################################################
 	# reconfigure lan as bridge if needed
@@ -110,7 +110,6 @@ setup_wwan()
 	uci set network.wwan.proto='qmi'
 	uci set network.wwan.apn="$(uci -q get ddmesh.network.wwan_apn)"
 	uci set network.wwan.pincode="$(uci -q get ddmesh.network.wwan_pincode)"
-	uci set network.wwan.device='/dev/cdc-wdm0'
 	uci set network.wwan.autoconnect='1'
 	uci set network.wwan.pdptype='IP'	# IPv4 only
 	uci set network.wwan.delay='30' 	# wait for SIMCard being ready
@@ -131,6 +130,7 @@ setup_wwan()
 	uci add network interface
 	uci rename network.@interface[-1]="${dev_config}"
 	uci set network.${dev_config}.name="wwan0" # must be wwan0
+	uci set network.${dev_config}.device='/dev/cdc-wdm0'
 
 	# helper network, to setup firewall rules for wwan network.
 	# openwrt is not relible to setup wwan0 rules in fw

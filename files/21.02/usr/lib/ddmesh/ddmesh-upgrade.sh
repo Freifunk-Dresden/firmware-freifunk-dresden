@@ -17,7 +17,6 @@ previous_version=${previous_version:-$current_version}
 
 test "$nightly_upgrade_running" = "1" && MESSAGE=" (Auto-Update)"
 
-
 # check if upgrade is needed
 test "$previous_version" = "$current_version" && {
 	echo "nothing to upgrade"
@@ -30,10 +29,12 @@ eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 run_upgrade()
 {
  #grep versions from this file (see below)
- upgrade_version_list=$(sed -n '/^[ 	]*upgrade_[0-9_]/{s#^[ 	]*upgrade_\([0-9]\+\)_\([0-9]\+\)_\([0-9]\+\).*#\1.\2.\3#;p}' $0)
+ local upgrade_version_list=$(sed -n '/^[ 	]*upgrade_[0-9_]/{s#^[ 	]*upgrade_\([0-9]\+\)_\([0-9]\+\)_\([0-9]\+\).*#\1.\2.\3#;p}' $0)
 
- previous_version_found=0
- ignore=1
+ local previous_version_found=0
+ local ignore=1
+ local v=0
+
  for v in $upgrade_version_list
  do
  	echo -n $v
@@ -49,18 +50,18 @@ run_upgrade()
 	#ignore if already on same version
 	test "$v" = "$previous_version" && echo " ignored (same)" && continue
 
-	#create name of upgrade function (version dependet)
+	#create name of upgrade function (version depended)
 	function_suffix=$(echo $v|sed 's#\.#_#g')
 	echo " upgrade to $v"
-	upgrade_$function_suffix;
+	upgrade_${function_suffix};
 
  	# force config update after next boot
 	# in case this script is called from terminal (manually)
  	uci set ddmesh.boot.boot_step=2
 
 	#save current state in case of later errors
-	uci set ddmesh.boot.upgrade_version=$v
-	uci add_list ddmesh.boot.upgraded="$previous_version to $v$MESSAGE"
+	uci set ddmesh.boot.upgrade_version="${v}"
+	uci add_list ddmesh.boot.upgraded="$previous_version to ${v}${MESSAGE}"
 
 	#stop if we have reached "current version" (ignore other upgrades)
 	test "$v" = "$current_version" && echo "last valid upgrade finished" && uci_commit.sh && break;
@@ -73,22 +74,7 @@ run_upgrade()
 #############################################
 ### keep ORDER - only change below
 ### uci_commit.sh is called after booting via ddmesh.boot_step=2
-
-# function for current version is needed for this algorithm
-upgrade_3_1_9()
-{
- true
-}
-
-upgrade_4_1_7()
-{
- true
-}
-
-upgrade_4_2_0()
-{
- true
-}
+# a function for current version is needed for this algorithm
 
 upgrade_4_2_2()
 {
@@ -559,9 +545,9 @@ upgrade_7_1_1()
 {
 	for option in lan.ipaddr lan.netmask lan.gateway lan.dns wan.proto wan.ipaddr wan.netmask wan.gateway wan.dns
 	do
-		v="$(uci -q get network.${option})"
+		local v="$(uci -q get network.${option})"
 		if [ -n "$v" ]; then
-			n="${option/./_}"
+			local n="${option/./_}"
 			uci set ddmesh.network.${n}="${v}"
 		fi
 	done

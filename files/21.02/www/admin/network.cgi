@@ -30,19 +30,16 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Switch</legend>
 <table>
+<tr class="colortoggle1"> <th>Port</th> <td>Carrier</td> <td>Speed</td> </tr>
 EOM
 
-IFS='
-'
-for dev in $(swconfig list | awk '{print $2}')
-do
-	echo "<tr class="colortoggle1"><th colspan=2>$dev</th></tr>"
-	for entry in $(swconfig dev $dev show | sed -n 's#link: port:\([0-9]\+\) link:\(.*\+\)#\1=\2#p')
-	do
-		port=${entry%%=*}
-		state=${entry#*=}
-		echo "<tr class="colortoggle2"><th>Port $port</th><td>$state</td></tr>"
-	done
+
+unset IFS;
+for entry in $(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh csv); do
+	IFS=','
+	set $entry
+	echo "<tr class="colortoggle2"> <th>$1</th> <td>$2</td> <td>$3</td> </tr>"
+	unset IFS
 done
 
 cat<<EOM
