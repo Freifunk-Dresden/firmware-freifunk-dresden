@@ -557,9 +557,13 @@ upgrade_7_1_0()
 
 upgrade_7_1_1()
 {
-	for i in loopback lan wan wwan_helper bat tbb_fastd tbbwg tbb_wg vpn privnet
+	for option in lan.ipaddr lan.netmask lan.gateway lan.dns wan.proto wan.ipaddr wan.netmask wan.gateway wan.dns
 	do
-		uci rename network.${i}.ifname=device
+		v="$(uci -q get network.${option})"
+		if [ -n "$v" ]; then
+			n="${option/./_}"
+			uci set ddmesh.network.${n}="${v}"
+		fi
 	done
 }
 

@@ -29,7 +29,7 @@ if [ "$1" = "configure" ]; then
 	# lan
 	if [ "$(uci get ddmesh.network.dhcp_lan_limit)" != 0 ]; then
 		#create LAN DHCP: IP,NETMASK,BROADCAST,NETWORK,PREFIX,START,END
-		eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask) $(uci get ddmesh.network.dhcp_lan_offset) $(uci get ddmesh.network.dhcp_lan_limit))
+		eval $(ipcalc.sh $(uci get ddmesh.network.lan_ipaddr) $(uci get ddmesh.network.lan_netmask) $(uci get ddmesh.network.dhcp_lan_offset) $(uci get ddmesh.network.dhcp_lan_limit))
 
 		test -z "$(uci -q get dhcp.dhcp)" && {
 			uci add dhcp dhcp
@@ -44,11 +44,11 @@ if [ "$1" = "configure" ]; then
 		uci -q set dhcp.lan.limit="$(uci get ddmesh.network.dhcp_lan_limit)"
 		uci -q set dhcp.lan.leasetime="$(uci get ddmesh.network.dhcp_lan_lease)"
 		uci -q delete dhcp.lan.dhcp_option
-		uci -q add_list dhcp.lan.dhcp_option="6,$(uci get network.lan.ipaddr)"	# dns
-		uci -q add_list dhcp.lan.dhcp_option="3,$(uci get network.lan.ipaddr)"  # default route
+		uci -q add_list dhcp.lan.dhcp_option="6,$(uci get ddmesh.network.lan_ipaddr)"	# dns
+		uci -q add_list dhcp.lan.dhcp_option="3,$(uci get ddmesh.network.lan_ipaddr)"  # default route
 		uci -q add_list dhcp.lan.dhcp_option="1,$NETMASK"
 		uci -q add_list dhcp.lan.dhcp_option="28,$BROADCAST"
-		uci -q add_list dhcp.lan.dhcp_option='121,10.200.0.0/16,'"$(uci get network.lan.ipaddr)" # add ffdd route
+		uci -q add_list dhcp.lan.dhcp_option='121,10.200.0.0/16,'"$(uci get ddmesh.network.lan_ipaddr)" # add ffdd route
 		uci -q add_list dhcp.lan.dhcp_option="12,$_ddmesh_hostname"	# hostname
 		uci -q add_list dhcp.lan.dhcp_option="15,$domain"		# domain
 		uci -q add_list dhcp.lan.dhcp_option="119,$domain"		# search path

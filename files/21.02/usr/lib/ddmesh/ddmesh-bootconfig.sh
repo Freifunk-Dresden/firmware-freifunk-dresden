@@ -24,26 +24,6 @@ LOGGER_TAG="ddmesh-boot"
 /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
-# returns device section for interface
-get_device_section_ifname()
-{
-	local device="$1"
-	cb_device()
-	{
-		local config="$1"
-		local var_name
-		config_get var_name "$config" name
-		if [ "$2" = "$var_name" ]; then
-			echo "$config"
-		fi
-	}
-
-	config_load network
-	config_foreach cb_device device "$device"
-}
-
-
-
 config_boot_step1() {
 
 cat <<EOM >/etc/config/overlay
@@ -54,112 +34,121 @@ EOM
 cat <<EOM >/etc/config/ddmesh
 #generated/overwritten by $0
 config system 'system'
-	option	community	'Freifunk Dresden'
-	list	communities	'Freifunk Dresden'
-	list	communities	'Freifunk Freiberg'
-	list	communities	'Freifunk Freital'
-	list	communities	'Freifunk Meissen'
-	list	communities	'Freifunk OL'
-	list	communities	'Freifunk Pirna'
-	list	communities	'Freifunk Radebeul'
-	list	communities	'Freifunk Tharandt'
-	list	communities	'Freifunk Waldheim'
-#	option 	node                0
-	option 	tmp_min_node        900
-	option	tmp_max_node        999
-#	option 	register_key        ''
-	option	announce_gateway    0
-	option  wanssh              1
-	option  wanhttp             1
-	option  wanhttps            1
-	option  wanicmp             1
-	option  wansetup            1
-	option  meshssh             1
-	option  meshsetup           1
-	option	disable_splash      1
+	option	community 'Freifunk Dresden'
+	list	communities 'Freifunk Dresden'
+	list	communities 'Freifunk Freiberg'
+	list	communities 'Freifunk Freital'
+	list	communities 'Freifunk Meissen'
+	list	communities 'Freifunk OL'
+	list	communities 'Freifunk Pirna'
+	list	communities 'Freifunk Radebeul'
+	list	communities 'Freifunk Tharandt'
+	list	communities 'Freifunk Waldheim'
+#	option 	node 0
+	option 	tmp_min_node 900
+	option	tmp_max_node 999
+#	option 	register_key ''
+	option	announce_gateway 0
+	option  wanssh 1
+	option  wanhttp 1
+	option  wanhttps 1
+	option  wanicmp 1
+	option  wansetup 1
+	option  meshssh 1
+	option  meshsetup 1
+	option	disable_splash 1
 	option	firmware_autoupdate 1
 	option	fwupdate_always_allow_testing 0
-	option	email_notification  0
-	option	node_type           'node'
-	list	node_types          'node'
-	list	node_types          'mobile'
-	list	node_types          'server'
-	option	nightly_reboot      0
+	option	email_notification 0
+	option	node_type 'node'
+	list	node_types 'node'
+	list	node_types 'mobile'
+	list	node_types 'server'
+	option	nightly_reboot 0
 	option	ignore_factory_reset_button 0
-	option	mesh_sleep          1
+	option	mesh_sleep 1
 
 config boot 'boot'
-	option boot_step                0
-	option upgrade_version		$(cat /etc/version)
-	option nightly_upgrade_running	0
-	option upgrade_running		0
+	option boot_step 0
+	option upgrade_version $(cat /etc/version)
+	option nightly_upgrade_running 0
+	option upgrade_running 0
 
 # on,off,status
 config led 'led'
-	option wwan 			''
-	option status			''
-	option wifi			''
+	option wwan ''
+	option status ''
+	option wifi ''
 
 config log 'log'
-	option tasks			0
+	option tasks 0
 
 config gps 'gps'
-	option 	latitude		'0'
-	option  longitude		'0'
-	option  altitude		'0'
+	option 	latitude '0'
+	option  longitude '0'
+	option  altitude '0'
 
 config geoloc 'geoloc'
-	list	ignore_macs		''
+	list	ignore_macs ''
 
 config contact 'contact'
-	option	name			''
-	option  email			''
-	option	location		''
-	option	note			''
+	option	name ''
+	option  email ''
+	option	location ''
+	option	note ''
 
 config network 'network'
-#	list	splash_mac		''
+#	list	splash_mac ''
 #0-disable; in minutes;
 	option	client_disconnect_timeout 0
-	option	dhcp_lan_offset		100
-	option	dhcp_lan_limit		0
-	option	dhcp_lan_lease		'12h'
-	option	essid_adhoc		'Freifunk-Mesh-Net'
-#	option	essid_ap		'' #custom essid
-	option	wifi_country		'DE'
-	option	wifi_channel		13
-	option  wifi_txpower		18
-	option	wifi_channel_5g		44
-	option  wifi_txpower_5g		18
-	option  wifi_indoor_5g		0
+	option	dhcp_lan_offset 100
+	option	dhcp_lan_limit 0
+	option	dhcp_lan_lease '12h'
+	option	essid_adhoc 'Freifunk-Mesh-Net'
+#	option	essid_ap '' #custom essid
+	option	wifi_country 'DE'
+	option	wifi_channel 13
+	option  wifi_txpower 18
+	option	wifi_channel_5g 44
+	option  wifi_txpower_5g 18
+	option  wifi_indoor_5g 0
 	option  wifi_channels_5g_outdoor '100-140'
-	option	wifi_ch_5g_outdoor_min	100
-	option	wifi_ch_5g_outdoor_max	140
-	option	wifi_slow_rates		0
-	option	wifi2_dhcplease		'5m'
-	option	wifi2_isolate		'1'
-	option  wifi2_roaming_enabled	'0'
-	option	mesh_mode		'adhoc+mesh' #adhoc,mesh,adhoc+mesh
-	option	lan_local_internet	'0'
-	option	speed_down		'200000'
-	option	speed_up		'50000'
-	option	speed_network		'lan'
-	option	speed_enabled		0
-	option	internal_dns1		'10.200.0.4'
-	option	internal_dns2		'10.200.0.16'
-	option	mesh_network_id		'1206'
-	option	mesh_mtu		1200
-	option	mesh_on_lan		0
-	option	wifi3_2g_enabled	0
-	option	wifi3_2g_network	'lan'
-	option	wifi3_2g_security	1
-	option	wifi3_5g_enabled	0
-	option	wifi3_5g_network	'lan'
-	option	wifi3_5g_security	1
-	option	wwan_apn		'internet'
-	option	wwan_pincode		''
-	option	wwan_syslog		0
-	option  fallback_dns		''
+	option	wifi_ch_5g_outdoor_min 100
+	option	wifi_ch_5g_outdoor_max 140
+	option	wifi_slow_rates 0
+	option	wifi2_dhcplease '5m'
+	option	wifi2_isolate '1'
+	option  wifi2_roaming_enabled '0'
+	option	mesh_mode 'adhoc+mesh' #adhoc,mesh,adhoc+mesh
+	option	lan_local_internet '0'
+	option	speed_down '200000'
+	option	speed_up '50000'
+	option	speed_network 'lan'
+	option	speed_enabled 0
+	option	internal_dns1 '10.200.0.4'
+	option	internal_dns2 '10.200.0.16'
+	option	mesh_network_id '1206'
+	option	mesh_mtu 1200
+	option	mesh_on_lan 0
+	option	wifi3_2g_enabled 0
+	option	wifi3_2g_network 'lan'
+	option	wifi3_2g_security 1
+	option	wifi3_5g_enabled 0
+	option	wifi3_5g_network 'lan'
+	option	wifi3_5g_security 1
+	option	wwan_apn 'internet'
+	option	wwan_pincode ''
+	option	wwan_syslog 0
+	option  fallback_dns ''
+	option lan_ipaddr '192.168.222.1'
+	option lan_netmask '255.255.255.0'
+	option lan_gateway ''
+	option lan_dns ''
+	option wan_proto 'dhcp'
+	#option wan_ipaddr
+	#option wan_netmask
+	#option wan_gateway
+	#option wan_dns
 
 config bmxd 'bmxd'
 	option  routing_class	3
@@ -268,9 +257,6 @@ EOM
 	# dropbear ssh
 	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
 
-	# set own freifunk default ip
-	uci set network.lan.ipaddr='192.168.222.1'
-
 } # config_boot_step1
 
 #############################################################################
@@ -311,318 +297,13 @@ config_update() {
 		fi
 	done
 
-	#############################################################################
-	# setup lan
-	# Interface for "lan" is initally  set in /etc/config/network
-	# tbb is a bridge used by mesh-on-lan
-	#############################################################################
-	# reconfigure lan as bridge if needed
-	for NET in lan wan
-	do
-		echo "NET:$NET"
-		if [ -n "$(uci -q get network.${NET})" ]; then
-			# openwrt 21 uses device and inferface sections.
-			# /etc/config/network needs to be checked and changed from interface only to
-			# device+interface configuration, as creating wan bridges do only work the old way.
-			# Some devices (ubnt-edge) already have device section to define different mac addresses.
-			# interface section and device section are bound via "device" name.
-			# non-bridge interface or a bridge interface can have its device section.
-			# the device section can be used to define mac addresses for that interface.
-			# In case of a bridge (br-lan) the corresponding device section (name="br-lan") can define
-			# mac address for the bridge. The bridge is assigned further interfaces (eth0.2) which also
-			# can have its own device section. This is important, because those low-level interfaces
-			# must have different mac addresses. often mac addr of eth0 is assigned to both switch/vlan
-			# interfaces. But if we (freifunk) use a lan bridge cable between WAN and LAN we have two
-			# different interfaces ip, but same mac address. This brings networking down.
-
-			# search for device-section. ifname was renamed to device (but it is uncertain which is used)
-			dev_name=$(uci -q get network.${NET}.ifname)
-			test -z "$dev_name" && dev_name=$(uci -q get network.${NET}.device)
-			dev_config="device_${NET}"
-
-			# get ll_ifname.
-			# - if interface section type is bridge (old format) -> ll_ifname=dev_name
-			# - if type is other then check for device section
-			dev_type=$(uci -q get network.${NET}.type)
-			if [ "$dev_type" = "bridge" ]; then
-				ll_ifname="$dev_name"
-			else
-				check_dev_config=$(get_device_section_ifname "$dev_name")
-				dev_type=$(uci -q get network.${check_dev_config}.type)
-				# if no device section dev_name is ll_ifname
-				if [ -n "$check_dev_config" -a "$dev_type" = "bridge" ]; then
-					ll_ifname=$(uci -q get network.${check_dev_config}.ports)
-					# there is a valid device section configured as bridge
-					# use this name
-					dev_config="$check_dev_config"
-				else
-					ll_ifname="$dev_name"
-				fi
-			fi
-			echo "dev_config:$dev_config"
-			echo "dev_name:$dev_name -> ll_ifname:$ll_ifname"
-
-			# check if we have a device section for lan/wan.
-			# dev_config could be "device_${NET}" or defined by openwrt if it has created
-			# a valid corresponding device section with type "bridge"
-			if [ -z "$(uci -q get network.${dev_config})" ]; then
-				echo "create device section ${dev_config} for br-${NET}"
-				uci add network device
-				uci rename network.@device[-1]="${dev_config}"
-			fi
-
-			# configure as bridge (dev_name is lowlevel name)
-			echo "configure: ${dev_config}"
-			uci set network.${NET}.device="br-${NET}"
-			uci set network.${NET}.ll_ifname="$ll_ifname"
-			uci set network.${dev_config}.name="br-${NET}"
-			uci set network.${dev_config}.type='bridge'
-			uci set network.${dev_config}.stp=1
-			uci set network.${dev_config}.bridge_empty=1
-			uci -q delete network.${dev_config}.ports
-			uci add_list network.${dev_config}.ports="$ll_ifname"
-
-			# force_link always up. else netifd reconfigures wan/mesh_wan because of hotplug events
-			uci set network.${NET}.force_link=1
-
-			# delete obsolete
-			uci -q delete network.${NET}.ifname
-			uci -q delete network.${NET}.type
-			uci -q delete network.${NET}.stp
-			uci -q delete network.${NET}.bridge_empty
-
-			# ensure that ll interfaces (eth0.1 and eth0.2) have different mac addresses
-			# check if a device section exists for those interfaces
-			dev_config=$(get_device_section_ifname "$ll_ifname")
-			if [ -z "${dev_config}" ]; then
-				dev_config="ll_device_${NET}"
-				echo "create device ${dev_config} for $ll_ifname"
-				uci add network device
-				uci rename network.@device[-1]="${dev_config}"
-				uci set network.${dev_config}.name="$ll_ifname"
-#				mac=
-#				uci set network.${dev_config}.macaddr="$mac"
-			fi
-
-		fi
-	done
-echo "-"
-
-	# create empty bridges
-	for NET in mesh_lan mesh_wan
-	do
-		echo "NET:$NET"
-
-		test -z "$(uci -q get network.${NET})" && {
-			uci add network interface
-			uci rename network.@interface[-1]="${NET}"
-		}
-		uci set network.${NET}.device="br-${NET}"
-		uci set network.${NET}.ipaddr="$_ddmesh_nonprimary_ip"
-		uci set network.${NET}.netmask="$_ddmesh_netmask"
-		uci set network.${NET}.broadcast="$_ddmesh_broadcast"
-		uci set network.${NET}.proto='static'
-		uci set network.${NET}.force_link=1
-
-		dev_config="device_${NET}"
-		if [ -z "$(uci -q get network.${dev_config})" ]; then
-			echo "create device section ${dev_config} for br-${NET}"
-			uci add network device
-			uci rename network.@device[-1]="${dev_config}"
-		fi
-
-		# configure as bridge (dev_name is lowlevel name)
-		echo "configure: ${dev_config}"
-		uci set network.${dev_config}.name="br-${NET}"
-		uci set network.${dev_config}.type='bridge'
-		uci set network.${dev_config}.stp=1
-		uci set network.${dev_config}.bridge_empty=1
-		uci -q delete network.${dev_config}.ports
-
-		# delete obsolete
-		uci -q delete network.${NET}.ifname
-		uci -q delete network.${NET}.type
-		uci -q delete network.${NET}.stp
-		uci -q delete network.${NET}.bridge_empty
-	done
-
-	# add network modem with qmi protocol
-	test -z "$(uci -q get network.wwan)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='wwan'
-	}
-	# must be wwan0
-	uci set network.wwan.ifname='wwan0'
-	uci set network.wwan.proto='qmi'
-	uci set network.wwan.apn="$(uci -q get ddmesh.network.wwan_apn)"
-	uci set network.wwan.pincode="$(uci -q get ddmesh.network.wwan_pincode)"
-	uci set network.wwan.device='/dev/cdc-wdm0'
-	uci set network.wwan.autoconnect='1'
-	uci set network.wwan.pdptype='IP'	# IPv4 only
-	uci set network.wwan.delay='30' 	# wait for SIMCard being ready
-	uci set network.wwan.metric='50'	# avoids overwriting WAN default route
-
-	wwan_modes=""
-	test "$(uci -q get ddmesh.network.wwan_4g)" = "1" && wwan_modes="$wwan_modes,lte"
-	test "$(uci -q get ddmesh.network.wwan_3g)" = "1" && wwan_modes="$wwan_modes,umts"
-	test "$(uci -q get ddmesh.network.wwan_2g)" = "1" && wwan_modes="$wwan_modes,gsm"
-	wwan_modes="${wwan_modes#,}"
-	wwan_modes="${wwan_modes:-lte,umts}"
-	uci set network.wwan.modes="$wwan_modes"
-
-	wwan_mode_preferred="$(uci -q get ddmesh.network.wwan_mode_preferred)"
-	uci set network.wwan.preference="$wwan_mode_preferred"
-
-	uci -q del firewall.zone_wan.network	# delete "option"
-	uci -q add_list firewall.zone_wan.network='wan'
-	# helper network, to setup firewall rules for wwan network.
-	# openwrt is not relible to setup wwan0 rules in fw
-	test -z "$(uci -q get network.wwan_helper)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='wwan_helper'
-	}
-	uci set network.wwan_helper.device="wwan+"
-	uci set network.wwan_helper.proto='static'
-	uci -q add_list firewall.zone_wan.network='wwan_helper'
-
-
-	#############################################################################
-	# setup wifi
-	# Interfaces for "wifi" and "wifi2" are created by wireless subsystem and
-	# assigned to this networks
-	#############################################################################
-	test -z "$(uci -q get network.wifi_adhoc)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='wifi_adhoc'
-	}
-	uci set network.wifi_adhoc.ipaddr="$_ddmesh_nonprimary_ip"
-	uci set network.wifi_adhoc.netmask="$_ddmesh_netmask"
-	uci set network.wifi_adhoc.broadcast="$_ddmesh_broadcast"
-	uci set network.wifi_adhoc.proto='static'
-
-	test -z "$(uci -q get network.wifi_mesh2g)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='wifi_mesh2g'
-	}
-	uci set network.wifi_mesh2g.ipaddr="$_ddmesh_nonprimary_ip"
-	uci set network.wifi_mesh2g.netmask="$_ddmesh_netmask"
-	uci set network.wifi_mesh2g.broadcast="$_ddmesh_broadcast"
-	uci set network.wifi_mesh2g.proto='static'
-
-	test -z "$(uci -q get network.wifi_mesh5g)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='wifi_mesh5g'
-	}
-	uci set network.wifi_mesh5g.ipaddr="$_ddmesh_nonprimary_ip"
-	uci set network.wifi_mesh5g.netmask="$_ddmesh_netmask"
-	uci set network.wifi_mesh5g.broadcast="$_ddmesh_broadcast"
-	uci set network.wifi_mesh5g.proto='static'
-
-	# wifi ap bridge (wireless will add interfaces to this bridge)
-	NET="wifi2"
-	echo "NET:$NET"
-	test -z "$(uci -q get network.${NET})" && {
-		uci add network interface
-		uci rename network.@interface[-1]="${NET}"
-	}
-	uci set network.${NET}.device="br-${NET}"
-	uci set network.${NET}.ipaddr="$_ddmesh_wifi2ip"
-	uci set network.${NET}.netmask="$_ddmesh_wifi2netmask"
-	uci set network.${NET}.broadcast="$_ddmesh_wifi2broadcast"
-	uci set network.${NET}.proto='static'
-	uci set network.${NET}.force_link=1
-	#don't store dns for wifi2 to avoid adding it to resolv.conf
-
-	dev_config="device_${NET}"
-	if [ -z "$(uci -q get network.${dev_config})" ]; then
-		echo "create device section ${dev_config} for br-${NET}"
-		uci add network device
-		uci rename network.@device[-1]="${dev_config}"
-	fi
-	# configure as bridge (dev_name is lowlevel name)
-	echo "configure: ${dev_config}"
-	uci set network.${dev_config}.name="br-${NET}"
-	uci set network.${dev_config}.type='bridge'
-	uci set network.${dev_config}.stp=1
-	uci set network.${dev_config}.bridge_empty=1
-	uci -q delete network.${dev_config}.ports
-
-	# delete obsolete
-	uci -q delete network.${NET}.ifname
-	uci -q delete network.${NET}.type
-	uci -q delete network.${NET}.stp
-	uci -q delete network.${NET}.bridge_empty
-
-	#############################################################################
-	# setup tbb_fastd/wg network assigned to a firewall zone (mesh) for an interface
-	# that is not controlled by openwrt.
-	# Bringing up tbb+ failes, but firewall rules are created anyway
-	# got this information by testing, because openwrt feature to add non-controlled
-	# interfaces (via netifd) was not working.
-	#############################################################################
-	test -z "$(uci -q get network.tbb_fastd)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='tbb_fastd'
-	}
-	uci set network.tbb_fastd.device='tbb_fastd'
-	uci set network.tbb_fastd.proto='static'
-
-	# wireguard tunnel
-	test -z "$(uci -q get network.tbbwg)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='tbbwg'
-	}
-	uci set network.tbbwg.device='tbbwg+'
-	uci set network.tbbwg.ipaddr="$_ddmesh_wireguard_ip"
-	uci set network.tbbwg.netmask="$_ddmesh_netmask"
-	uci set network.tbbwg.proto='static'
-
-	# wireguard ipip
-	test -z "$(uci -q get network.tbb_wg)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='tbb_wg'
-	}
-	# "+" is needed to create firewall rules for all tbb_wg+... ifaces
-	uci set network.tbb_wg.device='tbb_wg+'
-	uci set network.tbb_wg.proto='static'
-
-	#bmxd bat zone
-	test -z "$(uci -q get network.bat)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='bat'
-	}
-	uci set network.bat.device="bat+"
-	uci set network.bat.proto='static'
-
-	#openvpn zone
-	test -z "$(uci -q get network.vpn)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='vpn'
-	}
-	uci set network.vpn.device="vpn+"
-	uci set network.vpn.proto='static'
-
-	#######################################################################
-	# add other interfaces to system but do not create firewall rules for them.
-	# this allows to request all interfaces via ddmesh-utils-network-info.sh
-	# Interfaces "priv" and "tbb_fastd/tbb_wg" are created by fastd
-	#
-	#######################################################################
-
-	#privnet zone: it is bridged to br-lan (see /etc/fastd/privnet-cmd.sh)
-	test -z "$(uci -q get network.privnet)" && {
-		uci add network interface
-		uci rename network.@interface[-1]='privnet'
-	}
-	uci set network.privnet.device="priv"
-	uci set network.privnet.proto='static'
 
 
 	#############################################################################
 	# setup firewall
 	#############################################################################
 
-	eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask))
+	eval $(ipcalc.sh $(uci get ddmesh.network.lan_ipaddr) $(uci get ddmesh.network.lan_netmask))
 	lan_net=$NETWORK
 	lan_pre=$PREFIX
 
@@ -810,38 +491,6 @@ fi
 
 }
 
-setup_mesh_on_wire()
-{
- mesh_on_lan="$(uci -q get ddmesh.network.mesh_on_lan)"
- mesh_on_wan="$(uci -q get ddmesh.network.mesh_on_wan)"
-
- # give user time to change configs via lan/wan IP
- if [ "$mesh_on_lan" = "1" -o "$mesh_on_wan" = "1" ]; then
-
-	# mesh-on-lan: move phys ethernet to br-mesh_lan/br-mesh_wan
-	 lan_phy="$(uci -q get network.lan.ll_ifname)"
-	 wan_phy="$(uci -q get network.wan.ll_ifname)"
-
-	 if [ "$mesh_on_lan" = "1" ]; then
-		# only sleep for lan. no need to wait for mesh-on-wan
-		[ "$(uci get ddmesh.system.mesh_sleep)" = '1' ] && sleep 300 || sleep 3
-		logger -s -t "$LOGGER_TAG" "activate mesh-on-lan for $lan_phy"
-		# avoid ip conflicts when wan is in same network and gets ip from dhcp server
-		ip link set $lan_ifname down
- 		brctl delif $lan_ifname $lan_phy
-	 	brctl addif $mesh_lan_ifname $lan_phy
-	 fi
-
-	 if [ "$mesh_on_wan" = "1" -a "$wan_iface_present" = "1" ]; then
-		logger -s -t "$LOGGER_TAG" "activate mesh-on-wan for $wan_phy"
-		# avoid ip conflicts when wan is in same network and gets ip from dhcp server
-		ip link set $wan_ifname down
- 		brctl delif $wan_ifname $wan_phy
-	 	brctl addif $mesh_wan_ifname $wan_phy
-	 fi
- fi
-}
-
 #boot_step is empty for new devices
 boot_step="$(uci get ddmesh.boot.boot_step)"
 test -z "$boot_step" && boot_step=1
@@ -882,8 +531,9 @@ case "$boot_step" in
 
 			config_update
 
-			# regenerate wireless config after firmware update or
+			# regenerate network/wireless config after firmware update or
 			# config update.
+			/usr/lib/ddmesh/ddmesh-setup-network.sh
 			# hotplug event ieee80211 is not reliable before rebooting
 			/usr/lib/ddmesh/ddmesh-setup-wifi.sh
 
@@ -926,7 +576,7 @@ case "$boot_step" in
 			# cron job is started from ddmesh-init.sh after bmxd
 
 			# delay start mesh_on_wire, to allow access router config via lan/wan ip
-			setup_mesh_on_wire &
+			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_mesh_on_wire &
 		fi
 esac
 #continue boot-process
