@@ -229,6 +229,9 @@ listTargets()
  OPT="--raw-output" # do not excape values
  cleanJson=$(getTargetsJson)
 
+#	ARG_regexTarget='ip'
+#	echo "$cleanJson" | jq --raw-output '.[] | select( .name | test ("'${ARG_regexTarget}'") ) | .name'
+
  # first read default
  entry=$(echo "$cleanJson" | jq ".[0]")
  if [ -n "$entry" ]; then
@@ -315,35 +318,8 @@ listTargets()
 
 listTargetsNames()
 {
-
- OPT="--raw-output" # do not excape values
- cleanJson=$(getTargetsJson)
-
- # first read default
- targetIdx=0
- entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
- if [ -n "$entry" ]; then
-	_def_name=$(echo $entry | jq $OPT '.name')
- fi
- targetIdx=$(( targetIdx + 1 ))
-
- # run through rest of json
- while true
- do
- 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
-
-	if [ "$entry" = "null" ]; then
-		break;	# last entry
-	else
-		_config_name=$(echo $entry | jq $OPT '.name')
-	fi
-
-	test -z "${_config_name}" && echo "error: configuration has no name" && break
-
- 	printf  "${_config_name}\n"
-
-	targetIdx=$(( targetIdx + 1 ))
- done
+	cleanJson=$(getTargetsJson)
+	echo "$cleanJson" | jq --raw-output '.[] | select(.name != "default") | .name'
 }
 
 # returns number of targets in build.json
@@ -352,38 +328,14 @@ numberOfTargets()
  ARG_regexTarget=$1
  [ -z "$ARG_regexTarget" ] && ARG_regexTarget='.*'
 
- OPT="--raw-output" # do not excape values
- cleanJson=$(getTargetsJson)
-
- # ignore first default entry
- targetIdx=1
-
- count=0
-
- # run through rest of json
- while true
- do
- 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
-	[ "$entry" = "null" ] &&  break	# last entry
-
-	config_name=$(echo $entry | jq $OPT '.name')
-	[ -z "${config_name}" ] && break
-
-	targetIdx=$(( targetIdx + 1 ))
-
-	# ignore targets that do not match
-	filterred=$(echo ${config_name} | sed -n "/$ARG_regexTarget/p")
-	test -z "$filterred" && continue
-
-	count=$(( $count + 1 ))
- done
- printf "%d" $count
+	cleanJson=$(getTargetsJson)
+	echo "$cleanJson" | jq --raw-output '[ .[] | select( .name | test ("'${ARG_regexTarget}'") ) ]| length'
 }
 
 search_target()
 {
 	target=$1
-	 awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{print FILENAME}' openwrt-configs/*/*
+	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{print FILENAME}' openwrt-configs/*/*
 }
 
 setup_dynamic_firmware_config()
@@ -742,7 +694,7 @@ do
 	cd $RUN_DIR
 
 	# read configuration from first target in build.json
- 	entry=$(getTargetsJson | jq ".[$targetIdx]")
+	entry=$(getTargetsJson | jq ".[$targetIdx]")
 	targetIdx=$(( targetIdx + 1 ))	# for next build loop
 
 	# check if we have reached the end of all targets
