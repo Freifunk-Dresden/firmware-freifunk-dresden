@@ -1,0 +1,51 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr target.ori/linux/kirkwood/image/Makefile target/linux/kirkwood/image/Makefile
+--- buildroot/target/linux/kirkwood/image/Makefile	2021-08-18 17:30:31.000000000 +0200
++++ buildroot/target/linux/kirkwood/image/Makefile	2021-09-19 18:37:06.335989441 +0200
+@@ -8,8 +8,11 @@
+ KERNEL_LOADADDR:=0x8000
+
+ define Device/dsa-migration
+-  DEVICE_COMPAT_VERSION := 1.1
+-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++# ddmesh: disabled because we can upgrade from openwrt19 to 21
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  DEVICE_COMPAT_VERSION := 1.1
++#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+ endef
+
+ define Device/Default
+diff -Naur --suppress-blank-empty --strip-trailing-cr target.ori/linux/mvebu/image/cortexa9.mk target/linux/mvebu/image/cortexa9.mk
+--- buildroot/target/linux/mvebu/image/cortexa9.mk	2021-08-18 17:30:31.000000000 +0200
++++ buildroot/target/linux/mvebu/image/cortexa9.mk	2021-09-19 18:36:28.567830376 +0200
+@@ -4,8 +4,11 @@
+ # Copyright (C) 2016 LEDE-project.org
+
+ define Device/dsa-migration
+-  DEVICE_COMPAT_VERSION := 1.1
+-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++# ddmesh: disabled because we can upgrade from openwrt19 to 21
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  DEVICE_COMPAT_VERSION := 1.1
++#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+ endef
+
+ define Device/kernel-size-migration
+diff -Naur --suppress-blank-empty --strip-trailing-cr target.ori/linux/ramips/image/mt7621.mk target/linux/ramips/image/mt7621.mk
+--- buildroot/target/linux/ramips/image/mt7621.mk	2021-08-18 17:30:31.000000000 +0200
++++ buildroot/target/linux/ramips/image/mt7621.mk	2021-09-19 18:35:47.055654619 +0200
+@@ -91,8 +91,11 @@
+ endef
+
+ define Device/dsa-migration
+-  DEVICE_COMPAT_VERSION := 1.1
+-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++# ddmesh: disabled because we can upgrade from openwrt19 to 21
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  DEVICE_COMPAT_VERSION := 1.1
++#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+ endef
+
+ define Device/adslr_g7
