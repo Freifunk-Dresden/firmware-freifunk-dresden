@@ -36,10 +36,11 @@ setup_ethernet()
 	do
 		if [ -n "$(uci -q get network.${NET})" ]; then
 
+			# ------- configure device -------
 			dev_name=$(uci -q get network.${NET}.device)
-
-			# get corresponding device section
 			dev_config=$(get_device_section "$dev_name")
+echo dev_name=$dev_name
+echo dev_config=$dev_config
 
 			# check if we have a device section for lan/wan.
 			# In this case the device is normal interface (not a bridge)
@@ -52,7 +53,42 @@ setup_ethernet()
 				uci add_list network.${dev_config}.ports="${dev_name}"
 			fi
 
-			# configure interface
+			uci set network.${dev_config}.name="br-${NET}"
+			uci set network.${dev_config}.type='bridge'
+			uci set network.${dev_config}.stp=1
+			uci set network.${dev_config}.bridge_empty=1
+
+			# ------- create devices for all physical eth ports -------
+			for phy_name in $(uci get network.${dev_config}.ports)
+			do
+				phydev_config=$(get_device_section "${phy_name}")
+				if [ -z "$(uci -q get network.${phydev_config})" ]; then
+					phydev_config="dev_${phy_name/./_}"
+					echo "create device section ${phydev_config}"
+					uci add network device
+					uci rename network.@device[-1]="${phydev_config}"
+					uci set network.${phydev_config}.name="${phy_name}"
+				fi
+
+				if [ -z "$(uci set network.${phydev_config}.macaddr)" ]; then
+					# get real mac and modify it. some how does netifd use eth mac for
+					# wifi interfaces. so I can not use those (when lan+wifi are bridged).
+					# google for: U/L bit of mac address (https://de.wikipedia.org/wiki/MAC-Adresse#Vergabestelle)
+					# So I change the first and last
+					mac="$(ip link show dev ${phy_name} | awk '/ether/{print $2}')"
+
+					if [ "${NET}" = "lan" ]; then
+						mac="22:${mac:3:14}"
+					else
+						mac="66:${mac:3:14}"
+					fi
+					uci set network.${phydev_config}.macaddr="$mac"
+				fi
+
+			done
+
+			# ------- configure interface (after device sections) ------
+			# overwrite device name (after the previous name was extracted and used for device section (wan))
 			uci set network.${NET}.device="br-${NET}"
 			# force_link always up. else netifd reconfigures wan/mesh_wan because of hotplug events
 			uci set network.${NET}.force_link=1
@@ -63,15 +99,11 @@ setup_ethernet()
 				test -n "$v" && uci set network.${NET}.${option}="${v}"
 			done
 
-			# configure as bridge
-			uci set network.${dev_config}.name="br-${NET}"
-			uci set network.${dev_config}.type='bridge'
-			uci set network.${dev_config}.stp=1
-			uci set network.${dev_config}.bridge_empty=1
-#				mac=
-#				uci set network.${dev_config}.macaddr="$mac"
 		fi
 	done
+
+
+
 }
 
 setup_mesh()
