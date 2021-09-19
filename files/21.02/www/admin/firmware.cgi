@@ -152,7 +152,7 @@ EOM
 else #form_action
 
 	case "$form_action" in
-		# final step 
+		# final step
 		flash)
 			if [ -n "$form_update_abort" ]; then
 				rm -f $FIRMWARE_FILE
@@ -233,7 +233,7 @@ EOM
 			if [ "$do_update" = "1" ]; then
 
 				#check firmware
-				if m=$(sysupgrade -T $FIRMWARE_FILE) ;then
+				if m="$(sysupgrade --test $FIRMWARE_FILE 2>&1 )" ;then
 					cat<<EOM
 					<fieldset class="bubble">
 					<legend>Firmware-Update</legend>
@@ -261,7 +261,7 @@ EOM
 EOM
 				else # firmware check
 					rm -f $FIRMWARE_FILE
-					notebox "Falsche Firmware: <i>$m</i>"
+					notebox "Falsche Firmware: <br/><br/><i>$m</i>"
 				fi
 			fi
 			;;

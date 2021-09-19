@@ -221,11 +221,6 @@ EOM
 	#almost disable crond logging (only errors)
 	uci set system.@system[0].cronloglevel='9'
 
-	# sysupgrade: allow images with newer version (openwrt 19 -> 21)
-	# If not set, then openwrt 21 won't accept itself.
-	# check: sysupgrade --test firmware.bin
-	uci set system.@system[0].compat_version='1.1'
-
 	#  initial correct ntp
 	uci -q delete system.ntp.server
 	uci -q add_list system.ntp.server=0.de.pool.ntp.org
