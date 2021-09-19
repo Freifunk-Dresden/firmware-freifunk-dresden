@@ -556,6 +556,8 @@ upgrade_7_1_1()
 	done
 	rm /etc/config/uhttpd
 	cp /rom/etc/config/uhttpd /etc/config/uhttpd
+	rm /etc/config/wshaper
+	cp /rom/etc/config/uhttpd /etc/config/wshaper
 }
 
 ##################################

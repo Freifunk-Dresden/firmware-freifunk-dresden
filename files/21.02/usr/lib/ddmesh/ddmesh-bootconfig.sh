@@ -283,6 +283,11 @@ config_update() {
 	rm /etc/uhttpd.key
 	rm /etc/uhttpd.crt
 
+	# traffic shaping
+	uci set wshaper.settings.network "$(uci get ddmesh.network.speed_network)"
+	uci set wshaper.settings.downlink "$(uci get ddmesh.network.speed_down)"
+	uci set wshaper.settings.uplink "$(uci get ddmesh.network.speed_up)"
+
 	#############################################################################
 	# setup backbone clients
 	#############################################################################
@@ -394,17 +399,6 @@ config_update() {
 
 }
 
-# uci needs valid symlinks
-config_create_symlink_files()
-{
-	mkdir -p /var/etc/config
-
-	#ensure we use temporarily created config after sysupgrade has restored config as file instead of symlink
-	[ -L /etc/config/wshaper ] || ( rm -f /etc/config/wshaper && ln -s /var/etc/config/wshaper /etc/config/wshaper )
-	touch /var/etc/config/wshaper
-
-}
-
 config_temp_configs() {
 	# create directory to calm dnsmasq
 	mkdir -p /tmp/hosts
@@ -420,14 +414,6 @@ config_temp_configs() {
 	cat<<EOM >/var/etc/dnsmasq.hosts
 127.0.0.1 localhost
 $_ddmesh_wifi2ip hotspot
-EOM
-
-# traffic shaping
-cat <<EOM >/var/etc/config/wshaper
-config 'wshaper' 'settings'
-	option network "$(uci get ddmesh.network.speed_network)"
-	option downlink "$(uci get ddmesh.network.speed_down)"
-	option uplink "$(uci get ddmesh.network.speed_up)"
 EOM
 
 # setup cron.d
@@ -462,8 +448,6 @@ if [ "$(uci -q get ddmesh.boot.firstboot)" = "1" ]; then
 	boot_step=3
 	uci -q del ddmesh.boot.firstboot
 fi
-
-config_create_symlink_files
 
 case "$boot_step" in
 	1) # initial boot step
