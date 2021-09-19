@@ -39,8 +39,6 @@ setup_ethernet()
 			# ------- configure device -------
 			dev_name=$(uci -q get network.${NET}.device)
 			dev_config=$(get_device_section "$dev_name")
-echo dev_name=$dev_name
-echo dev_config=$dev_config
 
 			# check if we have a device section for lan/wan.
 			# In this case the device is normal interface (not a bridge)
@@ -59,7 +57,8 @@ echo dev_config=$dev_config
 			uci set network.${dev_config}.bridge_empty=1
 
 			# ------- create devices for all physical eth ports -------
-			for phy_name in $(uci get network.${dev_config}.ports)
+			local count=0
+			for phy_name in $(uci -q get network.${dev_config}.ports)
 			do
 				phydev_config=$(get_device_section "${phy_name}")
 				if [ -z "$(uci -q get network.${phydev_config})" ]; then
@@ -70,7 +69,7 @@ echo dev_config=$dev_config
 					uci set network.${phydev_config}.name="${phy_name}"
 				fi
 
-				if [ -z "$(uci set network.${phydev_config}.macaddr)" ]; then
+				if [ -z "$(uci -q get network.${phydev_config}.macaddr)" ]; then
 					# get real mac and modify it. some how does netifd use eth mac for
 					# wifi interfaces. so I can not use those (when lan+wifi are bridged).
 					# google for: U/L bit of mac address (https://de.wikipedia.org/wiki/MAC-Adresse#Vergabestelle)
@@ -78,13 +77,13 @@ echo dev_config=$dev_config
 					mac="$(ip link show dev ${phy_name} | awk '/ether/{print $2}')"
 
 					if [ "${NET}" = "lan" ]; then
-						mac="22:${mac:3:14}"
+						mac="${count:0:1}2:${mac:3:14}"
 					else
-						mac="66:${mac:3:14}"
+						mac="${count:0:1}6:${mac:3:14}"
 					fi
 					uci set network.${phydev_config}.macaddr="$mac"
 				fi
-
+				count=$((count + 1))
 			done
 
 			# ------- configure interface (after device sections) ------
