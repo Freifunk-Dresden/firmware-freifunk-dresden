@@ -1,1 +1,32 @@
-/var/etc/config/uhttpd
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
+config uhttpd main
+	list listen_http	0.0.0.0:80
+	list listen_http	0.0.0.0:81
+	list listen_https	0.0.0.0:443
+	option home		/www
+	option rfc1918_filter 1
+	option max_requests	20
+	option max_connections	100
+	option tcp_keepalive    1
+	option http_keepalive   60
+	option cert		/etc/uhttpd.crt
+	option key		/etc/uhttpd.key
+	list interpreter	".cgi=/bin/sh"
+	list interpreter	".json=/bin/sh"
+	option script_timeout	600
+	option network_timeout	600
+	option realm		'Freifunk Dresden'
+	option index_page	index.cgi
+	option error_page	/index.cgi
+
+# Certificate defaults for px5g key generator
+config cert px5g
+	option days		7300
+	option bits		1024
+	option country		DE
+	option state		Dresden
+	option location		Dresden
+	option commonname	'Freifunk Dresden'
+	option node		'Node 1496'

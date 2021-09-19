@@ -276,6 +276,13 @@ config_update() {
 	#syslog
 	uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
 
+	# update uhttpd certificates
+	uci set uhttpd.main.realm='$(uci get ddmesh.system.community)'
+	uci set uhttpd.px5g.commonname='$(uci -q get ddmesh.system.community)'
+	uci set uhttpd.px5g.node='Node $(uci -q get ddmesh.system.node)'
+	rm /etc/uhttpd.key
+	rm /etc/uhttpd.crt
+
 	#############################################################################
 	# setup backbone clients
 	#############################################################################
@@ -393,10 +400,6 @@ config_create_symlink_files()
 	mkdir -p /var/etc/config
 
 	#ensure we use temporarily created config after sysupgrade has restored config as file instead of symlink
-	[ -L /etc/config/uhttpd ] || ( rm -f /etc/config/uhttpd && ln -s /var/etc/config/uhttpd /etc/config/uhttpd )
-	touch /var/etc/config/uhttpd
-
-	#ensure we use temporarily created config after sysupgrade has restored config as file instead of symlink
 	[ -L /etc/config/wshaper ] || ( rm -f /etc/config/wshaper && ln -s /var/etc/config/wshaper /etc/config/wshaper )
 	touch /var/etc/config/wshaper
 
@@ -417,49 +420,6 @@ config_temp_configs() {
 	cat<<EOM >/var/etc/dnsmasq.hosts
 127.0.0.1 localhost
 $_ddmesh_wifi2ip hotspot
-EOM
-
-cat <<EOM >/var/etc/config/uhttpd
-#generated/overwritten by $0
-config uhttpd main
-	list listen_http	0.0.0.0:80
-	list listen_http	0.0.0.0:81
-	list listen_https	0.0.0.0:443
-	option home		/www
-	option rfc1918_filter 1
-	option max_requests	20
-	option max_connections	100
-	option tcp_keepalive    1
-	option http_keepalive   60
-	option cert		/etc/uhttpd.crt
-	option key		/etc/uhttpd.key
-	list interpreter	".cgi=/bin/sh"
-	list interpreter	".json=/bin/sh"
-EOM
-test -f /usr/lib/lua/uhttpd-handler.lua &&
-{
-cat <<EOM >>/var/etc/config/uhttpd
-	list interpreter	".lua=/usr/bin/lua"
-	option lua_prefix	/cgilua/
-	option lua_handler	/usr/lib/lua/uhttpd-handler.lua
-EOM
-}
-cat <<EOM >>/var/etc/config/uhttpd
-	option script_timeout	600
-	option network_timeout	600
-	option realm		'$(uci get ddmesh.system.community)'
-	option index_page	index.cgi
-	option error_page	/index.cgi
-
-# Certificate defaults for px5g key generator
-config cert px5g
-	option days		7300
-	option bits		1024
-	option country		DE
-	option state		Dresden
-	option location		Dresden
-	option commonname	'$(uci -q get ddmesh.system.community)'
-	option node		'Node $(uci -q get ddmesh.system.node)'
 EOM
 
 # traffic shaping
@@ -572,7 +532,7 @@ case "$boot_step" in
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 			config_temp_configs
-			/etc/init.d/uhttpd restart
+
 			WSHAPER=/etc/init.d/wshaper
 			[ -x "$WSHAPER" ] && $WSHAPER restart
 			# cron job is started from ddmesh-init.sh after bmxd

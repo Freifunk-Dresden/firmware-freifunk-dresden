@@ -554,6 +554,8 @@ upgrade_7_1_1()
 			uci set ddmesh.network.${n}="${v}"
 		fi
 	done
+	rm /etc/config/uhttpd
+	cp /rom/etc/config/uhttpd /etc/config/uhttpd
 }
 
 ##################################
