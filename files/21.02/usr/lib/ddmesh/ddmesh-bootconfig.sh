@@ -277,9 +277,9 @@ config_update() {
 	uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
 
 	# update uhttpd certificates
-	uci set uhttpd.main.realm='$(uci get ddmesh.system.community)'
-	uci set uhttpd.px5g.commonname='$(uci -q get ddmesh.system.community)'
-	uci set uhttpd.px5g.node='Node $(uci -q get ddmesh.system.node)'
+	uci set uhttpd.main.realm="$(uci get ddmesh.system.community)"
+	uci set uhttpd.px5g.commonname="$(uci -q get ddmesh.system.community)"
+	uci set uhttpd.px5g.node="Node $(uci -q get ddmesh.system.node)"
 	rm /etc/uhttpd.key
 	rm /etc/uhttpd.crt
 
