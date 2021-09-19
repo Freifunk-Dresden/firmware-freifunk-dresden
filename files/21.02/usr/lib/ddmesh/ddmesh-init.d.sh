@@ -1,5 +1,6 @@
 #!/bin/sh /etc/rc.common
-# Copyright (C) 2006 OpenWrt.org
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 LOGGER_TAG="ddmesh-boot"
 
@@ -57,7 +58,7 @@ start() {
 	/usr/lib/ddmesh/ddmesh-firewall-addons.sh firewall-update
 	/usr/lib/ddmesh/ddmesh-backbone.sh firewall-update
 	/usr/lib/ddmesh/ddmesh-privnet.sh firewall-update
-	/usr/lib/ddmesh/ddmesh-splash.sh firewall-update 
+	/usr/lib/ddmesh/ddmesh-splash.sh firewall-update
 
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit
@@ -124,4 +125,3 @@ stop() {
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh stop
 	setup_routing del
 }
-

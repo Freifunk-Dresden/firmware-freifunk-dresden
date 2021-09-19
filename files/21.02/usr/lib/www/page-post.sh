@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 #use envirment variables set by html or cgi pages
 #uhttpd_restart - uhttpd must be restarted at end

@@ -1,3 +1,6 @@
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bmxd
@@ -44,4 +47,3 @@ define Package/bmxd/install
 endef
 
 $(eval $(call BuildPackage,bmxd))
-

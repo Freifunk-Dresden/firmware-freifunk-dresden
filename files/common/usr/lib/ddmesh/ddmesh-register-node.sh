@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 LOGGER_TAG="register.node"
 AUTO_REBOOT=1

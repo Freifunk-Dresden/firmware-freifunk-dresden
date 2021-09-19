@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 test -x /usr/bin/iperf3 || exit 0
 
@@ -14,4 +16,3 @@ cat <<EOM
 <tr><td><div class="plugin"><a class="plugin" href="traceroute.cgi">Traceroute</a></div></td></tr>
 EOM
 fi
-

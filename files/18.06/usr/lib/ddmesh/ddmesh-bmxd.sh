@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 ARG1=$1
 ARG2=$2
@@ -69,7 +71,7 @@ case "$ARG1" in
 
 	# needed during async boot, state changes then
     /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
-    
+
 	#add wifi, if hotplug event did occur before starting bmxd
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 	if [ -n "$net_ifname" ]; then
@@ -85,9 +87,9 @@ case "$ARG1" in
 	fi
 
 	#add dyn interfaces (add_if_wifi, add_if_wire)
-	IFS=' 
+	IFS='
 	'
-	for line in $(cat ${DYN_IFACES_FILE}) 
+	for line in $(cat ${DYN_IFACES_FILE})
 	do
 		# split ifname and linklayer
 		_IF="$_IF dev=${line%,*} /linklayer ${line#*,}"
@@ -169,7 +171,7 @@ case "$ARG1" in
 		killall -9 $DAEMON
 		bmxd_restart=1
 
-		
+
 	fi
 
  	# connection check; if bmxd hangs, kill it
@@ -188,7 +190,7 @@ case "$ARG1" in
 	test "$bmxd_count" -gt $bmxd_max_instances && logger -s -t "$TAG" "bmxd: too many instances ($bmxd_count/$bmxd_max_instances)" && bmxd_restart=1
 
 	if [ "$bmxd_restart" = 1 ]; then
-		logger -s -t "$TAG" "$DAEMON not running - restart" 
+		logger -s -t "$TAG" "$DAEMON not running - restart"
 		$0 restart
 	fi
 

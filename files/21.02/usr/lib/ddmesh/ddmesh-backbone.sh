@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 . /lib/functions.sh
 
@@ -364,7 +366,7 @@ case "$1" in
 			ifname="${wg_ifname/+/}"
 
 			#ensure ifname is NOT empty
-			if [ -n "$ifname" ]; then	
+			if [ -n "$ifname" ]; then
 				IFS='
 '
 				for i in $($LS -1d  "/sys/class/net/$ifname"* 2>/dev/null | sed 's#.*/##')

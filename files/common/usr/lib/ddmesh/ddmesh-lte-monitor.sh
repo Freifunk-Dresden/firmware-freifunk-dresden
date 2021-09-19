@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 delay=10	# seconds
 dhcp_trigger_refresh_count=6	# refresh dhcp after x loops

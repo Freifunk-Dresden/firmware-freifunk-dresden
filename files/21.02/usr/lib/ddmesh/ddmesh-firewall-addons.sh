@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 [ -z "$1" ] && exit 1
 
@@ -296,16 +298,16 @@ _update()
 			$IPT -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
 		done
 
-		# remove/add SNAT rule when iface becomes available	
+		# remove/add SNAT rule when iface becomes available
 		for cmd in D A
-		do	
-			$IPT -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null 
+		do
+			$IPT -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null
 			$IPT -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'lan-to-mesh' 2>/dev/null
 		done
 
 		#add rules if gateway is on lan
 		if [ -n "$lan_gateway" ]; then
-			# remove/add SNAT rule when iface becomes available	
+			# remove/add SNAT rule when iface becomes available
 			for cmd in D A
 			do
 				$IPT -$cmd forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
@@ -325,9 +327,9 @@ _update()
 	fi
 
 	if [ "$wifi2_up" = "1" -a -n "$wifi2_ipaddr" -a -n "$wifi2_mask" ]; then
-		# remove/add SNAT rule when iface becomes available	
+		# remove/add SNAT rule when iface becomes available
 		for cmd in D A
-		do	
+		do
 			$IPT -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2' 2>/dev/null
 		done
 	fi

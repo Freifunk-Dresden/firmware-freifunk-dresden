@@ -1,4 +1,6 @@
 ######################################################################
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de
+# GNU General Public License Version 3
 #
 #   The order is important for device specific builds.
 #   In this case output directory is not deleted and device specific

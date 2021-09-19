@@ -1,4 +1,7 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
 #$1 -network name
 #$2 -variable prefix
 
@@ -144,7 +147,7 @@ fi # update cache data
 
 case "$ARG" in
 	list)
-		cat $CACHE_DATA | sed -n "s#export \(.*\)_ifname=\(.*\)#net_\1=\2#p" 
+		cat $CACHE_DATA | sed -n "s#export \(.*\)_ifname=\(.*\)#net_\1=\2#p"
 		;;
 
 	all) 	cat $CACHE_DATA
@@ -156,7 +159,6 @@ case "$ARG" in
 		pfx=${PREFIX:-net}
 		pfx=${pfx/-/_}
 
-		cat $CACHE_DATA | sed -n "/^export ${ARG}_/s#export ${ARG}_\(.*\)#export ${pfx}_\1#p" 
+		cat $CACHE_DATA | sed -n "/^export ${ARG}_/s#export ${ARG}_\(.*\)#export ${pfx}_\1#p"
 		;;
 esac
-

@@ -1,3 +1,6 @@
+// Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+// GNU General Public License Version 3
+
 var timer_dhcp=null;
 var timer_wlan=null;
 var timer_register=null;
@@ -37,7 +40,7 @@ function ajax_register(data)
 
 function onMarkerMove(event)
 {
-	lat=event.target.getLatLng().lat.toFixed(5) 
+	lat=event.target.getLatLng().lat.toFixed(5)
 	lng=event.target.getLatLng().lng.toFixed(5)
 	$("#geoloc_lat").val(lat);
 	$("#geoloc_lng").val(lng);
@@ -46,23 +49,23 @@ function onMarkerMove(event)
 	marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
 }
 
-function onMapClick(event)                                                       
-{                                                                                
-        lat=event.latlng.lat.toFixed(5)                                          
-        lng=event.latlng.lng.toFixed(5)                                          
-        $("#geoloc_lat").val(lat);                                               
-        $("#geoloc_lng").val(lng);                                               
-        marker.setLatLng([lat, lng]);                                            
+function onMapClick(event)
+{
+        lat=event.latlng.lat.toFixed(5)
+        lng=event.latlng.lng.toFixed(5)
+        $("#geoloc_lat").val(lat);
+        $("#geoloc_lng").val(lng);
+        marker.setLatLng([lat, lng]);
 //      var icon = L.icon({iconUrl:"https://leafletjs.com/examples/custom-icons/l
-//      marker.setIcon(icon);                                                    
+//      marker.setIcon(icon);
 	marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
 }
 
 function geoloc_callback(data)
 {
 	try {
-		lat=data.location.lat.toFixed(5) 
-		lng=data.location.lng.toFixed(5) 
+		lat=data.location.lat.toFixed(5)
+		lng=data.location.lng.toFixed(5)
 		$("#geoloc_lat").val(lat);
 		$("#geoloc_lng").val(lng);
 		marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
@@ -113,7 +116,6 @@ function checkWifiKey(key)
  {
   charCode = key.charCodeAt(i);
   if (charCode < 32 || charCode > 127) return false;
- } 
+ }
  return true;
 }
-

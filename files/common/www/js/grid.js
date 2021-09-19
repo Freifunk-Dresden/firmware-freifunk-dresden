@@ -1,5 +1,6 @@
+// Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+// GNU General Public License Version 3
 
-//auto: stephan enderlein
 //var b = new GridField("progress", "myProgress", 10, 50, 10, 5, "#aaaaaa", "#0000ff");
 //b.setGridValue( 5 );
 

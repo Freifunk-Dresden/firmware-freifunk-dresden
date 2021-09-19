@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 . /lib/functions.sh
 
@@ -29,7 +31,7 @@ setup_forwarding()
 	$IPT -t nat -A PORT_FORWARDING -j PORT_FORWARDING_PROTECT
 	$IPT -t nat -A PORT_FORWARDING -j PORT_FORWARDING_RULES
 
-	# forward incomming packets to PORT_FORWARDING rules (from wifi range to _ddmesh_ip) 
+	# forward incomming packets to PORT_FORWARDING rules (from wifi range to _ddmesh_ip)
 	for table in prerouting_mesh_rule prerouting_lan_rule prerouting_wifi2_rule
 	do
 		$IPT -t nat -D $table -s $_ddmesh_network/$_ddmesh_netpre -d $_ddmesh_ip -j PORT_FORWARDING 2>/dev/null
@@ -37,14 +39,14 @@ setup_forwarding()
 	done
 
 	# forward incomming packets to PORT_FORWARDING rules (from lan range to lan ip)
-	# interface might not be ready yet (wait for other hotplug updates)	
+	# interface might not be ready yet (wait for other hotplug updates)
 	if [ "$lan_up" = "1" -a -n "$lan_ipaddr" ]; then
 		$IPT -t nat -D prerouting_lan_rule -s $lan_network/$lan_mask -d $lan_ipaddr -j PORT_FORWARDING 2>/dev/null
 		$IPT -t nat -A prerouting_lan_rule -s $lan_network/$lan_mask -d $lan_ipaddr -j PORT_FORWARDING
 	fi
 
 	# forward incomming packets to PORT_FORWARDING rules (to wan ip)
-	# interface might not be ready yet (wait for other hotplug updates)	
+	# interface might not be ready yet (wait for other hotplug updates)
 	if [ "$wan_up" = "1" -a -n "$wan_ipaddr" ]; then
 		$IPT -t nat -D prerouting_wan_rule -s $wan_network/$wan_mask -d $wan_ipaddr -j PORT_FORWARDING 2>/dev/null
 		$IPT -t nat -A prerouting_wan_rule -s $wan_network/$wan_mask -d $wan_ipaddr -j PORT_FORWARDING

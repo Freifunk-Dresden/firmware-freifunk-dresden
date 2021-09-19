@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 export ALLOW_PAGE=1
 export NOMENU=1
@@ -68,4 +70,3 @@ EOM
 esac
 
 . /usr/lib/www/page-post.sh
-

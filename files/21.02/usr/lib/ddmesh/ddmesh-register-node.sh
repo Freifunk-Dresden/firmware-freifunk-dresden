@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 LOGGER_TAG="register.node"
 AUTO_REBOOT=1
@@ -67,7 +69,7 @@ case "$j_status" in
 			uci_commit=0
 
 			# check if green
-			/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh >/dev/null && overlay=1 
+			/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh >/dev/null && overlay=1
 
 			node=$j_node
 			logger -s -t $LOGGER_TAG "SUCCESS: node=[$node]; key=[$key] registered."
@@ -77,10 +79,10 @@ case "$j_status" in
 			fi
 
 			if [ "$j_geoloc" = "1" ]; then
-				/usr/lib/ddmesh/ddmesh-geoloc.sh update-config 
+				/usr/lib/ddmesh/ddmesh-geoloc.sh update-config
 			fi
 
-			#update dns1 
+			#update dns1
 			dns="$(uci -q get ddmesh.network.internal_dns1)"
 			if [ -n "$j_dns" -a "$j_dns" != "$dns" ]; then
 				uci set ddmesh.network.internal_dns1="$j_dns"

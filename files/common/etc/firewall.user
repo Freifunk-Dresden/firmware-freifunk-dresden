@@ -1,3 +1,5 @@
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 # called by fw3 after start or restart (not on reload)
 
 test -f /tmp/freifunk-running || exit 0

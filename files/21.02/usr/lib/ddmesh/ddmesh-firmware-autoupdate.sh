@@ -1,4 +1,7 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
 # checks or runs an firmware update. downloads firmware
 # arguments: <run | check>
 

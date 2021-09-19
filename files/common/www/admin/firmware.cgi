@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 #return 0 if new > cur
 compare_versions() {
@@ -233,7 +235,7 @@ EOM
 			if [ "$do_update" = "1" ]; then
 
 				#check firmware
-				if m=$(sysupgrade -T $FIRMWARE_FILE) ;then
+				if m="$(sysupgrade --test $FIRMWARE_FILE 2>&1 )" ;then
 					cat<<EOM
 					<fieldset class="bubble">
 					<legend>Firmware-Update</legend>
@@ -261,7 +263,7 @@ EOM
 EOM
 				else # firmware check
 					rm -f $FIRMWARE_FILE
-					notebox "Falsche Firmware: <i>$m</i>"
+					notebox "Falsche Firmware: <br/><br/><i>$m</i>"
 				fi
 			fi
 			;;

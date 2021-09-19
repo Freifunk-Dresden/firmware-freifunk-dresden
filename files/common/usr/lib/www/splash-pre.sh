@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 . /usr/lib/www/page-functions.sh
 
 #Redirect (change url) to router if not already there

@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 #redirect to splash
 if [ "$SERVER_PORT" = "81" -a "$ALLOW_PAGE" != "1" ];then

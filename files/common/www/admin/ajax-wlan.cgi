@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 # only display if arg1 is not "no-html-header"
 test -z $1 && {

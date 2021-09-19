@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 # https://openwrt.org/docs/guide-user/base-system/led_configuration
 
 ARG_LED="$1"

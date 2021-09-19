@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de
+# GNU General Public License Version 3
 
 #usage: see below
 SCRIPT_VERSION="13"

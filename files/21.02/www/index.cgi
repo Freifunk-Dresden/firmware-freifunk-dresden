@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 node=$(uci get ddmesh.system.node)
 tmpmin=$(uci get ddmesh.system.tmp_min_node)

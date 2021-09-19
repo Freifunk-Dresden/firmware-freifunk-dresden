@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 # script is called during boot process before config_update.
 # It updates changes in persistent files (e.g.: /etc/config/network, firewall)
 

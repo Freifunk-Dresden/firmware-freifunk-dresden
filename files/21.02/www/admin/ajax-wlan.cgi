@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 # only display if arg1 is not "no-html-header"
 test -z $1 && {
@@ -18,7 +20,7 @@ SCAN_RESULT=/tmp/wifi_scan
 /usr/sbin/iw dev wifi2ap scan > $SCAN_RESULT
 [ "$wifi_status_radio5g_up" = "1" ] && /usr/sbin/iw dev wifi5ap scan >> $SCAN_RESULT
 
-json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne' 
+json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne'
 s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="";wifi_essid="";wifi_meshid="";wifi_signal="0";wifi_open="yes";#p
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
 s#	SSID: \(.*\)#wifi_essid="\1";#p
@@ -82,7 +84,7 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	line="$line  \"uptime\": \"$wifi_uptime\", \"bssid\": \"$wifi_bssid\"},"
 
 	# output line from subshell
-	echo "$line"	
+	echo "$line"
 done ) ]}"
 
 #echo "$json" >/tmp/wegj

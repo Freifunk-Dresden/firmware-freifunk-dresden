@@ -1,5 +1,7 @@
 #!/bin/sh
-TAG="ddmesh-hotplug-net"
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
+TAG="ddmesh-hotplug-net"
 logger -t "$TAG" "event: iface:[$INTERFACE] action:$ACTION type:$DEVTYPE dev:[$DEVICENAME] devpath:$DEVPATH"
 

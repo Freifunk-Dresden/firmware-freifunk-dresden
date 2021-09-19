@@ -1,4 +1,7 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
 #creates manually the config because of special wifi ranges
 #file is linked via /etc/dnsmasq.conf
 # see http://www.faqs.org/rfcs/rfc2132.html for more dhcp options

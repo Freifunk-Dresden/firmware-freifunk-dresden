@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 RESOLV_CONF_FINAL="/tmp/resolv.conf.final"
 RESOLV_CONF_AUTO="/tmp/resolv.conf.auto"

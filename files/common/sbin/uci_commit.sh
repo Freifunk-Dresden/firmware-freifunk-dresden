@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 # helper to commit all temporary configuration, because
 # /sbin/uci commit can not handle symlink config files
