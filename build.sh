@@ -614,14 +614,16 @@ setup_buildroot ()
 	echo -n -e "${C_PURPLE}copy rootfs ${C_NONE}: ${C_GREEN} common ${C_NONE}: "
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
-	cp -a $RUN_DIR/files/common/* $buildroot/files/
+	# --remove-destination forces copy (first remove (e.g. symlinks))
+	cp -a --remove-destination $RUN_DIR/files/common/* $buildroot/files/
 	echo " done."
 
 	# -------- specific files -----------
 	# copy specific files over (may overwrite common)
 	echo -n -e "${C_PURPLE}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
 	if [ -n "${firmware_files}" -a -d "$RUN_DIR/files/${firmware_files}" ]; then
-		cp -a $RUN_DIR/files/${firmware_files}/* $buildroot/files/
+		# --remove-destination forces copy (first remove (e.g. symlinks))
+		cp -a --remove-destination $RUN_DIR/files/${firmware_files}/* $buildroot/files/
 		echo "done."
 	else
 		echo "no specific files."
@@ -757,7 +759,7 @@ do
 		show_progress $progress_counter $progress_max ${progbar_char_array[@]}
 		echo ""
 	fi
-	# increment counter (needed also when no progressbar is displayed, because the 
+	# increment counter (needed also when no progressbar is displayed, because the
 	# status is set despite of the usage of the progbar_char_array. This avoids
 	# the need of checking every time whether the progressbar is used or not
 	progress_counter=$(( $progress_counter + 1 ))
