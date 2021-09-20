@@ -13,7 +13,6 @@ function color_interface(ifname)
  if ( ifname ~ /tbb_wg.*/)	{ifcolor="#328f4a";}
  if ( ifname ~ /tbb_fastd/)	{ifcolor="#328f4a";}
  if ( ifname ~ /br-mesh.*/)	{ifcolor="#009c08";}
- if ( ifname ~ /br-lan\..*/)	{ifcolor="#009c08";}
  if ( ifname ~ /mesh-adhoc/)	{ifcolor="#5030a1";}
  if ( ifname ~ /mesh-802.*/)	{ifcolor="#a13067";}
  return "<div style=\"color:"ifcolor";\">"ifname"</div>";

@@ -123,7 +123,11 @@ setup_mesh()
 {
 	if [ "$(uci -q get ddmesh.network.mesh_on_vlan)" = "1" ]; then
 		# setup mesh vlan
-		mesh_vlan_id='10'
+		mesh_vlan_id="$(uci -q get ddmesh.network.mesh_vlan_id)"
+		if [ -z "${mesh_vlan_id}" ]; then
+			mesh_vlan_id="10"	# default
+			uci set ddmesh.network.mesh_vlan_id="${mesh_vlan_id}"
+		fi
 
 		# determine switch type configuration
 		if [ -n "$(which swconfig)" ]; then
@@ -135,7 +139,6 @@ setup_mesh()
 		br_landev_name=$(uci -q get network.lan.device)
 		br_landev_config=$(get_device_section "$br_landev_name")
 		vlan_dev_config="switch_vlan_mesh"
-		vlan_network="mesh_vlan"
 
 		if ! $dsa ; then
 			# get eth name (assuming switch always is connected to lan interface)
@@ -153,10 +156,12 @@ setup_mesh()
 			uci add network interface
 			uci set network.@interface[-1].device="${vlan_device}"
 
-			CREATE_VLAN_NETWORK="${vlan_network}"
 		else
 			# must be the interface where the switch is connected
 			device="${br_landev_name}"
+
+			br_wandev_name=$(uci -q get network.wan.device)
+			br_wandev_config=$(get_device_section "$br_wandev_name")
 
 			# create bridge-vlan (similar to device section)
 			uci add network bridge-vlan
@@ -164,27 +169,21 @@ setup_mesh()
 			uci set network.${vlan_dev_config}.name="${device}"
 			uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
 			# copy all switch ports from lan and tag them
-			for port in $(uci -q get network.${br_landev_config}.ports)
+			ports="$(uci -q get network.${br_landev_config}.ports) $(uci -q get network.${br_wandev_config}.ports)"
+			for port in ${ports}
 			do
 				uci add_list network.${vlan_dev_config}.ports="${port}:t"
 			done
 
-			# create interface
+			# create vlan interface
+			vlan_device="${device}.${mesh_vlan_id}"
 			uci add network interface
-			uci rename network.@interface[-1]="${vlan_network}"
-			uci set network.${vlan_network}.device="${device}.${mesh_vlan_id}"
-			uci set network.${vlan_network}.ipaddr="$_ddmesh_nonprimary_ip"
-			uci set network.${vlan_network}.netmask="$_ddmesh_netmask"
-			uci set network.${vlan_network}.broadcast="$_ddmesh_broadcast"
-			uci set network.${vlan_network}.proto='static'
-			uci set network.${vlan_network}.force_link=1
-
-			CREATE_VLAN_NETWORK=""
+			uci set network.@interface[-1].device="${vlan_device}"
 		fi
 	fi # ddmesh.network.mesh_on_vlan
 
 	# create interfaces (bridges)
-	for NET in mesh_lan mesh_wan ${CREATE_VLAN_NETWORK}
+	for NET in mesh_lan mesh_wan mesh_vlan
 	do
 		device="br-${NET}"
 
@@ -207,8 +206,8 @@ setup_mesh()
 		uci set network.${dev_config}.stp=1
 		uci set network.${dev_config}.bridge_empty=1
 
-		# add vlan ports (comes here only for non-dsa )
-		if [ "${NET}" = "${CREATE_VLAN_NETWORK}" ]; then
+		# add vlan ports
+		if [ "${NET}" = "mesh_vlan" ]; then
 			uci add_list network.${dev_config}.ports="${vlan_device}"
 		fi
 	done
