@@ -154,7 +154,7 @@ cat<<EOM
 <TR>
 <TH>- VLAN-Meshing:</TH>
 <TD><INPUT NAME="form_vlan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_vlan)" = "1" ];then echo ' checked="checked"';fi)></TD>
-<td>Wenn aktiv, wird ein VLAN$ (uci -q get ddmesh.network.mesh_vlan_id) &uuml;ber alle Ethernet-Ports zum direkten Meshing genutzt.</td>
+<td>Wenn aktiv, wird ein VLAN $(uci -q get ddmesh.network.mesh_vlan_id) &uuml;ber alle Ethernet-Ports zum direkten Meshing genutzt.</td>
 </TR>
 <TR>
 <TH>- VLAN-ID:</TH>
