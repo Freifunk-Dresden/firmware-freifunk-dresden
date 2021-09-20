@@ -121,9 +121,68 @@ setup_ethernet()
 
 setup_mesh()
 {
-	# create empty bridges
-	for NET in mesh_lan mesh_wan
+	# setup mesh vlan
+	mesh_vlan_id='10'
+
+	# determine switch type configuration
+	if [ -n "$(which swconfig)" ]; then
+		dsa=false
+	else
+		dsa=true
+	fi
+
+	br_landev_name=$(uci -q get network.lan.device)
+	br_landev_config=$(get_device_section "$br_landev_name")
+	vlan_dev_config="switch_vlan_mesh"
+	vlan_network="mesh_vlan"
+
+	if ! $dsa ; then
+		# get eth name (assuming switch always is connected to lan interface)
+		phy_name=$(uci -q get network.${br_landev_config}.ports)
+		eth=${phy_name%.*}
+
+		uci add network switch_vlan
+		uci rename network.@switch_vlan[-1]="${vlan_dev_config}"
+		uci set network.${vlan_dev_config}.device='switch0'
+		uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
+		uci set network.${vlan_dev_config}.ports='0t 1t 2t 3t 4t 5t 6t 7t 8t 9t'
+
+		# create interface
+		vlan_device="$eth.${mesh_vlan_id}"
+		uci add network interface
+		uci set network.@interface[-1].device="${vlan_device}"
+
+		CREATE_VLAN_NETWORK="${vlan_network}"
+	else
+echo aaaaa
+		# create bridge-vlan (similar to device section)
+		uci add network bridge-vlan
+		uci rename network.@bridge-vlan[-1]="${vlan_dev_config}"
+		uci set network.${vlan_dev_config}.name="${br_landev_name}"
+		uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
+		# copy all switch ports from lan and tag them
+		for port in $(uci -q get network.${br_landev_config}.ports)
+		do
+			uci add_list network.${vlan_dev_config}.ports="${port}:t"
+		done
+echo bbbb
+		# create interface
+		uci add network interface
+		uci rename network.@interface[-1]="${vlan_network}"
+		uci set network.${vlan_network}.device="${br_landev_name}.${mesh_vlan_id}"
+		uci set network.${vlan_network}.ipaddr="$_ddmesh_nonprimary_ip"
+		uci set network.${vlan_network}.netmask="$_ddmesh_netmask"
+		uci set network.${vlan_network}.broadcast="$_ddmesh_broadcast"
+		uci set network.${vlan_network}.proto='static'
+		uci set network.${vlan_network}.force_link=1
+echo ccc
+		CREATE_VLAN_NETWORK=""
+	fi
+
+	# create interfaces (bridges)
+	for NET in mesh_lan mesh_wan ${CREATE_VLAN_NETWORK}
 	do
+		# create interface
 		uci add network interface
 		uci rename network.@interface[-1]="${NET}"
 		uci set network.${NET}.device="br-${NET}"
@@ -141,6 +200,11 @@ setup_mesh()
 		uci set network.${dev_config}.type='bridge'
 		uci set network.${dev_config}.stp=1
 		uci set network.${dev_config}.bridge_empty=1
+
+		# add vlan ports (comes here only for non-dsa )
+		if [ "${NET}" = "${CREATE_VLAN_NETWORK}" ]; then
+			uci add_list network.${dev_config}.ports="${vlan_device}"
+		fi
 	done
 }
 
@@ -301,6 +365,7 @@ setup_network()
  rm -f /etc/config/network
  /bin/config_generate
 
+ # setup_mesh AFTER setup_ethernet (setup_mesh needs lan network)
  for f in setup_ethernet setup_mesh setup_wwan setup_wifi setup_backbone setup_bmxd setup_vpn setup_privnet
  do
 	echo "call ${f}()"
