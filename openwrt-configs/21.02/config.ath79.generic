@@ -3420,7 +3420,7 @@ CONFIG_OPENLDAP_DEBUG=y
 # CONFIG_PACKAGE_igmpproxy is not set
 # CONFIG_PACKAGE_ip-bridge is not set
 # CONFIG_PACKAGE_ip-full is not set
-# CONFIG_PACKAGE_ip-tiny is not set
+CONFIG_PACKAGE_ip-tiny=y
 # CONFIG_PACKAGE_lldpd is not set
 # CONFIG_PACKAGE_nstat is not set
 # CONFIG_PACKAGE_rdma is not set
