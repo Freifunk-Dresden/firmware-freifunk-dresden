@@ -25,7 +25,6 @@ define Package/$(PKG_NAME)-base
 		+PACKAGE_wireguard-tools:kmod-ipip \
 		+PACKAGE_fastd:nacl \
 		+PACKAGE_fastd:libuecc
-  PKG_BUILD_DEPENDS:=libuecc nacl
 
   TITLE:=Meta package to select all needed basic packages
 endef
