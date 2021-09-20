@@ -62,7 +62,7 @@ case "$ARG1" in
 	FASTD_IF="tbb_fastd"
 	LAN_IF="$(uci get network.mesh_lan.device)"
 	WAN_IF="$(uci get network.mesh_wan.device)"
-	VLAN_IF="$(uci get network.mesh_vlan.device)"
+	[ "$(uci -q get ddmesh.network.mesh_on_vlan)" = "1" ] && VLAN_IF="$(uci get network.mesh_vlan.device)"
 
 	brctl addbr $PRIMARY_IF
 	ip addr add $_ddmesh_ip/32 broadcast $_ddmesh_broadcast dev $PRIMARY_IF
