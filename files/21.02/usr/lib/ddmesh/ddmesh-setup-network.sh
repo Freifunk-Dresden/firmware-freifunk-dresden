@@ -155,11 +155,13 @@ setup_mesh()
 
 			CREATE_VLAN_NETWORK="${vlan_network}"
 		else
+			# must be the interface where the switch is connected
+			device="${br_landev_name}"
 
 			# create bridge-vlan (similar to device section)
 			uci add network bridge-vlan
 			uci rename network.@bridge-vlan[-1]="${vlan_dev_config}"
-			uci set network.${vlan_dev_config}.name="${br_landev_name}"
+			uci set network.${vlan_dev_config}.name="${device}"
 			uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
 			# copy all switch ports from lan and tag them
 			for port in $(uci -q get network.${br_landev_config}.ports)
@@ -170,7 +172,7 @@ setup_mesh()
 			# create interface
 			uci add network interface
 			uci rename network.@interface[-1]="${vlan_network}"
-			uci set network.${vlan_network}.device="${br_landev_name}.${mesh_vlan_id}"
+			uci set network.${vlan_network}.device="${device}.${mesh_vlan_id}"
 			uci set network.${vlan_network}.ipaddr="$_ddmesh_nonprimary_ip"
 			uci set network.${vlan_network}.netmask="$_ddmesh_netmask"
 			uci set network.${vlan_network}.broadcast="$_ddmesh_broadcast"
@@ -184,10 +186,12 @@ setup_mesh()
 	# create interfaces (bridges)
 	for NET in mesh_lan mesh_wan ${CREATE_VLAN_NETWORK}
 	do
+		device="br-${NET}"
+
 		# create interface
 		uci add network interface
 		uci rename network.@interface[-1]="${NET}"
-		uci set network.${NET}.device="br-${NET}"
+		uci set network.${NET}.device="${device}"
 		uci set network.${NET}.ipaddr="$_ddmesh_nonprimary_ip"
 		uci set network.${NET}.netmask="$_ddmesh_netmask"
 		uci set network.${NET}.broadcast="$_ddmesh_broadcast"
@@ -198,7 +202,7 @@ setup_mesh()
 		dev_config="device_${NET}"
 		uci add network device
 		uci rename network.@device[-1]="${dev_config}"
-		uci set network.${dev_config}.name="br-${NET}"
+		uci set network.${dev_config}.name="${device}"
 		uci set network.${dev_config}.type='bridge'
 		uci set network.${dev_config}.stp=1
 		uci set network.${dev_config}.bridge_empty=1
