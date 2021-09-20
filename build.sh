@@ -988,7 +988,6 @@ EOM
 				# create a new config
 
 	DEFAULT_CONFIG="${RUN_DIR}/${CONFIG_DIR}/${_selector_config}/${CONFIG_DEFAULT_FILE}"
-	# check if config exists, if not uses default as basis
 	if [ ! -f "${RUN_DIR}/${config_file}" ]; then
 		if [ "$MENUCONFIG" = "1" ]; then
 			echo -e "${C_PURPLE}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
@@ -1000,9 +999,10 @@ EOM
 
 			# remove any old config from build root
 			rm -f .config
-
+			#cp ${DEFAULT_CONFIG} .config
 		else
-			# no config and no menuconfig -> continue with next target
+			# no config and no menuconfig -> continue with next target; do not create config yet.
+			# it only should be down by menuconfig
 			echo -e $C_PURPLE"no configuration, continue with next target if any$C_NONE"
 			progbar_char_array[$((progress_counter-1))]="."
 			continue
