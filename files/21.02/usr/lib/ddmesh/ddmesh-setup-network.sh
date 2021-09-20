@@ -125,7 +125,7 @@ setup_mesh()
 		# setup mesh vlan
 		mesh_vlan_id="$(uci -q get ddmesh.network.mesh_vlan_id)"
 		if [ -z "${mesh_vlan_id}" ]; then
-			mesh_vlan_id="10"	# default
+			mesh_vlan_id="9"	# default, hope it doesn't conflict with private vlans
 			uci set ddmesh.network.mesh_vlan_id="${mesh_vlan_id}"
 		fi
 

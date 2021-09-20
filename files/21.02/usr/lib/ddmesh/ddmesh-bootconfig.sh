@@ -134,6 +134,7 @@ config network 'network'
 	option	mesh_on_lan 0
 	option	mesh_on_wan 0
 	option	mesh_on_vlan 1
+	option	mesh_vlan_id 9
 	option	wifi3_2g_enabled 0
 	option	wifi3_2g_network 'lan'
 	option	wifi3_2g_security 1
