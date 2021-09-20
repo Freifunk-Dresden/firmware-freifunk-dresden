@@ -39,6 +39,16 @@ get_switch_info()
 			$json && echo "]"
 			break; # only one switch
 		done
+	else
+		dev="dummy"
+		$json && echo "\"$dev\" : ["
+		unset port; unset link; unset speed
+		$json && {
+				$comma && echo -n ","
+				echo "{ \"port\":\"$port\", \"carrier\":\"$link\", \"speed\":\"$speed\"}"
+		}
+		$csv && echo "$port,$link,$speed"
+		$json && echo "]"
 	fi
 
 	$json && echo "}"
