@@ -20,6 +20,7 @@ define Package/$(PKG_NAME)-base
 		+ddns-scripts +ddns-scripts_no-ip_com \
 		+iptables \
 		+px5g-mbedtls \
+		+ip-tiny \
 		+iperf3 \
 		+PACKAGE_wireguard-tools:kmod-ipip \
 		+PACKAGE_fastd:nacl \
