@@ -329,7 +329,23 @@ numberOfTargets()
  [ -z "$ARG_regexTarget" ] && ARG_regexTarget='.*'
 
 	cleanJson=$(getTargetsJson)
-	echo "$cleanJson" | jq --raw-output "[ .[] | select( .name | test (\"${ARG_regexTarget}\") ) ]| length"
+# princip:
+# 1. separate each object from array and pip it to 'select'
+# 2. 'select' only let pass objects when true
+# 3. .name is piped to both 'test' functions at same time.
+# 4. 'not' function seams to have highere priority than 'and'. brackets are not needed, but I
+#    have added those for more clarifications
+#    The second 'test' outcome (true or false) are piped to 'not' and negates the output of the
+#    second 'test'
+# 5. first 'test' second 'test' are logical evaluated with 'and', and determines the input of
+#    'select' function
+#
+# 6. now an array from what 'select' filters, which in turn is
+# then counted by function 'length'
+echo "$cleanJson" | jq --raw-output "[  .[]
+			| select(	.name |
+			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+					    ) ] | length"
 }
 
 search_target()
@@ -488,8 +504,27 @@ fi
 echo "### target-regex:[$targetRegex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
 
 cleanJson=$(getTargetsJson)
-echo "$cleanJson" | jq --raw-output ".[] | select( .name | test (\"${targetRegex}\") ) | .name"
-echo "$cleanJson" | jq --raw-output "[ .[] | select( .name | test (\"${targetRegex}\") ) ]| length"
+
+# princip:
+# 1. separate each object from array and pip it to 'select'
+# 2. 'select' only let pass objects when true
+# 3. .name is piped to both 'test' functions at same time.
+# 4. 'not' function seams to have highere priority than 'and'. brackets are not needed, but I
+#    have added those for more clarifications
+#    The second 'test' outcome (true or false) are piped to 'not' and negates the output of the
+#    second 'test'
+# 5. first 'test' second 'test' are logical evaluated with 'and', and determines the input of
+#    'select' function
+echo "$cleanJson" | jq --raw-output ".[]
+			| select(	.name |
+			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+					    ) | .name"
+# same as first command; but creates an array from what 'select' filters, which in turn is
+# then counted by function 'length'
+echo "$cleanJson" | jq --raw-output "[  .[]
+			| select(	.name |
+			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+					    ) ] | length"
 
 # emtpy line needed, else tput stuff clears some. So this emtpy line is cleared
 echo " "
