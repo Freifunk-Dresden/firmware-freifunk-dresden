@@ -230,7 +230,7 @@ listTargets()
  cleanJson=$(getTargetsJson)
 
 #	ARG_regexTarget='ip'
-#	echo "$cleanJson" | jq --raw-output '.[] | select( .name | test ("'${ARG_regexTarget}'") ) | .name'
+#	echo "$cleanJson" | jq --raw-output ".[] | select( .name | test (\"${ARG_regexTarget}\") ) | .name"
 
  # first read default
  entry=$(echo "$cleanJson" | jq ".[0]")
@@ -329,7 +329,7 @@ numberOfTargets()
  [ -z "$ARG_regexTarget" ] && ARG_regexTarget='.*'
 
 	cleanJson=$(getTargetsJson)
-	echo "$cleanJson" | jq --raw-output '[ .[] | select( .name | test ("'${ARG_regexTarget}'") ) ]| length'
+	echo "$cleanJson" | jq --raw-output "[ .[] | select( .name | test (\"${ARG_regexTarget}\") ) ]| length"
 }
 
 search_target()
@@ -462,9 +462,6 @@ else
 	# replace any "space" with '|'. space can be used as separator lile '|'
 	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#|#g')
 
-	# add '\' to each '|'™
-	targetRegex=${targetRegex//|/\\|}
-
 	# append '$' to targetRegex, to ensure that 'ar71xx.generic.xyz' is not built
 	# when 'ar71xx.generic' was specified. Use 'ar71xx.generic.*' if both
 	# targets should be created
@@ -487,7 +484,15 @@ else
 	BUILD_PARAMS=$*
 fi
 
+
 echo "### target-regex:[$targetRegex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
+
+cleanJson=$(getTargetsJson)
+echo "$cleanJson" | jq --raw-output ".[] | select( .name | test (\"${targetRegex}\") ) | .name"
+echo "$cleanJson" | jq --raw-output "[ .[] | select( .name | test (\"${targetRegex}\") ) ]| length"
+
+# emtpy line needed, else tput stuff clears some. So this emtpy line is cleared
+echo " "
 
 if [ "$_TERM" = "1" ]; then
 	trap clean_up_exit SIGINT SIGTERM
@@ -702,7 +707,9 @@ do
 
 	#check if configuration name matches the targetRegex (target parameter)
 	config_name=$(echo $entry | jq $OPT '.name')
-	filterred=$(echo $config_name | sed -n "/$targetRegex/p")
+	# add '\' to each '|'™ only for sed command
+	sedTargetRegex=${targetRegex//|/\\|}
+	filterred=$(echo $config_name | sed -n "/$sedTargetRegex/p")
 	test -z "$filterred" && continue
 
 
