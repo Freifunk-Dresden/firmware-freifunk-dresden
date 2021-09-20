@@ -1,6 +1,18 @@
-diff -Naur --suppress-blank-empty --strip-trailing-cr target.ori/linux/kirkwood/image/Makefile target/linux/kirkwood/image/Makefile
---- buildroot/target/linux/kirkwood/image/Makefile	2021-08-18 17:30:31.000000000 +0200
-+++ buildroot/target/linux/kirkwood/image/Makefile	2021-09-19 18:37:06.335989441 +0200
+diff -Naur --suppress-blank-empty --strip-trailing-cr buildroot/target/linux/kirkwood/base-files/etc/board.d/05_compat-version target/linux/kirkwood/base-files/etc/board.d/05_compat-version
+--- buildroot/target/linux/kirkwood/base-files/etc/board.d/05_compat-version	2021-08-19 01:14:59.671234932 +0200
++++ buildroot/target/linux/kirkwood/base-files/etc/board.d/05_compat-version	2021-09-20 19:44:39.575578216 +0200
+@@ -12,7 +12,7 @@
+ 	linksys,e4200-v2|\
+ 	linksys,ea3500|\
+ 	linksys,ea4500)
+-		ucidef_set_compat_version "1.1"
++#ddmesh:dsa#		ucidef_set_compat_version "1.1"
+ 		;;
+ esac
+
+diff -Naur --suppress-blank-empty --strip-trailing-cr buildroot/target/linux/kirkwood/image/Makefile target/linux/kirkwood/image/Makefile
+--- buildroot/target/linux/kirkwood/image/Makefile	2021-08-19 01:14:59.671234932 +0200
++++ buildroot/target/linux/kirkwood/image/Makefile	2021-09-19 20:08:12.898709441 +0200
 @@ -8,8 +8,11 @@
  KERNEL_LOADADDR:=0x8000
 
@@ -15,9 +27,21 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr target.ori/linux/kirkwood/
  endef
 
  define Device/Default
-diff -Naur --suppress-blank-empty --strip-trailing-cr target.ori/linux/mvebu/image/cortexa9.mk target/linux/mvebu/image/cortexa9.mk
---- buildroot/target/linux/mvebu/image/cortexa9.mk	2021-08-18 17:30:31.000000000 +0200
-+++ buildroot/target/linux/mvebu/image/cortexa9.mk	2021-09-19 18:36:28.567830376 +0200
+diff -Naur --suppress-blank-empty --strip-trailing-cr buildroot/target/linux/mvebu/cortexa9/base-files/etc/board.d/05_compat-version target/linux/mvebu/cortexa9/base-files/etc/board.d/05_compat-version
+--- buildroot/target/linux/mvebu/cortexa9/base-files/etc/board.d/05_compat-version	2021-08-19 01:14:59.711234945 +0200
++++ buildroot/target/linux/mvebu/cortexa9/base-files/etc/board.d/05_compat-version	2021-09-20 19:46:08.836481151 +0200
+@@ -17,7 +17,7 @@
+ 	linksys,wrt32x|\
+ 	solidrun,clearfog-base-a1|\
+ 	solidrun,clearfog-pro-a1)
+-		ucidef_set_compat_version "1.1"
++#ddmesh:dsa#		ucidef_set_compat_version "1.1"
+ 		;;
+ esac
+
+diff -Naur --suppress-blank-empty --strip-trailing-cr buildroot/target/linux/mvebu/image/cortexa9.mk target/linux/mvebu/image/cortexa9.mk
+--- buildroot/target/linux/mvebu/image/cortexa9.mk	2021-08-19 01:14:59.715234948 +0200
++++ buildroot/target/linux/mvebu/image/cortexa9.mk	2021-09-19 20:08:12.898709441 +0200
 @@ -4,8 +4,11 @@
  # Copyright (C) 2016 LEDE-project.org
 
@@ -32,9 +56,9 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr target.ori/linux/mvebu/ima
  endef
 
  define Device/kernel-size-migration
-diff -Naur --suppress-blank-empty --strip-trailing-cr target.ori/linux/ramips/image/mt7621.mk target/linux/ramips/image/mt7621.mk
---- buildroot/target/linux/ramips/image/mt7621.mk	2021-08-18 17:30:31.000000000 +0200
-+++ buildroot/target/linux/ramips/image/mt7621.mk	2021-09-19 18:35:47.055654619 +0200
+diff -Naur --suppress-blank-empty --strip-trailing-cr buildroot/target/linux/ramips/image/mt7621.mk target/linux/ramips/image/mt7621.mk
+--- buildroot/target/linux/ramips/image/mt7621.mk	2021-08-19 01:14:59.779234970 +0200
++++ buildroot/target/linux/ramips/image/mt7621.mk	2021-09-19 20:08:12.902709460 +0200
 @@ -91,8 +91,11 @@
  endef
 
@@ -49,3 +73,15 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr target.ori/linux/ramips/im
  endef
 
  define Device/adslr_g7
+diff -Naur --suppress-blank-empty --strip-trailing-cr buildroot/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version
+--- buildroot/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2021-08-19 01:14:59.779234970 +0200
++++ buildroot/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2021-09-20 19:44:52.279707428 +0200
+@@ -10,7 +10,7 @@
+
+ case "$(board_name)" in
+ 	*)
+-		ucidef_set_compat_version "1.1"
++#ddmesh:dsa#		ucidef_set_compat_version "1.1"
+ 		;;
+ esac
+
