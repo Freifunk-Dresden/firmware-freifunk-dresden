@@ -164,12 +164,18 @@ cat<<EOM
 EOM
 fi
 cat<<EOM
-
 <TR>
 <TH>- LAN-Meshing:</TH>
 <TD><INPUT NAME="form_lan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ];then echo ' checked="checked"';fi)></TD>
 <td>Wenn aktiv, werden alle LAN-Ports zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber Knoten-IP-Adresse via LAN</b> erreichbar.<br/>LAN-Konfiguration und privates Netzwerk werden deaktiviert. LAN-Meshing wird erst 5 minuten nach Routerstart aktiviert wenn dies im Punkt "LAN-Meshing Wartezeit" nicht explizit deaktiviert wurde.</td>
 </TR>
+
+<TR>
+<TH>- VLAN-Meshing:</TH>
+<TD><INPUT NAME="form_vlan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_vlan)" = "1" ];then echo ' checked="checked"';fi)></TD>
+<td>Wenn aktiv, wird ein VLAN10 &uuml;ber alle Ethernet-Ports zum direkten Meshing genutzt.</td>
+</TR>
+
 <TH>- LAN-Meshing Wartezeit:</TH>
 <TD><INPUT NAME="form_lan_meshing_sleep" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.mesh_sleep)" = "1" ];then echo ' checked="checked"';fi)></TD>
 <td>Wenn aktiv, dann wird LAN-Meshing erst 5 minuten nach Routerstart aktiviert.</td>
@@ -288,6 +294,7 @@ else
 		uci set ddmesh.network.mesh_on_lan=${form_lan_meshing:-0}
 		uci set ddmesh.system.mesh_sleep=${form_lan_meshing_sleep:-0}
 		uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
+		uci set ddmesh.network.mesh_on_vlan=${form_vlan_meshing:-0}
 		prefgw="$(uhttpd -d $form_lan_preferred_gateway)"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}

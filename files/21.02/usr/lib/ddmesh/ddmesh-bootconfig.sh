@@ -132,6 +132,8 @@ config network 'network'
 	option	mesh_network_id '1206'
 	option	mesh_mtu 1200
 	option	mesh_on_lan 0
+	option	mesh_on_wan 0
+	option	mesh_on_vlan 1
 	option	wifi3_2g_enabled 0
 	option	wifi3_2g_network 'lan'
 	option	wifi3_2g_security 1
