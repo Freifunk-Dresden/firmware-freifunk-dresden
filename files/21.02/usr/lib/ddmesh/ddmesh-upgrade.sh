@@ -560,7 +560,7 @@ upgrade_7_1_1()
 	cp /rom/etc/config/uhttpd /etc/config/wshaper
 
 	uci add_list firewall.zone_mesh.network="mesh_vlan"
-
+  uci set ddmesh.network.mesh_on_vlan='1'
 }
 
 ##################################
