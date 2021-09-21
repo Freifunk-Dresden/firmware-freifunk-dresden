@@ -586,24 +586,24 @@ setup_buildroot ()
 		if [ -d $openwrt_patches_dir ]; then
 			for i in $openwrt_patches_dir/*
 			do
-				echo "apply openwrt patch: $i to buildroot:$buildroot"
+				echo -e "${C_CYAN}apply openwrt patch:${C_NONE} $i to buildroot:$buildroot"
 				# --no-backup-if-mismatch avoids creating backup files for files
 				# with different names or if not exist (new files)
 				patch --no-backup-if-mismatch --directory=$buildroot -p1 < $i
 			done
 		fi
 	else
-		echo -e "${C_PURPLE}Buildroot [$buildroot]${C_NONE} already present"
+		echo -e "${C_CYAN}Buildroot [$buildroot]${C_NONE} already present"
 	fi
 
-	echo -n -e $C_PURPLE"create dl directory/links"$C_NONE": "
+	echo -n -e $C_CYAN"create dl directory/links"$C_NONE": "
 	rm -f $buildroot/dl
 	ln -s ../../$openwrt_dl_dir $buildroot/dl
 	echo "done."
 
 	# -------- common files -----------
 	# copy common files first
-	echo -n -e "${C_PURPLE}copy rootfs ${C_NONE}: ${C_GREEN} common ${C_NONE}: "
+	echo -n -e "${C_CYAN}copy rootfs (common)${C_NONE}: "
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
 	# --remove-destination forces copy (first remove (e.g. symlinks))
@@ -612,7 +612,7 @@ setup_buildroot ()
 
 	# -------- specific files -----------
 	# copy specific files over (may overwrite common)
-	echo -n -e "${C_PURPLE}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
+	echo -n -e "${C_CYAN}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
 	if [ -n "${firmware_files}" -a -d "$RUN_DIR/files/${firmware_files}" ]; then
 		# --remove-destination forces copy (first remove (e.g. symlinks))
 		cp -a --remove-destination $RUN_DIR/files/${firmware_files}/* $buildroot/files/
@@ -621,13 +621,13 @@ setup_buildroot ()
 		echo "no specific files."
 	fi
 
-	echo -n -e $C_PURPLE"create rootfs/etc/built_info file: "$C_NONE
+	echo -n -e $C_CYAN"create rootfs/etc/built_info file: "$C_NONE
 	mkdir -p $buildroot/files/etc
 	> $buildroot/files/etc/built_info
 	echo "done."
 
 	# more dynamic changes
-	echo -n -e $C_PURPLE"setup dynamic firmware config: "$C_NONE
+	echo -n -e $C_CYAN"setup dynamic firmware config: "$C_NONE
 	setup_dynamic_firmware_config "$buildroot/files"
   echo "done."
 
@@ -861,7 +861,7 @@ do
 	setup_buildroot $buildroot $_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_selector_files
 
 	# --------  generate feed configuration from selected config -----------
-	echo -e $C_PURPLE"generate feed config"$C_NONE
+	echo -e $C_CYAN"generate feed config"$C_NONE
 
 	# create feed config from build.json
 	if [ "$_feeds" = "null" ]; then
@@ -911,16 +911,16 @@ EOM
 	cd $buildroot
 
 	if [ "$MAKE_CLEAN" = "1" ]; then
-		echo -e $C_PURPLE"run clean"$C_NONE
+		echo -e $C_CYAN"run clean"$C_NONE
 		make clean
 		continue # clean next target
 	fi
 
 	# --------- update all feeds from feeds.conf (feed info) ----
-	echo -e $C_PURPLE"update feeds"$C_NONE
+	echo -e $C_CYAN"update feeds"$C_NONE
 	./scripts/feeds update -a
 
-	echo -e $C_PURPLE"install missing packages from feeds"$C_NONE
+	echo -e $C_CYAN"install missing packages from feeds"$C_NONE
 	# install additional packages (can be selected via "menuconfig")
 	idx=0
 	while true
@@ -934,22 +934,22 @@ EOM
 		./scripts/feeds install $entry
 	done
 
-	echo -e $C_PURPLE"install all packages from own local feed directory (ddmesh_own)"$C_NONE
+	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh_own)"$C_NONE
 	./scripts/feeds install -a -p ddmesh_own
 
 
 	# delete target dir, but only delete when no specific device/variant is built.
 	# generic targets (that contains all devices) must come before specific targets.
 	if [ -z "$_variant" ]; then
-		echo -e "${C_PURPLE}delete previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
+		echo -e "${C_CYAN}delete previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
 		rm -rf ${target_dir}
 	else
-		echo -e "${C_PURPLE}KEEP previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
+		echo -e "${C_CYAN}KEEP previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
 	fi
 
 	#try to apply target patches
 	mkdir -p $DDMESH_PATCH_STATUS_DIR
-	echo -e $C_PURPLE"apply target patches"$C_NONE
+	echo -e $C_CYAN"apply target patches"$C_NONE
 	idx=0
 	while true
 	do
@@ -990,7 +990,7 @@ EOM
 	DEFAULT_CONFIG="${RUN_DIR}/${CONFIG_DIR}/${_selector_config}/${CONFIG_DEFAULT_FILE}"
 	if [ ! -f "${RUN_DIR}/${config_file}" ]; then
 		if [ "$MENUCONFIG" = "1" ]; then
-			echo -e "${C_PURPLE}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
+			echo -e "${C_CYAN}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
 
 			if [ ! -f ${DEFAULT_CONFIG} ]; then
 				echo -e "${C_RED}ERROR: NO Default Config:${C_NONE} [${DEFAULT_CONFIG}]"
@@ -1003,14 +1003,14 @@ EOM
 		else
 			# no config and no menuconfig -> continue with next target; do not create config yet.
 			# it only should be down by menuconfig
-			echo -e $C_PURPLE"no configuration, continue with next target if any$C_NONE"
+			echo -e $C_CYAN"no configuration, continue with next target if any$C_NONE"
 			progbar_char_array[$((progress_counter-1))]="."
 			continue
 
 		fi
 	else
 		# copy specific config
-		echo -e $C_PURPLE"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
+		echo -e $C_CYAN"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 		cp $RUN_DIR/$config_file .config
 	fi
 
@@ -1018,47 +1018,41 @@ EOM
 
 	if [ "$MENUCONFIG" = "1" ]; then
 
-		echo -e "${C_PURPLE}run menuconfig${C_NONE}"
+		echo -e "${C_CYAN}run menuconfig${C_NONE}"
 		make menuconfig
-		echo ""
-
-		# default config contains important modifications after openwrt has created a config from scratch
-		# or user has enabled some unsupported features by freifunk.
-		# All invalid settings are overwritten by just appending the default config.
-		# see https://openwrt.org/docs/guide-developer/build-system/use-buildsystem
-		# The default config is generated with those steps:
-		# 1. cd workdir/buildroot
-		# 2. rm .config
-		# 3. unselect all unwanted configuration that should be removed from (e.g. IPV6,PPP,....)
-		# 4. run ./scripts/diffconfig.sh firmware/openwrt-configs/21.02/default.config
-
-		echo -e "${C_PURPLE}post-overwrite configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
-		cat ${DEFAULT_CONFIG} >> .config
-		# cleanup config finally
-		echo -e "${C_PURPLE}reprocess configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
-		make defconfig
-
-		echo -e "${C_PURPLE}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
-		cp .config ${RUN_DIR}/${config_file}
-
-		clean_up_exit 0
 	fi
 
-	# run defconfig to correct config dependencies if those have changed.
-
-	echo -e $C_PURPLE"run defconfig"$C_NONE
+	# default config contains important modifications after openwrt has created a config from scratch
+	# or user has enabled some unsupported features by freifunk.
+	# All invalid settings are overwritten by just appending the default config.
+	# see https://openwrt.org/docs/guide-developer/build-system/use-buildsystem
+	# The default config is generated with those steps:
+	# 1. cd workdir/buildroot
+	# 2. rm .config
+	# 3. unselect all unwanted configuration that should be removed from (e.g. IPV6,PPP,....)
+	# 4. run ./scripts/diffconfig.sh firmware/openwrt-configs/21.02/default.config
+	echo -e "${C_CYAN}post-overwrite configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+	cat ${DEFAULT_CONFIG} >> .config
+	echo -e "${C_CYAN}reprocess configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
 	make defconfig
+	echo -e "${C_CYAN}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+	cp .config ${RUN_DIR}/${config_file}
+
+	if [ "$MENUCONFIG" = "1" ]; then
+		echo ""
+		clean_up_exit 0
+	fi
 
 	# make clean because openwrt could fail building targets after building different targets before
 	# but keep generated directories (ddmesh-makefile-lightclean.patch).
 	# It keeps generated images and packages.
 	make lightclean
 
-	echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
+	echo -e $C_CYAN"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	cp .config $RUN_DIR/$config_file
 
 	# run make command
-	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
+	echo -e $C_CYAN"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
 	time -p make -j$(nproc) $BUILD_PARAMS
 	error=$?
 	echo "make ret: $error"
@@ -1075,7 +1069,7 @@ EOM
 		echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_config_name}" $C_NONE
 
 		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
-			echo -e $C_PURPLE".......... rerun build with V=s ........................"$C_NONE
+			echo -e $C_CYAN".......... rerun build with V=s ........................"$C_NONE
 			time -p make $BUILD_PARAMS V=s -j1
 			error=$?
 			if [ $error -ne 0 ]; then
@@ -1096,14 +1090,14 @@ EOM
 	fi
 	# success status
 	progbar_char_array[$((progress_counter-1))]="+"
-	echo -e "${C_PURPLE}images created in${C_NONE} ${C_GREEN}${target_dir}${C_NONE}"
+	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${target_dir}${C_NONE}"
 
 done
 
 show_progress $progress_counter $progress_max ${progbar_char_array[@]}
 sleep 1
 
-echo -e $C_PURPLE".......... complete build finished ........................"$C_NONE
+echo -e $C_CYAN".......... complete build finished ........................"$C_NONE
 echo ""
 
 clean_up_exit 0
