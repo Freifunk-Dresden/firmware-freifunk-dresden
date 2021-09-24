@@ -70,7 +70,7 @@ case "$ARG1" in
 	_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1 dev=$LAN_IF /linklayer 1 dev=$WAN_IF /linklayer 1"
 
 	# needed during async boot, state changes then
-	/usr/lib/ddmesh/ddmesh-utils-network-info.sh update
+    /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 
 	#add wifi, if hotplug event did occur before starting bmxd
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
@@ -102,7 +102,6 @@ case "$ARG1" in
 	SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 	TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre"
 	TUNING_OPTS="--purge_timeout 20 --gateway_hysteresis $GATEWAY_HYSTERESIS --script /usr/lib/bmxd/bmxd-gateway.sh"
-
 	DAEMON_OPTS="$NETWORK_OPTS $SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
 
 
@@ -174,16 +173,18 @@ case "$ARG1" in
 
 
 	fi
+
  	# connection check; if bmxd hangs, kill it
 	# check for existance of "timeout" cmd, else bmxd will be killed every time
 	if [ -n "$TIMEOUT" ]; then
-		$TIMEOUT -s 9 10 $DAEMON -c --status >/dev/null
+		$TIMEOUT -t 10 -s 9 $DAEMON -c --status >/dev/null
 		if [ $? != 0 ]; then
 			logger -s -t "$TAG" "bmxd: connection failed"
 			killall -9 $DAEMON
 			bmxd_restart=1
 		fi
 	fi
+
 	# too many instances running (count no zombies)
 	bmxd_count=$(ps | awk '{ if(match($4,"Z")==0 && (match($5,"^bmxd$") || match($5,"^/usr/bin/bmxd$")) ){print $5}}' | wc -l)
 	test "$bmxd_count" -gt $bmxd_max_instances && logger -s -t "$TAG" "bmxd: too many instances ($bmxd_count/$bmxd_max_instances)" && bmxd_restart=1
