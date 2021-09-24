@@ -8,8 +8,12 @@
 
 export TITLE="Verwaltung &gt; Wartung: Konfiguration"
 
+eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
+export model="$(echo $model | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
+export model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
+
 ver=$(uci get ddmesh.boot.upgrade_version)
-CONF_FILE="router-$(uci get ddmesh.system.node)-config-fw$ver-$(date +"%Y%b%d-%H%M%S").tgz"
+CONF_FILE="config-${model2}-router-$(uci get ddmesh.system.node)-fw$ver-$(date +"%Y%b%d-%H%M%S").tgz"
 PACKAGES="/etc/installed.packages"
 OPKG_ERROR="/tmp/opkg.error"
 
