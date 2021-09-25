@@ -47,15 +47,15 @@
 "failed",
 "ar71xx.tiny.lowmem",
 "ar71xx.generic.lowmem",
-"x86.generic",
-"x64.generic",
-"ramips.mt7621.generic",
-"ramips.mt7621.ubnt-edge",
-"ramips.mt76x8.generic",
 "ramips.rt305x.tiny.lowmem",
+"x86.generic.offloader",
+"x86.64.offloader",
+"ramips.mt7621.generic",
+"ramips.mt7621.offloader",
+"ramips.mt76x8.generic",
 "lantiq.xrx200",
 "lantiq.xway",
-"sunxi.cortexa7.generic",
+"sunxi.cortexa7.offloader",
 "ath79.generic",
 "ath79.generic.gl-mifi",
 "ath79.nand",
@@ -63,7 +63,10 @@
 "ipq40xx.generic",
 "ipq40xx.generic.fr-1200",
 "bcm53xx.generic.arm",
-"mpc85xx.p1020            ]"
+"mpc85xx.p1020"
+
+
+            ]
         }
     ]
 }
