@@ -40,8 +40,14 @@ ip rule add fwmark 0x5002 table unreachable prio 460
 ip rule $1 to $_ddmesh_fullnet table bat_route priority 500
 
 #at this point only let inet ips go further. let all other network ips (10er) be unreachable
-#to speed up routing and avoid loops within same node
+#to speed up routing and avoid loops within same node.
+# Also forbit going in private ranges. that can happen when wan/lan interface bridge
+# does not contain an interface (because mesh-on-lan/wan). then no route is present
+# in table main.
 ip rule $1 to 10.0.0.0/8 table unreachable priority 503
+ip rule $1 to 192.168.0.0/16 table unreachable priority 504
+ip rule $1 to 172.16.0.0/12 table unreachable priority 504
+
 
 ip rule $1 table bat_default priority 505
 # put fallback after bat_default. If lan was configured and mesh-on-lan is active
