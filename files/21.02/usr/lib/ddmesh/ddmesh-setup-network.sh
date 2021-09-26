@@ -217,10 +217,14 @@ setup_mesh()
 
 		# add vlan ports
 		if [ "${NET}" = "mesh_vlan" ]; then
-			for br in lan wan
-			do
-				uci add_list network.${dev_config}.ports="br-${br}.${mesh_vlan_id}"
-			done
+			if ! $dsa; then
+				uci add_list network.${dev_config}.ports="${vlan_device}"
+			else
+				for br in lan wan
+				do
+					uci add_list network.${dev_config}.ports="br-${br}.${mesh_vlan_id}"
+				done
+			fi
 		fi
 	done
 }
