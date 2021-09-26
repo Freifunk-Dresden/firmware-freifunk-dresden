@@ -1,3 +1,0 @@
-#!/bin/sh
-# freifunk: disable wifi switch
-exit 0

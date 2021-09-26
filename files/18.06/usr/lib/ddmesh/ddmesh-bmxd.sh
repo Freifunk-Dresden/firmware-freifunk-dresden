@@ -60,17 +60,21 @@ case "$ARG1" in
 
 	PRIMARY_IF="bmx_prime"
 	FASTD_IF="tbb_fastd"
-	LAN_IF="br-mesh_lan"
-	WAN_IF="br-mesh_wan"
+	LAN_IF="$(uci get network.mesh_lan.device)"
+	WAN_IF="$(uci get network.mesh_wan.device)"
+	[ "$(uci -q get ddmesh.network.mesh_on_vlan)" = "1" ] && VLAN_IF="$(uci get network.mesh_vlan.device)"
 
 	brctl addbr $PRIMARY_IF
 	ip addr add $_ddmesh_ip/32 broadcast $_ddmesh_broadcast dev $PRIMARY_IF
 	ip link set dev $PRIMARY_IF up
 
-	_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1 dev=$LAN_IF /linklayer 1 dev=$WAN_IF /linklayer 1"
+	_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1"
+	_IF="${_IF} dev=$LAN_IF /linklayer 1"
+	_IF="${_IF} dev=$WAN_IF /linklayer 1"
+	_IF="${_IF} dev=$VLAN_IF /linklayer 1"
 
 	# needed during async boot, state changes then
-    /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
+	/usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 
 	#add wifi, if hotplug event did occur before starting bmxd
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
@@ -102,6 +106,7 @@ case "$ARG1" in
 	SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 	TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre"
 	TUNING_OPTS="--purge_timeout 20 --gateway_hysteresis $GATEWAY_HYSTERESIS --script /usr/lib/bmxd/bmxd-gateway.sh"
+
 	DAEMON_OPTS="$NETWORK_OPTS $SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $_IF"
 
 
