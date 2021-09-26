@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="13"
+SCRIPT_VERSION="14"
 
 
 # gitlab variables
@@ -67,14 +67,7 @@ C_LGREY='\033[1;37m'
 #save current directory when copying config file
 RUN_DIR=$(pwd)
 
-# jq: first selects the array with all entries and every entry is pass it to select().
-#       select() checks a condition and returns the input data (current array entry)
-#       if condition is true
-# Die eckigen klammern aussenherum erzeugt ein array, in welches alle gefundenen objekte gesammelt werden.
-# Fuer die meisten filenamen ist das array 1 gross. aber fuer files die fuer verschiedene router
-# verwendet werden, koennen mehrere eintraege sein.
-
-
+global_error=0
 
 ############# progress bar ##########################
 
@@ -1064,6 +1057,7 @@ EOM
 
 	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
+		global_error=1
 		progbar_char_array[$((progress_counter-1))]="E"
 
 		echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_config_name}" $C_NONE
@@ -1097,7 +1091,7 @@ done
 show_progress $progress_counter $progress_max ${progbar_char_array[@]}
 sleep 1
 
-echo -e $C_CYAN".......... complete build finished ........................"$C_NONE
+echo -e $C_CYAN".......... complete build finished (exitcode ${global_error})........................"$C_NONE
 echo ""
 
-clean_up_exit 0
+clean_up_exit ${global_error}
