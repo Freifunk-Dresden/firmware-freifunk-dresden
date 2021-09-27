@@ -19,7 +19,7 @@ config dnsmasq 'dnsmasq'
         option filterwin2k '0'
 	list notinterface ''
 	option leasefile '/tmp/dhcp.leases'
-        option resolvfile '/tmp/resolv.conf.final'
+        option resolvfile '/tmp/resolv.conf.d/resolv.conf.final'
         option boguspriv '1'
 
 config dhcp 'lan'

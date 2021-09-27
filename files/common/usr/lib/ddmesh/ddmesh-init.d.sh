@@ -74,7 +74,7 @@ start() {
 	logger -s -t $LOGGER_TAG "dnsmasq"
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh start
 
-	# AFTER dnsmasq (bmxd script will overwrite resolv.conf.final)
+	# AFTER dnsmasq (bmxd script will set resolv.conf.final)
 	logger -s -t $LOGGER_TAG "start service bmxd"
 	/usr/lib/ddmesh/ddmesh-bmxd.sh start
 

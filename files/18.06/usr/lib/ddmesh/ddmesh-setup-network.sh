@@ -39,68 +39,11 @@ setup_ethernet()
 	do
 		if [ -n "$(uci -q get network.${NET})" ]; then
 
-			# ------- configure device -------
-			dev_name=$(uci -q get network.${NET}.device)
-			dev_config=$(get_device_section "$dev_name")
-
-			# check if we have a device section for lan/wan.
-			# In this case the device is normal interface (not a bridge)
-			if [ -z "$(uci -q get network.${dev_config})" ]; then
-
-				# use name that can not conflict with exisings
-				dev_config="ddmesh_dev_${NET}"
-				echo "create device section ${dev_config} for ${NET}"
-
-				uci add network device
-				uci rename network.@device[-1]="${dev_config}"
-
-				# use devname as bridge interface names
-				uci add_list network.${dev_config}.ports="${dev_name}"
-			fi
-
-			# overwrite if device config was already present
-			uci set network.${dev_config}.name="br-${NET}"
-			uci set network.${dev_config}.type='bridge'
-			uci set network.${dev_config}.stp=1
-			uci set network.${dev_config}.bridge_empty=1
-
-			# ------- create devices for all physical eth ports -------
-			local count=0
-			for phy_name in $(uci -q get network.${dev_config}.ports)
-			do
-				phydev_config=$(get_device_section "${phy_name}")
-				if [ -z "$(uci -q get network.${phydev_config})" ]; then
-
-					phydev_config="ddmesh_phydev_${phy_name/./_}"
-					echo "create phy-device section ${phydev_config}"
-
-					uci add network device
-					uci rename network.@device[-1]="${phydev_config}"
-					uci set network.${phydev_config}.name="${phy_name}"
-				fi
-
-				if [ -z "$(uci -q get network.${phydev_config}.macaddr)" ]; then
-
-					# get real mac and modify it. some how does netifd use eth mac for
-					# wifi interfaces. so I can not use those (when lan+wifi are bridged).
-					# google for: U/L bit of mac address (https://de.wikipedia.org/wiki/MAC-Adresse#Vergabestelle)
-					# So I change the first and last
-					mac="$(ip link show dev ${phy_name} | awk '/ether/{print $2}')"
-
-					if [ "${NET}" = "lan" ]; then
-						mac="${count:0:1}2:${mac:3:14}"
-					else
-						mac="${count:0:1}6:${mac:3:14}"
-					fi
-					echo "set mac $mac for ${phydev_config}"
-					uci set network.${phydev_config}.macaddr="$mac"
-				fi
-				count=$((count + 1))
-			done
-
 			# ------- configure interface (after device sections) ------
 			# overwrite device name (after the previous name was extracted and used for device section (wan))
-			uci set network.${NET}.device="br-${NET}"
+			uci set network.${NET}.type='bridge'
+			uci set network.${NET}.stp=1
+			uci set network.${NET}.bridge_empty=1
 
 			# force_link always up. else netifd reconfigures wan/mesh_wan because of hotplug events
 			uci set network.${NET}.force_link=1
@@ -118,13 +61,6 @@ setup_ethernet()
 
 setup_mesh()
 {
-	# determine switch type configuration
-	if [ -n "$(which swconfig)" ]; then
-		dsa=false
-	else
-		dsa=true
-	fi
-
 	# setup mesh vlan
 	mesh_vlan_id="$(uci -q get ddmesh.network.mesh_vlan_id)"
 	if [ -z "${mesh_vlan_id}" ]; then
@@ -132,90 +68,38 @@ setup_mesh()
 		uci set ddmesh.network.mesh_vlan_id="${mesh_vlan_id}"
 	fi
 
-	if ! $dsa ; then
+	# collect all ports
+	local tmp_switch_ports=""
+	cb_switch_vlan()
+	{
+		local config="$1"
+		local var_ports
+		config_get var_ports "$config" ports
+		# remove any tags (t,u,*)
+		var_ports="${var_ports//u/}"
+		var_ports="${var_ports//t/}"
+		var_ports="${var_ports//\*/}"
+		tmp_switch_ports="${tmp_switch_ports} ${var_ports}"
+	}
+	config_load network
+	config_foreach cb_switch_vlan switch_vlan
 
-		# collect all ports
-		local tmp_switch_ports=""
-		cb_switch_vlan()
-		{
-			local config="$1"
-			local var_ports
-			config_get var_ports "$config" ports
-			# remove any tags (t,u,*)
-			var_ports="${var_ports//u/}"
-			var_ports="${var_ports//t/}"
-			var_ports="${var_ports//\*/}"
-			tmp_switch_ports="${tmp_switch_ports} ${var_ports}"
-		}
-		config_load network
-		config_foreach cb_switch_vlan switch_vlan
+	# add tag to each port
+	for p in ${tmp_switch_ports}
+	do
+		# check if already added
+		if [ "${switch_ports}" = "${switch_ports//${p}t/}" ]; then
+			switch_ports="${switch_ports} ${p}t"
+		fi
+	done
 
-		# add tag to each port
-		for p in ${tmp_switch_ports}
-		do
-			# check if already added
-			if [ "${switch_ports}" = "${switch_ports//${p}t/}" ]; then
-				switch_ports="${switch_ports} ${p}t"
-			fi
-		done
-
-		# vlan config
-		vlan_dev_config="switch_vlan_mesh"
-		uci add network switch_vlan
-		uci rename network.@switch_vlan[-1]="${vlan_dev_config}"
-		uci set network.${vlan_dev_config}.device='switch0'
-		uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
-		uci set network.${vlan_dev_config}.ports="${switch_ports# }" #remove leading space
-
-		vlan_ports=""
-		for NET in lan wan
-		do
-			br_dev_name=$(uci -q get network.${NET}.device)
-			br_dev_config=$(get_device_section "$br_dev_name")
-
-			# get eth name (assuming switch always is connected to lan interface)
-			phy_name=$(uci -q get network.${br_dev_config}.ports)
-			eth=${phy_name%.*}
-
-			# check if valid and if already created
-			if [ -n "${eth}" -a "${vlan_ports}" = "${vlan_ports//${eth}/}" ]; then
-				# create interface
-				vlan_device="${eth}.${mesh_vlan_id}"
-				uci add network interface
-				uci set network.@interface[-1].device="${vlan_device}"
-				vlan_ports="${vlan_ports} ${vlan_device}"
-			fi
-		done
-
-	else
-		# create two different vlan configs, one for lan one for wan.
-		# if wan an lan are on switch, then it is possible to put wan and lan dsa interfaces
-		# into one config. but if we have different physical interfaces eth0 and eth1 (futro)
-		# I can not put those interfaces together, as openwrt requires the vlan basename
-		# br-lan or br-wan (vlan bound to those)
-		for NET in lan wan
-		do
-			br_dev_name=$(uci -q get network.${NET}.device)
-			br_dev_config=$(get_device_section "$br_dev_name")
-
-			# create bridge-vlan (similar to device section)
-			vlan_dev_config="vlan_dev_config_${NET}"
-			uci add network bridge-vlan
-			uci rename network.@bridge-vlan[-1]="${vlan_dev_config}"
-			uci set network.${vlan_dev_config}.name="${br_dev_name}"
-			uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
-			# copy all ports from lan or wan and tag them
-			ports="$(uci -q get network.${br_dev_config}.ports)"
-			for port in ${ports}
-			do
-				uci add_list network.${vlan_dev_config}.ports="${port}:t"
-			done
-
-			# create vlan interface
-			uci add network interface
-			uci set network.@interface[-1].device="${br_dev_name}.${mesh_vlan_id}"
-		done
-	fi
+	# vlan config
+	vlan_dev_config="switch_vlan_mesh"
+	uci add network switch_vlan
+	uci rename network.@switch_vlan[-1]="${vlan_dev_config}"
+	uci set network.${vlan_dev_config}.device='switch0'
+	uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
+	uci set network.${vlan_dev_config}.ports="${switch_ports# }" #remove leading space
 
 	# create interfaces (bridges)
 	for NET in mesh_lan mesh_wan mesh_vlan
@@ -225,34 +109,25 @@ setup_mesh()
 		# create interface
 		uci add network interface
 		uci rename network.@interface[-1]="${NET}"
-		uci set network.${NET}.device="${device}"
 		uci set network.${NET}.ipaddr="$_ddmesh_nonprimary_ip"
 		uci set network.${NET}.netmask="$_ddmesh_netmask"
 		uci set network.${NET}.broadcast="$_ddmesh_broadcast"
 		uci set network.${NET}.proto='static'
+		uci set network.${NET}.type='bridge'
+		uci set network.${NET}.stp=1
+		uci set network.${NET}.bridge_empty=1
 		uci set network.${NET}.force_link=1
-
-		# configure as bridge (dev_name is lowlevel name)
-		dev_config="device_${NET}"
-		uci add network device
-		uci rename network.@device[-1]="${dev_config}"
-		uci set network.${dev_config}.name="${device}"
-		uci set network.${dev_config}.type='bridge'
-		uci set network.${dev_config}.stp=1
-		uci set network.${dev_config}.bridge_empty=1
 
 		# add vlan ports
 		if [ "${NET}" = "mesh_vlan" ]; then
-			if ! $dsa; then
-				# need to "for" vlan_ports to remove spaces
-				for p in ${vlan_ports}
-				do
-					uci add_list network.${dev_config}.ports="$p"
-				done
-			else
-				uci add_list network.${dev_config}.ports="br-lan.${mesh_vlan_id}"
-				uci add_list network.${dev_config}.ports="br-wan.${mesh_vlan_id}"
-			fi
+				phy_lan_name=$(uci -q get network.lan.ifname)
+				eth_lan=${phy_lan_name%.*}
+				phy_wan_name=$(uci -q get network.wan.ifname)
+				eth_wan=${phy_wan_name%.*}
+
+				vlan_lan_device="${eth_lan}.${mesh_vlan_id}"
+				vlan_wan_device="${eth_wan}.${mesh_vlan_id}"
+				uci set network.${NET}.ifname="${vlan_lan_device} ${vlan_wan_device}"
 		fi
 	done
 }
@@ -264,7 +139,8 @@ setup_wwan()
 	uci rename network.@interface[-1]='wwan'
 
 	# must be wwan0
-	uci set network.wwan.device='wwan0'
+	uci set network.wwan.ifname='wwan0'
+	uci set network.wwan.device='/dev/cdc-wdm0'
 	uci set network.wwan.proto='qmi'
 	uci set network.wwan.apn="$(uci -q get ddmesh.network.wwan_apn)"
 	uci set network.wwan.pincode="$(uci -q get ddmesh.network.wwan_pincode)"
@@ -284,17 +160,11 @@ setup_wwan()
 	wwan_mode_preferred="$(uci -q get ddmesh.network.wwan_mode_preferred)"
 	uci set network.wwan.preference="$wwan_mode_preferred"
 
-	dev_config="device_wwan"
-	uci add network interface
-	uci rename network.@interface[-1]="${dev_config}"
-	uci set network.${dev_config}.name='wwan0' # must be wwan0
-	uci set network.${dev_config}.device='/dev/cdc-wdm0'
-
 	# helper network, to setup firewall rules for wwan network.
 	# openwrt is not relible to setup wwan0 rules in fw
 	uci add network interface
 	uci rename network.@interface[-1]='wwan_helper'
-	uci set network.wwan_helper.device='wwan+'
+	uci set network.wwan_helper.ifname='wwan+'
 	uci set network.wwan_helper.proto='static'
 	uci set network.wwan_helper.force_link='1'
 }
@@ -331,23 +201,15 @@ setup_wifi()
 	NET="wifi2"
 	uci add network interface
 	uci rename network.@interface[-1]="${NET}"
-	uci set network.${NET}.device="br-${NET}"
 	uci set network.${NET}.ipaddr="$_ddmesh_wifi2ip"
 	uci set network.${NET}.netmask="$_ddmesh_wifi2netmask"
 	uci set network.${NET}.broadcast="$_ddmesh_wifi2broadcast"
 	uci set network.${NET}.proto='static'
 	uci set network.${NET}.force_link=1
+	uci set network.${NET}.type='bridge'
+	uci set network.${NET}.stp=1
+	uci set network.${NET}.bridge_empty=1
 	#don't store dns for wifi2 to avoid adding it to resolv.conf
-
-	dev_config="device_${NET}"
-	uci add network device
-	uci rename network.@device[-1]="${dev_config}"
-
-	# configure as bridge (dev_name is lowlevel name)
-	uci set network.${dev_config}.name="br-${NET}"
-	uci set network.${dev_config}.type='bridge'
-	uci set network.${dev_config}.stp=1
-	uci set network.${dev_config}.bridge_empty=1
 }
 
 setup_backbone()
@@ -361,26 +223,9 @@ setup_backbone()
 	#############################################################################
 	uci add network interface
 	uci rename network.@interface[-1]='tbb_fastd'
-	uci set network.tbb_fastd.device='tbb_fastd'
+	uci set network.tbb_fastd.ifname='tbb_fastd'
 	uci set network.tbb_fastd.proto='static'
 	uci set network.tbb_fastd.force_link='1'
-
-	# wireguard tunnel
-	uci add network interface
-	uci rename network.@interface[-1]='tbbwg'
-	uci set network.tbbwg.device='tbbwg+'
-	uci set network.tbbwg.ipaddr="$_ddmesh_wireguard_ip"
-	uci set network.tbbwg.netmask="$_ddmesh_netmask"
-	uci set network.tbbwg.proto='static'
-	uci set network.tbbwg.force_link='1'
-
-	# wireguard ipip
-	uci add network interface
-	uci rename network.@interface[-1]='tbb_wg'
-	# "+" is needed to create firewall rules for all tbb_wg+... ifaces
-	uci set network.tbb_wg.device='tbb_wg+'
-	uci set network.tbb_wg.proto='static'
-	uci set network.tbb_wg.force_link='1'
 }
 
 # physical if created by bmxd
@@ -389,7 +234,7 @@ setup_bmxd()
 	#bmxd bat zone
 	uci add network interface
 	uci rename network.@interface[-1]='bat'
-	uci set network.bat.device='bat+'
+	uci set network.bat.ifname='bat+'
 	uci set network.bat.proto='static'
 	uci set network.bat.force_link='1'
 }
@@ -400,7 +245,7 @@ setup_vpn()
 	#openvpn zone
 	uci add network interface
 	uci rename network.@interface[-1]='vpn'
-	uci set network.vpn.device='vpn+'
+	uci set network.vpn.ifname='vpn+'
 	uci set network.vpn.proto='static'
 	uci set network.vpn.force_link='1'
 }
@@ -411,7 +256,7 @@ setup_privnet()
 	#privnet zone: it is bridged to br-lan (see /etc/fastd/privnet-cmd.sh)
 	uci add network interface
 	uci rename network.@interface[-1]='privnet'
-	uci set network.privnet.device='priv'
+	uci set network.privnet.ifname='priv'
 	uci set network.privnet.proto='static'
 	uci set network.privnet.force_link='1'
 }

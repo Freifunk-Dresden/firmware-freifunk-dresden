@@ -68,10 +68,14 @@ case "$ARG1" in
 	ip addr add $_ddmesh_ip/32 broadcast $_ddmesh_broadcast dev $PRIMARY_IF
 	ip link set dev $PRIMARY_IF up
 
-	_IF="dev=$PRIMARY_IF /linklayer 0 dev=$FASTD_IF /linklayer 1"
+	_IF="dev=$PRIMARY_IF /linklayer 0"
+	_IF="${_IF} dev=$FASTD_IF /linklayer 1"
 	_IF="${_IF} dev=$LAN_IF /linklayer 1"
 	_IF="${_IF} dev=$WAN_IF /linklayer 1"
-	_IF="${_IF} dev=$VLAN_IF /linklayer 1"
+
+	if [ "$(uci -q get ddmesh.network.mesh_on_vlan)" = "1" ]; then
+		_IF="$_IF dev="$(uci get network.mesh_vlan.device)" /linklayer 1"
+	fi
 
 	# needed during async boot, state changes then
 	/usr/lib/ddmesh/ddmesh-utils-network-info.sh update

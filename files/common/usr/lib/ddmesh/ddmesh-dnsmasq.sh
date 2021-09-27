@@ -6,11 +6,14 @@
 #file is linked via /etc/dnsmasq.conf
 # see http://www.faqs.org/rfcs/rfc2132.html for more dhcp options
 
-FINAL=/tmp/resolv.conf.final
-AUTO=/tmp/resolv.conf.auto
+RESOLV_PATH="/tmp/resolv.conf.d"
+RESOLV_FINAL="${RESOLV_PATH}/resolv.conf.final"
+RESOLV_AUTO="${RESOLV_PATH}/resolv.conf.auto"
 
 if [ "$1" = "configure" ]; then
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+
+	uci set dhcp.dnsmasq.resolvfile="${RESOLV_FINAL}"
 
 	# set domains resolved by freifunk dns
 	nameserver1="$(uci get ddmesh.network.internal_dns1 | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
@@ -90,8 +93,8 @@ fi
 
 if [ "$1" == start ]; then
 	# link to resolv.conf.auto as long as bmxd has not written resolv.conf.final
-	rm -f $FINAL
-	ln -s $AUTO $FINAL
+	rm -f $RESOLV_FINAL
+	ln -s $RESOLV_AUTO $RESOLV_FINAL
 
 	/etc/init.d/dnsmasq stop 2>/dev/null
 	/etc/init.d/dnsmasq start 2>/dev/null

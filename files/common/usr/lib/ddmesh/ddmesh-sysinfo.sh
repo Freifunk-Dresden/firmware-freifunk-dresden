@@ -10,6 +10,8 @@ SYSINFO_MOBILE_GEOLOC=/var/geoloc-mobile.json
 > $OUTPUT
 
 BMXD_DB_PATH=/var/lib/ddmesh/bmxd
+RESOLV_PATH="/tmp/resolv.conf.d"
+RESOLV_FINAL="${RESOLV_PATH}/resolv.conf.final"
 
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 test -z "$_ddmesh_node" && exit
@@ -231,7 +233,7 @@ cat << EOM >> $OUTPUT
 			"uptime":"$(cat /proc/uptime)",
 			"uname":"$(uname -a)",
 			"nameserver": [
-$(cat /var/resolv.conf.final| sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*\(.*\)#\t\t\t\t"\1",#;p}' | sed '$s#,[ 	]*$##')
+$(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*\(.*\)#\t\t\t\t"\1",#;p}' | sed '$s#,[ 	]*$##')
 			],
 			"date":"$(date)",
 			"board":"$(cat /var/sysinfo/board_name 2>/dev/null)",

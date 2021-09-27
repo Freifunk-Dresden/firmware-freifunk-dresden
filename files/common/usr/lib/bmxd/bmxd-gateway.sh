@@ -2,8 +2,9 @@
 # Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
-RESOLV_CONF_FINAL="/tmp/resolv.conf.final"
-RESOLV_CONF_AUTO="/tmp/resolv.conf.auto"
+RESOLV_PATH="/tmp/resolv.conf.d"
+RESOLV_CONF_FINAL="${RESOLV_PATH}/resolv.conf.final"
+RESOLV_CONF_AUTO="${RESOLV_PATH}/resolv.conf.auto"
 TAG="BMXD-SCRIPT[$$]"
 
 if [ -z "$1" ]; then
