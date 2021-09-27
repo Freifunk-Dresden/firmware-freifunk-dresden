@@ -62,7 +62,7 @@ case "$ARG1" in
 	FASTD_IF="tbb_fastd"
 	LAN_IF="$(uci get network.mesh_lan.device)"
 	WAN_IF="$(uci get network.mesh_wan.device)"
-	[ "$(uci -q get ddmesh.network.mesh_on_vlan)" = "1" ] && VLAN_IF="$(uci get network.mesh_vlan.device)"
+	VLAN_IF="$(uci get network.mesh_vlan.device)"
 
 	brctl addbr $PRIMARY_IF
 	ip addr add $_ddmesh_ip/32 broadcast $_ddmesh_broadcast dev $PRIMARY_IF
@@ -74,7 +74,7 @@ case "$ARG1" in
 	_IF="${_IF} dev=$WAN_IF /linklayer 1"
 
 	if [ "$(uci -q get ddmesh.network.mesh_on_vlan)" = "1" ]; then
-		_IF="$_IF dev="$(uci get network.mesh_vlan.device)" /linklayer 1"
+		_IF="${_IF} dev=$VLAN_IF /linklayer 1"
 	fi
 
 	# needed during async boot, state changes then
