@@ -299,7 +299,7 @@ else
 		uci set ddmesh.network.mesh_on_lan=${form_lan_meshing:-0}
 		uci set ddmesh.system.mesh_sleep=${form_lan_meshing_sleep:-0}
 		uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
-		uci set ddmesh.network.mesh_on_vlan=${form_vlan_meshing:-1}
+		uci set ddmesh.network.mesh_on_vlan=${form_vlan_meshing:-0}
 		uci set ddmesh.network.mesh_vlan_id=${form_vlan_id:-9}
 		prefgw="$(uhttpd -d $form_lan_preferred_gateway)"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
