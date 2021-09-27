@@ -9,24 +9,6 @@ LOGGER_TAG="ddmesh-network"
 node=$(uci get ddmesh.system.node)
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
-# returns device section for device name (==interface)
-get_device_section()
-{
-	local device="$1"
-	cb_device()
-	{
-		local config="$1"
-		local var_devname
-		config_get var_devname "$config" name
-		if [ "$2" = "$var_devname" ]; then
-			echo "$config"
-		fi
-	}
-
-	config_load network
-	config_foreach cb_device device "$device"
-}
-
 setup_ethernet()
 {
 	#############################################################################
@@ -287,22 +269,15 @@ setup_mesh_on_wire()
 			fi
 
 			logger -s -t "$LOGGER_TAG" "activate mesh-on-${NET}"
-			dev_name=$(uci -q get network.${NET}.device)
-			dev_config=$(get_device_section "$dev_name")
-			mesh_bridge=$(uci -q get network.mesh_${NET}.device)
+			ifname="$(uci -q get network.${NET}.ifname)"
+			br_name="br-${NET}"
+			mesh_bridge="br-mesh_${NET}"
 
-			if [ -n "${dev_config}" ]; then
-				# avoid ip conflicts when wan is in same network as lan (getting ip from dhcp server)
-				# disable br-wan and br-lan
-				ip link set ${dev_name} down
-
-				# remove all interfaces from br-lan/wan and add those to br-mesh_lan/wan
-				for ifname in $(uci get network.${dev_config}.ports)
-				do
-					brctl delif ${dev_name} ${ifname}
-					brctl addif ${mesh_bridge} ${ifname}
-				done
-			fi
+			# avoid ip conflicts when wan is in same network as lan (getting ip from dhcp server)
+			# disable br-wan and br-lan
+			ip link set ${br_name} down
+			brctl delif ${br_name} ${ifname}
+			brctl addif ${mesh_bridge} ${ifname}
 		fi
 	done
 }
