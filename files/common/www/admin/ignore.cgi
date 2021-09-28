@@ -37,7 +37,7 @@ cat<<EOM
 <legend>Gespeicherte Knoten</legend>
 <table>
 
-<tr><th width="100">Knoten</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi-Adhoc</th><th>Wifi-802.11s 2.4GHz</th><th>Wifi-802.11s 5GHz</th><th></th></tr>
+<tr><th width="100">Knoten</th><th>VLAN</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi-Adhoc</th><th>Wifi-802.11s 2.4GHz</th><th>Wifi-802.11s 5GHz</th><th></th></tr>
 EOM
 
 T=1
@@ -53,12 +53,14 @@ print_node() {
 	local opt_wifi_adhoc=$4
 	local opt_wifi_mesh2g=$5
 	local opt_wifi_mesh5g=$6
+	local opt_vlan=$7
 
 	# old format
 	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" ] && opt_wifi_adhoc='1'
 
 	if [ -n "$1" ]; then
 		echo "<tr class=\"colortoggle$T\" ><td width=\"100\">$node</td>"
+		echo "<td><input disabled name="form_opt_vlan" type="checkbox" value="1" $(if [ "$opt_vlan" = "1" ];then echo 'checked="checked"';fi)></td>"
 		echo "<td><input disabled name="form_opt_lan" type="checkbox" value="1" $(if [ "$opt_lan" = "1" ];then echo 'checked="checked"';fi)></td>"
 		echo "<td><input disabled name="form_opt_tbb" type="checkbox" value="1" $(if [ "$opt_tbb" = "1" ];then echo 'checked="checked"';fi)></td>"
 		echo "<td><input disabled name="form_opt_wifi_adhoc" type="checkbox" value="1" $(if [ "$opt_wifi_adhoc" = "1" ];then echo 'checked="checked"';fi)></td>"
@@ -89,8 +91,9 @@ cat<<EOM
 <form name="form_node_new" action="ignore.cgi" method="post">
 <input name="form_action" value="none" type="hidden">
 <table>
- <tr><th width="100">Knoten</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi-Adhoc</th><th>Wifi-802.11s 2.4GHz</th><th>Wifi-802.11s 5GHz</th><th></th></tr>
+ <tr><th width="100">Knoten</th><th>VLAN</th><th>LAN/WAN</th><th>Backbone</th><th>Wifi-Adhoc</th><th>Wifi-802.11s 2.4GHz</th><th>Wifi-802.11s 5GHz</th><th></th></tr>
  <tr>	<td><input name="form_node" type="text" value="" size="17" maxlength="17"></td>
+  <td><input name="form_opt_vlan" type="checkbox" value="1" ></td>
 	<td><input name="form_opt_lan" type="checkbox" value="1" ></td>
 	<td><input name="form_opt_tbb" type="checkbox" value="1" ></td>
 	<td><input name="form_opt_wifi_adhoc" type="checkbox" value="1" ></td>
@@ -120,7 +123,7 @@ if [ -n "$QUERY_STRING" ]; then
 			fi
 
 			node=$(uhttpd -d $form_node)
-			entry="$node:$form_opt_lan:$form_opt_tbb:$form_opt_wifi_adhoc:$form_opt_wifi_mesh2g:$form_opt_wifi_mesh5g"
+			entry="$node:$form_opt_lan:$form_opt_tbb:$form_opt_wifi_adhoc:$form_opt_wifi_mesh2g:$form_opt_wifi_mesh5g:$form_opt_vlan"
 			uci add_list ddmesh.ignore_nodes.node="$entry"
 			uci_commit.sh
 			notebox "Knoten <b>$node</b> wurde zur Konfiguration hinzugef&uuml;gt. Bitte Konfiguration aktualisieren!"

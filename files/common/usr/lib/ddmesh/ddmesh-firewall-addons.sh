@@ -206,6 +206,7 @@ callback_add_ignored_nodes() {
 	local opt_wifi_adhoc=$4
 	local opt_wifi_mesh2g=$5
 	local opt_wifi_mesh5g=$6
+	local opt_lan=$7
 
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
@@ -213,6 +214,11 @@ callback_add_ignored_nodes() {
 	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" ] && opt_wifi_adhoc='1'
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+
+	if [ "$opt_vlan" = "1" ]; then
+		$IPT -A input_ignore_nodes_vlan -s $_ddmesh_nonprimary_ip -j DROP
+	fi
+
 	if [ "$opt_lan" = "1" ]; then
 		$IPT -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
 		$IPT -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP
@@ -242,6 +248,7 @@ setup_ignored_nodes() {
 	$IPT -N input_ignore_nodes_wifi5m
 	$IPT -N input_ignore_nodes_lan
 	$IPT -N input_ignore_nodes_wan
+	$IPT -N input_ignore_nodes_vlan
 	$IPT -N input_ignore_nodes_tbb # fastd+wg
 
 	#add tables to deny some nodes to prefer backbone connections
@@ -250,6 +257,7 @@ setup_ignored_nodes() {
 	[ -n "$wifi_mesh5g_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh5g_ifname -j input_ignore_nodes_wifi5m
 	[ -n "$mesh_lan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
 	[ -n "$mesh_wan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
+	[ -n "$mesh_vlan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_vlan_ifname -j input_ignore_nodes_vlan
 	[ -n "$tbb_fastd_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
 	[ -n "$tbb_wg_ifname" ] && $IPT -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
 
@@ -264,6 +272,7 @@ update_ignored_nodes() {
 	$IPT -F input_ignore_nodes_wifi5m
 	$IPT -F input_ignore_nodes_lan
 	$IPT -F input_ignore_nodes_wan
+	$IPT -F input_ignore_nodes_vlan
 	$IPT -F input_ignore_nodes_tbb
 
 	config_load ddmesh
