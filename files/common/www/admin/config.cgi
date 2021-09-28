@@ -82,6 +82,9 @@ else #form_action
 		if [ -z "$ffout" ]; then
 			notebox "Kein File"
 		else
+			# install all files including $PACKAGES
+			sysupgrade -r $ffout
+
 			echo "<pre>"
 			if [ -f "$PACKAGES" -a "$form_conf_ipkg_install" = "1" ]; then
 				opkg update && {
@@ -102,8 +105,6 @@ else #form_action
 					echo "Fehler: Keine Pakete zum Downloaden verf&uuml;gbar."
 				}
 			fi
-			echo "Installiere Konfigurations-Files."
-			sysupgrade -r $ffout
 			echo "</pre>"
 			notebox "<b>Hinweis:</b> Konfiguration wurde eingespielt. Die Einstellungen sind erst nach dem n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 		fi
