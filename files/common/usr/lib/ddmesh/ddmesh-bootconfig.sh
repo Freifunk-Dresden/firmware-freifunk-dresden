@@ -149,6 +149,7 @@ config network 'network'
 	option lan_netmask '255.255.255.0'
 	option lan_gateway ''
 	option lan_dns ''
+	option lan_proto 'static'
 	option wan_proto 'dhcp'
 	#option wan_ipaddr
 	#option wan_netmask

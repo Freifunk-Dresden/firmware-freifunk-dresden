@@ -560,8 +560,15 @@ upgrade_7_1_1()
 	cp /rom/etc/config/uhttpd /etc/config/wshaper
 
 	uci add_list firewall.zone_mesh.network="mesh_vlan"
-  uci set ddmesh.network.mesh_on_vlan='1'
+	uci set ddmesh.network.mesh_on_vlan='1'
 	uci set ddmesh.network.mesh_vlan_id='9'
+
+	uci set ddmesh.network.lan_ipaddr="$(uci get network.lan.ipaddr)"
+	uci set ddmesh.network.lan_netmask="$(uci get network.lan.netmask)"
+	uci set ddmesh.network.lan_gateway="$(uci get network.lan.gateway)"
+	uci set ddmesh.network.lan_dns="$(uci get network.lan.dns)"
+	uci set ddmesh.network.lan_proto="$(uci get network.lan.proto)"
+
 }
 
 ##################################
