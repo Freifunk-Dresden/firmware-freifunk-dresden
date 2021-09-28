@@ -28,7 +28,7 @@ echo "platform: $platform"
 echo "board: $boardname"
 
 # try to detect led (keep order)
-eval $(ddmesh-utils-wifi-info.sh)
+eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 #---- wifi2g
 # "link2" nanostation
