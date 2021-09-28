@@ -59,16 +59,15 @@ _led_status="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
 #---- wwan
 _led_wwan=""
 
-
 case "$platform" in
-
 	ath79)
 		case  "$boardname" in
-			"ubnt,unifi")	_led_wifi2g="ubnt:orange:dome"
+			"ubnt,unifi")
+					_led_wifi2g="ubnt:orange:dome"
 					_led_status="ubnt:green:dome"
 					;;
-			"gl-mifi") 	_led_wwan="$(uci -q get system.led_wwan.sysfs)"
-				 	test -z "$_led_wwan" && _led_wwan="gl-mifi:green:net"
+			"glinet,gl-mifi")
+					_led_wwan="$(uci -q get system.led_3gnet.sysfs)"
 					_led_status="$(uci -q get system.led_wan.sysfs)"
 					;;
 		esac
