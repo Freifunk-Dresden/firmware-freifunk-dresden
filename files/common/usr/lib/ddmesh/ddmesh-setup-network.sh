@@ -259,12 +259,16 @@ setup_mesh()
 
 setup_wwan()
 {
+	# Note: the new network configuration scheme does not work for WWAN modems.
+	# but the old way does.
+
 	# add network modem with qmi protocol
 	uci add network interface
 	uci rename network.@interface[-1]='wwan'
 
 	# must be wwan0
-	uci set network.wwan.device='wwan0'
+	uci set network.wwan.ifname='wwan0'
+	uci set network.wwan.device='/dev/cdc-wdm0'
 	uci set network.wwan.proto='qmi'
 	uci set network.wwan.apn="$(uci -q get ddmesh.network.wwan_apn)"
 	uci set network.wwan.pincode="$(uci -q get ddmesh.network.wwan_pincode)"
@@ -272,23 +276,7 @@ setup_wwan()
 	uci set network.wwan.pdptype='IP'	# IPv4 only
 	uci set network.wwan.delay='30' 	# wait for SIMCard being ready
 	uci set network.wwan.metric='50'	# avoids overwriting WAN default route
-
-	wwan_modes=""
-	test "$(uci -q get ddmesh.network.wwan_4g)" = "1" && wwan_modes="$wwan_modes,lte"
-	test "$(uci -q get ddmesh.network.wwan_3g)" = "1" && wwan_modes="$wwan_modes,umts"
-	test "$(uci -q get ddmesh.network.wwan_2g)" = "1" && wwan_modes="$wwan_modes,gsm"
-	wwan_modes="${wwan_modes#,}"
-	wwan_modes="${wwan_modes:-lte,umts}"
-	uci set network.wwan.modes="$wwan_modes"
-
-	wwan_mode_preferred="$(uci -q get ddmesh.network.wwan_mode_preferred)"
-	uci set network.wwan.preference="$wwan_mode_preferred"
-
-	dev_config="device_wwan"
-	uci add network interface
-	uci rename network.@interface[-1]="${dev_config}"
-	uci set network.${dev_config}.name='wwan0' # must be wwan0
-	uci set network.${dev_config}.device='/dev/cdc-wdm0'
+	uci set network.wwan.modes="lte"
 
 	# helper network, to setup firewall rules for wwan network.
 	# openwrt is not relible to setup wwan0 rules in fw

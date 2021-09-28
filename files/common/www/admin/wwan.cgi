@@ -78,10 +78,6 @@ cat<<EOM
 <b>Achtung:</b> Pin wird nicht gepr&uuml;ft. Eine falsche PIN kann die SIM-Karte sperren. Dann muss die Karte in einem Mobiltelefon entsperrt werden.
 </td></tr>
 <tr><td COLSPAN="2">&nbsp;</td></tr>
-<tr><td class="nowrap">4G (LTE);</td><td><input name="form_wwan_4g" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.wwan_4g)" = "1" ];then echo 'checked="checked"';fi)></td></tr>
-<tr><td class="nowrap">3G (UMTS);</td><td><input name="form_wwan_3g" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.wwan_3g)" = "1" ];then echo 'checked="checked"';fi)></td></tr>
-<tr><td class="nowrap">2G (GMS);</td><td><input name="form_wwan_2g" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.wwan_2g)" = "1" ];then echo 'checked="checked"';fi)></td></tr>
-<tr><td COLSPAN="2">&nbsp;</td></tr>
 
 <tr> <td COLSPAN="2">
 <input name="form_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="SUBMIT" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;
@@ -97,9 +93,6 @@ else # query
 	if [ -n "$form_submit" ]; then
 		uci set ddmesh.network.wwan_apn="$(uhttpd -d "$form_wwan_apn")"
 		uci set ddmesh.network.wwan_pincode="$(uhttpd -d "$form_wwan_pincode")"
-		uci set ddmesh.network.wwan_4g=${form_wwan_4g:-0}
-		uci set ddmesh.network.wwan_3g=${form_wwan_3g:-0}
-		uci set ddmesh.network.wwan_2g=${form_wwan_2g:-0}
 		uci set ddmesh.boot.boot_step=2
 		uci_commit.sh
 		notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."

@@ -568,7 +568,9 @@ upgrade_7_1_1()
 	uci set ddmesh.network.lan_gateway="$(uci get network.lan.gateway)"
 	uci set ddmesh.network.lan_dns="$(uci get network.lan.dns)"
 	uci set ddmesh.network.lan_proto="$(uci get network.lan.proto)"
-
+	uci -q delete ddmesh.network.wwan_4g
+	uci -q delete ddmesh.network.wwan_3g
+	uci -q delete ddmesh.network.wwan_2g
 }
 
 ##################################
