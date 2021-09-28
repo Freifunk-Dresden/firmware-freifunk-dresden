@@ -2,10 +2,13 @@
 2021-04-00 8.1.0
 --------------------------------------------------
 openwrt                   - upgrade to openwrt 21 (only from devices with openwrt 19)
-mesh-lan                  - add meshing on vlan 10 (avoids need of bridging cable
-                            between wan and lan ports that on some devices cause issues)
+network                   - complete rework of internal network configuration
+                            (needed to support openwrt 21 and vlan meshing)
+mesh-lan                  - add meshing on vlan 9 (avoids need of bridging cable
+                            between wan and lan ports that causes issues on some devices)
 gui                       - add option to control LEDs
                           - configure mesh vlan
+                          - ignore nodes for vlan
 wifi                      - add light roaming (hotspot should use same gateway and should
                             have same data transfer power, else roaming could select slow
                             access points but with stronger wifi signal)
