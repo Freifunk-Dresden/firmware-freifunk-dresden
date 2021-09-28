@@ -2,6 +2,8 @@
 # I control what should be kept
 /etc/config/
 /etc/dropbear/
+/etc/ethers
+/etc/fstab
 /etc/hosts
 /etc/group
 /etc/passwd
@@ -12,4 +14,3 @@
 /etc/uhttpd.key
 /etc/uhttpd.crt
 /etc/installed.packages
-
