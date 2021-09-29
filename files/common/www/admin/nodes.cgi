@@ -17,16 +17,19 @@ cat<<EOM
 EOM
 
 /usr/bin/bmxd -c --links | awk -f /usr/lib/www/page-functions.awk -e '
- BEGIN {c=1;count=0;}
+ BEGIN {c=1;count=0;rtq=0;rq=0;tq=0}
  {
 	if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
 	{
  		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$3,$3,color_interface($2),$1,$4,$4,$5,$6);
 		if(c==1)c=2;else c=1;
 		count=count+1;
+		rtq=rtq+$4;
+		rq=rq+$5;
+		tq=tq+$6
 	}
  }
- END { printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td></tr>", count);}
+ END {rtq=int(rtq/count);rq=int(rq/count);tq=int(tq/count); printf("<tr><td colspan=\"4\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td></tr>", count, rtq, rtq, rq, rq, tq, tq);}
 '
 
 cat<<EOM
@@ -48,7 +51,7 @@ EOM
 
 export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p' )"
 /usr/bin/bmxd -c --gateways | awk -f /usr/lib/www/page-functions.awk -e '
- BEGIN {c=1;count=0;}
+ BEGIN {c=1;count=0;brc=0}
  {
 
 	if(match($0,"^[=> 	]*[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
@@ -70,9 +73,10 @@ export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+
  		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",c,pref,img,stat,getnode($1),$1,$1,$2,$3,$3,rest);
 		if(c==1)c=2;else c=1;
 		count=count+1;
+		brc=brc+$3
 	}
  }
- END { printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td></tr>", count);}
+ END {brc=int(brc/count); printf("<tr><td colspan=\"6\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}
 '
 
 cat<<EOM
@@ -86,7 +90,7 @@ cat<<EOM
 EOM
 
 /usr/bin/bmxd -c --originators | awk -f /usr/lib/www/page-functions.awk -e '
- BEGIN {c=1;count=0;}
+ BEGIN {c=1;count=0;brc=0}
  {
 
 	if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
@@ -94,9 +98,10 @@ EOM
  		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$1,$1,$4,$4,color_interface($2),$3);
 		if(c==1)c=2;else c=1;
 		count=count+1;
+		brc=brc+$4
 	}
  }
- END { printf("<tr><td colspan=\"5\"><b>Anzahl:</b>&nbsp;%d</td></tr>", count);}
+ END {brc=int(brc/count); printf("<tr><td colspan=\"2\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td><td></td></tr>", count, brc, brc);}
 '
 
 cat<<EOM
