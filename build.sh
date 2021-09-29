@@ -64,6 +64,21 @@ C_LCYAN='\033[1;36m'
 C_GREY='\033[0;37m'
 C_LGREY='\033[1;37m'
 
+if true; then
+	PBC_RUNNING="${C_YELLOW}*${C_NONE}"
+	PBC_ERROR="${C_LRED}E${C_NONE}"
+	PBC_IGNORE="${C_RED}i${C_NONE}"
+	PBC_SUCCESS="${C_GREEN}+${C_NONE}"
+	PBC_SKIP="${C_GREEN}-${C_NONE}"
+else
+	PBC_RUNNING="*"
+	PBC_ERROR="E"
+	PBC_IGNORE="i"
+	PBC_SUCCESS="+"
+	PBC_SKIP="-"
+fi
+
+
 #save current directory when copying config file
 RUN_DIR=$(pwd)
 
@@ -139,7 +154,8 @@ progressbar()
 
 
 		# construct complete bar
-		printf "%s[%s]%s" "${title}" "${_bar}" "${progress_string}"
+		#printf "%s[%s]%s" "${title}" "${_bar}" "${progress_string}"
+		echo -e -n "${title}[${_bar}]${progress_string}"
 
 		# clear until end of line
 		tput el
@@ -842,13 +858,13 @@ do
 		fi
 		# ignore successfull targetes
 		test "$compile_status" = "0" && {
-			progbar_char_array[$((progress_counter-1))]="-"
+			progbar_char_array[$((progress_counter-1))]="${PBC_SKIP}"
 			continue;
 		}
 	fi
 
 	# progress bar: compiling
-	progbar_char_array[$((progress_counter-1))]="*"
+	progbar_char_array[$((progress_counter-1))]="${PBC_RUNNING}"
 	show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
 
 	# reset compile status
@@ -1005,7 +1021,7 @@ EOM
 			# no config and no menuconfig -> continue with next target; do not create config yet.
 			# it only should be down by menuconfig
 			echo -e $C_CYAN"no configuration, continue with next target if any$C_NONE"
-			progbar_char_array[$((progress_counter-1))]="i"
+			progbar_char_array[$((progress_counter-1))]="${PBC_IGNORE}"
 			continue
 
 		fi
@@ -1064,7 +1080,7 @@ EOM
 	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
 		global_error=1
-		progbar_char_array[$((progress_counter-1))]="E"
+		progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
 
 		echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_config_name}" $C_NONE
 
@@ -1089,7 +1105,7 @@ EOM
 		clean_up_exit 1
 	fi
 	# success status
-	progbar_char_array[$((progress_counter-1))]="+"
+	progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
 	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${target_dir}${C_NONE}"
 
 done
