@@ -124,7 +124,7 @@ progressbar()
 #				_bar="${_bar}#"
 				_bar="${_bar}${_char_array[$barCharIdx]}"
 			else
-				_bar="${_bar}-"
+				_bar="${_bar} " # use space character for empty progress
 			fi
 
 			[ $pos -ge $len ] && break;
@@ -183,7 +183,9 @@ show_progress()
 
 		# print progress bar at bottom
 		tput cup $(( $row - 1)) 0
-		progressbar $_count $_max "|" ${_bar_char_array[@]}		# pass last array as separate parameters
+		progressbar $_count $_max "|" "${_bar_char_array[@]}"		# pass last array as separate parameters
+																														# but as one argument with "" to allow
+																														# special characters like *
 
 		# print empty line above
 		tput cup $(( $row - 2)) 0
@@ -710,10 +712,12 @@ fi
 # this means that each target can display a different character in progressbar to show the
 # build status.
 # example: |####|.....|*****|
-# hier I use '#' - success;
-#            '.' - nothing compiled yet (default defined in progressbar
-#            'i' - ignored (not yet done or no config or when only building "failed" targets)
-#            'E' - error
+# hier I use:
+#  ' ' - nothing compiled yet (default defined in progressbar
+#	 '+' - success;
+#  '-' - ignored previously successful targets (./build.sh failed)
+#  'i' - ignored (not yet done or no config or when only building "failed" targets)
+#  'E' - error
 #
 unset progbar_char_array
 
@@ -743,7 +747,7 @@ do
 
 	# only enable progressbar for tty
 	if [ "$_TERM" = "1" ]; then
-		show_progress $progress_counter $progress_max ${progbar_char_array[@]}
+		show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
 		echo ""
 	fi
 	# increment counter (needed also when no progressbar is displayed, because the
@@ -838,10 +842,14 @@ do
 		fi
 		# ignore successfull targetes
 		test "$compile_status" = "0" && {
-			progbar_char_array[$((progress_counter-1))]="~"
+			progbar_char_array[$((progress_counter-1))]="-"
 			continue;
 		}
 	fi
+
+	# progress bar: compiling
+	progbar_char_array[$((progress_counter-1))]="*"
+	show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
 
 	# reset compile status
 	rm -f ${target_dir}/${compile_status_file}
@@ -997,7 +1005,7 @@ EOM
 			# no config and no menuconfig -> continue with next target; do not create config yet.
 			# it only should be down by menuconfig
 			echo -e $C_CYAN"no configuration, continue with next target if any$C_NONE"
-			progbar_char_array[$((progress_counter-1))]="."
+			progbar_char_array[$((progress_counter-1))]="i"
 			continue
 
 		fi
@@ -1006,8 +1014,6 @@ EOM
 		echo -e $C_CYAN"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 		cp $RUN_DIR/$config_file .config
 	fi
-
-
 
 	if [ "$MENUCONFIG" = "1" ]; then
 
@@ -1088,7 +1094,7 @@ EOM
 
 done
 
-show_progress $progress_counter $progress_max ${progbar_char_array[@]}
+show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
 sleep 1
 
 echo -e $C_CYAN".......... complete build finished (exitcode ${global_error})........................"$C_NONE
