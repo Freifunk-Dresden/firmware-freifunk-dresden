@@ -94,6 +94,7 @@ else # query_sring
 		uci set ddmesh.network.wan_netmask=$form_wan_netmask
 		uci set ddmesh.network.wan_gateway=$form_wan_gateway
 		uci set ddmesh.network.wan_dns=$form_wan_dns
+		uci set ddmesh.boot.boot_step=2
 		uci_commit.sh
 
 		notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
