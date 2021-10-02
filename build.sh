@@ -11,7 +11,6 @@ SCRIPT_VERSION="14"
 # FF_BUILD_TAG
 # FF_MESH_KEY
 
-
 # check terms
 case "$TERM" in
 	xterm*) _TERM=1 ;;
@@ -26,6 +25,11 @@ cd $(dirname $0)
 
 # target file
 PLATFORMS_JSON="build.json"
+
+USE_DOCKER=false
+DOCKER_IMAGE="freifunkdresden/openwrt-docker-build"
+DOCKER_OUTPUT_DIR="docker"
+DOCKER_CONTAINER_NAME="ffbuild"
 
 DL_DIR=dl
 WORK_DIR=workdir
@@ -382,33 +386,107 @@ setup_dynamic_firmware_config()
 
 
 #----------------- process argument ----------------------------------
-if [ -z "$1" ]; then
+usage()
+{
 	# create a simple menu
-	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) list | search <string> | clean | feed-revisions | (target | all | failed [menuconfig ] [rerun] [ <make params ...> ])"
-	echo " list             - lists all available targets"
-	echo " list-targets     - lists only target names for usage in IDE"
-	echo " search           - search specific router (target)"
-	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
-	echo " feed-revisions   - returns the git HEAD revision hash for current date (now)."
-	echo "                    The revisions then could be set in build.json"
-	echo " target           - target to build (can have regex)"
-	echo "          that are defined by build.json. use 'list' for supported targets."
-	echo "          'all'                   - builds all targets"
-	echo "          'failed'                - builds only previously failed or not built targets"
-	echo "          'ramips.*'              - builds all ramips targets only"
-	echo "          'ramips.rt305x.generic' - builds exact this target"
-	echo "          '^rt30.*'               - builds all that start with 'rt30'"
-	echo "          'ramips.mt7621.generic ar71xx.tiny.lowmem' - space or pipe separates targets"
-	echo "          'ramips.mt7621.generic | ar71xx.tiny.lowmem' "
-	echo ""
-	echo " menuconfig       - displays configuration menu"
-	echo " rerun            - enables a second compilation with make option 'V=s'"
-	echo "                    If first make failes a second make is tried with this option"
-	echo " make params      - all paramerters that follows are passed to make command"
-	echo ""
+	cat <<EOM
+Version: $SCRIPT_VERSION
+usage: $(basename $0) [options] list | search <string> | clean | feed-revisions | (target | all | failed [menuconfig ] [rerun] [ <make params ...> ])
+ options:
+		-d    docker host, if not specifies environment variable 'export DOCKER_HOST' is used.
+		-D    use docker for compiling
+
+ commands:
+		list             - lists all available targets
+		list-targets     - lists only target names for usage in IDE
+		search           - search specific router (target)
+		clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
+		feed-revisions   - returns the git HEAD revision hash for current date (now).
+												The revisions then could be set in build.json
+		target           - target to build (can have regex)
+							that are defined by build.json. use 'list' for supported targets.
+							'all'                   - builds all targets
+							'failed'                - builds only previously failed or not built targets
+							'ramips.*'              - builds all ramips targets only
+							'ramips.rt305x.generic' - builds exact this target
+							'^rt30.*'               - builds all that start with 'rt30'
+							'ramips.mt7621.generic ar71xx.tiny.lowmem' - space or pipe separates targets
+							'ramips.mt7621.generic | ar71xx.tiny.lowmem'
+
+		menuconfig       - displays configuration menu
+		rerun            - enables a second compilation with make option 'V=s'
+												If first make failes a second make is tried with this option
+		make params      - all paramerters that follows are passed to make command
+EOM
+}
+
+# check if there are options
+while getopts "Dd:h" arg
+do
+	case "$arg" in
+		d)
+			test -z "${OPTARG}" && echo "docker host"
+			export DOCKER_HOST="tcp://${OPTARG}" # export it here, to not overwrite external possible
+			;;                                   # variable
+		D)
+			USE_DOCKER=true
+			if [ -z "$(which docker)" ]; then
+				echo "Error: no docker installed"
+				exit 1
+			fi
+			;;
+		h)	usage; exit 1;;
+		\?)	exit 1	;;
+	esac
+done
+shift $(( OPTIND - 1 ))
+
+test -n "${DOCKER_HOST}" && echo "docker at: ${DOCKER_HOST}"
+
+#for a;  do echo "arg [$a]"; done
+#echo $@
+
+if [ -z "$1" ]; then
+	usage
 	exit 1
 fi
+
+# if docker is used, this script should be called from docker container
+if $USE_DOCKER; then
+	echo "Using Docker at ${DOCKER_HOST:=localhost}"
+	docker_tar="$(mktemp).tgz"
+
+	# create container and upload current directory
+  docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
+  docker start --name ${DOCKER_CONTAINER_NAME}
+
+	# create file to upload
+	tar -cvz --exclude ${WORK_DIR} --exclude ${DL_DIR} \
+	    --exclude-backups --exclude-vcs --exclude-vcs-ignores \
+			-f "${docker_tar}" ./
+
+	# upload and extract
+	docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds
+	docker exec -it ${DOCKER_CONTAINER_NAME} tar -xvzf "${docker_tar/\/tmp\//}"
+
+	# run build
+	docker exec -it ${DOCKER_CONTAINER_NAME} git config --global http.sslverify false
+	docker exec -it ${DOCKER_CONTAINER_NAME} ./build.sh $@
+	docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
+
+	# copy back results
+	mkdir -p "${DOCKER_OUTPUT_DIR}"
+	docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf output.tgz output
+	docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/output.tgz "${DOCKER_OUTPUT_DIR}"/
+	tar -C "${DOCKER_OUTPUT_DIR}" xvzf output.tgz
+
+	# stop and delete
+	docker stop -t0 ${DOCKER_CONTAINER_NAME}
+#	docker rm ${DOCKER_CONTAINER_NAME}
+
+	exit 0
+fi
+
 
 #check if next argument is "menuconfig"
 if [ "$1" = "list" ]; then
