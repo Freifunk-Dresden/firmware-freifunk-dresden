@@ -125,97 +125,102 @@ setup_mesh()
 		dsa=true
 	fi
 
+	enable_vlan="$(uci -q get ddmesh.network.mesh_on_vlan)"
+
 	# setup mesh vlan
-	mesh_vlan_id="$(uci -q get ddmesh.network.mesh_vlan_id)"
-	if [ -z "${mesh_vlan_id}" ]; then
-		mesh_vlan_id="9"	# default, hope it doesn't conflict with private vlans
-		uci set ddmesh.network.mesh_vlan_id="${mesh_vlan_id}"
-	fi
+	if [ "${enable_vlan}" = "1" ]; then
 
-	if ! $dsa ; then
+		mesh_vlan_id="$(uci -q get ddmesh.network.mesh_vlan_id)"
+		if [ -z "${mesh_vlan_id}" ]; then
+			mesh_vlan_id="9"	# default, hope it doesn't conflict with private vlans
+			uci set ddmesh.network.mesh_vlan_id="${mesh_vlan_id}"
+		fi
 
-		# collect all ports
-		local tmp_switch_ports=""
-		cb_switch_vlan()
-		{
-			local config="$1"
-			local var_ports
-			config_get var_ports "$config" ports
-			# remove any tags (t,u,*)
-			var_ports="${var_ports//u/}"
-			var_ports="${var_ports//t/}"
-			var_ports="${var_ports//\*/}"
-			tmp_switch_ports="${tmp_switch_ports} ${var_ports}"
-		}
-		config_load network
-		config_foreach cb_switch_vlan switch_vlan
+		if ! $dsa ; then
 
-		# add tag to each port
-		for p in ${tmp_switch_ports}
-		do
-			# check if already added
-			if [ "${switch_ports}" = "${switch_ports//${p}t/}" ]; then
-				switch_ports="${switch_ports} ${p}t"
-			fi
-		done
+			# collect all ports
+			local tmp_switch_ports=""
+			cb_switch_vlan()
+			{
+				local config="$1"
+				local var_ports
+				config_get var_ports "$config" ports
+				# remove any tags (t,u,*)
+				var_ports="${var_ports//u/}"
+				var_ports="${var_ports//t/}"
+				var_ports="${var_ports//\*/}"
+				tmp_switch_ports="${tmp_switch_ports} ${var_ports}"
+			}
+			config_load network
+			config_foreach cb_switch_vlan switch_vlan
 
-		# vlan config
-		vlan_dev_config="switch_vlan_mesh"
-		uci add network switch_vlan
-		uci rename network.@switch_vlan[-1]="${vlan_dev_config}"
-		uci set network.${vlan_dev_config}.device='switch0'
-		uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
-		uci set network.${vlan_dev_config}.ports="${switch_ports# }" #remove leading space
-
-		vlan_ports=""
-		for NET in lan wan
-		do
-			br_dev_name=$(uci -q get network.${NET}.device)
-			br_dev_config=$(get_device_section "$br_dev_name")
-
-			# get eth name (assuming switch always is connected to lan interface)
-			phy_name=$(uci -q get network.${br_dev_config}.ports)
-			eth=${phy_name%.*}
-
-			# check if valid and if already created
-			if [ -n "${eth}" -a "${vlan_ports}" = "${vlan_ports//${eth}/}" ]; then
-				# create interface
-				vlan_device="${eth}.${mesh_vlan_id}"
-				uci add network interface
-				uci set network.@interface[-1].device="${vlan_device}"
-				vlan_ports="${vlan_ports} ${vlan_device}"
-			fi
-		done
-
-	else
-		# create two different vlan configs, one for lan one for wan.
-		# if wan an lan are on switch, then it is possible to put wan and lan dsa interfaces
-		# into one config. but if we have different physical interfaces eth0 and eth1 (futro)
-		# I can not put those interfaces together, as openwrt requires the vlan basename
-		# br-lan or br-wan (vlan bound to those)
-		for NET in lan wan
-		do
-			br_dev_name=$(uci -q get network.${NET}.device)
-			br_dev_config=$(get_device_section "$br_dev_name")
-
-			# create bridge-vlan (similar to device section)
-			vlan_dev_config="vlan_dev_config_${NET}"
-			uci add network bridge-vlan
-			uci rename network.@bridge-vlan[-1]="${vlan_dev_config}"
-			uci set network.${vlan_dev_config}.name="${br_dev_name}"
-			uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
-			# copy all ports from lan or wan and tag them
-			ports="$(uci -q get network.${br_dev_config}.ports)"
-			for port in ${ports}
+			# add tag to each port
+			for p in ${tmp_switch_ports}
 			do
-				uci add_list network.${vlan_dev_config}.ports="${port}:t"
+				# check if already added
+				if [ "${switch_ports}" = "${switch_ports//${p}t/}" ]; then
+					switch_ports="${switch_ports} ${p}t"
+				fi
 			done
 
-			# create vlan interface
-			uci add network interface
-			uci set network.@interface[-1].device="${br_dev_name}.${mesh_vlan_id}"
-		done
-	fi
+			# vlan config
+			vlan_dev_config="switch_vlan_mesh"
+			uci add network switch_vlan
+			uci rename network.@switch_vlan[-1]="${vlan_dev_config}"
+			uci set network.${vlan_dev_config}.device='switch0'
+			uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
+			uci set network.${vlan_dev_config}.ports="${switch_ports# }" #remove leading space
+
+			vlan_ports=""
+			for NET in lan wan
+			do
+				br_dev_name=$(uci -q get network.${NET}.device)
+				br_dev_config=$(get_device_section "$br_dev_name")
+
+				# get eth name (assuming switch always is connected to lan interface)
+				phy_name=$(uci -q get network.${br_dev_config}.ports)
+				eth=${phy_name%.*}
+
+				# check if valid and if already created
+				if [ -n "${eth}" -a "${vlan_ports}" = "${vlan_ports//${eth}/}" ]; then
+					# create interface
+					vlan_device="${eth}.${mesh_vlan_id}"
+					uci add network interface
+					uci set network.@interface[-1].device="${vlan_device}"
+					vlan_ports="${vlan_ports} ${vlan_device}"
+				fi
+			done
+
+		else
+			# create two different vlan configs, one for lan one for wan.
+			# if wan an lan are on switch, then it is possible to put wan and lan dsa interfaces
+			# into one config. but if we have different physical interfaces eth0 and eth1 (futro)
+			# I can not put those interfaces together, as openwrt requires the vlan basename
+			# br-lan or br-wan (vlan bound to those)
+			for NET in lan wan
+			do
+				br_dev_name=$(uci -q get network.${NET}.device)
+				br_dev_config=$(get_device_section "$br_dev_name")
+
+				# create bridge-vlan (similar to device section)
+				vlan_dev_config="vlan_dev_config_${NET}"
+				uci add network bridge-vlan
+				uci rename network.@bridge-vlan[-1]="${vlan_dev_config}"
+				uci set network.${vlan_dev_config}.name="${br_dev_name}"
+				uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
+				# copy all ports from lan or wan and tag them
+				ports="$(uci -q get network.${br_dev_config}.ports)"
+				for port in ${ports}
+				do
+					uci add_list network.${vlan_dev_config}.ports="${port}:t"
+				done
+
+				# create vlan interface
+				uci add network interface
+				uci set network.@interface[-1].device="${br_dev_name}.${mesh_vlan_id}"
+			done
+		fi
+	fi # if mesh_on_vlan
 
 	# create interfaces (bridges)
 	for NET in mesh_lan mesh_wan mesh_vlan
@@ -242,7 +247,7 @@ setup_mesh()
 		uci set network.${dev_config}.bridge_empty=1
 
 		# add vlan ports
-		if [ "${NET}" = "mesh_vlan" ]; then
+		if [ "${enable_vlan}" = "1" -a "${NET}" = "mesh_vlan" ]; then
 			if ! $dsa; then
 				# need to "for" vlan_ports to remove spaces
 				for p in ${vlan_ports}
