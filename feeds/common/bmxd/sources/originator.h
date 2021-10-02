@@ -108,7 +108,7 @@ extern int32_t dad_to;
 #define MIN_TTL 1
 extern int32_t Ttl;
 
-#define DEF_WL_CLONES 200
+#define DEF_WL_CLONES 100
 #define MIN_WL_CLONES 0
 #define MAX_WL_CLONES 400
 #define ARG_WL_CLONES "ogm_broadcasts"
