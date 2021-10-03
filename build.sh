@@ -28,7 +28,7 @@ PLATFORMS_JSON="build.json"
 
 USE_DOCKER=false
 DOCKER_IMAGE="freifunkdresden/openwrt-docker-build"
-DOCKER_OUTPUT_DIR="docker-output"
+DOCKER_FINAL_TGZ="docker-final-output.tgz"
 DOCKER_CONTAINER_NAME="ffbuild"
 
 DL_DIR=dl
@@ -497,11 +497,11 @@ if $USE_DOCKER; then
 	docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
 
 	# copy back results
-	echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_OUTPUT_DIR}]${C_NONE}"
-	mkdir -p "${DOCKER_OUTPUT_DIR}"
-	docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf output.tgz output
-	docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/output.tgz "${DOCKER_OUTPUT_DIR}"/
-	tar -C "${DOCKER_OUTPUT_DIR}" xvzf output.tgz
+	echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_FINAL_TGZ}]${C_NONE}"
+	docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf final_output.tgz final_output
+	docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/final_output.tgz "${DOCKER_FINAL_TGZ}"
+	tar xvzf "${DOCKER_FINAL_TGZ}"
+	rm "${DOCKER_FINAL_TGZ}"
 
 	# stop and delete
 	echo -e "${C_CYAN}stop container${C_NONE}"
