@@ -33,6 +33,7 @@ DOCKER_CONTAINER_NAME="ffbuild"
 
 DL_DIR=dl
 WORK_DIR=workdir
+FINAL_OUTPUT_DIR="final_output" # used by gen-upload.sh (docker)
 CONFIG_DIR=openwrt-configs
 CONFIG_DEFAULT_FILE="default.config"
 OPENWRT_PATCHES_DIR=openwrt-patches
@@ -491,14 +492,14 @@ if $USE_DOCKER; then
 
 		# create file to upload
 		echo -e "${C_CYAN}create project archive${C_NONE}"
-		tar -cz --exclude ${WORK_DIR} --exclude ${DL_DIR} \
+		tar -cz --exclude ${WORK_DIR} --exclude ${DL_DIR} --exclude ${FINAL_OUTPUT_DIR} \
 				--exclude-backups --exclude-vcs --exclude-vcs-ignores \
 				-f "/tmp/${docker_tar}" ./
 
 		# upload and extract (workdir is not included)
 		echo -e "${C_CYAN}copy project to container${C_NONE}"
-		docker cp "/tmp/${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds
-		docker exec -it ${DOCKER_CONTAINER_NAME} "tar -xzf ${docker_tar} && rm ${docker_tar}"
+		docker cp "/tmp/${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/
+		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "tar -xzf ${docker_tar} && rm ${docker_tar}"
 		rm /tmp/${docker_tar}
 
 		# run build
@@ -514,8 +515,8 @@ if $USE_DOCKER; then
 
 		# copy back results
 		echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_FINAL_TGZ}]${C_NONE}"
-		docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf final_output.tgz final_output
-		docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/final_output.tgz "${DOCKER_FINAL_TGZ}"
+		docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf ${DOCKER_FINAL_TGZ} final_output
+		docker cp ${DOCKER_CONTAINER_NAME}:/builds/${DOCKER_FINAL_TGZ} "${DOCKER_FINAL_TGZ}"
 		tar xvzf "${DOCKER_FINAL_TGZ}"
 		rm "${DOCKER_FINAL_TGZ}"
 
