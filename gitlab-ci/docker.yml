@@ -170,7 +170,7 @@ docker:ath79:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))" V=s
   tags:
   - docker
 
