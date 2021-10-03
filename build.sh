@@ -774,7 +774,7 @@ setup_buildroot ()
 	# So I check if FF_BUILD_TAG is set and then use this. If not defined I use
 	# the one I can determine.
 	git_ddmesh_rev="$(git log -1 --format=%H)"
-	if [ "$FF_BUILD_TAG" ]; then
+	if [ -n "$FF_BUILD_TAG" ]; then
 		git_ddmesh_branch="$FF_BUILD_TAG"
 	else
 		git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
