@@ -13,7 +13,7 @@
 
 default:
   # image is on hub.docker.com
-  image: freifunkdresden/openwrt-docker-build
+  image: freifunkdresden/openwrt-docker-build:v3
 
 docker:init:
   except:
