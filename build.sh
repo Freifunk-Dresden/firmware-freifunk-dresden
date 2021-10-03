@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="14"
+SCRIPT_VERSION="15"
 
 
 # gitlab variables
@@ -391,43 +391,45 @@ usage()
 	# create a simple menu
 	cat <<EOM
 Version: $SCRIPT_VERSION
-usage: $(basename $0) [options] list | search <string> | clean | feed-revisions | (target | all | failed [menuconfig ] [rerun] [ <make params ...> ])
+usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < make params ... > ]
  options:
-		-h    docker host, if not specifies environment variable 'export DOCKER_HOST' is used.
-		-d    use docker for compiling (keep workdir)
-		-D    use docker for compiling (clear workdir)
+   -h    docker host, if not specifies environment variable 'export DOCKER_HOST' is used.
+         e.g: tcp://192.168.123.123
+   -d    use docker for compiling (keep workdir)
+   -D    use docker for compiling (clear workdir)
+   -s    open docker shell
 
- commands:
-		list             - lists all available targets
-		list-targets     - lists only target names for usage in IDE
-		search           - search specific router (target)
-		clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
-		feed-revisions   - returns the git HEAD revision hash for current date (now).
-												The revisions then could be set in build.json
-		target           - target to build (can have regex)
-							that are defined by build.json. use 'list' for supported targets.
-							'all'                   - builds all targets
-							'failed'                - builds only previously failed or not built targets
-							'ramips.*'              - builds all ramips targets only
-							'ramips.rt305x.generic' - builds exact this target
-							'^rt30.*'               - builds all that start with 'rt30'
-							'ramips.mt7621.generic ar71xx.tiny.lowmem' - space or pipe separates targets
-							'ramips.mt7621.generic | ar71xx.tiny.lowmem'
+  commands:
+   list             - lists all available targets
+   list-targets     - lists only target names for usage in IDE
+   search <string>  - search specific router (target)
+   clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
+   feed-revisions   - returns the git HEAD revision hash for current date (now).
+                      The revisions then could be set in build.json
+   target           - target to build (can have regex)
+           that are defined by build.json. use 'list' for supported targets.
+           'all'                   - builds all targets
+           'failed'                - builds only previously failed or not built targets
+           'ramips.*'              - builds all ramips targets only
+           'ramips.rt305x.generic' - builds exact this target
+           '^rt30.*'               - builds all that start with 'rt30'
+           'ramips.mt7621.generic ar71xx.tiny.lowmem' - space or pipe separates targets
+           'ramips.mt7621.generic | ar71xx.tiny.lowmem'
 
-		menuconfig       - displays configuration menu
-		rerun            - enables a second compilation with make option 'V=s'
-												If first make failes a second make is tried with this option
-		make params      - all paramerters that follows are passed to make command
+   menuconfig       - displays configuration menu
+   rerun            - enables a second compilation with make option 'V=s'
+                      If first make failes a second make is tried with this option
+   make params      - all paramerters that follows are passed to make command
 EOM
 }
 
 # check if there are options
-while getopts "Ddh:" arg
+while getopts "sDdh:" arg
 do
 	case "$arg" in
 		h)
 			test -z "${OPTARG}" && echo "docker host"
-			export DOCKER_HOST="tcp://${OPTARG}" # export it here, to not overwrite external possible
+			export DOCKER_HOST="${OPTARG}" # export it here, to not overwrite external possible
 			;;                                   # variable
 		d)
 			USE_DOCKER=true
@@ -445,6 +447,14 @@ do
 				exit 1
 			fi
 			;;
+		s)
+			USE_DOCKER=true
+			RUN_DOCKER_SHELL="1"
+			if [ -z "$(which docker)" ]; then
+				echo "Error: no docker installed"
+				exit 1
+			fi
+			;;
 
 		\?)	exit 1	;;
 	esac
@@ -456,7 +466,7 @@ test -n "${DOCKER_HOST}" && echo "docker at: ${DOCKER_HOST}"
 #for a;  do echo "arg [$a]"; done
 #echo $@
 
-if [ -z "$1" ]; then
+if [ -z "$1" -a "$RUN_DOCKER_SHELL" != "1" ]; then
 	usage
 	exit 1
 fi
@@ -464,7 +474,8 @@ fi
 # if docker is used, this script should be called from docker container
 if $USE_DOCKER; then
 	echo "Using Docker at ${DOCKER_HOST:=localhost}"
-	docker_tar="$(mktemp).tgz"
+	docker_tar="$(mktemp -u).tgz"
+	docker_tar=$(basename ${docker_tar})	# remove path
 
 	# create container and upload current directory
 	docker inspect ${DOCKER_CONTAINER_NAME} >/dev/null 2>/dev/null || {
@@ -474,39 +485,46 @@ if $USE_DOCKER; then
 	echo -e "${C_CYAN}start container${C_NONE}"
   docker start ${DOCKER_CONTAINER_NAME}
 
-	# create file to upload
-	echo -e "${C_CYAN}create project archive${C_NONE}"
-	tar -cz --exclude ${WORK_DIR} --exclude ${DL_DIR} \
-	    --exclude-backups --exclude-vcs --exclude-vcs-ignores \
-			-f "${docker_tar}" ./
+	if [ "$RUN_DOCKER_SHELL" = "1" ]; then
+		docker exec -it ${DOCKER_CONTAINER_NAME} bash
+	else
 
-	# upload and extract (workdir is not included)
-	echo -e "${C_CYAN}copy project to container${C_NONE}"
-	docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds
-	docker exec -it ${DOCKER_CONTAINER_NAME} tar -xzf "${docker_tar/\/tmp\//}"
+		# create file to upload
+		echo -e "${C_CYAN}create project archive${C_NONE}"
+		tar -cz --exclude ${WORK_DIR} --exclude ${DL_DIR} \
+				--exclude-backups --exclude-vcs --exclude-vcs-ignores \
+				-f "/tmp/${docker_tar}" ./
 
-	# run build
-	${DOCKER_RM_WORKDIR} && {
-		echo -e "$${C_LCYAN}remove workdir${C_NONE}"
-		docker exec -it ${DOCKER_CONTAINER_NAME} rm -rf ${WORK_DIR}
-	}
-	docker exec -it ${DOCKER_CONTAINER_NAME} git config --global http.sslverify false
-	echo -e "${C_CYAN}run build${C_NONE}"
-	docker exec -it ${DOCKER_CONTAINER_NAME} ./build.sh $@
-	echo -e "${C_CYAN}generate upload${C_NONE}"
-	docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
+		# upload and extract (workdir is not included)
+		echo -e "${C_CYAN}copy project to container${C_NONE}"
+		docker cp "/tmp/${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds
+		docker exec -it ${DOCKER_CONTAINER_NAME} "tar -xzf ${docker_tar} && rm ${docker_tar}"
+		rm /tmp/${docker_tar}
 
-	# copy back results
-	echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_FINAL_TGZ}]${C_NONE}"
-	docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf final_output.tgz final_output
-	docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/final_output.tgz "${DOCKER_FINAL_TGZ}"
-	tar xvzf "${DOCKER_FINAL_TGZ}"
-	rm "${DOCKER_FINAL_TGZ}"
+		# run build
+		${DOCKER_RM_WORKDIR} && {
+			echo -e "$${C_LCYAN}remove workdir${C_NONE}"
+			docker exec -it ${DOCKER_CONTAINER_NAME} rm -rf ${WORK_DIR}
+		}
+		docker exec -it ${DOCKER_CONTAINER_NAME} git config --global http.sslverify false
+		echo -e "${C_CYAN}run build${C_NONE}"
+		docker exec -it ${DOCKER_CONTAINER_NAME} ./build.sh $@
+		echo -e "${C_CYAN}generate upload${C_NONE}"
+		docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
 
-	# stop and delete
-	echo -e "${C_CYAN}stop container${C_NONE}"
-	docker stop -t0 ${DOCKER_CONTAINER_NAME}
-#	docker rm ${DOCKER_CONTAINER_NAME}
+		# copy back results
+		echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_FINAL_TGZ}]${C_NONE}"
+		docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf final_output.tgz final_output
+		docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/final_output.tgz "${DOCKER_FINAL_TGZ}"
+		tar xvzf "${DOCKER_FINAL_TGZ}"
+		rm "${DOCKER_FINAL_TGZ}"
+
+		# stop and delete
+		echo -e "${C_CYAN}stop container${C_NONE}"
+		docker stop -t0 ${DOCKER_CONTAINER_NAME}
+	#	docker rm ${DOCKER_CONTAINER_NAME}
+
+	fi
 
 	exit 0
 fi
