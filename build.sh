@@ -393,8 +393,9 @@ usage()
 Version: $SCRIPT_VERSION
 usage: $(basename $0) [options] list | search <string> | clean | feed-revisions | (target | all | failed [menuconfig ] [rerun] [ <make params ...> ])
  options:
-		-d    docker host, if not specifies environment variable 'export DOCKER_HOST' is used.
-		-D    use docker for compiling
+		-h    docker host, if not specifies environment variable 'export DOCKER_HOST' is used.
+		-d    use docker for compiling (keep workdir)
+		-D    use docker for compiling (clear workdir)
 
  commands:
 		list             - lists all available targets
@@ -421,21 +422,30 @@ EOM
 }
 
 # check if there are options
-while getopts "Dd:h" arg
+while getopts "Ddh:" arg
 do
 	case "$arg" in
-		d)
+		h)
 			test -z "${OPTARG}" && echo "docker host"
 			export DOCKER_HOST="tcp://${OPTARG}" # export it here, to not overwrite external possible
 			;;                                   # variable
-		D)
+		d)
 			USE_DOCKER=true
+			DOCKER_RM_WORKDIR=false
 			if [ -z "$(which docker)" ]; then
 				echo "Error: no docker installed"
 				exit 1
 			fi
 			;;
-		h)	usage; exit 1;;
+		D)
+			USE_DOCKER=true
+			DOCKER_RM_WORKDIR=true
+			if [ -z "$(which docker)" ]; then
+				echo "Error: no docker installed"
+				exit 1
+			fi
+			;;
+
 		\?)	exit 1	;;
 	esac
 done
@@ -457,30 +467,44 @@ if $USE_DOCKER; then
 	docker_tar="$(mktemp).tgz"
 
 	# create container and upload current directory
-  docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
-  docker start --name ${DOCKER_CONTAINER_NAME}
+	docker inspect ${DOCKER_CONTAINER_NAME} >/dev/null 2>/dev/null || {
+		echo -e "${C_CYAN}create container${C_NONE}"
+  	docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
+	}
+	echo -e "${C_CYAN}start container${C_NONE}"
+  docker start ${DOCKER_CONTAINER_NAME}
 
 	# create file to upload
-	tar -cvz --exclude ${WORK_DIR} --exclude ${DL_DIR} \
+	echo -e "${C_CYAN}create project archive${C_NONE}"
+	tar -cz --exclude ${WORK_DIR} --exclude ${DL_DIR} \
 	    --exclude-backups --exclude-vcs --exclude-vcs-ignores \
 			-f "${docker_tar}" ./
 
-	# upload and extract
+	# upload and extract (workdir is not included)
+	echo -e "${C_CYAN}copy project to container${C_NONE}"
 	docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds
-	docker exec -it ${DOCKER_CONTAINER_NAME} tar -xvzf "${docker_tar/\/tmp\//}"
+	docker exec -it ${DOCKER_CONTAINER_NAME} tar -xzf "${docker_tar/\/tmp\//}"
 
 	# run build
+	${DOCKER_RM_WORKDIR} && {
+		echo -e "$${C_LCYAN}remove workdir${C_NONE}"
+		docker exec -it ${DOCKER_CONTAINER_NAME} rm -rf ${WORK_DIR}
+	}
 	docker exec -it ${DOCKER_CONTAINER_NAME} git config --global http.sslverify false
+	echo -e "${C_CYAN}run build${C_NONE}"
 	docker exec -it ${DOCKER_CONTAINER_NAME} ./build.sh $@
+	echo -e "${C_CYAN}generate upload${C_NONE}"
 	docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
 
 	# copy back results
+	echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_OUTPUT_DIR}]${C_NONE}"
 	mkdir -p "${DOCKER_OUTPUT_DIR}"
 	docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf output.tgz output
 	docker cp "${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/output.tgz "${DOCKER_OUTPUT_DIR}"/
 	tar -C "${DOCKER_OUTPUT_DIR}" xvzf output.tgz
 
 	# stop and delete
+	echo -e "${C_CYAN}stop container${C_NONE}"
 	docker stop -t0 ${DOCKER_CONTAINER_NAME}
 #	docker rm ${DOCKER_CONTAINER_NAME}
 
