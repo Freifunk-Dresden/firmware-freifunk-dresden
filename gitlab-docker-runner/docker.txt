@@ -1,22 +1,22 @@
+# https://docs.gitlab.com/runner/install/docker.html
+
+
 # There are two possibilities to install gitlab-runner
 #  1. install native gitlab-runner tools, which runs on host and
 #      uses gitlab-runner/helber to build firmware with docker image.
 #      This allows to create openwrt-docker-build with bind-mounted
 #      /mycache directory. /mycache would then hold working dir and dl dir
+# (max runner uses this way)
+
+
+
 #  2. install gitlab-runner as docker image, that has gitlab-runner tools
 #      in container. this container runs always to speak with gitlab server.
 #      The runners config is within the container.
-
-
-# https://docs.gitlab.com/runner/install/docker.html
-#
-# bind mount to /etc/gitlab-runner/ does not work, so I have to use the
-# original docker command to create container.
-
-# for instance set "pull_policy = if-not-present
+# (stephan runner uses this way)
 
 # create and run container (variante 2)
-
+----------------------------------------------
 docker run -d --name gitlab-runner --restart always \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v gitlab-runner-config:/etc/gitlab-runner \
@@ -45,14 +45,14 @@ docker exec -it gitlab-runner bash
 # Howto use /mycache:
 # 1. add /mycache bind mount. this is working because runner creates the openwrt-container within
 #    host, not within docker (not nested)
-#  volumes = ["/cache", "/root/mycache:/mycache"]
+#  volumes = ["/cache", "/mycache:/mycache"]
 #
-# 2. host: mkdir /root/mycache && chmod 777 /root/mycache
+# 2. host: mkdir /mycache && chmod 777 /mycache
 #    This is needed because gitlab-runner bind-mounts this directory. firmware is build as user "builder"
 #    which is required not to be "root". It has to be able to create /mycache/dl and /mycache/workdir.
 #
 # 3. Optional if testing manually.
-#    - docker run --rm -it -v "/root/mycache:/mycache" openwrt-docker-build bash
+#    - docker run --rm -it -v "/mycache:/mycache" openwrt-docker-build bash
 #    - checkout project
 #    - cd firmware
 #    - mkdir -p /mycache/dl /mycache/workdir
