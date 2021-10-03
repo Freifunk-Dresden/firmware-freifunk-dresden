@@ -13,8 +13,7 @@ Install native gitlab-runner tools, which runs on host and
       The runners config is within the container.
  (stephan runner uses this way)
 
-# create and run container (variante 2)
-----------------------------------------------
+# Create and run container (variante 2)
 ~~~sh
 docker run -d --name gitlab-runner --restart always \
     -v /var/run/docker.sock:/var/run/docker.sock \
@@ -22,10 +21,10 @@ docker run -d --name gitlab-runner --restart always \
     gitlab/gitlab-runner:latest
 ~~~    
     
-## register docker runner with gitlab
+## Register docker runner with gitlab
  https://docs.gitlab.com/runner/register/#docker
 
- When ask for default docker image, use "registry.gitlab.freifunk-dresden.de/openwrt-docker-build:latest"
+ When ask for default docker image, use **registry.gitlab.freifunk-dresden.de/openwrt-docker-build:latest**
  Registration process will update /etc/gitlab-runner/config.toml (which is either
  on host (variante 1) or within the docker-runner container (variante 2)
 
@@ -33,13 +32,11 @@ docker run -d --name gitlab-runner --restart always \
 docker run --rm -it -v gitlab-runner-config:/etc/gitlab-runner gitlab/gitlab-runner:latest register
 ~~~
 
-## modify docker configuration and restart container.
-
+## Configuration
 ~~~sh
 docker exec -it gitlab-runner bash
 ~~~
 
-## configuration
 add to [runners.docker] to allow loading images when those are not present on any server 
 (only generated locally) but .gitlab-ci.yml has a reference to a remote docker registry
 `pull_policy = ["if-not-present"]`
