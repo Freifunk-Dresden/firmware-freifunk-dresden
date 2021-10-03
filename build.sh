@@ -28,7 +28,7 @@ PLATFORMS_JSON="build.json"
 
 USE_DOCKER=false
 DOCKER_IMAGE="freifunkdresden/openwrt-docker-build"
-DOCKER_OUTPUT_DIR="docker"
+DOCKER_OUTPUT_DIR="docker-output"
 DOCKER_CONTAINER_NAME="ffbuild"
 
 DL_DIR=dl
