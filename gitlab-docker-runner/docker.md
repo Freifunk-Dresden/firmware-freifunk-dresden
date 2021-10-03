@@ -2,15 +2,21 @@ https://docs.gitlab.com/runner/install/docker.html
 
 # Install
 1. There are two possibilities to install gitlab-runner.
-Install native gitlab-runner tools, which runs on host and
-      uses gitlab-runner/helber to build firmware with docker image.
-      This allows to create openwrt-docker-build with bind-mounted
-      /mycache directory. /mycache would then hold working dir and dl dir
+- Install native gitlab-runner tools, which runs on host and
+uses gitlab-runner/helber to build firmware with docker image.
+- gitlab config: /etc/gitlab-runner/config.yaml
+This allows to create openwrt-docker-build with bind-mounted
+- gitlab-runner-helper mounts /mycache directly
+
 (max runner uses this way)
 
   2. install gitlab-runner as docker image, that has gitlab-runner tools
-      in container. this container runs always to speak with gitlab server.
-      The runners config is within the container.
+in container. 
+* gitlab docker (which runs gitlab-runner-helper) uses host dockerd (socket) to create more container
+* configuration lays within this container (run `docker exec -it gitlab-runner bash` to access it)
+* /mycache is mounted to /root/mycache (/ is not working). This is also on host available, because docker within gitlab-runner
+container access the same docker socket from host.
+
  (stephan runner uses this way)
 
 # Create and run container (variante 2)
