@@ -106,7 +106,7 @@ case "$ARG1" in
 
 	#default start with no gatway.will be updated by gateway_check.sh
 	#SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"
-	NETWORK_OPTS="--network $_ddmesh_fullnet"
+	NETWORK_OPTS="--network $_ddmesh_fullnet --netid $MESH_NETWORK_ID"
 	SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 	TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre"
 	TWEAK_OPTS="--ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 30"
