@@ -10,7 +10,8 @@ bmx_proto = Proto("BMX","BMX Protocol")
 
 
 -- define fields that can be used for searching/filtering.
--- So it can be filtered I have use these filter to add in the tree below. 
+-- So it can be filtered I have use these filter to add in the tree below.
+f_netid=ProtoField.uint16("bmx.netid", "Network ID") 
 f_ogm_package_size=ProtoField.uint16("bmx.ogm.size", "Packet size")
 
 -- flags: create a bool. 1: name of filter; 2: displayed text; 3: bytes that hold the flags;
@@ -33,10 +34,9 @@ f_ext_gw_class=ProtoField.uint8("bmx.ogm.ext.gw.class", "Gateway Class")
 f_ext_pip_addr=ProtoField.ipv4("bmx.ogm.ext.pip.addr","Primary interface packet IP")
 f_ext_pip_seqno=ProtoField.uint16("bmx.ogm.ext.pip.seqno", "Sequence number")
 
-f_ext_netid=ProtoField.uint16("bmx.ogm.ext.netid", "Network ID")
 bmx_proto.fields={f_orig, f_seqno,f_prevHopId, f_ttl, f_cpu, f_pws, f_flag_uni
 		, f_flag_direct, f_flag_clone, f_ogm_package_size, f_ext_gw_addr, f_ext_gw_class
-		, f_ext_pip_addr, f_ext_pip_seqno, f_ext_netid}
+		, f_ext_pip_addr, f_ext_pip_seqno, f_netid}
 
 
 function ipStr(number)
@@ -63,17 +63,15 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 
 	-- bat_header
 	local bmx_ver=buffer(0,1):uint()
-	local bmx_flags=buffer(1,1):uint()
+	local netid=buffer(1,2):uint()
 	-- take size byte and multiply it with 4 to get the size including the bat header
 	local packet_size = buffer(3,1):uint() * 4 
---	local line = "Ver:" .. bmx_ver .. " Link flags:" .. bmx_flags .." Data Size:" .. packet_size - 4
-	local line = string.format("Ver: 0x%2.2x, Link flags: 0x%2.2x, Data Size: %d", bmx_ver, bmx_flags, packet_size - 4)
+	local line = string.format("Ver: 0x%2.2x, NetworkId: %u, Data Size: %d", bmx_ver, netid, packet_size - 4)
 
 	local tree_bat_header = subtree:add(buffer(0,4),"Header:" .. line)
 	-- add() is for bigendian; add_le() is for little endian
 	tree_bat_header:add(buffer(0,1),"version: " .. bmx_ver)
-	tree_bat_header:add(buffer(1,1),"Link flags: " .. bmx_flags)
-	tree_bat_header:add(buffer(2,1),"reserved: " .. buffer(2,1):uint())
+	tree_bat_header:add(f_netid,buffer(1,2))
 	tree_bat_header:add(buffer(3,1), "Size:", packet_size - 4)
 
 	-- check coded size against buffer (packet_size contains the bat_header too, so 
@@ -180,11 +178,11 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 						exttree2:add(f_ext_pip_seqno, buffer(ext_offset+2,2))
 						exttree2:add(f_ext_pip_addr, buffer(ext_offset+4,4))
 
-					elseif ext_type == 3 then
-					-- EXT_TYPE_64B_NETID
-						local line = string.format("Network ID: %d", d32)
-						local exttree2=exttree:add(buffer(ext_offset, 8), line)
-						exttree2:add(f_ext_netid, buffer(ext_offset+2,2))
+--					elseif ext_type == 3 then
+--					-- EXT_TYPE_64B_NETID
+--						local line = string.format("Network ID: %d", d32)
+--						local exttree2=exttree:add(buffer(ext_offset, 8), line)
+--						exttree2:add(f_ext_netid, buffer(ext_offset+2,2))
 					else
 						-- unknown
 					end

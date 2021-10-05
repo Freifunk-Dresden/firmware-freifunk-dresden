@@ -223,7 +223,8 @@ static void send_aggregated_ogms(void)
 			{
 				struct bat_header *bat_hdr = (struct bat_header *)bif->aggregation_out;
 				bat_hdr->version = COMPAT_VERSION;
-				bat_hdr->link_flags = 0;
+				bat_hdr->networkId_high = gNetworkId >> 8;
+				bat_hdr->networkId_low  = gNetworkId & 0xff;
 				bat_hdr->size = (bif->aggregation_len) / 4;
 
 				if (bif->aggregation_len > MAX_UDPD_SIZE || (bif->aggregation_len) % 4 != 0)
@@ -882,6 +883,10 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 
 	addr_to_str(rcvd_neighbor, mb->neigh_str);
 
+	//SE: add network ID, but enable/disable check
+	mb->networkId =   (((struct bat_header *)pos)->networkId_high) << 8
+	                | (((struct bat_header *)pos)->networkId_low) ;
+
 	// immediately drop invalid packets...
 	// we acceppt longer packets than specified by pos->size to allow padding for equal packet sizes
 	if (((((struct bat_header *)pos)->size) << 2) < (int32_t)(sizeof(struct bat_header) + sizeof(struct bat_packet_common)) ||
@@ -892,11 +897,11 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 		{
 			dbg_mute(60, DBGL_SYS, DBGT_WARN,
 							 "Drop packet: rcvd incompatible batman packet via NB %s "
-							 "(version? %i, reserved? %X, size? %i), "
+							 "(version %i, networkId %u, size %i), "
 							 "rcvd udp_len %d  My version is %d",
 							 mb->neigh_str,
 							 ((struct bat_header *)pos)->version,
-							 ((struct bat_header *)pos)->reserved,
+							 mb->networkId,
 							 ((struct bat_header *)pos)->size,
 							 mb->total_length, COMPAT_VERSION);
 		}
@@ -912,12 +917,24 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 
 	mb->neigh = rcvd_neighbor;
 
+
 	dbgf_all(DBGT_INFO, "version? %i, "
-											"reserved? %X, size? %i, rcvd udp_len %d via NB %s %s %s",
+											"networkId %u, size %i, rcvd udp_len %d via NB %s %s %s",
 					 ((struct bat_header *)pos)->version,
-					 ((struct bat_header *)pos)->reserved,
+					 mb->networkId,
 					 ((struct bat_header *)pos)->size,
 					 mb->total_length, mb->neigh_str, mb->iif->dev, mb->unicast ? "UNICAST" : "BRC");
+
+	#ifndef DISABLE_NETWORK_ID_CHECK
+		//se: check networkId against our
+		if ( mb->networkId != gNetworkId)
+		{
+			dbgf_all(DBGT_INFO, "Drop packet: invalid networkId %u iif %s", mb->iif->dev);
+
+			prof_stop(PROF_process_packet);
+			return;
+		}
+	#endif
 
 	check_len = udp_len = ((((struct bat_header *)pos)->size) << 2) - sizeof(struct bat_header);
 	check_pos = pos = pos + sizeof(struct bat_header);
@@ -1406,6 +1423,7 @@ static struct opt_type schedule_options[] =
 
 				{ODI, 5, 0, ARG_UDPD_SIZE, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &pref_udpd_size, MIN_UDPD_SIZE, MAX_UDPD_SIZE, DEF_UDPD_SIZE, 0,
 				 ARG_VALUE_FORM, "set preferred udp-data size for send packets"}
+
 #ifndef LESS_OPTIONS
 #ifndef NOPARANOIA
 				,

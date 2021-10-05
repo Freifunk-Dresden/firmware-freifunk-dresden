@@ -80,6 +80,9 @@ static int32_t my_asym_exp = DEF_ASYM_EXP;
 //SE: network filter
 static uint32_t network_prefix;
 static uint32_t network_netmask;
+//SE: added to separate networks. (network extension could be used, but
+//this would cause to increase size of every packet)
+int32_t gNetworkId = DEF_NETWORK_ID; //only 16bits are used, but parameter needs to be 32bit
 
 
 static LIST_ENTRY pifnb_list;
@@ -1846,7 +1849,6 @@ static int32_t opt_netw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 }
 
 
-
 static struct opt_type originator_options[] =
 		{
 				//        ord parent long_name          shrt Attributes				*ival		min		max		default		*func,*syntax,*help
@@ -1872,6 +1874,9 @@ static struct opt_type originator_options[] =
 //SE: network filter; can be set dynamically
 				{ODI, 4, 0, ARG_NETW, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, 0, 0, 0, 0, opt_netw,
 		 			ARG_PREFIX_FORM, "only accept OGM from network\n"},
+
+				{ODI, 4, 0, ARG_NETWORK_ID, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, &gNetworkId, MIN_NETWORK_ID, MAX_NETWORK_ID, DEF_NETWORK_ID, 0,
+				 ARG_VALUE_FORM, "set network ID"},
 
 #ifndef LESS_OPTIONS
 				{ODI, 5, ARG_DEV, ARG_DEV_TTL, 't', A_CS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, MIN_TTL, MAX_TTL, DEF_TTL, opt_dev,

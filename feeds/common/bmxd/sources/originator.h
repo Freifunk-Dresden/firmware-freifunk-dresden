@@ -138,6 +138,13 @@ extern int32_t wl_clones;
 #define DEF_NETW_PREFIX "10.0.0.0"
 #define DEF_NETW_MASK   8					// primary ip and non-primary
 
+//SE: added to separate networks. (network extension could be used, but
+//this would cause to increase size of every packet)
+#define ARG_NETWORK_ID "netid"
+#define MIN_NETWORK_ID 0
+#define MAX_NETWORK_ID 65535
+#define DEF_NETWORK_ID 0
+extern int32_t gNetworkId;	//only 16bits are used, but parameter needs to be 32bit
 
 extern struct batman_if *primary_if;
 extern uint32_t primary_addr;

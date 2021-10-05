@@ -44,7 +44,7 @@ uint8_t ext_attribute[EXT_TYPE_MAX + 1] =
 // hna is removed, but this is still used by older firmware versions in pakets
 				0,														// _removed_EXT_TYPE_64B_HNA
 				0,														// EXT_TYPE_64B_PIP
-				EXT_ATTR_KEEP,								// EXT_TYPE_64B_NETID
+				EXT_ATTR_KEEP,								// EXT_TYPE_64B_DDMESH
 
 //stephan: alle die hier folgen, werden nicht verwendet (reserivert)
 				EXT_ATTR_KEEP,								// EXT_TYPE_64B_KEEP_RESERVED4
@@ -62,8 +62,6 @@ uint8_t ext_attribute[EXT_TYPE_MAX + 1] =
 };
 
 int32_t Gateway_class = 0;
-
-//uint8_t Link_flags = 0;
 
 batman_time_t batman_time = 0; //milli seconds
 batman_time_t batman_time_sec = 0;
