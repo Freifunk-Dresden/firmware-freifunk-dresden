@@ -8,6 +8,37 @@
 -- declare our protocol
 bmx_proto = Proto("BMX","BMX Protocol")
 
+
+-- define fields that can be used for searching/filtering.
+-- So it can be filtered I have use these filter to add in the tree below. 
+f_ogm_package_size=ProtoField.uint16("bmx.ogm.size", "Packet size")
+
+-- flags: create a bool. 1: name of filter; 2: displayed text; 3: bytes that hold the flags;
+-- 4: if the mask delivers true, then display either of one strings
+--  5: bitmask
+f_flag_uni=ProtoField.bool("bmx.ogm.flag.uni", "Flag: Uni-directional",8,{"UNI","none"},0x01)
+f_flag_direct=ProtoField.bool("bmx.ogm.flag.direct", "Flag: direct-link",8,{"DIRECT","none"},0x02)
+f_flag_clone=ProtoField.bool("bmx.ogm.flag.clone", "Flag: clone",8,{"CLONE","none"},0x04)
+
+f_pws=ProtoField.uint8("bmx.ogm.pws", "PWS")
+f_cpu=ProtoField.uint8("bmx.ogm.cpu", "CPU")
+f_ttl=ProtoField.uint8("bmx.ogm.ttl", "TTL")
+f_prevHopId=ProtoField.uint8("bmx.ogm.hopID", "Previous Hop ID")
+f_orig=ProtoField.ipv4("bmx.ogm.orig.addr","Originator IP")
+f_seqno=ProtoField.uint16("bmx.ogm.seqno", "Sequence number")
+
+f_ext_gw_addr=ProtoField.ipv4("bmx.ogm.ext.gw.addr","Gateway IP")
+f_ext_gw_class=ProtoField.uint8("bmx.ogm.ext.gw.class", "Gateway Class")
+
+f_ext_pip_addr=ProtoField.ipv4("bmx.ogm.ext.pip.addr","Primary interface packet IP")
+f_ext_pip_seqno=ProtoField.uint16("bmx.ogm.ext.pip.seqno", "Sequence number")
+
+f_ext_netid=ProtoField.uint16("bmx.ogm.ext.netid", "Network ID")
+bmx_proto.fields={f_orig, f_seqno,f_prevHopId, f_ttl, f_cpu, f_pws, f_flag_uni
+		, f_flag_direct, f_flag_clone, f_ogm_package_size, f_ext_gw_addr, f_ext_gw_class
+		, f_ext_pip_addr, f_ext_pip_seqno, f_ext_netid}
+
+
 function ipStr(number)
 	n1=bit.band(number, 0xff)
 	n2=bit.band(bit.rshift(number, 8), 0xff)
@@ -97,14 +128,19 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 					, ogm_prevHopId, ogm_flag_unidir, ogm_flag_direct, ogm_flag_clone, ext_str)
 
 			local tree_bat_packet = subtree:add(buffer(offset,size), line)
-			tree_bat_packet:add(buffer(offset,1),"bat_type+flags: " .. string.format("0x%02x",tmp))
-			tree_bat_packet:add(buffer(offset+1,1),"size: " .. size)
-			tree_bat_packet:add(buffer(offset+2,1),"pws: " .. ogm_pws )
-			tree_bat_packet:add(buffer(offset+3,1),"misc: " .. ogm_misc .." (cpu)")
-			tree_bat_packet:add(buffer(offset+4,1),"ttl: " .. ogm_ttl)
-			tree_bat_packet:add(buffer(offset+5,1),"prevHopId: " .. ogm_prevHopId)
-			tree_bat_packet:add(buffer(offset+6,2),"seqno: " .. ogm_seqno)
-			tree_bat_packet:add(buffer(offset+8,4),"orig: " .. ipStr(ogm_orig))
+			-- the size filed is coded and must be lshifted by 2, To display the correct value and
+			-- still have the byte marked in wireshark when I click on "Packet size", I simply add 
+			-- the value as third paramter. (don't know why this works).
+			tree_bat_packet:add(f_ogm_package_size, buffer(offset+1,1), size )
+			tree_bat_packet:add(f_flag_clone,buffer(offset,1))
+			tree_bat_packet:add(f_flag_direct,buffer(offset,1))
+			tree_bat_packet:add(f_flag_uni,buffer(offset,1))
+			tree_bat_packet:add(f_pws,buffer(offset+2,1) )
+			tree_bat_packet:add(f_cpu,buffer(offset+3,1))
+			tree_bat_packet:add(f_ttl,buffer(offset+4,1))
+			tree_bat_packet:add(f_prevHopId, buffer(offset+5,1))
+			tree_bat_packet:add(f_seqno,buffer(offset+6,2))
+			tree_bat_packet:add(f_orig,buffer(offset+8,4))
 
 			-- extension
 			if ext_size > 0 then
@@ -133,21 +169,22 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 						local line = string.format("Gateway: %s, %s, off:%d", ipStr(d32), gw_type, ext_offset)
 						local exttree2=exttree:add(buffer(ext_offset, 8), line)
 						exttree2:add(buffer(ext_offset,1),"Extension: GW type:" .. gw_type)
-						exttree2:add(buffer(ext_offset+1,1),"Extension: GW flags (class):" .. d8)
+						exttree2:add(f_ext_gw_class, buffer(ext_offset+1,1))
 						exttree2:add(buffer(ext_offset+2,2),"Extension: GW port:" .. d16)
-						exttree2:add(buffer(ext_offset+4,4),"Extension: GW ip:" .. ipStr(d32))
+						exttree2:add(f_ext_gw_addr, buffer(ext_offset+4,4))
 
 					elseif ext_type == 2 then
 					-- EXT_TYPE_64B_PIP
 						local line = string.format("Primary interface: %s, seqno:%d", ipStr(d32), d16)
 						local exttree2=exttree:add(buffer(ext_offset, 8), line)
-						exttree2:add(buffer(ext_offset+2,2),"Extension: PIP seqno:" .. d16)
-						exttree2:add(buffer(ext_offset+4,4),"Extension: PIP new primary interface ip:" .. ipStr(d32))
+						exttree2:add(f_ext_pip_seqno, buffer(ext_offset+2,2))
+						exttree2:add(f_ext_pip_addr, buffer(ext_offset+4,4))
+
 					elseif ext_type == 3 then
 					-- EXT_TYPE_64B_NETID
 						local line = string.format("Network ID: %d", d32)
 						local exttree2=exttree:add(buffer(ext_offset, 8), line)
-						exttree2:add(buffer(ext_offset+4,4),"Extension: NETID:" .. d32)
+						exttree2:add(f_ext_netid, buffer(ext_offset+2,2))
 					else
 						-- unknown
 					end
