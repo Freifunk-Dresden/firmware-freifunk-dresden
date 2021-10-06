@@ -510,15 +510,26 @@ if $USE_DOCKER; then
 		docker exec -it ${DOCKER_CONTAINER_NAME} git config --global http.sslverify false
 		echo -e "${C_CYAN}run build${C_NONE}"
 		docker exec -it ${DOCKER_CONTAINER_NAME} ./build.sh $@
-		echo -e "${C_CYAN}generate upload${C_NONE}"
-		docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
 
-		# copy back results
-		echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_FINAL_TGZ}]${C_NONE}"
-		docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf ${DOCKER_FINAL_TGZ} final_output
-		docker cp ${DOCKER_CONTAINER_NAME}:/builds/${DOCKER_FINAL_TGZ} "${DOCKER_FINAL_TGZ}"
-		tar xvzf "${DOCKER_FINAL_TGZ}"
-		rm "${DOCKER_FINAL_TGZ}"
+		# ignore some operations for some arguments
+		case "$1" in
+		list) ;;
+		list-targets) ;;
+		search) ;;
+		clean) ;;
+		feed-revisions) ;;
+		*)
+			echo -e "${C_CYAN}generate upload${C_NONE}"
+			docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
+
+			# copy back results
+			echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_FINAL_TGZ}]${C_NONE}"
+			docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf ${DOCKER_FINAL_TGZ} final_output
+			docker cp ${DOCKER_CONTAINER_NAME}:/builds/${DOCKER_FINAL_TGZ} "${DOCKER_FINAL_TGZ}"
+			tar xvzf "${DOCKER_FINAL_TGZ}"
+			rm "${DOCKER_FINAL_TGZ}"
+			;;
+		esac
 
 		# stop and delete
 		echo -e "${C_CYAN}stop container${C_NONE}"
