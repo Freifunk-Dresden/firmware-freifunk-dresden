@@ -301,14 +301,14 @@ else
 		uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
 		uci set ddmesh.network.mesh_on_vlan=${form_vlan_meshing:-0}
 		uci set ddmesh.network.mesh_vlan_id=${form_vlan_id:-9}
-		prefgw="$(uhttpd -d $form_bmxd_preferred_gateway)"
+		test -n "$form_bmxd_preferred_gateway" && prefgw="$(uhttpd -d $form_bmxd_preferred_gateway)"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}
 		uci set ddmesh.system.nightly_reboot=${form_nightly_reboot:-0}
 		uci set ddmesh.system.ignore_factory_reset_button=${form_ignore_factory_reset_button:-0}
-		uci set ddmesh.network.internal_dns1="$(uhttpd -d $form_internal_dns1)"
-		uci set ddmesh.network.internal_dns2="$(uhttpd -d $form_internal_dns2)"
-		uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
+		test -n "$form_internal_dns1" && uci set ddmesh.network.internal_dns1="$(uhttpd -d $form_internal_dns1)"
+		test -n "$form_internal_dns2" && uci set ddmesh.network.internal_dns2="$(uhttpd -d $form_internal_dns2)"
+		test -n "$form_fallback_dns" && uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
 		uci set ddmesh.network.mesh_network_id=${form_mesh_network_id:-0}
 		uci set ddmesh.led.wifi="${form_led_wifi:-status}"
 		uci set ddmesh.led.status="${form_led_status:-status}"
@@ -317,7 +317,8 @@ else
 		uci set ddmesh.boot.boot_step=2
 		uci_commit.sh
 		notebox  'Die Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv.'
-		test -n "$prefgw" && bmxd -c --netid ${form_mesh_network_id:-0} -p $prefgw 2>&1 >/dev/null
+		/usr/lib/ddmesh/ddmesh-bmxd.sh prefered_gateway "$prefgw" 2>&1 >/dev/null
+		/usr/lib/ddmesh/ddmesh-bmxd.sh netid "${form_mesh_network_id:-0}" 2>&1 >/dev/null
 	else
 		notebox  'Einstellungen wurden nicht &uuml;bernommen.'
 	fi

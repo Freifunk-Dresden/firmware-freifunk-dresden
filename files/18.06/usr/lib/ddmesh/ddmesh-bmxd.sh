@@ -215,9 +215,16 @@ case "$ARG1" in
 	#	$DAEMON_PATH/$DAEMON -c --networks > $DB_PATH/networks
 		$DAEMON_PATH/$DAEMON -ci > $DB_PATH/info
 		;;
+	netid)
+		$DAEMON_PATH/$DAEMON -c --netid ${ARG2}
+		;;
+
+	prefered_gateway)
+		$DAEMON_PATH/$DAEMON -cp ${ARG2:--0.0.0.0}
+		;;
 
 	*)
-		echo "Usage: $0 {start|stop|restart|gateway|no_gateway|runcheck|update_infos|add_if_wifi|add_if_wire|del_if}" >&2
+		echo "Usage: $0 {start|stop|restart|gateway|no_gateway|runcheck|update_infos|add_if_wifi|add_if_wire|del_if|prefered_gateway|netid}" >&2
 		exit 1
 		;;
 esac
