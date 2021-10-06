@@ -571,6 +571,10 @@ upgrade_7_1_1()
 	uci -q delete ddmesh.network.wwan_4g
 	uci -q delete ddmesh.network.wwan_3g
 	uci -q delete ddmesh.network.wwan_2g
+}
+
+upgrade_7_1_2()
+{
 	uci -q set ddmesh.network.mesh_network_id='0''
 }
 
