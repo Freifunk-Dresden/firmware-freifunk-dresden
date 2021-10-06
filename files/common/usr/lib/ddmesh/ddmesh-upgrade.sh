@@ -575,7 +575,7 @@ upgrade_7_1_1()
 
 upgrade_7_1_2()
 {
-	uci -q set ddmesh.network.mesh_network_id='0''
+	uci -q set ddmesh.network.mesh_network_id='0'
 }
 
 ##################################
