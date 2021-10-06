@@ -187,7 +187,7 @@ cat<<EOM
 </TR>
 <TR>
 <TH>- Bevorzugtes Gateway (IP):</TH>
-<TD><INPUT NAME="form_lan_preferred_gateway" TYPE="TEXT" VALUE="$(uci -q get ddmesh.bmxd.preferred_gateway)"></TD>
+<TD><INPUT NAME="form_bmxd_preferred_gateway" TYPE="TEXT" VALUE="$(uci -q get ddmesh.bmxd.preferred_gateway)"></TD>
 <td>Angegebenes Gateway (z. B.: 10.200.0.1) wird bei Gateway-Auswahl bevorzugt. Ein leeres Feld l&ouml;scht das bevorzugte Gateway.</td>
 </TR>
 <TR>
@@ -301,7 +301,7 @@ else
 		uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
 		uci set ddmesh.network.mesh_on_vlan=${form_vlan_meshing:-0}
 		uci set ddmesh.network.mesh_vlan_id=${form_vlan_id:-9}
-		prefgw="$(uhttpd -d $form_lan_preferred_gateway)"
+		prefgw="$(uhttpd -d $form_bmxd_preferred_gateway)"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}
 		uci set ddmesh.system.nightly_reboot=${form_nightly_reboot:-0}
@@ -317,7 +317,7 @@ else
 		uci set ddmesh.boot.boot_step=2
 		uci_commit.sh
 		notebox  'Die Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv.'
-		test -n "$prefgw" && bmxd -cp $prefgw 2>&1 >/dev/null
+		test -n "$prefgw" && bmxd -c --netid ${form_mesh_network_id:-0} -p $prefgw 2>&1 >/dev/null
 	else
 		notebox  'Einstellungen wurden nicht &uuml;bernommen.'
 	fi
