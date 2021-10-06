@@ -129,7 +129,7 @@ config network 'network'
 	option	speed_enabled 0
 	option	internal_dns1 '10.200.0.4'
 	option	internal_dns2 '10.200.0.16'
-	option	mesh_network_id '1206'
+	option	mesh_network_id '0'
 	option	mesh_mtu 1200
 	option	mesh_on_lan 0
 	option	mesh_on_wan 0
