@@ -17,9 +17,9 @@ f_ogm_package_size=ProtoField.uint16("bmx.ogm.size", "Packet size")
 -- flags: create a bool. 1: name of filter; 2: displayed text; 3: bytes that hold the flags;
 -- 4: if the mask delivers true, then display either of one strings
 --  5: bitmask
-f_flag_uni=ProtoField.bool("bmx.ogm.flag.uni", "Flag: Uni-directional",8,{"UNI","none"},0x01)
-f_flag_direct=ProtoField.bool("bmx.ogm.flag.direct", "Flag: direct-link",8,{"DIRECT","none"},0x02)
-f_flag_clone=ProtoField.bool("bmx.ogm.flag.clone", "Flag: clone",8,{"CLONE","none"},0x04)
+f_flag_uni=ProtoField.bool("bmx.ogm.flag.uni", "Flag: Uni-directional",8,{"YES","no"},0x01)
+f_flag_direct=ProtoField.bool("bmx.ogm.flag.direct", "Flag: direct-link",8,{"YES","no"},0x02)
+f_flag_clone=ProtoField.bool("bmx.ogm.flag.clone", "Flag: clone",8,{"YES","no"},0x04)
 
 f_pws=ProtoField.uint8("bmx.ogm.pws", "PWS")
 f_cpu=ProtoField.uint8("bmx.ogm.cpu", "CPU")
@@ -30,12 +30,15 @@ f_seqno=ProtoField.uint16("bmx.ogm.seqno", "Sequence number")
 
 f_ext_gw_addr=ProtoField.ipv4("bmx.ogm.ext.gw.addr","Gateway IP")
 f_ext_gw_class=ProtoField.uint8("bmx.ogm.ext.gw.class", "Gateway Class")
+f_ext_gw_flag_community=ProtoField.bool("bmx.ogm.ext.gw.flag.community", "Flag: Community Gateway",8,{"YES","no"}, 0x01)
+f_ext_gw_flag_owt=ProtoField.bool("bmx.ogm.ext.gw.flag.owt", "Flag: One Way Tunnel",8,{"YES","no"}, 0x02)
 
 f_ext_pip_addr=ProtoField.ipv4("bmx.ogm.ext.pip.addr","Primary interface packet IP")
 f_ext_pip_seqno=ProtoField.uint16("bmx.ogm.ext.pip.seqno", "Sequence number")
 
 bmx_proto.fields={f_orig, f_seqno,f_prevHopId, f_ttl, f_cpu, f_pws, f_flag_uni
-		, f_flag_direct, f_flag_clone, f_ogm_package_size, f_ext_gw_addr, f_ext_gw_class
+		, f_flag_direct, f_flag_clone, f_ogm_package_size
+		, f_ext_gw_addr, f_ext_gw_class, f_ext_gw_flag_community, f_ext_gw_flag_owt
 		, f_ext_pip_addr, f_ext_pip_seqno, f_netid}
 
 
@@ -144,7 +147,8 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 			if ext_size > 0 then
 				ext_offset = offset+12
 				ext_end=offset+size
-				local exttree=tree_bat_packet:add(buffer(ext_offset,ext_size),"Extensions (offset: "..ext_offset..")")
+--				local exttree=tree_bat_packet:add(buffer(ext_offset,ext_size),"Extensions (offset: "..ext_offset..")")
+				local exttree=tree_bat_packet
 
 				-- run through extensions, all do have a fix size of 8 bytes
 				while ext_offset+8 <= ext_end 
@@ -162,11 +166,15 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 					-- extension types: look for EXT_TYPE_64B_GW, EXT_TYPE_64B_PIP, EXT_TYPE_64B_NETID
 					if ext_type == 0 then 
 						-- EXT_TYPE_64B_GW
-						if ext_releated == 0x02 then gw_type="One-way" else gw_type="Two-way" end
+						gw_type = ""
+						if bit.band(ext_releated, 0x01) == 0x01 then gw_type = gw_type .. " Community-Gateway" end
+						if bit.band(ext_releated, 0x02) == 0x02 then gw_type = gw_type .. " One-Way-Tunnel" end
 						
-						local line = string.format("Gateway: %s, %s, off:%d", ipStr(d32), gw_type, ext_offset)
+						local line = string.format("(offset: %3d) Gateway: %s, %s", ext_offset, ipStr(d32), gw_type)
 						local exttree2=exttree:add(buffer(ext_offset, 8), line)
-						exttree2:add(buffer(ext_offset,1),"Extension: GW type:" .. gw_type)
+						exttree2:add(f_ext_gw_flag_community, buffer(ext_offset,1))
+						exttree2:add(f_ext_gw_flag_owt, buffer(ext_offset,1))
+
 						exttree2:add(f_ext_gw_class, buffer(ext_offset+1,1))
 						exttree2:add(buffer(ext_offset+2,2),"Extension: GW port:" .. d16)
 						exttree2:add(f_ext_gw_addr, buffer(ext_offset+4,4))
