@@ -138,6 +138,12 @@ extern int32_t wl_clones;
 #define DEF_NETW_PREFIX "10.0.0.0"
 #define DEF_NETW_MASK   8					// primary ip and non-primary
 
+//SE: network filter
+// MUST BE default 0. So if user does not pass the network parameter, no OGM will be dropped
+extern uint32_t gNetworkPrefix;
+extern uint32_t gNetworkNetmask;
+
+
 //SE: added to separate networks. (network extension could be used, but
 //this would cause to increase size of every packet)
 #define ARG_NETWORK_ID "netid"

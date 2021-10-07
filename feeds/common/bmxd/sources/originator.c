@@ -78,8 +78,9 @@ static int32_t my_hop_penalty = DEF_HOP_PENALTY;
 static int32_t my_asym_exp = DEF_ASYM_EXP;
 
 //SE: network filter
-static uint32_t network_prefix;
-static uint32_t network_netmask;
+// MUST BE default 0. So if user does not pass the network parameter, no OGM will be dropped
+uint32_t gNetworkPrefix = 0;
+uint32_t gNetworkNetmask = 0;
 //SE: added to separate networks. (network extension could be used, but
 //this would cause to increase size of every packet)
 int32_t gNetworkId = DEF_NETWORK_ID; //only 16bits are used, but parameter needs to be 32bit
@@ -1150,10 +1151,11 @@ void process_ogm(struct msg_buff *mb)
 		goto process_ogm_end;
 	}
 
-//SE: check that IP matchs the ip network
-	if ( (ogm->orig & network_netmask) != ( network_prefix & network_netmask) )
+//SE: check that IP matchs the ip network. If netmask was not passed in as bmxd parameter, then
+// this is still zero. Therfore both conditions are same and no package is dropped.
+	if ( (ogm->orig & gNetworkNetmask) != ( gNetworkPrefix & gNetworkNetmask) )
 	{
-		dbg_mute(30, DBGL_SYS, DBGT_WARN, "drop OGM: %s does not match network [%s/%x] !", ipStr(ogm->orig), ipStr(network_prefix), network_netmask);
+		dbg_mute(30, DBGL_SYS, DBGT_WARN, "drop OGM: %s does not match network [%s/%x] !", ipStr(ogm->orig), ipStr(gNetworkPrefix), gNetworkNetmask);
 		goto process_ogm_end;
 	}
 
@@ -1818,10 +1820,10 @@ static int32_t opt_netw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 
 	if (cmd == OPT_REGISTER)
 	{
-		inet_pton(AF_INET, DEF_NETW_PREFIX, &network_prefix);
+		inet_pton(AF_INET, DEF_NETW_PREFIX, &gNetworkPrefix);
 		// convert netmask /16 to binary, so I can easily check later
 
-		network_netmask = htonl(0xFFFFFFFF << (32 - DEF_NETW_MASK));
+		gNetworkNetmask = htonl(0xFFFFFFFF << (32 - DEF_NETW_MASK));
 	}
 	else if (cmd == OPT_CHECK || cmd == OPT_APPLY)
 	{
@@ -1838,10 +1840,10 @@ static int32_t opt_netw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 
 		if (cmd == OPT_APPLY)
 		{
-			network_prefix = ip;
+			gNetworkPrefix = ip;
 			// convert netmask /16 to binary, so I can easily check later
-			network_netmask = htonl(0xFFFFFFFF << (32 - mask));
-//			dbg_printf(cn, "OPT_APPLY: str: %s, mask:%x -> %x\n", patch->p_val, mask, network_netmask);
+			gNetworkNetmask = htonl(0xFFFFFFFF << (32 - mask));
+//			dbg_printf(cn, "OPT_APPLY: str: %s, mask:%x -> %x\n", patch->p_val, mask, gNetworkNetmask);
 		}
 	}
 
