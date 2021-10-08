@@ -505,7 +505,7 @@ if $USE_DOCKER; then
 		# upload and extract (workdir is not included)
 		echo -e "${C_CYAN}copy project to container${C_NONE}"
 		docker cp "/tmp/${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/
-		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "tar -xzf ${docker_tar} && rm ${docker_tar}"
+		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "rm -rf files feeds openwrt-configs; tar -xzf ${docker_tar} && rm ${docker_tar}"
 		rm /tmp/${docker_tar}
 
 		# run build
