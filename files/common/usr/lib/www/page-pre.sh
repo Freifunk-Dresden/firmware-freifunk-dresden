@@ -113,13 +113,14 @@ else
 fi
 
 COMMUNITY="$(uci get ddmesh.system.community | sed 's#[ ]#\&nbsp;#g' )"
+NETID="$(uci -q get ddmesh.network.mesh_network_id)"
 cat<<EOM
 </TD></TR>
 <TR><TD COLSPAN="5">
  <TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
   <TR>
   <TD width="40" HEIGHT="33" ><img src="$lockimg"></TD>
-  <TD HEIGHT="33" style="vertical-align: middle;"><font size="5"><b>$COMMUNITY</b>&nbsp;$_ddmesh_node</font>
+  <TD HEIGHT="33" style="vertical-align: middle;"><font size="5"><b>$COMMUNITY</b>&nbsp;$_ddmesh_node</font><font size="4">&nbsp;&nbsp;(Network ID: $NETID)</font>
 EOM
 test "$URI_PATH" = "/www/admin" && check_passwd && {
 	echo "<font size="+1" color="red"><span class="blink">!!! BITTE Password setzen !!!</span</font>"

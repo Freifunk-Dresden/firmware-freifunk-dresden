@@ -92,6 +92,10 @@ if [ "$1" = "configure" ]; then
 fi
 
 if [ "$1" == start ]; then
+	# openwrt 18 netifd creates files in /tmp/
+	# need to create symlink to support new path in openwrt 21
+	ln -s /tmp $RESOLV_PATH
+
 	# link to resolv.conf.auto as long as bmxd has not written resolv.conf.final
 	rm -f $RESOLV_FINAL
 	ln -s $RESOLV_AUTO $RESOLV_FINAL

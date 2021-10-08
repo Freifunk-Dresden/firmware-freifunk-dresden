@@ -44,8 +44,8 @@ eval $(echo "$json" | jsonfilter \
 	-e j_status='@.registration.status' \
 	-e j_error='@.registration.error' \
 	-e j_node='@.registration.node' \
-	-e j_netid='@.control.netid' \
 	-e j_autoupdate='@.control.enable_autoupdate' \
+	-e j_netid='@.control.trigger.netid' \
 	-e j_gateway='@.control.trigger.gateway' \
 	-e j_dns='@.control.trigger.dns' \
 	-e j_reboot='@.control.trigger.reboot' \
