@@ -478,6 +478,12 @@ if $USE_DOCKER; then
 	docker_tar="$(mktemp -u).tgz"
 	docker_tar=$(basename ${docker_tar})	# remove path
 
+	# check connection
+	ping -c 1 ${DOCKER_HOST:=localhost} >/dev/null 2>/dev/null || {
+		echo "Error: docker host not reachable"
+		exit 1
+	}
+
 	# create container and upload current directory
 	docker inspect ${DOCKER_CONTAINER_NAME} >/dev/null 2>/dev/null || {
 		echo -e "${C_CYAN}create container${C_NONE}"
