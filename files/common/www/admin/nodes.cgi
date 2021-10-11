@@ -29,7 +29,7 @@ EOM
 		tq=tq+$6
 	}
  }
- END {rtq=int(rtq/count);rq=int(rq/count);tq=int(tq/count); printf("<tr><td colspan=\"4\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td></tr>", count, rtq, rtq, rq, rq, tq, tq);}
+ END {if(count){rtq=int(rtq/count);rq=int(rq/count);tq=int(tq/count); printf("<tr><td colspan=\"4\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td></tr>", count, rtq, rtq, rq, rq, tq, tq);}}
 '
 
 cat<<EOM
@@ -76,7 +76,7 @@ export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+
 		brc=brc+$3
 	}
  }
- END {brc=int(brc/count); printf("<tr><td colspan=\"6\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}
+ END {if(count){brc=int(brc/count); printf("<tr><td colspan=\"6\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}}
 '
 
 cat<<EOM
@@ -101,7 +101,7 @@ EOM
 		brc=brc+$4
 	}
  }
- END {brc=int(brc/count); printf("<tr><td colspan=\"2\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td><td></td></tr>", count, brc, brc);}
+ END {if(count){brc=int(brc/count); printf("<tr><td colspan=\"2\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td><td></td></tr>", count, brc, brc);}}
 '
 
 cat<<EOM

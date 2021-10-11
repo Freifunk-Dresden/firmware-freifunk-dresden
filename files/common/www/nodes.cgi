@@ -28,7 +28,7 @@ cat $BMXD_DB_PATH/links | awk -f /usr/lib/www/page-functions.awk -e '
 		tq=tq+$6
 	}
  }
- END {rtq=int(rtq/count);rq=int(rq/count);tq=int(tq/count); printf("<tr><td colspan=\"4\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td></tr>", count, rtq, rtq, rq, rq, tq, tq);}
+ END {if(count){rtq=int(rtq/count);rq=int(rq/count);tq=int(tq/count); printf("<tr><td colspan=\"4\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td></tr>", count, rtq, rtq, rq, rq, tq, tq);}}
 '
 
 cat<<EOM
@@ -71,7 +71,7 @@ cat $BMXD_DB_PATH/gateways | awk -f /usr/lib/www/page-functions.awk -e '
 		brc=brc+$3
 	}
  }
- END {brc=int(brc/count); printf("<tr><td colspan=\"5\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}
+ END {if(count){brc=int(brc/count); printf("<tr><td colspan=\"5\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}}
 '
 
 cat<<EOM
@@ -96,7 +96,7 @@ cat $BMXD_DB_PATH/originators | awk -f /usr/lib/www/page-functions.awk -e '
 		brc=brc+$4
 	}
  }
- END {brc=int(brc/count); printf("<tr><td colspan=\"2\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td><td></td></tr>", count, brc, brc);}
+ END {if(count){brc=int(brc/count); printf("<tr><td colspan=\"2\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td><td></td></tr>", count, brc, brc);}}
 '
 
 cat<<EOM
