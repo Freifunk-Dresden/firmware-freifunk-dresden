@@ -4,19 +4,6 @@
 
 # https://openwrt.org/docs/guide-user/base-system/led_configuration
 
-ARG_LED="$1"
-ARG_CMD="$2"
-
-if [ -z "$ARG_CMD" ]; then
-	echo "ddmesh-led.sh <type> <value>"
-	echo "	type: wifi | status"
-	echo "	value:"
-	echo "		wifi:	off|on|alive|freifunk|gateway"
-	echo "		status: boot1|boot2|boot3|done|off|on"
-	echo "		wwan:	off|on|2g|3g|4g"
-	exit 0
-fi
-
 . /lib/functions.sh
 . /lib/functions/leds.sh
 
@@ -26,6 +13,20 @@ boardname=$(board_name) # function in function.sh
 
 echo "platform: $platform"
 echo "board: $boardname"
+
+ARG_LED="$1"
+ARG_CMD="$2"
+
+if [ -z "$ARG_CMD" ]; then
+	echo ""
+	echo "ddmesh-led.sh <type> <value>"
+	echo "	type: wifi | status"
+	echo "	value:"
+	echo "		wifi:	off|on|alive|freifunk|gateway"
+	echo "		status: boot1|boot2|boot3|done|off|on"
+	echo "		wwan:	off|on|2g|3g|4g"
+	exit 0
+fi
 
 # try to detect led (keep order)
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
@@ -63,8 +64,8 @@ case "$platform" in
 	ath79)
 		case  "$boardname" in
 			"ubnt,unifi")
-					_led_wifi2g="ubnt:orange:dome"
-					_led_status="ubnt:green:dome"
+					_led_wifi2g="orange:dome"
+					_led_status="green:dome"
 					;;
 			"glinet,gl-mifi")
 					_led_wwan="$(uci -q get system.led_3gnet.sysfs)"
