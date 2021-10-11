@@ -490,7 +490,7 @@ if $USE_DOCKER; then
   	docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
 	}
 	echo -e "${C_CYAN}start container${C_NONE}"
-  docker start ${DOCKER_CONTAINER_NAME}
+	docker start ${DOCKER_CONTAINER_NAME}
 
 	if [ "$RUN_DOCKER_SHELL" = "1" ]; then
 		docker exec -it ${DOCKER_CONTAINER_NAME} bash
