@@ -206,7 +206,7 @@ callback_add_ignored_nodes() {
 	local opt_wifi_adhoc=$4
 	local opt_wifi_mesh2g=$5
 	local opt_wifi_mesh5g=$6
-	local opt_lan=$7
+	local opt_vlan=$7
 
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
