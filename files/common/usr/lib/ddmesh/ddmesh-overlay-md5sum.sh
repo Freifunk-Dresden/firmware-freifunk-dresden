@@ -8,7 +8,14 @@ else
  d="/overlay"
 fi
 
-md5="$(find $d ! -type l ! -name "overlay" -exec md5sum {} 2>/dev/null \; | md5sum | cut -d' ' -f1)"
+md5source()
+{
+	# exclude directory entry for overlay file
+	ls -lisaRt /overlay/upper/ | grep -v 'overlay'
+	find $d ! -type l ! -name "overlay" -exec md5sum {} 2>/dev/null \;
+}
+
+md5="$(md5source | md5sum | cut -d' ' -f1)"
 stored="$(uci get overlay.@overlay[0].md5sum)"
 
 if [ "$1" = "-json" ]; then
