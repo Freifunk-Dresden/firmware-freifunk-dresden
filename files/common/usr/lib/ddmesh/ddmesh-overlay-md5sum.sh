@@ -11,12 +11,12 @@ fi
 md5source()
 {
 	# exclude directory entry for overlay file
-	ls -lisaRt /overlay/upper/ | grep -v 'overlay'
+	find /overlay/upper ! -type d ! -name "overlay" -exec ls -lisa {} \; | md5sum
 	find $d ! -type l ! -name "overlay" -exec md5sum {} 2>/dev/null \;
 }
 
 md5="$(md5source | md5sum | cut -d' ' -f1)"
-stored="$(uci get overlay.@overlay[0].md5sum)"
+stored="$(uci get overlay.data.md5sum)"
 
 if [ "$1" = "-json" ]; then
 	echo "{\"md5_current\":\"$md5\", \"md5_previous\":\"$stored\"}"
