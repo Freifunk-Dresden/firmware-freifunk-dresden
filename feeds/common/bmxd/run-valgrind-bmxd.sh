@@ -17,11 +17,12 @@ fi
 
 usage()
 {
-	echo "Usage: $(basename) [server | client | setup-if | clean-if]"
+	echo "Usage: $(basename) [server | client | setup-if | clean-if | bmxd]"
 	echo "server - run bmxd in forground (-d${BMXD_DEBUG_LEVEL})"
 	echo "client - run bmxd as client (-lcd${BMXD_DEBUG_LEVEL})"
 	echo "setup-if - only setup interfaces"
 	echo "clean-if - delete interfaces"
+	echo "bmxd     - calles bmxd and pass all other arguments to it"
 }
 
 setup()
@@ -62,7 +63,7 @@ VALGRIND_OPT="--tool=memcheck --show-error-list=yes --leak-check=full -s --track
 case "$1" in
 	server)
 		setup
-		CMD="./sources/bmxd -r3 -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1"
+		CMD="./sources/bmxd --fast_path_hysteresis 0 --path_hysteresis 10 -r3 -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1"
 		echo "valgrind: [${VALGRIND_OPT}]"
 		echo "cmd: [${CMD}]"
 		valgrind ${VALGRIND_OPT} ${CMD}
@@ -70,6 +71,10 @@ case "$1" in
 		;;
 	client)
 		valgrind ${VALGRIND_OPT} ./sources/bmxd -lcd${BMXD_DEBUG_LEVEL}
+		;;
+	bmxd)
+		shift
+		valgrind ${VALGRIND_OPT} ./sources/bmxd $@
 		;;
 	setup-if)  setup;;
 	clean-if)  clean;;
