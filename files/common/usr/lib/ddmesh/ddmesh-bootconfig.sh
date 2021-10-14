@@ -493,17 +493,19 @@ case "$boot_step" in
 			uci set ddmesh.boot.upgrade_running=0
 
 			uci_commit.sh
+			sync
 
 			# after uci commit and only when fw was upgraded
 			if [ "$upgrade_running" = "1" ]; then
 				logger -t $LOGGER_TAG "firmware upgrade finished"
-
+				# to find changes in directories easier
+				find /overlay/upper -exec touch {} \;
 				/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
 			fi
 
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
 
-			sleep 5 # no sync, it might modify flash
+			sleep 5
 			reboot
 
 			#stop boot process

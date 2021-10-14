@@ -33,6 +33,8 @@
 #include "schedule.h"
 //#include "avl.h"
 
+void update_community_route(uint8_t add, struct orig_node * check_node);
+
 static int32_t my_seqno;
 
 char *gw_scirpt_name = NULL;
@@ -122,7 +124,12 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 										orig_node->router->key.iif ? orig_node->router->key.iif->if_index : 0,
 										orig_node->router->key.iif ? orig_node->router->key.iif->dev : NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, DEL, TRACK_OTHER_HOST);
+			//dbg(DBGL_SYS, DBGT_INFO,"route del %s via %s, %s:%d", ipStr(orig_node->orig), ipStr(orig_node->router->key.addr), orig_node->router->key.iif ? orig_node->router->key.iif->dev : "NULL", orig_node->router->key.iif ? orig_node->router->key.iif->if_index : 0);
+			update_community_route(0, orig_node);
 		}
+
+		orig_node->router = new_router; // put it before update_community_route(0), so this
+		                                // will get the new router too
 
 		/* route altered or new route added */
 		if (new_router)
@@ -133,9 +140,10 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 										new_router->key.iif ? new_router->key.iif->if_index : 0,
 										new_router->key.iif ? new_router->key.iif->dev : NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, ADD, TRACK_OTHER_HOST);
-		}
+			//dbg(DBGL_SYS, DBGT_INFO,"route add %s via %s, %s:%d", ipStr(orig_node->orig), ipStr(orig_node->router->key.addr), orig_node->router->key.iif ? orig_node->router->key.iif->dev : "NULL", orig_node->router->key.iif ? orig_node->router->key.iif->if_index : 0);
 
-		orig_node->router = new_router;
+			update_community_route(1, orig_node);
+		}
 	}
 
 	prof_stop(PROF_update_routes);
@@ -1151,15 +1159,6 @@ void process_ogm(struct msg_buff *mb)
 		goto process_ogm_end;
 	}
 
-//SE: check that IP matchs the ip network. If netmask was not passed in as bmxd parameter, then
-// this is still zero. Therfore both conditions are same and no package is dropped.
-	if ( (ogm->orig & gNetworkNetmask) != ( gNetworkPrefix & gNetworkNetmask) )
-	{
-		dbg_mute(30, DBGL_SYS, DBGT_WARN, "drop OGM: %s does not match network [%s/%x] !", ipStr(ogm->orig), ipStr(gNetworkPrefix), gNetworkNetmask);
-		goto process_ogm_end;
-	}
-
-
 	OLForEach(bif, struct batman_if, if_list)
 	{
 		//eine ogm, die das interface nicht verlassen hat und gleich hier zurück gespiegelt wird
@@ -1744,8 +1743,11 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 
 static int32_t opt_purge(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-	if (cmd == OPT_APPLY)
-		purge_orig(0, NULL);
+//SE: rausgenommen, da das bei den optionen, wo das verwendet wird crasht
+// muss noch untersucht werden. crash passiert auch, wenn bmxd gekillt wird (normales kill)
+//die path_hysteresis parameter wirken aber trotzdem sofort
+//	if (cmd == OPT_APPLY)
+//	 	purge_orig(0, NULL);
 
 	return SUCCESS;
 }
@@ -1821,9 +1823,7 @@ static int32_t opt_netw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 	if (cmd == OPT_REGISTER)
 	{
 		inet_pton(AF_INET, DEF_NETW_PREFIX, &gNetworkPrefix);
-		// convert netmask /16 to binary, so I can easily check later
-
-		gNetworkNetmask = htonl(0xFFFFFFFF << (32 - DEF_NETW_MASK));
+		gNetworkNetmask = DEF_NETW_MASK;
 	}
 	else if (cmd == OPT_CHECK || cmd == OPT_APPLY)
 	{
@@ -1841,9 +1841,7 @@ static int32_t opt_netw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct
 		if (cmd == OPT_APPLY)
 		{
 			gNetworkPrefix = ip;
-			// convert netmask /16 to binary, so I can easily check later
-			gNetworkNetmask = htonl(0xFFFFFFFF << (32 - mask));
-//			dbg_printf(cn, "OPT_APPLY: str: %s, mask:%x -> %x\n", patch->p_val, mask, gNetworkNetmask);
+			gNetworkNetmask = mask;
 		}
 	}
 
@@ -1875,7 +1873,7 @@ static struct opt_type originator_options[] =
 
 //SE: network filter; can be set dynamically
 				{ODI, 4, 0, ARG_NETW, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, 0, 0, 0, 0, opt_netw,
-		 			ARG_PREFIX_FORM, "only accept OGM from network\n"},
+		 			ARG_PREFIX_FORM, "community network. sets default community route\n"},
 
 				{ODI, 4, 0, ARG_NETWORK_ID, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, &gNetworkId, MIN_NETWORK_ID, MAX_NETWORK_ID, DEF_NETWORK_ID, 0,
 				 ARG_VALUE_FORM, "set network ID"},

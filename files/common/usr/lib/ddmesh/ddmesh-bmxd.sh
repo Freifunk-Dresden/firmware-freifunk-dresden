@@ -29,7 +29,7 @@ touch $DB_PATH/status
 touch $DB_PATH/networks	# network ids
 touch $STAT_DIR/gateway_usage
 
-GATEWAY_HYSTERESIS="100"
+GATEWAY_HYSTERESIS="20"
 
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
@@ -106,11 +106,13 @@ case "$ARG1" in
 
 		#default start with no gatway.will be updated by gateway_check.sh
 		#SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"
-		NETWORK_OPTS="--network $_ddmesh_fullnet --netid $MESH_NETWORK_ID"
+		NETWORK_OPTS="--network $_ddmesh_meshnet --netid $MESH_NETWORK_ID"
 		SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
-		TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_network/$_ddmesh_netpre"
-		TWEAK_OPTS="--ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 30"
-		TUNING_OPTS="--gateway_hysteresis $GATEWAY_HYSTERESIS --script /usr/lib/bmxd/bmxd-gateway.sh"
+		TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_meshnet"
+		TWEAK_OPTS="--ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 20"
+		# --fast_path_hysteresis has not changed frequency of root setting in bat_route
+		# --path_hysteresis should be less than 5, else dead routes are hold to long
+		TUNING_OPTS="--gateway_hysteresis $GATEWAY_HYSTERESIS --path_hysteresis 3  --script /usr/lib/bmxd/bmxd-gateway.sh"
 
 		DAEMON_OPTS="$NETWORK_OPTS $SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $TWEAK_OPTS $_IF"
 

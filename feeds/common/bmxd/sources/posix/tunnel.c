@@ -45,6 +45,7 @@
 #include "plugin.h"
 #include "schedule.h"
 
+void update_community_route(uint8_t add, struct orig_node * check_node);
 
 #define ARG_GW_HYSTERESIS "gateway_hysteresis"
 #define MIN_GW_HYSTERE 1
@@ -697,29 +698,8 @@ static void gwc_cleanup(struct gw_node *curr_gateway)
 		{
 			// delete default route (in table bat_default)
 			add_del_route(0, 0, 0, 0, gwc_args->tun_ifi, gwc_args->tun_dev, RT_TABLE_TUNNEL, RTN_UNICAST, DEL, TRACK_TUNNEL);
-
-			//delete community default route in bat_route (RT_TABLE_HOST)
-			if(curr_gateway && curr_gateway->orig_node)
-			{
-// route for community: eine default route anlegen, mit dem knoten, ueber das das gw erreichbar ist.
-// nicht die gw ip verwendent, sonder die des nachesten hops zum gw. damit musste es dann irgendwann
-// beim gw ankommen. dieser muss in seinen rules dann sehen, dass die ip in einem anderen netz liegt
-// (bgp) und routen.
-
-// NOTE: I have to check for prefix/netmask. if user did not pass in this
-		// then no route will be added.
-		// The community route should only forward community pakets.
-		// Later when ICVPN is used for other communiiies, bmxd or routing rules
-		// must be extended
-				if(gNetworkPrefix && gNetworkNetmask)
-				{
-					add_del_route(gNetworkPrefix, gNetworkNetmask,
-										curr_gateway->orig_node->router->key.addr, 0,
-										curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->if_index : 0,
-										curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->dev : NULL,
-										RT_TABLE_HOSTS, RTN_UNICAST, DEL, TRACK_OTHER_HOST);
-				}
-			}
+			//dbg(DBGL_SYS, DBGT_INFO,"Tunnel del");
+			update_community_route(0, NULL);
 			call_script("del");
 		}
 
@@ -855,28 +835,11 @@ static int8_t gwc_init(void)
 
 		// add default route to bat_default
 		add_del_route(0, 0, 0, 0, gwc_args->tun_ifi, gwc_args->tun_dev, RT_TABLE_TUNNEL, RTN_UNICAST, ADD, TRACK_TUNNEL);
-
-		//SE: create default route to the next hop that also the gateway is using.
-		// if all routers have this default route, the packets that are not found in sub-community are traveling
-		// to the gateway. This then is responsible to forward it via (e.g.: BGP) to other sub-community and
-		// return it back to origin node (initially sent the request)
-		// NOTE: I have to check for prefix/netmask. if user did not pass in this
-		// then no route will be added.
-		// The community route should only forward community pakets of the complete 10.200.er network..
-		// Later when ICVPN is used for other communiiies, bmxd or routing rules
-		// must be extended
-		if(gNetworkPrefix && gNetworkNetmask)
-		{
-			add_del_route(gNetworkPrefix, gNetworkNetmask,
-								curr_gateway->orig_node->router->key.addr, primary_addr,
-								curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->if_index : 0,
-								curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->dev : NULL,
-								RT_TABLE_HOSTS, RTN_UNICAST, ADD, TRACK_OTHER_HOST);
-		}
+		//dbg(DBGL_SYS, DBGT_INFO,"Tunnel add");
+		update_community_route(1, NULL);
 
 		call_script(gwc_args->gw_str);
 
-		// critical syntax: may be used for nameserver updates
 		dbg(DBGL_CHANGES, DBGT_INFO, "GWT: GW-client tunnel init succeeded - type: 1WT  dev: %s  IP: %s  MTU: %d",
 				gwc_args->tun_dev, ipStr(gwc_args->my_addr.sin_addr.s_addr), gwc_args->mtu_min);
 	}
@@ -1574,5 +1537,49 @@ void init_tunnel(void)
 {
 	OLInitializeListHead(&gw_list);
 }
+
+void update_community_route(uint8_t add, struct orig_node * check_node)
+{
+	//delete community default route in bat_route (RT_TABLE_HOST)
+	if(curr_gateway && curr_gateway->orig_node )
+	{
+		//SE: create default route to the next hop that also the gateway is using.
+		// if all routers have this default route, the packets that are not found in sub-community are traveling
+		// to the gateway. This then is responsible to forward it via (e.g.: BGP) to other sub-community and
+		// return it back to origin node (initially sent the request)
+		// NOTE: I have to check for prefix/netmask. if user did not pass in this
+		// then no route will be added.
+		// The community route should only forward community pakets of the complete 10.200.er network..
+		// Later when ICVPN is used for other communiiies, bmxd or routing rules
+		// must be extended
+
+		if(gNetworkPrefix && gNetworkNetmask)
+		{
+			// dbg(DBGL_SYS, DBGT_INFO,"community route curr %s via %s, %s:%d", curr_gateway->orig_node->orig_str,ipStr(curr_gateway->orig_node->router->key.addr)
+			// 	, curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->dev : "NULL"
+			// 	, curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->if_index : 0);
+			// if(check_node)
+			// {
+			// dbg(DBGL_SYS, DBGT_INFO,"community route check %s via %s, %s:%d", check_node->orig_str, ipStr(check_node->router->key.addr)
+			// 	, check_node->router->key.iif ? check_node->router->key.iif->dev : "NULL"
+			// 	, check_node->router->key.iif ? check_node->router->key.iif->if_index : 0);
+			// }
+			if(!check_node || check_node==curr_gateway->orig_node)
+			{
+				add_del_route(gNetworkPrefix, gNetworkNetmask,
+									curr_gateway->orig_node->router->key.addr, primary_addr,
+									curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->if_index : 0,
+									curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->dev : NULL,
+									RT_TABLE_HOSTS, RTN_UNICAST, add ? ADD : DEL, TRACK_OTHER_HOST);
+
+				// dbg(DBGL_SYS, DBGT_INFO,"%s community route via %s, %s:%d", add ? "ADD" : "DEL",
+				// ipStr(curr_gateway->orig_node->router->key.addr)
+				//   , curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->dev : "NULL"
+				// 	, curr_gateway->orig_node->router->key.iif ? curr_gateway->orig_node->router->key.iif->if_index : 0);
+			}
+		}
+	}
+}
+
 
 #endif
