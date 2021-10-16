@@ -27,7 +27,7 @@ enum
 	PROF_all,
 	PROF_ipStr,
 	PROF_update_routes,
-	PROF_get_orig_node,
+	PROF_find_or_create_orig_node_in_avl,
 	PROF_update_originator,
 	PROF_update_orig_bits,
 	PROF_purge_originator,

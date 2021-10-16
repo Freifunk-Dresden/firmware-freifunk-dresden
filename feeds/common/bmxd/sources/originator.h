@@ -155,7 +155,7 @@ extern int32_t gNetworkId;	//only 16bits are used, but parameter needs to be 32b
 extern struct batman_if *primary_if;
 extern uint32_t primary_addr;
 
-//extern struct hashtable_t *orig_hash;
+// orig_avl holds all orig_node (own and for all neigh)
 extern struct avl_tree orig_avl;
 
 extern LIST_ENTRY if_list;
@@ -163,7 +163,9 @@ extern LIST_ENTRY if_list;
 extern LIST_ENTRY link_list;
 extern struct avl_tree link_avl;
 
-struct orig_node *get_orig_node(uint32_t addr, uint8_t create);
+// search orig_avl for key "addr". if not present, then a new orig_node object
+// is created and added.
+struct orig_node *find_or_create_orig_node_in_avl(uint32_t addr);
 
 int tq_rate(struct orig_node *orig_node_neigh, struct batman_if *iif, int range);
 

@@ -77,7 +77,7 @@ void init_profile(void)
 	prof_init(PROF_all, "all");
 	prof_init(PROF_ipStr, "ipStr");
 	prof_init(PROF_update_routes, "update_routes");
-	prof_init(PROF_get_orig_node, "get_orig_node");
+	prof_init(PROF_find_or_create_orig_node_in_avl, "find_or_create_orig_node_in_avl");
 	prof_init(PROF_update_originator, "update_orig");
 	prof_init(PROF_update_orig_bits, "update_orig_bits");
 	prof_init(PROF_purge_originator, "purge_orig");

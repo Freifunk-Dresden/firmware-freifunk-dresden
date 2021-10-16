@@ -33,7 +33,7 @@
 #include "schedule.h"
 //#include "avl.h"
 
-void update_community_route(uint8_t add, struct orig_node * check_node);
+void update_community_route(void);
 
 static int32_t my_seqno;
 
@@ -125,11 +125,8 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 										orig_node->router->key.iif ? orig_node->router->key.iif->dev : NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, DEL, TRACK_OTHER_HOST);
 			//dbg(DBGL_SYS, DBGT_INFO,"route del %s via %s, %s:%d", ipStr(orig_node->orig), ipStr(orig_node->router->key.addr), orig_node->router->key.iif ? orig_node->router->key.iif->dev : "NULL", orig_node->router->key.iif ? orig_node->router->key.iif->if_index : 0);
-			update_community_route(0, orig_node);
+			orig_node->router = NULL;
 		}
-
-		orig_node->router = new_router; // put it before update_community_route(0), so this
-		                                // will get the new router too
 
 		/* route altered or new route added */
 		if (new_router)
@@ -141,8 +138,9 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 										new_router->key.iif ? new_router->key.iif->dev : NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, ADD, TRACK_OTHER_HOST);
 			//dbg(DBGL_SYS, DBGT_INFO,"route add %s via %s, %s:%d", ipStr(orig_node->orig), ipStr(orig_node->router->key.addr), orig_node->router->key.iif ? orig_node->router->key.iif->dev : "NULL", orig_node->router->key.iif ? orig_node->router->key.iif->if_index : 0);
-
-			update_community_route(1, orig_node);
+			orig_node->router = new_router; // put it before update_community_route(0), so this
+																			// will get the new router too
+			update_community_route();
 		}
 	}
 
@@ -631,7 +629,7 @@ static void set_primary_orig(struct orig_node *orig_node, uint32_t new_primary_a
 
 		if (orig_node->orig != new_primary_addr)
 		{
-			orig_node->primary_orig_node = get_orig_node(new_primary_addr, YES /*create*/);
+			orig_node->primary_orig_node = find_or_create_orig_node_in_avl(new_primary_addr);
 			orig_node->primary_orig_node->pog_refcnt++;
 		}
 		else
@@ -641,6 +639,9 @@ static void set_primary_orig(struct orig_node *orig_node, uint32_t new_primary_a
 	}
 }
 
+// die funktion wird entweder fuer ogm aufgerufen, die emfpangen wurden
+// und evt eine PIP extension haben, oder fuer meine eigen knoten.
+// in beiden
 static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff *mb, uint16_t oCtx)
 {
 	if (mb->rcv_ext_len[EXT_TYPE_64B_PIP])
@@ -663,13 +664,11 @@ static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff
 					free_pifnb_node(orig_node->primary_orig_node);
 
 				set_primary_orig(orig_node, pip->EXT_PIP_FIELD_ADDR);
-				//orig_node->primary_orig_node = get_orig_node( pip->EXT_PIP_FIELD_ADDR, YES/*create*/ );
 			}
 		}
 		else
 		{
 			set_primary_orig(orig_node, pip->EXT_PIP_FIELD_ADDR);
-			//orig_node->primary_orig_node = get_orig_node( pip->EXT_PIP_FIELD_ADDR, YES/*create*/ );
 		}
 
 		if (pip->EXT_PIP_FIELD_PIPSEQNO && //remain compatible to COMPAT_VERSION 10
@@ -684,6 +683,8 @@ static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff
 	}
 	else
 	{
+		//hier keine extension vorhaden
+
 		if (orig_node->primary_orig_node)
 		{
 			if (orig_node->primary_orig_node != orig_node)
@@ -894,23 +895,17 @@ static int8_t validate_considered_order(struct orig_node *orig_node, SQ_TYPE seq
 }
 
 /* this function finds and may create an originator entry for the given address */
-struct orig_node *get_orig_node(uint32_t addr, uint8_t create)
+struct orig_node *find_or_create_orig_node_in_avl(uint32_t addr)
 {
-	prof_start(PROF_get_orig_node);
+	prof_start(PROF_find_or_create_orig_node_in_avl);
 	struct avl_node *an = avl_find(&orig_avl, &addr);
 
 	struct orig_node *orig_node = an ? (struct orig_node *)an->object : NULL;
 
-	if (!create)
-	{
-		prof_stop(PROF_get_orig_node);
-		return orig_node;
-	}
-
 	if (orig_node)
 	{
 		orig_node->last_aware = batman_time;
-		prof_stop(PROF_get_orig_node);
+		prof_stop(PROF_find_or_create_orig_node_in_avl);
 		return orig_node;
 	}
 
@@ -937,16 +932,28 @@ struct orig_node *get_orig_node(uint32_t addr, uint8_t create)
 
 	cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_CREATE);
 
-	prof_stop(PROF_get_orig_node);
+	prof_stop(PROF_find_or_create_orig_node_in_avl);
 	return orig_node;
 }
 
+//wird aufgerfen um:
+//1 alle orig_nodes zu loeschen curr_time=0, bif=0
+//2 um all alten orig_nodes zu loeschen, geal welches if; curr_time>0; bif=0
+//3 um alle orig_nodes zu loeschen, die ueber ein bestimmtes interface
+//  if rein kamen.if kann sich aendern, je nach Weg der ogm
+//4 sonst: wenn keine dieser geziehlten ereignisse aufgetreten ist
+//  wird von batman.c diese funktion nur mit curr_time aufgerufen.
+//  wenn diese nicht abgelaufen ist (was den punkt 2 betrifft), so
+//  wird nur geprueft, ob in der neighbour liste abgelaufene eintraege
+//  liegen und diese aus neighbour liste geloescht.
+//  die avl-liste bleibt wie sie ist
 void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 {
 	prof_start(PROF_purge_originator);
 	struct orig_node *orig_node = NULL;
 	struct avl_node *an;
 	static char neigh_str[ADDR_STR_LEN];
+  int purge_old = 0;
 
 	dbgf_all(DBGT_INFO, "%llu %s", (unsigned long long)curr_time, bif ? bif->dev : "???");
 
@@ -961,7 +968,9 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 
 		dbgf_all(DBGT_INFO, "%llu %s %s", (unsigned long long)curr_time, bif ? bif->dev : "???", orig_node->orig_str);
 
-		if (!curr_time || bif || (orig_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time )
+		purge_old = (orig_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time ? 1 : 0;
+
+		if (!curr_time || bif || purge_old )
 		{
 			/* purge outdated originators completely */
 
@@ -969,8 +978,9 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 							 orig_node->orig_str, (unsigned long long)orig_node->last_valid_time, (unsigned long long)orig_node->last_aware);
 
 			flush_orig(orig_node, bif);
-
-			if (!bif && (!curr_time || !orig_node->pog_refcnt))
+//SE: siehe commentare unten
+			if (!bif && (!curr_time && orig_node->pog_refcnt == 0))
+//			if (!bif && (!curr_time || !orig_node->pog_refcnt))
 				cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_DESTROY);
 
 			//remove all neighbours of this originator ...
@@ -994,11 +1004,43 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			if (orig_node->link_node)
 				free_link_node(orig_node, bif);
 
-			if (!bif && (!curr_time || !orig_node->pog_refcnt))
+			//loesche orig_node in avl nur bei
+			// -alte knoten (purge_orig(batman_time, NULL))
+			// -all cleanup (purge_orig(0, NULL)
+			//  ABER nur wenn alle referencen zu diesen knoten aufgeloest sind.
+			// Das ist der fall, wenn es sich um ein "angehaengten" node handelt von einem
+			// link-interface, der auf den haupt originator verweisst.
+			// Wenn  die reihenfolge bloed ist,
+			// so dass der "haupt node" auf den referenziert wird
+			// ausgelassen wird, so wuerde hier ein memleak
+			// entstehen (vorallem wenn bmxd beendet wird.)
+			// um das aufzuloesen, muss in diesem fall
+			// orig_ip=0 gesetzt werden, damit die schleife
+			// nochmal von von startet.
+
+			if (!bif && (!curr_time && orig_node->pog_refcnt == 0))
+//ori			if (!bif && (!curr_time || orig_node->pog_refcnt == 0))
 			{
 				if (orig_node->id4him)
 					free_pifnb_node(orig_node);
 
+				// wenn der aktuelle knoten, nicht der haupt orig_node war und
+				// der refcount des hauptnode 0 in set_primary_org() wird,
+				// dann neu starten mit der schleife,
+				// damit dieser auch geloescht wird.
+				// Muss hier ref=1 testen, da set_primary_org() den pointer primary_orig_node
+				// auf NULL setzt.
+				// Falls der aktuelle node bereits der hauptnode ist, so kommt man nur hhier her,
+				// falls der refcount vorher schon 0 geworden ist. in diesem fall
+				// ist orig_node->primary_orig_node ebenfalls NULL
+				if(orig_node->primary_orig_node
+							&& orig_node->primary_orig_node->pog_refcnt == 1)
+				{
+					orig_ip = 0;
+				}
+
+				//SE: when curr_time is zero then all data is destroyed
+				//in this case the orig
 				set_primary_orig(orig_node, 0);
 
 				avl_remove(&orig_avl, /*(uint32_t*)*/ &orig_node->orig);
@@ -1008,6 +1050,8 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 		}
 		else
 		{
+			// hier wird nur neigh zeug geloscht, wenn zu alt.
+
 			/* purge selected outdated originator elements */
 
 			/* purge outdated links */
@@ -1198,8 +1242,8 @@ void process_ogm(struct msg_buff *mb)
 	}
 
 	//suche den nachbar, der mir die ogm weitergeleitet hat. wenn nicht in meiner liste
-	//dann ist das die erste ogm und es wird ein eintrag in der liste gespeichert.
-	orig_node_neigh = get_orig_node(neigh, YES /*create*/);
+	//dann ist das die erste ogm und es wird ein eintrag im avl-tree gespeichert.
+	orig_node_neigh = find_or_create_orig_node_in_avl(neigh);
 
 	if (!(oCtx & IS_DIRECT_NEIGH) && !(orig_node_neigh->last_valid_time))
 	{
@@ -1259,7 +1303,7 @@ void process_ogm(struct msg_buff *mb)
 	}
 
 	mb->orig_node = orig_node =
-			(oCtx & IS_DIRECT_NEIGH) ? orig_node_neigh : get_orig_node(ogm->orig, YES /*create*/);
+			(oCtx & IS_DIRECT_NEIGH) ? orig_node_neigh : find_or_create_orig_node_in_avl(ogm->orig);
 
 	char *ndev = NULL;
 	if(orig_node_neigh && orig_node_neigh->router && orig_node_neigh->router->key.iif)
@@ -1743,11 +1787,8 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 
 static int32_t opt_purge(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
-//SE: rausgenommen, da das bei den optionen, wo das verwendet wird crasht
-// muss noch untersucht werden. crash passiert auch, wenn bmxd gekillt wird (normales kill)
-//die path_hysteresis parameter wirken aber trotzdem sofort
-//	if (cmd == OPT_APPLY)
-//	 	purge_orig(0, NULL);
+	if (cmd == OPT_APPLY)
+	 	purge_orig(0, NULL);
 
 	return SUCCESS;
 }
