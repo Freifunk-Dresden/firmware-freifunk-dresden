@@ -34,17 +34,18 @@ setup()
 	}
 	ip link set ${PrimeDEV} up
 
-	# vlan 1
-	ip link add link ${LAN_DEV} ${LAN_DEV}.1 type vlan id 1
-	ip link set ${LAN_DEV}.1 up
-	brctl addif br-bmx0 ${LAN_DEV}.1
+#	# vlan 1
+#	ip link add link ${LAN_DEV} ${LAN_DEV}.1 type vlan id 1
+#	ip link set ${LAN_DEV}.1 up
 
+	ip rule add to 10.200.0.0/16 ta 64
 
 	ip link show dev ${LinkDEV} || {
 		echo "create bmxd link interface: ${LinkDEV}: ${LinkIP}"
 		ip link add ${LinkDEV} type bridge
 		ip addr add ${LinkIP}/16 broadcast ${BROADCAST} dev ${LinkDEV}
-		brctl addif ${LinkDEV} ${LAN_DEV}.1
+#		brctl addif ${LinkDEV} ${LAN_DEV}.1
+		brctl addif ${LinkDEV} ${LAN_DEV}
 	}
 	ip link set ${LinkDEV} up
 }
@@ -56,6 +57,7 @@ clean()
 
 		ip link set ${PrimeDEV} down
 		ip link del ${PrimeDEV}
+		ip rule del to 10.200.0.0/16 ta 64
 }
 
 # Run the Valgrind tool called toolname, e.g. memcheck, cachegrind, callgrind, helgrind, drd, massif,
