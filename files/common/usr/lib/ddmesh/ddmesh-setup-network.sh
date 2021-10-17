@@ -425,34 +425,42 @@ setup_network()
 # called from ddmesh-bootconfig.sh (boot step 3)
 setup_mesh_on_wire()
 {
-	for NET in lan wan
-	do
-		if [ "$(uci -q get ddmesh.network.mesh_on_${NET})" = "1" ]; then
+	# vlan mesh and mesh-on-lan/wan are alternative because
+	# some switch devices can not use vlan 1 and vlan 9 with same
+	# ports but different tagging
+	enable_vlan="$(uci -q get ddmesh.network.mesh_on_vlan)"
 
-			# only sleep for lan
-			if [ ${NET} = "lan" -a "$(uci get ddmesh.system.mesh_sleep)" = '1' ]; then
-				sleep 300
+	if [ "${enable_vlan}" != 1 ]; then
+
+		for NET in lan wan
+		do
+			if [ "$(uci -q get ddmesh.network.mesh_on_${NET})" = "1" ]; then
+
+				# only sleep for lan
+				if [ ${NET} = "lan" -a "$(uci get ddmesh.system.mesh_sleep)" = '1' ]; then
+					sleep 300
+				fi
+
+				logger -s -t "$LOGGER_TAG" "activate mesh-on-${NET}"
+				dev_name=$(uci -q get network.${NET}.device)
+				dev_config=$(get_device_section "$dev_name")
+				mesh_bridge=$(uci -q get network.mesh_${NET}.device)
+
+				if [ -n "${dev_config}" ]; then
+					# avoid ip conflicts when wan is in same network as lan (getting ip from dhcp server)
+					# disable br-wan and br-lan
+					ip link set ${dev_name} down
+
+					# remove all interfaces from br-lan/wan and add those to br-mesh_lan/wan
+					for ifname in $(uci get network.${dev_config}.ports)
+					do
+						brctl delif ${dev_name} ${ifname}
+						brctl addif ${mesh_bridge} ${ifname}
+					done
+				fi
 			fi
-
-			logger -s -t "$LOGGER_TAG" "activate mesh-on-${NET}"
-			dev_name=$(uci -q get network.${NET}.device)
-			dev_config=$(get_device_section "$dev_name")
-			mesh_bridge=$(uci -q get network.mesh_${NET}.device)
-
-			if [ -n "${dev_config}" ]; then
-				# avoid ip conflicts when wan is in same network as lan (getting ip from dhcp server)
-				# disable br-wan and br-lan
-				ip link set ${dev_name} down
-
-				# remove all interfaces from br-lan/wan and add those to br-mesh_lan/wan
-				for ifname in $(uci get network.${dev_config}.ports)
-				do
-					brctl delif ${dev_name} ${ifname}
-					brctl addif ${mesh_bridge} ${ifname}
-				done
-			fi
-		fi
-	done
+		done
+	fi
 }
 
 

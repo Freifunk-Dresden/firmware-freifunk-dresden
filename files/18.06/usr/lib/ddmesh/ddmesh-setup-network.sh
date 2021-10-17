@@ -43,45 +43,52 @@ setup_ethernet()
 
 setup_mesh()
 {
+	enable_vlan="$(uci -q get ddmesh.network.mesh_on_vlan)"
+
 	# setup mesh vlan
-	mesh_vlan_id="$(uci -q get ddmesh.network.mesh_vlan_id)"
-	if [ -z "${mesh_vlan_id}" ]; then
-		mesh_vlan_id="9"	# default, hope it doesn't conflict with private vlans
-		uci set ddmesh.network.mesh_vlan_id="${mesh_vlan_id}"
-	fi
+	if [ "${enable_vlan}" = "1" ]; then
 
-	# collect all ports
-	local tmp_switch_ports=""
-	cb_switch_vlan()
-	{
-		local config="$1"
-		local var_ports
-		config_get var_ports "$config" ports
-		# remove any tags (t,u,*)
-		var_ports="${var_ports//u/}"
-		var_ports="${var_ports//t/}"
-		var_ports="${var_ports//\*/}"
-		tmp_switch_ports="${tmp_switch_ports} ${var_ports}"
-	}
-	config_load network
-	config_foreach cb_switch_vlan switch_vlan
-
-	# add tag to each port
-	for p in ${tmp_switch_ports}
-	do
-		# check if already added
-		if [ "${switch_ports}" = "${switch_ports//${p}t/}" ]; then
-			switch_ports="${switch_ports} ${p}t"
+		# setup mesh vlan
+		mesh_vlan_id="$(uci -q get ddmesh.network.mesh_vlan_id)"
+		if [ -z "${mesh_vlan_id}" ]; then
+			mesh_vlan_id="9"	# default, hope it doesn't conflict with private vlans
+			uci set ddmesh.network.mesh_vlan_id="${mesh_vlan_id}"
 		fi
-	done
 
-	# vlan config
-	vlan_dev_config="switch_vlan_mesh"
-	uci add network switch_vlan
-	uci rename network.@switch_vlan[-1]="${vlan_dev_config}"
-	uci set network.${vlan_dev_config}.device='switch0'
-	uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
-	uci set network.${vlan_dev_config}.ports="${switch_ports# }" #remove leading space
+		# collect all ports
+		local tmp_switch_ports=""
+		cb_switch_vlan()
+		{
+			local config="$1"
+			local var_ports
+			config_get var_ports "$config" ports
+			# remove any tags (t,u,*)
+			var_ports="${var_ports//u/}"
+			var_ports="${var_ports//t/}"
+			var_ports="${var_ports//\*/}"
+			tmp_switch_ports="${tmp_switch_ports} ${var_ports}"
+		}
+		config_load network
+		config_foreach cb_switch_vlan switch_vlan
+
+		# add tag to each port
+		for p in ${tmp_switch_ports}
+		do
+			# check if already added
+			if [ "${switch_ports}" = "${switch_ports//${p}t/}" ]; then
+				switch_ports="${switch_ports} ${p}t"
+			fi
+		done
+
+		# vlan config
+		vlan_dev_config="switch_vlan_mesh"
+		uci add network switch_vlan
+		uci rename network.@switch_vlan[-1]="${vlan_dev_config}"
+		uci set network.${vlan_dev_config}.device='switch0'
+		uci set network.${vlan_dev_config}.vlan="${mesh_vlan_id}"
+		uci set network.${vlan_dev_config}.ports="${switch_ports# }" #remove leading space
+
+	fi # if mesh_on_vlan
 
 	# create interfaces (bridges)
 	for NET in mesh_lan mesh_wan mesh_vlan
@@ -101,7 +108,7 @@ setup_mesh()
 		uci set network.${NET}.force_link=1
 
 		# add vlan ports
-		if [ "${NET}" = "mesh_vlan" ]; then
+		if [ "${enable_vlan}" = "1" -a "${NET}" = "mesh_vlan" ]; then
 				phy_lan_name=$(uci -q get network.lan.ifname)
 				eth_lan=${phy_lan_name%.*}
 				phy_wan_name=$(uci -q get network.wan.ifname)
@@ -249,27 +256,34 @@ setup_network()
 # called from ddmesh-bootconfig.sh (boot step 3)
 setup_mesh_on_wire()
 {
-	for NET in lan wan
-	do
-		if [ "$(uci -q get ddmesh.network.mesh_on_${NET})" = "1" ]; then
+	# vlan mesh and mesh-on-lan/wan are alternative because
+	# some switch devices can not use vlan 1 and vlan 9 with same
+	# ports but different tagging
+	enable_vlan="$(uci -q get ddmesh.network.mesh_on_vlan)"
 
-			# only sleep for lan
-			if [ ${NET} = "lan" -a "$(uci get ddmesh.system.mesh_sleep)" = '1' ]; then
-				sleep 300
+	if [ "${enable_vlan}" != 1 ]; then
+		for NET in lan wan
+		do
+			if [ "$(uci -q get ddmesh.network.mesh_on_${NET})" = "1" ]; then
+
+				# only sleep for lan
+				if [ ${NET} = "lan" -a "$(uci get ddmesh.system.mesh_sleep)" = '1' ]; then
+					sleep 300
+				fi
+
+				logger -s -t "$LOGGER_TAG" "activate mesh-on-${NET}"
+				ifname="$(uci -q get network.${NET}.ifname)"
+				br_name="br-${NET}"
+				mesh_bridge="br-mesh_${NET}"
+
+				# avoid ip conflicts when wan is in same network as lan (getting ip from dhcp server)
+				# disable br-wan and br-lan
+				ip link set ${br_name} down
+				brctl delif ${br_name} ${ifname}
+				brctl addif ${mesh_bridge} ${ifname}
 			fi
-
-			logger -s -t "$LOGGER_TAG" "activate mesh-on-${NET}"
-			ifname="$(uci -q get network.${NET}.ifname)"
-			br_name="br-${NET}"
-			mesh_bridge="br-mesh_${NET}"
-
-			# avoid ip conflicts when wan is in same network as lan (getting ip from dhcp server)
-			# disable br-wan and br-lan
-			ip link set ${br_name} down
-			brctl delif ${br_name} ${ifname}
-			brctl addif ${mesh_bridge} ${ifname}
-		fi
-	done
+		done
+	fi
 }
 
 
