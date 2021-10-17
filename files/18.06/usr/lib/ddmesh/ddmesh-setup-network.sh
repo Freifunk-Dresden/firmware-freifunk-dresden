@@ -256,12 +256,11 @@ setup_network()
 # called from ddmesh-bootconfig.sh (boot step 3)
 setup_mesh_on_wire()
 {
-	# vlan mesh and mesh-on-lan/wan are alternative because
-	# some switch devices can not use vlan 1 and vlan 9 with same
-	# ports but different tagging
-	enable_vlan="$(uci -q get ddmesh.network.mesh_on_vlan)"
-
-	if [ "${enable_vlan}" != 1 ]; then
+#	# vlan mesh and mesh-on-lan/wan are alternative because
+#	# some switch devices can not use vlan 1 and vlan 9 with same
+#	# ports but different tagging
+#	enable_vlan="$(uci -q get ddmesh.network.mesh_on_vlan)"
+#	if [ "${enable_vlan}" != 1 ]; then
 		for NET in lan wan
 		do
 			if [ "$(uci -q get ddmesh.network.mesh_on_${NET})" = "1" ]; then
@@ -283,7 +282,7 @@ setup_mesh_on_wire()
 				brctl addif ${mesh_bridge} ${ifname}
 			fi
 		done
-	fi
+#	fi
 }
 
 

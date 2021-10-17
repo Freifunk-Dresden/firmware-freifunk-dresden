@@ -17,6 +17,8 @@ fi
 cat<<EOM
 <script type="text/javascript">
 	function disable_mesh_fields(s) {
+		// disabled for now
+		return
 		var v=document.getElementsByName('form_vlan_meshing')[0].checked;
 		var d = (v=="1") ? true : false;
 		document.getElementsByName('form_lan_meshing')[0].disabled=d;
@@ -185,8 +187,7 @@ cat<<EOM
 
 <TR>
 <TH>- WAN-Meshing:</TH>
-<TD><INPUT NAME="form_wan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ];then echo ' checked="checked"';fi)
-	$(if [ "$mesh_on_vlan" = "1" ];then echo ' disabled="disabled"';fi)></TD>
+<TD><INPUT NAME="form_wan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ];then echo ' checked="checked"';fi)></TD>
 <td>Wenn aktiv, wird der WAN-Port zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber die Knoten-IP-Adresse via WAN</b> erreichbar.<br/>WAN-Konfiguration wird deaktiviert.</td>
 </TR>
 
@@ -195,8 +196,7 @@ fi
 cat<<EOM
 <TR>
 <TH>- LAN-Meshing:</TH>
-<TD><INPUT NAME="form_lan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ];then echo ' checked="checked"';fi)
-	$(if [ "$mesh_on_vlan" = "1" ];then echo ' disabled="disabled"';fi)></TD>
+<TD><INPUT NAME="form_lan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ];then echo ' checked="checked"';fi)</TD>
 <td>Wenn aktiv, werden alle LAN-Ports zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber Knoten-IP-Adresse via LAN</b> erreichbar.<br/>LAN-Konfiguration und privates Netzwerk werden deaktiviert. LAN-Meshing wird erst 5 minuten nach Routerstart aktiviert wenn dies im Punkt "LAN-Meshing Wartezeit" nicht explizit deaktiviert wurde.</td>
 </TR>
 
@@ -332,13 +332,13 @@ else
 		# vlan has precedence over lan/wan meshing
 		uci set ddmesh.network.mesh_on_vlan=${form_vlan_meshing:-0}
 		uci set ddmesh.network.mesh_vlan_id=${form_vlan_id:-9}
-		if [ "${form_vlan_meshing:-0}" = 1]; then
-			uci set ddmesh.network.mesh_on_lan='0'
-			uci set ddmesh.network.mesh_on_wan='0'
-		else
+#		if [ "${form_vlan_meshing:-0}" = 1]; then
+#			uci set ddmesh.network.mesh_on_lan='0'
+#			uci set ddmesh.network.mesh_on_wan='0'
+#		else
 			uci set ddmesh.network.mesh_on_lan=${form_lan_meshing:-0}
 			uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
-		fi
+#		fi
 
 		test -n "$form_bmxd_preferred_gateway" && prefgw="$(uhttpd -d $form_bmxd_preferred_gateway)"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
