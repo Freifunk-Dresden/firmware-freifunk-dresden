@@ -45,7 +45,11 @@ docker exec -it gitlab-runner bash
 
 add to [runners.docker] to allow loading images when those are not present on any server 
 (only generated locally) but .gitlab-ci.yml has a reference to a remote docker registry
-`pull_policy = ["if-not-present"]`
+`pull_policy = ["if-not-present"]` # or `pull_policy = "if-not-present"` if service does not start (old ubuntu)
+
+Then you need to restart either the container (in gitlab-runner runs as container) or on natively installed runner
+restart with `gitlab-runner restart`.  
+You may check if container or gitlab-runner service is running `service gitlab-runner status`.
 
 
 ## Howto use /mycache:
@@ -57,8 +61,8 @@ add to [runners.docker] to allow loading images when those are not present on an
     This is needed because gitlab-runner bind-mounts this directory. firmware is build as user "builder"
     which is required not to be "root". It has to be able to create /root/mycache/dl and /mycache/workdir.
 3. Optional if testing manually.
-    - `docker run --rm -it -v "/mycache:/mycache" openwrt-docker-build bash`
-    - checkout project
+    - `docker run --rm -it -v "/mycache:/mycache" freifunkdresden/openwrt-docker-build bash`
+    - checkout project `git clone https://gitlab.freifunk-dresden.de/firmware-developer/firmware.git`
     - `cd firmware`
     - `mkdir -p /mycache/dl /mycache/workdir`
     - `ln -s /mycache/dl && ln -s /mycache/dl`
