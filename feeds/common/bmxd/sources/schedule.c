@@ -918,7 +918,7 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 	mb->neigh = rcvd_neighbor;
 
 
-	dbgf_all(DBGT_INFO, "version? %i, "
+	dbgf_all(DBGT_INFO, "version %i, "
 											"networkId %u, size %i, rcvd udp_len %d via NB %s %s %s",
 					 ((struct bat_header *)pos)->version,
 					 mb->networkId,
