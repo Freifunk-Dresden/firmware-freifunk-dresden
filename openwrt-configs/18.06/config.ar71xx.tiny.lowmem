@@ -192,7 +192,7 @@ CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3020-v1=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3220-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3220-v2 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3420-v1 is not set
-CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3420-v2=y
+# CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3420-v2 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa701nd-v1 is not set
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa701nd-v2=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa7210n-v2 is not set
@@ -206,12 +206,12 @@ CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa801nd-v3=y
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa830re-v2=y
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa850re-v1=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa850re-v2 is not set
-CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa855re-v1=y
+# CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa855re-v1 is not set
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa860re-v1=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa901nd-v1 is not set
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa901nd-v2=y
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa901nd-v3=y
-CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa901nd-v4=y
+# CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa901nd-v4 is not set
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa901nd-v5=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wdr3320-v2 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr1041n-v2 is not set
@@ -221,7 +221,7 @@ CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wa901nd-v5=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr720n-v4 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr740n-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr740n-v3 is not set
-CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr740n-v4=y
+# CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr740n-v4 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr740n-v5 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr740n-v6 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr741nd-v1 is not set
@@ -230,7 +230,7 @@ CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr741nd-v4=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr741nd-v5 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr743nd-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr743nd-v2 is not set
-CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr802n-v1=y
+# CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr802n-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr802n-v2 is not set
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr840n-v2=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr840n-v3 is not set
@@ -252,7 +252,7 @@ CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr941nd-v2=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr941nd-v4 is not set
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr941nd-v5=y
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr941nd-v6=y
-CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr941nd-v6-cn=y
+# CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-wr941nd-v6-cn is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_TEW632BRP is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_TEW652BRP_FW is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_TEW652BRP_RECOVERY is not set
