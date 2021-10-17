@@ -978,10 +978,13 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 							 orig_node->orig_str, (unsigned long long)orig_node->last_valid_time, (unsigned long long)orig_node->last_aware);
 
 			flush_orig(orig_node, bif);
+
 //SE: siehe commentare unten
-			if (!bif && (!curr_time && orig_node->pog_refcnt == 0))
-//			if (!bif && (!curr_time || !orig_node->pog_refcnt))
+			if (!bif && ( 		(!curr_time && orig_node->pog_refcnt == 0) 		// if flush
+										|| 	(purge_old && orig_node->pog_refcnt == 0) ))  // if old
+			{
 				cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_DESTROY);
+			}
 
 			//remove all neighbours of this originator ...
 			OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
@@ -1018,22 +1021,35 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			// orig_ip=0 gesetzt werden, damit die schleife
 			// nochmal von von startet.
 
-			if (!bif && (!curr_time && orig_node->pog_refcnt == 0))
-//ori			if (!bif && (!curr_time || orig_node->pog_refcnt == 0))
+			if (!bif && ( 		(!curr_time && orig_node->pog_refcnt == 0) 		// if flush
+										|| 	(purge_old && orig_node->pog_refcnt == 0) ))	// if old
 			{
 				if (orig_node->id4him)
 					free_pifnb_node(orig_node);
 
-				// wenn der aktuelle knoten, nicht der haupt orig_node war und
-				// der refcount des hauptnode 0 in set_primary_org() wird,
-				// dann neu starten mit der schleife,
-				// damit dieser auch geloescht wird.
-				// Muss hier ref=1 testen, da set_primary_org() den pointer primary_orig_node
-				// auf NULL setzt.
-				// Falls der aktuelle node bereits der hauptnode ist, so kommt man nur hhier her,
-				// falls der refcount vorher schon 0 geworden ist. in diesem fall
-				// ist orig_node->primary_orig_node ebenfalls NULL
-				if(orig_node->primary_orig_node
+				// when alles "ge-flusht" wird, dann sollen alle orig_nodes im avl-tree
+				// geloescht werden.
+				// Da aber ein nicht-primary-orig_node auf einen primary referenziert
+				// muss dieser primary_node erst dann geloescht werden, wenn dessen
+				// ref-counter == 0 ist.
+				// Es kommt vor, dass dieser primary_node in der reihenfolge im avl-tree
+				// eher betrachtet wird. dieser muss erstmal ignoriert werden, da
+				// sonst die referenz-pointer ins nowana zeigen wuerden. das gilt besonsers
+				// auch fuer curr_gateway strukturen.
+				//
+				// damit bei einem "flush" letztlich auch die primary orig_node geloescht
+				// werden, muss der refcount ueberacht werden. Sobal der letzte nicht-primary
+				// orgin_node geloescht wird, muss der avl-tree wieder von vorn beginnen, um
+				// letztlich das primary orgin_node ebenfalls zu loeschen.
+				//
+				// dieser "reset" darf aber nur fuer "flush" operationen gelten,
+				// da wenn nur "outdated" orig_nodes geloescht werden sollen, nicht automatisch
+				// wieder die schleife von vorn beginnen muss/braucht. "outdated" primary orign_nodes
+				// werden dann beim naechsten mal entfernt.
+				// ein "reset" wuerde hier die laufzeit nur erhohen und bereits geteste
+				// orign_nodes erneut testen.
+				if(!curr_time 		// nur bei "flush"
+							&& orig_node->primary_orig_node
 							&& orig_node->primary_orig_node->pog_refcnt == 1)
 				{
 					orig_ip = 0;
