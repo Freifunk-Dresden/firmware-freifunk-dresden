@@ -3,7 +3,7 @@
 BMXD_DEBUG_LEVEL=4
 PrimeDEV="bmx_prime"
 PIP="10.200.99.99"
-LinkDEV="br-bmx0"				# empty bridge
+LinkDEV="bmx0"				# empty bridge
 LinkIP="10.201.99.99"
 BROADCAST="10.255.255.255"
 
@@ -44,10 +44,10 @@ setup()
 		echo "create bmxd link interface: ${LinkDEV}: ${LinkIP}"
 		ip link add ${LinkDEV} type bridge
 		ip addr add ${LinkIP}/16 broadcast ${BROADCAST} dev ${LinkDEV}
-#		brctl addif ${LinkDEV} ${LAN_DEV}.1
-		brctl addif ${LinkDEV} ${LAN_DEV}
 	}
 	ip link set ${LinkDEV} up
+#	brctl addif ${LinkDEV} ${LAN_DEV}.1
+ 	brctl addif ${LinkDEV} ${LAN_DEV}
 }
 
 clean()
