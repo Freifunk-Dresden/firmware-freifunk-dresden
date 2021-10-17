@@ -40,7 +40,8 @@ docker exec -it gitlab-runner bash
 #                           (only generated locally)
 #                           but .gitlab-ci.yml has a reference to a remote docker registry
 #  pull_policy = ["if-not-present"]
-#
+# - restart container (if gitlab-runner was installed as container), or call `gitlab-runner restart` to
+#   reload configuration
 
 # Howto use /mycache:
 # 1. add /mycache bind mount. this is working because runner creates the openwrt-container within
