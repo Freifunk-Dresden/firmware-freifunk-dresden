@@ -52,12 +52,12 @@ docker exec -it gitlab-runner bash
 #    which is required not to be "root". It has to be able to create /mycache/dl and /mycache/workdir.
 #
 # 3. Optional if testing manually.
-#    - docker run --rm -it -v "/root/mycache:/mycache" openwrt-docker-build bash
-#    - checkout project
+#    - docker run --rm -it -v "/root/mycache:/mycache" freifunkdresden/openwrt-docker-build bash
+#      OR docker run --rm -it -v "/mycache:/mycache" freifunkdresden/openwrt-docker-build bash
+#    - checkout project `GIT_SSL_NO_VERIFY=true git clone https://gitlab.freifunk-dresden.de/firmware-developer/firmware.git`
 #    - cd firmware
-#    - mkdir -p /mycache/dl /mycache/workdir
-#    - ln -s /mycache/dl && ln -s /mycache/dl
-#
+#    - run the commands in gitlab-ci/docker.yml
+
  
 
 
