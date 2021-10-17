@@ -215,9 +215,9 @@ CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_dir-615-h1=y
 # CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_d105 is not set
 # CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_hg255d is not set
 # CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_m2m is not set
-CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_jhr-n805r=y
-CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_jhr-n825r=y
-CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_jhr-n926r=y
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_jhr-n805r is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_jhr-n825r is not set
+# CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_jhr-n926r is not set
 # CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_mofi3500-3gn is not set
 # CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_nw718 is not set
 # CONFIG_TARGET_DEVICE_ramips_rt305x_DEVICE_wnce2001 is not set
