@@ -11,7 +11,7 @@ bmx_proto = Proto("BMX","BMX Protocol")
 
 -- define fields that can be used for searching/filtering.
 -- So it can be filtered I have use these filter to add in the tree below.
-f_netid=ProtoField.uint16("bmx.netid", "Network ID") 
+f_netid=ProtoField.uint16("bmx.netid", "Network ID")
 f_ogm_package_size=ProtoField.uint16("bmx.ogm.size", "Packet size")
 
 -- flags: create a bool. 1: name of filter; 2: displayed text; 3: bytes that hold the flags;
@@ -55,7 +55,7 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 	length = buffer:len()
 	if length == 0 then return end
 
-	-- simply use name from above. pinfo.cols represends the colums in 
+	-- simply use name from above. pinfo.cols represends the colums in
 	-- paket list of the window in wireshare window
 	pinfo.cols.protocol = bmx_proto.name
 
@@ -68,7 +68,7 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 	local bmx_ver=buffer(0,1):uint()
 	local netid=buffer(1,2):uint()
 	-- take size byte and multiply it with 4 to get the size including the bat header
-	local packet_size = buffer(3,1):uint() * 4 
+	local packet_size = buffer(3,1):uint() * 4
 	local line = string.format("Ver: 0x%2.2x, NetworkId: %u, Data Size: %d", bmx_ver, netid, packet_size - 4)
 
 	local tree_bat_header = subtree:add(buffer(0,4),"Header:" .. line)
@@ -77,13 +77,13 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 	tree_bat_header:add(f_netid,buffer(1,2))
 	tree_bat_header:add(buffer(3,1), "Size:", packet_size - 4)
 
-	-- check coded size against buffer (packet_size contains the bat_header too, so 
+	-- check coded size against buffer (packet_size contains the bat_header too, so
 	-- I can check against the buffer length
 	if packet_size > length then return end
 
 	-- process all objects; packet_size will be decremented
 	local offset = 4
-	while (offset+4) <= packet_size 
+	while (offset+4) <= packet_size
 	do
 		-- extract object header (big endian)
 		local tmp = buffer(offset,1):uint()
@@ -100,7 +100,7 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 
 		if tmp_type == 0 then
 			-- OGM
-		
+
 			-- check if we have an extension or more
 			-- the normal OGM has 12 bytes. If size is greater it has extensions, but this must be multiple of 8
 			-- which is sizeof(ext_packet)
@@ -108,13 +108,32 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 			local ext_str=""
 			if size > 12 then
 				ext_size=size-12
-				ext_str="{ EXTENSION }"
+
+					-- just get the type of extension
+					ext_offset = offset+12
+					ext_end=offset+size
+					-- run through extensions, all do have a fix size of 8 bytes
+					ext_str="{"
+					while ext_offset+8 <= ext_end
+					do
+						-- big endian
+						local tmp = buffer(ext_offset,1):uint()
+						local ext_msg = bit.band(bit.rshift(tmp,7),0x01) -- must be 1
+						local ext_type = bit.band(bit.rshift(tmp, 2),0x1f)
+						if ext_type == 0 then
+							ext_str=ext_str.." GW-EXT"
+						elseif ext_type == 2 then
+							ext_str=ext_str.." PIP-EXT"
+						end
+						ext_offset = ext_offset + 8
+					end
+					ext_str=ext_str.." }"
 			end
 
 			ogm_flag_clone = bit.band(bit.rshift(tmp,2),1)
-			ogm_flag_direct = bit.band(bit.rshift(tmp,1),1) 
+			ogm_flag_direct = bit.band(bit.rshift(tmp,1),1)
 			ogm_flag_unidir = bit.band(tmp,1)
-	
+
 			ogm_pws = buffer(offset+2, 1):uint()
 			ogm_misc = buffer(offset+3, 1):uint() -- hold cpu load stuff
 			ogm_ttl = buffer(offset+4, 1):uint()
@@ -122,15 +141,15 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 			ogm_seqno = buffer(offset+6, 2):uint()
 			ogm_orig = buffer(offset+8, 4):uint()
 
-		
+
 			local line = string.format("Data (offset:%3d, len:%3d): OGM %-15.15s, ttl:%02d, seqno:%5d, pwd:%3d, cpu:%3d, prvHopId:%3d, unidirect:%d, direct:%d, clone:%d %s"
-					, offset, size 
+					, offset, size
 					, ipStr(ogm_orig), ogm_ttl, ogm_seqno, ogm_pws, ogm_misc
 					, ogm_prevHopId, ogm_flag_unidir, ogm_flag_direct, ogm_flag_clone, ext_str)
 
 			local tree_bat_packet = subtree:add(buffer(offset,size), line)
 			-- the size filed is coded and must be lshifted by 2, To display the correct value and
-			-- still have the byte marked in wireshark when I click on "Packet size", I simply add 
+			-- still have the byte marked in wireshark when I click on "Packet size", I simply add
 			-- the value as third paramter. (don't know why this works).
 			tree_bat_packet:add(f_ogm_package_size, buffer(offset+1,1), size )
 			tree_bat_packet:add(f_flag_clone,buffer(offset,1))
@@ -151,7 +170,7 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 				local exttree=tree_bat_packet
 
 				-- run through extensions, all do have a fix size of 8 bytes
-				while ext_offset+8 <= ext_end 
+				while ext_offset+8 <= ext_end
 				do
 					-- big endian
 					local tmp = buffer(ext_offset,1):uint()
@@ -164,12 +183,12 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 					local d32 = buffer(ext_offset+4,4):uint()
 
 					-- extension types: look for EXT_TYPE_64B_GW, EXT_TYPE_64B_PIP, EXT_TYPE_64B_NETID
-					if ext_type == 0 then 
+					if ext_type == 0 then
 						-- EXT_TYPE_64B_GW
 						gw_type = ""
 						if bit.band(ext_releated, 0x01) == 0x01 then gw_type = gw_type .. " Community-Gateway" end
 						if bit.band(ext_releated, 0x02) == 0x02 then gw_type = gw_type .. " One-Way-Tunnel" end
-						
+
 						local line = string.format("(offset: %3d) Gateway: %s, %s", ext_offset, ipStr(d32), gw_type)
 						local exttree2=exttree:add(buffer(ext_offset, 8), line)
 						exttree2:add(f_ext_gw_flag_community, buffer(ext_offset,1))
@@ -210,12 +229,11 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 		offset = offset + size
 
 
-		
+
 	end
 
 end
 -- load the udp.port table
 udp_table = DissectorTable.get("udp.port")
--- register our protocol to handle udp port 
+-- register our protocol to handle udp port
 udp_table:add(4305,bmx_proto)
-
