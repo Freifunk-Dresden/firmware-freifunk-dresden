@@ -515,7 +515,10 @@ if $USE_DOCKER; then
 		}
 		docker exec -it ${DOCKER_CONTAINER_NAME} git config --global http.sslverify false
 		echo -e "${C_CYAN}run build${C_NONE}"
-		docker exec -it ${DOCKER_CONTAINER_NAME} ./build.sh $@
+		# need to pass target as one parameter. $@ does separate target list ("ar71xx.tiny.lowmem ath79.generic lantiq.xrx200")
+		target="$1"
+		shift
+		docker exec -it ${DOCKER_CONTAINER_NAME} ./build.sh "$target" $@
 
 		# ignore some operations for some arguments
 		case "$1" in
@@ -604,6 +607,7 @@ else
 	# get target (addtional arguments are passt to command line make)
 	# last value will become DEFAULT
 	targetRegex="$1"
+echo "1:targetRegex=[$targetRegex]"
 	shift
 
 	if [ "$targetRegex" = "failed" ]; then
@@ -625,8 +629,11 @@ else
 	# remove leading and trailing spaces
 	targetRegex=$(echo "${targetRegex}" | sed 's#[ 	]\+$##;s#^[ 	]\+##')
 
-	# replace any "space" with '|'. space can be used as separator lile '|'
-	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#|#g')
+	# replace any "space" with '$|^'. space can be used as separator lile '|'
+	# This ensures that full target names are only considered instead of processing
+	# targets that just start with the given name
+	# If wildecards are needed, user has to add them
+	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#$|^#g')
 
 	# append '$' to targetRegex, to ensure that 'ar71xx.generic.xyz' is not built
 	# when 'ar71xx.generic' was specified. Use 'ar71xx.generic.*' if both
