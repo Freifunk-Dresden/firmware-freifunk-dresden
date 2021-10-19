@@ -18,9 +18,11 @@ f_ogm_package_size=ProtoField.uint16("bmx.ogm.size", "Packet size")
 -- flags: create a bool. 1: name of filter; 2: displayed text; 3: bytes that hold the flags;
 -- 4: if the mask delivers true, then display either of one strings
 --  5: bitmask
-f_flag_uni=ProtoField.bool("bmx.ogm.flag.uni", "Flag: Uni-directional",8,{"YES","no"},0x01)
-f_flag_direct=ProtoField.bool("bmx.ogm.flag.direct", "Flag: direct-link",8,{"YES","no"},0x02)
-f_flag_clone=ProtoField.bool("bmx.ogm.flag.clone", "Flag: clone",8,{"YES","no"},0x04)
+-- KEEP the flags string {"Y"," "} / space is needed. This allows to display flags as column,
+-- which gives a matrix of all ogm in one packet
+f_flag_uni=ProtoField.bool("bmx.ogm.flag.uni", "Flag: uni-directional",8,{"Y"," "},0x01)
+f_flag_direct=ProtoField.bool("bmx.ogm.flag.direct", "Flag: Direct-link",8,{"Y"," "},0x02)
+f_flag_clone=ProtoField.bool("bmx.ogm.flag.clone", "Flag: clone",8,{"Y"," "},0x04)
 
 f_pws=ProtoField.uint8("bmx.ogm.pws", "PWS")
 f_cpu=ProtoField.uint8("bmx.ogm.cpu", "CPU")
@@ -121,10 +123,15 @@ function bmx_proto.dissector(buffer,pinfo,tree)
 						local tmp = buffer(ext_offset,1):uint()
 						local ext_msg = bit.band(bit.rshift(tmp,7),0x01) -- must be 1
 						local ext_type = bit.band(bit.rshift(tmp, 2),0x1f)
+						local ext_releated = bit.band(tmp,3)
 						if ext_type == 0 then
-							ext_str=ext_str.." GW-EXT"
+							if bit.band(ext_releated, 0x01) == 0x01 then
+								ext_str=ext_str.." Community-Gateway"
+							else
+								ext_str=ext_str.." Gateway"
+							end
 						elseif ext_type == 2 then
-							ext_str=ext_str.." PIP-EXT"
+							ext_str=ext_str.." PrimaryIP-EXT"
 						end
 						ext_offset = ext_offset + 8
 					end
