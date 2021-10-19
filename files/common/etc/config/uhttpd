@@ -27,7 +27,7 @@ config cert px5g
 	option bits		1024
 	option country	'DE'
 	option state		'Saxony'
-	option location		Dresden
+	option location		'Dresden'
 	option commonname	'Freifunk Dresden Communities'
 	option organisation 'Freifunk Dresden'
 	option node		'Node'

@@ -583,6 +583,12 @@ upgrade_7_1_3()
 	uci -q delete ddmesh.network.speed_up
 	uci -q delete ddmesh.network.speed_down
 	uci -q delete ddmesh.network.speed_network
+	uci set ddmesh.network.wifi_country='DE'
+	uci set uhttpd.px5g.country='DE'
+	uci set uhttpd.px5g.state='Saxony'
+	uci set uhttpd.px5g.location='Dresden'
+	uci set uhttpd.px5g.commonname='Freifunk Dresden Communities'
+	uci set uhttpd.px5g.organisation='Freifunk Dresden'
 }
 
 ##################################
