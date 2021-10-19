@@ -1233,7 +1233,7 @@ EOM
 			fi
 		fi
 		# ignore error and continue with next target
-		echo -e $C_RED"Error: ignore build error"$C_NONE "at target" $C_YELLOW and continue "${_config_name}" $C_NONE
+		echo -e "${C_RED}Error: ignore build error${C_NONE} target and ${C_YELLOW}continue${C_NONE} with next"
 		continue
 	fi
 
