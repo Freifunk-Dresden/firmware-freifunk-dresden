@@ -395,9 +395,9 @@ static void aggregate_outstanding_ogms(void *unused)
 			// keep care to not aggregate more packets than would fit into max packet size
 			aggregated_size += send_node->ogm_buff_len;
 
-			directlink = (send_node->ogm->flags & DIRECTLINK_FLAG);
-			unidirectional = (send_node->ogm->flags & UNIDIRECTIONAL_FLAG);
-			cloned = (send_node->ogm->flags & CLONED_FLAG);
+			directlink = (send_node->ogm->flags & DIRECTLINK_FLAG) > 0;
+			unidirectional = (send_node->ogm->flags & UNIDIRECTIONAL_FLAG) > 0;
+			cloned = (send_node->ogm->flags & CLONED_FLAG) > 0;
 
 			ttl = send_node->ogm->ogm_ttl;
 			if_singlehomed = ((send_node->own_if && send_node->if_outgoing->if_singlehomed) ? 1 : 0);
@@ -521,7 +521,7 @@ static void aggregate_outstanding_ogms(void *unused)
 			send_node->send_bucket += 100;
 
 			dbgf_all(DBGT_INFO,
-							 "OG %-16s, seqno %5d, TTL %2d, IDF %d, UDF %d, CLF %d "
+							 "OG %-16s, seqno %5d, TTL %2d, DirectF %d, UniF %d, CloneF %d "
 							 "iter %d len %3d max agg_size %3d IFs %s",
 							 ipStr(send_node->ogm->orig),
 							 ntohs(send_node->ogm->ogm_seqno),
@@ -605,12 +605,12 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 		{
 			if (oCtx & IS_ASOCIAL)
 			{
-				dbgf_all(DBGT_INFO, "re-brc neighb OGM with direct link and unidirect flag");
+				dbgf_all(DBGT_INFO, "re-brc (accepted) neighb OGM with direct link and unidirect flag");
 				with_unidirectional_flag = 1;
 			}
 			else
 			{ // mark direct link on incoming interface
-				dbgf_all(DBGT_INFO, "rebroadcast neighbour packet with direct link flag");
+				dbgf_all(DBGT_INFO, "rebroadcast neighbour (accepted) packet with direct link flag");
 			}
 
 			/* if an unidirectional direct neighbour sends us a packet or
@@ -619,7 +619,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 		}
 		else if (!(oCtx & HAS_CLONED_FLAG))
 		{
-			dbgf_all(DBGT_INFO, "re-brc neighb OGM with direct link and unidirect flag");
+			dbgf_all(DBGT_INFO, "re-brc (answer back) neighb OGM with direct link and unidirect flag");
 			with_unidirectional_flag = 1;
 		}
 		else
@@ -639,7 +639,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	}
 	else if ((oCtx & IS_ACCEPTED) && (oCtx & IS_BEST_NEIGH_AND_NOT_BROADCASTED))
 	{
-		dbgf_all(DBGT_INFO, "re-brc OGM");
+		dbgf_all(DBGT_INFO, "re-brc accepted OGM");
 	}
 	else
 	{
@@ -713,6 +713,9 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	/* change sequence number to network order */
 	sn->ogm->ogm_seqno = htons(sn->ogm->ogm_seqno);
 
+	// we send the ogm back as answer with direct link, unidirect, to tell neighbour that we are direct connected
+	dbgf_all(DBGT_INFO, "prepare send re-brc OGM TTL %d DirectF %d UniF %d ", sn->ogm->ogm_ttl, directlink, with_unidirectional_flag );
+
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
@@ -726,7 +729,9 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	}
 
 	if (!inserted)
+	{
 		OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
+	}
 
 	prof_stop(PROF_schedule_rcvd_ogm);
 }
@@ -1375,6 +1380,8 @@ void schedule_own_ogm(struct batman_if *bif)
 
 	sn->ogm->ogm_misc = MIN(s_curr_avg_cpu_load, 255);
 
+	dbgf_all(DBGT_INFO, "prepare send own OGM");
+
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
@@ -1388,7 +1395,9 @@ void schedule_own_ogm(struct batman_if *bif)
 	}
 
 	if (!inserted)
+	{
 		OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
+	}
 
 	OLForEach(ln, struct link_node, link_list)
 	{

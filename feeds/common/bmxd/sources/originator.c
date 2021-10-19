@@ -125,8 +125,10 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 										orig_node->router->key.iif ? orig_node->router->key.iif->dev : NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, DEL, TRACK_OTHER_HOST);
 			//dbg(DBGL_SYS, DBGT_INFO,"route del %s via %s, %s:%d", ipStr(orig_node->orig), ipStr(orig_node->router->key.addr), orig_node->router->key.iif ? orig_node->router->key.iif->dev : "NULL", orig_node->router->key.iif ? orig_node->router->key.iif->if_index : 0);
-			orig_node->router = NULL;
 		}
+
+		orig_node->router = new_router; // put it before update_community_route(0), so this
+																		// will get the new router too
 
 		/* route altered or new route added */
 		if (new_router)
@@ -138,8 +140,6 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 										new_router->key.iif ? new_router->key.iif->dev : NULL,
 										RT_TABLE_HOSTS, RTN_UNICAST, ADD, TRACK_OTHER_HOST);
 			//dbg(DBGL_SYS, DBGT_INFO,"route add %s via %s, %s:%d", ipStr(orig_node->orig), ipStr(orig_node->router->key.addr), orig_node->router->key.iif ? orig_node->router->key.iif->dev : "NULL", orig_node->router->key.iif ? orig_node->router->key.iif->if_index : 0);
-			orig_node->router = new_router; // put it before update_community_route(0), so this
-																			// will get the new router too
 			update_community_route();
 		}
 	}
@@ -1203,13 +1203,20 @@ void process_ogm(struct msg_buff *mb)
 	oCtx |= (ogm->flags & UNIDIRECTIONAL_FLAG) ? HAS_UNIDIRECT_FLAG : 0;
 	oCtx |= (ogm->flags & DIRECTLINK_FLAG) ? HAS_DIRECTLINK_FLAG : 0;
 	oCtx |= (ogm->flags & CLONED_FLAG) ? HAS_CLONED_FLAG : 0;
+
+	// when orig ip that comes from neighbour is the same as the source ip than the neighbour
+	// must be directly connected.
+	// The ogm for the neighbours interface was created/scheduled directly and not rebroadcasted.
+	// This means that the ttl==1 which is not decremented before sending.
+	// re-brodcasted ogms gets its ttl-- before sending. this can be seen if another node rebroadcasts
+	// an ogm. ttl is then zero and the ogm will be ignored.
 	oCtx |= (ogm->orig == neigh) ? IS_DIRECT_NEIGH : 0;
 
 	dbgf_all(DBGT_INFO, "OG %s  via IF %s %s  NB %s  "
-											"SQN %d  TTL %d  V %d  UDF %d  IDF %d  DPF %d, directNB %d, asocial %d(%d)",
+											"V %d SQN %d TTL %d DirectF %d UniF %d  CloneF %d, directNB %d, asocial %d(%d)",
 					 ipStr(ogm->orig), iif->dev, iif->if_ip_str, mb->neigh_str,
-					 ogm->ogm_seqno, ogm->ogm_ttl, COMPAT_VERSION,
-					 (oCtx & HAS_UNIDIRECT_FLAG), (oCtx & HAS_DIRECTLINK_FLAG),
+					 COMPAT_VERSION, ogm->ogm_seqno, ogm->ogm_ttl,
+					 (oCtx & HAS_DIRECTLINK_FLAG), (oCtx & HAS_UNIDIRECT_FLAG),
 					 (oCtx & HAS_CLONED_FLAG), (oCtx & IS_DIRECT_NEIGH), (oCtx & IS_ASOCIAL), Asocial_device);
 
 	if (ogm->ogm_pws < MIN_PWS || ogm->ogm_pws > MAX_PWS)
@@ -1221,8 +1228,9 @@ void process_ogm(struct msg_buff *mb)
 
 	OLForEach(bif, struct batman_if, if_list)
 	{
-		//eine ogm, die das interface nicht verlassen hat und gleich hier zurück gespiegelt wird
-		//könnte passieren wenn es ein loopback ist.
+		//eine OGM, welche von einem meiner interfaces verschickt wurde und auf
+		//einem anderen wieder empfangen wurde
+
 		if (neigh == bif->if_addr)
 		{
 			dbgf_all(DBGT_INFO, "drop OGM: rcvd my own broadcast via: %s", mb->neigh_str);
@@ -1244,13 +1252,9 @@ void process_ogm(struct msg_buff *mb)
 		}
 	}
 
-	//unidirect wird nur vom nachbar node gesetzt wenn die ogm, die ich vorher ueber
-	//das interface zu diesem nachbar, noch nicht das direct flag gesetzt hat.
-	//das wird verwendet, um eine direkte nachbar verbindung zu erkennen.
-	//wenn es meine ogm ist und der nachbar hat das uni flag gesetzt, so wird dann
-	//in einer nächsten ogm an diesen nachbar über dieses interface das direct flag in dieser bmxd
-	//instance (dieser knoten) gesetzt. damit weiss dann dieser nachbar, dass er die ogm
-	//weiterleiten darf und er direkt mit mir verbunden ist.
+	// ein neighbour antwortet mir mit unidirect flag und direct flag wenn er feststellt,
+	// dass meine ogm-ip auch von einem interface mit gleicher IP ageschickt wurde.
+	// Falls das nicht so ist, ist das packet nicht fuer mich.
 	if (oCtx & HAS_UNIDIRECT_FLAG && !(oCtx & IS_MY_ORIG))
 	{
 		dbgf_all(DBGT_INFO, "drop OGM: unidirectional flag and not my OGM");
@@ -1282,6 +1286,10 @@ void process_ogm(struct msg_buff *mb)
 		goto process_ogm_end;
 	}
 
+	// ttl einer ogm wird nur durch re-broadcasts runtergezahlt. da ogm eines interfaces (primar 50) und
+	// fuer ein link interface ttl==1 ist, muss das eine rebroadcasted ogm sein.
+	// das kann eine sein, die ueber einen anderen re-broadcasted wurde, oder auch von dem directen nachbarn,
+	// was ich erwarten wuerde.
 	if (ogm->ogm_ttl == 0)
 	{
 		dbgf_all(DBGT_INFO, "drop OGM: TTL of zero!");
