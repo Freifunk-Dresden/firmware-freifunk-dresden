@@ -2,7 +2,8 @@
 -- GNU General Public License Version 3
 
 -- This is a simple wireshark dissection lua function to display bmx packages
--- Copy it to ~/.local/lib/wireshark/plugins
+-- Copy it to ~/.local/lib/wireshark/plugins. If updated press Ctrl-Shift-L to reload
+-- it into wireshark
 
 
 -- declare our protocol
