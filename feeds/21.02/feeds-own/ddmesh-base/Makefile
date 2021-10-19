@@ -82,13 +82,6 @@ define Package/$(PKG_NAME)-base/config
 			help
 				required by firmware
 
-		# use SYMBOL of package that should be selected
-		config PACKAGE_wshaper
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-base
-			tristate "wshaper"
-			help
-				required by firmware
 	#endmenu
 
 endef

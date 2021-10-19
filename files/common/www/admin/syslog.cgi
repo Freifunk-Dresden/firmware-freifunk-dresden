@@ -16,7 +16,7 @@ fi
 
 cat<<EOM
 <h1>$TITLE</h1>
-<form name="form_wshaper" action="syslog.cgi" method="POST">
+<form name="form_syslog" action="syslog.cgi" method="POST">
 <fieldset class="bubble">
 <legend>Remote-Syslog</legend>
 <table>

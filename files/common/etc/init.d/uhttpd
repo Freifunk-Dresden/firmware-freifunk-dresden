@@ -61,7 +61,7 @@ generate_keys() {
 	[ -n "$GENKEY_CMD" ] && {
 		$GENKEY_CMD \
 			-days ${days:-730} -newkey ${KEY_OPTS} -keyout "${UHTTPD_KEY}.new" -out "${UHTTPD_CERT}.new" \
-                        -subj /C="${country:-DE}"/ST="${state:-Saxony}"/L="${location:-Dresden}"/O="${commonname:-OpenWrt}$UNIQUEID" /O="${organisation:-Freifunk Dresden}"/OU="${node:-Node}"
+                         -subj /C="${country:-DE}"/ST="${state:-Saxony}"/L="${location:-Dresden}"/CN="${commonname:-OpenWrt}"/O="${organisation:-Freifunk Dresden}"/OU="${node:-Node}"
 		sync
 		mv "${UHTTPD_KEY}.new" "${UHTTPD_KEY}"
 		mv "${UHTTPD_CERT}.new" "${UHTTPD_CERT}"

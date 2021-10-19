@@ -17,7 +17,7 @@ config uhttpd main
 	list interpreter	".json=/bin/sh"
 	option script_timeout	600
 	option network_timeout	600
-	option realm		'Freifunk Dresden'
+	option realm	'Freifunk Dresden'
 	option index_page	index.cgi
 	option error_page	/index.cgi
 
@@ -25,8 +25,9 @@ config uhttpd main
 config cert px5g
 	option days		7300
 	option bits		1024
-	option country		DE
-	option state		Dresden
+	option country	'DE'
+	option state		'Saxony'
 	option location		Dresden
-	option commonname	'Freifunk Dresden'
-	option node		'Node 1496'
+	option commonname	'Freifunk Dresden Communities'
+	option organisation 'Freifunk Dresden'
+	option node		'Node'

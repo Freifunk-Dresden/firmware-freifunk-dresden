@@ -123,10 +123,6 @@ config network 'network'
 	option  wifi2_roaming_enabled '0'
 	option	mesh_mode 'adhoc+mesh' #adhoc,mesh,adhoc+mesh
 	option	lan_local_internet '0'
-	option	speed_down '200000'
-	option	speed_up '50000'
-	option	speed_network 'lan'
-	option	speed_enabled 0
 	option	internal_dns1 '10.200.0.4'
 	option	internal_dns2 '10.200.0.16'
 	option	mesh_network_id '0'
@@ -280,17 +276,14 @@ config_update() {
 	#syslog
 	uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
 
-	# update uhttpd certificates
-	uci set uhttpd.main.realm="$(uci get ddmesh.system.community)"
-	uci set uhttpd.px5g.commonname="$(uci -q get ddmesh.system.community)"
+	# update uhttpd certificates in case user has changed community or node
+	uci set uhttpd.px5g.commonname="Freifunk Dresden"
+	uci set uhttpd.px5g.organisation="$(uci get ddmesh.system.community)"
 	uci set uhttpd.px5g.node="Node $(uci -q get ddmesh.system.node)"
-	rm /etc/uhttpd.key
-	rm /etc/uhttpd.crt
-
-	# traffic shaping
-	uci set wshaper.settings.network "$(uci get ddmesh.network.speed_network)"
-	uci set wshaper.settings.downlink "$(uci get ddmesh.network.speed_down)"
-	uci set wshaper.settings.uplink "$(uci get ddmesh.network.speed_up)"
+	rm -f /etc/uhttpd.key
+	rm -f /etc/uhttpd.crt
+	# restart needed to generate certificates in boot_step 2
+	/etc/init.d/uhttpd restart
 
 	#############################################################################
 	# setup backbone clients
@@ -523,8 +516,6 @@ case "$boot_step" in
 
 			config_temp_configs
 
-			WSHAPER=/etc/init.d/wshaper
-			[ -x "$WSHAPER" ] && $WSHAPER restart
 			# cron job is started from ddmesh-init.sh after bmxd
 
 			# delay start mesh_on_wire, to allow access router config via lan/wan ip

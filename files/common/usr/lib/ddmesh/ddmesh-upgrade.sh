@@ -163,7 +163,6 @@ upgrade_4_2_3()
  uci del_list ddmesh.system.communities="Freifunk Meissen"
  uci add_list ddmesh.system.communities="Freifunk Meissen"
  #traffic shaping for upgrade only
- uci set ddmesh.network.speed_enabled=1
  uci set ddmesh.network.wifi_country="DE"
  for nt in node mobile server
  do
@@ -557,7 +556,6 @@ upgrade_7_1_1()
 	rm /etc/config/uhttpd
 	cp /rom/etc/config/uhttpd /etc/config/uhttpd
 	rm /etc/config/wshaper
-	cp /rom/etc/config/uhttpd /etc/config/wshaper
 
 	uci add_list firewall.zone_mesh.network="mesh_vlan"
 	uci set ddmesh.network.mesh_on_vlan='0'
@@ -575,7 +573,16 @@ upgrade_7_1_1()
 
 upgrade_7_1_2()
 {
+	true
+}
+
+upgrade_7_1_3()
+{
 	uci -q set ddmesh.network.mesh_network_id='0'
+	uci -q delete ddmesh.network.speed_enabled
+	uci -q delete ddmesh.network.speed_up
+	uci -q delete ddmesh.network.speed_down
+	uci -q delete ddmesh.network.speed_network
 }
 
 ##################################

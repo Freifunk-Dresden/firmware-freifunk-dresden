@@ -392,14 +392,6 @@ $(cat $BMXD_DB_PATH/gateways | sed -n '
 			"info":[
 $(cat $BMXD_DB_PATH/info | sed 's#^[ 	]*\(.*\)$#\t\t\t\t"\1",#; $s#,[ 	]*$##') ]
 		},
-EOM
-		if [ "$(uci -q get ddmesh.network.speed_enabled)" = "1" ]; then
-			tc_enabled=1
-		else
-			tc_enabled=0
-		fi
-cat<<EOM >>$OUTPUT
-		"traffic_shaping":{"enabled":$tc_enabled, "network":"$(uci -q get ddmesh.network.speed_network)", "incomming":"$(uci -q get ddmesh.network.speed_down)", "outgoing":"$(uci -q get ddmesh.network.speed_up)"},
 		"airtime":{"radio2g":"$(echo $wifi_status_radio2g_airtime)"$([ ! -z "$wifi_status_radio5g_airtime" ] && echo ", \"radio5g\":\"$wifi_status_radio5g_airtime\"" )},
 		"network_switch":$(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh json)
 EOM

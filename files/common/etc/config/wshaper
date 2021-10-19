@@ -1,4 +1,0 @@
-config 'wshaper' 'settings'
-	option network ''
-	option downlink ''
-	option uplink ''
