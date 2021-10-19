@@ -153,7 +153,7 @@ setup_statistic_rules() {
 	$IPT -A forwarding_rule -j statistic_forward
 	$IPT -A output_rule -j statistic_output
 
-	NETWORKS="bat wan wwan lan wifi_adhoc wifi_mesh2g wifi_mesh5g wifi2 vpn tbb_fastd tbb_wg mesh_lan mesh_wan privnet"
+	NETWORKS="bat wan wwan lan wifi_adhoc wifi_mesh2g wifi_mesh5g wifi2 vpn tbb_fastd tbb_wg mesh_lan mesh_wan mesh_vlan privnet"
 	for net in $NETWORKS
 	do
 #		logger -s -t $TAG "LOOP: net=$net"

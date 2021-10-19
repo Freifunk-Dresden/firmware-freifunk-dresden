@@ -302,6 +302,7 @@ iptables -w -L statistic_forward -xvn | awk '
 		networks["tbb_wg"]="tbb_wg";
 		networks["mesh_lan"]="mesh_lan";
 		networks["mesh_wan"]="mesh_wan";
+		networks["mesh_vlan"]="mesh_vlan";
 	}
 	NR>2{
 		#read counter into array
@@ -364,6 +365,7 @@ EOM
 						nettype_lookup[ENVIRON["wifi_mesh5g_ifname"]]="wifi_mesh";
 						nettype_lookup[ENVIRON["mesh_lan_ifname"]]="lan";
 						nettype_lookup[ENVIRON["mesh_wan_ifname"]]="lan";
+						nettype_lookup[ENVIRON["mesh_vlan_ifname"]]="lan";
 						nettype_lookup[ENVIRON["tbb_fastd_ifname"]]="backbone";
 					}
 					{
