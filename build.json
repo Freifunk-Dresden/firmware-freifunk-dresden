@@ -52,8 +52,8 @@
 
 		"feeds" : [
 			{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
-			{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"a55103240"}, # 21.02
-			{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"8d93475"}    # 21.02
+			{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"26e9cbc4c"}, # 21.02
+			{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"c524118"}    # 21.02
 		  ],
 
 		# install addional packages from feeds (see feeds.conf)
