@@ -32,7 +32,7 @@
 							#      	a set of routers when selecting "multiple devices"
 							#	via "make menuconfig"
 
-		"openwrt_rev":"134ac824c5a154edbbe1c581bcbc42d265dc20c0", # (HEAD, tag: v21.02.0-rc4)
+		"openwrt_rev":"b2ae4233149dfd78f2ac00bb5327695bcacdc255", # (HEAD, tag: v21.02.0)
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
 							# Note that selecting some packages as module could have
