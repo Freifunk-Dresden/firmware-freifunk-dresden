@@ -109,7 +109,7 @@ case "$ARG1" in
 		NETWORK_OPTS="--network $_ddmesh_meshnet --netid $MESH_NETWORK_ID"
 		SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 		TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_meshnet"
-		TWEAK_OPTS="--ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 20"
+		TWEAK_OPTS="--hop_penalty 50 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 20"
 		# --fast_path_hysteresis has not changed frequency of root setting in bat_route
 		# --path_hysteresis should be less than 5, else dead routes are hold to long
 		TUNING_OPTS="--gateway_hysteresis $GATEWAY_HYSTERESIS --path_hysteresis 3  --script /usr/lib/bmxd/bmxd-gateway.sh"
