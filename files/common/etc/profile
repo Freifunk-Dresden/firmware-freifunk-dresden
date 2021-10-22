@@ -1,5 +1,9 @@
 #!/bin/sh
-[ -f /etc/banner ] && cat /etc/banner
+if [ -x /etc/banner.sh ]; then
+	/etc/banner.sh
+else
+	[ -f /etc/banner ] && cat /etc/banner
+fi
 [ -e /tmp/.failsafe ] && cat /etc/banner.failsafe
 fgrep -sq '/ overlay ro,' /proc/mounts && {
 	echo 'Your JFFS2-partition seems full and overlayfs is mounted read-only.'
