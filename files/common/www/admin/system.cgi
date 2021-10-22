@@ -172,7 +172,7 @@ cat<<EOM
 
 <TR>
 <TH>- VLAN-Meshing:</TH>
-<TD><INPUT NAME="form_vlan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "${mesh_on_vlan}" = "1" ];then echo ' checked="checked"';fi) onchange="disable_mesh_fields();" ></TD>
+<TD><INPUT NAME="form_vlan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "${mesh_on_vlan}" = "1" ];then echo ' checked="checked"';fi) onchange="disable_mesh_fields();"></TD>
 <td>Wenn aktiv, wird ein VLAN $(uci -q get ddmesh.network.mesh_vlan_id) &uuml;ber alle Ethernet-Ports zum direkten Meshing genutzt.</td>
 </TR>
 <TR>
@@ -196,7 +196,7 @@ fi
 cat<<EOM
 <TR>
 <TH>- LAN-Meshing:</TH>
-<TD><INPUT NAME="form_lan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ];then echo ' checked="checked"';fi)</TD>
+<TD><INPUT NAME="form_lan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ];then echo ' checked="checked"';fi)></TD>
 <td>Wenn aktiv, werden alle LAN-Ports zum direkten Meshing genutzt. Der Router ist dann <b>nur noch &uuml;ber Knoten-IP-Adresse via LAN</b> erreichbar.<br/>LAN-Konfiguration und privates Netzwerk werden deaktiviert. LAN-Meshing wird erst 5 minuten nach Routerstart aktiviert wenn dies im Punkt "LAN-Meshing Wartezeit" nicht explizit deaktiviert wurde.</td>
 </TR>
 
