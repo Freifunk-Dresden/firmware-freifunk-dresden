@@ -19,7 +19,7 @@
 
 #define WA_SCALE_FACTOR 1000 /* scale factor used to increase precision of integer division */
 #define PROBE_TO100 1
-#define PROBE_RANGE 100
+#define PROBE_RANGE 100   // never exceed 255 (uint8_t)
 
 #define MIN_SEQNO 0
 #define DEF_SEQNO 0 /* causes seqno to be randomized */
@@ -78,7 +78,7 @@ extern int32_t my_path_lounge;
 #define ARG_RCNT_FK "fast_path_faktor"
 
 #define MIN_LATE_PENAL 0
-#define MAX_LATE_PENAL 100
+#define MAX_LATE_PENAL PROBE_RANGE // see my_late_penalty probe calulation (uint8_t)
 #define DEF_LATE_PENAL 1
 #define ARG_LATE_PENAL "lateness_penalty"
 
