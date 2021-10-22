@@ -88,10 +88,18 @@ function checkinput_incomming ()
 	return 1;
 }
 
-function form_submit (form,action,entry)
+function form_submit (form, action, entry)
 {
-	form.form_action.value=action;
-	form.form_entry.value=entry
+	form.form_action.value = action;
+	form.form_entry.value = entry;
+	form.submit();
+}
+
+function form_submit_checked (form, action, entry, checked)
+{
+	form.form_action.value = action;
+	form.form_entry.value = entry;
+	form.form_checked.value = checked ? 1 : 0;
 	form.submit();
 }
 
@@ -163,6 +171,7 @@ show_accept()
 	local vkey
 	local vtype
 	local vnode
+	local disabled
 
 	config_get vnode "$config" node
 	config_get vkey  "$config" public_key
@@ -171,6 +180,7 @@ show_accept()
 	if [ "$vtype" = "" ]; then
 		vtype="fastd"
 	fi
+	config_get disabled "$config" disabled
 
 	if [ "$vtype" = "fastd" ]; then
 		test -f "$STATUS_DIR/$vkey" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
@@ -192,6 +202,7 @@ show_accept()
 
 	cat<<EOM
 	<tr class="colortoggle$TOGGEL">
+	<td><input onclick="form_submit_checked(document.forms.backbone_form_connection_in,'update_enabled','$config', this.checked)" type="checkbox" $(if [ "$disabled" != "1" ];then echo ' checked="checked"';fi)></td>
 	<td>$vtype</td> <td>$vnode</td> <td>$vkey</td>	<td>$vcomment</td>
 	<td><img title="$connect_title" src="$CONNECTED"></td>
 	<td><button onclick="if(ask('$vnode'))form_submit(document.forms.backbone_form_connection_in,'accept_del','$config')" title="Verbindung l&ouml;schen" type="button">
@@ -213,6 +224,7 @@ show_outgoing()
 	local vkey
 	local vtype
 	local vnode
+	local disabled
 
 	config_get vnode "$config" node
 	config_get vhost "$config" host
@@ -222,6 +234,7 @@ show_outgoing()
 	if [ "$vtype" = "" ]; then
 		vtype="fastd"
 	fi
+	config_get disabled "$config" disabled
 
 	if [ "$vtype" = "fastd" ]; then
 		test -f "$STATUS_DIR/$vkey" && CONNECTED=/images/yes.png || CONNECTED=/images/no.png
@@ -240,7 +253,9 @@ show_outgoing()
 	fi
 
 	cat<<EOM
-	<tr class="colortoggle$TOGGEL"><td>$vtype</td><td>$vnode</td><td>$vhost</td><td>$vport</td><td>$vkey</td>
+	<tr class="colortoggle$TOGGEL">
+	<td><input onclick="form_submit_checked(document.forms.backbone_form_connection_out,'update_enabled','$config', this.checked)" type="checkbox" $(if [ "$disabled" != "1" ];then echo ' checked="checked"';fi)></td>
+	<td>$vtype</td><td>$vnode</td><td>$vhost</td><td>$vport</td><td>$vkey</td>
 	<td><img title="$connect_title" src="$CONNECTED"></td>
 	<td>
 	<button onclick="if(ask('$vhost'))form_submit(document.forms.backbone_form_connection_out,'client_del','$config')" title="Verbindung l&ouml;schen" type="button">
@@ -261,8 +276,6 @@ content()
 
 	backbone_local_wg_port=$(uci get ddmesh.backbone.wg_port)
 	backbone_local_wg_port=${backbone_local_wg_port:-$DEFAULT_WG_PORT}
-
-	COUNT=$(uci show ddmesh | grep '=backbone_\(client\|accept\)' | wc -l)
 
 	cat<<EOM
 <fieldset class="bubble">
@@ -321,8 +334,9 @@ cat<<EOM
 <form name="backbone_form_connection_in" action="backbone.cgi" method="POST">
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
+<input name="form_checked" value="none" type="hidden">
 <table>
-<tr><th>Typ</th><th>Knotennummer</th><th>Public-Key</th><th>Kommentar</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<tr><th>Aktiviert</th><th>Typ</th><th>Knotennummer</th><th>Public-Key</th><th>Kommentar</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -333,6 +347,7 @@ EOM
 	if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
 		cat<<EOM
 	<tr class="colortoggle$TOGGEL">
+	<td><input name="form_backbone_incomming_enabled" type="CHECKBOX" VALUE="1"></td>
 	<td title="Typ"><select onchange="enable_formfields_incomming();" name="form_backbone_incomming_peer_type" size="1">
 EOM
 	if [ -f "$FASTD_PATH" ]; then
@@ -369,8 +384,9 @@ EOM
 <form name="backbone_form_connection_out" action="backbone.cgi" method="POST">
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
+<input name="form_checked" value="none" type="hidden">
 <table>
-<tr><th>Typ</th><th>Knotennummer</th><th>Server-Hostname (Freifunk-Router)</th><th>Server-Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<tr><th>Aktiv</th><th>Typ</th><th>Knotennummer</th><th>Server-Hostname (Freifunk-Router)</th><th>Server-Port</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -380,6 +396,7 @@ EOM
 	if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
 	cat<<EOM
  <tr class="colortoggle$TOGGEL">
+ <td><input name="form_backbone_outgoing_enabled" type="CHECKBOX" VALUE="1"></td>
  <td title="Typ"><select onchange="enable_formfields_outgoing();" name="form_backbone_outgoing_peer_type" size="1">
 EOM
 if [ -f "$FASTD_PATH" ]; then
@@ -443,16 +460,19 @@ else
 			uci_commit.sh
 			MSG=2
 		;;
+
 		client_del)
 			uci delete ddmesh.$form_entry;
 			uci_commit.sh
 			MSG=4
 		;;
+
 		accept_del)
 			uci delete ddmesh.$form_entry;
 			uci_commit.sh
 			MSG=4;
 		;;
+
 		client_add_outgoing)
 			if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
 				uci add ddmesh backbone_client >/dev/null
@@ -461,19 +481,11 @@ else
 				uci set ddmesh.@backbone_client[-1].public_key="$(uhttpd -d $form_backbone_outgoing_peer_key)"
 				uci set ddmesh.@backbone_client[-1].type="$form_backbone_outgoing_peer_type"
 				uci set ddmesh.@backbone_client[-1].node="$form_backbone_outgoing_peer_node"
-				uci_commit.sh
-				MSG=3;
-			else
-				MSG=6;
-			fi
-			;;
-		client_add_incomming)
-			if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
-				uci add ddmesh backbone_accept >/dev/null
-				uci set ddmesh.@backbone_accept[-1].comment="$form_backbone_incomming_peer_comment"
-				uci set ddmesh.@backbone_accept[-1].public_key="$(uhttpd -d $form_backbone_incomming_peer_key)"
-				uci set ddmesh.@backbone_accept[-1].node="$form_backbone_incomming_peer_node"
-				uci set ddmesh.@backbone_accept[-1].type="$form_backbone_incomming_peer_type"
+				if [ "$form_backbone_outgoing_enabled" = "1" ]; then
+					uci set ddmesh.@backbone_client[-1].disabled='0'
+				else
+					uci set ddmesh.@backbone_client[-1].disabled='1'
+				fi
 				uci_commit.sh
 				MSG=3;
 			else
@@ -481,17 +493,48 @@ else
 			fi
 			;;
 
+		client_add_incomming)
+			if [ $COUNT -lt $NUMBER_OF_CLIENTS ];then
+				uci add ddmesh backbone_accept >/dev/null
+				uci set ddmesh.@backbone_accept[-1].comment="$form_backbone_incomming_peer_comment"
+				uci set ddmesh.@backbone_accept[-1].public_key="$(uhttpd -d $form_backbone_incomming_peer_key)"
+				uci set ddmesh.@backbone_accept[-1].node="$form_backbone_incomming_peer_node"
+				uci set ddmesh.@backbone_accept[-1].type="$form_backbone_incomming_peer_type"
+				if [ "$form_backbone_incomming_enabled" = "1" ]; then
+					uci set ddmesh.@backbone_accept[-1].disabled='0'
+				else
+					uci set ddmesh.@backbone_accept[-1].disabled='1'
+				fi
+				uci_commit.sh
+				MSG=3;
+			else
+				MSG=6;
+			fi
+			;;
+
+		update_enabled)
+			if [ "$form_checked" = "1" ]; then
+				uci set ddmesh.${form_entry}.disabled='0'
+			else
+				uci set ddmesh.${form_entry}.disabled='1'
+			fi
+			uci_commit.sh
+			;;
+
 		keygen_fastd)
 			/usr/lib/ddmesh/ddmesh-backbone.sh gen_secret_key
 			;;
+
 		keygen_wg)
 			/usr/lib/ddmesh/ddmesh-backbone.sh gen_wgsecret_key
 			;;
+
 		restart)
 			html_msg 8
 			RESTART=1
 			MSG=7;
 			;;
+
 		refresh)
 			;;
 
