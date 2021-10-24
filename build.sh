@@ -518,7 +518,7 @@ if $USE_DOCKER; then
 		# need to pass target as one parameter. $@ does separate target list ("ar71xx.tiny.lowmem ath79.generic lantiq.xrx200")
 		target="$1"
 		shift
-		docker exec -it ${DOCKER_CONTAINER_NAME} ./build.sh "$target" $@
+		docker exec -it -e FF_REGISTERKEY_PREFIX=$FF_REGISTERKEY_PREFIX ${DOCKER_CONTAINER_NAME} ./build.sh "$target" $@
 
 		# ignore some operations for some arguments
 		case "$1" in
