@@ -83,7 +83,7 @@ else #form_action
 			notebox "Kein File"
 		else
 			# install all files including $PACKAGES
-			sysupgrade -r $ffout
+			sysupgrade -r "${ffout}"
 
 			echo "<pre>"
 			if [ -f "$PACKAGES" -a "$form_conf_ipkg_install" = "1" ]; then
@@ -95,10 +95,10 @@ else #form_action
 						IFS=':'
 						set $ipkg
 						echo "*** re-installing $1"
-						opkg -V2 --force-overwrite install $1 2>$OPKG_ERROR | flush
-						name=$(opkg --noaction install $1 2>/dev/null | cut -d' ' -f2)
+						opkg -V2 --force-overwrite install "$1" 2>$OPKG_ERROR | flush
+						name=$(opkg --noaction install "$1" 2>/dev/null | cut -d' ' -f2)
 						echo "*** set flag ok [$name]"
-						opkg flag ok $name 2>>$OPKG_ERROR | flush
+						opkg flag ok "$name" 2>>$OPKG_ERROR | flush
 						cat $OPKG_ERROR
 					done
 				} || {
