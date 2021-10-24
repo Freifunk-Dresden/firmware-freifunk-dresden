@@ -211,19 +211,14 @@ callback_add_ignored_nodes() {
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
 
-	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" ] && opt_wifi_adhoc='1'
+	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" -a -z "$opt_vlan" ] && opt_wifi_adhoc='1'
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
-
-	if [ "$opt_vlan" = "1" ]; then
-		$IPT -A input_ignore_nodes_vlan -s $_ddmesh_nonprimary_ip -j DROP
-	fi
 
 	if [ "$opt_lan" = "1" ]; then
 		$IPT -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
 		$IPT -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP
 	fi
-
 	if [ "$opt_tbb" = "1" ]; then
 		$IPT -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP
 	fi
@@ -235,6 +230,9 @@ callback_add_ignored_nodes() {
 	fi
 	if [ "$opt_wifi_mesh5g" = "1" ]; then
 		$IPT -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP
+	fi
+	if [ "$opt_vlan" = "1" ]; then
+		$IPT -A input_ignore_nodes_vlan -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
