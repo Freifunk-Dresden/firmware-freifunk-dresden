@@ -212,9 +212,12 @@ static struct gwc_args *gwc_args = NULL;
 
 static struct tun_packet tp;
 
-static int32_t batman_tun_index = 0;
-
 static void gwc_cleanup(void);
+
+//SE: only create bat0 once. but allow add_dev_tun() be called when ever a change was made.
+// e.g. create client tunnel or gateway tunnel, or change ip
+static int32_t _bat_fd = -1;
+
 
 /* Probe for tun interface availability */
 static int8_t probe_tun(void)
@@ -232,22 +235,7 @@ static int8_t probe_tun(void)
 	return SUCCESS;
 }
 
-static void del_dev_tun(int32_t fd, char *tun_name, uint32_t tun_ip, char const *whose)
-{
-	if (Tun_persist && ioctl(fd, TUNSETPERSIST, 0) < 0)
-	{
-		dbg(DBGL_SYS, DBGT_ERR, "can't delete tun device: %s", strerror(errno));
-		return;
-	}
-
-	dbgf(DBGL_SYS, DBGT_INFO, "closing %s tunnel %s  ip %s", whose, tun_name, ipStr(tun_ip));
-
-	close(fd);
-
-	return;
-}
-
-//stephan: begin
+//stephan:
 void call_script(char *pCmd)
 {
 	#define SCRIPT_CMD_SIZE 256
@@ -262,12 +250,29 @@ void call_script(char *pCmd)
 		strcpy(old_cmd, pCmd);
 	}
 }
-//stephan: end
 
+
+// need to provide a function that is called when bmxd exits. this will remove the
+// interface bat0
+static void close_bat_fd(void)
+{
+	if(_bat_fd != -1)
+	{
+		// reset interface persistance
+		if (Tun_persist && ioctl(_bat_fd, TUNSETPERSIST, 0) < 0)
+		{
+			dbg(DBGL_SYS, DBGT_ERR, "can't delete tun device: %s", strerror(errno));
+			return;
+		}
+
+		close(_bat_fd);
+		_bat_fd = -1;
+	}
+}
 static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size, int32_t *ifi, int mtu_min)
 {
+
 	int32_t tmp_fd = -1;
-	int32_t fd = -1;
 	int32_t sock_opts;
 	struct ifreq ifr_tun, ifr_if;
 	struct sockaddr_in addr;
@@ -276,46 +281,53 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 	/* set up tunnel device */
 	memset(&ifr_if, 0, sizeof(ifr_if));
 
-	if ((fd = open("/dev/net/tun", O_RDWR)) < 0)
+	// check if we already have a fd (bat interface)
+	if( _bat_fd == -1)
 	{
-		dbg(DBGL_SYS, DBGT_ERR, "can't open tun device (/dev/net/tun): %s", strerror(errno));
-		return FAILURE;
-	}
-
-	batman_tun_index = 0;
-	uint8_t name_tun_success = NO;
-
-	while (batman_tun_index < MAX_BATMAN_TUN_INDEX && !name_tun_success)
-	{
-		memset(&ifr_tun, 0, sizeof(ifr_tun));
-		ifr_tun.ifr_flags = IFF_TUN | IFF_NO_PI;
-		sprintf(ifr_tun.ifr_name, "%s%d", BATMAN_TUN_PREFIX, batman_tun_index++);
-
-		if ((ioctl(fd, TUNSETIFF, (void *)&ifr_tun)) < 0)
+		if ((_bat_fd = open("/dev/net/tun", O_RDWR)) < 0)
 		{
-			dbg(DBGL_CHANGES, DBGT_WARN, "Tried to name tunnel to %s ... busy", ifr_tun.ifr_name);
+			dbg(DBGL_SYS, DBGT_ERR, "can't open tun device (/dev/net/tun): %s", strerror(errno));
+			return FAILURE;
 		}
-		else
+
+		int32_t batman_tun_index = 0;
+		uint8_t name_tun_success = NO;
+
+		while (batman_tun_index < MAX_BATMAN_TUN_INDEX && !name_tun_success)
 		{
-			name_tun_success = YES;
-			dbg(DBGL_CHANGES, DBGT_INFO, "Tried to name tunnel to %s ... success", ifr_tun.ifr_name);
+			memset(&ifr_tun, 0, sizeof(ifr_tun));
+			ifr_tun.ifr_flags = IFF_TUN | IFF_NO_PI;
+			sprintf(ifr_tun.ifr_name, "%s%d", BATMAN_TUN_PREFIX, batman_tun_index++);
+
+			if ((ioctl(_bat_fd, TUNSETIFF, (void *)&ifr_tun)) < 0)
+			{
+				dbg(DBGL_CHANGES, DBGT_WARN, "Tried to name tunnel to %s ... busy", ifr_tun.ifr_name);
+			}
+			else
+			{
+				name_tun_success = YES;
+				dbg(DBGL_CHANGES, DBGT_INFO, "Tried to name tunnel to %s ... success", ifr_tun.ifr_name);
+			}
 		}
-	}
 
-	if (!name_tun_success)
-	{
-		dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETIFF): %s", strerror(errno));
-		dbg(DBGL_SYS, DBGT_ERR, "Giving up !");
-		close(fd);
-		return FAILURE;
-	}
+		if (!name_tun_success)
+		{
+			dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETIFF): %s", strerror(errno));
+			dbg(DBGL_SYS, DBGT_ERR, "Giving up !");
+			close(_bat_fd);
+			_bat_fd = -1;
+			return FAILURE;
+		}
 
-	if (Tun_persist && ioctl(fd, TUNSETPERSIST, 1) < 0)
-	{
-		dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETPERSIST): %s", strerror(errno));
-		close(fd);
-		return FAILURE;
-	}
+		if (Tun_persist && ioctl(_bat_fd, TUNSETPERSIST, 1) < 0)
+		{
+			dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETPERSIST): %s", strerror(errno));
+			close(_bat_fd);
+			_bat_fd = -1;
+			return FAILURE;
+		}
+	} //if bat0
+
 
 	if ((tmp_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 	{
@@ -329,20 +341,26 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 	addr.sin_family = AF_INET;
 	memcpy(&ifr_tun.ifr_addr, &addr, sizeof(struct sockaddr));
 
+	//tmp_fd is not needed but must be passed to ioctl() and socked must be open.
+	//it is closed after configuration and not needed further
 	if (ioctl(tmp_fd, (req = SIOCSIFADDR), &ifr_tun) < 0)
 		goto add_dev_tun_error;
 
+	//get interface index. this is used when setting up routes
 	if (ioctl(tmp_fd, (req = SIOCGIFINDEX), &ifr_tun) < 0)
 		goto add_dev_tun_error;
 
 	*ifi = ifr_tun.ifr_ifindex;
 
+  // request current flags
 	if (ioctl(tmp_fd, (req = SIOCGIFFLAGS), &ifr_tun) < 0)
 		goto add_dev_tun_error;
 
+	// update flags
 	ifr_tun.ifr_flags |= IFF_UP;
 	ifr_tun.ifr_flags |= IFF_RUNNING;
 
+	//write back flags
 	if (ioctl(tmp_fd, (req = SIOCSIFFLAGS), &ifr_tun) < 0)
 		goto add_dev_tun_error;
 
@@ -367,21 +385,18 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 	}
 
 	/* make tun socket non blocking */
-	sock_opts = fcntl(fd, F_GETFL, 0);
-	fcntl(fd, F_SETFL, sock_opts | O_NONBLOCK);
+	sock_opts = fcntl(_bat_fd, F_GETFL, 0);
+	fcntl(_bat_fd, F_SETFL, sock_opts | O_NONBLOCK);
 
 	strncpy(tun_dev, ifr_tun.ifr_name, tun_dev_size - 1);
 	close(tmp_fd);
 
-	return fd;
+	return _bat_fd;
 
 add_dev_tun_error:
 
 	if (req)
 		dbg(DBGL_SYS, DBGT_ERR, "can't ioctl %d tun device %s: %s", req, tun_dev, strerror(errno));
-
-	if (fd > -1)
-		del_dev_tun(fd, tun_dev, tun_addr, __func__);
 
 	if (tmp_fd > -1)
 		close(tmp_fd);
@@ -712,7 +727,6 @@ static void gwc_cleanup(void)
 
 		if (gwc_args->tun_fd)
 		{
-			del_dev_tun(gwc_args->tun_fd, gwc_args->tun_dev, gwc_args->my_tun_addr, __func__);
 			set_fd_hook(gwc_args->tun_fd, gwc_recv_tun, YES /*delete*/);
 		}
 
@@ -930,11 +944,6 @@ static void gws_cleanup(void)
 		if (gws_args->tun_ifi)
 			add_del_route(gws_args->my_tun_ip, gws_args->netmask,
 										0, 0, gws_args->tun_ifi, gws_args->tun_dev, 254, RTN_UNICAST, DEL, TRACK_TUNNEL);
-
-		if (gws_args->tun_fd)
-		{
-			del_dev_tun(gws_args->tun_fd, gws_args->tun_dev, gws_args->my_tun_ip, __func__);
-		}
 
 		if (gws_args->sock)
 		{
@@ -1340,7 +1349,8 @@ static int32_t opt_rt_class(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 {
 	if (cmd == OPT_APPLY)
 	{
-		if (/* Gateway_class  && */ routing_class)
+		// delete wg class
+		if ( Gateway_class  && routing_class )
 			check_apply_parent_option(DEL, OPT_APPLY, _save, get_option(0, 0, ARG_GW_CLASS), 0, cn);
 	}
 
@@ -1447,8 +1457,11 @@ static int32_t opt_gw_class(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 		{
 			Gateway_class = gateway_class;
 
-			if (gateway_class /*&&  routing_class*/)
+			// delete routing class
+			if ( gateway_class &&  routing_class )
+			{
 				check_apply_parent_option(DEL, OPT_APPLY, _save, get_option(0, 0, ARG_RT_CLASS), 0, cn);
+			}
 
 			dbg(DBGL_SYS, DBGT_INFO, "gateway class: %i -> propagating: %s", gateway_class, gwarg);
 		}
@@ -1503,6 +1516,8 @@ static void tun_cleanup(void)
 
 	if (gwc_args)
 	{	gwc_cleanup();}
+
+	close_bat_fd();
 }
 
 static int32_t tun_init(void)
