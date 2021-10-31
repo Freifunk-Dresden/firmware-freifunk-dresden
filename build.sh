@@ -462,8 +462,6 @@ do
 done
 shift $(( OPTIND - 1 ))
 
-test -n "${DOCKER_HOST}" && echo "docker at: ${DOCKER_HOST}"
-
 #for a;  do echo "arg [$a]"; done
 #echo $@
 
@@ -548,6 +546,8 @@ if $USE_DOCKER; then
 	fi
 
 	exit 0
+else
+	echo -e "${C_CYAN}build locally.${C_NONE}"
 fi
 
 
