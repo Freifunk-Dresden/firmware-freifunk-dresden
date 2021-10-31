@@ -17,9 +17,6 @@ eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 test -z "$_ddmesh_node" && exit
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
-vpn=vpn0
-gwt=bat0
-
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 eval $(cat /etc/built_info | sed 's#:\(.*\)$#="\1"#')
 eval $(cat /etc/openwrt_release)
@@ -277,67 +274,45 @@ $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 			"email":"$(uci -q get ddmesh.contact.email)",
 			"note":"$(uci -q get ddmesh.contact.note)"
 		},
-EOM
-
-cat<<EOM >> $OUTPUT
 		"statistic" : {
-
-"client2g" : $( parseWifiDump wifi2ap /var/statistic/wifi2g.stat),
-"client5g" : $( parseWifiDump wifi5ap /var/statistic/wifi5g.stat),
-
 EOM
-
-iptables -w -L statistic_forward -xvn | awk '
-	BEGIN {
-		# networks [ firewall_rule_name ] = sysinfo_key_name
-		networks["lan"]="lan";
-		networks["wan"]="wan";
-		networks["wifi_adhoc"]="adhoc";
-		networks["wifi_mesh2g"]="mesh2g";
-		networks["wifi_mesh5g"]="mesh5g";
-		networks["wifi2"]="ap";
-		networks["vpn"]="ovpn";
-		networks["bat"]="gwt";
-		networks["tbb_fastd"]="tbb_fastd";
-		networks["tbb_wg"]="tbb_wg";
-		networks["mesh_lan"]="mesh_lan";
-		networks["mesh_wan"]="mesh_wan";
-		networks["mesh_vlan"]="mesh_vlan";
-	}
-	NR>2{
-		#read counter into array
-		data[$3]=$2
-	}
-	END {
-		for ( netA in networks )
-		{
-			key="s_any_" netA "_f"
-			value=data[key]
-			if(value=="")value="0"
-			j="\"traffic_any_" networks[netA] "\":\"" value "\","
-			print j;
-
-			key="s_" netA "_any_f"
-			value=data[key]
-			if(value=="")value="0"
-			j="\"traffic_" networks[netA] "_any\":\"" value "\","
-			print j;
-		}
-		for ( netA in networks )
-		{
-			for ( netB in networks )
-			{
-				key="s_" netA "_" netB "_f"
-				value=data[key]
-				if(value=="")value="0"
-				j="\"traffic_" networks[netA] "_" networks[netB] "\":\"" value "\","
-				print j;
-			}
-		}
-	}
-' >> $OUTPUT
+		for wifi in 2g 5g
+		do
+			ifname=$(uci -q get wireless.wifi2_${wifi}.ifname)
+			if [ -n "$ifname" ]; then
+				echo "\"client${wifi}\" :" >> $OUTPUT
+				parseWifiDump $ifname /var/statistic/wifi${wifi}.stat >> $OUTPUT
+				echo "," >> $OUTPUT
+			fi
+		done
 
 cat<<EOM >> $OUTPUT
+		"interfaces" : {
+EOM
+
+		comma=0
+		for entry in $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh list)
+		do
+			ifname=${entry#*=}
+			ifname=${ifname/+/?}
+			net=${entry%%=*}
+			net=${net#net_}
+			case "$net" in
+				mesh_lan|mesh_wan|mesh_vlan|tbb_wg|tbb_fastd|bat|vpn|wifi2|wifi_adhoc|wifi_mesh2g|wifi_mesh5g)
+					if [ -n "$ifname" -a -d "/sys/class/net/${ifname}" ]; then
+						
+						[ $comma = 1 ] && echo -n "," >> $OUTPUT
+						comma=1
+						echo "\"${net}-rx\":\"$(cat /sys/class/net/${ifname}/statistics/rx_bytes)\"" >> $OUTPUT
+						echo ",\"${net}-tx\":\"$(cat /sys/class/net/${ifname}/statistics/tx_bytes)\"" >> $OUTPUT
+					fi
+				;;
+			esac
+			
+		done
+
+cat<<EOM >> $OUTPUT
+		},
 $(cat /proc/meminfo | sed -n '/^MemTotal\|^MemFree\|^Buffers\|^Cached/{s#\(.*\):[ 	]\+\([0-9]\+\)[ 	]*\(.*\)#\t\t\t\"meminfo_\1\" : \"\2\ \3\",#p}')
 			"cpu_load" : "$(cat /proc/loadavg)",
 			"cpu_stat" : "$(cat /proc/stat | sed -n '/^cpu[ 	]\+/{s# \+# #;p}')",

@@ -137,64 +137,6 @@ setup_openvpn_rules() {
 
 }
 
-setup_statistic_rules() {
-	logger -s -t $TAG "setup_statistic_rules"
-	$IPT -N statistic_input	2>/dev/null
-	$IPT -N statistic_forward 2>/dev/null
-	$IPT -N statistic_output 2>/dev/null
-	$IPT -F statistic_input
-	$IPT -F statistic_forward
-	$IPT -F statistic_output
-	$IPT -D input_rule -j statistic_input 2>/dev/null
-	$IPT -D forwarding_rule -j statistic_forward 2>/dev/null
-	$IPT -D output_rule -j statistic_output 2>/dev/null
-
-	$IPT -A input_rule -j statistic_input
-	$IPT -A forwarding_rule -j statistic_forward
-	$IPT -A output_rule -j statistic_output
-
-	NETWORKS="bat wan wwan lan wifi_adhoc wifi_mesh2g wifi_mesh5g wifi2 vpn tbb_fastd tbb_wg mesh_lan mesh_wan mesh_vlan privnet"
-	for net in $NETWORKS
-	do
-#		logger -s -t $TAG "LOOP: net=$net"
-		ifname=$(eval echo \$$net"_ifname")
-		test -z "$ifname" && continue
-
-		target_in=s_"$net"_in
-		$IPT -N $target_in 2>/dev/null
-		$IPT -D statistic_input -i $ifname -j $target_in 2>/dev/null
-		$IPT -A statistic_input -i $ifname -j $target_in
-
-		target_out=s_"$net"_out
-		$IPT -N $target_out 2>/dev/null
-		$IPT -D statistic_output -o $ifname -j $target_out 2>/dev/null
-		$IPT -A statistic_output -o $ifname -j $target_out
-
-		target_fwd=s_any_"$net"_f
-		$IPT -N $target_fwd 2>/dev/null
-		$IPT -D statistic_forward -o $ifname -j $target_fwd 2>/dev/null
-		$IPT -A statistic_forward -o $ifname -j $target_fwd
-
-		target_fwd=s_"$net"_any_f
-		$IPT -N $target_fwd 2>/dev/null
-		$IPT -D statistic_forward -i $ifname -j $target_fwd 2>/dev/null
-		$IPT -A statistic_forward -i $ifname -j $target_fwd
-
-		# detailed
-		for net2 in $NETWORKS
-		do
-#			logger -s -t $TAG "LOOP2: net=$net2"
-			ifname2=$(eval echo \$$net2"_ifname")
-			test -z "$ifname2" && continue
-
-			target_fwd=s_"$net"_"$net2"_f
-			$IPT -N $target_fwd 2>/dev/null
-			$IPT -D statistic_forward -i $ifname -o $ifname2 -j $target_fwd 2>/dev/null
-			$IPT -A statistic_forward -i $ifname -o $ifname2 -j $target_fwd
-		done
-	done
-}
-
 callback_add_ignored_nodes() {
 	local entry="$1"
 	IFS=':'
@@ -282,7 +224,6 @@ _init()
 	#init all rules that can not be set by openwrt-firewall
 	test "$(uci get ddmesh.system.disable_splash 2>/dev/null)" != "1" && setup_splash
 	setup_custom_rules
-	setup_statistic_rules
 	setup_ignored_nodes
 	setup_openvpn_rules
 }
