@@ -10,6 +10,9 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
+# when a additional package should be selected when another gets selected
+#+PACKAGE_wireguard-tools:kmod-ipip \
+
 ##########################################################
 define Package/$(PKG_NAME)-base
   CATEGORY:=ddmesh
@@ -22,7 +25,7 @@ define Package/$(PKG_NAME)-base
 		+px5g-mbedtls \
 		+ip-tiny \
 		+iperf3 \
-		+PACKAGE_wireguard-tools:kmod-ipip \
+		+kmod-ipip \
 		+PACKAGE_fastd:nacl \
 		+PACKAGE_fastd:libuecc
 
@@ -102,7 +105,6 @@ define Package/$(PKG_NAME)-wifi
   TITLE:=Selects all addtional wifi tools.
 
 endef
-
 
 define Package/$(PKG_NAME)-wifi/description
   Selects all addtional wifi tools.

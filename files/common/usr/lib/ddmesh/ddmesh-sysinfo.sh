@@ -300,15 +300,15 @@ EOM
 			case "$net" in
 				mesh_lan|mesh_wan|mesh_vlan|tbb_wg|tbb_fastd|bat|vpn|wifi2|wifi_adhoc|wifi_mesh2g|wifi_mesh5g)
 					if [ -n "$ifname" -a -d "/sys/class/net/${ifname}" ]; then
-						
+
 						[ $comma = 1 ] && echo -n "," >> $OUTPUT
 						comma=1
-						echo "\"${net}-rx\":\"$(cat /sys/class/net/${ifname}/statistics/rx_bytes)\"" >> $OUTPUT
-						echo ",\"${net}-tx\":\"$(cat /sys/class/net/${ifname}/statistics/tx_bytes)\"" >> $OUTPUT
+						echo "\"${net}_rx\":\"$(cat /sys/class/net/${ifname}/statistics/rx_bytes)\"" >> $OUTPUT
+						echo ",\"${net}_tx\":\"$(cat /sys/class/net/${ifname}/statistics/tx_bytes)\"" >> $OUTPUT
 					fi
 				;;
 			esac
-			
+
 		done
 
 cat<<EOM >> $OUTPUT
