@@ -36,7 +36,7 @@ start() {
 
 	eval $(cat /etc/openwrt_release)
 
-	/usr/lib/ddmesh/ddmesh-led.sh wifi_off
+	/usr/lib/ddmesh/ddmesh-led.sh wifi off
 
 	#initial setup and node depended setup (crond calles ddmesh-register-node.sh to update node)
 	logger -s -t $LOGGER_TAG "inital boot setting"
