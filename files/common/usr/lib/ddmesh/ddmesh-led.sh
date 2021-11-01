@@ -20,7 +20,7 @@ ARG_CMD="$2"
 if [ -z "$ARG_CMD" ]; then
 	echo ""
 	echo "ddmesh-led.sh <type> <value>"
-	echo "	type: wifi | status"
+	echo "	type: wifi | status | wwan"
 	echo "	value:"
 	echo "		wifi:	off|on|alive|freifunk|gateway"
 	echo "		status: boot1|boot2|boot3|done|off|on"
