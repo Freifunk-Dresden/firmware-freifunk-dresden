@@ -594,7 +594,10 @@ static void flush_routes_rules(int8_t is_rule)
 					case 15: // FIXME: RTA_TABLE is not always available - not needed but avoid warning
 						break;
 
-					case RTA_PREFSRC: // rta_type 7 - not needed but avoid warning
+					// avoid warnings; not needed
+					case RTA_METRICS:
+					case RTA_CACHEINFO:
+					case RTA_PREFSRC:
 						break;
 
 					default:
