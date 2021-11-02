@@ -45,12 +45,19 @@ toggle_ssid()
 case $1 in
 	gateway)
 		logger -s -t $TAG "GATEWAY"
+
+		# Dont set link ffgw down, it will delete default route.
+		# There is no need to change ffgw, when changing to gateway.
+		# Because of routing rules ensure that internet traffic will go
+		# to right interface before it can go to ffgw
+
 		# use symlink. because resolv.conf.auto can be set later by wwan
 		rm $RESOLV_CONF_FINAL
 		ln -s $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
 		/usr/lib/ddmesh/ddmesh-led.sh wifi gateway
 		toggle_ssid true
-	;;
+		;;
+
 	del|init)
 		# check if this router is a gateway
 		gw="$(ip ro li ta public_gateway | grep default)"
@@ -58,21 +65,29 @@ case $1 in
 		# set when "del" or if empty
 		if [ -z "$gw" -a "$1" = "del" -o -z "$(grep nameserver $RESOLV_CONF_FINAL)" ]; then
 			logger -s -t $TAG "remove GATEWAY (del)"
+
+			# Dont set link ffgw down, it will delete default route.
+			# There is no need to change ffgw, when removing gw.
+
 			# use symlink. because resolv.conf.auto can be set later by wwan
 			rm $RESOLV_CONF_FINAL
 			ln -s $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
 			/usr/lib/ddmesh/ddmesh-led.sh wifi alive
 			toggle_ssid false
 		fi
-	;;
+		;;
+
 	*)
+		# update gateway ip
+		ip tunnel change ffgw remote $1
+
 		logger -s -t $TAG "nameserver $1"
 		# delete initial symlink
 		rm $RESOLV_CONF_FINAL
 		echo "nameserver $1" >$RESOLV_CONF_FINAL
 		/usr/lib/ddmesh/ddmesh-led.sh wifi freifunk
 		toggle_ssid true
-	;;
+		;;
 esac
 
 # restart dnsmasq, as workaround for dead dnsmasq

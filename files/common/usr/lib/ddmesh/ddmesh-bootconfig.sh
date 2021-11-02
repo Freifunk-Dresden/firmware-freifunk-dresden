@@ -515,8 +515,10 @@ case "$boot_step" in
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 			config_temp_configs
-
 			# cron job is started from ddmesh-init.sh after bmxd
+
+			# setup gateway tunnel
+			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel
 
 			# delay start mesh_on_wire, to allow access router config via lan/wan ip
 			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_mesh_on_wire &

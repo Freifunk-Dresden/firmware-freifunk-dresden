@@ -218,6 +218,21 @@ setup_bmxd()
 	uci set network.bat.force_link='1'
 }
 
+setup_ffgw()
+{
+	# protocol handler ipip needs valid peeraddr
+	# and requires some wan interface or another fix
+	# interface. but this is not possible because
+	# ipip packets can go out on every mesh interface
+	# -> create an fake network to setup firewall rules
+	# and create tunnel by bmxd-gateway.sh
+	uci add network interface
+	uci rename network.@interface[-1]='ffgw'
+	uci set network.ffgw.ifname='ffgw+'
+	uci set network.ffgw.proto='static'
+	uci set network.ffgw.force_link='1'
+}
+
 # physical if created by openvpn
 setup_vpn()
 {
@@ -246,7 +261,7 @@ setup_network()
  /bin/config_generate
 
  # setup_mesh AFTER setup_ethernet (setup_mesh needs lan network)
- for f in setup_ethernet setup_mesh setup_wwan setup_wifi setup_backbone setup_bmxd setup_vpn setup_privnet
+ for f in setup_ethernet setup_mesh setup_wwan setup_wifi setup_backbone setup_bmxd setup_ffgw setup_vpn setup_privnet
  do
 	echo "call ${f}()"
 	${f}
@@ -261,6 +276,7 @@ setup_mesh_on_wire()
 #	# ports but different tagging
 #	enable_vlan="$(uci -q get ddmesh.network.mesh_on_vlan)"
 #	if [ "${enable_vlan}" != 1 ]; then
+
 		for NET in lan wan
 		do
 			if [ "$(uci -q get ddmesh.network.mesh_on_${NET})" = "1" ]; then
@@ -285,6 +301,18 @@ setup_mesh_on_wire()
 #	fi
 }
 
+# called from ddmesh-bootconfig.sh (boot step 3)
+setup_ffgw_tunnel()
+{
+	ifname="$(uci -q get network.ffgw.ifname)"
+	ifname="${ifname/+/}"
+	# use any valid ip for remote, else I can not use 'ip tunnel change....'
+	# to update remote
+	ip tunnel add "${ifname}" mode ipip local $_ddmesh_ip remote $_ddmesh_ip
+	ip addr add $_ddmesh_ip/32 dev "${ifname}"
+	ip link set "${ifname}" up
+	ip route add default dev "${ifname}" table ff_gateway src $_ddmesh_ip
+}
 
 
 #boot_step is empty for new devices

@@ -589,6 +589,7 @@ upgrade_7_1_3()
 	uci set uhttpd.px5g.location='Dresden'
 	uci set uhttpd.px5g.commonname='Freifunk Dresden Communities'
 	uci set uhttpd.px5g.organisation='Freifunk Dresden'
+	uci add_list firewall.zone_bat.network='ffgw'
 }
 
 ##################################
