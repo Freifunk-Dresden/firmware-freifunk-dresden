@@ -486,6 +486,8 @@ setup_ffgw_tunnel()
 	# to update remote
 	ip tunnel add "${ifname}" mode ipip local $_ddmesh_ip remote $_ddmesh_ip
 	ip addr add $_ddmesh_ip/32 dev "${ifname}"
+	# wg mtu - 20 = 1280
+	ip link set "${ifname}" mtu 1280
 	ip link set "${ifname}" up
 	ip route add default dev "${ifname}" table ff_gateway src $_ddmesh_ip
 }
