@@ -213,7 +213,7 @@ static struct gws_args *gws_args = NULL;
 static struct gwc_args *gwc_args = NULL;
 
 static struct tun_packet tp;
-
+int32_t batman_tun_index = 0;
 static void gwc_cleanup(void);
 
 /* Probe for tun interface availability */
@@ -230,6 +230,21 @@ static int8_t probe_tun(void)
 	close(fd);
 
 	return SUCCESS;
+}
+
+static void del_dev_tun(int32_t fd, char *tun_name, uint32_t tun_ip, char const *whose)
+{
+	if (Tun_persist && ioctl(fd, TUNSETPERSIST, 0) < 0)
+	{
+		dbg(DBGL_SYS, DBGT_ERR, "can't delete tun device: %s", strerror(errno));
+		return;
+	}
+
+	dbgf(DBGL_SYS, DBGT_INFO, "closing %s tunnel %s  ip %s", whose, tun_name, ipStr(tun_ip));
+
+	close(fd);
+
+	return;
 }
 
 //stephan:
@@ -267,7 +282,7 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 		return FAILURE;
 	}
 
-	int32_t batman_tun_index = 0;
+	batman_tun_index = 0;
 	uint8_t name_tun_success = NO;
 
 	while (batman_tun_index < MAX_BATMAN_TUN_INDEX && !name_tun_success)
@@ -301,7 +316,6 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 		close(bat_fd);
 		return FAILURE;
 	}
-
 
 	if ((tmp_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 	{
@@ -371,6 +385,11 @@ add_dev_tun_error:
 
 	if (req)
 		dbg(DBGL_SYS, DBGT_ERR, "can't ioctl %d tun device %s: %s", req, tun_dev, strerror(errno));
+
+	if (bat_fd > -1)
+	{
+		del_dev_tun(bat_fd, tun_dev, tun_addr, __func__);
+	}
 
 	if (tmp_fd > -1)
 		close(tmp_fd);
@@ -703,6 +722,7 @@ static void gwc_cleanup(void)
 		// hook is registered. gwc_cleanup()
 		if (gwc_args->tun_fd >= 0)
 		{
+			del_dev_tun(gwc_args->tun_fd, gwc_args->tun_dev, gwc_args->my_tun_addr, __func__);
 			set_fd_hook(gwc_args->tun_fd, gwc_recv_tun, YES /*delete*/);
 		}
 
@@ -920,6 +940,11 @@ static void gws_cleanup(void)
 		if (gws_args->tun_ifi)
 			add_del_route(gws_args->my_tun_ip, gws_args->netmask,
 										0, 0, gws_args->tun_ifi, gws_args->tun_dev, 254, RTN_UNICAST, DEL, TRACK_TUNNEL);
+
+		if (gws_args->tun_fd)
+		{
+			del_dev_tun(gws_args->tun_fd, gws_args->tun_dev, gws_args->my_tun_ip, __func__);
+		}
 
 		if (gws_args->sock)
 		{
@@ -1327,7 +1352,9 @@ static int32_t opt_rt_class(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 	{
 		// delete wg class
 		if ( Gateway_class  && routing_class )
+		{
 			check_apply_parent_option(DEL, OPT_APPLY, _save, get_option(0, 0, ARG_GW_CLASS), 0, cn);
+		}
 	}
 
 	return SUCCESS;
