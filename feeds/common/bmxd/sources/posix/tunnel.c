@@ -216,11 +216,6 @@ static struct tun_packet tp;
 
 static void gwc_cleanup(void);
 
-//SE: only create bat0 once. but allow add_dev_tun() be called when ever a change was made.
-// e.g. create client tunnel or gateway tunnel, or change ip
-static int32_t _bat_fd = -1;
-
-
 /* Probe for tun interface availability */
 static int8_t probe_tun(void)
 {
@@ -254,26 +249,9 @@ void call_script(char *pCmd)
 }
 
 
-// need to provide a function that is called when bmxd exits. this will remove the
-// interface bat0
-static void close_bat_fd(void)
-{
-	if(_bat_fd != -1)
-	{
-		// reset interface persistance
-		if (Tun_persist && ioctl(_bat_fd, TUNSETPERSIST, 0) < 0)
-		{
-			dbg(DBGL_SYS, DBGT_ERR, "can't delete tun device: %s", strerror(errno));
-			return;
-		}
-
-		close(_bat_fd);
-		_bat_fd = -1;
-	}
-}
 static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size, int32_t *ifi, int mtu_min)
 {
-
+	int32_t bat_fd = -1;
 	int32_t tmp_fd = -1;
 	int32_t sock_opts;
 	struct ifreq ifr_tun, ifr_if;
@@ -283,52 +261,46 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 	/* set up tunnel device */
 	memset(&ifr_if, 0, sizeof(ifr_if));
 
-	// check if we already have a fd (bat interface)
-	if( _bat_fd == -1)
+	if ((bat_fd = open("/dev/net/tun", O_RDWR)) < 0)
 	{
-		if ((_bat_fd = open("/dev/net/tun", O_RDWR)) < 0)
+		dbg(DBGL_SYS, DBGT_ERR, "can't open tun device (/dev/net/tun): %s", strerror(errno));
+		return FAILURE;
+	}
+
+	int32_t batman_tun_index = 0;
+	uint8_t name_tun_success = NO;
+
+	while (batman_tun_index < MAX_BATMAN_TUN_INDEX && !name_tun_success)
+	{
+		memset(&ifr_tun, 0, sizeof(ifr_tun));
+		ifr_tun.ifr_flags = IFF_TUN | IFF_NO_PI;
+		sprintf(ifr_tun.ifr_name, "%s%d", BATMAN_TUN_PREFIX, batman_tun_index++);
+
+		if ((ioctl(bat_fd, TUNSETIFF, (void *)&ifr_tun)) < 0)
 		{
-			dbg(DBGL_SYS, DBGT_ERR, "can't open tun device (/dev/net/tun): %s", strerror(errno));
-			return FAILURE;
+			dbg(DBGL_CHANGES, DBGT_WARN, "Tried to name tunnel to %s ... busy", ifr_tun.ifr_name);
 		}
-
-		int32_t batman_tun_index = 0;
-		uint8_t name_tun_success = NO;
-
-		while (batman_tun_index < MAX_BATMAN_TUN_INDEX && !name_tun_success)
+		else
 		{
-			memset(&ifr_tun, 0, sizeof(ifr_tun));
-			ifr_tun.ifr_flags = IFF_TUN | IFF_NO_PI;
-			sprintf(ifr_tun.ifr_name, "%s%d", BATMAN_TUN_PREFIX, batman_tun_index++);
-
-			if ((ioctl(_bat_fd, TUNSETIFF, (void *)&ifr_tun)) < 0)
-			{
-				dbg(DBGL_CHANGES, DBGT_WARN, "Tried to name tunnel to %s ... busy", ifr_tun.ifr_name);
-			}
-			else
-			{
-				name_tun_success = YES;
-				dbg(DBGL_CHANGES, DBGT_INFO, "Tried to name tunnel to %s ... success", ifr_tun.ifr_name);
-			}
+			name_tun_success = YES;
+			dbg(DBGL_CHANGES, DBGT_INFO, "Tried to name tunnel to %s ... success", ifr_tun.ifr_name);
 		}
+	}
 
-		if (!name_tun_success)
-		{
-			dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETIFF): %s", strerror(errno));
-			dbg(DBGL_SYS, DBGT_ERR, "Giving up !");
-			close(_bat_fd);
-			_bat_fd = -1;
-			return FAILURE;
-		}
+	if (!name_tun_success)
+	{
+		dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETIFF): %s", strerror(errno));
+		dbg(DBGL_SYS, DBGT_ERR, "Giving up !");
+		close(bat_fd);
+		return FAILURE;
+	}
 
-		if (Tun_persist && ioctl(_bat_fd, TUNSETPERSIST, 1) < 0)
-		{
-			dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETPERSIST): %s", strerror(errno));
-			close(_bat_fd);
-			_bat_fd = -1;
-			return FAILURE;
-		}
-	} //if bat0
+	if (Tun_persist && ioctl(bat_fd, TUNSETPERSIST, 1) < 0)
+	{
+		dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETPERSIST): %s", strerror(errno));
+		close(bat_fd);
+		return FAILURE;
+	}
 
 
 	if ((tmp_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
@@ -387,13 +359,13 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 	}
 
 	/* make tun socket non blocking */
-	sock_opts = fcntl(_bat_fd, F_GETFL, 0);
-	fcntl(_bat_fd, F_SETFL, sock_opts | O_NONBLOCK);
+	sock_opts = fcntl(bat_fd, F_GETFL, 0);
+	fcntl(bat_fd, F_SETFL, sock_opts | O_NONBLOCK);
 
 	strncpy(tun_dev, ifr_tun.ifr_name, tun_dev_size - 1);
 	close(tmp_fd);
 
-	return _bat_fd;
+	return bat_fd;
 
 add_dev_tun_error:
 
@@ -1520,8 +1492,6 @@ static void tun_cleanup(void)
 
 	if (gwc_args)
 	{	gwc_cleanup();}
-
-	close_bat_fd();
 }
 
 static int32_t tun_init(void)
