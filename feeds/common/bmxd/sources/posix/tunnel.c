@@ -157,7 +157,9 @@ struct gwc_args
 	uint8_t tunnel_type;
 	int32_t udp_sock;
 	int32_t tun_fd;
-	int32_t tun_ifi;
+	int32_t tun_ifi;			// interfaces have internal in linux kernel an index.
+												// some api can not be used with interface names. instead the coresponding
+												// index is used
 	char tun_dev[IFNAMSIZ]; // was tun_if
 };
 
@@ -725,7 +727,9 @@ static void gwc_cleanup(void)
 			call_script("del");
 		}
 
-		if (gwc_args->tun_fd)
+		// check for valid fd, because if tun dev couldn't created, no
+		// hook is registered. gwc_cleanup()
+		if (gwc_args->tun_fd >= 0)
 		{
 			set_fd_hook(gwc_args->tun_fd, gwc_recv_tun, YES /*delete*/);
 		}
