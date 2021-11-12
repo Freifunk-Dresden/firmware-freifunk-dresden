@@ -578,6 +578,11 @@ upgrade_7_1_2()
 
 upgrade_7_1_3()
 {
+	true
+}
+
+upgrade_7_1_4()
+{
 	uci -q set ddmesh.network.mesh_network_id='0'
 	uci -q delete ddmesh.network.speed_enabled
 	uci -q delete ddmesh.network.speed_up
