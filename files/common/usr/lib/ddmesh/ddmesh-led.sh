@@ -71,6 +71,10 @@ case "$platform" in
 					_led_wwan="$(uci -q get system.led_3gnet.sysfs)"
 					_led_status="$(uci -q get system.led_wan.sysfs)"
 					;;
+			"tplink,eap225-outdoor-v1")
+					_led_wifi2g="green:status"
+					_led_wifi5g=""
+					;;
 		esac
 		;;
 
