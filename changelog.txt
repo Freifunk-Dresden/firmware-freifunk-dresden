@@ -5,6 +5,7 @@ openwrt 21                - upgrade to openwrt 21 (only from devices with openwr
 network                   - complete rework of internal network configuration
                             (needed to support openwrt 21 and vlan meshing)
 gui-backbone              - add possibility to enable/disable backbone configurations
+gui-speedtest             - improve speedtest
 mesh-lan                  - add meshing on vlan 9 (avoids need of bridging cable
                             between wan and lan ports that causes issues on some devices)
 gui-syslog                - change color for wifi related entries (red to some other)

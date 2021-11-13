@@ -283,7 +283,7 @@ fieldset.bubble td {
 	border: 0px solid #ffcb05;
 }
 .navibar {
-  background-color: #000088; 
+  background-color: #000088;
   -moz-border-radius: 4px;
   border-radius: 4px;
   border: 0px ;
@@ -430,4 +430,16 @@ form.splash
 .blink {
 	animation: blink 1s step-start 0s infinite;
 	-webkit-animation: blink 1s step-start 0s infinite;
+}
+fieldset.bubble table.speedtest{
+	width: 400px;
+	border-collapse: collapse;
+
+}
+fieldset.bubble table.speedtest th {
+	font-size: medium;
+}
+fieldset.bubble table.speedtest td {
+	font-size: medium;
+	border: 1px solid #dddddd;
 }
