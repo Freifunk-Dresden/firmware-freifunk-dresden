@@ -443,3 +443,11 @@ fieldset.bubble table.speedtest td {
 	font-size: medium;
 	border: 1px solid #dddddd;
 }
+.marked-input-fg {
+	color: #678b82;
+	font-weight: bold;
+	font-size: medium;
+}
+.marked-input-bg {
+	background-color: #9ec9bf;
+}

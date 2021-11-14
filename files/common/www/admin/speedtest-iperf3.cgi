@@ -25,7 +25,7 @@ function checkInput()
 <fieldset class="bubble" id="fieldset" style="display:none;">
 <legend>Speedtest &ndash; $node ($_ddmesh_ip)</legend>
 <table class="speedtest">
-<tr><th></th><th>Download Mbit/s</th><th>Upload Mbit/s</th></tr>
+<tr><th></th><th>Download</th><th>Upload</th></tr>
 <tr><th>TCP</th><td id="rxtcp"></td><td id="txtcp"></td></tr>
 <tr><th>UDP</th><td id="rxudp"></td><td id="txudp"></td></tr>
 </table>
@@ -72,7 +72,7 @@ format()
 	awk '{
 		if(match($0, ".*receiver"))
 		{
-			speed=gensub(/.*MBytes[ ]+([0-9]+.[0-9]+)[ ]+Mbits\/sec.*/,"\\1",1,$0);
+			speed=gensub(/.*.Bytes[ ]+([0-9]+.[0-9]+[ ]+.bits\/sec).*/,"\\1",1,$0);
 			printf("<script type=\"text/javascript\">document.getElementById(\"%s\").innerHTML=\"%s\"</script>\n",ENVIRON["elementId"], speed);
 		}
 		printf("%s</br>\n",$0);

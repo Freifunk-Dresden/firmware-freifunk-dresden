@@ -209,8 +209,8 @@ cat<<EOM
 <tr><td colspan="3"></td></tr>
 
 <TR>
-<TH>- Bevorzugtes Gateway (IP):</TH>
-<TD><INPUT NAME="form_bmxd_preferred_gateway" TYPE="TEXT" VALUE="$(uci -q get ddmesh.bmxd.preferred_gateway)"></TD>
+<TH>- Bevorzugtes Gateway (IP) <font class="marked-input-fg">*</font>:</TH>
+<TD><INPUT class="marked-input-bg" NAME="form_bmxd_preferred_gateway" TYPE="TEXT" VALUE="$(uci -q get ddmesh.bmxd.preferred_gateway)"></TD>
 <td>Angegebenes Gateway (z. B.: 10.200.0.1) wird bei Gateway-Auswahl bevorzugt. Ein leeres Feld l&ouml;scht das bevorzugte Gateway.</td>
 </TR>
 <TR>
@@ -229,8 +229,8 @@ cat<<EOM
 <td>DNS-IP-Adresse wird zus&auml;tzlich an Wifi-Ger&auml;te per DHCP als alternativen Nameserver mitgeteilt, falls DNS im Freifunk gest&ouml;rt ist.</td>
 </TR>
 <TR>
-<TH>- Netzwerk-ID:</TH>
-<TD><INPUT NAME="form_mesh_network_id" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.mesh_network_id)"></TD>
+<TH>- Netzwerk-ID <font class="marked-input-fg">*</font>:</TH>
+<TD><INPUT class="marked-input-bg" NAME="form_mesh_network_id" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.mesh_network_id)"></TD>
 <td></td>
 </TR>
 
@@ -292,6 +292,8 @@ EOM
 done
 
 cat<<EOM
+<TR><TD COLSPAN="3">&nbsp;</TD></TR>
+<TR><TD COLSPAN="3"><font class="marked-input-fg">*</font> Einstellungen werden sofort aktiv</TD></TR>
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR>
 <TD COLSPAN="3"><INPUT NAME="form_submit" ONCLICK="return validate(systemform);" TITLE="Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." TYPE="SUBMIT" VALUE="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<INPUT NAME="form_abort" TITLE="Abbrechen und &Auml;nderungen verwerfen." TYPE="SUBMIT" VALUE="Abbrechen"></TD>
