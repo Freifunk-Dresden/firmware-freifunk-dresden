@@ -594,24 +594,11 @@ upgrade_7_1_4()
 	uci set uhttpd.px5g.location='Dresden'
 	uci set uhttpd.px5g.commonname='Freifunk Dresden Communities'
 	uci set uhttpd.px5g.organisation='Freifunk Dresden'
-	uci add_list firewall.zone_bat.network='ffgw'
-	uci add_list firewall.zone_bat.subnet='10.200.0.0/16'
-	uci add_list firewall.zone_lan.subnet='192.168.0.0/16'
-	uci add_list firewall.zone_mesh.subnet='10.200.0.0/15'
-	uci set firewall.forward_bat_wan.src_ip='10.200.0.0/16'
-	uci set firewall.forward_bat_vpn.src_ip='10.200.0.0/16'
-	uci delete firewall.forward_bat_lan
+}
 
-	# add rule to allow ip-proto 4 (ipip)
-	uci add firewall rule
-	uci rename firewall.@rule[-1]='mesh_ipip'
-	uci set firewall.mesh_ipip.name='Allow-ipip-mesh'
-	uci set firewall.mesh_ipip.src='mesh'
-	uci set firewall.mesh_ipip.src_ip='10.200.0.0/16'
-	uci set firewall.mesh_ipip.dest_ip='10.200.0.0/16'
-	uci set firewall.mesh_ipip.proto='4'
-	uci set firewall.mesh_ipip.target='ACCEPT'
-	uci set firewall.mesh_ipip.family='ipv4'
+upgrade_7_1_5()
+{
+	cp /rom/etc/config/firewall /etc/config/firewall
 }
 
 ##################################
