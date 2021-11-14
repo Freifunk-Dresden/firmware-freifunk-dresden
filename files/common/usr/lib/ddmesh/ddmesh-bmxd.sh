@@ -16,7 +16,10 @@ STAT_DIR=/var/statistic
 WD_FILE=/tmp/state/bmxd.watchdog
 DYN_IFACES_FILE=/tmp/state/bmxd.dyn-ifaces
 TAG="bmxd"
+BMXD_GW_STATUS_FILE="/tmp/state/bmxd.gw"
+
 # maximal parallel instances (used internally and gui)
+# for running check
 bmxd_max_instances=5
 
 mkdir -p $DB_PATH
@@ -49,6 +52,10 @@ fi
 case "$ARG1" in
 
 	start)
+
+		# clear gw state, to ensure creating interface and setting up dns
+		> ${BMXD_GW_STATUS_FILE}
+
 		MESH_NETWORK_ID="$(uci -q get ddmesh.network.mesh_network_id)"
 		MESH_NETWORK_ID="${MESH_NETWORK_ID:-0}"
 
@@ -109,7 +116,7 @@ case "$ARG1" in
 		NETWORK_OPTS="--network $_ddmesh_meshnet --netid $MESH_NETWORK_ID"
 		SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 		TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_meshnet"
-		TWEAK_OPTS="--hop_penalty 5 --lateness_penalty 10 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 20"
+		TWEAK_OPTS="--hop_penalty 5 --lateness_penalty 10 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 60"
 		# --fast_path_hysteresis has not changed frequency of root setting in bat_route
 		# --path_hysteresis should be less than 5, else dead routes are hold to long
 		TUNING_OPTS="--gateway_hysteresis $GATEWAY_HYSTERESIS --path_hysteresis 3  --script /usr/lib/bmxd/bmxd-gateway.sh"

@@ -7,7 +7,12 @@ RESOLV_CONF_FINAL="${RESOLV_PATH}/resolv.conf.final"
 RESOLV_CONF_AUTO="${RESOLV_PATH}/resolv.conf.auto"
 TAG="BMXD-SCRIPT[$$]"
 
-if [ -z "$1" ]; then
+# see also ddmesh-bmxd.sh
+BMXD_GW_STATUS_FILE="/tmp/state/bmxd.gw"
+
+ARG="$1"
+
+if [ -z "$ARG" ]; then
  echo "missing params"
  exit 0
 fi
@@ -42,9 +47,18 @@ toggle_ssid()
 # script is called by:
 # - bmxd calles it with: gateway,del,IP
 # - boot and wan hotplug: init
-case $1 in
+
+# check for change
+if [ -f "${BMXD_GW_STATUS_FILE}" -a "$(cat ${BMXD_GW_STATUS_FILE})" = "$ARG" ]; then
+	logger -s -t $TAG "state not changed: $ARG"
+	exit 0
+fi
+
+case "$ARG" in
 	gateway)
 		logger -s -t $TAG "GATEWAY"
+		# save state
+		echo "$ARG" > "${BMXD_GW_STATUS_FILE}"
 
 		/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "gateway"
 
@@ -56,11 +70,13 @@ case $1 in
 		;;
 
 	del|init)
+		# dont write this state to BMXD_GW_STATUS_FILE !
+
 		# check if this router is a gateway
 		gw="$(ip ro li ta public_gateway | grep default)"
 
 		# set when "del" or if empty
-		if [ -z "$gw" -a "$1" = "del" -o -z "$(grep nameserver $RESOLV_CONF_FINAL)" ]; then
+		if [ -z "$gw" -a "$ARG" = "del" -o -z "$(grep nameserver $RESOLV_CONF_FINAL)" ]; then
 			logger -s -t $TAG "remove GATEWAY (del)"
 
 			# Dont set link ffgw down, it will delete default route.
@@ -75,13 +91,15 @@ case $1 in
 		;;
 
 	*)
-		# update gateway ip
-		/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "$1"
+		# save state
+		echo "$ARG" > "${BMXD_GW_STATUS_FILE}"
 
-		logger -s -t $TAG "nameserver $1"
+		/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "$ARG"
+
+		logger -s -t $TAG "nameserver $ARG"
 		# delete initial symlink
 		rm $RESOLV_CONF_FINAL
-		echo "nameserver $1" >$RESOLV_CONF_FINAL
+		echo "nameserver $ARG" >$RESOLV_CONF_FINAL
 		/usr/lib/ddmesh/ddmesh-led.sh wifi freifunk
 		toggle_ssid true
 		;;
@@ -92,10 +110,10 @@ esac
 
 
 GW_STAT="/var/statistic/gateway_usage"
-count=$(sed -n "/$1:/s#.*:##p" $GW_STAT)
+count=$(sed -n "/$ARG:/s#.*:##p" $GW_STAT)
 if [ -z $count ]; then
-	echo "$1:1" >> $GW_STAT
+	echo "$ARG:1" >> $GW_STAT
 else
 	count=$(( $count + 1 ))
-	sed -i "/$1/s#:.*#:$count#" $GW_STAT
+	sed -i "/$ARG/s#:.*#:$count#" $GW_STAT
 fi
