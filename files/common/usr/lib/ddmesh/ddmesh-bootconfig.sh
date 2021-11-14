@@ -277,13 +277,19 @@ config_update() {
 	uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
 
 	# update uhttpd certificates in case user has changed community or node
-	uci set uhttpd.px5g.commonname="Freifunk Dresden"
-	uci set uhttpd.px5g.organisation="$(uci get ddmesh.system.community)"
-	uci set uhttpd.px5g.node="Node $(uci -q get ddmesh.system.node)"
-	rm -f /etc/uhttpd.key
-	rm -f /etc/uhttpd.crt
-	# restart needed to generate certificates in boot_step 2
-	/etc/init.d/uhttpd restart
+	commonname="Freifunk Dresden"
+	organisation="$(uci get ddmesh.system.community)"
+	node="Node $(uci -q get ddmesh.system.node)"
+
+	if [ "${commonname}" != "$(uci -q get uhttpd.px5g.commonname)" -o "${organisation}" != "$(uci -q get uhttpd.px5g.organisation)" -o "${node}" != "$(uci -q get uhttpd.px5g.node)" ]; then
+		uci set uhttpd.px5g.commonname="${commonname}"
+		uci set uhttpd.px5g.organisation="${organisation}"
+		uci set uhttpd.px5g.node="${node}"
+		rm -f /etc/uhttpd.key
+		rm -f /etc/uhttpd.crt
+		# restart needed to generate certificates in boot_step 2
+		/etc/init.d/uhttpd restart
+	fi
 
 	#############################################################################
 	# setup backbone clients
@@ -516,9 +522,6 @@ case "$boot_step" in
 
 			config_temp_configs
 			# cron job is started from ddmesh-init.sh after bmxd
-
-			# setup gateway tunnel
-			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel
 
 			# delay start mesh_on_wire, to allow access router config via lan/wan ip
 			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_mesh_on_wire &

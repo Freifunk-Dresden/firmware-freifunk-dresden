@@ -46,10 +46,7 @@ case $1 in
 	gateway)
 		logger -s -t $TAG "GATEWAY"
 
-		# Dont set link ffgw down, it will delete default route.
-		# There is no need to change ffgw, when changing to gateway.
-		# Because of routing rules ensure that internet traffic will go
-		# to right interface before it can go to ffgw
+		/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "gateway"
 
 		# use symlink. because resolv.conf.auto can be set later by wwan
 		rm $RESOLV_CONF_FINAL
@@ -79,7 +76,7 @@ case $1 in
 
 	*)
 		# update gateway ip
-		ip tunnel change ffgw remote $1
+		/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "$1"
 
 		logger -s -t $TAG "nameserver $1"
 		# delete initial symlink
