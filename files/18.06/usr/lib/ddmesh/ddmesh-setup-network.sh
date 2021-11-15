@@ -301,19 +301,33 @@ setup_mesh_on_wire()
 #	fi
 }
 
-# called from ddmesh-bootconfig.sh (boot step 3)
+# called from  bmxd-gateway.sh
 setup_ffgw_tunnel()
 {
-	ifname="$(uci -q get network.ffgw.ifname)"
+ gatewayIP="$1"
+
+	ifname="$(uci -q get network.ffgw.device)"
 	ifname="${ifname/+/}"
-	# use any valid ip for remote, else I can not use 'ip tunnel change....'
-	# to update remote
-	ip tunnel add "${ifname}" mode ipip local $_ddmesh_ip remote $_ddmesh_ip
-	ip addr add $_ddmesh_ip/32 dev "${ifname}"
-	# wg mtu - 20 = 1280
-	ip link set "${ifname}" mtu 1280
-	ip link set "${ifname}" up
-	ip route add default dev "${ifname}" table ff_gateway src $_ddmesh_ip
+
+	setup_ffwg_if()
+	{
+		ip addr add ${_ddmesh_ip}/32 dev "${ifname}"
+		# wg mtu - 20 = 1280
+		ip link set "${ifname}" mtu 1280
+		ip link set "${ifname}" up
+		ip route add default dev "${ifname}" table ff_gateway src ${_ddmesh_ip} 2>/dev/null
+	}
+
+	if [ "${gatewayIP}" = "gateway" ]; then
+		ip tunnel del "${ifname}" 2>/dev/null
+		ip tunnel add "${ifname}" mode ipip local $_ddmesh_ip
+		setup_ffwg_if
+	else
+		ip tunnel del "${ifname}" 2>/dev/null
+		ip tunnel add "${ifname}" mode ipip local $_ddmesh_ip remote ${gatewayIP}
+		setup_ffwg_if
+	fi
+
 }
 
 
@@ -329,7 +343,7 @@ fi
 
 # call function passed as parameter (e.g.: setup_mesh_on_wire)
 if [ -n "$1" ]; then
-	$1
+	$1 $2
 fi
 
 exit 0
