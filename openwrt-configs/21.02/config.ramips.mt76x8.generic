@@ -74,6 +74,7 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ramips_mt76x8_DEVICE_mediatek_linkit-smart-7688 is not set
 # CONFIG_TARGET_ramips_mt76x8_DEVICE_mediatek_mt7628an-eval-board is not set
 # CONFIG_TARGET_ramips_mt76x8_DEVICE_mercury_mac1200r-v2 is not set
+# CONFIG_TARGET_ramips_mt76x8_DEVICE_minew_g1-c is not set
 # CONFIG_TARGET_ramips_mt76x8_DEVICE_netgear_r6020 is not set
 # CONFIG_TARGET_ramips_mt76x8_DEVICE_netgear_r6080 is not set
 # CONFIG_TARGET_ramips_mt76x8_DEVICE_netgear_r6120 is not set
@@ -155,6 +156,7 @@ CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_glinet_gl-mt300n-v2=y
 # CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_mediatek_linkit-smart-7688 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_mediatek_mt7628an-eval-board is not set
 # CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_mercury_mac1200r-v2 is not set
+# CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_minew_g1-c is not set
 # CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_netgear_r6020 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_netgear_r6080 is not set
 CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_netgear_r6120=y
