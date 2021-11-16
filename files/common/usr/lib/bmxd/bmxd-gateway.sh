@@ -9,6 +9,7 @@ TAG="BMXD-SCRIPT[$$]"
 
 # see also ddmesh-bmxd.sh
 BMXD_GW_STATUS_FILE="/tmp/state/bmxd.gw"
+touch "${BMXD_GW_STATUS_FILE}"
 
 ARG="$1"
 
@@ -48,19 +49,14 @@ toggle_ssid()
 # - bmxd calles it with: gateway,del,IP
 # - boot and wan hotplug: init
 
-# check for change
-if [ -f "${BMXD_GW_STATUS_FILE}" -a "$(cat ${BMXD_GW_STATUS_FILE})" = "$ARG" ]; then
-	logger -s -t $TAG "state not changed: $ARG"
-	exit 0
-fi
-
 case "$ARG" in
 	gateway)
 		logger -s -t $TAG "GATEWAY"
-		# save state
-		echo "$ARG" > "${BMXD_GW_STATUS_FILE}"
 
-		/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "gateway"
+		if [ "$(cat ${BMXD_GW_STATUS_FILE})" != "$ARG" ]; then
+			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "gateway"
+			echo "$ARG" > "${BMXD_GW_STATUS_FILE}"
+		fi
 
 		# use symlink. because resolv.conf.auto can be set later by wwan
 		rm $RESOLV_CONF_FINAL
@@ -91,10 +87,11 @@ case "$ARG" in
 		;;
 
 	*)
-		# save state
-		echo "$ARG" > "${BMXD_GW_STATUS_FILE}"
 
-		/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "$ARG"
+		if [ "$(cat ${BMXD_GW_STATUS_FILE})" != "$ARG" ]; then
+			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "$ARG"
+			echo "$ARG" > "${BMXD_GW_STATUS_FILE}"
+		fi
 
 		logger -s -t $TAG "nameserver $ARG"
 		# delete initial symlink
