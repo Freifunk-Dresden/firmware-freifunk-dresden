@@ -1220,6 +1220,10 @@ loop4Event:
 
 	loop4ActivePlugins:
 
+		// plugins have registerred FD, which are now checked if
+		// data was received on those FD (sockets). If yes the
+		// callback function is called.
+		// gw tunnel is implemented as plugin
 		// check active plugins...
 		OLForEach(cdn, struct cb_fd_node, cb_fd_list)
 		{
