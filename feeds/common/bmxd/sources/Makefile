@@ -1,5 +1,12 @@
 
 
+# to compile for Yohua (mipsel) with target compiler set
+# export CC=../../../../workdir/b4d7885/staging_dir/toolchain-mipsel_24kc_gcc-8.4.0_musl/bin/mipsel-openwrt-linux-gcc
+# export STAGING_DIR=../../../../workdir/b4d7885/staging_dir
+# tp-link 841
+# export CC=/home/stephan/freifunk/firmware/workdir/5625f5b.lowmem/staging_dir/toolchain-mips_24kc_gcc-7.3.0_musl/bin/mips-openwrt-linux-gcc
+# export STAGING_DIR=../../../../workdir/5625f5b.lowmem/staging_dir
+
 REVISION =	"$(shell git show --abbrev-commit | sed -n '1{s/.* //p}')"
 DATE=		"$(shell git show --abbrev-commit | sed -n '3{s/Date:[ ]\+\(.*\) +.*/\1/p}' )"
 SOURCE_MD5=	$(shell md5sum *.[ch] linux/*.[cp] posix/*.[cp] Makefile | md5sum | cut -d' ' -f1)
