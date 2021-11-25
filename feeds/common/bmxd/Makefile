@@ -5,7 +5,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bmxd
 PKG_VERSION:=1.1-freifunk-dresden
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
@@ -38,6 +38,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
+	$(MAKE) -C $(PKG_BUILD_DIR) CC="$(TARGET_CC) clean"
 	$(MAKE) -C $(PKG_BUILD_DIR) CC="$(TARGET_CC)"
 endef
 
