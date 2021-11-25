@@ -38,7 +38,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	$(MAKE) -C $(PKG_BUILD_DIR) CC="$(TARGET_CC) clean"
+	$(MAKE) -C $(PKG_BUILD_DIR) CC="$(TARGET_CC)" clean
 	$(MAKE) -C $(PKG_BUILD_DIR) CC="$(TARGET_CC)"
 endef
 
