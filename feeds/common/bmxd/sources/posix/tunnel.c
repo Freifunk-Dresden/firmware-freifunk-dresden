@@ -491,12 +491,11 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 					tuno ? ntohs(tuno->tun_array[0].EXT_GW_FIELD_GWPORT) : 0,
 					ipStr(tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWADDR : 0));
 
-//SE: reset current_gateway before gw_node is set to zero in case.
-// this function is called via purge_orig()->flush_orig() when a
-// node is removed
+			//SE: reset current_gateway before gw_node is set to zero in case.
+			// this function is called via purge_orig()->flush_orig() when a
+			// node is removed
 			if (gw_node == curr_gateway)
 			{
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 				gwc_cleanup();
 				curr_gateway = NULL;
 			}
@@ -600,16 +599,6 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 		update_gw_list(on, gw_array_len, gw_array);
 	}
 
-//if(tuno && curr_gateway && curr_gateway->orig_node)
-//{
-// dbg(DBGL_SYS, DBGT_INFO,
-// 					"GWSEL: %s (community: %i, packet_count: %i; cur community: %i)",
-// 					on->orig_str,
-// 					tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY,
-// 					on->router->longtm_sqr.wa_val / PROBE_TO100,
-// 					((struct tun_orig_data*)curr_gateway->orig_node->plugin_data[tun_orig_registry]) -> tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
-// 					);
-//}
 	/* restart gateway selection if routing class 3 and we have more packets than curr_gateway */
 	if (curr_gateway &&
 			on->router &&
@@ -678,7 +667,6 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 
 		if(reselect)
 		{
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 			gwc_cleanup();
 			curr_gateway = NULL;
 		}
@@ -702,7 +690,6 @@ static void gwc_recv_tun(int32_t fd_in)
 		dbgf(DBGL_SYS, DBGT_ERR, "called while curr_gateway_changed  %s",
 				 gwc_args ? "with invalid gwc_args..." : "");
 
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 		gwc_cleanup();
 		return;
 	}
@@ -727,7 +714,6 @@ dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 
 			dbgf(DBGL_SYS, DBGT_ERR, "No vitual IP! Ignoring this GW for %d secs",
 					 (gwc_args->gw_node->unavail_factor * gwc_args->gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) / 1000);
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 			gwc_cleanup();
 			curr_gateway = NULL;
 			return;
@@ -739,7 +725,6 @@ dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 								 (struct sockaddr *)&gwc_args->gw_addr, sizeof(struct sockaddr_in)) < 0)
 			{
 				dbg_mute(30, DBGL_SYS, DBGT_ERR, "can't send data to gateway: %s", strerror(errno));
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 				gwc_cleanup();
 				curr_gateway = NULL;
 				return;
@@ -761,7 +746,6 @@ dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 
 			if (tp.u.iphdr.saddr == gwc_args->gw_addr.sin_addr.s_addr)
 			{
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 				gwc_cleanup();
 				return;
 			}
@@ -934,7 +918,7 @@ gwc_init_failure:
 
 	// critical syntax: may be used for nameserver updates
 	dbg(DBGL_SYS, DBGT_INFO, "GWT: GW-client tunnel init failed");
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
+
 	gwc_cleanup();
 	curr_gateway = NULL;
 
@@ -1172,7 +1156,6 @@ static void cb_tun_conf_changed(void *unused)
 
 		if (gwc_args)
 		{
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 			gwc_cleanup();
 		}
 
@@ -1229,7 +1212,7 @@ static void cb_choose_gw(void *unused)
 	tmp_curr_gw = NULL;
 	for( int i = 0; !tmp_curr_gw && i < 2; i++)
 	{
-dbg(DBGL_SYS, DBGT_INFO, "---gw check loop: %d", i);
+//dbg(DBGL_SYS, DBGT_INFO, "---gw check loop: %d", i);
 
 		OLForEach(gw_node, struct gw_node, gw_list)
 		{
@@ -1254,22 +1237,15 @@ dbg(DBGL_SYS, DBGT_INFO, "---gw check loop: %d", i);
 				continue;
 			}
 
-// dbg(DBGL_SYS, DBGT_INFO,
-// 					"check [loop %d]gateway: %s (gw_flags: %i, community: %i, packet_count: %i(best:%i), pws: %i, gw_product: %i)",
-// 					i,
-// 					on->orig_str, tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS,
-// 					tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY,
-// 					on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val, on->pws, tmp_gw_factor);
-
-dbg(DBGL_SYS, DBGT_INFO, "check [loop %d] gateway: %s, community: %i # %i (best: %i)", i, on->orig_str
-  , tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
-	,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
-	);
+// dbg(DBGL_SYS, DBGT_INFO, "check [loop %d] gateway: %s, community: %i # %i (best: %i)", i, on->orig_str
+//   , tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
+// 	,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
+// 	);
 
 			// check for community flag
 			if( i == 0 && ! (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY))
 			{ // ignore gw for first run that does not have a flag
-dbg(DBGL_SYS, DBGT_INFO, "ignore gw for now");
+//dbg(DBGL_SYS, DBGT_INFO, "ignore gw for now");
 				continue;
 			}
 
@@ -1290,16 +1266,17 @@ dbg(DBGL_SYS, DBGT_INFO, "ignore gw for now");
 
 				break;
 
-			case 2: /* stable connection (use best statistic) */
-				if (on->router->longtm_sqr.wa_val > best_wa_val)
-					tmp_curr_gw = gw_node;
-				break;
-
-			default: /* fast-switch (use best statistic but change as soon as a better gateway appears) */
+			case 2: /* fall-through */ /* stable connection (use best statistic) */
+			case 3: /* fall-through */ /* fast-switch (use best statistic but change as soon as a better gateway appears) */
+			default:
 				if (on->router->longtm_sqr.wa_val > best_wa_val)
 				{
 					tmp_curr_gw = gw_node;
-dbg(DBGL_SYS, DBGT_INFO, "select gw");
+					dbg(DBGL_SYS, DBGT_INFO, "select gateway [loop %d]: %s, community: %i # %i (best: %i)"
+						, i, on->orig_str
+						, tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
+						,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
+						);
 				}
 				break;
 			}
@@ -1339,7 +1316,6 @@ dbg(DBGL_SYS, DBGT_INFO, "select gw");
 					tmp_curr_gw->orig_node->orig_str, max_gw_class, best_wa_val / PROBE_TO100, max_gw_factor);
 		}
 
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 		gwc_cleanup();
 		curr_gateway = tmp_curr_gw;
 
@@ -1608,7 +1584,6 @@ static void tun_cleanup(void)
 
 	if (gwc_args)
 	{
-dbg(DBGL_SYS, DBGT_INFO, "gwc_cleanup() %d", __LINE__);
 		gwc_cleanup();
 	}
 }
