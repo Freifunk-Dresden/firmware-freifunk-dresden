@@ -401,13 +401,13 @@ usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < ma
    -s    open docker shell
 
   commands:
-   list             - lists all available targets
-   list-targets     - lists only target names for usage in IDE
-   search <string>  - search specific router (target)
-   clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
-   feed-revisions   - returns the git HEAD revision hash for current date (now).
-                      The revisions then could be set in build.json
-   target           - target to build (can have regex)
+   list              - lists all available targets
+   lt | list-targets - lists only target names for usage in IDE
+   search <string>   - search specific router (target)
+   clean             - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
+   feed-revisions    - returns the git HEAD revision hash for current date (now).
+                       The revisions then could be set in build.json
+   target            - target to build (can have regex)
            that are defined by build.json. use 'list' for supported targets.
            'all'                   - builds all targets
            'failed'                - builds only previously failed or not built targets
@@ -521,7 +521,7 @@ if $USE_DOCKER; then
 		# ignore some operations for some arguments
 		case "$1" in
 		list) ;;
-		list-targets) ;;
+		lt | list-targets) ;;
 		search) ;;
 		clean) ;;
 		feed-revisions) ;;
@@ -557,7 +557,7 @@ if [ "$1" = "list" ]; then
 	exit 0
 fi
 
-if [ "$1" = "list-targets" ]; then
+if [ "$1" = "list-targets" -o "$1" = "lt" ]; then
 	listTargetsNames
 	exit 0
 fi
