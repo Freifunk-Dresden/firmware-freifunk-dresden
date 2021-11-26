@@ -75,13 +75,13 @@ case "$ARG1" in
 		ip addr add $_ddmesh_ip/32 broadcast $_ddmesh_broadcast dev $PRIMARY_IF
 		ip link set dev $PRIMARY_IF up
 
-		_IF="dev=$PRIMARY_IF /linklayer 0"
-		_IF="${_IF} dev=$FASTD_IF /linklayer 1"
-		_IF="${_IF} dev=$LAN_IF /linklayer 1"
-		_IF="${_IF} dev=$WAN_IF /linklayer 1"
+		_IF="--dev=$PRIMARY_IF /linklayer 0"
+		_IF="${_IF} --dev=$FASTD_IF /linklayer 1"
+		_IF="${_IF} --dev=$LAN_IF /linklayer 1"
+		_IF="${_IF} --dev=$WAN_IF /linklayer 1"
 
 		if [ "$(uci -q get ddmesh.network.mesh_on_vlan)" = "1" ]; then
-			_IF="${_IF} dev=$VLAN_IF /linklayer 1"
+			_IF="${_IF} --dev=$VLAN_IF /linklayer 1"
 		fi
 
 		# needed during async boot, state changes then
@@ -90,15 +90,15 @@ case "$ARG1" in
 		#add wifi, if hotplug event did occur before starting bmxd
 		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
 		if [ -n "$net_ifname" ]; then
-			_IF="$_IF dev=$net_ifname /linklayer 2"
+			_IF="$_IF --dev=$net_ifname /linklayer 2"
 		fi
 		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_mesh2g)
 		if [ -n "$net_ifname" ]; then
-			_IF="$_IF dev=$net_ifname /linklayer 2"
+			_IF="$_IF --dev=$net_ifname /linklayer 2"
 		fi
 		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_mesh5g)
 		if [ -n "$net_ifname" ]; then
-			_IF="$_IF dev=$net_ifname /linklayer 2"
+			_IF="$_IF --dev=$net_ifname /linklayer 2"
 		fi
 
 		#add dyn interfaces (add_if_wifi, add_if_wire)
@@ -107,20 +107,21 @@ case "$ARG1" in
 		for line in $(cat ${DYN_IFACES_FILE})
 		do
 			# split ifname and linklayer
-			_IF="$_IF dev=${line%,*} /linklayer ${line#*,}"
+			_IF="$_IF --dev=${line%,*} /linklayer ${line#*,}"
 		done
 		unset IFS
 
 		#default start with no gatway.will be updated by gateway_check.sh
-		NETWORK_OPTS="--network $_ddmesh_meshnet --netid $MESH_NETWORK_ID"
-		SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
-		TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_meshnet"
-		TWEAK_OPTS="--hop_penalty 5 --lateness_penalty 10 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 60"
+		# devel info:
 		# --fast_path_hysteresis has not changed frequency of root setting in bat_route
 		# --path_hysteresis should be less than 5, else dead routes are hold to long
-		TUNING_OPTS="--gateway_hysteresis $GATEWAY_HYSTERESIS --path_hysteresis 3  --script /usr/lib/bmxd/bmxd-gateway.sh"
-
-		DAEMON_OPTS="$NETWORK_OPTS $SPECIAL_OPTS $TUNNEL_OPTS $TUNING_OPTS $ROUTING_CLASS $PREFERRED_GATEWAY $TWEAK_OPTS $_IF"
+		OPTS="--throw-rules 0 --prio-rules 0"
+		OPTS="${OPTS} --network $_ddmesh_meshnet --netid $MESH_NETWORK_ID --only_community-gw 1"
+		OPTS="${OPTS} --gateway_tunnel_network $_ddmesh_meshnet"
+		OPTS="${OPTS} --gateway_hysteresis $GATEWAY_HYSTERESIS --path_hysteresis 3  --script /usr/lib/bmxd/bmxd-gateway.sh"
+		OPTS="${OPTS} ${ROUTING_CLASS} ${PREFERRED_GATEWAY}"
+		OPTS="${OPTS} --hop_penalty 5 --lateness_penalty 10 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 60"
+		DAEMON_OPTS="${OPTS} ${_IF}"
 
 		# set initial wifi ssid to "FF no-inet"
 		/usr/lib/bmxd/bmxd-gateway.sh init

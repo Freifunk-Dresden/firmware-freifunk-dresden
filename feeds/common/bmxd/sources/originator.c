@@ -1937,10 +1937,10 @@ static struct opt_type originator_options[] =
 				 "<interface-name>", "add or change device or its configuration, options for specified device are:"},
 
 //SE: network filter; can be set dynamically
-				{ODI, 4, 0, ARG_NETW, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, 0, 0, 0, 0, opt_netw,
+				{ODI, 5, 0, ARG_NETW, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, 0, 0, 0, 0, opt_netw,
 		 			ARG_PREFIX_FORM, "community network. sets default community route\n"},
 
-				{ODI, 4, 0, ARG_NETWORK_ID, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, &gNetworkId, MIN_NETWORK_ID, MAX_NETWORK_ID, DEF_NETWORK_ID, 0,
+				{ODI, 5, 0, ARG_NETWORK_ID, 0, A_PS1, A_ADM, A_INI|A_DYN, A_CFA, A_ANY, &gNetworkId, MIN_NETWORK_ID, MAX_NETWORK_ID, DEF_NETWORK_ID, 0,
 				 ARG_VALUE_FORM, "set network ID"},
 
 #ifndef LESS_OPTIONS

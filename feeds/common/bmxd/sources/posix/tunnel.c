@@ -53,11 +53,17 @@ void update_community_route(void);
 #define DEF_GW_HYSTERE 2
 static int32_t gw_hysteresis;
 
-#define ARG_GW_COMMUNITY "community"
+#define ARG_GW_COMMUNITY "community_gateway"
 #define MIN_GW_COMMUNITY	0
 #define MAX_GW_COMMUNITY	1
 #define DEF_GW_COMMUNITY	0
 static int32_t communityGateway;
+
+#define ARG_ONLY_COMMUNITY_GW "only_community_gw"
+#define MIN_ONLY_COMMUNITY_GW	0
+#define MAX_ONLY_COMMUNITY_GW	1
+#define DEF_ONLY_COMMUNITY_GW	0
+static int32_t onlyCommunityGateway;
 
 #define DEF_GWTUN_NETW_PREFIX "169.254.0.0" /* 0x0000FEA9 */
 static uint32_t gw_tunnel_prefix;
@@ -610,13 +616,6 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 	{
 		int reselect = 0;
 
-		// if the new gw (orig) is preferred gw
-		if ( pref_gateway == on->orig )
-		{
-			dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - preferred found");
-			reselect = 1;
-		}
-
 		// in case orig_node is gone
 		if (!curr_gateway->orig_node)
 		{
@@ -624,46 +623,26 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 			reselect = 1;
 		}
 
-	#if 0	//original
-		// or: required preferred gw does not match current gw and current gw  is more bad than new
-		// (also valid when there is no preferred)
-		if ( pref_gateway != curr_gateway->orig_node->orig &&
-				 curr_gateway->orig_node->router->longtm_sqr.wa_val + (gw_hysteresis * PROBE_TO100) <= on->router->longtm_sqr.wa_val )
+		// either process all gateways or only community gw
+		if (   ! onlyCommunityGateway
+					|| (onlyCommunityGateway && tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY) )
 		{
-			dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - better found");
-			reselect = 1;
-		}
-	#else
-		{
-			struct tun_orig_data *curr_gateway_tuno = curr_gateway->orig_node->plugin_data[tun_orig_registry];
-			int curr_gateway_community = curr_gateway_tuno ?
-												curr_gateway_tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
-												: 0;
+			// if the new gw (orig) is preferred gw and not currently selected
+			if ( pref_gateway == on->orig && pref_gateway != curr_gateway->orig_node->orig)
+			{
+				dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - preferred found");
+				reselect = 1;
+			}
 
-			// or: required preferred gw does not match current gw and current gw  is more bad than new
-			// (also valid when there is no preferred)
-			// But ensure that if current gw is a community gw, I have to check only against community gw. else
-			// a lower wa_val for community gw may cause a reselection if a non-community-gw has higher value
-			if (
-					// if current gw is community then new gw must be also community gw
-					(! curr_gateway_community || (curr_gateway_community && tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY))
-					&& pref_gateway != curr_gateway->orig_node->orig
+			// ignore "better-check" if current selected is the preferred gw
+			if (   pref_gateway != curr_gateway->orig_node->orig
 					&& curr_gateway->orig_node->router->longtm_sqr.wa_val + (gw_hysteresis * PROBE_TO100) <= on->router->longtm_sqr.wa_val
-				 )
+			)
 			{
 				dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - better found");
 				reselect = 1;
 			}
-
-			// if current gw is not community but we have now one, trigger reselection
-			if( ! curr_gateway_community && tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY)
-			{
-				dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - community found");
-				reselect = 1;
-			}
-
 		}
-#endif
 
 		if(reselect)
 		{
@@ -1207,102 +1186,94 @@ static void cb_choose_gw(void *unused)
 		return;
 	}
 
-	// first run i==0 means, that community flag is checked. if
-	// no gw was found with such flag, all gw without this flag are checked
-	tmp_curr_gw = NULL;
-	for( int i = 0; !tmp_curr_gw && i < 2; i++)
+	OLForEach(gw_node, struct gw_node, gw_list)
 	{
-//dbg(DBGL_SYS, DBGT_INFO, "---gw check loop: %d", i);
-
-		OLForEach(gw_node, struct gw_node, gw_list)
+		if (gw_node->unavail_factor > MAX_GW_UNAVAIL_FACTOR)
 		{
-			if (gw_node->unavail_factor > MAX_GW_UNAVAIL_FACTOR)
-			{
-				gw_node->unavail_factor = MAX_GW_UNAVAIL_FACTOR;
-			}
+			gw_node->unavail_factor = MAX_GW_UNAVAIL_FACTOR;
+		}
 
-			/* ignore this gateway if recent connection attempts were unsuccessful */
-			if (     ((gw_node->unavail_factor * gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) + gw_node->last_failure)
-						>  batman_time
-				)
-			{
-				continue;
-			}
+		/* ignore this gateway if recent connection attempts were unsuccessful */
+		if (     ((gw_node->unavail_factor * gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) + gw_node->last_failure)
+					>  batman_time
+			)
+		{
+			continue;
+		}
 
-			// check that the gw node has valid tunnel object data (received via ext_packet)
-			struct orig_node *on = gw_node->orig_node;
-			struct tun_orig_data *tuno = on->plugin_data[tun_orig_registry];
-			if (!on->router || !tuno)
-			{
-				continue;
-			}
+		// check that the gw node has valid tunnel object data (received via ext_packet)
+		struct orig_node *on = gw_node->orig_node;
+		struct tun_orig_data *tuno = on->plugin_data[tun_orig_registry];
+		if (!on->router || !tuno)
+		{
+			continue;
+		}
 
-// dbg(DBGL_SYS, DBGT_INFO, "check [loop %d] gateway: %s, community: %i # %i (best: %i)", i, on->orig_str
-//   , tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
-// 	,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
-// 	);
+dbg(DBGL_SYS, DBGT_INFO, "check gateway: %s, community: %i # %i (best: %i)", on->orig_str
+, tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
+,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
+);
 
-			// check for community flag
-			if( i == 0 && ! (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY))
-			{ // ignore gw for first run that does not have a flag
-//dbg(DBGL_SYS, DBGT_INFO, "ignore gw for now");
-				continue;
-			}
+		// check for community flag
+		if(onlyCommunityGateway && ! (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY))
+		{
+dbg(DBGL_SYS, DBGT_INFO, "ignore gw - not a community gw");
+			continue;
+		}
 
-			switch (routing_class)
-			{
-			case 1: /* fast connection */
-				get_gw_speeds(tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS, &download_speed, &upload_speed);
+		switch (routing_class)
+		{
+		case 1: /* fast connection */
+			get_gw_speeds(tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS, &download_speed, &upload_speed);
 
-				// is this voodoo ???
-				tmp_gw_factor = (((on->router->longtm_sqr.wa_val / PROBE_TO100) *
-													(on->router->longtm_sqr.wa_val / PROBE_TO100))) *
-												(download_speed / 64);
+			// is this voodoo ???
+			tmp_gw_factor = (((on->router->longtm_sqr.wa_val / PROBE_TO100) *
+												(on->router->longtm_sqr.wa_val / PROBE_TO100))) *
+											(download_speed / 64);
 
-				if (tmp_gw_factor > max_gw_factor ||
-						(tmp_gw_factor == max_gw_factor &&
-						on->router->longtm_sqr.wa_val > best_wa_val))
-					tmp_curr_gw = gw_node;
-
-				break;
-
-			case 2: /* fall-through */ /* stable connection (use best statistic) */
-			case 3: /* fall-through */ /* fast-switch (use best statistic but change as soon as a better gateway appears) */
-			default:
-				if (on->router->longtm_sqr.wa_val > best_wa_val)
-				{
-					tmp_curr_gw = gw_node;
-					dbg(DBGL_SYS, DBGT_INFO, "select gateway [loop %d]: %s, community: %i # %i (best: %i)"
-						, i, on->orig_str
-						, tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
-						,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
-						);
-				}
-				break;
-			}
-
-			if (tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS > max_gw_class)
-				max_gw_class = tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS;
-
-			best_wa_val = MAX(best_wa_val, on->router->longtm_sqr.wa_val);
-
-			if (tmp_gw_factor > max_gw_factor)
-				max_gw_factor = tmp_gw_factor;
-
-			// accept perferred gw and break loop
-			if ((pref_gateway != 0) && (pref_gateway == on->orig))
-			{
+			if (tmp_gw_factor > max_gw_factor ||
+					(tmp_gw_factor == max_gw_factor &&
+					on->router->longtm_sqr.wa_val > best_wa_val))
 				tmp_curr_gw = gw_node;
 
-				dbg(DBGL_SYS, DBGT_INFO,
-						"Preferred gateway found: %s (gw_flags: %i, packet_count: %i, ws: %i, gw_product: %i)",
-						on->orig_str, tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS,
-						on->router->longtm_sqr.wa_val / PROBE_TO100, on->pws, tmp_gw_factor);
+			break;
 
-				break;
+		case 2: /* fall-through */ /* stable connection (use best statistic) */
+		case 3: /* fall-through */ /* fast-switch (use best statistic but change as soon as a better gateway appears) */
+		default:
+			if (on->router->longtm_sqr.wa_val > best_wa_val)
+			{
+				tmp_curr_gw = gw_node;
+				dbg(DBGL_SYS, DBGT_INFO, "select gateway: %s, community: %i # %i (best: %i)"
+					, on->orig_str
+					, tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
+					,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
+					);
 			}
-		} //for gw list
-	} //for: try first gateway community
+			break;
+		}
+
+		if (tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS > max_gw_class)
+			max_gw_class = tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS;
+
+		best_wa_val = MAX(best_wa_val, on->router->longtm_sqr.wa_val);
+
+		if (tmp_gw_factor > max_gw_factor)
+			max_gw_factor = tmp_gw_factor;
+
+		// overwrite previously found (perhaps better) gw in favour to preferred gw
+		if ((pref_gateway != 0) && (pref_gateway == on->orig))
+		{
+			tmp_curr_gw = gw_node;
+
+			dbg(DBGL_SYS, DBGT_INFO,
+					"Preferred gateway found: %s (gw_flags: %i, packet_count: %i, ws: %i, gw_product: %i)",
+					on->orig_str, tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS,
+					on->router->longtm_sqr.wa_val / PROBE_TO100, on->pws, tmp_gw_factor);
+
+			break;
+		}
+	} //for gw list
 
 	if (curr_gateway != tmp_curr_gw)
 	{
@@ -1441,12 +1412,28 @@ static int32_t opt_rt_pref(uint8_t cmd, uint8_t _save, struct opt_type *opt, str
 		{
 			pref_gateway = test_ip;
 
+			// trigger new gw selection
+			gwc_cleanup();
+			curr_gateway = NULL;
+
 			/* use routing class 3 if none specified */
 			/*
 			if ( pref_gateway && !routing_class && !Gateway_class )
 				check_apply_parent_option( ADD, OPT_APPLY, _save, get_option(0,0,ARG_RT_CLASS), "3", cn );
 */
 		}
+	}
+
+	return SUCCESS;
+}
+
+static int32_t opt_only_commuity_gw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
+{
+	if (cmd == OPT_APPLY)
+	{
+		// trigger new gw selection
+		gwc_cleanup();
+		curr_gateway = NULL;
 	}
 
 	return SUCCESS;
@@ -1559,10 +1546,13 @@ static struct opt_type tunnel_options[] = {
 		{ODI, 5, 0, ARG_GW_COMMUNITY, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &communityGateway, MIN_GW_COMMUNITY, MAX_GW_COMMUNITY, DEF_GW_COMMUNITY, 0,
 		 ARG_VALUE_FORM, "gateway is a community gw that can route default traffic to other communities"},
 
+		{ODI, 5, 0, ARG_ONLY_COMMUNITY_GW, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &onlyCommunityGateway, MIN_ONLY_COMMUNITY_GW, MAX_ONLY_COMMUNITY_GW, DEF_ONLY_COMMUNITY_GW, opt_only_commuity_gw,
+		 ARG_VALUE_FORM, "only select community gateways"},
+
 		{ODI, 5, 0, ARG_GW_CLASS, 'g', A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_gw_class,
 		 ARG_VALUE_FORM "[/VAL]", "set GW up- & down-link class (e.g. 5mbit/1024kbit)"},
 
-		{ODI, 4, 0, ARG_GWTUN_NETW, 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, 0, 0, 0, 0, opt_gwtun_netw,
+		{ODI, 5, 0, ARG_GWTUN_NETW, 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, 0, 0, 0, 0, opt_gwtun_netw,
 		 ARG_PREFIX_FORM, "set network used by gateway nodes\n"},
 
 #ifndef LESS_OPTIONS
