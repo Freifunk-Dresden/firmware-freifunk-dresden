@@ -112,7 +112,6 @@ case "$ARG1" in
 		unset IFS
 
 		#default start with no gatway.will be updated by gateway_check.sh
-		#SPECIAL_OPTS="--throw-rules 0 --prio-rules 0 --meshNetworkIdPreferred $MESH_NETWORK_ID"
 		NETWORK_OPTS="--network $_ddmesh_meshnet --netid $MESH_NETWORK_ID"
 		SPECIAL_OPTS="--throw-rules 0 --prio-rules 0"
 		TUNNEL_OPTS="--gateway_tunnel_network $_ddmesh_meshnet"
