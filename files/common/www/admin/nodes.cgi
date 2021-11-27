@@ -59,10 +59,10 @@ export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+
  	{
 		img=match($0,"=>") ? "<img src=\"/images/yes12.png\">" : ""
 		gsub("^=>","")
-		rest=substr($0,index($0,$5))
 		sub(",","",$3)
 		sub(",","",$4)
 		cimg=match($4,"1") ? "<img src=\"/images/yes12.png\">" : ""
+		sub(",","",$5)
 		statfile="/var/statistic/gateway_usage"
 		stat=0
 		while((getline line < statfile) > 0)
@@ -73,7 +73,7 @@ export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+
 		close(statfile)
 		p="^" ENVIRON["preferred"] "$"
 		pref = p && match($1,p) ? "<img src=\"/images/yes12.png\">" : ""
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",c,pref,img,cimg,stat,getnode($1),$1,$1,$2,$3,$3,rest);
+ 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",c,pref,img,cimg,stat,getnode($1),$1,$1,$2,$3,$3,$5);
 		if(c==1)c=2;else c=1;
 		count=count+1;
 		brc=brc+$3
