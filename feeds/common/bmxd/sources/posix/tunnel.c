@@ -519,7 +519,7 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 					OLRemoveEntry(gw_node);
 					debugFree(gw_node, 1103);
 					gw_node = NULL;
-					dbg(DBGL_SYS, DBGT_INFO, "Gateway %s removed from gateway list", orig_node->orig_str);
+//					dbg(DBGL_SYS, DBGT_INFO, "Gateway %s removed from gateway list", orig_node->orig_str);
 				}
 			}
 
@@ -619,7 +619,7 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 		// in case orig_node is gone
 		if (!curr_gateway->orig_node)
 		{
-			dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - orig_node gone");
+//			dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - orig_node gone");
 			reselect = 1;
 		}
 
@@ -639,7 +639,7 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 					&& curr_gateway->orig_node->router->longtm_sqr.wa_val + (gw_hysteresis * PROBE_TO100) <= on->router->longtm_sqr.wa_val
 			)
 			{
-				dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - better found");
+//				dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - better found");
 				reselect = 1;
 			}
 		}
@@ -1209,15 +1209,15 @@ static void cb_choose_gw(void *unused)
 			continue;
 		}
 
-dbg(DBGL_SYS, DBGT_INFO, "check gateway: %s, community: %i # %i (best: %i)", on->orig_str
-, tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
-,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
-);
+// dbg(DBGL_SYS, DBGT_INFO, "check gateway: %s, community: %i # %i (best: %i)", on->orig_str
+// , tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
+// ,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
+// );
 
 		// check for community flag
 		if(onlyCommunityGateway && ! (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY))
 		{
-dbg(DBGL_SYS, DBGT_INFO, "ignore gw - not a community gw");
+//dbg(DBGL_SYS, DBGT_INFO, "ignore gw - not a community gw");
 			continue;
 		}
 
