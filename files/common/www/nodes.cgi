@@ -16,16 +16,18 @@ cat<<EOM
 EOM
 
 cat $BMXD_DB_PATH/links | awk -f /usr/lib/www/page-functions.awk -e '
- BEGIN {c=1;count=0;rtq=0;rq=0;tq=0}
+ BEGIN {prevNode=0;c=1;count=0;rtq=0;rq=0;tq=0}
  {
 	if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
 	{
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$3,$3,color_interface($2),$1,$4,$4,$5,$6);
-		if(c==1)c=2;else c=1;
+		node=getnode($1)
+		if(prevNode!=node) {if(c==1)c=2;else c=1;}
+ 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,node,$3,$3,color_interface($2),$1,$4,$4,$5,$6);
 		count=count+1;
 		rtq=rtq+$4;
 		rq=rq+$5;
-		tq=tq+$6
+		tq=tq+$6;
+		prevNode=node;
 	}
  }
  END {if(count){rtq=int(rtq/count);rq=int(rq/count);tq=int(tq/count); printf("<tr><td colspan=\"4\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td></tr>", count, rtq, rtq, rq, rq, tq, tq);}}
@@ -45,20 +47,21 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Gateways</legend>
 <table>
-<tr><th>Aktiv</th><th>Community</th><th>Statistik</th><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
+<tr><th>Pr&auml;f.</th><th>Aktiv</th><th>Community</th><th>Statistik</th><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
 EOM
 
+export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p' )"
 cat $BMXD_DB_PATH/gateways | awk -f /usr/lib/www/page-functions.awk -e '
  BEGIN {c=1;count=0;brc=0}
  {
 	if(match($0,"^[=> 	]*[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
  	{
-		img=match($0,"=>") ? "<img src=\"/images/yes.png\">" : ""
+		img=match($0,"=>") ? "<img src=\"/images/yes12.png\">" : ""
 		gsub("^=>","")
 		rest=substr($0,index($0,$5))
 		sub(",","",$3)
 		sub(",","",$4)
-		cimg=match($4,"1") ? "<img src=\"/images/yes.png\">" : "<img src=\"/images/no-grey.png\">"
+		cimg=match($4,"1") ? "<img src=\"/images/yes12.png\">" : ""
 		statfile="/var/statistic/gateway_usage"
 		stat=0
 		while((getline line < statfile) > 0)
@@ -67,13 +70,15 @@ cat $BMXD_DB_PATH/gateways | awk -f /usr/lib/www/page-functions.awk -e '
 			if(a[1]==$1) { stat=a[2]; break; }
 		}
 		close(statfile)
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,img,cimg,stat,getnode($1),$1,$1,$2,$3,$3,rest);
+		p="^" ENVIRON["preferred"] "$"
+		pref = p && match($1,p) ? "<img src=\"/images/yes12.png\">" : ""
+ 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",c,pref,img,cimg,stat,getnode($1),$1,$1,$2,$3,$3,rest);
 		if(c==1)c=2;else c=1;
 		count=count+1;
 		brc=brc+$3
 	}
  }
- END {if(count){brc=int(brc/count); printf("<tr><td colspan=\"6\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}}
+ END {if(count){brc=int(brc/count); printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}}
 '
 
 cat<<EOM

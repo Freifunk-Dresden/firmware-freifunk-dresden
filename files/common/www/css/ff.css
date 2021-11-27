@@ -262,6 +262,7 @@ fieldset.bubble legend {
 fieldset.bubble table {
 	border: 0px;
 	width: 100%;
+	border-spacing: 2px 1px;
 }
 fieldset.bubble table.hidden {
 	border: 0px;
@@ -274,8 +275,9 @@ fieldset.bubble th {
 	text-align: left;
 }
 fieldset.bubble td {
-	padding: 1px 10px;
+	padding: 0px 10px;
 }
+
 .navi {
 	background-color: #ffcb05;
 	-moz-border-radius: 4px;
@@ -434,7 +436,6 @@ form.splash
 fieldset.bubble table.speedtest{
 	width: 400px;
 	border-collapse: collapse;
-
 }
 fieldset.bubble table.speedtest th {
 	font-size: medium;
@@ -443,6 +444,7 @@ fieldset.bubble table.speedtest td {
 	font-size: medium;
 	border: 1px solid #dddddd;
 }
+
 .marked-input-fg {
 	color: #678b82;
 	font-weight: bold;

@@ -91,7 +91,7 @@ done ) ]}"
 
 cat<<EOM
 <table>
- <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc/Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
+ <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
  <pre>
 EOM
 
@@ -126,7 +126,7 @@ do
 
 			style="$base_style font-weight:bold;"
 			class="selected_adhoc"
-			meshimage="yes.png"
+			meshimage='<img src="/images/yes16.png">'
 			wifi_ssid='Freifunk-Adhoc-Net'
 			wifi_bssid='multiple'
 			seen_ffadhoc=1
@@ -144,32 +144,37 @@ do
 
 			style="$base_style font-weight:bold;"
 			class="selected_mesh"
-			meshimage="yes.png"
+			meshimage='<img src="/images/yes16.png">'
 			wifi_ssid='Freifunk-Mesh-Net'
 			wifi_bssid='multiple'
 			;;
 		ffap)
 			style="$base_style font-weight:bold;"
 			class="selected_ap"
-			meshimage="no.png"
+			meshimage=''
 			;;
 		*)
 			class=colortoggle$T
 			style="$base_style"
-			meshimage="no.png"
+			meshimage=''
 			;;
 	esac
 
+	if [ "$wifi_open" = "yes" ]; then
+		openimage='<img src="/images/yes16.png">'
+	else
+		openimage=''
+	fi
 
 cat<<EOM
 <TR class="$class" >
 <TD style="$style" width="$WIDTH">$wifi_ssid</TD>
-<TD style="$style">$wifi_channel</TD>
-<TD style="$style"><IMG SRC="/images/$meshimage" ALT="$wifi_type" TITLE="Ad-Hoc/Mesh mode"></TD>
-<TD style="$style"><IMG SRC="/images/$wifi_open.png" ALT="$wifi_open"></TD>
-<TD style="$style"><IMG SRC="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm"></TD>
-<TD style="$style">- $wifi_signal</TD>
-<TD style="$style">$wifi_uptime</TD>
+<TD style="$style" width="20">$wifi_channel</TD>
+<TD style="$style" width="20">$meshimage</TD>
+<TD style="$style" width="20">$openimage</TD>
+<TD style="$style" width="20"><img src="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm"></TD>
+<TD style="$style" width="40">- $wifi_signal</TD>
+<TD style="$style" width="40">$wifi_uptime</TD>
 <TD style="$style">$wifi_bssid</TD></tr>
 EOM
 	if [ $T -eq 1 ]; then
