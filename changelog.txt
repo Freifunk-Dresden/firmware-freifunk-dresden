@@ -10,6 +10,9 @@ mesh-lan                  - add meshing on vlan 9 (avoids need of bridging cable
                             between wan and lan ports that causes issues on some devices)
 gui-syslog                - change color for wifi related entries (red to some other)
 gui-led                   - add option to control LEDs
+gui-nodes                 - change alternating background color "grouping" to better
+                            display interfaces belonging to same node
+gui-network               - implement openwrt 21 network ports (switch DSA)
 gui-vlan                  - configure mesh vlan
                           - ignore nodes for vlan
 gui-wifi                  - let display wifi scan page competely and start scanning afterwards
