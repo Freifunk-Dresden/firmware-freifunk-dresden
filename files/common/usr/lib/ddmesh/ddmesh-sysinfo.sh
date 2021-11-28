@@ -297,7 +297,7 @@ EOM
 			ifname=${ifname/+/}
 			[ -n "$ifname" ] && ifname="$(basename /sys/class/net/${ifname}*)"
 			ifpath="/sys/class/net/${ifname}"
-	
+
 			net=${entry%%=*}
 			net=${net#net_}
 			case "$net" in
@@ -305,8 +305,13 @@ EOM
 					if [ -n "${ifname}" -a -d ${ifpath} ]; then
 						[ $comma = 1 ] && echo -n "," >> $OUTPUT
 						comma=1
-						echo "\"${net}_rx\":\"$(cat ${ifpath}/statistics/rx_bytes)\"" >> $OUTPUT
-						echo ",\"${net}_tx\":\"$(cat ${ifpath}/statistics/tx_bytes)\"" >> $OUTPUT
+						rx="$(cat ${ifpath}/statistics/rx_bytes)"
+						tx="$(cat ${ifpath}/statistics/tx_bytes)"
+						# fix fastd statistic
+						test ${net} = "tbb_fastd" -a "$rx" = "0" && tx="0"
+
+						echo "\"${net}_rx\":\"$rx\"" >> $OUTPUT
+						echo ",\"${net}_tx\":\"$tx\"" >> $OUTPUT
 					fi
 				;;
 			esac
