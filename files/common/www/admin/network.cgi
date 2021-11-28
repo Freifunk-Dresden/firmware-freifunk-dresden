@@ -26,18 +26,21 @@ s#[ 	]\+# #g
 cat<<EOM
 </table>
 </fieldset>
-
 <br>
+EOM
 
+SWITCH_INFO="$(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh csv)"
+
+if [ -n "${SWITCH_INFO}" ]; then
+cat<<EOM
 <fieldset class="bubble">
 <legend>Switch</legend>
 <table>
 <tr class="colortoggle1"> <th>Port</th> <td>Carrier</td> <td>Speed</td> </tr>
 EOM
 
-
 unset IFS;
-for entry in $(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh csv); do
+for entry in ${SWITCH_INFO}; do
 	IFS=','
 	set $entry
 	echo "<tr class="colortoggle2"> <th>$1</th> <td>$2</td> <td>$3</td> </tr>"
@@ -47,9 +50,11 @@ done
 cat<<EOM
 </table>
 </fieldset>
-
 <br>
+EOM
+fi
 
+cat<<EOM
 <fieldset class="bubble">
 <legend>Netzwerk-Schnittstellen</legend>
 <table>

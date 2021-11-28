@@ -40,14 +40,31 @@ get_switch_info()
 			break; # only one switch
 		done
 	else
-		dev="dummy"
-		$json && echo "\"$dev\" : ["
-		unset port; unset link; unset speed
-		$json && {
-				$comma && echo -n ","
-				echo "{ \"port\":\"$port\", \"carrier\":\"$link\", \"speed\":\"$speed\"}"
-		}
-		$csv && echo "$port,$link,$speed"
+		$json && echo "\"switch\" : ["
+		for dev in wan lan1 lan2 lan3 lan4
+		do
+			class_path="/sys/class/net/${dev}"
+			if [ -d "${class_path}" ]; then
+				unset port; unset link; unset speed
+
+				# get device path
+				dp="$(readlink ${class_path} | sed 's#.*\(/devices/.*\)$#/sys\1#')"
+
+				phys_port_name="$(cat ${dp}/phys_port_name)"
+				port="${phys_port_name:1:2}"
+
+				link="$(cat ${dp}/carrier)"
+				speed="$(cat ${dp}/speed)"
+				[ $speed -lt 0 ] && speed=0
+
+				$json && {
+					$comma && echo -n ","
+					echo "{ \"port\":\"$port\", \"carrier\":\"$link\", \"speed\":\"$speed\"}"
+				}
+				comma=true
+				$csv && echo "$port,$link,$speed"
+			fi
+		done
 		$json && echo "]"
 	fi
 
