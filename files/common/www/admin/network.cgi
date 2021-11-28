@@ -40,12 +40,15 @@ cat<<EOM
 EOM
 
 unset IFS;
+IFS='
+'
 for entry in ${SWITCH_INFO}; do
 	IFS=','
 	set $entry
 	echo "<tr class="colortoggle2"> <th>$1</th> <td>$2</td> <td>$3</td> </tr>"
 	unset IFS
 done
+unset IFS
 
 cat<<EOM
 </table>
