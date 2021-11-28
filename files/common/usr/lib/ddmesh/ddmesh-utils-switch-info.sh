@@ -51,7 +51,7 @@ get_switch_info()
 				dp="$(readlink ${class_path} | sed 's#.*\(/devices/.*\)$#/sys\1#')"
 
 				phys_port_name="$(cat ${dp}/phys_port_name)"
-				port="${phys_port_name:1:2}"
+				port="${phys_port_name:1:2} (${dev})"
 
 				link="$(cat ${dp}/carrier)"
 				speed="$(cat ${dp}/speed)"
