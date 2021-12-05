@@ -166,10 +166,9 @@ cat<<EOM
 </TR>
 
 <tr><td colspan="3">
-<fieldset class="bubble">
+<fieldset>
 
 <table>
-
 <TR>
 <TH>- VLAN-Meshing:</TH>
 <TD><INPUT NAME="form_vlan_meshing" TYPE="CHECKBOX" VALUE="1"$(if [ "${mesh_on_vlan}" = "1" ];then echo ' checked="checked"';fi) onchange="disable_mesh_fields();"></TD>
@@ -205,8 +204,8 @@ cat<<EOM
 <td>Wenn aktiv, dann wird LAN-Meshing erst 5 minuten nach Routerstart aktiviert.</td>
 </TR>
 
-</table></fieldset></tr>
-<tr><td colspan="3"></td></tr>
+</table></fieldset></td></tr>
+<tr><td COLSPAN="3">&nbsp;</td></tr>
 
 <TR>
 <TH>- Bevorzugtes Gateway (IP) <font class="marked-input-fg">*</font>:</TH>
@@ -237,23 +236,45 @@ cat<<EOM
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR><TH COLSPAN="3" class="heading">Cron</TH></TR>
 
-<TR>
-<TH>- Automatisches Firmware-Update:</TH>
-<TD><INPUT NAME="form_firmware_autoupdate" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.firmware_autoupdate)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td>T&auml;glich um 5:00 Uhr wird auf eine neue Firmware-Version getestet. Gibt es eine, so aktualisiert sich der Router selbst&auml;ndig. Nachtr&auml;glich installierte Pakete m&uuml;ssen erneut installiert werden.<td>
-</TR>
+<tr><td colspan="3">
+<fieldset>
+<table>
+<tr><th>- Zeitpunkt:</th>
+<td><select name="form_maintenance_time" size=1>
+EOM
+
+maintenance="$(uci -q get ddmesh.system.maintenance_time)"
+maintenance="${maintenance:=4}"
+
+
+for h in $(seq 0 23)
+do
+	if [ "$h" = "$maintenance" ]; then
+		echo " <option selected value=\"$h\">$h Uhr</option>"
+	else
+		echo " <option value=\"$h\">$h Uhr</option>"
+	fi
+done
+cat<<EOM
+</select></td>
+<td>Zeitpunkt f&uuml;r t&auml;glichen Neustart und Firmware-update check<td>
+</tr>
 
 <TR>
 <TH>- Automatischer n&auml;chtlicher Neustart:</TH>
 <TD><INPUT NAME="form_nightly_reboot" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td>T&auml;glich um 4:00 Uhr wird der Router neu gestartet. Dies l&ouml;st manchmal seltsame Probleme, wenn der Router aus unbekannten Gr&uuml;nden nicht mehr richtig funktioniert.<td>
+<td>Router wird t&auml;glich neu gestartet. Dies l&ouml;st manchmal seltsame Probleme, wenn der Router aus unbekannten Gr&uuml;nden nicht mehr richtig funktioniert.<td>
 </TR>
 
 <TR>
-<TH>- Ignoriere Werkseinstellungs-Button:</TH>
-<TD><INPUT NAME="form_ignore_factory_reset_button" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.ignore_factory_reset_button)" = "1" ];then echo ' checked="checked"';fi)></td>
-<td>Verhindert das Zur&uuml;cksetzen des Routers via Reset-Button<td>
+<TH>- Automatisches Firmware-Update:</TH>
+<TD><INPUT NAME="form_firmware_autoupdate" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.system.firmware_autoupdate)" = "1" ];then echo ' checked="checked"';fi)></td>
+<td>Firmware wird automatisch aktualisiert. Nachtr&auml;glich installierte Pakete m&uuml;ssen erneut installiert werden.<td>
 </TR>
+
+</table>
+</fieldset></td></tr>
+<tr><td COLSPAN="3">&nbsp;</td></tr>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR><TH COLSPAN="3" class="heading">LEDs</TH></TR>
@@ -293,6 +314,14 @@ done
 
 cat<<EOM
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
+<TR><TH COLSPAN="3" class="heading">Sonstiges</TH></TR>
+<TR>
+<TH>- Ignoriere Werkseinstellungs-Button:</TH>
+<TD><INPUT NAME="form_ignore_factory_reset_button" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.system.ignore_factory_reset_button)" = "1" ];then echo ' checked="checked"';fi)></td>
+<td>Verhindert das Zur&uuml;cksetzen des Routers via Reset-Button<td>
+</TR>
+
+<TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR><TD COLSPAN="3"><font class="marked-input-fg">*</font> Einstellungen werden sofort aktiv</TD></TR>
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR>
@@ -328,6 +357,7 @@ else
 		uci set ddmesh.system.announce_gateway=${form_announce_gateway:-0}
 		uci set ddmesh.network.lan_local_internet=${form_lan_local_internet:-0}
 		uci set ddmesh.system.mesh_sleep=${form_lan_meshing_sleep:-0}
+		uci set ddmesh.system.maintenance_time=${form_maintenance_time:-4}
 
 		# vlan and mesh-lan/wan can only be used alternatively. some switch devices
 		# can not setup vlan 1 and van 9 with same ports

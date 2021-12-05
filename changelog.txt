@@ -28,6 +28,7 @@ sub-community /bmxd       - add community default route for gateway that ensure 
                             sub-communities.
                           - add network id
 sysinfo                   - add wg_pubkey and roaming flag
+system-cron               - nightly reboot/firmware update: add option to configure maintenance time
 
 build-system              - fix some configuration dependencies
                           - add default openwrt config as basis for creating new config files

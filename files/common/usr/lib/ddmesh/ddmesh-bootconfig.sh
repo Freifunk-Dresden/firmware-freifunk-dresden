@@ -427,16 +427,20 @@ $m */1 * * *  /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
 * * * * *  /usr/lib/ddmesh/ddmesh-tasks.sh watchdog  >/dev/null 2>/dev/null
 EOM
 
+maintenance="$(uci -q get ddmesh.system.maintenance_time)"
+maintenance="${maintenance:=4}"
+
 if [ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ];then
 cat<<EOM >> /var/etc/crontabs/root
-0 4 * * *  /sbin/reboot
+0 ${maintenance} * * *  /sbin/reboot
 EOM
 fi
 
 # ALWAYS update check AFTER nightly reboot
+maintenance=$((maintenance+1))
 if [ "$(uci -q get ddmesh.system.firmware_autoupdate)" = "1" ];then
 cat<<EOM >> /var/etc/crontabs/root
-$m 5 * * *  /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run nightly >/dev/null 2>/dev/null
+$m ${maintenance} * * *  /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run nightly >/dev/null 2>/dev/null
 EOM
 fi
 
