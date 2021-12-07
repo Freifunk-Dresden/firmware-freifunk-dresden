@@ -4,6 +4,7 @@
 openwrt 21                - upgrade to openwrt 21 (only from devices with openwrt 19)
 network                   - complete rework of internal network configuration
                             (needed to support openwrt 21 and vlan meshing)
+gateway                   - add ipip gateway tunnel to increase network speed
 gui-backbone              - add possibility to enable/disable backbone configurations
 gui-speedtest             - improve speedtest
 mesh-lan                  - add meshing on vlan 9 (avoids need of bridging cable
