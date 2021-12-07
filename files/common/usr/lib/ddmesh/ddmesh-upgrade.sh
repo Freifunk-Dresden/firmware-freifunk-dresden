@@ -598,6 +598,7 @@ upgrade_7_1_4()
 
 upgrade_7_1_5()
 {
+ 	uci set ddmesh.system.firmware_autoupdate=1
 	cp /rom/etc/config/firewall /etc/config/firewall
 }
 
