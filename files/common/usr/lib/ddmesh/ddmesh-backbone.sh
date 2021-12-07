@@ -94,7 +94,7 @@ callback_accept_fastd_config ()
 	config_get comment "$config" comment
 	config_get disabled "$config" disabled
 
-	echo "fastd process accept: $key # $comment"
+	#echo "fastd process accept: disabled:$disabled, $key # $comment"
 	if [ "$disabled" != "1" -a -n "$key" -a -n "$comment" ]; then
 		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/accept_$key.conf
 		echo "fastd accept peer: [$key:$comment] ($FILE)"
@@ -120,7 +120,7 @@ callback_outgoing_fastd_config ()
 	[ -z "$type" ] && type="fastd"
 	config_get disabled "$config" disabled
 
-	#echo "fastd process out: cfgtype:$type, host:$host, port:$port, key:$key]"
+	#echo "fastd process out: disabled:$disabled, cfgtype:$type, host:$host, port:$port, key:$key"
 	if [ "$disabled" != "1" -a "$type" == "fastd" -a -n "$host" -a -n "$port" -a -n "$key" ]; then
 		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/"connect_"$host"_"$port".conf"
 		#echo "fastd out: add peer ($FILE)"
@@ -150,7 +150,7 @@ callback_outgoing_wireguard_interfaces ()
 	config_get node "$config" node
 	config_get disabled "$config" disabled
 
-	#echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
+	#echo "wg process out: disabled:$disabled, cfgtype:$type, host:$host, port:$port, key:$key, target node:$node"
 	if [ "$disabled" != "1" -a "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
 
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
@@ -189,7 +189,7 @@ callback_outgoing_wireguard_connection ()
 	config_get node "$config" node
 	config_get disabled "$config" disabled
 
-	# echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
+	#echo "wg process out: disabled:$disabled, cfgtype:$type, host:$host, port:$port, key:$key, target node:$node"
 	if [ "$disabled" != "1" -a "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
 
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
@@ -216,7 +216,7 @@ callback_incoming_wireguard ()
 	config_get node "$config" node
 	config_get disabled "$config" disabled
 
-	echo "wg process out: cfgtype:$type, key:$key, target node:$node]"
+	#echo "wg process out: disabled:$disabled, cfgtype:$type, key:$key, target node:$node]"
 	if [ "$disabled" != "1" -a "$type" == "wireguard" -a -n "$key" -a -n "$node" ]; then
 
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)

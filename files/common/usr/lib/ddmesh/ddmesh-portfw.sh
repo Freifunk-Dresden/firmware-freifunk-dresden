@@ -73,7 +73,7 @@ setup_forwarding()
 			$IPT -D $table -o $wifi2_ifname -d $wifi2_network/$wifi2_mask -j PORT_FORWARDING 2>/dev/null
 			$IPT -A $table -o $wifi2_ifname -d $wifi2_network/$wifi2_mask -j PORT_FORWARDING
 		fi
-		if [ $wan_up = 1 -a -n "$wan_network" -a -n "$wan_mask" ]; then
+		if [ "$wan_up" = 1 -a -n "$wan_network" -a -n "$wan_mask" ]; then
 			$IPT -D $table -o $wan_ifname -d $wan_network/$wan_mask -j PORT_FORWARDING 2>/dev/null
 			$IPT -A $table -o $wan_ifname -d $wan_network/$wan_mask -j PORT_FORWARDING
 		fi
@@ -101,15 +101,15 @@ setup_rules() {
 		if [ "$vproto" = "tcp" -o "$vproto" = "tcpudp" ]; then
 			$IPT -t nat -A PORT_FORWARDING_RULES -p tcp --dport $vsrc_dport -j DNAT --to-destination $vdest_ip:$vdest_port
 			$IPT -A PORT_FORWARDING_RULES -p tcp -d $vdest_ip --dport $vdest_port -o $lan_ifname -j ACCEPT
-			test $wan_up = 1 && $IPT -A PORT_FORWARDING_RULES -p tcp -d $vdest_ip --dport $vdest_port -o $wan_ifname -j ACCEPT
-			test $wifi2_up = 1 && $IPT -A PORT_FORWARDING_RULES -p tcp -d $vdest_ip --dport $vdest_port -o $wifi2_ifname -j ACCEPT
+			test "$wan_up" = 1 && $IPT -A PORT_FORWARDING_RULES -p tcp -d $vdest_ip --dport $vdest_port -o $wan_ifname -j ACCEPT
+			test "$wifi2_up" = 1 && $IPT -A PORT_FORWARDING_RULES -p tcp -d $vdest_ip --dport $vdest_port -o $wifi2_ifname -j ACCEPT
 		fi
 
 		if [ "$vproto" = "udp" -o "$vproto" = "tcpudp" ]; then
 			$IPT -t nat -A PORT_FORWARDING_RULES -p udp --dport $vsrc_dport -j DNAT --to-destination $vdest_ip:$vdest_port
 			$IPT -A PORT_FORWARDING_RULES -p udp -d $vdest_ip --dport $vdest_port -o $lan_ifname -j ACCEPT
-			test $wan_up = 1 && $IPT -A PORT_FORWARDING_RULES -p udp -d $vdest_ip --dport $vdest_port -o $wan_ifname -j ACCEPT
-			test $wifi2_up = 1 && $IPT -A PORT_FORWARDING_RULES -p udp -d $vdest_ip --dport $vdest_port -o $wifi2_ifname -j ACCEPT
+			test "$wan_up" = 1 && $IPT -A PORT_FORWARDING_RULES -p udp -d $vdest_ip --dport $vdest_port -o $wan_ifname -j ACCEPT
+			test "$wifi2_up" = 1 && $IPT -A PORT_FORWARDING_RULES -p udp -d $vdest_ip --dport $vdest_port -o $wifi2_ifname -j ACCEPT
 		fi
 	fi
 }
