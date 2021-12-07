@@ -601,8 +601,8 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_rocket-m=y
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifi=y
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-lite=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-lr is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-mesh is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-mesh-pro is not set
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-mesh=y
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-mesh-pro=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifiac-pro is not set
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifi-ap-outdoor-plus=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_unifi-ap-pro is not set
