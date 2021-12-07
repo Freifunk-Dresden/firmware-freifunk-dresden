@@ -37,6 +37,11 @@ setup_ethernet()
 				test -n "$v" && uci set network.${NET}.${option}="${v}"
 			done
 
+			# if mesh on wan, we need to disable udhcpc to avoid flooding syslog
+			if [ "${NET}" = "wan" -a "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ]; then
+				uci set network.wan.proto='static'
+				uci set ddmesh.network.wan_proto='static'
+			fi
 		fi
 	done
 }

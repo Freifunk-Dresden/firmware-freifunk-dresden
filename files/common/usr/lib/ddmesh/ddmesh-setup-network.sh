@@ -112,6 +112,11 @@ setup_ethernet()
 				test -n "$v" && uci set network.${NET}.${option}="${v}"
 			done
 
+			# if mesh on wan, we need to disable udhcpc to avoid flooding syslog
+			if [ "${NET}" = "wan" -a "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ]; then
+				uci set network.wan.proto='static'
+				uci set ddmesh.network.wan_proto='static'
+			fi
 		fi
 	done
 }
@@ -193,7 +198,7 @@ setup_mesh()
 
 		else
 			# create two different vlan configs, one for lan one for wan.
-			# if wan an lan are on switch, then it is possible to put wan and lan dsa interfaces
+			# if wan and lan are on switch, then it is possible to put wan and lan dsa interfaces
 			# into one config. but if we have different physical interfaces eth0 and eth1 (futro)
 			# I can not put those interfaces together, as openwrt requires the vlan basename
 			# br-lan or br-wan (vlan bound to those)
@@ -216,8 +221,11 @@ setup_mesh()
 				done
 
 				# create vlan interface
+				vlan_if_config="vlan_iface_${NET}"
 				uci add network interface
-				uci set network.@interface[-1].device="${br_dev_name}.${mesh_vlan_id}"
+				uci rename network.@interface[-1]="${vlan_if_config}"
+				uci set network.${vlan_if_config}.device="${br_dev_name}.${mesh_vlan_id}"
+				uci set network.${vlan_if_config}.force_link='1'
 			done
 		fi
 	fi # if mesh_on_vlan
@@ -461,7 +469,7 @@ setup_mesh_on_wire()
 				mesh_bridge=$(uci -q get network.mesh_${NET}.device)
 
 				if [ -n "${dev_config}" ]; then
-					# avoid ip conflicts when wan is in same network as lan (getting ip from dhcp server)
+					# avoid ip conflicts (outgoing) when wan is in same network as lan (getting ip from dhcp server)
 					# disable br-wan and br-lan
 					ip link set ${dev_name} down
 
