@@ -246,7 +246,6 @@ $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*
 			"email_notification":$email_notification,
 			"autoupdate":$autoupdate,
 			"available_flash_size":"$avail_flash_size",
-			"bmxd_restart_counter":0,
 			"overlay_md5sum": $(/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh -json)
 		},
 		"opkg":{
