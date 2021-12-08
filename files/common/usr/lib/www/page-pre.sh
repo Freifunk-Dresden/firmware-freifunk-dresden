@@ -112,7 +112,7 @@ else
 	lockimg="/images/red-unlock-icon.png"
 fi
 
-COMMUNITY="$(uci get ddmesh.system.community | sed 's#[ ]#\&nbsp;#g' )"
+COMMUNITY="Freifunk $(uci get ddmesh.system.community | sed 's#[ ]#\&nbsp;#g' )"
 NETID="$(uci -q get ddmesh.system.mesh_network_id)"
 cat<<EOM
 </TD></TR>

@@ -41,12 +41,6 @@ else
 	autoupdate=0
 fi
 
-if [ "$(uci get ddmesh.system.community)" = 'Freifunk OL' ]; then
-	ddmesh_community='Oberlausitz'
-else
-	ddmesh_community="$(uci get ddmesh.system.community | awk '{print $2}')"
-fi
-
 case "$(uci -q get ddmesh.system.node_type)" in
 	node)	node_type="node" ;;
 	mobile)	node_type="mobile" ;;
@@ -252,7 +246,7 @@ $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*
 $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 		},
 		"common":{
-			"city":"$ddmesh_community",
+			"community":"$(uci get ddmesh.system.community)",
 			"node":"$_ddmesh_node",
 			"domain":"$_ddmesh_domain",
 			"ip":"$_ddmesh_ip",

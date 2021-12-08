@@ -36,18 +36,18 @@ EOM
 cat <<EOM >/etc/config/ddmesh
 # mesh_network_id % community name
 config communities 'communities'
-	list	community '0%Freifunk Dresden'
-	list	community '1000%Freifunk Dresden'
-	list	community '1001%Freifunk Dresden NO'
-	list	community '1002%Freifunk Dresden NW'
-	list	community '1003%Freifunk Dresden SO'
-	list	community '1004%Freifunk Dresden SW'
-	list	community '1020%Freifunk Pirna'
-	list	community '1021%Freifunk OL'
+	list	community '0%Dresden'
+	list	community '1000%Dresden'
+	list	community '1001%Dresden NO'
+	list	community '1002%Dresden NW'
+	list	community '1003%Dresden SO'
+	list	community '1004%Dresden SW'
+	list	community '1020%Pirna'
+	list	community '1021%OL'
 
 config system 'system'
 	option	mesh_network_id '0'
-	option	community 'Freifunk Dresden'
+	option	community 'Dresden'
 #	option 	node 0
 	option 	tmp_min_node 900
 	option	tmp_max_node 999

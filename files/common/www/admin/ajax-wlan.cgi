@@ -66,14 +66,14 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 		type="ffadhoc"
 	fi
 
-	# check for meshid
+	# check for 80211s
 	A="$(uci -q get credentials.network.wifi_mesh_id)"
 	if [ "$wifi_essid_clean" = "$A" ]; then
 		type="ffmesh"
 	fi
 
-	# Freifunk (ap) check that community name is in essid
-	A="$(uci get ddmesh.system.community)"
+	# Freifunk (wifi2) check that community name is in essid
+	A="Freifunk $(uci get ddmesh.system.community)"
 	B="${wifi_essid_clean/$A/}"
 	if [ "$wifi_essid_clean" != "$B" ]; then
 		type="ffap"

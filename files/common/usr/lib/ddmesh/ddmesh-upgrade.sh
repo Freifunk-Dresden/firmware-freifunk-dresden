@@ -606,26 +606,26 @@ upgrade_7_1_6()
 	uci -q del ddmesh.system.communities
 	uci add ddmesh communities
 	uci rename ddmesh.@communities[-1]='communities'
-	uci add_list ddmesh.communities.community='0%Freifunk Dresden'
-	uci add_list ddmesh.communities.community='1000%Freifunk Dresden'
-	uci add_list ddmesh.communities.community='1001%Freifunk Dresden NO'
-	uci add_list ddmesh.communities.community='1002%Freifunk Dresden NW'
-	uci add_list ddmesh.communities.community='1003%Freifunk Dresden SO'
-	uci add_list ddmesh.communities.community='1004%Freifunk Dresden SW'
-	uci add_list ddmesh.communities.community='1020%Freifunk Pirna'
-	uci add_list ddmesh.communities.community='1021%Freifunk OL'
+	uci add_list ddmesh.communities.community='0%Dresden'
+	uci add_list ddmesh.communities.community='1000%Dresden'
+	uci add_list ddmesh.communities.community='1001%Dresden NO'
+	uci add_list ddmesh.communities.community='1002%Dresden NW'
+	uci add_list ddmesh.communities.community='1003%Dresden SO'
+	uci add_list ddmesh.communities.community='1004%Dresden SW'
+	uci add_list ddmesh.communities.community='1020%Pirna'
+	uci add_list ddmesh.communities.community='1021%OL'
   # convert
 	case "$(uci get ddmesh.system.community)" in
-		'Freifunk Dresden') 	com='Freifunk Dresden' ;;
-		'Freifunk Freiberg')	com='Freifunk Dresden SW' ;;
-		'Freifunk Freital') 	com='Freifunk Dresden SW' ;;
-		'Freifunk Tharandt')	com='Freifunk Dresden SW' ;;
-		'Freifunk Meissen')		com='Freifunk Dresden NW' ;;
-		'Freifunk Radebeul')	com='Freifunk Dresden NW' ;;
-		'Freifunk Waldheim')	com='Freifunk Dresden NW' ;;
-		'Freifunk OL')		com='Freifunk OL' ;;
-		'Freifunk Pirna')	com='Freifunk Pirna' ;;
-		*) com = 'Freifunk Dresden' ;;
+		'Freifunk Dresden') 	com='Dresden' ;;
+		'Freifunk Freiberg')	com='Dresden SW' ;;
+		'Freifunk Freital') 	com='Dresden SW' ;;
+		'Freifunk Tharandt')	com='Dresden SW' ;;
+		'Freifunk Meissen')		com='Dresden NW' ;;
+		'Freifunk Radebeul')	com='Dresden NW' ;;
+		'Freifunk Waldheim')	com='Dresden NW' ;;
+		'Freifunk OL')		com='OL' ;;
+		'Freifunk Pirna')	com='Pirna' ;;
+		*) com = 'Dresden' ;;
 	esac
 	uci set ddmesh.system.community="$com"
 

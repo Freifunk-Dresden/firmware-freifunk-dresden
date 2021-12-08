@@ -139,7 +139,7 @@ setup_wireless()
  isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
  isolate="${isolate:-1}" #default isolate
  uci set wireless.@wifi-iface[$iface].isolate="$isolate"
- uci set wireless.@wifi-iface[$iface].ssid="${essid2:0:32}"
+ uci set wireless.@wifi-iface[$iface].ssid="Freifunk ${essid2:0:32}"
  test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
  #uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
  #uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
@@ -160,7 +160,7 @@ setup_wireless()
 	isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
 	isolate="${isolate:-1}" #default isolate
 	uci set wireless.@wifi-iface[$iface].isolate="$isolate"
-	uci set wireless.@wifi-iface[$iface].ssid="${essid5:0:32}"
+	uci set wireless.@wifi-iface[$iface].ssid="Freifunk ${essid5:0:32}"
 	#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
 	#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
 	#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
