@@ -123,8 +123,6 @@ upgrade_4_2_2()
 		done
  	fi
  done
-
- uci -q set ddmesh.network.mesh_network_id=1206
 }
 
 upgrade_4_2_3()
@@ -364,7 +362,6 @@ upgrade_6_0_6()
 
 upgrade_6_0_7()
 {
- uci -q set ddmesh.network.mesh_network_id=1206
  uci -q delete system.ntp.server
  uci -q add_list system.ntp.server=0.de.pool.ntp.org
  uci -q add_list system.ntp.server=1.de.pool.ntp.org
@@ -583,7 +580,7 @@ upgrade_7_1_3()
 
 upgrade_7_1_4()
 {
-	uci -q set ddmesh.network.mesh_network_id='0'
+	uci -q set ddmesh.system.mesh_network_id='0'
 	uci -q delete ddmesh.network.speed_enabled
 	uci -q delete ddmesh.network.speed_up
 	uci -q delete ddmesh.network.speed_down
@@ -601,6 +598,26 @@ upgrade_7_1_5()
  	uci set ddmesh.system.firmware_autoupdate=1
 	cp /rom/etc/config/firewall /etc/config/firewall
 }
+
+upgrade_7_1_6()
+{
+	uci -q del ddmesh.network.mesh_network_id
+	uci -q set ddmesh.system.mesh_network_id='0'
+
+ uci add ddmesh communities
+ uci rename ddmesh.@communities[-1]='communities'
+ uci add_list ddmesh.communities.community='0:undefined'
+ uci add_list ddmesh.communities.community='1000:Freifunk Dresden'
+ uci add_list ddmesh.communities.community='1001:Freifunk Pirna'
+ uci add_list ddmesh.communities.community='1002:Freifunk OL'
+ uci add_list ddmesh.communities.community='1011:Freifunk Dresden: Nord'
+ uci add_list ddmesh.communities.community='1012:Freifunk Dresden: Ost'
+ uci add_list ddmesh.communities.community='1013:Freifunk Dresden: Süd'
+ uci add_list ddmesh.communities.community='1014:Freifunk Dresden: West'
+ uci add_list ddmesh.communities.community='1020:Freifunk Dresden: World'
+}
+
+
 
 ##################################
 

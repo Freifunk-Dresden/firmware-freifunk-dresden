@@ -113,7 +113,7 @@ else
 fi
 
 COMMUNITY="$(uci get ddmesh.system.community | sed 's#[ ]#\&nbsp;#g' )"
-NETID="$(uci -q get ddmesh.network.mesh_network_id)"
+NETID="$(uci -q get ddmesh.system.mesh_network_id)"
 cat<<EOM
 </TD></TR>
 <TR><TD COLSPAN="5">

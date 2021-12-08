@@ -94,6 +94,12 @@ cat<<EOM
 EOM
 
 cat<<EOM
+<TR>
+<TH>- Netzwerk-ID <font class="marked-input-fg">*</font>:</TH>
+<TD><INPUT class="marked-input-bg" NAME="form_mesh_network_id" TYPE="TEXT" VALUE="$(uci -q get ddmesh.system.mesh_network_id)"></TD>
+<td></td>
+</TR>
+
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 
 <TR TITLE="Setzt die Umgebungsvariable TZ zur Korrektur von Zeitangaben.">
@@ -226,11 +232,6 @@ cat<<EOM
 <TH>- Fallback-DNS (IP):</TH>
 <TD><INPUT NAME="form_fallback_dns" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.fallback_dns)"></TD>
 <td>DNS-IP-Adresse wird zus&auml;tzlich an Wifi-Ger&auml;te per DHCP als alternativen Nameserver mitgeteilt, falls DNS im Freifunk gest&ouml;rt ist.</td>
-</TR>
-<TR>
-<TH>- Netzwerk-ID <font class="marked-input-fg">*</font>:</TH>
-<TD><INPUT class="marked-input-bg" NAME="form_mesh_network_id" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.mesh_network_id)"></TD>
-<td></td>
 </TR>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
@@ -380,7 +381,7 @@ else
 		test -n "$form_internal_dns1" && uci set ddmesh.network.internal_dns1="$(uhttpd -d $form_internal_dns1)"
 		test -n "$form_internal_dns2" && uci set ddmesh.network.internal_dns2="$(uhttpd -d $form_internal_dns2)"
 		test -n "$form_fallback_dns" && uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
-		uci set ddmesh.network.mesh_network_id=${form_mesh_network_id:-0}
+		uci set ddmesh.system.mesh_network_id=${form_mesh_network_id:-0}
 		uci set ddmesh.led.wifi="${form_led_wifi:-status}"
 		uci set ddmesh.led.status="${form_led_status:-status}"
 		uci set ddmesh.led.wwan="${form_led_wwan:-status}"

@@ -92,9 +92,9 @@ case "$j_status" in
 			fi
 
 			#update netid if >0
-			netid="$(uci -q get ddmesh.network.mesh_network_id)"
+			netid="$(uci -q get ddmesh.system.mesh_network_id)"
 			if [ -n "$j_netid" -a "$j_netid" != "0" -a "$j_netid" != "$netid" ]; then
-				uci set ddmesh.network.mesh_network_id="$j_netid"
+				uci set ddmesh.system.mesh_network_id="$j_netid"
 				logger -s -t $LOGGER_TAG "update netid to $j_netid."
 				uci_commit=1
 				rebooting=1

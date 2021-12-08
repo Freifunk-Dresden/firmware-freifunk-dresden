@@ -34,18 +34,21 @@ config overlay 'data'
 EOM
 
 cat <<EOM >/etc/config/ddmesh
-#generated/overwritten by $0
+
+config communities 'communities'
+	list	community '0:undefined'
+	list	community '1000:Freifunk Dresden'
+	list	community '1001:Freifunk Pirna'
+	list	community '1002:Freifunk OL'
+	list	community '1011:Freifunk Dresden: Nord'
+	list	community '1012:Freifunk Dresden: Ost'
+	list	community '1013:Freifunk Dresden: Süd'
+	list	community '1014:Freifunk Dresden: West'
+	list	community '1020:Freifunk Dresden: World'
+
 config system 'system'
+	option	mesh_network_id '0'
 	option	community 'Freifunk Dresden'
-	list	communities 'Freifunk Dresden'
-	list	communities 'Freifunk Freiberg'
-	list	communities 'Freifunk Freital'
-	list	communities 'Freifunk Meissen'
-	list	communities 'Freifunk OL'
-	list	communities 'Freifunk Pirna'
-	list	communities 'Freifunk Radebeul'
-	list	communities 'Freifunk Tharandt'
-	list	communities 'Freifunk Waldheim'
 #	option 	node 0
 	option 	tmp_min_node 900
 	option	tmp_max_node 999
@@ -125,7 +128,7 @@ config network 'network'
 	option	lan_local_internet '0'
 	option	internal_dns1 '10.200.0.4'
 	option	internal_dns2 '10.200.0.16'
-	option	mesh_network_id '0'
+
 	option	mesh_mtu 1200
 	option	mesh_on_lan 0
 	option	mesh_on_wan 0

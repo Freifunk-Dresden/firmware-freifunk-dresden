@@ -56,7 +56,7 @@ case "$ARG1" in
 		# clear gw state, to ensure creating interface and setting up dns
 		> ${BMXD_GW_STATUS_FILE}
 
-		MESH_NETWORK_ID="$(uci -q get ddmesh.network.mesh_network_id)"
+		MESH_NETWORK_ID="$(uci -q get ddmesh.system.mesh_network_id)"
 		MESH_NETWORK_ID="${MESH_NETWORK_ID:-0}"
 
 		PREFERRED_GATEWAY="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
