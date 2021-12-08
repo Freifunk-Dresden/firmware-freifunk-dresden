@@ -606,15 +606,15 @@ upgrade_7_1_6()
 
  uci add ddmesh communities
  uci rename ddmesh.@communities[-1]='communities'
- uci add_list ddmesh.communities.community='0:undefined'
- uci add_list ddmesh.communities.community='1000:Freifunk Dresden'
- uci add_list ddmesh.communities.community='1001:Freifunk Pirna'
- uci add_list ddmesh.communities.community='1002:Freifunk OL'
- uci add_list ddmesh.communities.community='1011:Freifunk Dresden: Nord'
- uci add_list ddmesh.communities.community='1012:Freifunk Dresden: Ost'
- uci add_list ddmesh.communities.community='1013:Freifunk Dresden: Süd'
- uci add_list ddmesh.communities.community='1014:Freifunk Dresden: West'
- uci add_list ddmesh.communities.community='1020:Freifunk Dresden: World'
+ uci add_list ddmesh.communities.community='0%Freifunk Dresden'
+ uci add_list ddmesh.communities.community='1000%Freifunk Dresden'
+ uci add_list ddmesh.communities.community='1001%Freifunk Dresden NO'
+ uci add_list ddmesh.communities.community='1002%Freifunk Dresden NW'
+ uci add_list ddmesh.communities.community='1003%Freifunk Dresden SO'
+ uci add_list ddmesh.communities.community='1004%Freifunk Dresden SW'
+ uci add_list ddmesh.communities.community='1020%Freifunk Pirna'
+ uci add_list ddmesh.communities.community='1021%Freifunk OL'
+
 }
 
 

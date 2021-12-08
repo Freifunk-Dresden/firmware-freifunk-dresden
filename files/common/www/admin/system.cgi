@@ -72,24 +72,28 @@ EOM
 cat<<EOM
 <TR>
 <TH>Community:</TH>
-<TD colspan="2">
+<TD>
         <select name="form_community" size="1">
 EOM
 print_communities() {
 #$1 - community entry
-#$2 - current community
-	display="$1"
-	[ "$1" = 'Freifunk OL' ] && display='Freifunk Oberlausitz'
-	if [ "$1" = "$2" ]; then
-		echo " <option selected value=\"$1\">$display</option>"
+#$2 - mesh_network_id
+	entry="$1"
+	mesh_network_id="$2"
+	entry_id="${entry%%:*}"
+	entry_name="${entry#*:}"
+
+	if [ "$entry_id" = "$mesh_network_id" ]; then
+		echo " <option selected value=\"$entry_name\">$entry_name ($entry_id)</option>"
 	else
-		echo " <option value=\"$1\">$display</option>"
+		echo " <option value=\"$entry_name\">$entry_name ($entry_id)</option>"
 	fi
 }
 config_load ddmesh
-config_list_foreach system communities print_communities "$(uci get ddmesh.system.community)"
+config_list_foreach communities community print_communities "$(uci get ddmesh.system.mesh_network_id)"
 cat<<EOM
-        </select>
+        </select></td>
+<td>Community Name und Network ID werden in Zukunft zusammen gelegt</td>
 </TR>
 EOM
 
@@ -347,7 +351,10 @@ else
 # process form abort or save
 	if [ -n "$form_submit" ]; then
 		uci set ddmesh.system.node_type="$(uhttpd -d $form_node_type)"
+		# community und network id muessen noch zusammen gefuehrt werden
 		uci set ddmesh.system.community="$(uhttpd -d $form_community)"
+		uci set ddmesh.system.mesh_network_id=${form_mesh_network_id:-0}
+
 		uci set ddmesh.system.wanssh=${form_wanssh:-0}
 		uci set ddmesh.system.wanhttp=${form_wanhttp:-0}
 		uci set ddmesh.system.wanhttps=${form_wanhttps:-0}
@@ -381,7 +388,6 @@ else
 		test -n "$form_internal_dns1" && uci set ddmesh.network.internal_dns1="$(uhttpd -d $form_internal_dns1)"
 		test -n "$form_internal_dns2" && uci set ddmesh.network.internal_dns2="$(uhttpd -d $form_internal_dns2)"
 		test -n "$form_fallback_dns" && uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
-		uci set ddmesh.system.mesh_network_id=${form_mesh_network_id:-0}
 		uci set ddmesh.led.wifi="${form_led_wifi:-status}"
 		uci set ddmesh.led.status="${form_led_status:-status}"
 		uci set ddmesh.led.wwan="${form_led_wwan:-status}"
