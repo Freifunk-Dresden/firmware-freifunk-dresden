@@ -4,11 +4,22 @@
 openwrt 21                - upgrade to openwrt 21 (only from devices with openwrt 19)
 network                   - complete rework of internal network configuration
                             (needed to support openwrt 21 and vlan meshing)
-gateway                   - add ipip gateway tunnel to increase network speed
-gui-backbone              - add possibility to enable/disable backbone configurations
-gui-speedtest             - improve speedtest
 mesh-lan                  - add meshing on vlan 9 (avoids need of bridging cable
                             between wan and lan ports that causes issues on some devices)
+wifi-roaming              - add light roaming (hotspot should use same gateway and should
+                            have same data transfer power, else roaming could select slow
+                            access points but with stronger wifi signal)
+gateway                   - add ipip gateway tunnel to increase network speed
+community                 - rework communities
+bmxd                      - remove unused code
+                          - some improvments on duplicate address detection
+                          - some tweaking to reduce load
+sub-community /bmxd       - add community default route for gateway that ensure routing to other
+                            sub-communities. This will be used when a communtity is split up into
+                            sub-communities.
+                          - add network id
+gui-backbone              - add possibility to enable/disable backbone configurations
+gui-speedtest             - improve speedtest
 gui-syslog                - change color for wifi related entries (red to some other)
 gui-led                   - add option to control LEDs
 gui-nodes                 - change alternating background color "grouping" to better
@@ -17,20 +28,9 @@ gui-network               - implement openwrt 21 network ports (switch DSA)
 gui-vlan                  - configure mesh vlan
                           - ignore nodes for vlan
 gui-wifi                  - let display wifi scan page competely and start scanning afterwards
-wifi                      - add light roaming (hotspot should use same gateway and should
-                            have same data transfer power, else roaming could select slow
-                            access points but with stronger wifi signal)
 splash                    - hide splash if not used (will be removed in future)
-bmxd                      - remove unused code
-                          - some improvments on duplicate address detection
-                          - some tweaking to reduce load
-sub-community /bmxd       - add community default route for gateway that ensure routing to other
-                            sub-communities. This will be used when a communtity is split up into
-                            sub-communities.
-                          - add network id
 sysinfo                   - add wg_pubkey and roaming flag
 system-cron               - nightly reboot/firmware update: add option to configure maintenance time
-
 build-system              - fix some configuration dependencies
                           - add default openwrt config as basis for creating new config files
                           - some other build script improvments
