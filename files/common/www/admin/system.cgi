@@ -80,8 +80,8 @@ print_communities() {
 #$2 - mesh_network_id
 	entry="$1"
 	mesh_network_id="$2"
-	entry_id="${entry%%:*}"
-	entry_name="${entry#*:}"
+	entry_id="${entry%%\%*}"
+	entry_name="${entry#*\%}"
 
 	if [ "$entry_id" = "$mesh_network_id" ]; then
 		echo " <option selected value=\"$entry_name\">$entry_name ($entry_id)</option>"
