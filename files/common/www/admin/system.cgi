@@ -223,6 +223,14 @@ cat<<EOM
 <td>Angegebenes Gateway (z. B.: 10.200.0.1) wird bei Gateway-Auswahl bevorzugt. Ein leeres Feld l&ouml;scht das bevorzugte Gateway.</td>
 </TR>
 <TR>
+<TH>- W&auml;hle nur Community Gateways <font class="marked-input-fg">*</font></TH>
+<TD><INPUT NAME="form_bmxd_only_community" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.bmxd.only_community_gateways)" = "1" ];then echo ' checked="checked"';fi)>
+</td>
+<td><td>
+</TR>
+
+
+<TR>
 <TH>- Freifunk-DNS 1 (IP):</TH>
 <TD><INPUT NAME="form_internal_dns1" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.internal_dns1)"></TD>
 <td></td>
@@ -382,6 +390,7 @@ else
 
 		test -n "$form_bmxd_preferred_gateway" && prefgw="$(uhttpd -d $form_bmxd_preferred_gateway)"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
+		uci set ddmesh.bmxd.only_community_gateways=${form_bmxd_only_community:-0}
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}
 		uci set ddmesh.system.nightly_reboot=${form_nightly_reboot:-0}
 		uci set ddmesh.system.ignore_factory_reset_button=${form_ignore_factory_reset_button:-0}
@@ -397,6 +406,8 @@ else
 		notebox  'Die Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv.'
 		/usr/lib/ddmesh/ddmesh-bmxd.sh prefered_gateway "$prefgw" 2>&1 >/dev/null
 		/usr/lib/ddmesh/ddmesh-bmxd.sh netid "${form_mesh_network_id:-0}" 2>&1 >/dev/null
+		/usr/lib/ddmesh/ddmesh-bmxd.sh only_community_gateway "${form_bmxd_only_community:-0}" 2>&1 >/dev/null
+
 	else
 		notebox  'Einstellungen wurden nicht &uuml;bernommen.'
 	fi

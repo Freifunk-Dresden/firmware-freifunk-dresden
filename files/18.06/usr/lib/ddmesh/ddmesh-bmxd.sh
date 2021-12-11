@@ -56,11 +56,14 @@ case "$ARG1" in
 		# clear gw state, to ensure creating interface and setting up dns
 		> ${BMXD_GW_STATUS_FILE}
 
-		MESH_NETWORK_ID="$(uci -q get ddmesh.network.mesh_network_id)"
+		MESH_NETWORK_ID="$(uci -q get ddmesh.system.mesh_network_id)"
 		MESH_NETWORK_ID="${MESH_NETWORK_ID:-0}"
 
 		PREFERRED_GATEWAY="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
 		test -n "$PREFERRED_GATEWAY" && PREFERRED_GATEWAY="-p $PREFERRED_GATEWAY"
+
+		ONLY_COMMUNITY="$(uci -q get ddmesh.bmxd.only_community_gateways)"
+		test "$ONLY_COMMUNITY" != 1 && ONLY_COMMUNITY=0
 
 		# create a virtual interface for primary interface. loopback has
 		# 127er IP which would be broadcasted
@@ -116,7 +119,7 @@ case "$ARG1" in
 		# --fast_path_hysteresis has not changed frequency of root setting in bat_route
 		# --path_hysteresis should be less than 5, else dead routes are hold to long
 		OPTS="--throw-rules 0 --prio-rules 0"
-		OPTS="${OPTS} --network $_ddmesh_meshnet --netid $MESH_NETWORK_ID --only_community-gw 1"
+		OPTS="${OPTS} --network $_ddmesh_meshnet --netid $MESH_NETWORK_ID --only_community-gw $ONLY_COMMUNITY"
 		OPTS="${OPTS} --gateway_tunnel_network $_ddmesh_meshnet"
 		OPTS="${OPTS} --gateway_hysteresis $GATEWAY_HYSTERESIS --path_hysteresis 3  --script /usr/lib/bmxd/bmxd-gateway.sh"
 		OPTS="${OPTS} ${ROUTING_CLASS} ${PREFERRED_GATEWAY}"
@@ -224,6 +227,7 @@ case "$ARG1" in
 	#	$DAEMON_PATH/$DAEMON -c --networks > $DB_PATH/networks
 		$DAEMON_PATH/$DAEMON -ci > $DB_PATH/info
 		;;
+
 	netid)
 		$DAEMON_PATH/$DAEMON -c --netid ${ARG2}
 		;;
@@ -232,8 +236,12 @@ case "$ARG1" in
 		$DAEMON_PATH/$DAEMON -cp ${ARG2:--0.0.0.0}
 		;;
 
+	only_community_gateway)
+		$DAEMON_PATH/$DAEMON -c --only_community_gw ${ARG2:-0}
+		;;
+
 	*)
-		echo "Usage: $0 {start|stop|restart|gateway|no_gateway|runcheck|update_infos|add_if_wifi|add_if_wire|del_if|prefered_gateway|netid}" >&2
+		echo "Usage: $0 {start|stop|restart|gateway|no_gateway|runcheck|update_infos|add_if_wifi|add_if_wire|del_if|prefered_gateway|netid|only_community_gateway}" >&2
 		exit 1
 		;;
 esac

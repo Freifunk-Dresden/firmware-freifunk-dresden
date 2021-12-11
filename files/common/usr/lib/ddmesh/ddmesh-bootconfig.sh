@@ -155,9 +155,10 @@ config network 'network'
 	#option wan_dns
 
 config bmxd 'bmxd'
-	option  routing_class	3
-	option  gateway_class	'1024/1024'
-	option  prefered_gateway	''
+	option routing_class	3
+	option gateway_class	'1024/1024'
+	option prefered_gateway	''
+	option only_community_gateways '1'
 
 
 config backbone 'backbone'

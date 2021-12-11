@@ -628,6 +628,7 @@ upgrade_7_1_6()
 		*) com = 'Dresden' ;;
 	esac
 	uci set ddmesh.system.community="$com"
+  uci set ddmesh.bmxd.only_community_gateways='1'
 
 ##################################
 
