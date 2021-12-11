@@ -311,7 +311,7 @@ setup_ffgw_tunnel()
 {
  gatewayIP="$1"
 
-	ifname="$(uci -q get network.ffgw.device)"
+	ifname="$(uci -q get network.ffgw.ifname)"
 	ifname="${ifname/+/}"
 
 	setup_ffwg_if()

@@ -616,19 +616,20 @@ upgrade_7_1_6()
 	uci add_list ddmesh.communities.community='1021%OL'
   # convert
 	case "$(uci get ddmesh.system.community)" in
-		'Freifunk Dresden') 	com='Dresden' ;;
-		'Freifunk Freiberg')	com='Dresden SW' ;;
-		'Freifunk Freital') 	com='Dresden SW' ;;
-		'Freifunk Tharandt')	com='Dresden SW' ;;
-		'Freifunk Meissen')		com='Dresden NW' ;;
-		'Freifunk Radebeul')	com='Dresden NW' ;;
-		'Freifunk Waldheim')	com='Dresden NW' ;;
-		'Freifunk OL')		com='OL' ;;
+		'Freifunk Dresden')  com='Dresden' ;;
+		'Freifunk Freiberg') com='Dresden SW' ;;
+		'Freifunk Freital')  com='Dresden SW' ;;
+		'Freifunk Tharandt') com='Dresden SW' ;;
+		'Freifunk Meissen')  com='Dresden NW' ;;
+		'Freifunk Radebeul') com='Dresden NW' ;;
+		'Freifunk Waldheim') com='Dresden NW' ;;
+		'Freifunk OL') com='OL' ;;
 		'Freifunk Pirna')	com='Pirna' ;;
-		*) com = 'Dresden' ;;
+		*) com='Dresden' ;;
 	esac
 	uci set ddmesh.system.community="$com"
   uci set ddmesh.bmxd.only_community_gateways='1'
+}
 
 ##################################
 
