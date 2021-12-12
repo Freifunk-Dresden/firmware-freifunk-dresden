@@ -8,8 +8,6 @@ table.form {
 	background-color: gainsboro;
 	border: 3px solid gainsboro;
 	position: relative;
-/*	top: -1px;
-	left: -1px;*/
 }
 table.note {
 	background-color: #ff99ff;
@@ -171,13 +169,11 @@ th {
 	font-weight: bold;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	text-align: left;
-	vertical-align:top;
 }
 td {
 	font-size: 11px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	text-align: left;
-	vertical-align:top;
 }
 p,ol,ul,dl,pre {
 	margin-top: 4px;

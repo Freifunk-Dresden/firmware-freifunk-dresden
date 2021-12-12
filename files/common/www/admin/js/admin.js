@@ -8,6 +8,7 @@ var lock_dhcp=0
 var lock_wlan=0
 var lock_register=0
 var lock_geoloc=0
+var lock_regwg=0
 
 
 function ajax_dhcp(data)
@@ -81,6 +82,32 @@ function ajax_geoloc(data)
 	var request = $.ajax({url:"/admin/ajax-geoloc.cgi", dataType:"json", dummy:t});
 	request.done(geoloc_callback)
 	lock_geoloc=0;
+}
+
+function regwg_callback(data)
+{
+	try {
+		if(data.status=="RequestAccepted" || data.status=="RequestAlreadyRegistered")
+		{
+			$("#wgcheck_key").val(data.server.key);
+			$("#wgcheck_node").val(data.server.node);
+		}
+		else
+		{
+			if(data.status=="Restricted") $("#wgcheck_key").val("Kein Zugang");
+			else $("#wgcheck_key").val("Fehler");
+		}
+	} catch (e) {}
+}
+function ajax_regwg(host)
+{
+	if(lock_regwg)return;
+	if(host == "")return;
+	lock_regwg=1;
+	t=Math.random();
+	var request = $.ajax({url:"/admin/ajax-regwg.cgi", dataType:"json",method:"POST",data:{host: host}, dummy:t});
+	request.done(regwg_callback)
+	lock_regwg=0;
 }
 
 
