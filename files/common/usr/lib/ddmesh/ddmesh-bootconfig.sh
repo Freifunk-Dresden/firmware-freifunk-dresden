@@ -426,8 +426,9 @@ EOM
 mkdir -p /var/etc/crontabs
 m=$(( $_ddmesh_node % 60))
 cat<<EOM > /var/etc/crontabs/root
-$m */1 * * *  /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
-* * * * *  /usr/lib/ddmesh/ddmesh-tasks.sh watchdog  >/dev/null 2>/dev/null
+$m */1 * * * /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
+* * * * * /usr/lib/ddmesh/ddmesh-tasks.sh watchdog
+* */6 * * * /usr/lib/ddmesh/ddmesh-backbone-regwg.sh refresh >/dev/null 2>/dev/null
 EOM
 
 maintenance="$(uci -q get ddmesh.system.maintenance_time)"

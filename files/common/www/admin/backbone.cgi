@@ -125,10 +125,12 @@ function enable_formfields_outgoing()
 	{
 		document.getElementsByName('form_backbone_outgoing_peer_node')[0].disabled = false;
 		document.getElementsByName('form_backbone_outgoing_peer_port')[0].value = "$DEFAULT_WG_PORT";
+		document.getElementsByName('bb_btn_wgcheck')[0].disabled = false;
 	}
 	else
 	{
 		document.getElementsByName('form_backbone_outgoing_peer_node')[0].disabled = true;
+		document.getElementsByName('bb_btn_wgcheck')[0].disabled = true;
 		document.getElementsByName('form_backbone_outgoing_peer_port')[0].value = "$DEFAULT_FASTD_PORT";
 	}
 }
@@ -350,15 +352,15 @@ EOM
 	<td><input name="form_backbone_incomming_enabled" type="CHECKBOX" VALUE="1"></td>
 	<td title="Typ"><select onchange="enable_formfields_incomming();" name="form_backbone_incomming_peer_type" size="1">
 EOM
-	if [ -f "$FASTD_PATH" ]; then
-		echo "<option selected value=\"fastd\">fastd</option>"
-	fi
 	if [ -f "$WG_PATH" ]; then
-		echo "<option value=\"wireguard\">wireguard</option>"
+		echo "<option selected value=\"wireguard\">wireguard</option>"
+	fi
+	if [ -f "$FASTD_PATH" ]; then
+		echo "<option value=\"fastd\">fastd</option>"
 	fi
 	cat<<EOM
 	</select></td>
-	<td title="Knoten der Gegenstelle"> <input disabled name="form_backbone_incomming_peer_node" type="text" size="5" value=""></td>
+	<td title="Knoten der Gegenstelle"> <input name="form_backbone_incomming_peer_node" type="text" size="5" value=""></td>
 	<td title="Public Key der Gegenstelle"> <input name="form_backbone_incomming_peer_key" type="text" size="40" value=""></td>
 	<td title="Kommentar"> <input name="form_backbone_incomming_peer_comment" type="text" size="20" value=""></td>
 	<td></td>
@@ -399,18 +401,19 @@ EOM
  <td><input name="form_backbone_outgoing_enabled" type="CHECKBOX" VALUE="1"></td>
  <td title="Typ"><select onchange="enable_formfields_outgoing();" name="form_backbone_outgoing_peer_type" size="1">
 EOM
-if [ -f "$FASTD_PATH" ]; then
-echo "<option selected value=\"fastd\">fastd</option>"
-fi
 if [ -f "$WG_PATH" ]; then
-echo "<option value=\"wireguard\">wireguard</option>"
+	echo "<option selected value=\"wireguard\">wireguard</option>"
+fi
+if [ -f "$FASTD_PATH" ]; then
+	echo "<option value=\"fastd\">fastd</option>"
 fi
 cat<<EOM
  </select></td>
- <td title="Zielknottennummer (nur f&uuml;r Wireguard)"><input disabled name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>
+ <td title="Zielknottennummer (nur f&uuml;r Wireguard)"><input name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>
  <td title="Hostname oder IP Adresse &uuml;ber den ein anderer Freifunk Router erreichbar ist (z.b. xxx.dyndns.org). Kann eine IP im LAN oder IP/Hostname im Internet sein."><input name="form_backbone_outgoing_peer_hostname" type="text" size="15" value=""></td>
  <td title="Port des Servers"><input name="form_backbone_outgoing_peer_port" type="text" size="8" value="$DEFAULT_FASTD_PORT"></td>
- <td title="Public Key der Gegenstelle"><input name="form_backbone_outgoing_peer_key" type="text" size="40" value=""></td>
+ <td title="Public Key der Gegenstelle">
+  <button onclick="" name="bb_btn_wgcheck" title="Pr&uuml;fe Zugriff" type="button"><img src="/images/key16.png"></button><div name="wgcheck_status"></div><input name="form_backbone_outgoing_peer_key" type="text" size="40" value=""></td>
  <td></td>
  <td><button onclick="if(checkinput_outgoing())form_submit(document.forms.backbone_form_connection_out,'client_add_outgoing','none')" name="bb_btn_new" title="Verbindung speichern" type="button">Neu</button></td>
 </tr>
