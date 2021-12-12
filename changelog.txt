@@ -19,6 +19,7 @@ sub-community /bmxd       - add community default route for gateway that ensure 
                             sub-communities.
                           - add network id
 gui-backbone              - add possibility to enable/disable backbone configurations
+                          - wireguard: add ajax server registration 
 gui-speedtest             - improve speedtest
 gui-syslog                - change color for wifi related entries (red to some other)
 gui-led                   - add option to control LEDs
