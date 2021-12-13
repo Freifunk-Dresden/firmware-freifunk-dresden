@@ -13,7 +13,10 @@ node="$(uci get ddmesh.system.node)"
 
 usage()
 {
-	echo "usage: $(basename $0) [info <host>]"
+	echo "usage: $(basename $0) info <host> | register <host> | refresh"
+	echo " info     - get server info"
+	echo " register - register with host"
+	echo " refresh  - refresh all stored registrations"
 }
 
 returnJsonError()
