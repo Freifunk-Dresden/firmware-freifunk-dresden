@@ -76,21 +76,21 @@ cat<<EOM
         <select name="form_community" size="1">
 EOM
 print_communities() {
-#$1 - community entry
-#$2 - mesh_network_id
+#$1 - community config entry
+#$2 - current community
 	entry="$1"
-	mesh_network_id="$2"
+	community="$2"
 	entry_id="${entry%%\%*}"
 	entry_name="${entry#*\%}"
 
-	if [ "$entry_id" = "$mesh_network_id" ]; then
+	if [ "$entry_name" = "$community" ]; then
 		echo " <option selected value=\"$entry_name\">$entry_name ($entry_id)</option>"
 	else
 		echo " <option value=\"$entry_name\">$entry_name ($entry_id)</option>"
 	fi
 }
 config_load ddmesh
-config_list_foreach communities community print_communities "$(uci get ddmesh.system.mesh_network_id)"
+config_list_foreach communities community print_communities "$(uci get ddmesh.system.community)"
 cat<<EOM
         </select></td>
 <td>Community Name und Network ID werden in Zukunft zusammen gelegt</td>
