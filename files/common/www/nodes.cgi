@@ -47,7 +47,7 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Gateways</legend>
 <table>
-<tr><th>Pr&auml;f.</th><th>Aktiv</th><th>Community</th><th>Statistik</th><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
+<tr><th width="30">Pr&auml;f.</th><th width="30">Aktiv</th><th width="30">Community</th><th width="30">Statistik</th><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
 EOM
 
 export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p' )"
@@ -56,7 +56,7 @@ cat $BMXD_DB_PATH/gateways | awk -f /usr/lib/www/page-functions.awk -e '
  {
 	if(match($0,"^[=> 	]*[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
  	{
-		img=match($0,"=>") ? "<img src=\"/images/yes12.png\">" : ""
+		active_img=match($0,"=>") ? "<img src=\"/images/yes12.png\">" : ""
 		gsub("^=>","")
 		sub(",","",$3)
 		sub(",","",$4)
@@ -72,13 +72,33 @@ cat $BMXD_DB_PATH/gateways | awk -f /usr/lib/www/page-functions.awk -e '
 		close(statfile)
 		p="^" ENVIRON["preferred"] "$"
 		pref = p && match($1,p) ? "<img src=\"/images/yes12.png\">" : ""
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",c,pref,img,cimg,stat,getnode($1),$1,$1,$2,$3,$3,$5);
-		if(c==1)c=2;else c=1;
+		# add all data into array, use node as key
+		node=getnode($1)
+		data_node[count]=node  # add node, which is then used as index in END
+
+		data_pref[node]=pref
+		data_active[node]=active_img
+		data_comimg[node]=cimg
+		data_stat[node]=stat
+		data_ip[node]=$1
+		data_hop[node]=$2
+		data_brc[node]=$3
+		data_speed[node]=$5
 		count=count+1;
 		brc=brc+$3
 	}
  }
- END {if(count){brc=int(brc/count); printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}}
+ END {
+	arraysort(data_node)
+	for(c=1,i=0;i<count;i++)
+	{
+		key=data_node[i]
+		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",
+		c,data_pref[key],data_active[key],data_comimg[key],data_stat[key],key,data_ip[key],data_ip[key],data_hop[key],data_brc[key],data_brc[key],data_speed[key]);
+		if(c==1)c=2;else c=1;
+	}
+	if(count){brc=int(brc/count); printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}
+ }
 '
 
 cat<<EOM
