@@ -17,17 +17,6 @@ echo "board: $boardname"
 ARG_LED="$1"
 ARG_CMD="$2"
 
-if [ -z "$ARG_CMD" ]; then
-	echo ""
-	echo "ddmesh-led.sh <type> <value>"
-	echo "	type: wifi | status | wwan"
-	echo "	value:"
-	echo "		wifi:	off|on|alive|freifunk|gateway"
-	echo "		status: boot1|boot2|boot3|done|off|on"
-	echo "		wwan:	off|on|2g|3g|4g"
-	exit 0
-fi
-
 # try to detect led (keep order)
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
@@ -87,10 +76,21 @@ case "$platform" in
 		;;
 esac
 
-echo "_led_status: $_led_status"
-echo "_led_wifi2g: $_led_wifi2g"
-echo "_led_wifi5g: $_led_wifi5g"
-echo "_led_wwan: $_led_wwan"
+echo "LED status: $_led_status"
+echo "LED wifi2g: $_led_wifi2g"
+echo "LED wifi5g: $_led_wifi5g"
+echo "LED wwan: $_led_wwan"
+
+if [ -z "$ARG_CMD" ]; then
+	echo ""
+	echo "ddmesh-led.sh <type> <value>"
+	echo "	type: wifi | status | wwan"
+	echo "	value:"
+	echo "		wifi:	off|on|alive|freifunk|gateway"
+	echo "		status: boot1|boot2|boot3|done|off|on"
+	echo "		wwan:	off|on|2g|3g|4g"
+	exit 0
+fi
 
 case "$ARG_LED" in
 	wifi)
@@ -152,9 +152,9 @@ case "$ARG_LED" in
 					;;
 				boot3)	led_timer $_led_status 150 150
 					;;
-				done|off)  led_off $_led_status
+				off)  led_off $_led_status
 					;;
-				on)	led_on $_led_status
+				done|on)	led_on $_led_status
 					;;
 			esac
 		fi
