@@ -21,7 +21,7 @@ function checkInput()
 </script>
 
 <h2>$TITLE</h2>
-<br>
+<br />
 <fieldset class="bubble" id="fieldset" style="display:none;">
 <legend>Speedtest &ndash; $node ($_ddmesh_ip)</legend>
 <table class="speedtest">
@@ -75,7 +75,7 @@ format()
 			speed=gensub(/.*.Bytes[ ]+([0-9]+.[0-9]+[ ]+.bits\/sec).*/,"\\1",1,$0);
 			printf("<script type=\"text/javascript\">document.getElementById(\"%s\").innerHTML=\"%s\"</script>\n",ENVIRON["elementId"], speed);
 		}
-		printf("%s</br>\n",$0);
+		printf("%s<br />\n",$0);
 	}'
 }
 	if [ -x /usr/bin/iperf3 ]; then
