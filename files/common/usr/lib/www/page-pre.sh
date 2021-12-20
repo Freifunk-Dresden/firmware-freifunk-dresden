@@ -68,7 +68,7 @@ cat<<EOF
 EOF
 
 test "$URI_PATH" = "/www/admin" && {
-	echo '<script type="text/javascript" src="/admin/js/admin.js"></script>'
+	echo '<script type="text/javascript" src="/admin/js/admin.js?random=${RANDOM}"></script>'
 }
 
 cat<<EOF
