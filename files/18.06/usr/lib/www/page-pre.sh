@@ -76,32 +76,34 @@ cat<<EOF
 
 <body>
 <table border="0" cellpadding="0" cellspacing="0" class="body">
-<tr><td class="navihead" colspan="5" height="18">
+<tr><td class="topmenu" colspan="5" height="18">
 EOF
 
 if [ -z "$NOMENU" ]; then
-	cat<<EOM
-<span class="color"><a class="color" href="/"><img class="icon" src="/images/home.png">Home</a></span>
+cat<<EOM
+<img src="/images/home.png">
+<a class="topmenu" href="/">Home</a>
 <img alt="" height="10" hspace="2" src="/images/vertbar.gif" width="1">
 EOM
 
 	if [ "$enable_setup" = "1" ]; then
-		cat <<EOM
-<span class="color"><a class="color" href="https://$HTTP_HOST/admin/index.cgi"><img class="icon" src="/images/process.png">Verwalten</a></span>
+cat <<EOM
+<img src="/images/process.png">
+<a class="topmenu" href="https://$HTTP_HOST/admin/index.cgi">Verwalten</a>
 <img alt="" height="10" hspace="2" src="/images/vertbar.gif" width="1">
 EOM
 	fi
 
-	cat<<EOM
-<span class="color"><a class="color" href="http://$FFDD/">Freifunk-Dresden</a></span>
+cat<<EOM
+<a class="topmenu" href="http://$FFDD/">Freifunk-Dresden</a>
 <img alt="" height="10" hspace="2" src="/images/vertbar.gif" width="1">
-<span class="color"><a class="color" href="http://www.freifunk.net/">Freifunk.net</a></span>
+<a class="topmenu" href="http://www.freifunk.net/">Freifunk.net</a>
 EOM
 
 else
 
-	cat<<EOM
-<span class="color"><a class="color" href="http://$FFDD/">Freifunk-Dresden</a></span>
+cat<<EOM
+<a class="topmenu" href="http://$FFDD/">Freifunk-Dresden</a>
 EOM
 
 fi

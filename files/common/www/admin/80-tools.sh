@@ -6,7 +6,7 @@ test -x /usr/bin/iperf3 || exit 0
 
 cat <<EOM
 <tr><td height="8"></td></tr>
-<tr><td><img class="icon" src="/images/expert.png"><big class="plugin">Tools</big></td></tr>
+<tr><td><img src="/images/expert.png"><big class="plugin">Tools</big></td></tr>
 EOM
 
 
