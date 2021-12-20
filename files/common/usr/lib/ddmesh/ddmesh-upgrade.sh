@@ -631,6 +631,11 @@ upgrade_7_1_6()
   uci set ddmesh.bmxd.only_community_gateways='1'
 }
 
+upgrade_8_0_1()
+{
+	true
+}
+
 ##################################
 
 run_upgrade
