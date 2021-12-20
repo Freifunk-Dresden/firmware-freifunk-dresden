@@ -60,7 +60,7 @@ cat<<EOF
 	<meta name="viewport" content="width=device-width" />
 	<meta name="author" content="Stephan Enderlein">
 	<meta name="robots" content="noindex">
-	<link href="/css/ff.css" rel="StyleSheet" TYPE="text/css">
+	<link href="/css/ff.css?random=${RANDOM}" rel="StyleSheet" TYPE="text/css">
 	<link rel="shortcut icon" href="/images/favicon.ico">
 	<script type="text/javascript" src="/js/jquery.js"></script>
 	<script type="text/javascript" src="/js/help.js"></script>
