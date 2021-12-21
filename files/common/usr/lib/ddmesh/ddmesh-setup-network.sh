@@ -44,7 +44,7 @@ setup_ethernet()
 			dev_config=$(get_device_section "$dev_name")
 
 			# check if we have a device section for lan/wan.
-			# In this case the device is normal interface (not a bridge)
+			# and create one
 			if [ -z "$(uci -q get network.${dev_config})" ]; then
 
 				# use name that can not conflict with exisings
@@ -53,8 +53,11 @@ setup_ethernet()
 
 				uci add network device
 				uci rename network.@device[-1]="${dev_config}"
+			fi
 
-				# use devname as bridge interface names
+			# device section will become a bridge (if not already)
+			# add ports if not present and use devname as bridge interface names
+			if [ -z "$(uci -q get network.${dev_config}.ports)" ]; then
 				uci add_list network.${dev_config}.ports="${dev_name}"
 			fi
 
