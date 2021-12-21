@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 #redirect to splash
 if [ "$SERVER_PORT" = "81" -a "$ALLOW_PAGE" != "1" ];then
@@ -10,7 +12,7 @@ fi
 . /usr/lib/www/page-functions.sh
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
-# get model                                                              
+# get model
 eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
 export model="$(echo $model | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 export model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
@@ -19,7 +21,7 @@ export model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 #check if access comes from disabled network and we have access to "Verwalten" enabled
 in_ifname="$(ip ro get $REMOTE_ADDR | sed -n '1,2s#.*dev[ ]\+\([^ ]\+\).*#\1#p')"
 enable_setup=1
-test ! "$(uci get ddmesh.system.wansetup)" = "1" && test "$in_ifname" = "$(uci get network.wan.ifname)" && enable_setup=0
+test ! "$(uci get ddmesh.system.wansetup)" = "1" && test "$in_ifname" = "$(uci get network.wan.device)" && enable_setup=0
 if [ "$(uci get ddmesh.system.meshsetup)" != "1" ]; then
 	test "$in_ifname" = "$wifi_adhoc_ifname" && enable_setup=0
 	test "$in_ifname" = "$wifi_mesh_ifname" && enable_setup=0
@@ -58,7 +60,7 @@ cat<<EOF
 	<meta name="viewport" content="width=device-width" />
 	<meta name="author" content="Stephan Enderlein">
 	<meta name="robots" content="noindex">
-	<link href="/css/ff.css" rel="StyleSheet" TYPE="text/css">
+	<link href="/css/ff.css?random=${RANDOM}" rel="StyleSheet" TYPE="text/css">
 	<link rel="shortcut icon" href="/images/favicon.ico">
 	<script type="text/javascript" src="/js/jquery.js"></script>
 	<script type="text/javascript" src="/js/help.js"></script>
@@ -66,7 +68,7 @@ cat<<EOF
 EOF
 
 test "$URI_PATH" = "/www/admin" && {
-	echo '<script type="text/javascript" src="/admin/js/admin.js"></script>'
+	echo '<script type="text/javascript" src="/admin/js/admin.js?random=${RANDOM}"></script>'
 }
 
 cat<<EOF
@@ -74,32 +76,34 @@ cat<<EOF
 
 <body>
 <table border="0" cellpadding="0" cellspacing="0" class="body">
-<tr><td class="navihead" colspan="5" height="18">
+<tr><td class="topmenu" colspan="5" height="18">
 EOF
 
 if [ -z "$NOMENU" ]; then
-	cat<<EOM
-<span class="color"><a class="color" href="/"><img class="icon" src="/images/home.png">Home</a></span>
+cat<<EOM
+<img src="/images/home.png">
+<a class="topmenu" href="/">Home</a>
 <img alt="" height="10" hspace="2" src="/images/vertbar.gif" width="1">
 EOM
 
 	if [ "$enable_setup" = "1" ]; then
-		cat <<EOM
-<span class="color"><a class="color" href="https://$HTTP_HOST/admin/index.cgi"><img class="icon" src="/images/process.png">Verwalten</a></span>
+cat <<EOM
+<img src="/images/process.png">
+<a class="topmenu" href="https://$HTTP_HOST/admin/index.cgi">Verwalten</a>
 <img alt="" height="10" hspace="2" src="/images/vertbar.gif" width="1">
 EOM
 	fi
 
-	cat<<EOM
-<span class="color"><a class="color" href="http://$FFDD/">Freifunk-Dresden</a></span>
+cat<<EOM
+<a class="topmenu" href="http://$FFDD/">Freifunk-Dresden</a>
 <img alt="" height="10" hspace="2" src="/images/vertbar.gif" width="1">
-<span class="color"><a class="color" href="http://www.freifunk.net/">Freifunk.net</a></span>
+<a class="topmenu" href="http://www.freifunk.net/">Freifunk.net</a>
 EOM
 
 else
 
-	cat<<EOM
-<span class="color"><a class="color" href="http://$FFDD/">Freifunk-Dresden</a></span>
+cat<<EOM
+<a class="topmenu" href="http://$FFDD/">Freifunk-Dresden</a>
 EOM
 
 fi
@@ -110,14 +114,15 @@ else
 	lockimg="/images/red-unlock-icon.png"
 fi
 
-COMMUNITY="$(uci get ddmesh.system.community | sed 's#[ ]#\&nbsp;#g' )"
+COMMUNITY="Freifunk $(uci get ddmesh.system.community | sed 's#[ ]#\&nbsp;#g' )"
+NETID="$(uci -q get ddmesh.system.mesh_network_id)"
 cat<<EOM
 </TD></TR>
 <TR><TD COLSPAN="5">
  <TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
   <TR>
   <TD width="40" HEIGHT="33" ><img src="$lockimg"></TD>
-  <TD HEIGHT="33" style="vertical-align: middle;"><font size="5"><b>$COMMUNITY</b>&nbsp;$_ddmesh_node</font>
+  <TD HEIGHT="33" style="vertical-align: middle;"><font size="5"><b>$COMMUNITY</b>&nbsp;$_ddmesh_node</font><font size="4">&nbsp;&nbsp;(Network ID: $NETID)</font>
 EOM
 test "$URI_PATH" = "/www/admin" && check_passwd && {
 	echo "<font size="+1" color="red"><span class="blink">!!! BITTE Password setzen !!!</span</font>"

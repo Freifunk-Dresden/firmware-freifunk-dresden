@@ -1,5 +1,14 @@
 #!/bin/sh
 
+# script allows to upload/install firmware via GUI. It can be run in an outer loop in case 
+# a router is not accessable (turned on) continously. 
+# It does the following steps:
+# - calculates md5sum of firmware
+# - uploads the image via gui
+# - extracts the md5sum from gui and compares it to local md5sum
+# - it activates firmare upgrade
+
+ 
 USER=root
 PASSWORD=
 
@@ -9,7 +18,7 @@ arg_filename="$1"
 arg_ip="$2"
 
 if [ -z "$arg_filename" -o -z "$arg_ip" ]; then
-	echo "Upload firmware via htts"
+	echo "Upload firmware via https"
 	echo "$(basename $0) <firmware-file> <router-ip>"
 	exit 1 
 fi

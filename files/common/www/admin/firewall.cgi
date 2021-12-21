@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 export TITLE="Verwaltung &gt; Infos: Firewall"
 export HTTP_ALLOW_GET_REQUEST=1
@@ -111,7 +113,7 @@ cat<<EOF
 <fieldset class="bubble">
 <legend>Iptables Download</legend>
 <table>
-<tr><td>IPv4:&nbsp;<a href="iptables.cgi?4filter">filter</a>&nbsp;<a href="iptables.cgi?4nat">nat</a>&nbsp;<a href="iptables.cgi?4mangle">mangle</a>&nbsp;<a href="iptables.cgi?4raw">raw</a></td></tr>
+<tr><td>IPv4:&nbsp;<a href="iptables.cgi?4filter">filter</a>&nbsp;<a href="iptables.cgi?4nat">nat</a>&nbsp;<a href="iptables.cgi?4mangle">mangle</a></td></tr>
 </table>
 </fieldset>
 EOF
@@ -120,8 +122,7 @@ cat<<EOM
 	<b>IPv4 Table:</b>
 	<a href="firewall.cgi?ipt_table=filter&ip_version=ipv4">filter</a>,
 	<a href="firewall.cgi?ipt_table=nat&ip_version=ipv4">nat</a>,
-	<a href="firewall.cgi?ipt_table=mangle&ip_version=ipv4">mangle</a>,
-	<a href="firewall.cgi?ipt_table=raw&ip_version=ipv4">raw</a>
+	<a href="firewall.cgi?ipt_table=mangle&ip_version=ipv4">mangle</a>
 EOM
 if [ "$(uci get ddmesh.system.disable_splash)" != "1" ]; then
 cat<<EOM
@@ -156,10 +157,6 @@ if [ -z "$ipt_table" -o -z "$ipt_chain" -o -z "$ip_version" ]; then
 			show_table $ipt_table FORWARD $ip_version
 			show_table $ipt_table OUTPUT $ip_version
 			show_table $ipt_table POSTROUTING $ip_version
-			;;
-		raw)
-			show_table $ipt_table PREROUTING $ip_version
-			show_table $ipt_table OUTPUT $ip_version
 			;;
 	esac
 

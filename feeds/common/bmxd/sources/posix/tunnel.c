@@ -45,12 +45,25 @@
 #include "plugin.h"
 #include "schedule.h"
 
+void update_community_route(void);
 
 #define ARG_GW_HYSTERESIS "gateway_hysteresis"
 #define MIN_GW_HYSTERE 1
 #define MAX_GW_HYSTERE PROBE_RANGE / PROBE_TO100
 #define DEF_GW_HYSTERE 2
 static int32_t gw_hysteresis;
+
+#define ARG_GW_COMMUNITY "community_gateway"
+#define MIN_GW_COMMUNITY	0
+#define MAX_GW_COMMUNITY	1
+#define DEF_GW_COMMUNITY	0
+static int32_t communityGateway;
+
+#define ARG_ONLY_COMMUNITY_GW "only_community_gw"
+#define MIN_ONLY_COMMUNITY_GW	0
+#define MAX_ONLY_COMMUNITY_GW	1
+#define DEF_ONLY_COMMUNITY_GW	0
+static int32_t onlyCommunityGateway;
 
 #define DEF_GWTUN_NETW_PREFIX "169.254.0.0" /* 0x0000FEA9 */
 static uint32_t gw_tunnel_prefix;
@@ -150,7 +163,9 @@ struct gwc_args
 	uint8_t tunnel_type;
 	int32_t udp_sock;
 	int32_t tun_fd;
-	int32_t tun_ifi;
+	int32_t tun_ifi;			// interfaces have internal in linux kernel an index.
+												// some api can not be used with interface names. instead the coresponding
+												// index is used
 	char tun_dev[IFNAMSIZ]; // was tun_if
 };
 
@@ -158,7 +173,6 @@ struct gws_args
 {
 	int8_t netmask;
 	int32_t port;
-	int32_t owt;
 	int mtu_min;
 	uint32_t my_tun_ip;
 	uint32_t my_tun_netmask;
@@ -178,6 +192,14 @@ struct gws_args
 #define EXT_GW_FIELD_GWADDR d32.def32
 
 // the flags for gw extension messsage gwtypes:
+#define COMMUNITY_GATEWAY 0x01			// this is used by community servers that provide a default
+																		// gateway from one to ALL other communities.
+																		// The server then can route traffic not found within current
+																		// communitiy (not found in bat_route table) to the selected
+																		// gw.
+																		// such gateways are always preverred over gateways that do not
+																		// have this flag set (a router that provides a fall back GW).
+																		// such a router, does not signal this flag (via command line)
 #define ONE_WAY_TUNNEL_FLAG 0x02
 
 struct tun_orig_data
@@ -196,9 +218,7 @@ static struct gws_args *gws_args = NULL;
 static struct gwc_args *gwc_args = NULL;
 
 static struct tun_packet tp;
-
-static int32_t batman_tun_index = 0;
-
+int32_t batman_tun_index = 0;
 static void gwc_cleanup(void);
 
 /* Probe for tun interface availability */
@@ -232,7 +252,7 @@ static void del_dev_tun(int32_t fd, char *tun_name, uint32_t tun_ip, char const 
 	return;
 }
 
-//stephan: begin
+//stephan:
 void call_script(char *pCmd)
 {
 	#define SCRIPT_CMD_SIZE 256
@@ -247,12 +267,12 @@ void call_script(char *pCmd)
 		strcpy(old_cmd, pCmd);
 	}
 }
-//stephan: end
+
 
 static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size, int32_t *ifi, int mtu_min)
 {
+	int32_t bat_fd = -1;
 	int32_t tmp_fd = -1;
-	int32_t fd = -1;
 	int32_t sock_opts;
 	struct ifreq ifr_tun, ifr_if;
 	struct sockaddr_in addr;
@@ -261,7 +281,7 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 	/* set up tunnel device */
 	memset(&ifr_if, 0, sizeof(ifr_if));
 
-	if ((fd = open("/dev/net/tun", O_RDWR)) < 0)
+	if ((bat_fd = open("/dev/net/tun", O_RDWR)) < 0)
 	{
 		dbg(DBGL_SYS, DBGT_ERR, "can't open tun device (/dev/net/tun): %s", strerror(errno));
 		return FAILURE;
@@ -276,14 +296,14 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 		ifr_tun.ifr_flags = IFF_TUN | IFF_NO_PI;
 		sprintf(ifr_tun.ifr_name, "%s%d", BATMAN_TUN_PREFIX, batman_tun_index++);
 
-		if ((ioctl(fd, TUNSETIFF, (void *)&ifr_tun)) < 0)
+		if ((ioctl(bat_fd, TUNSETIFF, (void *)&ifr_tun)) < 0)
 		{
 			dbg(DBGL_CHANGES, DBGT_WARN, "Tried to name tunnel to %s ... busy", ifr_tun.ifr_name);
 		}
 		else
 		{
 			name_tun_success = YES;
-			dbg(DBGL_CHANGES, DBGT_INFO, "Tried to name tunnel to %s ... success", ifr_tun.ifr_name);
+			dbg(DBGL_SYS, DBGT_INFO, "Tried to name tunnel to %s ... success", ifr_tun.ifr_name);
 		}
 	}
 
@@ -291,14 +311,14 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 	{
 		dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETIFF): %s", strerror(errno));
 		dbg(DBGL_SYS, DBGT_ERR, "Giving up !");
-		close(fd);
+		close(bat_fd);
 		return FAILURE;
 	}
 
-	if (Tun_persist && ioctl(fd, TUNSETPERSIST, 1) < 0)
+	if (Tun_persist && ioctl(bat_fd, TUNSETPERSIST, 1) < 0)
 	{
 		dbg(DBGL_SYS, DBGT_ERR, "can't set tun device (TUNSETPERSIST): %s", strerror(errno));
-		close(fd);
+		close(bat_fd);
 		return FAILURE;
 	}
 
@@ -314,20 +334,26 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 	addr.sin_family = AF_INET;
 	memcpy(&ifr_tun.ifr_addr, &addr, sizeof(struct sockaddr));
 
+	//tmp_fd is not needed but must be passed to ioctl() and socked must be open.
+	//it is closed after configuration and not needed further
 	if (ioctl(tmp_fd, (req = SIOCSIFADDR), &ifr_tun) < 0)
 		goto add_dev_tun_error;
 
+	//get interface index. this is used when setting up routes
 	if (ioctl(tmp_fd, (req = SIOCGIFINDEX), &ifr_tun) < 0)
 		goto add_dev_tun_error;
 
 	*ifi = ifr_tun.ifr_ifindex;
 
+  // request current flags
 	if (ioctl(tmp_fd, (req = SIOCGIFFLAGS), &ifr_tun) < 0)
 		goto add_dev_tun_error;
 
+	// update flags
 	ifr_tun.ifr_flags |= IFF_UP;
 	ifr_tun.ifr_flags |= IFF_RUNNING;
 
+	//write back flags
 	if (ioctl(tmp_fd, (req = SIOCSIFFLAGS), &ifr_tun) < 0)
 		goto add_dev_tun_error;
 
@@ -352,21 +378,23 @@ static int32_t add_dev_tun(uint32_t tun_addr, char *tun_dev, size_t tun_dev_size
 	}
 
 	/* make tun socket non blocking */
-	sock_opts = fcntl(fd, F_GETFL, 0);
-	fcntl(fd, F_SETFL, sock_opts | O_NONBLOCK);
+	sock_opts = fcntl(bat_fd, F_GETFL, 0);
+	fcntl(bat_fd, F_SETFL, sock_opts | O_NONBLOCK);
 
 	strncpy(tun_dev, ifr_tun.ifr_name, tun_dev_size - 1);
 	close(tmp_fd);
 
-	return fd;
+	return bat_fd;
 
 add_dev_tun_error:
 
 	if (req)
 		dbg(DBGL_SYS, DBGT_ERR, "can't ioctl %d tun device %s: %s", req, tun_dev, strerror(errno));
 
-	if (fd > -1)
-		del_dev_tun(fd, tun_dev, tun_addr, __func__);
+	if (bat_fd > -1)
+	{
+		del_dev_tun(bat_fd, tun_dev, tun_addr, __func__);
+	}
 
 	if (tmp_fd > -1)
 		close(tmp_fd);
@@ -453,18 +481,32 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 	int download_speed, upload_speed;
 	struct tun_orig_data *tuno = orig_node->plugin_data[tun_orig_registry];
 
+	// search and update gateway tunnel object from ext_packet
 	OLForEach(gw_node, struct gw_node, gw_list)
 	{
 		if (gw_node->orig_node == orig_node)
 		{
-			dbg(DBGL_CHANGES, DBGT_INFO,
-					"Gateway class of originator %s changed from %i to %i, port %d, addr %s",
+			dbg(DBGL_SYS, DBGT_INFO,
+					"Gateway class of originator %s changed from %i -> %i, community %d->%d, port %d, addr %s",
 					orig_node->orig_str,
 					tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS : 0,
 					gw_array ? gw_array[0].EXT_GW_FIELD_GWFLAGS : 0,
+					tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY: 0,
+					gw_array ? gw_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY : 0,
+
 					tuno ? ntohs(tuno->tun_array[0].EXT_GW_FIELD_GWPORT) : 0,
 					ipStr(tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWADDR : 0));
 
+			//SE: reset current_gateway before gw_node is set to zero in case.
+			// this function is called via purge_orig()->flush_orig() when a
+			// node is removed
+			if (gw_node == curr_gateway)
+			{
+				gwc_cleanup();
+				curr_gateway = NULL;
+			}
+
+			// free old tunnel object data
 			if (tuno)
 			{
 				debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
@@ -476,10 +518,12 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 				{
 					OLRemoveEntry(gw_node);
 					debugFree(gw_node, 1103);
-					dbg(DBGL_CHANGES, DBGT_INFO, "Gateway %s removed from gateway list", orig_node->orig_str);
+					gw_node = NULL;
+//					dbg(DBGL_SYS, DBGT_INFO, "Gateway %s removed from gateway list", orig_node->orig_str);
 				}
 			}
 
+			// create new tunnel object and copy all gw infos (ext_packet) to it.
 			if (!tuno && gw_array)
 			{
 				tuno = debugMalloc(sizeof(struct tun_orig_data) + gw_array_len * sizeof(struct ext_packet), 123);
@@ -491,23 +535,19 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 				tuno->tun_array_len = gw_array_len;
 			}
 
-			if (gw_node == curr_gateway)
-			{
-				curr_gateway = NULL;
-				gwc_cleanup();
-			}
-
 			return;
 		}
 	}
 
+	// when this was the first gw
 	if (gw_array && !tuno)
 	{
 		get_gw_speeds(gw_array->EXT_GW_FIELD_GWFLAGS, &download_speed, &upload_speed);
 
-		dbg(DBGL_CHANGES, DBGT_INFO, "found new gateway %s, announced by %s -> class: %i - %i%s/%i%s",
+		dbg(DBGL_SYS, DBGT_INFO, "found new gateway %s, announced by %s -> community: %i, class: %i - %i%s/%i%s",
 				ipStr(gw_array->EXT_GW_FIELD_GWADDR),
 				orig_node->orig_str,
+				gw_array->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY,
 				gw_array->EXT_GW_FIELD_GWFLAGS,
 				(download_speed > 2048 ? download_speed / 1024 : download_speed),
 				(download_speed > 2048 ? "MBit" : "KBit"),
@@ -571,25 +611,53 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 			routing_class == 3 &&
 			tuno &&
 			tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS &&
-			curr_gateway->orig_node != on &&
-			((pref_gateway == on->orig) ||
-			 (pref_gateway != curr_gateway->orig_node->orig &&
-				curr_gateway->orig_node->router->longtm_sqr.wa_val + (gw_hysteresis * PROBE_TO100) <= on->router->longtm_sqr.wa_val)))
+			curr_gateway->orig_node != on 	// if new originator is different from current selected
+		 )
 	{
-		dbg(DBGL_CHANGES, DBGT_INFO, "Restart gateway selection. %s gw found! "
-																 "%d OGMs from new GW %s (compared to %d from old GW %s)",
-				pref_gateway == on->orig ? "Preferred" : "Better",
-				on->router->longtm_sqr.wa_val,
-				on->orig_str,
-				pref_gateway != on->orig ? curr_gateway->orig_node->router->longtm_sqr.wa_val : 255,
-				pref_gateway != on->orig ? curr_gateway->orig_node->orig_str : "???");
+		int reselect = 0;
 
-		curr_gateway = NULL;
-		gwc_cleanup();
+		// in case orig_node is gone
+		if (!curr_gateway->orig_node)
+		{
+//			dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - orig_node gone");
+			reselect = 1;
+		}
+
+		// either process all gateways or only community gw
+		if (   ! onlyCommunityGateway
+					|| (onlyCommunityGateway && tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY) )
+		{
+			// if the new gw (orig) is preferred gw and not currently selected
+			if ( pref_gateway == on->orig && pref_gateway != curr_gateway->orig_node->orig)
+			{
+				dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - preferred found");
+				reselect = 1;
+			}
+
+			// ignore "better-check" if current selected is the preferred gw
+			if (   pref_gateway != curr_gateway->orig_node->orig
+					&& curr_gateway->orig_node->router->longtm_sqr.wa_val + (gw_hysteresis * PROBE_TO100) <= on->router->longtm_sqr.wa_val
+			)
+			{
+//				dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - better found");
+				reselect = 1;
+			}
+		}
+
+		if(reselect)
+		{
+			gwc_cleanup();
+			curr_gateway = NULL;
+		}
 	}
 
 	return CB_OGM_ACCEPT;
 }
+
+// select() also listens via FD to any data that local router sents to bat0.
+// via "plugin" this function is called when data arrive.
+// It reads the data from the fd (which is connected to bat0) and creates a
+// gw udp packet and sends it over the network.
 
 static void gwc_recv_tun(int32_t fd_in)
 {
@@ -625,7 +693,6 @@ static void gwc_recv_tun(int32_t fd_in)
 
 			dbgf(DBGL_SYS, DBGT_ERR, "No vitual IP! Ignoring this GW for %d secs",
 					 (gwc_args->gw_node->unavail_factor * gwc_args->gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) / 1000);
-
 			gwc_cleanup();
 			curr_gateway = NULL;
 			return;
@@ -637,7 +704,6 @@ static void gwc_recv_tun(int32_t fd_in)
 								 (struct sockaddr *)&gwc_args->gw_addr, sizeof(struct sockaddr_in)) < 0)
 			{
 				dbg_mute(30, DBGL_SYS, DBGT_ERR, "can't send data to gateway: %s", strerror(errno));
-
 				gwc_cleanup();
 				curr_gateway = NULL;
 				return;
@@ -648,6 +714,10 @@ static void gwc_recv_tun(int32_t fd_in)
 		else /*if ( gwc_args->last_invalidip_warning == 0 ||
 		            (gwc_args->last_invalidip_warning + WARNING_PERIOD) < batman_time) )*/
 		{
+//sollte hier niemals herkommen, da es nur einen ONE-WAY tunnel gibt
+//kann nur sein, wenn ein anderer client einen anderen tunnel signalisiert,
+//was aber nicht mehr sein durfte (alte firmware)
+
 			//gwc_args->last_invalidip_warning = batman_time;
 			dbg_mute(60, DBGL_CHANGES, DBGT_ERR,
 							 "Gateway client - Invalid outgoing src IP: %s (should be %s) or dst IP %s ! Dropping packet",
@@ -672,11 +742,16 @@ static void gwc_cleanup(void)
 
 		if (gwc_args->my_tun_addr)
 		{
+			// delete default route (in table bat_default)
 			add_del_route(0, 0, 0, 0, gwc_args->tun_ifi, gwc_args->tun_dev, RT_TABLE_TUNNEL, RTN_UNICAST, DEL, TRACK_TUNNEL);
+			//dbg(DBGL_SYS, DBGT_INFO,"Tunnel del");
+
 			call_script("del");
 		}
 
-		if (gwc_args->tun_fd)
+		// check for valid fd, because if tun dev couldn't created, no
+		// hook is registered. gwc_cleanup()
+		if (gwc_args->tun_fd >= 0)
 		{
 			del_dev_tun(gwc_args->tun_fd, gwc_args->tun_dev, gwc_args->my_tun_addr, __func__);
 			set_fd_hook(gwc_args->tun_fd, gwc_recv_tun, YES /*delete*/);
@@ -688,7 +763,7 @@ static void gwc_cleanup(void)
 		}
 
 		// critical syntax: may be used for nameserver updates
-		dbg(DBGL_CHANGES, DBGT_INFO, "GWT: GW-client tunnel closed ");
+		dbg(DBGL_SYS, DBGT_INFO, "GWT: GW-client tunnel closed ");
 
 		debugFree(gwc_args, 1207);
 		gwc_args = NULL;
@@ -806,11 +881,13 @@ static int8_t gwc_init(void)
 		gwc_args->my_tun_addr = gwc_args->my_addr.sin_addr.s_addr;
 		addr_to_str(gwc_args->my_tun_addr, gwc_args->my_tun_str);
 
+		// add default route to bat_default
 		add_del_route(0, 0, 0, 0, gwc_args->tun_ifi, gwc_args->tun_dev, RT_TABLE_TUNNEL, RTN_UNICAST, ADD, TRACK_TUNNEL);
+		//dbg(DBGL_SYS, DBGT_INFO,"Tunnel add");
+
 		call_script(gwc_args->gw_str);
 
-		// critical syntax: may be used for nameserver updates
-		dbg(DBGL_CHANGES, DBGT_INFO, "GWT: GW-client tunnel init succeeded - type: 1WT  dev: %s  IP: %s  MTU: %d",
+		dbg(DBGL_SYS, DBGT_INFO, "GWT: GW-client tunnel init succeeded - type: 1WT  dev: %s  IP: %s  MTU: %d",
 				gwc_args->tun_dev, ipStr(gwc_args->my_addr.sin_addr.s_addr), gwc_args->mtu_min);
 	}
 
@@ -819,7 +896,7 @@ static int8_t gwc_init(void)
 gwc_init_failure:
 
 	// critical syntax: may be used for nameserver updates
-	dbg(DBGL_CHANGES, DBGT_INFO, "GWT: GW-client tunnel init failed");
+	dbg(DBGL_SYS, DBGT_INFO, "GWT: GW-client tunnel init failed");
 
 	gwc_cleanup();
 	curr_gateway = NULL;
@@ -867,8 +944,7 @@ static void gws_recv_udp(int32_t fd_in)
 				continue;
 			}
 
-			if (gws_args->owt &&
-					((tp.u.iphdr.saddr & gws_args->my_tun_netmask) != gws_args->my_tun_ip || tp.u.iphdr.saddr == addr.sin_addr.s_addr))
+			if ((tp.u.iphdr.saddr & gws_args->my_tun_netmask) != gws_args->my_tun_ip || tp.u.iphdr.saddr == addr.sin_addr.s_addr)
 			{
 				if (write(gws_args->tun_fd, tp.u.ip_packet, tp_data_len) < 0)
 					dbg(DBGL_SYS, DBGT_ERR, "can't write packet: %s", strerror(errno));
@@ -907,7 +983,7 @@ static void gws_cleanup(void)
 		}
 
 		// critical syntax: may be used for nameserver updates
-		dbg(DBGL_CHANGES, DBGT_INFO, "GWT: GW-server tunnel closed - dev: %s  IP: %s/%d  MTU: %d",
+		dbg(DBGL_SYS, DBGT_INFO, "GWT: GW-server tunnel closed - dev: %s  IP: %s/%d  MTU: %d",
 				gws_args->tun_dev, ipStr(gws_args->my_tun_ip), gws_args->netmask, gws_args->mtu_min);
 
 		debugFree(gws_args, 1223);
@@ -945,7 +1021,6 @@ static int32_t gws_init(void)
 
 	gws_args->netmask = gw_tunnel_netmask;
 	gws_args->port = my_gw_port;
-	gws_args->owt = 1; //one-way-tunnel
 	gws_args->mtu_min = Mtu_min;
 	gws_args->my_tun_ip = gw_tunnel_prefix;
 	gws_args->my_tun_netmask = htonl(0xFFFFFFFF << (32 - (gws_args->netmask)));
@@ -1012,7 +1087,10 @@ static int32_t gws_init(void)
 	my_gw_ext_array->EXT_FIELD_TYPE = EXT_TYPE_64B_GW;
 
 	my_gw_ext_array->EXT_GW_FIELD_GWFLAGS = Gateway_class;
-	my_gw_ext_array->EXT_GW_FIELD_GWTYPES = Gateway_class ? ONE_WAY_TUNNEL_FLAG : 0;
+
+	my_gw_ext_array->EXT_GW_FIELD_GWTYPES = 0;
+	if (Gateway_class) 	{my_gw_ext_array->EXT_GW_FIELD_GWTYPES |= ONE_WAY_TUNNEL_FLAG;}
+  if (communityGateway) 	{my_gw_ext_array->EXT_GW_FIELD_GWTYPES |= COMMUNITY_GATEWAY;}
 
 	my_gw_ext_array->EXT_GW_FIELD_GWPORT = htons(my_gw_port);
 	my_gw_ext_array->EXT_GW_FIELD_GWADDR = my_gw_addr;
@@ -1020,7 +1098,7 @@ static int32_t gws_init(void)
 	my_gw_ext_array_len = 1;
 
 	// critical syntax: may be used for nameserver updates
-	dbg(DBGL_CHANGES, DBGT_INFO, "GWT: GW-server tunnel init succeeded - dev: %s  IP: %s/%d  MTU: %d",
+	dbg(DBGL_SYS, DBGT_INFO, "GWT: GW-server tunnel init succeeded - dev: %s  IP: %s/%d  MTU: %d",
 			gws_args->tun_dev, ipStr(gws_args->my_tun_ip), gws_args->netmask, gws_args->mtu_min);
 
 	call_script("gateway");
@@ -1030,7 +1108,7 @@ static int32_t gws_init(void)
 gws_init_failure:
 
 	// critical syntax: may be used for nameserver updates
-	dbg(DBGL_CHANGES, DBGT_INFO, "GWT: GW-server tunnel init failed");
+	dbg(DBGL_SYS, DBGT_INFO, "GWT: GW-server tunnel init failed");
 
 	gws_cleanup();
 
@@ -1053,10 +1131,12 @@ static void cb_tun_conf_changed(void *unused)
 			(curr_gateway && !gwc_args))
 	{
 		if (gws_args)
-			gws_cleanup();
+		{	gws_cleanup(); }
 
 		if (gwc_args)
+		{
 			gwc_cleanup();
+		}
 
 		if (primary_addr)
 		{
@@ -1109,21 +1189,35 @@ static void cb_choose_gw(void *unused)
 	OLForEach(gw_node, struct gw_node, gw_list)
 	{
 		if (gw_node->unavail_factor > MAX_GW_UNAVAIL_FACTOR)
+		{
 			gw_node->unavail_factor = MAX_GW_UNAVAIL_FACTOR;
+		}
 
 		/* ignore this gateway if recent connection attempts were unsuccessful */
 		if (     ((gw_node->unavail_factor * gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) + gw_node->last_failure)
-		      >  batman_time
-			 )
+					>  batman_time
+			)
 		{
 			continue;
 		}
 
+		// check that the gw node has valid tunnel object data (received via ext_packet)
 		struct orig_node *on = gw_node->orig_node;
 		struct tun_orig_data *tuno = on->plugin_data[tun_orig_registry];
-
 		if (!on->router || !tuno)
 		{
+			continue;
+		}
+
+// dbg(DBGL_SYS, DBGT_INFO, "check gateway: %s, community: %i # %i (best: %i)", on->orig_str
+// , tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
+// ,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
+// );
+
+		// check for community flag
+		if(onlyCommunityGateway && ! (tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY))
+		{
+//dbg(DBGL_SYS, DBGT_INFO, "ignore gw - not a community gw");
 			continue;
 		}
 
@@ -1139,19 +1233,23 @@ static void cb_choose_gw(void *unused)
 
 			if (tmp_gw_factor > max_gw_factor ||
 					(tmp_gw_factor == max_gw_factor &&
-					 on->router->longtm_sqr.wa_val > best_wa_val))
+					on->router->longtm_sqr.wa_val > best_wa_val))
 				tmp_curr_gw = gw_node;
 
 			break;
 
-		case 2: /* stable connection (use best statistic) */
+		case 2: /* fall-through */ /* stable connection (use best statistic) */
+		case 3: /* fall-through */ /* fast-switch (use best statistic but change as soon as a better gateway appears) */
+		default:
 			if (on->router->longtm_sqr.wa_val > best_wa_val)
+			{
 				tmp_curr_gw = gw_node;
-			break;
-
-		default: /* fast-switch (use best statistic but change as soon as a better gateway appears) */
-			if (on->router->longtm_sqr.wa_val > best_wa_val)
-				tmp_curr_gw = gw_node;
+				dbg(DBGL_SYS, DBGT_INFO, "select gateway: %s, community: %i # %i (best: %i)"
+					, on->orig_str
+					, tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY
+					,on->router->longtm_sqr.wa_val / PROBE_TO100, best_wa_val
+					);
+			}
 			break;
 		}
 
@@ -1163,6 +1261,7 @@ static void cb_choose_gw(void *unused)
 		if (tmp_gw_factor > max_gw_factor)
 			max_gw_factor = tmp_gw_factor;
 
+		// overwrite previously found (perhaps better) gw in favour to preferred gw
 		if ((pref_gateway != 0) && (pref_gateway == on->orig))
 		{
 			tmp_curr_gw = gw_node;
@@ -1174,12 +1273,12 @@ static void cb_choose_gw(void *unused)
 
 			break;
 		}
-	}
+	} //for gw list
 
 	if (curr_gateway != tmp_curr_gw)
 	{
 		if (curr_gateway != NULL)
-			dbg(DBGL_CHANGES, DBGT_INFO, "removing old default route");
+			dbg(DBGL_SYS, DBGT_INFO, "removing old default route");
 
 		/* may be the last gateway is now gone */
 		if (tmp_curr_gw != NULL)
@@ -1188,8 +1287,10 @@ static void cb_choose_gw(void *unused)
 					tmp_curr_gw->orig_node->orig_str, max_gw_class, best_wa_val / PROBE_TO100, max_gw_factor);
 		}
 
-		curr_gateway = tmp_curr_gw;
 		gwc_cleanup();
+		curr_gateway = tmp_curr_gw;
+
+		update_community_route();
 
 		cb_plugin_hooks(NULL, PLUGIN_CB_CONF);
 	}
@@ -1217,7 +1318,7 @@ static int32_t opt_gateways(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 	}
 	else
 	{
-		dbg_printf(cn, "%12s     %15s   #         preferred gateway: %s \n", "Originator", "bestNextHop", ipStr(pref_gateway));
+		dbg_printf(cn, " %12s     %15s   #   Community      preferred gateway: %s \n", "Originator", "bestNextHop", ipStr(pref_gateway));
 
 		OLForEach(gw_node, struct gw_node, gw_list)
 		{
@@ -1229,10 +1330,11 @@ static int32_t opt_gateways(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 
 			get_gw_speeds(tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS, &download_speed, &upload_speed);
 
-			dbg_printf(cn, "%s %-15s %15s %3i, %i%s/%i%s, reliability: %i\n",
+			dbg_printf(cn, "%s %-15s %15s %3i, %i, %i%s/%i%s, reliability: %i\n",
 								 (gwc_args && curr_gateway == gw_node) ? "=>" : "  ",
 								 ipStr(on->orig), ipStr(on->router->key.addr),
 								 gw_node->orig_node->router->longtm_sqr.wa_val / PROBE_TO100,
+								 tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY ? 1 : 0,
 								 download_speed > 2048 ? download_speed / 1024 : download_speed,
 								 download_speed > 2048 ? "MBit" : "KBit",
 								 upload_speed > 2048 ? upload_speed / 1024 : upload_speed,
@@ -1284,8 +1386,11 @@ static int32_t opt_rt_class(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 {
 	if (cmd == OPT_APPLY)
 	{
-		if (/* Gateway_class  && */ routing_class)
+		// delete wg class
+		if ( Gateway_class  && routing_class )
+		{
 			check_apply_parent_option(DEL, OPT_APPLY, _save, get_option(0, 0, ARG_GW_CLASS), 0, cn);
+		}
 	}
 
 	return SUCCESS;
@@ -1307,12 +1412,28 @@ static int32_t opt_rt_pref(uint8_t cmd, uint8_t _save, struct opt_type *opt, str
 		{
 			pref_gateway = test_ip;
 
+			// trigger new gw selection
+			gwc_cleanup();
+			curr_gateway = NULL;
+
 			/* use routing class 3 if none specified */
 			/*
 			if ( pref_gateway && !routing_class && !Gateway_class )
 				check_apply_parent_option( ADD, OPT_APPLY, _save, get_option(0,0,ARG_RT_CLASS), "3", cn );
 */
 		}
+	}
+
+	return SUCCESS;
+}
+
+static int32_t opt_only_commuity_gw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
+{
+	if (cmd == OPT_APPLY)
+	{
+		// trigger new gw selection
+		gwc_cleanup();
+		curr_gateway = NULL;
 	}
 
 	return SUCCESS;
@@ -1391,8 +1512,11 @@ static int32_t opt_gw_class(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 		{
 			Gateway_class = gateway_class;
 
-			if (gateway_class /*&&  routing_class*/)
+			// delete routing class
+			if ( gateway_class &&  routing_class )
+			{
 				check_apply_parent_option(DEL, OPT_APPLY, _save, get_option(0, 0, ARG_RT_CLASS), 0, cn);
+			}
 
 			dbg(DBGL_SYS, DBGT_INFO, "gateway class: %i -> propagating: %s", gateway_class, gwarg);
 		}
@@ -1419,10 +1543,16 @@ static struct opt_type tunnel_options[] = {
 		{ODI, 5, 0, "preferred_gateway", 'p', A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_rt_pref,
 		 ARG_ADDR_FORM, "permanently select specified GW if available"},
 
+		{ODI, 5, 0, ARG_GW_COMMUNITY, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &communityGateway, MIN_GW_COMMUNITY, MAX_GW_COMMUNITY, DEF_GW_COMMUNITY, 0,
+		 ARG_VALUE_FORM, "gateway is a community gw that can route default traffic to other communities"},
+
+		{ODI, 5, 0, ARG_ONLY_COMMUNITY_GW, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &onlyCommunityGateway, MIN_ONLY_COMMUNITY_GW, MAX_ONLY_COMMUNITY_GW, DEF_ONLY_COMMUNITY_GW, opt_only_commuity_gw,
+		 ARG_VALUE_FORM, "only select community gateways"},
+
 		{ODI, 5, 0, ARG_GW_CLASS, 'g', A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_gw_class,
 		 ARG_VALUE_FORM "[/VAL]", "set GW up- & down-link class (e.g. 5mbit/1024kbit)"},
 
-		{ODI, 4, 0, ARG_GWTUN_NETW, 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, 0, 0, 0, 0, opt_gwtun_netw,
+		{ODI, 5, 0, ARG_GWTUN_NETW, 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, 0, 0, 0, 0, opt_gwtun_netw,
 		 ARG_PREFIX_FORM, "set network used by gateway nodes\n"},
 
 #ifndef LESS_OPTIONS
@@ -1440,10 +1570,12 @@ static void tun_cleanup(void)
 	set_ogm_hook(cb_tun_ogm_hook, DEL);
 
 	if (gws_args)
-		gws_cleanup();
+	{	gws_cleanup();}
 
 	if (gwc_args)
+	{
 		gwc_cleanup();
+	}
 }
 
 static int32_t tun_init(void)
@@ -1486,5 +1618,51 @@ void init_tunnel(void)
 {
 	OLInitializeListHead(&gw_list);
 }
+
+
+//SE: create default route to the next hop that also the gateway is using.
+// if all routers have this default route, the packets that are not found in sub-community are traveling
+// to the gateway. This then is responsible to forward it via (e.g.: BGP) to other sub-community and
+// return it back to origin node (initially sent the request)
+// NOTE: I have to check for prefix/netmask. if user did not pass in this
+// then no route will be added.
+// The community route should only forward community pakets of the complete 10.200.er network..
+// Later when ICVPN is used for other communiiies, bmxd or routing rules
+// must be extended
+
+static uint32_t community_via_addr = 0;
+static int32_t community_via_dev_idx = -1;
+void update_community_route(void)
+{
+	if(		gNetworkPrefix && gNetworkNetmask
+		&& 	curr_gateway && curr_gateway->orig_node && curr_gateway->orig_node->router
+		)
+	{
+				if(  community_via_addr != curr_gateway->orig_node->router->key.addr
+				  || community_via_dev_idx != curr_gateway->orig_node->router->key.iif->if_index)
+				{
+					// remove previous route
+					if(community_via_addr)
+					{
+						add_del_route(gNetworkPrefix, (int16_t)gNetworkNetmask,
+											community_via_addr, primary_addr,
+											community_via_dev_idx, "",
+											RT_TABLE_HOSTS, RTN_UNICAST, DEL, TRACK_OTHER_HOST);
+					}
+
+					community_via_addr = curr_gateway->orig_node->router->key.addr;
+					community_via_dev_idx = curr_gateway->orig_node->router->key.iif
+																? curr_gateway->orig_node->router->key.iif->if_index : 0;
+
+
+					add_del_route(gNetworkPrefix, (int16_t)gNetworkNetmask,
+										community_via_addr, primary_addr,
+										community_via_dev_idx, "",
+										RT_TABLE_HOSTS, RTN_UNICAST, ADD, TRACK_OTHER_HOST);
+				}
+		}
+
+}
+
 
 #endif

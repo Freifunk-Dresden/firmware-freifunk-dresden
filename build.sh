@@ -1,15 +1,15 @@
 #!/bin/bash
-
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de
+# GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="13"
+SCRIPT_VERSION="15"
 
 
 # gitlab variables
 # FF_REGISTERKEY_PREFIX
 # FF_BUILD_TAG
 # FF_MESH_KEY
-
 
 # check terms
 case "$TERM" in
@@ -26,8 +26,14 @@ cd $(dirname $0)
 # target file
 PLATFORMS_JSON="build.json"
 
+USE_DOCKER=false
+DOCKER_IMAGE="freifunkdresden/openwrt-docker-build"
+DOCKER_FINAL_TGZ="docker-final-output.tgz"
+DOCKER_CONTAINER_NAME="ffbuild"
+
 DL_DIR=dl
 WORK_DIR=workdir
+FINAL_OUTPUT_DIR="final_output" # used by gen-upload.sh (docker)
 CONFIG_DIR=openwrt-configs
 CONFIG_DEFAULT_FILE="default.config"
 OPENWRT_PATCHES_DIR=openwrt-patches
@@ -62,26 +68,39 @@ C_CYAN='\033[0;36m'
 C_LCYAN='\033[1;36m'
 C_GREY='\033[0;37m'
 C_LGREY='\033[1;37m'
+C_BLINK='\033[5m'
+
+if true; then
+	PBC_RUNNING="${C_YELLOW}${C_BLINK}*${C_NONE}"
+	PBC_ERROR="${C_LRED}E${C_NONE}"
+	PBC_IGNORE="${C_RED}i${C_NONE}"
+	PBC_SUCCESS="${C_GREEN}+${C_NONE}"
+	PBC_SKIP="${C_GREEN}-${C_NONE}"
+else
+	PBC_RUNNING="*"
+	PBC_ERROR="E"
+	PBC_IGNORE="i"
+	PBC_SUCCESS="+"
+	PBC_SKIP="-"
+fi
+
 
 #save current directory when copying config file
 RUN_DIR=$(pwd)
 
-# jq: first selects the array with all entries and every entry is pass it to select().
-#       select() checks a condition and returns the input data (current array entry)
-#       if condition is true
-# Die eckigen klammern aussenherum erzeugt ein array, in welches alle gefundenen objekte gesammelt werden.
-# Fuer die meisten filenamen ist das array 1 gross. aber fuer files die fuer verschiedene router
-# verwendet werden, koennen mehrere eintraege sein.
-
-
+global_error=0
 
 ############# progress bar ##########################
 
 progressbar()
 {
   _value=$1
-  _maxValue=$2
-  _marker=$3
+	shift
+  _maxValue=$1
+	shift
+  _marker=$1
+	shift
+	_char_array=("$@")	# get all other strings and create array again
 
 	if [ "$_TERM" = "1" -a -n "$_value" -a -n "$_maxValue" ]; then
 		# get current number of terminal colums
@@ -117,14 +136,16 @@ progressbar()
 		_bar=""
 		pos=0
 		nextMarkerPos=$charsPerValue
+		barCharIdx=0
 		while [ $pos -lt $len ]
 		do
 			pos=$((pos + 1))
 
 			if [ $pos -le $absCharPos ]; then
-				_bar="${_bar}#"
+#				_bar="${_bar}#"
+				_bar="${_bar}${_char_array[$barCharIdx]}"
 			else
-				_bar="${_bar}-"
+				_bar="${_bar} " # use space character for empty progress
 			fi
 
 			[ $pos -ge $len ] && break;
@@ -132,13 +153,15 @@ progressbar()
 			if [ -n "${_marker}" -a $pos -eq $nextMarkerPos ]; then
 				_bar="${_bar}${_marker}"
 				nextMarkerPos=$(( nextMarkerPos + charsPerValue))
+				barCharIdx=$((barCharIdx +1 ))
 			fi
 
 		done
 
 
 		# construct complete bar
-		printf "%s[%s]%s" "${title}" "${_bar}" "${progress_string}"
+		#printf "%s[%s]%s" "${title}" "${_bar}" "${progress_string}"
+		echo -e -n "${title}[${_bar}]${progress_string}"
 
 		# clear until end of line
 		tput el
@@ -157,7 +180,7 @@ clean_up_exit()
 			printf "\n"
 		fi
 	fi
-	exit ${EXIT:=0} 
+	exit ${EXIT:=0}
 }
 
 
@@ -166,7 +189,10 @@ show_progress()
 	if [ "$_TERM" = "1" ]; then
 		# dont overwrite last value, when no parameter was given (window resize signal)
 		[ -n "$1" ] && _count=$1
-		[ -n "$2" ] && _max=$2
+		shift
+		[ -n "$1" ] && _max=$1
+		shift
+		[ -n "$1" ] && _bar_char_array=("$@")	# get all other strings and create array again
 
 		[ -z "$_count" ] && return
 		[ -z "$_max" -o "$_max" -eq 0 ] && return
@@ -179,7 +205,9 @@ show_progress()
 
 		# print progress bar at bottom
 		tput cup $(( $row - 1)) 0
-		progressbar $_count $_max "|"
+		progressbar $_count $_max "|" "${_bar_char_array[@]}"		# pass last array as separate parameters
+																														# but as one argument with "" to allow
+																														# special characters like *
 
 		# print empty line above
 		tput cup $(( $row - 2)) 0
@@ -217,6 +245,9 @@ listTargets()
 {
  OPT="--raw-output" # do not excape values
  cleanJson=$(getTargetsJson)
+
+#	ARG_regexTarget='ip'
+#	echo "$cleanJson" | jq --raw-output ".[] | select( .name | test (\"${ARG_regexTarget}\") ) | .name"
 
  # first read default
  entry=$(echo "$cleanJson" | jq ".[0]")
@@ -304,35 +335,8 @@ listTargets()
 
 listTargetsNames()
 {
-
- OPT="--raw-output" # do not excape values
- cleanJson=$(getTargetsJson)
-
- # first read default
- targetIdx=0
- entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
- if [ -n "$entry" ]; then
-	_def_name=$(echo $entry | jq $OPT '.name')
- fi
- targetIdx=$(( targetIdx + 1 ))
-
- # run through rest of json
- while true
- do
- 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
-
-	if [ "$entry" = "null" ]; then
-		break;	# last entry
-	else
-		_config_name=$(echo $entry | jq $OPT '.name')
-	fi
-
-	test -z "${_config_name}" && echo "error: configuration has no name" && break
-
- 	printf  "${_config_name}\n"
-
-	targetIdx=$(( targetIdx + 1 ))
- done
+	cleanJson=$(getTargetsJson)
+	echo "$cleanJson" | jq --raw-output '.[] | select(.name != "default") | .name'
 }
 
 # returns number of targets in build.json
@@ -341,38 +345,30 @@ numberOfTargets()
  ARG_regexTarget=$1
  [ -z "$ARG_regexTarget" ] && ARG_regexTarget='.*'
 
- OPT="--raw-output" # do not excape values
- cleanJson=$(getTargetsJson)
-
- # ignore first default entry
- targetIdx=1
-
- count=0
-
- # run through rest of json
- while true
- do
- 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
-	[ "$entry" = "null" ] &&  break	# last entry
-
-	config_name=$(echo $entry | jq $OPT '.name')
-	[ -z "${config_name}" ] && break
-
-	targetIdx=$(( targetIdx + 1 ))
-
-	# ignore targets that do not match
-	filterred=$(echo ${config_name} | sed -n "/$ARG_regexTarget/p")
-	test -z "$filterred" && continue
-
-	count=$(( $count + 1 ))
- done
- printf "%d" $count
+	cleanJson=$(getTargetsJson)
+# princip:
+# 1. separate each object from array and pip it to 'select'
+# 2. 'select' only let pass objects when true
+# 3. .name is piped to both 'test' functions at same time.
+# 4. 'not' function seams to have highere priority than 'and'. brackets are not needed, but I
+#    have added those for more clarifications
+#    The second 'test' outcome (true or false) are piped to 'not' and negates the output of the
+#    second 'test'
+# 5. first 'test' second 'test' are logical evaluated with 'and', and determines the input of
+#    'select' function
+#
+# 6. now an array from what 'select' filters, which in turn is
+# then counted by function 'length'
+echo "$cleanJson" | jq --raw-output "[  .[]
+			| select(	.name |
+			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+					    ) ] | length"
 }
 
 search_target()
 {
 	target=$1
-	 awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{print FILENAME}' openwrt-configs/*/*
+	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{print FILENAME}' openwrt-configs/*/*
 }
 
 setup_dynamic_firmware_config()
@@ -391,33 +387,169 @@ setup_dynamic_firmware_config()
 
 
 #----------------- process argument ----------------------------------
-if [ -z "$1" ]; then
+usage()
+{
 	# create a simple menu
-	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) list | search <string> | clean | feed-revisions | (target | all | failed [menuconfig ] [rerun] [ <make params ...> ])"
-	echo " list             - lists all available targets"
-	echo " list-targets     - lists only target names for usage in IDE"
-	echo " search           - search specific router (target)"
-	echo " clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)"
-	echo " feed-revisions   - returns the git HEAD revision hash for current date (now)."
-	echo "                    The revisions then could be set in build.json"
-	echo " target           - target to build (can have regex)"
-	echo "          that are defined by build.json. use 'list' for supported targets."
-	echo "          'all'                   - builds all targets"
-	echo "          'failed'                - builds only previously failed or not built targets"
-	echo "          'ramips.*'              - builds all ramips targets only"
-	echo "          'ramips.rt305x.generic' - builds exact this target"
-	echo "          '^rt30.*'               - builds all that start with 'rt30'"
-	echo "          'ramips.mt7621.generic ar71xx.tiny.lowmem' - space or pipe separates targets"
-	echo "          'ramips.mt7621.generic | ar71xx.tiny.lowmem' "
-	echo ""
-	echo " menuconfig       - displays configuration menu"
-	echo " rerun            - enables a second compilation with make option 'V=s'"
-	echo "                    If first make failes a second make is tried with this option"
-	echo " make params      - all paramerters that follows are passed to make command"
-	echo ""
+	cat <<EOM
+Version: $SCRIPT_VERSION
+usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < make params ... > ]
+ options:
+   -h    docker host, if not specifies environment variable 'export DOCKER_HOST' is used.
+         e.g: tcp://192.168.123.123
+   -d    use docker for compiling (keep workdir)
+   -D    use docker for compiling (clear workdir)
+   -s    open docker shell
+
+  commands:
+   list              - lists all available targets
+   lt | list-targets - lists only target names for usage in IDE
+   search <string>   - search specific router (target)
+   clean             - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
+   feed-revisions    - returns the git HEAD revision hash for current date (now).
+                       The revisions then could be set in build.json
+   target            - target to build (can have regex)
+           that are defined by build.json. use 'list' for supported targets.
+           'all'                   - builds all targets
+           'failed'                - builds only previously failed or not built targets
+           'ramips.*'              - builds all ramips targets only
+           'ramips.rt305x.generic' - builds exact this target
+           '^rt30.*'               - builds all that start with 'rt30'
+           'ramips.mt7621.generic ar71xx.tiny.lowmem' - space or pipe separates targets
+           'ramips.mt7621.generic | ar71xx.tiny.lowmem'
+
+   menuconfig       - displays configuration menu
+   rerun            - enables a second compilation with make option 'V=s'
+                      If first make failes a second make is tried with this option
+   make params      - all paramerters that follows are passed to make command
+EOM
+}
+
+# check if there are options
+while getopts "sDdh:" arg
+do
+	case "$arg" in
+		h)
+			test -z "${OPTARG}" && echo "docker host"
+			export DOCKER_HOST="${OPTARG}" # export it here, to not overwrite external possible
+			;;                                   # variable
+		d)
+			USE_DOCKER=true
+			DOCKER_RM_WORKDIR=false
+			if [ -z "$(which docker)" ]; then
+				echo "Error: no docker installed"
+				exit 1
+			fi
+			;;
+		D)
+			USE_DOCKER=true
+			DOCKER_RM_WORKDIR=true
+			if [ -z "$(which docker)" ]; then
+				echo "Error: no docker installed"
+				exit 1
+			fi
+			;;
+		s)
+			USE_DOCKER=true
+			RUN_DOCKER_SHELL="1"
+			if [ -z "$(which docker)" ]; then
+				echo "Error: no docker installed"
+				exit 1
+			fi
+			;;
+
+		\?)	exit 1	;;
+	esac
+done
+shift $(( OPTIND - 1 ))
+
+#for a;  do echo "arg [$a]"; done
+#echo $@
+
+if [ -z "$1" -a "$RUN_DOCKER_SHELL" != "1" ]; then
+	usage
 	exit 1
 fi
+
+# if docker is used, this script should be called from docker container
+if $USE_DOCKER; then
+	echo "Using Docker at ${DOCKER_HOST:=localhost}"
+	docker_tar="$(mktemp -u).tgz"
+	docker_tar=$(basename ${docker_tar})	# remove path
+
+	# check connection
+	docker info 2>/dev/null >/dev/null || {
+		echo "Error: docker host not reachable"
+		exit 1
+	}
+
+	# create container and upload current directory
+	docker inspect ${DOCKER_CONTAINER_NAME} >/dev/null 2>/dev/null || {
+		echo -e "${C_CYAN}create container${C_NONE}"
+  	docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
+	}
+	echo -e "${C_CYAN}start container${C_NONE}"
+	docker start ${DOCKER_CONTAINER_NAME}
+
+	if [ "$RUN_DOCKER_SHELL" = "1" ]; then
+		docker exec -it ${DOCKER_CONTAINER_NAME} bash
+	else
+
+		# create file to upload
+		echo -e "${C_CYAN}create project archive${C_NONE}"
+		tar -cz --exclude ${WORK_DIR} --exclude ${DL_DIR} --exclude ${FINAL_OUTPUT_DIR} \
+				--exclude-backups --exclude-vcs --exclude-vcs-ignores \
+				-f "/tmp/${docker_tar}" ./
+
+		# upload and extract (workdir is not included)
+		echo -e "${C_CYAN}copy project to container${C_NONE}"
+		docker cp "/tmp/${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/
+		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "rm -rf files feeds openwrt-configs; tar -xzf ${docker_tar} && rm ${docker_tar}"
+		rm /tmp/${docker_tar}
+
+		# run build
+		${DOCKER_RM_WORKDIR} && {
+			echo -e "$${C_LCYAN}remove workdir${C_NONE}"
+			docker exec -it ${DOCKER_CONTAINER_NAME} rm -rf ${WORK_DIR}
+		}
+		docker exec -it ${DOCKER_CONTAINER_NAME} git config --global http.sslverify false
+		echo -e "${C_CYAN}run build${C_NONE}"
+		# need to pass target as one parameter. $@ does separate target list ("ar71xx.tiny.lowmem ath79.generic lantiq.xrx200")
+		target="$1"
+		shift
+		docker exec -it -e FF_REGISTERKEY_PREFIX=$FF_REGISTERKEY_PREFIX ${DOCKER_CONTAINER_NAME} ./build.sh "$target" $@
+
+		# ignore some operations for some arguments
+		case "$1" in
+		list) ;;
+		lt | list-targets) ;;
+		search) ;;
+		clean) ;;
+		feed-revisions) ;;
+		*)
+			echo -e "${C_CYAN}generate upload${C_NONE}"
+			docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
+
+			# copy back results
+			echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_FINAL_TGZ}]${C_NONE}"
+			docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf ${DOCKER_FINAL_TGZ} final_output
+			docker cp ${DOCKER_CONTAINER_NAME}:/builds/${DOCKER_FINAL_TGZ} "${DOCKER_FINAL_TGZ}"
+			tar xvzf "${DOCKER_FINAL_TGZ}"
+			rm "${DOCKER_FINAL_TGZ}"
+			;;
+		esac
+
+		# stop and delete
+		echo -e "${C_CYAN}stop container${C_NONE}"
+		docker stop -t0 ${DOCKER_CONTAINER_NAME}
+	#	docker rm ${DOCKER_CONTAINER_NAME}
+
+	fi
+
+	exit 0
+else
+	echo -e "${C_CYAN}build locally.${C_NONE}"
+fi
+
 
 #check if next argument is "menuconfig"
 if [ "$1" = "list" ]; then
@@ -425,7 +557,7 @@ if [ "$1" = "list" ]; then
 	exit 0
 fi
 
-if [ "$1" = "list-targets" ]; then
+if [ "$1" = "list-targets" -o "$1" = "lt" ]; then
 	listTargetsNames
 	exit 0
 fi
@@ -475,6 +607,7 @@ else
 	# get target (addtional arguments are passt to command line make)
 	# last value will become DEFAULT
 	targetRegex="$1"
+echo "1:targetRegex=[$targetRegex]"
 	shift
 
 	if [ "$targetRegex" = "failed" ]; then
@@ -496,17 +629,17 @@ else
 	# remove leading and trailing spaces
 	targetRegex=$(echo "${targetRegex}" | sed 's#[ 	]\+$##;s#^[ 	]\+##')
 
-	# replace any "space" with '|'. space can be used as separator lile '|'
-	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#|#g')
-
-	# add '\' to each '|â€™
-	targetRegex=${targetRegex//|/\\|}
+	# replace any "space" with '$|^'. space can be used as separator lile '|'
+	# This ensures that full target names are only considered instead of processing
+	# targets that just start with the given name
+	# If wildecards are needed, user has to add them
+	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#$|^#g')
 
 	# append '$' to targetRegex, to ensure that 'ar71xx.generic.xyz' is not built
 	# when 'ar71xx.generic' was specified. Use 'ar71xx.generic.*' if both
 	# targets should be created
 
-	targetRegex="$targetRegex\$"
+	targetRegex="^$targetRegex\$"
 	echo "targetRegex:[$targetRegex]"
 
 	#check if next argument is "menuconfig"
@@ -524,7 +657,34 @@ else
 	BUILD_PARAMS=$*
 fi
 
+
 echo "### target-regex:[$targetRegex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
+
+cleanJson=$(getTargetsJson)
+
+# princip:
+# 1. separate each object from array and pip it to 'select'
+# 2. 'select' only let pass objects when true
+# 3. .name is piped to both 'test' functions at same time.
+# 4. 'not' function seams to have highere priority than 'and'. brackets are not needed, but I
+#    have added those for more clarifications
+#    The second 'test' outcome (true or false) are piped to 'not' and negates the output of the
+#    second 'test'
+# 5. first 'test' second 'test' are logical evaluated with 'and', and determines the input of
+#    'select' function
+echo "$cleanJson" | jq --raw-output ".[]
+			| select(	.name |
+			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+					    ) | .name"
+# same as first command; but creates an array from what 'select' filters, which in turn is
+# then counted by function 'length'
+echo "$cleanJson" | jq --raw-output "[  .[]
+			| select(	.name |
+			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+					    ) ] | length"
+
+# emtpy line needed, else tput stuff clears some. So this emtpy line is cleared
+echo " "
 
 if [ "$_TERM" = "1" ]; then
 	trap clean_up_exit SIGINT SIGTERM
@@ -583,46 +743,48 @@ setup_buildroot ()
 		if [ -d $openwrt_patches_dir ]; then
 			for i in $openwrt_patches_dir/*
 			do
-				echo "apply openwrt patch: $i to buildroot:$buildroot"
+				echo -e "${C_CYAN}apply openwrt patch:${C_NONE} $i to buildroot:$buildroot"
 				# --no-backup-if-mismatch avoids creating backup files for files
 				# with different names or if not exist (new files)
 				patch --no-backup-if-mismatch --directory=$buildroot -p1 < $i
 			done
 		fi
 	else
-		echo -e "${C_PURPLE}Buildroot [$buildroot]${C_NONE} already present"
+		echo -e "${C_CYAN}Buildroot [$buildroot]${C_NONE} already present"
 	fi
 
-	echo -n -e $C_PURPLE"create dl directory/links"$C_NONE": "
+	echo -n -e $C_CYAN"create dl directory/links"$C_NONE": "
 	rm -f $buildroot/dl
 	ln -s ../../$openwrt_dl_dir $buildroot/dl
 	echo "done."
 
 	# -------- common files -----------
 	# copy common files first
-	echo -n -e "${C_PURPLE}copy rootfs ${C_NONE}: ${C_GREEN} common ${C_NONE}: "
+	echo -n -e "${C_CYAN}copy rootfs (common)${C_NONE}: "
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
-	cp -a $RUN_DIR/files/common/* $buildroot/files/
+	# --remove-destination forces copy (first remove (e.g. symlinks))
+	cp -a --remove-destination $RUN_DIR/files/common/* $buildroot/files/
 	echo " done."
 
 	# -------- specific files -----------
 	# copy specific files over (may overwrite common)
-	echo -n -e "${C_PURPLE}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
+	echo -n -e "${C_CYAN}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
 	if [ -n "${firmware_files}" -a -d "$RUN_DIR/files/${firmware_files}" ]; then
-		cp -a $RUN_DIR/files/${firmware_files}/* $buildroot/files/
+		# --remove-destination forces copy (first remove (e.g. symlinks))
+		cp -a --remove-destination $RUN_DIR/files/${firmware_files}/* $buildroot/files/
 		echo "done."
 	else
 		echo "no specific files."
 	fi
 
-	echo -n -e $C_PURPLE"create rootfs/etc/built_info file: "$C_NONE
+	echo -n -e $C_CYAN"create rootfs/etc/built_info file: "$C_NONE
 	mkdir -p $buildroot/files/etc
 	> $buildroot/files/etc/built_info
 	echo "done."
 
 	# more dynamic changes
-	echo -n -e $C_PURPLE"setup dynamic firmware config: "$C_NONE
+	echo -n -e $C_CYAN"setup dynamic firmware config: "$C_NONE
 	setup_dynamic_firmware_config "$buildroot/files"
   echo "done."
 
@@ -636,7 +798,7 @@ setup_buildroot ()
 	# So I check if FF_BUILD_TAG is set and then use this. If not defined I use
 	# the one I can determine.
 	git_ddmesh_rev="$(git log -1 --format=%H)"
-	if [ "$FF_BUILD_TAG" ]; then
+	if [ -n "$FF_BUILD_TAG" ]; then
 		git_ddmesh_branch="$FF_BUILD_TAG"
 	else
 		git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
@@ -700,7 +862,7 @@ if [ -n "$entry" ]; then
 fi
 
 
-# prepare progress bar
+# ------------- prepare progress bar -----------------------------------
 progress_counter=0
 progress_max=$(numberOfTargets "$targetRegex")
 
@@ -708,19 +870,30 @@ if [ $progress_max -eq 0 ]; then
  	echo "no target found"
 	clean_up_exit 1
 fi
+# progbar_char holds the current count character for each build.
+# this means that each target can display a different character in progressbar to show the
+# build status.
+# example: |####|.....|*****|
+# hier I use:
+#  ' ' - nothing compiled yet (default defined in progressbar
+#	 '+' - success;
+#  '-' - ignored previously successful targets (./build.sh failed)
+#  'i' - ignored (not yet done or no config or when only building "failed" targets)
+#  'E' - error
+#
+unset progbar_char_array
 
 # if "all" target is selected, then remove all compile status files
 test "${ARG_TARET_ALL}" = "1" && find $WORK_DIR/*/bin/ -name "${compile_status_file}" -delete
 
-
-# build loop, run through all targets listed in build.json
+# ---------------- build loop, run through all targets listed in build.json -----------------
 targetIdx=1	# index 0 holds default values
 while true
 do
 	cd $RUN_DIR
 
 	# read configuration from first target in build.json
- 	entry=$(getTargetsJson | jq ".[$targetIdx]")
+	entry=$(getTargetsJson | jq ".[$targetIdx]")
 	targetIdx=$(( targetIdx + 1 ))	# for next build loop
 
 	# check if we have reached the end of all targets
@@ -728,16 +901,21 @@ do
 
 	#check if configuration name matches the targetRegex (target parameter)
 	config_name=$(echo $entry | jq $OPT '.name')
-	filterred=$(echo $config_name | sed -n "/$targetRegex/p")
+	# add '\' to each '|'™ only for sed command
+	sedTargetRegex=${targetRegex//|/\\|}
+	filterred=$(echo $config_name | sed -n "/$sedTargetRegex/p")
 	test -z "$filterred" && continue
 
 
 	# only enable progressbar for tty
 	if [ "$_TERM" = "1" ]; then
-		show_progress $progress_counter $progress_max
-		progress_counter=$(( $progress_counter + 1 ))
+		show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
 		echo ""
 	fi
+	# increment counter (needed also when no progressbar is displayed, because the
+	# status is set despite of the usage of the progbar_char_array. This avoids
+	# the need of checking every time whether the progressbar is used or not
+	progress_counter=$(( $progress_counter + 1 ))
 
 	# check each config variable and use defaults when no value was defined
 	echo -e "${C_YELLOW}process configuration${C_NONE}"
@@ -825,8 +1003,15 @@ do
 			compile_status=1
 		fi
 		# ignore successfull targetes
-		test "$compile_status" = "0" && continue;
+		test "$compile_status" = "0" && {
+			progbar_char_array[$((progress_counter-1))]="${PBC_SKIP}"
+			continue;
+		}
 	fi
+
+	# progress bar: compiling
+	progbar_char_array[$((progress_counter-1))]="${PBC_RUNNING}"
+	show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
 
 	# reset compile status
 	rm -f ${target_dir}/${compile_status_file}
@@ -839,7 +1024,7 @@ do
 	setup_buildroot $buildroot $_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_selector_files
 
 	# --------  generate feed configuration from selected config -----------
-	echo -e $C_PURPLE"generate feed config"$C_NONE
+	echo -e $C_CYAN"generate feed config"$C_NONE
 
 	# create feed config from build.json
 	if [ "$_feeds" = "null" ]; then
@@ -889,16 +1074,16 @@ EOM
 	cd $buildroot
 
 	if [ "$MAKE_CLEAN" = "1" ]; then
-		echo -e $C_PURPLE"run clean"$C_NONE
+		echo -e $C_CYAN"run clean"$C_NONE
 		make clean
 		continue # clean next target
 	fi
 
 	# --------- update all feeds from feeds.conf (feed info) ----
-	echo -e $C_PURPLE"update feeds"$C_NONE
+	echo -e $C_CYAN"update feeds"$C_NONE
 	./scripts/feeds update -a
 
-	echo -e $C_PURPLE"install missing packages from feeds"$C_NONE
+	echo -e $C_CYAN"install missing packages from feeds"$C_NONE
 	# install additional packages (can be selected via "menuconfig")
 	idx=0
 	while true
@@ -912,34 +1097,34 @@ EOM
 		./scripts/feeds install $entry
 	done
 
-	echo -e $C_PURPLE"install all packages from own local feed directory (ddmesh_own)"$C_NONE
+	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh_own)"$C_NONE
 	./scripts/feeds install -a -p ddmesh_own
 
 
 	# delete target dir, but only delete when no specific device/variant is built.
 	# generic targets (that contains all devices) must come before specific targets.
 	if [ -z "$_variant" ]; then
-		echo -e "${C_PURPLE}delete previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
+		echo -e "${C_CYAN}delete previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
 		rm -rf ${target_dir}
 	else
-		echo -e "${C_PURPLE}KEEP previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
+		echo -e "${C_CYAN}KEEP previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
 	fi
 
 	#try to apply target patches
 	mkdir -p $DDMESH_PATCH_STATUS_DIR
-        echo -e $C_PURPLE"apply target patches"$C_NONE
-        idx=0
-        while true
-        do
+	echo -e $C_CYAN"apply target patches"$C_NONE
+	idx=0
+	while true
+	do
 		# check if all patches was processed
 		test -z "$_target_patches" && break
 
-                # use OPT to prevent jq from adding ""
-                entry="$(echo $_target_patches | jq $OPT .[$idx])"
-                test "$entry" = "null" && break
-                test -z "$entry"  && break
+		# use OPT to prevent jq from adding ""
+		entry="$(echo $_target_patches | jq $OPT .[$idx])"
+		test "$entry" = "null" && break
+		test -z "$entry"  && break
 
-                idx=$(( idx + 1 ))
+		idx=$(( idx + 1 ))
 
 		# check patch
 		if [ -f $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ]; then
@@ -960,62 +1145,75 @@ EOM
 		else
 			echo -e $C_RED"Warning: patch [$_selector_patches/$entry] not found!"$C_NONE
 		fi
-        done
+	done
 
-	#copy after installing feeds, because .config will be overwritten by default config
-	echo -e $C_PURPLE"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
 				# create a new config
-		
+
 	DEFAULT_CONFIG="${RUN_DIR}/${CONFIG_DIR}/${_selector_config}/${CONFIG_DEFAULT_FILE}"
-	# check if config exists, if not uses default as basis
 	if [ ! -f "${RUN_DIR}/${config_file}" ]; then
-		echo -e "${C_PURPLE}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
-	
-		if [ ! -f ${DEFAULT_CONFIG} ]; then
-			echo -e "${C_RED}ERROR: NO Default Config:${C_NONE} [${DEFAULT_CONFIG}]"
-			clean_up_exit 1
+		if [ "$MENUCONFIG" = "1" ]; then
+			echo -e "${C_CYAN}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
+
+			if [ ! -f ${DEFAULT_CONFIG} ]; then
+				echo -e "${C_RED}ERROR: NO Default Config:${C_NONE} [${DEFAULT_CONFIG}]"
+				clean_up_exit 1
+			fi
+
+			# remove any old config from build root
+			rm -f .config
+			#cp ${DEFAULT_CONFIG} .config
+		else
+			# no config and no menuconfig -> continue with next target; do not create config yet.
+			# it only should be down by menuconfig
+			echo -e $C_CYAN"no configuration, continue with next target if any$C_NONE"
+			progbar_char_array[$((progress_counter-1))]="${PBC_IGNORE}"
+			continue
+
 		fi
-	
-		# copy config only to buildroot, not as specific config. 
-		# specific configs should be created only from menuconfig
-		
-		cp ${DEFAULT_CONFIG} .config 
-		MENUCONFIG=1
 	else
 		# copy specific config
+		echo -e $C_CYAN"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 		cp $RUN_DIR/$config_file .config
 	fi
 
-
-
 	if [ "$MENUCONFIG" = "1" ]; then
 
-		echo -e "${C_PURPLE}run menuconfig${C_NONE}"
-		make menuconfig 
+		echo -e "${C_CYAN}run menuconfig${C_NONE}"
+		make menuconfig
+	fi
+
+	# default config contains important modifications after openwrt has created a config from scratch
+	# or user has enabled some unsupported features by freifunk.
+	# All invalid settings are overwritten by just appending the default config.
+	# see https://openwrt.org/docs/guide-developer/build-system/use-buildsystem
+	# The default config is generated with those steps:
+	# 1. cd workdir/buildroot
+	# 2. rm .config
+	# 3. unselect all unwanted configuration that should be removed from (e.g. IPV6,PPP,....)
+	# 4. run ./scripts/diffconfig.sh firmware/openwrt-configs/21.02/default.config
+	echo -e "${C_CYAN}post-overwrite configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+	cat ${DEFAULT_CONFIG} >> .config
+	echo -e "${C_CYAN}reprocess configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+	make defconfig
+	echo -e "${C_CYAN}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+	cp .config ${RUN_DIR}/${config_file}
+
+	if [ "$MENUCONFIG" = "1" ]; then
 		echo ""
-		# check if menuconfig has changed config. only then copy it to specific config
-		diff -q .config ${DEFAULT_CONFIG} 2>/dev/null || {
-			echo -e "${C_PURPLE}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
-			cp .config ${RUN_DIR}/${config_file}
-		}
 		clean_up_exit 0
 	fi
 
-	# run defconfig to correct config dependencies if those have changed.
-
-	echo -e $C_PURPLE"run defconfig"$C_NONE
-	make defconfig
-
 	# make clean because openwrt could fail building targets after building different targets before
-	# but keep generated directories (ddmesh-makefile-lightclean.patch)
+	# but keep generated directories (ddmesh-makefile-lightclean.patch).
+	# It keeps generated images and packages.
 	make lightclean
 
-	echo -e $C_PURPLE"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
+	echo -e $C_CYAN"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	cp .config $RUN_DIR/$config_file
 
 	# run make command
-	echo -e $C_PURPLE"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
+	echo -e $C_CYAN"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
 	time -p make -j$(nproc) $BUILD_PARAMS
 	error=$?
 	echo "make ret: $error"
@@ -1027,20 +1225,23 @@ EOM
 
 	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
+		global_error=1
+		progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
 
 		echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_config_name}" $C_NONE
 
 		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
-			echo -e $C_PURPLE".......... rerun build with V=s ........................"$C_NONE
+			echo -e $C_CYAN".......... rerun build with V=s ........................"$C_NONE
 			time -p make $BUILD_PARAMS V=s -j1
 			error=$?
 			if [ $error -ne 0 ]; then
 				echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
 				clean_up_exit 1
 			fi
-		else
-			clean_up_exit 1
 		fi
+		# ignore error and continue with next target
+		echo -e "${C_RED}Error: ignore build error${C_NONE} target and ${C_YELLOW}continue${C_NONE} with next"
+		continue
 	fi
 
 	# check if we have file
@@ -1049,16 +1250,16 @@ EOM
 		echo "     ${target_dir}"
 		clean_up_exit 1
 	fi
-
-	echo -e "${C_PURPLE}images created in${C_NONE} ${C_GREEN}${target_dir}${C_NONE}"
+	# success status
+	progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
+	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${target_dir}${C_NONE}"
 
 done
 
-show_progress $progress_counter $progress_max
+show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
 sleep 1
 
-echo -e $C_PURPLE".......... complete build finished ........................"$C_NONE
+echo -e $C_CYAN".......... complete build finished (exitcode ${global_error})........................"$C_NONE
 echo ""
 
-clean_up_exit 0
-
+clean_up_exit ${global_error}

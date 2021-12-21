@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 export TITLE="Verwaltung &gt; Wartung: Remote-Syslog"
 . /usr/lib/www/page-pre.sh ${0%/*}
@@ -14,7 +16,7 @@ fi
 
 cat<<EOM
 <h1>$TITLE</h1>
-<form name="form_wshaper" action="syslog.cgi" method="POST">
+<form name="form_syslog" action="syslog.cgi" method="POST">
 <fieldset class="bubble">
 <legend>Remote-Syslog</legend>
 <table>

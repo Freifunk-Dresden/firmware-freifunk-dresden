@@ -40,7 +40,7 @@ docker:init:
   tags:
     - docker
 
-docker:ar71xx.tiny:
+docker:ar71xx.tiny.lowmem:
   except:
     - schedules
     - master
@@ -60,7 +60,7 @@ docker:ar71xx.tiny:
   - docker
 
 
-docker:ar71xx.generic:
+docker:ar71xx.generic.lowmem:
   except:
     - schedules
     - master
@@ -75,11 +75,11 @@ docker:ar71xx.generic:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.generic.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
-docker:ar71xx.nand:
+docker:x86.generic.offloader:
   except:
     - schedules
     - master
@@ -94,12 +94,11 @@ docker:ar71xx.nand:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.nand.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh x86.generic.offloader rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
-
-docker:x86.generic:
+docker:x86.64.offloader:
   except:
     - schedules
     - master
@@ -114,26 +113,7 @@ docker:x86.generic:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh x86.generic rerun -j"$(( $(nproc) + 1))"
-  tags:
-  - docker
-
-docker:x64.generic:
-  except:
-    - schedules
-    - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
-  stage: build
-  needs: ["docker:init"]
-  script:
-    - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
-    - mkdir -p /mycache/workdir
-    - ln -s /mycache/workdir
-    - ./build.sh x64.generic rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh x86.64.offloader rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -192,7 +172,7 @@ docker:ath79:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))" V=s
   tags:
   - docker
 
@@ -272,25 +252,6 @@ docker:bcm53xx.generic.arm:
   tags:
   - docker
 
-docker:21.ath79:
-  except:
-    - schedules
-    - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
-  stage: build
-  needs: ["docker:init"]
-  script:
-    - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
-    - mkdir -p /mycache/workdir
-    - ln -s /mycache/workdir
-    - ./build.sh 21.ath79.* rerun -j"$(( $(nproc) + 1))"
-  tags:
-  - docker
-
 # just to check also generation of final_output directory.
 # e.g.: check missing firmware infos
 docker:gen-upload-test:
@@ -302,7 +263,7 @@ docker:gen-upload-test:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: deploy
-  needs: ["docker:ar71xx.tiny","docker:ar71xx.generic","docker:ar71xx.nand","docker:x86.generic","docker:x64.generic","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx","docker:bcm53xx.generic.arm"]
+  needs: ["docker:ar71xx.tiny.lowmem","docker:ar71xx.generic.lowmem","docker:x86.generic.offloader","docker:x86.64.offloader","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx","docker:bcm53xx.generic.arm"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl

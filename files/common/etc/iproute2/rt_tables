@@ -16,9 +16,8 @@
 247	unreachable
 246	fallback_gateway
 245	public_dns
+244	ff_gateway
 
 #batman
 64	bat_route
 66	bat_default
-
-

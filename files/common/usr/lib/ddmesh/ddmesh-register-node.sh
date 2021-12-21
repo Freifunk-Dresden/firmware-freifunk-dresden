@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 LOGGER_TAG="register.node"
 AUTO_REBOOT=1
@@ -42,8 +44,8 @@ eval $(echo "$json" | jsonfilter \
 	-e j_status='@.registration.status' \
 	-e j_error='@.registration.error' \
 	-e j_node='@.registration.node' \
-	-e j_netid='@.control.netid' \
 	-e j_autoupdate='@.control.enable_autoupdate' \
+	-e j_netid='@.control.trigger.netid' \
 	-e j_gateway='@.control.trigger.gateway' \
 	-e j_dns='@.control.trigger.dns' \
 	-e j_reboot='@.control.trigger.reboot' \
@@ -67,7 +69,7 @@ case "$j_status" in
 			uci_commit=0
 
 			# check if green
-			/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh >/dev/null && overlay=1 
+			/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh >/dev/null && overlay=1
 
 			node=$j_node
 			logger -s -t $LOGGER_TAG "SUCCESS: node=[$node]; key=[$key] registered."
@@ -77,10 +79,10 @@ case "$j_status" in
 			fi
 
 			if [ "$j_geoloc" = "1" ]; then
-				/usr/lib/ddmesh/ddmesh-geoloc.sh update-config 
+				/usr/lib/ddmesh/ddmesh-geoloc.sh update-config
 			fi
 
-			#update dns1 
+			#update dns1
 			dns="$(uci -q get ddmesh.network.internal_dns1)"
 			if [ -n "$j_dns" -a "$j_dns" != "$dns" ]; then
 				uci set ddmesh.network.internal_dns1="$j_dns"
@@ -90,9 +92,9 @@ case "$j_status" in
 			fi
 
 			#update netid if >0
-			netid="$(uci -q get ddmesh.network.mesh_network_id)"
+			netid="$(uci -q get ddmesh.system.mesh_network_id)"
 			if [ -n "$j_netid" -a "$j_netid" != "0" -a "$j_netid" != "$netid" ]; then
-				uci set ddmesh.network.mesh_network_id="$j_netid"
+				uci set ddmesh.system.mesh_network_id="$j_netid"
 				logger -s -t $LOGGER_TAG "update netid to $j_netid."
 				uci_commit=1
 				rebooting=1

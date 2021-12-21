@@ -1,7 +1,11 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 export TITLE="Verwaltung &gt; Allgemein"
 . /usr/lib/www/page-pre.sh ${0%/*}
+
+RESOLV_PATH="/tmp/resolv.conf.d"
 
 if [ "$form_action" = "overlay" ]; then
 	/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write >/dev/null
@@ -95,7 +99,7 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1
 <legend>System Info</legend>
 <table>
 <tr class="colortoggle2"><th>Knoten-IP:</th><td colspan="6">$_ddmesh_ip</td></tr>
-<tr class="colortoggle2"><th>Nameserver:</th><td colspan="6">$(grep nameserver /tmp/resolv.conf.auto | sed 's#nameserver##g')</td></tr>
+<tr class="colortoggle2"><th>Nameserver:</th><td colspan="6">$(grep nameserver ${RESOLV_PATH}/resolv.conf.auto | sed 's#nameserver##g')</td></tr>
 <tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="6">$(uptime)</td></tr>
 <tr class="colortoggle2"><th>System:</th><td colspan="6">$(uname -m) $(sed -n '/system type/s#system[ 	]*type[ 	]*:##p' /proc/cpuinfo)</td></tr>
 <tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="6"><b>Model:</b> $model ($model2) - <b>CPU:</b> $(sed -n '/system type/s#[^:]\+:[ 	]*##p' /proc/cpuinfo) - <b>Board:</b> $(cat /tmp/sysinfo/board_name)</td></tr>

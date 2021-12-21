@@ -58,7 +58,7 @@
  * Global Variables and definitions
  */
 
-#define SOURCE_VERSION "0.7-freifunk-dresden"
+#define SOURCE_VERSION "1.1-freifunk-dresden"
 
 #define COMPAT_VERSION 10
 
@@ -219,16 +219,11 @@ extern uint32_t s_curr_avg_cpu_load;
 #define DIRECTLINK_FLAG 0x02		 /* set when re-broadcasting a received OGM with identical OG IP and NB IP on the interface link as received */
 #define CLONED_FLAG 0x04				 /* set when (re-)broadcasting a OGM not-for-the-first time or re-broadcasting a OGM with this flag */
 
-//extern uint8_t Link_flags;
-
-#define BAT_CAPAB_UNICAST_PROBES 0x01 /* set on bat_header->link_flags to announce capability for unidirectional UDP link measurements */
-#define BAT_CAPAB_ ...
-
 struct bat_header
 {
 	uint8_t version;
-	uint8_t link_flags; // BAT_CAPAB_UNICAST_PROBES, ...
-	uint8_t reserved;
+  uint8_t networkId_high; //SE: big-endian; replace unused fields with network ID (16bit, is suffient)
+	uint8_t networkId_low;  //SE: big-endian; replace unused fields with network ID (16bit, is suffient)
 	uint8_t size; // the relevant data size in 4 oktets blocks of the packet (including the bat_header)
 } __attribute__((packed));
 
@@ -296,11 +291,7 @@ behalten werden wenn eine OGM empfangen wird (also weiter gesendet
 Dazu gibt es das globale array ext_attribute[]
 Das passiert in schedule.c::strip_packet() zeile 760ff
 
-Fuer die networkid muss ich also was einbauen wie my_pip_extension.
-EXT_ATTR_KEEP ist schon mal dafür in ext_attribute[] definiert.
-Ebenso das Macro, um in der struct ext_packet auf den wert zu zugreifen.
-
-"EXT_NETID_FIELD_ID"
+"EXT_DDMESH_FIELD_ID"
 
 Devel-info:
 suche nach, als anhaltspunkt:
@@ -310,9 +301,9 @@ suche nach, als anhaltspunkt:
 
 */
 //stephan create new extension (we can use maximal 15)
-#ifdef ENABLE_NETID
-	#define EXT_TYPE_64B_NETID 3		//struct ext_packet has has
-#endif //ENABLE_NETID
+#ifdef ENABLE_DDMESH
+	#define EXT_TYPE_64B_DDMESH 3		//struct ext_packet has has
+#endif //ENABLE_DDMESH
 
 //SE: die namen der defines spielen nur die konfigurierent attribute
 //    aus dem globalen array "ext_attribute[]" wider.
@@ -352,9 +343,11 @@ struct ext_packet
 #define EXT_PIP_FIELD_ADDR d32.def32
 
 // stephan
-#ifdef ENABLE_NETID
-	#define EXT_NETID_FIELD_ID d32.def32	//I need 4 bytes
-#endif 	//ENABLE_NETID
+#ifdef ENABLE_DDMESH
+	#define EXT_DDMESH_FIELD_8  def8
+	#define EXT_DDMESH_FIELD_16 d16.def16
+	#define EXT_DDMESH_FIELD_32 d32.def32
+#endif 	//ENABLE_DDMESH
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 	unsigned int ext_related : 2; // may be used by the related message type
@@ -398,6 +391,8 @@ struct msg_buff
 	char neigh_str[ADDR_STR_LEN];
 	int16_t total_length;
 	uint8_t unicast;
+
+  uint16_t networkId;
 
 	//filled by strip_packet()
 	struct bat_packet_ogm *ogm;

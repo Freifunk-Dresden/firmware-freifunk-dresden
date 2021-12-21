@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 export TITLE="Verwaltung &gt; Konfiguration: WIFI 5GHz"
 
@@ -54,9 +56,9 @@ function checkInput()
 	{
 		var key = document.getElementById('id_wifi3_key').value;
 		var ssid = document.getElementById('id_wifi3_ssid').value;
-		if(   ssid === undefined 
-		   || ( security && 
-			( key === undefined || key.length < 8 
+		if(   ssid === undefined
+		   || ( security &&
+			( key === undefined || key.length < 8
 			  || !checkWifiKey(document.getElementById('id_wifi3_key').value)))
 		  )
 		{
@@ -161,7 +163,7 @@ else #query string
 			else
 				uci set ddmesh.network.wifi_channels_5g_outdoor="$form_wifi_channels_lower-$form_wifi_channels_upper"
 			fi
-			
+
 			uci set ddmesh.network.wifi3_5g_enabled="$form_wifi3_enabled"
 			# avoid clearing values when disabled
 			if [ "$form_wifi3_enabled" = 1 ]; then

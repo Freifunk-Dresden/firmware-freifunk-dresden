@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 [ -z "$1" ] && exit 1
 
@@ -135,64 +137,6 @@ setup_openvpn_rules() {
 
 }
 
-setup_statistic_rules() {
-	logger -s -t $TAG "setup_statistic_rules"
-	$IPT -N statistic_input	2>/dev/null
-	$IPT -N statistic_forward 2>/dev/null
-	$IPT -N statistic_output 2>/dev/null
-	$IPT -F statistic_input
-	$IPT -F statistic_forward
-	$IPT -F statistic_output
-	$IPT -D input_rule -j statistic_input 2>/dev/null
-	$IPT -D forwarding_rule -j statistic_forward 2>/dev/null
-	$IPT -D output_rule -j statistic_output 2>/dev/null
-
-	$IPT -A input_rule -j statistic_input
-	$IPT -A forwarding_rule -j statistic_forward
-	$IPT -A output_rule -j statistic_output
-
-	NETWORKS="bat wan wwan lan wifi_adhoc wifi_mesh2g wifi_mesh5g wifi2 vpn tbb_fastd tbb_wg mesh_lan mesh_wan privnet"
-	for net in $NETWORKS
-	do
-#		logger -s -t $TAG "LOOP: net=$net"
-		ifname=$(eval echo \$$net"_ifname")
-		test -z "$ifname" && continue
-
-		target_in=s_"$net"_in
-		$IPT -N $target_in 2>/dev/null
-		$IPT -D statistic_input -i $ifname -j $target_in 2>/dev/null
-		$IPT -A statistic_input -i $ifname -j $target_in
-
-		target_out=s_"$net"_out
-		$IPT -N $target_out 2>/dev/null
-		$IPT -D statistic_output -o $ifname -j $target_out 2>/dev/null
-		$IPT -A statistic_output -o $ifname -j $target_out
-
-		target_fwd=s_any_"$net"_f
-		$IPT -N $target_fwd 2>/dev/null
-		$IPT -D statistic_forward -o $ifname -j $target_fwd 2>/dev/null
-		$IPT -A statistic_forward -o $ifname -j $target_fwd
-
-		target_fwd=s_"$net"_any_f
-		$IPT -N $target_fwd 2>/dev/null
-		$IPT -D statistic_forward -i $ifname -j $target_fwd 2>/dev/null
-		$IPT -A statistic_forward -i $ifname -j $target_fwd
-
-		# detailed
-		for net2 in $NETWORKS
-		do
-#			logger -s -t $TAG "LOOP2: net=$net2"
-			ifname2=$(eval echo \$$net2"_ifname")
-			test -z "$ifname2" && continue
-
-			target_fwd=s_"$net"_"$net2"_f
-			$IPT -N $target_fwd 2>/dev/null
-			$IPT -D statistic_forward -i $ifname -o $ifname2 -j $target_fwd 2>/dev/null
-			$IPT -A statistic_forward -i $ifname -o $ifname2 -j $target_fwd
-		done
-	done
-}
-
 callback_add_ignored_nodes() {
 	local entry="$1"
 	IFS=':'
@@ -204,18 +148,19 @@ callback_add_ignored_nodes() {
 	local opt_wifi_adhoc=$4
 	local opt_wifi_mesh2g=$5
 	local opt_wifi_mesh5g=$6
+	local opt_vlan=$7
 
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
 
-	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" ] && opt_wifi_adhoc='1'
+	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" -a -z "$opt_vlan" ] && opt_wifi_adhoc='1'
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+
 	if [ "$opt_lan" = "1" ]; then
 		$IPT -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
 		$IPT -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP
 	fi
-
 	if [ "$opt_tbb" = "1" ]; then
 		$IPT -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP
 	fi
@@ -227,6 +172,9 @@ callback_add_ignored_nodes() {
 	fi
 	if [ "$opt_wifi_mesh5g" = "1" ]; then
 		$IPT -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP
+	fi
+	if [ "$opt_vlan" = "1" ]; then
+		$IPT -A input_ignore_nodes_vlan -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
@@ -240,6 +188,7 @@ setup_ignored_nodes() {
 	$IPT -N input_ignore_nodes_wifi5m
 	$IPT -N input_ignore_nodes_lan
 	$IPT -N input_ignore_nodes_wan
+	$IPT -N input_ignore_nodes_vlan
 	$IPT -N input_ignore_nodes_tbb # fastd+wg
 
 	#add tables to deny some nodes to prefer backbone connections
@@ -248,6 +197,7 @@ setup_ignored_nodes() {
 	[ -n "$wifi_mesh5g_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh5g_ifname -j input_ignore_nodes_wifi5m
 	[ -n "$mesh_lan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
 	[ -n "$mesh_wan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
+	[ -n "$mesh_vlan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_vlan_ifname -j input_ignore_nodes_vlan
 	[ -n "$tbb_fastd_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
 	[ -n "$tbb_wg_ifname" ] && $IPT -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
 
@@ -262,6 +212,7 @@ update_ignored_nodes() {
 	$IPT -F input_ignore_nodes_wifi5m
 	$IPT -F input_ignore_nodes_lan
 	$IPT -F input_ignore_nodes_wan
+	$IPT -F input_ignore_nodes_vlan
 	$IPT -F input_ignore_nodes_tbb
 
 	config_load ddmesh
@@ -273,7 +224,6 @@ _init()
 	#init all rules that can not be set by openwrt-firewall
 	test "$(uci get ddmesh.system.disable_splash 2>/dev/null)" != "1" && setup_splash
 	setup_custom_rules
-	setup_statistic_rules
 	setup_ignored_nodes
 	setup_openvpn_rules
 }
@@ -296,16 +246,16 @@ _update()
 			$IPT -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
 		done
 
-		# remove/add SNAT rule when iface becomes available	
+		# remove/add SNAT rule when iface becomes available
 		for cmd in D A
-		do	
-			$IPT -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null 
+		do
+			$IPT -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null
 			$IPT -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'lan-to-mesh' 2>/dev/null
 		done
 
 		#add rules if gateway is on lan
 		if [ -n "$lan_gateway" ]; then
-			# remove/add SNAT rule when iface becomes available	
+			# remove/add SNAT rule when iface becomes available
 			for cmd in D A
 			do
 				$IPT -$cmd forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
@@ -325,9 +275,9 @@ _update()
 	fi
 
 	if [ "$wifi2_up" = "1" -a -n "$wifi2_ipaddr" -a -n "$wifi2_mask" ]; then
-		# remove/add SNAT rule when iface becomes available	
+		# remove/add SNAT rule when iface becomes available
 		for cmd in D A
-		do	
+		do
 			$IPT -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2' 2>/dev/null
 		done
 	fi

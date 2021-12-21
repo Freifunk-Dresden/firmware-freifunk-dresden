@@ -1,4 +1,5 @@
-# https://openwrt.org/docs/guide-developer/dependencies
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 include $(TOPDIR)/rules.mk
 
@@ -8,6 +9,9 @@ PKG_VERSION:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
+
+# when a additional package should be selected when another gets selected
+#+PACKAGE_wireguard-tools:kmod-ipip \
 
 ##########################################################
 define Package/$(PKG_NAME)-base
@@ -19,8 +23,11 @@ define Package/$(PKG_NAME)-base
 		+ddns-scripts +ddns-scripts_no-ip_com \
 		+iptables \
 		+px5g-mbedtls \
+		+ip-tiny \
 		+iperf3 \
-		+PACKAGE_wireguard:kmod-ipip
+		+kmod-ipip \
+		+PACKAGE_fastd:nacl \
+		+PACKAGE_fastd:libuecc
 
   TITLE:=Meta package to select all needed basic packages
 endef
@@ -71,13 +78,6 @@ define Package/$(PKG_NAME)-base/config
 			help
 				required by firmware
 
-		# use SYMBOL of package that should be selected
-		config PACKAGE_wshaper
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-base
-			tristate "wshaper"
-			help
-				required by firmware
 	#endmenu
 
 endef
@@ -96,6 +96,7 @@ define Package/$(PKG_NAME)-wifi
   DEPENDS:= +iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
+
 endef
 
 define Package/$(PKG_NAME)-wifi/description

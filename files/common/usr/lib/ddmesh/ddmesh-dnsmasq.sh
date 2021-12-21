@@ -1,13 +1,19 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
 #creates manually the config because of special wifi ranges
 #file is linked via /etc/dnsmasq.conf
 # see http://www.faqs.org/rfcs/rfc2132.html for more dhcp options
 
-FINAL=/tmp/resolv.conf.final
-AUTO=/tmp/resolv.conf.auto
+RESOLV_PATH="/tmp/resolv.conf.d"
+RESOLV_FINAL="${RESOLV_PATH}/resolv.conf.final"
+RESOLV_AUTO="${RESOLV_PATH}/resolv.conf.auto"
 
 if [ "$1" = "configure" ]; then
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+
+	uci set dhcp.dnsmasq.resolvfile="${RESOLV_FINAL}"
 
 	# set domains resolved by freifunk dns
 	nameserver1="$(uci get ddmesh.network.internal_dns1 | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
@@ -24,12 +30,12 @@ if [ "$1" = "configure" ]; then
 
 	# no dns queries from the wan
 	uci -q delete dhcp.dnsmasq.notinterface
-	uci -q add_list dhcp.dnsmasq.notinterface="$(uci get network.wan.ifname 2>/dev/null)"
+	uci -q add_list dhcp.dnsmasq.notinterface="$(uci get network.wan.device 2>/dev/null)"
 
 	# lan
 	if [ "$(uci get ddmesh.network.dhcp_lan_limit)" != 0 ]; then
 		#create LAN DHCP: IP,NETMASK,BROADCAST,NETWORK,PREFIX,START,END
-		eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask) $(uci get ddmesh.network.dhcp_lan_offset) $(uci get ddmesh.network.dhcp_lan_limit))
+		eval $(ipcalc.sh $(uci get ddmesh.network.lan_ipaddr) $(uci get ddmesh.network.lan_netmask) $(uci get ddmesh.network.dhcp_lan_offset) $(uci get ddmesh.network.dhcp_lan_limit))
 
 		test -z "$(uci -q get dhcp.dhcp)" && {
 			uci add dhcp dhcp
@@ -44,11 +50,11 @@ if [ "$1" = "configure" ]; then
 		uci -q set dhcp.lan.limit="$(uci get ddmesh.network.dhcp_lan_limit)"
 		uci -q set dhcp.lan.leasetime="$(uci get ddmesh.network.dhcp_lan_lease)"
 		uci -q delete dhcp.lan.dhcp_option
-		uci -q add_list dhcp.lan.dhcp_option="6,$(uci get network.lan.ipaddr)"	# dns
-		uci -q add_list dhcp.lan.dhcp_option="3,$(uci get network.lan.ipaddr)"  # default route
+		uci -q add_list dhcp.lan.dhcp_option="6,$(uci get ddmesh.network.lan_ipaddr)"	# dns
+		uci -q add_list dhcp.lan.dhcp_option="3,$(uci get ddmesh.network.lan_ipaddr)"  # default route
 		uci -q add_list dhcp.lan.dhcp_option="1,$NETMASK"
 		uci -q add_list dhcp.lan.dhcp_option="28,$BROADCAST"
-		uci -q add_list dhcp.lan.dhcp_option='121,10.200.0.0/16,'"$(uci get network.lan.ipaddr)" # add ffdd route
+		uci -q add_list dhcp.lan.dhcp_option='121,10.200.0.0/16,'"$(uci get ddmesh.network.lan_ipaddr)" # add ffdd route
 		uci -q add_list dhcp.lan.dhcp_option="12,$_ddmesh_hostname"	# hostname
 		uci -q add_list dhcp.lan.dhcp_option="15,$domain"		# domain
 		uci -q add_list dhcp.lan.dhcp_option="119,$domain"		# search path
@@ -87,8 +93,8 @@ fi
 
 if [ "$1" == start ]; then
 	# link to resolv.conf.auto as long as bmxd has not written resolv.conf.final
-	rm -f $FINAL
-	ln -s $AUTO $FINAL
+	rm -f $RESOLV_FINAL
+	ln -s $RESOLV_AUTO $RESOLV_FINAL
 
 	/etc/init.d/dnsmasq stop 2>/dev/null
 	/etc/init.d/dnsmasq start 2>/dev/null

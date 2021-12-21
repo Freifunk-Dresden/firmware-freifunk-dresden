@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 export TITLE="Verwaltung &gt; Infos: Logs"
 . /usr/lib/www/page-pre.sh ${0%/*}
@@ -52,7 +54,7 @@ BEGIN {t=1;}
 	line=gensub(/(.*([Ff][Aa][Ii][Ll][Ee][Dd]|[Ee][Rr][Rr][Oo][Rr]).*)/,"<font color=\"red\">\\1</font>","",line);
 	line=gensub(/(.*Wait for WIFI up.*|.*WIFI is up.*)/,"<div style=\"background-color:#ffaaff;\">\\1</div>","",line);
 	printf("<tr class=\"colortoggle%d\"><td class=\"nowrap\">%s</td><td class=\"nowrap\">%s</td><td class=\"nowrap\">%s</td><td>%s</td></tr>\n",t,d,tag1,tag2,line);
-	
+
 
 	if(t==1){ t=2;}
 	else{ t=1;}

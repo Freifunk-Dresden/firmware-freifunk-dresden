@@ -1,4 +1,7 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
 # script is called during boot process before config_update.
 # It updates changes in persistent files (e.g.: /etc/config/network, firewall)
 
@@ -17,7 +20,6 @@ previous_version=${previous_version:-$current_version}
 
 test "$nightly_upgrade_running" = "1" && MESSAGE=" (Auto-Update)"
 
-
 # check if upgrade is needed
 test "$previous_version" = "$current_version" && {
 	echo "nothing to upgrade"
@@ -30,10 +32,12 @@ eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 run_upgrade()
 {
  #grep versions from this file (see below)
- upgrade_version_list=$(sed -n '/^[ 	]*upgrade_[0-9_]/{s#^[ 	]*upgrade_\([0-9]\+\)_\([0-9]\+\)_\([0-9]\+\).*#\1.\2.\3#;p}' $0)
+ local upgrade_version_list=$(sed -n '/^[ 	]*upgrade_[0-9_]/{s#^[ 	]*upgrade_\([0-9]\+\)_\([0-9]\+\)_\([0-9]\+\).*#\1.\2.\3#;p}' $0)
 
- previous_version_found=0
- ignore=1
+ local previous_version_found=0
+ local ignore=1
+ local v=0
+
  for v in $upgrade_version_list
  do
  	echo -n $v
@@ -49,18 +53,18 @@ run_upgrade()
 	#ignore if already on same version
 	test "$v" = "$previous_version" && echo " ignored (same)" && continue
 
-	#create name of upgrade function (version dependet)
+	#create name of upgrade function (version depended)
 	function_suffix=$(echo $v|sed 's#\.#_#g')
 	echo " upgrade to $v"
-	upgrade_$function_suffix;
+	upgrade_${function_suffix};
 
  	# force config update after next boot
 	# in case this script is called from terminal (manually)
  	uci set ddmesh.boot.boot_step=2
 
 	#save current state in case of later errors
-	uci set ddmesh.boot.upgrade_version=$v
-	uci add_list ddmesh.boot.upgraded="$previous_version to $v$MESSAGE"
+	uci set ddmesh.boot.upgrade_version="${v}"
+	uci add_list ddmesh.boot.upgraded="$previous_version to ${v}${MESSAGE}"
 
 	#stop if we have reached "current version" (ignore other upgrades)
 	test "$v" = "$current_version" && echo "last valid upgrade finished" && uci_commit.sh && break;
@@ -73,22 +77,7 @@ run_upgrade()
 #############################################
 ### keep ORDER - only change below
 ### uci_commit.sh is called after booting via ddmesh.boot_step=2
-
-# function for current version is needed for this algorithm
-upgrade_3_1_9()
-{
- true
-}
-
-upgrade_4_1_7()
-{
- true
-}
-
-upgrade_4_2_0()
-{
- true
-}
+# a function for current version is needed for this algorithm
 
 upgrade_4_2_2()
 {
@@ -134,8 +123,6 @@ upgrade_4_2_2()
 		done
  	fi
  done
-
- uci -q set ddmesh.network.mesh_network_id=1206
 }
 
 upgrade_4_2_3()
@@ -174,7 +161,6 @@ upgrade_4_2_3()
  uci del_list ddmesh.system.communities="Freifunk Meissen"
  uci add_list ddmesh.system.communities="Freifunk Meissen"
  #traffic shaping for upgrade only
- uci set ddmesh.network.speed_enabled=1
  uci set ddmesh.network.wifi_country="DE"
  for nt in node mobile server
  do
@@ -376,7 +362,6 @@ upgrade_6_0_6()
 
 upgrade_6_0_7()
 {
- uci -q set ddmesh.network.mesh_network_id=1206
  uci -q delete system.ntp.server
  uci -q add_list system.ntp.server=0.de.pool.ntp.org
  uci -q add_list system.ntp.server=1.de.pool.ntp.org
@@ -553,6 +538,102 @@ upgrade_7_1_0()
 {
 	uci del_list firewall.zone_wifi.subnet
 	uci add_list firewall.zone_wifi.subnet="$_ddmesh_wifi2net"
+}
+
+upgrade_7_1_1()
+{
+	for option in lan.ipaddr lan.netmask lan.gateway lan.dns wan.proto wan.ipaddr wan.netmask wan.gateway wan.dns
+	do
+		local v="$(uci -q get network.${option})"
+		if [ -n "$v" ]; then
+			local n="${option/./_}"
+			uci set ddmesh.network.${n}="${v}"
+		fi
+	done
+	rm /etc/config/uhttpd
+	cp /rom/etc/config/uhttpd /etc/config/uhttpd
+	rm /etc/config/wshaper
+
+	uci add_list firewall.zone_mesh.network="mesh_vlan"
+	uci set ddmesh.network.mesh_on_vlan='0'
+	uci set ddmesh.network.mesh_vlan_id='9'
+
+	uci set ddmesh.network.lan_ipaddr="$(uci get network.lan.ipaddr)"
+	uci set ddmesh.network.lan_netmask="$(uci get network.lan.netmask)"
+	uci set ddmesh.network.lan_gateway="$(uci get network.lan.gateway)"
+	uci set ddmesh.network.lan_dns="$(uci get network.lan.dns)"
+	uci set ddmesh.network.lan_proto="$(uci get network.lan.proto)"
+	uci -q delete ddmesh.network.wwan_4g
+	uci -q delete ddmesh.network.wwan_3g
+	uci -q delete ddmesh.network.wwan_2g
+}
+
+upgrade_7_1_2()
+{
+	true
+}
+
+upgrade_7_1_3()
+{
+	true
+}
+
+upgrade_7_1_4()
+{
+	uci -q set ddmesh.system.mesh_network_id='0'
+	uci -q delete ddmesh.network.speed_enabled
+	uci -q delete ddmesh.network.speed_up
+	uci -q delete ddmesh.network.speed_down
+	uci -q delete ddmesh.network.speed_network
+	uci set ddmesh.network.wifi_country='DE'
+	uci set uhttpd.px5g.country='DE'
+	uci set uhttpd.px5g.state='Saxony'
+	uci set uhttpd.px5g.location='Dresden'
+	uci set uhttpd.px5g.commonname='Freifunk Dresden Communities'
+	uci set uhttpd.px5g.organisation='Freifunk Dresden'
+}
+
+upgrade_7_1_5()
+{
+ 	uci set ddmesh.system.firmware_autoupdate=1
+	cp /rom/etc/config/firewall /etc/config/firewall
+}
+
+upgrade_7_1_6()
+{
+	uci -q del ddmesh.network.mesh_network_id
+	uci -q set ddmesh.system.mesh_network_id='0'
+	uci -q del ddmesh.system.communities
+	uci add ddmesh communities
+	uci rename ddmesh.@communities[-1]='communities'
+	uci add_list ddmesh.communities.community='0%Dresden'
+	uci add_list ddmesh.communities.community='1000%Dresden'
+	uci add_list ddmesh.communities.community='1001%Dresden NO'
+	uci add_list ddmesh.communities.community='1002%Dresden NW'
+	uci add_list ddmesh.communities.community='1003%Dresden SO'
+	uci add_list ddmesh.communities.community='1004%Dresden SW'
+	uci add_list ddmesh.communities.community='1020%Pirna'
+	uci add_list ddmesh.communities.community='1021%OL'
+  # convert
+	case "$(uci get ddmesh.system.community)" in
+		'Freifunk Dresden')  com='Dresden' ;;
+		'Freifunk Freiberg') com='Dresden SW' ;;
+		'Freifunk Freital')  com='Dresden SW' ;;
+		'Freifunk Tharandt') com='Dresden SW' ;;
+		'Freifunk Meissen')  com='Dresden NW' ;;
+		'Freifunk Radebeul') com='Dresden NW' ;;
+		'Freifunk Waldheim') com='Dresden NW' ;;
+		'Freifunk OL') com='OL' ;;
+		'Freifunk Pirna')	com='Pirna' ;;
+		*) com='Dresden' ;;
+	esac
+	uci set ddmesh.system.community="$com"
+  uci set ddmesh.bmxd.only_community_gateways='1'
+}
+
+upgrade_8_0_1()
+{
+	true
 }
 
 ##################################

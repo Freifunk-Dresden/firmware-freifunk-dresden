@@ -1,5 +1,6 @@
 #!/bin/sh /etc/rc.common
-# Copyright (C) 2006 OpenWrt.org
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 LOGGER_TAG="ddmesh-boot"
 
@@ -35,7 +36,7 @@ start() {
 
 	eval $(cat /etc/openwrt_release)
 
-	/usr/lib/ddmesh/ddmesh-led.sh wifi_off
+	/usr/lib/ddmesh/ddmesh-led.sh wifi off
 
 	#initial setup and node depended setup (crond calles ddmesh-register-node.sh to update node)
 	logger -s -t $LOGGER_TAG "inital boot setting"
@@ -57,7 +58,7 @@ start() {
 	/usr/lib/ddmesh/ddmesh-firewall-addons.sh firewall-update
 	/usr/lib/ddmesh/ddmesh-backbone.sh firewall-update
 	/usr/lib/ddmesh/ddmesh-privnet.sh firewall-update
-	/usr/lib/ddmesh/ddmesh-splash.sh firewall-update 
+	/usr/lib/ddmesh/ddmesh-splash.sh firewall-update
 
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit
@@ -73,7 +74,7 @@ start() {
 	logger -s -t $LOGGER_TAG "dnsmasq"
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh start
 
-	# AFTER dnsmasq (bmxd script will overwrite resolv.conf.final)
+	# AFTER dnsmasq (bmxd script will set resolv.conf.final)
 	logger -s -t $LOGGER_TAG "start service bmxd"
 	/usr/lib/ddmesh/ddmesh-bmxd.sh start
 
@@ -84,8 +85,11 @@ start() {
 	/usr/lib/ddmesh/ddmesh-privnet.sh start
 
 	logger -s -t $LOGGER_TAG "start service openvpn"
-	test -f /etc/config/openvpn.ffdd && mv /etc/config/openvpn.ffdd /etc/config/openvpn
-	test -x /etc/init.d/openvpn && /etc/init.d/openvpn start
+	# only touch any file when openvpn is used. else overlay md5sum will change
+	if [ -f "/etc/openvpn/openvpn.conf" ]; then
+		test -f /etc/config/openvpn.ffdd && mv /etc/config/openvpn.ffdd /etc/config/openvpn
+		test -x /etc/init.d/openvpn && /etc/init.d/openvpn start
+	fi
 
 	if [ -x /usr/bin/iperf3 ]; then
 		logger -s -t $LOGGER_TAG "start service iperf3"
@@ -124,4 +128,3 @@ stop() {
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh stop
 	setup_routing del
 }
-

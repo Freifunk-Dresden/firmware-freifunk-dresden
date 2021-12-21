@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
@@ -8,7 +10,7 @@ cat<<EOM
 EOM
 
 # slash will be removed; keep it sill active if used
-if [ "$(uci -q get ddmesh.system.disable_splash)" != "1" ]; then
+if [ "$(uci -q get ddmesh.system.disable_splash)" = "0" ]; then
 cat<<EOM
 <tr><td><div class="plugin">&nbsp;&nbsp;<a class="plugin" href="splash.cgi">Splash</a></div></td></tr>
 EOM

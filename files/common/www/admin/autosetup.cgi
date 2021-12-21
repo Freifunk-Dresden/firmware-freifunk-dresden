@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 if [ "$(uci get ddmesh.system.node)" -le "$(uci get ddmesh.system.tmp_max_node)" ]; then
 #	export NOMENU=1
@@ -72,4 +74,3 @@ EOM
 fi
 
 . /usr/lib/www/page-post.sh
-

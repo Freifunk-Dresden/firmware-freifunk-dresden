@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 # only display if arg1 is not "no-html-header"
 test -z $1 && {
@@ -18,7 +20,7 @@ SCAN_RESULT=/tmp/wifi_scan
 /usr/sbin/iw dev wifi2ap scan > $SCAN_RESULT
 [ "$wifi_status_radio5g_up" = "1" ] && /usr/sbin/iw dev wifi5ap scan >> $SCAN_RESULT
 
-json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne' 
+json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne'
 s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="";wifi_essid="";wifi_meshid="";wifi_signal="0";wifi_open="yes";#p
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
 s#	SSID: \(.*\)#wifi_essid="\1";#p
@@ -64,14 +66,14 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 		type="ffadhoc"
 	fi
 
-	# check for meshid
+	# check for 80211s
 	A="$(uci -q get credentials.network.wifi_mesh_id)"
 	if [ "$wifi_essid_clean" = "$A" ]; then
 		type="ffmesh"
 	fi
 
-	# Freifunk (ap) check that community name is in essid
-	A="$(uci get ddmesh.system.community)"
+	# Freifunk (wifi2) check that community name is in essid
+	A="Freifunk $(uci get ddmesh.system.community)"
 	B="${wifi_essid_clean/$A/}"
 	if [ "$wifi_essid_clean" != "$B" ]; then
 		type="ffap"
@@ -82,14 +84,14 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	line="$line  \"uptime\": \"$wifi_uptime\", \"bssid\": \"$wifi_bssid\"},"
 
 	# output line from subshell
-	echo "$line"	
+	echo "$line"
 done ) ]}"
 
 #echo "$json" >/tmp/wegj
 
 cat<<EOM
 <table>
- <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Ad-Hoc/Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
+ <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
  <pre>
 EOM
 
@@ -124,7 +126,7 @@ do
 
 			style="$base_style font-weight:bold;"
 			class="selected_adhoc"
-			meshimage="yes.png"
+			meshimage='<img src="/images/yes16.png">'
 			wifi_ssid='Freifunk-Adhoc-Net'
 			wifi_bssid='multiple'
 			seen_ffadhoc=1
@@ -142,32 +144,37 @@ do
 
 			style="$base_style font-weight:bold;"
 			class="selected_mesh"
-			meshimage="yes.png"
+			meshimage='<img src="/images/yes16.png">'
 			wifi_ssid='Freifunk-Mesh-Net'
 			wifi_bssid='multiple'
 			;;
 		ffap)
 			style="$base_style font-weight:bold;"
 			class="selected_ap"
-			meshimage="no.png"
+			meshimage=''
 			;;
 		*)
 			class=colortoggle$T
 			style="$base_style"
-			meshimage="no.png"
+			meshimage=''
 			;;
 	esac
 
+	if [ "$wifi_open" = "yes" ]; then
+		openimage='<img src="/images/yes16.png">'
+	else
+		openimage=''
+	fi
 
 cat<<EOM
 <TR class="$class" >
 <TD style="$style" width="$WIDTH">$wifi_ssid</TD>
-<TD style="$style">$wifi_channel</TD>
-<TD style="$style"><IMG SRC="/images/$meshimage" ALT="$wifi_type" TITLE="Ad-Hoc/Mesh mode"></TD>
-<TD style="$style"><IMG SRC="/images/$wifi_open.png" ALT="$wifi_open"></TD>
-<TD style="$style"><IMG SRC="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm"></TD>
-<TD style="$style">- $wifi_signal</TD>
-<TD style="$style">$wifi_uptime</TD>
+<TD style="$style" width="20">$wifi_channel</TD>
+<TD style="$style" width="20">$meshimage</TD>
+<TD style="$style" width="20">$openimage</TD>
+<TD style="$style" width="20"><img src="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm"></TD>
+<TD style="$style" width="40">- $wifi_signal</TD>
+<TD style="$style" width="40">$wifi_uptime</TD>
 <TD style="$style">$wifi_bssid</TD></tr>
 EOM
 	if [ $T -eq 1 ]; then

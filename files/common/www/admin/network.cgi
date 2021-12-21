@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 export TITLE="Verwaltung &gt; Infos: Netzwerk"
 . /usr/lib/www/page-pre.sh ${0%/*}
@@ -24,33 +26,38 @@ s#[ 	]\+# #g
 cat<<EOM
 </table>
 </fieldset>
-
 <br>
+EOM
 
+SWITCH_INFO="$(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh csv)"
+
+if [ -n "${SWITCH_INFO}" ]; then
+cat<<EOM
 <fieldset class="bubble">
 <legend>Switch</legend>
 <table>
+<tr class="colortoggle1"> <th>Port</th> <td>Carrier</td> <td>Speed</td> </tr>
 EOM
 
+unset IFS;
 IFS='
 '
-for dev in $(swconfig list | awk '{print $2}')
-do
-	echo "<tr class="colortoggle1"><th colspan=2>$dev</th></tr>"
-	for entry in $(swconfig dev $dev show | sed -n 's#link: port:\([0-9]\+\) link:\(.*\+\)#\1=\2#p')
-	do
-		port=${entry%%=*}
-		state=${entry#*=}
-		echo "<tr class="colortoggle2"><th>Port $port</th><td>$state</td></tr>"
-	done
+for entry in ${SWITCH_INFO}; do
+	IFS=','
+	set $entry
+	echo "<tr class="colortoggle2"> <th>$1</th> <td>$2</td> <td>$3</td> </tr>"
+	unset IFS
 done
+unset IFS
 
 cat<<EOM
 </table>
 </fieldset>
-
 <br>
+EOM
+fi
 
+cat<<EOM
 <fieldset class="bubble">
 <legend>Netzwerk-Schnittstellen</legend>
 <table>

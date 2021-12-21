@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 export TITLE="Verwaltung &gt; Konfiguration: LAN"
 . /usr/lib/www/page-pre.sh ${0%/*}
@@ -9,7 +11,7 @@ cat<<EOM
 EOM
 
 if [ -z "$QUERY_STRING" ]; then
-	eval $(ipcalc.sh $(uci get network.lan.ipaddr) $(uci get network.lan.netmask))
+	eval $(ipcalc.sh $(uci get ddmesh.network.lan_ipaddr) $(uci get ddmesh.network.lan_netmask))
 	cat<<EOM
 <form name="form_lan" action="lan.cgi" class="form" method="POST">
 <fieldset class="bubble">
@@ -20,19 +22,19 @@ LAN- und WAN-IP-Adressen/-Bereiche sollten sich nicht &uuml;berschneiden!</th></
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
 <th>LAN-IP-Adresse:</th>
-<td><input name="form_lan_ip" size="32" type="text" value="$(uci get network.lan.ipaddr)"></td>
+<td><input name="form_lan_ip" size="32" type="text" value="$(uci get ddmesh.network.lan_ipaddr)"></td>
 </tr>
 <tr>
 <th>LAN-Netzmaske:</th>
-<td><input name="form_lan_netmask" size="32" type="text" value="$(uci get network.lan.netmask)"></td>
+<td><input name="form_lan_netmask" size="32" type="text" value="$(uci get ddmesh.network.lan_netmask)"></td>
 </tr>
 <tr>
 <th>LAN-Gateway:</th>
-<td><input name="form_lan_gateway" size="32" type="text" value="$(uci get network.lan.gateway)"></td>
+<td><input name="form_lan_gateway" size="32" type="text" value="$(uci get ddmesh.network.lan_gateway)"></td>
 </tr>
 <tr>
 <th>LAN-DNS-IP-Adresse:</th>
-<td><input name="form_lan_dns" size="32" type="text" value="$(uci get network.lan.dns)"></td>
+<td><input name="form_lan_dns" size="32" type="text" value="$(uci get ddmesh.network.lan_dns)"></td>
 </tr>
 
 
@@ -67,10 +69,10 @@ else #query string
 
 	if [ -n "$form_lan_submit" ]; then
 		if [ -n "$form_lan_ip" -a -n "$form_lan_netmask" ]; then
-			uci set network.lan.ipaddr="$form_lan_ip"
-			uci set network.lan.netmask="$form_lan_netmask"
-			uci set network.lan.gateway="$form_lan_gateway"
-			uci set network.lan.dns="$form_lan_dns"
+			uci set ddmesh.network.lan_ipaddr="$form_lan_ip"
+			uci set ddmesh.network.lan_netmask="$form_lan_netmask"
+			uci set ddmesh.network.lan_gateway="$form_lan_gateway"
+			uci set ddmesh.network.lan_dns="$form_lan_dns"
 			uci set ddmesh.network.dhcp_lan_offset="$form_dhcp_offset"
 			uci set ddmesh.network.dhcp_lan_limit="$form_dhcp_limit"
 			uci set ddmesh.network.dhcp_lan_lease="$form_dhcp_lease"

@@ -1,3 +1,5 @@
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 include $(TOPDIR)/rules.mk
 
@@ -8,18 +10,24 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
+# when a additional package should be selected when another gets selected
+#+PACKAGE_wireguard-tools:kmod-ipip \
+
 ##########################################################
 define Package/$(PKG_NAME)-base
   CATEGORY:=ddmesh
   DEFAULT:=y
-  DEPENDS:=	+kmod-ledtrig-timer +kmod-tun +libmbedtls +libustream-mbedtls \
-		+kmod-ipip \
+  DEPENDS:=	+kmod-tun +libmbedtls +libustream-mbedtls \
 		+uhttpd \
 		+bmxd +freifunk-upload \
 		+ddns-scripts +ddns-scripts_no-ip_com \
 		+iptables \
 		+px5g-mbedtls \
-		+iperf3
+		+ip-tiny \
+		+iperf3 \
+		+kmod-ipip \
+		+PACKAGE_fastd:nacl \
+		+PACKAGE_fastd:libuecc
 
   TITLE:=Meta package to select all needed basic packages
 endef
@@ -77,13 +85,6 @@ define Package/$(PKG_NAME)-base/config
 			help
 				required by firmware
 
-		# use SYMBOL of package that should be selected
-		config PACKAGE_wshaper
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-base
-			tristate "wshaper"
-			help
-				required by firmware
 	#endmenu
 
 endef
@@ -99,25 +100,10 @@ define Package/$(PKG_NAME)-wifi
 	# the complete package "ddmesh-wifi" will also not be visible.
 	# only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
 	# This simply just selects wpa-cli without hiding current packet
-  DEPENDS:= +iw +iwinfo +@ddmesh-mesh-wifi:PACKAGE_wpad-mesh-openssl +@!ddmesh-mesh-wifi:PACKAGE_wpad-basic +@PACKAGE_wpa-cli
+  DEPENDS:= +iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
 
-endef
-
-define Package/$(PKG_NAME)-wifi/config
-	#menu "config"
-		# menu point is displayed when dependings are set
-		config ddmesh-mesh-wifi
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_$(PKG_NAME)-wifi
-			bool "wifi 802.11s support"
-			help
-				This option adds wifi mesh. Only router with at least 8 MByte Flash and 64MByte RAM should use this option.
-
-	# AFTER config, there MUST be at least one empty line !
-
-	#endmenu
 endef
 
 define Package/$(PKG_NAME)-wifi/description

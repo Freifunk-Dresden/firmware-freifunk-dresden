@@ -1,17 +1,18 @@
+// Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+// GNU General Public License Version 3
 
-//auto: stephan enderlein
 //var b = new GridField("progress", "myProgress", 10, 50, 10, 5, "#aaaaaa", "#0000ff");
 //b.setGridValue( 5 );
 
 //create object via constructor function
-function GridField( parent, id, nBars, nFields, cellWidth, cellHeight, colorClear, colorSelected) 
+function GridField( parent, id, nBars, nFields, cellWidth, cellHeight, colorClear, colorSelected)
 {
 	this.parent = parent;
 	this.id = id;
 	this.nBars = nBars;
 	this.nFields = nFields;
 	this.cellWidth = cellWidth;
-	this.cellHeight = cellHeight; 
+	this.cellHeight = cellHeight;
  	this.colorClear = colorClear;
 	this.colorSelected = colorSelected;
 	this.drawGrid = function()
@@ -80,8 +81,8 @@ function GridField( parent, id, nBars, nFields, cellWidth, cellHeight, colorClea
 		//get full bars
 		var nb = Math.floor(value / this.nFields );
 		var nf = value % this.nFields;
-	
-		// full rows	
+
+		// full rows
 		for(var b = 0; b < this.nBars; b++)
 		{
 			if(b < nb)
@@ -89,7 +90,7 @@ function GridField( parent, id, nBars, nFields, cellWidth, cellHeight, colorClea
 			else
 				this.setGridRow(b, false);
 		}
-		
+
 		// partial row
 		for(var f = 0; f < nf; f++)
 		{
@@ -99,7 +100,7 @@ function GridField( parent, id, nBars, nFields, cellWidth, cellHeight, colorClea
 	this.autoCounter = function(intervalMs, maxValue)
 	{
 		var count=0;
-		var timer= setInterval( function( myThis ) 
+		var timer= setInterval( function( myThis )
 		{
 			count++;
 			if(count > maxValue)
@@ -112,4 +113,3 @@ function GridField( parent, id, nBars, nFields, cellWidth, cellHeight, colorClea
 	//create and display bars
 	this.drawGrid();
 }
-

@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 export TITLE="Verwaltung &gt; Infos: Knoten"
 . /usr/lib/www/page-pre.sh ${0%/*}
@@ -15,16 +17,21 @@ cat<<EOM
 EOM
 
 /usr/bin/bmxd -c --links | awk -f /usr/lib/www/page-functions.awk -e '
- BEGIN {c=1;count=0;}
+ BEGIN {prevNode=0;c=1;count=0;rtq=0;rq=0;tq=0}
  {
 	if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
 	{
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$3,$3,color_interface($2),$1,$4,$4,$5,$6);
-		if(c==1)c=2;else c=1;
+		node=getnode($1)
+		if(prevNode!=node) {if(c==1)c=2;else c=1;}
+ 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,node,$3,$3,color_interface($2),$1,$4,$4,$5,$6);
 		count=count+1;
+		rtq=rtq+$4;
+		rq=rq+$5;
+		tq=tq+$6;
+		prevNode=node;
 	}
  }
- END { printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td></tr>", count);}
+ END {if(count){rtq=int(rtq/count);rq=int(rq/count);tq=int(tq/count); printf("<tr><td colspan=\"4\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td><td class=\"quality_%s\"><b>%s</b></td></tr>", count, rtq, rtq, rq, rq, tq, tq);}}
 '
 
 cat<<EOM
@@ -41,20 +48,21 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Gateways</legend>
 <table>
-<tr><th>Pr&auml;f.</th><th>Aktiv</th><th>Statistik</th><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
+<tr><th width="30">Pr&auml;f.</th><th width="30">Aktiv</th><th width="30">Community</th><th width="30">Statistik</th><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Best Next Hop</th><th>BRC</th><th></th></tr>
 EOM
 
 export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p' )"
 /usr/bin/bmxd -c --gateways | awk -f /usr/lib/www/page-functions.awk -e '
- BEGIN {c=1;count=0;}
+ BEGIN {c=1;count=0;brc=0}
  {
-
 	if(match($0,"^[=> 	]*[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
  	{
-		img=match($0,"=>") ? "<img src=\"/images/yes.png\">" : ""
+		active_img=match($0,"=>") ? "<img src=\"/images/yes12.png\">" : ""
 		gsub("^=>","")
- 		rest=substr($0,index($0,$4))
- 		sub(",","",$3)
+		sub(",","",$3)
+		sub(",","",$4)
+		cimg=match($4,"1") ? "<img src=\"/images/yes12.png\">" : ""
+		sub(",","",$5)
 		statfile="/var/statistic/gateway_usage"
 		stat=0
 		while((getline line < statfile) > 0)
@@ -64,13 +72,34 @@ export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+
 		}
 		close(statfile)
 		p="^" ENVIRON["preferred"] "$"
-		pref = p && match($1,p) ? "<img src=\"/images/yes.png\">" : ""
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",c,pref,img,stat,getnode($1),$1,$1,$2,$3,$3,rest);
-		if(c==1)c=2;else c=1;
+		pref = p && match($1,p) ? "<img src=\"/images/yes12.png\">" : ""
+		# add all data into array, use node as key
+		node=getnode($1)
+		data_node[count]=node  # add node, which is then used as index in END
+
+		data_pref[node]=pref
+		data_active[node]=active_img
+		data_comimg[node]=cimg
+		data_stat[node]=stat
+		data_ip[node]=$1
+		data_hop[node]=$2
+		data_brc[node]=$3
+		data_speed[node]=$5
 		count=count+1;
+		brc=brc+$3
 	}
  }
- END { printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td></tr>", count);}
+ END {
+	arraysort(data_node)
+	for(c=1,i=0;i<count;i++)
+	{
+		key=data_node[i]
+		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",
+		c,data_pref[key],data_active[key],data_comimg[key],data_stat[key],key,data_ip[key],data_ip[key],data_hop[key],data_brc[key],data_brc[key],data_speed[key]);
+		if(c==1)c=2;else c=1;
+	}
+	if(count){brc=int(brc/count); printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}
+ }
 '
 
 cat<<EOM
@@ -80,11 +109,11 @@ cat<<EOM
 <fieldset class="bubble">
 <legend>Freifunk-Knoten</legend>
 <table>
-<tr><th>Knoten-Nr.</th><th>Ip</th><th>BRC</th><th>via Routing-Interface</th><th>via Router</th></tr>
+<tr><th>Knoten-Nr.</th><th>IP-Adresse</th><th>BRC</th><th>via Routing-Interface</th><th>via Router</th></tr>
 EOM
 
 /usr/bin/bmxd -c --originators | awk -f /usr/lib/www/page-functions.awk -e '
- BEGIN {c=1;count=0;}
+ BEGIN {c=1;count=0;brc=0}
  {
 
 	if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
@@ -92,9 +121,10 @@ EOM
  		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$1,$1,$4,$4,color_interface($2),$3);
 		if(c==1)c=2;else c=1;
 		count=count+1;
+		brc=brc+$4
 	}
  }
- END { printf("<tr><td colspan=\"5\"><b>Anzahl:</b>&nbsp;%d</td></tr>", count);}
+ END {if(count){brc=int(brc/count); printf("<tr><td colspan=\"2\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td><td></td></tr>", count, brc, brc);}}
 '
 
 cat<<EOM

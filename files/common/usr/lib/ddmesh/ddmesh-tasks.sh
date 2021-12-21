@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 TAG="ddmesh task"
 TIMESTAMP="/var/run/ddmesh-tasks.time"
@@ -38,7 +40,7 @@ call_task()
  shift
  args=$*
 
- test $(expr $MINUTE_COUNTER % $interval) -eq 0 && { 
+ test $(expr $MINUTE_COUNTER % $interval) -eq 0 && {
 	[ "$(uci -q get ddmesh.log.tasks)" = "1" ] && logger -t "$TAG" "CALL interval:$interval [$args]"
 	$args 2>/dev/null >/dev/null
  }
@@ -75,7 +77,7 @@ do
 
 	# stop tasks when status file is deleted. this avoids running tasks during
 	# firmware update
-	test -f /tmp/freifunk-running || continue 
+	test -f /tmp/freifunk-running || continue
 
 	# call task scripts
 	# call_task <interval-minutes> <script | function> [arguments...]

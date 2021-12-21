@@ -1,4 +1,6 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 TAG="fastd-privnet"
 
@@ -42,4 +44,3 @@ case $1 in
 esac
 
 exit 0
-

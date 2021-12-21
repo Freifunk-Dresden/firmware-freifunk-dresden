@@ -19,7 +19,7 @@
 
 #define WA_SCALE_FACTOR 1000 /* scale factor used to increase precision of integer division */
 #define PROBE_TO100 1
-#define PROBE_RANGE 100
+#define PROBE_RANGE 100   // never exceed 255 (uint8_t)
 
 #define MIN_SEQNO 0
 #define DEF_SEQNO 0 /* causes seqno to be randomized */
@@ -78,7 +78,7 @@ extern int32_t my_path_lounge;
 #define ARG_RCNT_FK "fast_path_faktor"
 
 #define MIN_LATE_PENAL 0
-#define MAX_LATE_PENAL 100
+#define MAX_LATE_PENAL PROBE_RANGE // see my_late_penalty probe calulation (uint8_t)
 #define DEF_LATE_PENAL 1
 #define ARG_LATE_PENAL "lateness_penalty"
 
@@ -108,7 +108,7 @@ extern int32_t dad_to;
 #define MIN_TTL 1
 extern int32_t Ttl;
 
-#define DEF_WL_CLONES 200
+#define DEF_WL_CLONES 100
 #define MIN_WL_CLONES 0
 #define MAX_WL_CLONES 400
 #define ARG_WL_CLONES "ogm_broadcasts"
@@ -138,11 +138,24 @@ extern int32_t wl_clones;
 #define DEF_NETW_PREFIX "10.0.0.0"
 #define DEF_NETW_MASK   8					// primary ip and non-primary
 
+//SE: network filter
+// MUST BE default 0. So if user does not pass the network parameter, no OGM will be dropped
+extern uint32_t gNetworkPrefix;
+extern uint32_t gNetworkNetmask;
+
+
+//SE: added to separate networks. (network extension could be used, but
+//this would cause to increase size of every packet)
+#define ARG_NETWORK_ID "netid"
+#define MIN_NETWORK_ID 0
+#define MAX_NETWORK_ID 65535
+#define DEF_NETWORK_ID 0
+extern int32_t gNetworkId;	//only 16bits are used, but parameter needs to be 32bit
 
 extern struct batman_if *primary_if;
 extern uint32_t primary_addr;
 
-//extern struct hashtable_t *orig_hash;
+// orig_avl holds all orig_node (own and for all neigh)
 extern struct avl_tree orig_avl;
 
 extern LIST_ENTRY if_list;
@@ -150,7 +163,9 @@ extern LIST_ENTRY if_list;
 extern LIST_ENTRY link_list;
 extern struct avl_tree link_avl;
 
-struct orig_node *get_orig_node(uint32_t addr, uint8_t create);
+// search orig_avl for key "addr". if not present, then a new orig_node object
+// is created and added.
+struct orig_node *find_or_create_orig_node_in_avl(uint32_t addr);
 
 int tq_rate(struct orig_node *orig_node_neigh, struct batman_if *iif, int range);
 

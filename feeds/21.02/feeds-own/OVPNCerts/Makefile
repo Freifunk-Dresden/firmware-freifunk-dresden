@@ -1,9 +1,5 @@
-#
-# Copyright (C) 2006-2012 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 include $(TOPDIR)/rules.mk
 
@@ -26,7 +22,7 @@ endef
 
 define Package/OVPNCerts/description
  Open VPN Tunnel - allows to installed cert.tgz files to setup internet tunnel.
- A script parses the configuration and creates it dynamically 
+ A script parses the configuration and creates it dynamically
 endef
 
 define Build/Prepare
@@ -42,7 +38,7 @@ define Package/OVPNCerts/install
 	$(INSTALL_DIR) $(1)/etc/config
 	# copy as openvpn.ffdd because of install conflics when OVPNCerts
 	# is included directly into firmware
-	# it will be renamed in ddmesh-init.d.sh  
+	# it will be renamed in ddmesh-init.d.sh
 	$(INSTALL_DATA) files/openvpn.config $(1)/etc/config/openvpn.ffdd
 	$(INSTALL_DIR) $(1)/etc/openvpn
 	$(INSTALL_DATA) files/up.sh $(1)/etc/openvpn/up.sh
@@ -57,4 +53,3 @@ define Package/OVPNCerts/install
 endef
 
 $(eval $(call BuildPackage,OVPNCerts))
-

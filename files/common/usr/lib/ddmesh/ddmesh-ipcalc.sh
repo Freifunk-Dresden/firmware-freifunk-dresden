@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 #
 #     0 -   256   vserver
 #   900 -   999   temp Knoten, bei Inbetriebnahme

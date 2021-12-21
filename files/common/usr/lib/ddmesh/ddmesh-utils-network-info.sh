@@ -1,4 +1,7 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
 #$1 -network name
 #$2 -variable prefix
 
@@ -101,7 +104,15 @@ if [ $ARG = "update" -o ! -f "$CACHE_DATA" ]; then
 
 	#if net_name matches requested network, stay in this entry
 
-		[ "$net_available" = 1 ] && net_iface_present=1
+		if [ "$net_available" = 1 ]; then
+			# check if ll_ifname is really present
+			ll_ifname="$(uci -q get network.${net_name}.ll_ifname)"
+			if [ -n "$ll_ifname" ]; then
+				ip link show dev ${ll_ifname} 2>/dev/null >/dev/null && net_iface_present=1
+			else
+				net_iface_present=1
+			fi
+		fi
 
 		#calculate rest
 		[ "$net_up" = "1" ] &&  [ -n "$net_ipaddr" ] && {
@@ -136,7 +147,7 @@ fi # update cache data
 
 case "$ARG" in
 	list)
-		cat $CACHE_DATA | sed -n "s#export \(.*\)_ifname=\(.*\)#net_\1=\2#p" 
+		cat $CACHE_DATA | sed -n "s#export \(.*\)_ifname=\(.*\)#net_\1=\2#p"
 		;;
 
 	all) 	cat $CACHE_DATA
@@ -148,7 +159,6 @@ case "$ARG" in
 		pfx=${PREFIX:-net}
 		pfx=${pfx/-/_}
 
-		cat $CACHE_DATA | sed -n "/^export ${ARG}_/s#export ${ARG}_\(.*\)#export ${pfx}_\1#p" 
+		cat $CACHE_DATA | sed -n "/^export ${ARG}_/s#export ${ARG}_\(.*\)#export ${pfx}_\1#p"
 		;;
 esac
-

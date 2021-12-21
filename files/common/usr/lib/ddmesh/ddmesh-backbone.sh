@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 . /lib/functions.sh
 
@@ -86,12 +88,14 @@ callback_accept_fastd_config ()
 	local config="$1"
 	local key
 	local comment
+	local disabled
 
 	config_get key "$config" public_key
 	config_get comment "$config" comment
+	config_get disabled "$config" disabled
 
-	echo "fastd process accept: $key # $comment"
-	if [ -n "$key" -a -n "$comment" ]; then
+	#echo "fastd process accept: disabled:$disabled, $key # $comment"
+	if [ "$disabled" != "1" -a -n "$key" -a -n "$comment" ]; then
 		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/accept_$key.conf
 		echo "fastd accept peer: [$key:$comment] ($FILE)"
 
@@ -107,15 +111,17 @@ callback_outgoing_fastd_config ()
 	local port
 	local key
 	local type
+	local disabled
 
 	config_get host "$config" host
 	config_get port "$config" port
 	config_get key "$config" public_key
 	config_get type "$config" type
 	[ -z "$type" ] && type="fastd"
+	config_get disabled "$config" disabled
 
-	#echo "fastd process out: cfgtype:$type, host:$host, port:$port, key:$key]"
-	if [ "$type" == "fastd" -a -n "$host" -a -n "$port" -a -n "$key" ]; then
+	#echo "fastd process out: disabled:$disabled, cfgtype:$type, host:$host, port:$port, key:$key"
+	if [ "$disabled" != "1" -a "$type" == "fastd" -a -n "$host" -a -n "$port" -a -n "$key" ]; then
 		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/"connect_"$host"_"$port".conf"
 		#echo "fastd out: add peer ($FILE)"
 		echo "key \"$key\";" > $FILE
@@ -123,7 +129,7 @@ callback_outgoing_fastd_config ()
 	fi
 }
 
-# only ipip tunnel
+# outgoing: only ipip tunnel
 callback_outgoing_wireguard_interfaces ()
 {
 	local config="$1"
@@ -135,15 +141,17 @@ callback_outgoing_wireguard_interfaces ()
 	local key
 	local type
 	local node
+	local disabled
 
 	config_get host "$config" host
 	config_get port "$config" port
 	config_get key "$config" public_key
 	config_get type "$config" type
 	config_get node "$config" node
+	config_get disabled "$config" disabled
 
-	#echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
-	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
+	#echo "wg process out: disabled:$disabled, cfgtype:$type, host:$host, port:$port, key:$key, target node:$node"
+	if [ "$disabled" != "1" -a "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
 
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
@@ -160,8 +168,39 @@ callback_outgoing_wireguard_interfaces ()
 	fi
 }
 
-# wg tunnel + ipip tunnel
-callback_incomming_wireguard ()
+# outgoing: only wg tunnel
+callback_outgoing_wireguard_connection ()
+{
+	local config="$1"
+	local local_wg_ip=$2
+	local local_wgX_ip=$3
+
+	local host  #hostname or ip
+	local port
+	local key
+	local type
+	local node
+	local disabled
+
+	config_get host "$config" host
+	config_get port "$config" port
+	config_get key "$config" public_key
+	config_get type "$config" type
+	config_get node "$config" node
+	config_get disabled "$config" disabled
+
+	#echo "wg process out: disabled:$disabled, cfgtype:$type, host:$host, port:$port, key:$key, target node:$node"
+	if [ "$disabled" != "1" -a "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
+
+		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+		local remote_wg_ip=$_ddmesh_wireguard_ip
+		wg set $tbbwg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
+
+	fi
+}
+
+# incoming: wg tunnel + ipip tunnel
+callback_incoming_wireguard ()
 {
 	local config="$1"
 	local local_wg_ip=$2
@@ -170,13 +209,15 @@ callback_incomming_wireguard ()
 	local key
 	local type
 	local node
+	local disabled
 
 	config_get key "$config" public_key
 	config_get type "$config" type
 	config_get node "$config" node
+	config_get disabled "$config" disabled
 
-	echo "wg process out: cfgtype:$type, key:$key, target node:$node]"
-	if [ "$type" == "wireguard" -a -n "$key" -a -n "$node" ]; then
+	#echo "wg process out: disabled:$disabled, cfgtype:$type, key:$key, target node:$node]"
+	if [ "$disabled" != "1" -a "$type" == "wireguard" -a -n "$key" -a -n "$node" ]; then
 
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
@@ -195,34 +236,6 @@ callback_incomming_wireguard ()
 	fi
 }
 
-# only wg tunnel
-callback_outgoing_wireguard_connection ()
-{
-	local config="$1"
-	local local_wg_ip=$2
-	local local_wgX_ip=$3
-
-	local host  #hostname or ip
-	local port
-	local key
-	local type
-	local node
-
-	config_get host "$config" host
-	config_get port "$config" port
-	config_get key "$config" public_key
-	config_get type "$config" type
-	config_get node "$config" node
-
-	# echo "wg process out: cfgtype:$type, host:$host, port:$port, key:$key, target node:$node]"
-	if [ "$type" == "wireguard" -a -n "$host" -a -n "$port" -a -n "$key" -a -n "$node" ]; then
-
-		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
-		local remote_wg_ip=$_ddmesh_wireguard_ip
-		wg set $tbbwg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
-
-	fi
-}
 
 callback_firewall()
 {
@@ -323,9 +336,9 @@ case "$1" in
 				config_load ddmesh
 				config_foreach callback_outgoing_wireguard_interfaces backbone_client $local_wg_ip "$local_wg_ip_nonprimary/$local_wg_ip_netpre"
 
-				# add incomming clients
+				# add incoming clients
 				config_load ddmesh
-				config_foreach callback_incomming_wireguard backbone_accept $local_wg_ip "$local_wg_ip_nonprimary/$local_wg_ip_netpre"
+				config_foreach callback_incoming_wireguard backbone_accept $local_wg_ip "$local_wg_ip_nonprimary/$local_wg_ip_netpre"
 			fi
 		fi
 
@@ -364,7 +377,7 @@ case "$1" in
 			ifname="${wg_ifname/+/}"
 
 			#ensure ifname is NOT empty
-			if [ -n "$ifname" ]; then	
+			if [ -n "$ifname" ]; then
 				IFS='
 '
 				for i in $($LS -1d  "/sys/class/net/$ifname"* 2>/dev/null | sed 's#.*/##')
@@ -374,6 +387,11 @@ case "$1" in
 				done
 				unset IFS
 			fi
+			# remove peers
+			for peer in $(wg show tbbwg+ | sed -n '/^peer:/s#peer:[ ]*##p')
+			do
+				wg set $tbbwg_ifname peer $peer remove
+			done
 		fi
 		;;
 

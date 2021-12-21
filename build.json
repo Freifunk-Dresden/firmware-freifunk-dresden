@@ -1,4 +1,6 @@
 ######################################################################
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de
+# GNU General Public License Version 3
 #
 #   The order is important for device specific builds.
 #   In this case output directory is not deleted and device specific
@@ -23,14 +25,14 @@
 	{
 		"name":"default",			# currently just an unused name (only displayed)
 							# if following blocks do not specifiy there own value
-		"target":"ar71xx",
+		"target":"ath79",
 		"subtarget":"generic",
 		"variant":"",				# used to distinguish different configs
 							# e.g. 	could be name of a router or
 							#      	a set of routers when selecting "multiple devices"
 							#	via "make menuconfig"
 
-		"openwrt_rev":"b12284a14ce90d77c9b0e77876454e173be5bea6", # v19.07.6
+		"openwrt_rev":"b4d7885af70a42df7577157b96f941500bd17bfb", # (HEAD, tag: v21.02.1)
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
 							# Note that selecting some packages as module could have
@@ -39,30 +41,35 @@
 							# This value is added to config file name
 							# Example value could be : "lowmem" or "ram32mbyte"
 
-		"selector-config":"19.07",		# used to select config
-		"selector-files":"",			# used to select files
-		"selector-feeds":"19.07",		# used to select feeds
-		"selector-patches":"19.07",		# used to select patches
+		"selector-config":"21.02",		# used to select config
+		"selector-feeds":"21.02",		# used to select feeds
+		"selector-patches":"21.02",		# used to select patches
+		"selector-files":"21.02",
 
 		# generates the feeds/feeds-[selector].conf
 		# for short commit value use: git log --abbrev-commit
 
 
-		# Versions: tagged on openwrt v19.07.6
 		"feeds" : [
-				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },	# feeds/<selector>/feeds-own
-				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"ce5a4eaea2"},
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"02b4dbf"}
-			  ],
+			{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
+			{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"26e9cbc4c"}, # 21.02
+			{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"c524118"}    # 21.02
+		  ],
 
 		# install addional packages from feeds (see feeds.conf)
-		"packages":["libpam","libcap","libgnutls","libopenldap",
-				"libidn2","libssh2","libnetsnmp",
-				"libcap", "jansson", "kmod-cryptodev", "liblzma" ],
+#		"packages":["libpam","libcap","libgnutls","libopenldap",
+#				"libidn2","libssh2","libnetsnmp",
+#				"libcap", "jansson", "kmod-cryptodev", "liblzma" ],
+		"packages":["libpam", "libnetsnmp"],
+
 		# apply additional target patches
 		"target-patches":[""]
 	},
-# ------------- specific targets ------------------------------
+
+# =================== specific targets =======================================================
+
+
+# ---------- openwrt 18 -----------------------------------------------------------------------
 	{
 		"name":"ar71xx.tiny.lowmem",	# can be any name
 		"target":"ar71xx",
@@ -77,7 +84,10 @@
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
-			  ]
+			  ],
+		"packages":["libpam","libcap","libgnutls","libopenldap",
+				"libidn2","libssh2","libnetsnmp",
+				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
 	{
 		"name":"ar71xx.generic.lowmem",	# can be any name
@@ -93,52 +103,10 @@
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
-			  ]
-	},
-	{
-		"name":"ar71xx.generic",
-		"target":"ar71xx",
-		"subtarget":"generic"
-	},
-	{
-		"name":"ar71xx.generic.gl-mifi",
-		"target":"ar71xx",
-		"subtarget":"generic",
-		"variant":"gl-mifi"
-	},
-	{
-		"name":"ar71xx.nand",
-		"target":"ar71xx",
-		"subtarget":"nand"
-	},
-	{
-		"name":"x86.generic",
-		"target":"x86",
-		"subtarget":"generic"
-	},
-	{
-		"name":"x64.generic",
-		"target":"x86",
-		"subtarget":"64",
-		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
-	},
-	{
-		"name":"ramips.mt7621.generic",
-		"target":"ramips",
-		"subtarget":"mt7621",
-		"variant":"generic"
-	},
-	{
-		"name":"ramips.mt7621.ubnt-edge",
-		"target":"ramips",
-		"subtarget":"mt7621",
-		"variant":"ubiquiti-edgerouter-x"	# specific target (overwrites previous generic only for this device)
-	},
-	{
-		"name":"ramips.mt76x8.generic",
-		"target":"ramips",
-		"subtarget":"mt76x8",
-		"variant":"generic"
+			  ],
+		"packages":["libpam","libcap","libgnutls","libopenldap",
+				"libidn2","libssh2","libnetsnmp",
+				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
 	{
 		"name":"ramips.rt305x.tiny.lowmem",	# can be any name
@@ -155,14 +123,49 @@
 				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
-			  ]
+			  ],
+		"packages":["libpam","libcap","libgnutls","libopenldap",
+				"libidn2","libssh2","libnetsnmp",
+				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
+	},
+# ---------- openwrt 21 -----------------------------------------------------------------------
+	{
+		"name":"x86.generic.offloader",
+		"target":"x86",
+		"subtarget":"generic",
+		"variant":"offloader"
+	},
+	{
+		"name":"x86.64.offloader",
+		"target":"x86",
+		"subtarget":"64",
+		"variant":"offloader"
+#,		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
+	},
+	{
+		"name":"ramips.mt7621.generic",
+		"target":"ramips",
+		"subtarget":"mt7621",
+		"variant":"generic"
+	},
+	{
+		"name":"ramips.mt7621.offloader",
+		"target":"ramips",
+		"subtarget":"mt7621",
+		"variant":"offloader"	# specific target (overwrites previous generic only for this device)
+	},
+	{
+		"name":"ramips.mt76x8.generic",
+		"target":"ramips",
+		"subtarget":"mt76x8",
+		"variant":"generic"
 	},
 	{
 		"name":"lantiq.xrx200",
 		"target":"lantiq",
-		"subtarget":"xrx200",
-		"openwrt_variant":"patchset-1",
-		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
+		"subtarget":"xrx200"
+#	,	"openwrt_variant":"patchset-1",
+#		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
 	},
 	{
 		"name":"lantiq.xway",
@@ -170,16 +173,26 @@
 		"subtarget":"xway"
 	},
 	{	# created for Orange Pi R1
-		"name":"sunxi.cortexa7.generic",
+		"name":"sunxi.cortexa7.offloader",
 		"target":"sunxi",
 		"subtarget":"cortexa7",
-		"variant":"generic"
+		"variant":"offloader"
 	},
 	{
 		"name":"ath79.generic",
 		"target":"ath79",
+		"subtarget":"generic"
+	},
+	{
+		"name":"ath79.generic.gl-mifi",
+		"target":"ath79",
 		"subtarget":"generic",
-		"target-patches":["device1-comfast-e314n.patch", "device2-comfast-comfast-e130n.patch"]
+		"variant":"gl-mifi"
+	},
+	{
+		"name":"ath79.nand",
+		"target":"ath79",
+		"subtarget":"nand"
 	},
 	{
 		"name":"ath79.generic.smallbuffers",
@@ -187,13 +200,6 @@
 		"subtarget":"generic",
 		"variant":"smallbuffers"
 	},
-#	{
-#		"name":"ath79.tiny.wireguard.lowmem",
-#		"target":"ath79",
-#		"subtarget":"tiny",
-#		"variant":"wireguard",
-#		"openwrt_variant":"lowmem"
-#	},
 	{	# created for fritzbox 4040
 		"name":"ipq40xx.generic",
 		"target":"ipq40xx",
@@ -215,26 +221,9 @@
 		"name":"mpc85xx.p1020",
 		"target":"mpc85xx",
 		"subtarget":"p1020"
-	},
-#----------------------openwrt 21.02-----------------------------------------------------------------------------------------
-# created for new target : Joy-IT JT-OR750i
-	{
-		"name":"21.ath79.generic",	# can be any name
-		"target":"ath79",
-		"subtarget":"generic",
-		"openwrt_rev":"134ac824c5a154edbbe1c581bcbc42d265dc20c0", # (HEAD, tag: v21.02.0-rc4)
-		"selector-config":"21.02",		# used to select config
-		"selector-feeds":"21.02",		# used to select feeds
-		"selector-patches":"21.02",		# used to select patches
-		"selector-files":"21.02",
-		"packages":[ ],
-		"feeds" : [
-				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
-				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"a55103240"}, # 21.02
-				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"8d93475"}    # 21.02
-			  ]
 	}
-#------------------------master---------------------------------------------------------------------------------------------
+
+# ---------- master 21 -----------------------------------------------------------------------
 #	,{
 #		"name":"master.ath79.generic",	# can be any name
 #		"target":"ath79",
@@ -251,5 +240,7 @@
 #				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"master"}
 #			  ]
 #	}
+
+
  ]
 }

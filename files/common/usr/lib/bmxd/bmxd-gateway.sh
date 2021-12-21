@@ -1,10 +1,19 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
-RESOLV_CONF_FINAL="/tmp/resolv.conf.final"
-RESOLV_CONF_AUTO="/tmp/resolv.conf.auto"
+RESOLV_PATH="/tmp/resolv.conf.d"
+RESOLV_CONF_FINAL="${RESOLV_PATH}/resolv.conf.final"
+RESOLV_CONF_AUTO="${RESOLV_PATH}/resolv.conf.auto"
 TAG="BMXD-SCRIPT[$$]"
 
-if [ -z "$1" ]; then
+# see also ddmesh-bmxd.sh
+BMXD_GW_STATUS_FILE="/tmp/state/bmxd.gw"
+touch "${BMXD_GW_STATUS_FILE}"
+
+ARG="$1"
+
+if [ -z "$ARG" ]; then
  echo "missing params"
  exit 0
 fi
@@ -39,37 +48,58 @@ toggle_ssid()
 # script is called by:
 # - bmxd calles it with: gateway,del,IP
 # - boot and wan hotplug: init
-case $1 in
+
+case "$ARG" in
 	gateway)
 		logger -s -t $TAG "GATEWAY"
+
+		if [ "$(cat ${BMXD_GW_STATUS_FILE})" != "$ARG" ]; then
+			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "gateway"
+			echo "$ARG" > "${BMXD_GW_STATUS_FILE}"
+		fi
+
 		# use symlink. because resolv.conf.auto can be set later by wwan
 		rm $RESOLV_CONF_FINAL
 		ln -s $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
 		/usr/lib/ddmesh/ddmesh-led.sh wifi gateway
 		toggle_ssid true
-	;;
+		;;
+
 	del|init)
+		# dont write this state to BMXD_GW_STATUS_FILE !
+
 		# check if this router is a gateway
 		gw="$(ip ro li ta public_gateway | grep default)"
 
 		# set when "del" or if empty
-		if [ -z "$gw" -a "$1" = "del" -o -z "$(grep nameserver $RESOLV_CONF_FINAL)" ]; then
+		if [ -z "$gw" -a "$ARG" = "del" -o -z "$(grep nameserver $RESOLV_CONF_FINAL)" ]; then
 			logger -s -t $TAG "remove GATEWAY (del)"
+
+			# Dont set link ffgw down, it will delete default route.
+			# There is no need to change ffgw, when removing gw.
+
 			# use symlink. because resolv.conf.auto can be set later by wwan
 			rm $RESOLV_CONF_FINAL
 			ln -s $RESOLV_CONF_AUTO $RESOLV_CONF_FINAL
 			/usr/lib/ddmesh/ddmesh-led.sh wifi alive
 			toggle_ssid false
 		fi
-	;;
+		;;
+
 	*)
-		logger -s -t $TAG "nameserver $1"
+
+		if [ "$(cat ${BMXD_GW_STATUS_FILE})" != "$ARG" ]; then
+			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_ffgw_tunnel "$ARG"
+			echo "$ARG" > "${BMXD_GW_STATUS_FILE}"
+		fi
+
+		logger -s -t $TAG "nameserver $ARG"
 		# delete initial symlink
 		rm $RESOLV_CONF_FINAL
-		echo "nameserver $1" >$RESOLV_CONF_FINAL
+		echo "nameserver $ARG" >$RESOLV_CONF_FINAL
 		/usr/lib/ddmesh/ddmesh-led.sh wifi freifunk
 		toggle_ssid true
-	;;
+		;;
 esac
 
 # restart dnsmasq, as workaround for dead dnsmasq
@@ -77,10 +107,10 @@ esac
 
 
 GW_STAT="/var/statistic/gateway_usage"
-count=$(sed -n "/$1:/s#.*:##p" $GW_STAT)
+count=$(sed -n "/$ARG:/s#.*:##p" $GW_STAT)
 if [ -z $count ]; then
-	echo "$1:1" >> $GW_STAT
+	echo "$ARG:1" >> $GW_STAT
 else
 	count=$(( $count + 1 ))
-	sed -i "/$1/s#:.*#:$count#" $GW_STAT
+	sed -i "/$ARG/s#:.*#:$count#" $GW_STAT
 fi

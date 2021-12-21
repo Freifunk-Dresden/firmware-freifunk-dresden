@@ -1,6 +1,3 @@
-input {
-	vertical-align: middle;
-}
 input.radio {
 	margin-bottom: 2px;
 }
@@ -8,8 +5,6 @@ table.form {
 	background-color: gainsboro;
 	border: 3px solid gainsboro;
 	position: relative;
-/*	top: -1px;
-	left: -1px;*/
 }
 table.note {
 	background-color: #ff99ff;
@@ -25,16 +20,6 @@ pre {
 	background-color: lightgrey;
 }
 
-/* General layout */
-.white {
-	background-color: white;
-}
-.color {
-	background-color: #ffcb05;
-}
-.magenta {
-	background-color: #dc0067;
-}
 A:link {
   color: navy;
 }
@@ -48,22 +33,20 @@ A:hover {
   color: darkmagenta;
 }
 A.form:link,A.form:visited,A.form:active,
-A.color:link,A.color:visited,A.color:active,
+A.topmenu:link,A.topmenu:visited,A.topmenu:active,
 A.plugin:link,A.plugin:visited,A.plugin:active,
-A.magenta:link,A.magenta:visited,A.magenta:active {
+A.subplugin:link,A.subplugin:visited,A.subplugin:active
+{
   color: black;
   text-decoration: none;
 }
-A.form:hover,A.color:hover,A.plugin:hover,A.magenta:hover {
+A.form:hover,A.topmenu:hover,A.plugin:hover,A.magenta:hover {
   color: black;
   text-decoration: underline;
 }
 A.white:link,A.white:visited,A.white:active,A.white:hover {
   color: white;
   text-decoration: none;
-}
-code {
-	color: brown;
 }
 big.plugin {
 	/* Navbar left heading */
@@ -72,7 +55,9 @@ big.plugin {
 	font-weight: bolder;
 	line-height: 25px;
 	font-family: Trebuchet, Arial, Helvetica, sans-serif;
-
+	vertical-align: bottom;
+	margin-left: 3px;
+	margin-right: 3px;
 }
 big.subplugin {
 	/* Navbar left heading */
@@ -109,34 +94,6 @@ div.subplugin {
 	font-family: Trebuchet, Arial, Helvetica, sans-serif;
 	margin-left: 10px;
 }
-div.white {
-	/* Navbar hr */
-	font-size: 0;
-	height: 5px;
-	width: 100%;
-	background-color: white;
-}
-span.color {
-	/* Navbar top */
-	color: black;
-	font-size: 13px;
-	font-weight: bolder;
-	padding-left: 5px;
-	padding-right: 5px;
-	font-family: Trebuchet, Arial, Helvetica, sans-serif;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
-	border: 0px ;
-}
-span.magenta {
-	/* Bottom bar */
-	color: black;
-	font-size: 13px;
-	font-weight: bolder;
-	padding-left: 5px;
-	padding-right: 5px;
-	font-family: Trebuchet, Arial, Helvetica, sans-serif;
-}
 table.body {
 	background-color: white;
 	height: 100%;
@@ -171,13 +128,11 @@ th {
 	font-weight: bold;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	text-align: left;
-	vertical-align:top;
 }
 td {
 	font-size: 11px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	text-align: left;
-	vertical-align:top;
 }
 p,ol,ul,dl,pre {
 	margin-top: 4px;
@@ -237,9 +192,7 @@ tr.colortoggle3 {
 	background-color: #ffcb05;
 }
 fieldset.bubble {
-	padding: 8px 10px 7px 20px;
 	border: 1px solid #d0d0d0;
-	font-size: 10px;
 	background: #f0f0f0;
 	border-radius: 4px;
 }
@@ -262,6 +215,7 @@ fieldset.bubble legend {
 fieldset.bubble table {
 	border: 0px;
 	width: 100%;
+	border-spacing: 2px 1px;
 }
 fieldset.bubble table.hidden {
 	border: 0px;
@@ -274,8 +228,9 @@ fieldset.bubble th {
 	text-align: left;
 }
 fieldset.bubble td {
-	padding: 1px 10px;
+	padding: 0px 10px;
 }
+
 .navi {
 	background-color: #ffcb05;
 	-moz-border-radius: 4px;
@@ -283,7 +238,7 @@ fieldset.bubble td {
 	border: 0px solid #ffcb05;
 }
 .navibar {
-  background-color: #000088; 
+  background-color: #000088;
   -moz-border-radius: 4px;
   border-radius: 4px;
   border: 0px ;
@@ -328,25 +283,30 @@ fieldset.bubble td {
   color: #ffcb05;
 }
 
-.navihead {
+td.topmenu {
 	background-color: #ffcb05;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 	border: 0px ;
+	/* Navbar top */
+	color: black;
+	font-size: 16px;
+	font-weight: bolder;
+	padding-left: 5px;
+	padding-right: 5px;
+	font-family: Trebuchet, Arial, Helvetica, sans-serif;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	border: 0px ;
 }
+
 *+html td.ie_color {
 	background-color: #ffcb05;
 }
 *+html td.ie_white {
 	background-color: white;
 }
-img {
-	border: 0px ;
-}
-img.icon {
-	vertical-align: top;
-	padding-right:5;
-}
+
 a[href^="http://"] {
 	background: url(/images/external.png) center right no-repeat;
 	padding-right: 13px;
@@ -430,4 +390,24 @@ form.splash
 .blink {
 	animation: blink 1s step-start 0s infinite;
 	-webkit-animation: blink 1s step-start 0s infinite;
+}
+fieldset.bubble table.speedtest{
+	width: 400px;
+	border-collapse: collapse;
+}
+fieldset.bubble table.speedtest th {
+	font-size: medium;
+}
+fieldset.bubble table.speedtest td {
+	font-size: medium;
+	border: 1px solid #dddddd;
+}
+
+.marked-input-fg {
+	color: #678b82;
+	font-weight: bold;
+	font-size: medium;
+}
+.marked-input-bg {
+	background-color: #9ec9bf;
 }

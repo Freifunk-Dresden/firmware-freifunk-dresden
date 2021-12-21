@@ -1,3 +1,6 @@
+// Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+// GNU General Public License Version 3
+
 var timer_dhcp=null;
 var timer_wlan=null;
 var timer_register=null;
@@ -5,6 +8,7 @@ var lock_dhcp=0
 var lock_wlan=0
 var lock_register=0
 var lock_geoloc=0
+var lock_regwg=0
 
 
 function ajax_dhcp(data)
@@ -37,7 +41,7 @@ function ajax_register(data)
 
 function onMarkerMove(event)
 {
-	lat=event.target.getLatLng().lat.toFixed(5) 
+	lat=event.target.getLatLng().lat.toFixed(5)
 	lng=event.target.getLatLng().lng.toFixed(5)
 	$("#geoloc_lat").val(lat);
 	$("#geoloc_lng").val(lng);
@@ -46,23 +50,23 @@ function onMarkerMove(event)
 	marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
 }
 
-function onMapClick(event)                                                       
-{                                                                                
-        lat=event.latlng.lat.toFixed(5)                                          
-        lng=event.latlng.lng.toFixed(5)                                          
-        $("#geoloc_lat").val(lat);                                               
-        $("#geoloc_lng").val(lng);                                               
-        marker.setLatLng([lat, lng]);                                            
+function onMapClick(event)
+{
+        lat=event.latlng.lat.toFixed(5)
+        lng=event.latlng.lng.toFixed(5)
+        $("#geoloc_lat").val(lat);
+        $("#geoloc_lng").val(lng);
+        marker.setLatLng([lat, lng]);
 //      var icon = L.icon({iconUrl:"https://leafletjs.com/examples/custom-icons/l
-//      marker.setIcon(icon);                                                    
+//      marker.setIcon(icon);
 	marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
 }
 
 function geoloc_callback(data)
 {
 	try {
-		lat=data.location.lat.toFixed(5) 
-		lng=data.location.lng.toFixed(5) 
+		lat=data.location.lat.toFixed(5)
+		lng=data.location.lng.toFixed(5)
 		$("#geoloc_lat").val(lat);
 		$("#geoloc_lng").val(lng);
 		marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
@@ -78,6 +82,32 @@ function ajax_geoloc(data)
 	var request = $.ajax({url:"/admin/ajax-geoloc.cgi", dataType:"json", dummy:t});
 	request.done(geoloc_callback)
 	lock_geoloc=0;
+}
+
+function regwg_callback(data)
+{
+	try {
+		if(data.status=="RequestAccepted" || data.status=="RequestAlreadyRegistered")
+		{
+			$("#wgcheck_key").val(data.server.key);
+			$("#wgcheck_node").val(data.server.node);
+		}
+		else
+		{
+			if(data.status=="Restricted") $("#wgcheck_key").val("Kein Zugang");
+			else $("#wgcheck_key").val("Fehler");
+		}
+	} catch (e) {}
+}
+function ajax_regwg(host)
+{
+	if(lock_regwg)return;
+	if(host == "")return;
+	lock_regwg=1;
+	t=Math.random();
+	var request = $.ajax({url:"/admin/ajax-regwg.cgi", dataType:"json",method:"POST",data:{host: host}, dummy:t});
+	request.done(regwg_callback)
+	lock_regwg=0;
 }
 
 
@@ -113,7 +143,6 @@ function checkWifiKey(key)
  {
   charCode = key.charCodeAt(i);
   if (charCode < 32 || charCode > 127) return false;
- } 
+ }
  return true;
 }
-

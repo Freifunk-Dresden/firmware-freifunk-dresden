@@ -223,7 +223,8 @@ static void send_aggregated_ogms(void)
 			{
 				struct bat_header *bat_hdr = (struct bat_header *)bif->aggregation_out;
 				bat_hdr->version = COMPAT_VERSION;
-				bat_hdr->link_flags = 0;
+				bat_hdr->networkId_high = gNetworkId >> 8;
+				bat_hdr->networkId_low  = gNetworkId & 0xff;
 				bat_hdr->size = (bif->aggregation_len) / 4;
 
 				if (bif->aggregation_len > MAX_UDPD_SIZE || (bif->aggregation_len) % 4 != 0)
@@ -394,9 +395,9 @@ static void aggregate_outstanding_ogms(void *unused)
 			// keep care to not aggregate more packets than would fit into max packet size
 			aggregated_size += send_node->ogm_buff_len;
 
-			directlink = (send_node->ogm->flags & DIRECTLINK_FLAG);
-			unidirectional = (send_node->ogm->flags & UNIDIRECTIONAL_FLAG);
-			cloned = (send_node->ogm->flags & CLONED_FLAG);
+			directlink = (send_node->ogm->flags & DIRECTLINK_FLAG) > 0;
+			unidirectional = (send_node->ogm->flags & UNIDIRECTIONAL_FLAG) > 0;
+			cloned = (send_node->ogm->flags & CLONED_FLAG) > 0;
 
 			ttl = send_node->ogm->ogm_ttl;
 			if_singlehomed = ((send_node->own_if && send_node->if_outgoing->if_singlehomed) ? 1 : 0);
@@ -433,13 +434,14 @@ static void aggregate_outstanding_ogms(void *unused)
  singlehomed bedeutet nur, dass der node nur ein interface hat.
  ist das nicht gesetzt, so werden OGMs an alle interfaces angehängt und dann später versendet.
 
- im original wird nur eine "grosse" OGM erzeugt (mit gateway,...) und an alle interfaces mit
+ im original wird nur eine "grosse" OGM erzeugt (mit gateway,...) und �beralle alle interfaces mit
  TTL 50 verschickt. "kleine" OGM enthalten nur die ip des interfaces und als einzige erweiterung
  die ip und seqno der grossen OGM. diese werden mit ttl=1 verschickt, so dass diese ip von den
  non-prim interfaces nicht im netz gestreut werden.
  Nur die grosse ogm travelt durch das netz.
 
- Das setzt aber voraus, dass die non-prim interfaces alles verschiedene IPs haben, da die ogm
+ Das setzt aber voraus, dass die non-prim interfaces alles verschiedene IPs zum primaren
+ interface haben, da die ogm
  bei der metrik berechnung von der primary ogm unterschieden werden.
 
 */
@@ -519,7 +521,7 @@ static void aggregate_outstanding_ogms(void *unused)
 			send_node->send_bucket += 100;
 
 			dbgf_all(DBGT_INFO,
-							 "OG %-16s, seqno %5d, TTL %2d, IDF %d, UDF %d, CLF %d "
+							 "OG %-16s, seqno %5d, TTL %2d, DirectF %d, UniF %d, CloneF %d "
 							 "iter %d len %3d max agg_size %3d IFs %s",
 							 ipStr(send_node->ogm->orig),
 							 ntohs(send_node->ogm->ogm_seqno),
@@ -603,12 +605,12 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 		{
 			if (oCtx & IS_ASOCIAL)
 			{
-				dbgf_all(DBGT_INFO, "re-brc neighb OGM with direct link and unidirect flag");
+				dbgf_all(DBGT_INFO, "re-brc (accepted) neighb OGM with direct link and unidirect flag");
 				with_unidirectional_flag = 1;
 			}
 			else
 			{ // mark direct link on incoming interface
-				dbgf_all(DBGT_INFO, "rebroadcast neighbour packet with direct link flag");
+				dbgf_all(DBGT_INFO, "rebroadcast neighbour (accepted) packet with direct link flag");
 			}
 
 			/* if an unidirectional direct neighbour sends us a packet or
@@ -617,7 +619,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 		}
 		else if (!(oCtx & HAS_CLONED_FLAG))
 		{
-			dbgf_all(DBGT_INFO, "re-brc neighb OGM with direct link and unidirect flag");
+			dbgf_all(DBGT_INFO, "re-brc (answer back) neighb OGM with direct link and unidirect flag");
 			with_unidirectional_flag = 1;
 		}
 		else
@@ -637,7 +639,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	}
 	else if ((oCtx & IS_ACCEPTED) && (oCtx & IS_BEST_NEIGH_AND_NOT_BROADCASTED))
 	{
-		dbgf_all(DBGT_INFO, "re-brc OGM");
+		dbgf_all(DBGT_INFO, "re-brc accepted OGM");
 	}
 	else
 	{
@@ -711,6 +713,9 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	/* change sequence number to network order */
 	sn->ogm->ogm_seqno = htons(sn->ogm->ogm_seqno);
 
+	// we send the ogm back as answer with direct link, unidirect, to tell neighbour that we are direct connected
+	dbgf_all(DBGT_INFO, "prepare send re-brc OGM TTL %d DirectF %d UniF %d ", sn->ogm->ogm_ttl, directlink, with_unidirectional_flag );
+
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
@@ -724,7 +729,9 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	}
 
 	if (!inserted)
+	{
 		OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
+	}
 
 	prof_stop(PROF_schedule_rcvd_ogm);
 }
@@ -881,6 +888,10 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 
 	addr_to_str(rcvd_neighbor, mb->neigh_str);
 
+	//SE: add network ID, but enable/disable check
+	mb->networkId =   (((struct bat_header *)pos)->networkId_high) << 8
+	                | (((struct bat_header *)pos)->networkId_low) ;
+
 	// immediately drop invalid packets...
 	// we acceppt longer packets than specified by pos->size to allow padding for equal packet sizes
 	if (((((struct bat_header *)pos)->size) << 2) < (int32_t)(sizeof(struct bat_header) + sizeof(struct bat_packet_common)) ||
@@ -891,11 +902,11 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 		{
 			dbg_mute(60, DBGL_SYS, DBGT_WARN,
 							 "Drop packet: rcvd incompatible batman packet via NB %s "
-							 "(version? %i, reserved? %X, size? %i), "
+							 "(version %i, networkId %u, size %i), "
 							 "rcvd udp_len %d  My version is %d",
 							 mb->neigh_str,
 							 ((struct bat_header *)pos)->version,
-							 ((struct bat_header *)pos)->reserved,
+							 mb->networkId,
 							 ((struct bat_header *)pos)->size,
 							 mb->total_length, COMPAT_VERSION);
 		}
@@ -911,12 +922,24 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 
 	mb->neigh = rcvd_neighbor;
 
-	dbgf_all(DBGT_INFO, "version? %i, "
-											"reserved? %X, size? %i, rcvd udp_len %d via NB %s %s %s",
+
+	dbgf_all(DBGT_INFO, "version %i, "
+											"networkId %u, size %i, rcvd udp_len %d via NB %s %s %s",
 					 ((struct bat_header *)pos)->version,
-					 ((struct bat_header *)pos)->reserved,
+					 mb->networkId,
 					 ((struct bat_header *)pos)->size,
 					 mb->total_length, mb->neigh_str, mb->iif->dev, mb->unicast ? "UNICAST" : "BRC");
+
+	#ifndef DISABLE_NETWORK_ID_CHECK
+		//se: check networkId against our
+		if ( mb->networkId != gNetworkId)
+		{
+			dbgf_all(DBGT_INFO, "Drop packet: invalid networkId %u iif %s", mb->iif->dev);
+
+			prof_stop(PROF_process_packet);
+			return;
+		}
+	#endif
 
 	check_len = udp_len = ((((struct bat_header *)pos)->size) << 2) - sizeof(struct bat_header);
 	check_pos = pos = pos + sizeof(struct bat_header);
@@ -1197,6 +1220,10 @@ loop4Event:
 
 	loop4ActivePlugins:
 
+		// plugins have registerred FD, which are now checked if
+		// data was received on those FD (sockets). If yes the
+		// callback function is called.
+		// gw tunnel is implemented as plugin
 		// check active plugins...
 		OLForEach(cdn, struct cb_fd_node, cb_fd_list)
 		{
@@ -1357,6 +1384,8 @@ void schedule_own_ogm(struct batman_if *bif)
 
 	sn->ogm->ogm_misc = MIN(s_curr_avg_cpu_load, 255);
 
+	dbgf_all(DBGT_INFO, "prepare send own OGM");
+
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
@@ -1370,7 +1399,9 @@ void schedule_own_ogm(struct batman_if *bif)
 	}
 
 	if (!inserted)
+	{
 		OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
+	}
 
 	OLForEach(ln, struct link_node, link_list)
 	{
@@ -1405,6 +1436,7 @@ static struct opt_type schedule_options[] =
 
 				{ODI, 5, 0, ARG_UDPD_SIZE, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &pref_udpd_size, MIN_UDPD_SIZE, MAX_UDPD_SIZE, DEF_UDPD_SIZE, 0,
 				 ARG_VALUE_FORM, "set preferred udp-data size for send packets"}
+
 #ifndef LESS_OPTIONS
 #ifndef NOPARANOIA
 				,

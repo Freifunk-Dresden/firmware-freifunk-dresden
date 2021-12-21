@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 . /lib/functions.sh
 . /lib/upgrade/common.sh
@@ -6,8 +8,12 @@
 
 export TITLE="Verwaltung &gt; Wartung: Konfiguration"
 
+eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
+export model="$(echo $model | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
+export model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
+
 ver=$(uci get ddmesh.boot.upgrade_version)
-CONF_FILE="router-$(uci get ddmesh.system.node)-config-fw$ver-$(date +"%Y%b%d-%H%M%S").tgz"
+CONF_FILE="config-${model2}-router-$(uci get ddmesh.system.node)-fw$ver-$(date +"%Y%b%d-%H%M%S").tgz"
 PACKAGES="/etc/installed.packages"
 OPKG_ERROR="/tmp/opkg.error"
 
@@ -76,6 +82,9 @@ else #form_action
 		if [ -z "$ffout" ]; then
 			notebox "Kein File"
 		else
+			# install all files including $PACKAGES
+			sysupgrade -r "${ffout}"
+
 			echo "<pre>"
 			if [ -f "$PACKAGES" -a "$form_conf_ipkg_install" = "1" ]; then
 				opkg update && {
@@ -86,18 +95,16 @@ else #form_action
 						IFS=':'
 						set $ipkg
 						echo "*** re-installing $1"
-						opkg -V2 --force-overwrite install $1 2>$OPKG_ERROR | flush
-						name=$(opkg --noaction install $1 2>/dev/null | cut -d' ' -f2)
+						opkg -V2 --force-overwrite install "$1" 2>$OPKG_ERROR | flush
+						name=$(opkg --noaction install "$1" 2>/dev/null | cut -d' ' -f2)
 						echo "*** set flag ok [$name]"
-						opkg flag ok $name 2>>$OPKG_ERROR | flush
+						opkg flag ok "$name" 2>>$OPKG_ERROR | flush
 						cat $OPKG_ERROR
 					done
 				} || {
 					echo "Fehler: Keine Pakete zum Downloaden verf&uuml;gbar."
 				}
 			fi
-			echo "Installiere Konfigurations-Files."
-			sysupgrade -r $ffout
 			echo "</pre>"
 			notebox "<b>Hinweis:</b> Konfiguration wurde eingespielt. Die Einstellungen sind erst nach dem n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 		fi

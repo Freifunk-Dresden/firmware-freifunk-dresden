@@ -1,18 +1,8 @@
 #!/bin/ash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
 # https://openwrt.org/docs/guide-user/base-system/led_configuration
-
-ARG_LED="$1"
-ARG_CMD="$2"
-
-if [ -z "$ARG_CMD" ]; then
-	echo "ddmesh-led.sh <type> <value>"
-	echo "	type: wifi | status"
-	echo "	value:"
-	echo "		wifi:	off|on|alive|freifunk|gateway"
-	echo "		status: boot1|boot2|boot3|done|off|on"
-	echo "		wwan:	off|on|2g|3g|4g"
-	exit 0
-fi
 
 . /lib/functions.sh
 . /lib/functions/leds.sh
@@ -24,8 +14,11 @@ boardname=$(board_name) # function in function.sh
 echo "platform: $platform"
 echo "board: $boardname"
 
+ARG_LED="$1"
+ARG_CMD="$2"
+
 # try to detect led (keep order)
-eval $(ddmesh-utils-wifi-info.sh)
+eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 #---- wifi2g
 # "link2" nanostation
@@ -56,26 +49,24 @@ _led_status="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
 #---- wwan
 _led_wwan=""
 
-
 case "$platform" in
-
-	ar71xx)
-		case  "$boardname" in
-			gl-mifi) 	_led_wwan="$(uci -q get system.led_wwan.sysfs)"
-				 	test -z "$_led_wwan" && _led_wwan="gl-mifi:green:net"
-					_led_status="$(uci -q get system.led_wan.sysfs)"
-					;;
-		esac
-		;;
-	
 	ath79)
 		case  "$boardname" in
-			"ubnt,unifi")	_led_wifi2g="ubnt:orange:dome"
-					_led_status="ubnt:green:dome"
+			"ubnt,unifi")
+					_led_wifi2g="orange:dome"
+					_led_status="green:dome"
+					;;
+			"glinet,gl-mifi")
+					_led_wwan="$(uci -q get system.led_3gnet.sysfs)"
+					_led_status="$(uci -q get system.led_wan.sysfs)"
+					;;
+			"tplink,eap225-outdoor-v1")
+					_led_wifi2g="green:status"
+					_led_wifi5g=""
 					;;
 		esac
 		;;
-		
+
 	lantiq|ipq40xx)
 		case  "$boardname" in
 			*)
@@ -85,13 +76,24 @@ case "$platform" in
 		;;
 esac
 
-echo "_led_status: $_led_status"
-echo "_led_wifi2g: $_led_wifi2g"
-echo "_led_wifi5g: $_led_wifi5g"
-echo "_led_wwan: $_led_wwan"
+echo "LED status: $_led_status"
+echo "LED wifi2g: $_led_wifi2g"
+echo "LED wifi5g: $_led_wifi5g"
+echo "LED wwan: $_led_wwan"
+
+if [ -z "$ARG_CMD" ]; then
+	echo ""
+	echo "ddmesh-led.sh <type> <value>"
+	echo "	type: wifi | status | wwan"
+	echo "	value:"
+	echo "		wifi:	off|on|alive|freifunk|gateway"
+	echo "		status: boot1|boot2|boot3|done|off|on"
+	echo "		wwan:	off|on|2g|3g|4g"
+	exit 0
+fi
 
 case "$ARG_LED" in
-	wifi)	
+	wifi)
 		case "$(uci -q get ddmesh.led.wifi)" in
 			on)	ARG_CMD="on" ;;
 			off)	ARG_CMD="off" ;;
@@ -150,9 +152,9 @@ case "$ARG_LED" in
 					;;
 				boot3)	led_timer $_led_status 150 150
 					;;
-				done|off)  led_off $_led_status
+				off)  led_off $_led_status
 					;;
-				on)	led_on $_led_status
+				done|on)	led_on $_led_status
 					;;
 			esac
 		fi
@@ -187,4 +189,3 @@ case "$ARG_LED" in
 	*)	echo "invalid param"
 		;;
 esac
-

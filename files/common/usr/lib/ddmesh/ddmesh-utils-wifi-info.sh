@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
 
 prefix="wifi_status"
 radio2g_up=""
@@ -31,10 +33,18 @@ do
 	dev_path=$(uci -q get wireless.@wifi-device[$idx].path)
 	[ -z "$dev_path" ] && break
 
-	phy=$(ls /sys/devices/$dev_path/ieee80211/)
-	dev=$(ls /sys/devices/$dev_path/net/ | sed -n '1p')
+	devpath="/sys/devices/${dev_path}"
+	# check if path exists. if not prepend "platform". Somehow openwrt21 does not
+	# add "platform" for ramips boards
+	if [ ! -d "${devpath}" ]; then
+		devpath="/sys/devices/platform/${dev_path}"
+	fi
+	[ -d "${devpath}" ] || break;
 
-	unset freq2 
+	phy=$(ls ${devpath}/ieee80211/)
+	dev=$(ls ${devpath}/net/ | sed -n '1p')
+
+	unset freq2
 	unset freq5
 
 	# check for channel (one radio might support 2.4 and 5GHz)
@@ -66,4 +76,3 @@ echo export $prefix"_radio5g_up"="$radio5g_up"
 echo export $prefix"_radio5g_phy"="$radio5g_phy"
 echo export $prefix"_radio5g_config_index"="$radio5g_config_index"
 echo export $prefix"_radio5g_airtime"="$radio5g_airtime"
-

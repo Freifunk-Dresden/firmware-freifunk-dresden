@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de
+# GNU General Public License Version 3
+
 #
 #
 # copy firwmare,packets and generate download.json
@@ -79,7 +82,7 @@ fwdate="$(date)"
 # So I check if FF_BUILD_TAG is set and then use this. If not defined I use
 # the one I can determine.
 git_ddmesh_rev="$(git log -1 --format=%H)"
-if [ "$FF_BUILD_TAG" ]; then
+if [ -n "$FF_BUILD_TAG" ]; then
 	git_ddmesh_branch="$FF_BUILD_TAG"
 else
 	git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
@@ -124,7 +127,7 @@ gen_download_json_start()
   fw_version="$2" # firmware version
   fw_date="$3" # build date
   fw_branch="$4" # ddmesh repository branch or tag
-  fw_rev="$5" # ddmesh git hash 
+  fw_rev="$5" # ddmesh git hash
 
 	printf $C_YELLOW"create download.json"$C_NONE"\n"
 
@@ -208,7 +211,7 @@ gen_download_json_add_data()
 		idx=0
 		while true
 		do
-			# try reading infos 
+			# try reading infos
 			if [ "$info_array" != "[]" ]; then
 				info=$(echo "$info_array" | jq ".[$idx]")
 #printf "idx:%d info:$info\n" $idx
@@ -262,7 +265,7 @@ gen_download_json_add_data()
 			# check if firmware filename is already in OUTPUT_FILEINFO_JSON_FILENAME.
 			# When targets are moved from one buildroot to another (19.04 -> 18.06) then json may still(already)
 			# contain the filename. do not add it a second time.
-			# 
+			#
 			#
 
 			# generate download.json and new fileinfo.json
@@ -289,7 +292,7 @@ gen_download_json_add_data()
 				if [ -n "$result" ]; then
 					printf "\n"$C_LRED"Warning: duplicate found: "$C_NONE"[$search]\n"
 					error=1
-				fi	
+				fi
 
 				printf "{ \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 				# generate new input info file
@@ -486,4 +489,3 @@ EOM
 
 
 printf "FINISHED: files are copied to directory [$target_dir]\n"
-
