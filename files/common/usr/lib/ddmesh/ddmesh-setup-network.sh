@@ -89,14 +89,15 @@ setup_ethernet()
 					# google for: U/L bit of mac address (https://de.wikipedia.org/wiki/MAC-Adresse#Vergabestelle)
 					# So I change the first and last
 					mac="$(ip link show dev ${phy_name} | awk '/ether/{print $2}')"
-
-					if [ "${NET}" = "lan" ]; then
-						mac="${count:0:1}2:${mac:3:14}"
-					else
-						mac="${count:0:1}6:${mac:3:14}"
+					if [ -n "${mac}" ]; then
+						if [ "${NET}" = "lan" ]; then
+							mac="${count:0:1}2:${mac:3:14}"
+						else
+							mac="${count:0:1}6:${mac:3:14}"
+						fi
+						echo "set mac $mac for ${phydev_config}"
+						uci set network.${phydev_config}.macaddr="$mac"
 					fi
-					echo "set mac $mac for ${phydev_config}"
-					uci set network.${phydev_config}.macaddr="$mac"
 				fi
 				count=$((count + 1))
 			done
