@@ -29,7 +29,7 @@ cat<<EOM
 <br>
 EOM
 
-SWITCH_INFO="$(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh csv)"
+SWITCH_INFO="$(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh csv | sort)"
 
 if [ -n "${SWITCH_INFO}" ]; then
 cat<<EOM

@@ -5,15 +5,42 @@
 json=false
 csv=false
 
+isDsa()
+{
+	for i in /sys/class/net/*
+	do
+		ifname="${i##*/}"
+		dsa="$(grep DEVTYPE=dsa $i/uevent)"
+		if [ -n "$dsa" ]; then
+			echo "1"
+			return 1
+		fi
+	done
+	echo "0"
+	return 0
+}
+
+getDsaInterfaces()
+{
+	for i in /sys/class/net/*
+	do
+		ifname="${i##*/}"
+		dsa="$(grep DEVTYPE=dsa $i/uevent)"
+		if [ -n "$dsa" ]; then
+			echo "$ifname"
+		fi
+	done
+}
+
 case $1 in
 	json)	json=true ;;
 	csv)	csv=true ;;
+	isdsa)	isDsa && exit 1 || exit 0;;
 	*)
-		echo "usage: $(basename $0) json | csv"
+		echo "usage: $(basename $0) json | csv | isdsa"
 		exit 1
 		;;
 esac
-
 
 get_switch_info()
 {
@@ -21,7 +48,7 @@ get_switch_info()
 
 	$json && echo "{"
 
-	if [ -x /sbin/swconfig ]; then
+	if [ "$(isDsa)" = "0" ]; then
 		for dev in $(swconfig list | awk '{print $2}')
 		do
 			$json && echo "\"$dev\" : ["
@@ -41,7 +68,7 @@ get_switch_info()
 		done
 	else
 		$json && echo "\"switch\" : ["
-		for dev in wan lan1 lan2 lan3 lan4
+		for dev in $(getDsaInterfaces)
 		do
 			class_path="/sys/class/net/${dev}"
 			if [ -d "${class_path}" ]; then

@@ -128,7 +128,7 @@ setup_ethernet()
 setup_mesh()
 {
 	# determine switch type configuration
-	if [ -n "$(which swconfig)" ]; then
+	if /usr/lib/ddmesh/ddmesh-utils-switch-info.sh isdsa >/dev/null; then
 		dsa=false
 	else
 		dsa=true
