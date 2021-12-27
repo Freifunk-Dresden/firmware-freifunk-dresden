@@ -38,15 +38,17 @@ C_LGREY='\033[1;37m'
 #################################################################################################
 
 #parameter check
-if [ -z "$1" ]; then
-	printf "${0##*/} <all | json>[<directory-suffix>]\n"
+usage()
+{
+	printf "${0##*/} (all | json [<directory-suffix>] ) | pretty <fileinfo.json>\n"
 	printf "Version 5\n"
 	printf "   all                  - generates all (incl.copying files)\n"
 	printf "   json                 - only updates download.json\n"
 	printf "   directory-suffix     - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
+	printf "   pretty <file>        - reads file info json from file and prints sorted (by filename) json on stdout\n"
 	printf "\n"
 	exit 1
-fi
+}
 
 # DEVEL: can be set to false to when only debugging index-generation and generation of download.json stuff
 case "$1" in
@@ -54,7 +56,18 @@ case "$1" in
 		;;
 	"json") ENABLE_COPY=false
 		;;
+
+	"pretty")
+		if [ -z "$2" ]; then
+			printf "missing file\n"
+			exit 1
+		fi
+		cat "$2" | jq '{comment,json_version,"fileinfo":[ .fileinfo | sort_by(.filename) ]}'
+		exit 0
+		;;
+
 	*) 	printf "invalid parameter\n"
+		usage
 		exit 1
 		;;
 esac
