@@ -209,6 +209,7 @@
 { "name":"", "filename":"openwrt-ramips-mt7621-ubnt-erx-sfp-initramfs-kernel.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"", "model2":"", "filename":"openwrt-ramips-mt7621-ubnt-erx-sfp-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"ubnt,edgerouter-x", "model2":"Ubiquiti EdgeRouter X", "filename":"openwrt-ramips-mt7621-ubnt-erx-squashfs-sysupgrade.bin", "comment":""},
+{ "name":"", "autoupdate":"1", "model":"ubnt-erx", "model2":"UBNT-ERX", "filename":"openwrt-ramips-mt7621-ubnt-erx-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "filename":"openwrt-ramips-mt7621-youhua_wr1200js-initramfs-kernel.bin", "comment":""},
 { "name":"", "autoupdate":"1", "model":"youhua,wr1200js", "model2":"YouHua WR1200JS", "filename":"openwrt-ramips-mt7621-youhua_wr1200js-squashfs-sysupgrade.bin", "comment":""},
 { "name":"", "autoupdate":"0", "model":"", "model2":"", "filename":"openwrt-ramips-mt76x8-gl-mt300n-v2-squashfs-sysupgrade.bin", "comment":"new file"},
