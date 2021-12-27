@@ -29,12 +29,13 @@ cat<<EOM
 <br>
 EOM
 
+
 SWITCH_INFO="$(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh csv | sort)"
 
 if [ -n "${SWITCH_INFO}" ]; then
 cat<<EOM
 <fieldset class="bubble">
-<legend>Switch</legend>
+<legend>Switch $(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh isdsa >/dev/null && echo "(DSA)")</legend>
 <table>
 <tr class="colortoggle1"> <th>Port</th> <td>Carrier</td> <td>Speed</td> </tr>
 EOM
