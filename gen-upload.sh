@@ -129,7 +129,7 @@ gen_download_json_start()
   fw_branch="$4" # ddmesh repository branch or tag
   fw_rev="$5" # ddmesh git hash
 
-	printf $C_YELLOW"create download.json"$C_NONE"\n"
+	printf "${C_YELLOW}create download.json${C_NONE}\n"
 
 	> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 
@@ -171,7 +171,7 @@ gen_download_json_add_data()
 
 	printf "add files to download.json\n"
 	# progress info
-	printf $C_LBLUE"# info complete"$C_ORANGE"	+ some info missing"$C_LRED"	- NO info"$C_NONE"\n"
+	printf "${C_LBLUE}# info complete${C_ORANGE}	+ some info missing${C_LRED}	- NO info${C_NONE}\n"
 
 	# get info for each filename
 	# eval is needed because file_filter must be avaluated
@@ -243,12 +243,12 @@ gen_download_json_add_data()
 			# progress bar only for files where I add model/model2 information
 			if [ $sysupgrade = 1 ]; then
 				if [ -n "$model" -a -n "$model2" ]; then
-					printf $C_LBLUE"#"$C_NONE
+					printf "${C_LBLUE}#${C_NONE}"
 				else
 					if [ -n "$model" -o -n "$model2" ]; then
-						printf $C_ORANGE"+"$C_NONE
+						printf "${C_ORANGE}+${C_NONE}"
 					else
-						printf $C_LRED"-"$C_NONE
+						printf "${C_LRED}-${C_NONE}"
 					fi
 				fi
 			fi
@@ -277,7 +277,7 @@ gen_download_json_add_data()
 				result=$(grep "$search" $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME)
 
 				if [ -n "$result" ]; then
-					printf "\n"$C_LRED"Warning: duplicate found: "$C_NONE"[$search]\n"
+					printf "\n${C_LRED}Warning: duplicate found: ${C_NONE}[$search] at ${C_YELLOW}$subpath${C_NONE}\n"
 					error=1
 				fi
 
@@ -290,7 +290,7 @@ gen_download_json_add_data()
 				search="$file"
 				result=$(grep "$search" $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME)
 				if [ -n "$result" ]; then
-					printf "\n"$C_LRED"Warning: duplicate found: "$C_NONE"[$search]\n"
+					printf "\n{C_LRED}Warning: duplicate found: ${C_NONE}[$search] at ${C_YELLOW}$subpath${C_NONE}\n"
 					error=1
 				fi
 
@@ -310,7 +310,7 @@ gen_download_json_add_data()
 	done
 
 	if [ $error -eq 1 ]; then
-		printf "Error: there were some duplicates.\n"
+		printf "${C_LRED}Error: there were some duplicates.${C_NONE}\n"
 		exit 1
 	fi
 	printf "\n"
@@ -365,7 +365,7 @@ gen_download_json_start "$target_dir" "$fwversion" "$fwdate" "$fw_branch" "$fw_r
 # copy build dl
 #################################################################################################
 $ENABLE_COPY && {
-	printf $C_YELLOW"copy downloaded packages"$C_NONE"\n"
+	printf "${C_YELLOW}copy downloaded packages${C_NONE}\n"
 	cp -a $firmwareroot/dl/* $target_dir/downloaded_packages/
 #	gen_download_json_add_single_link '[downloaded_packages]' 'downloaded_packages' $target_dir
 }
@@ -376,20 +376,20 @@ $ENABLE_COPY && {
 
 #changelog
 $ENABLE_COPY && {
-	printf $C_YELLOW"copy changelog"$C_NONE"\n"
+	printf "${C_YELLOW}copy changelog${C_NONE}\n"
 	cp -a $firmwareroot/changelog.txt $target_dir/
 #	gen_download_json_add_single_link 'changelog.txt' 'changelog.txt' $target_dir
 }
 
 #licenses
 $ENABLE_COPY && {
-	printf $C_YELLOW"copy licenses"$C_NONE"\n"
+	printf "${C_YELLOW}copy licenses${C_NONE}\n"
 	cp -a $firmwareroot/license $target_dir/
 #	gen_download_json_add_single_link '[license]' 'license' $target_dir
 }
 
 $ENABLE_COPY && {
-	printf $C_YELLOW"copy www"$C_NONE"\n"
+	printf "${C_YELLOW}copy www${C_NONE}\n"
 	cp -a $info_dir/files/index.html $target_dir/
 	cp -a $info_dir/files/_res $target_dir/
 }
@@ -404,7 +404,7 @@ printf "finished.\n"
 # run through all openwrt version (targets may be created for different openwrt versions)
 for _buildroot in $(ls -1 $firmwareroot/workdir/)
 do
-	printf $C_YELLOW"build root:"$C_NONE"["$C_GREEN"$_buildroot"$C_NONE"]\n"
+	printf "${C_YELLOW}build root:${C_NONE}[${C_GREEN}${_buildroot}${C_NONE}]\n"
 
 	buildroot=$firmwareroot/workdir/$_buildroot
 
@@ -424,7 +424,7 @@ do
 	for platform in $(ls $_platforms)
 	do
 
-		printf $C_YELLOW"platform:"$C_NONE" ["$C_GREEN"$platform"$C_NONE"]\n"
+		printf "${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
 		mkdir -p $target_dir/$_buildroot/$platform
 
 		for subplatform in $(ls $buildroot/bin/targets/$platform)
@@ -448,7 +448,7 @@ do
 			# oder github
 			p=$(pwd)
 			cd $tmpTargetDir
-			printf $C_YELLOW"calculate md5sum"$C_NONE"\n"
+			printf "${C_YELLOW}calculate md5sum${C_NONE}\n"
 			md5sum * > $tmpTargetDir/md5sums
 			cd $p
 
@@ -457,18 +457,18 @@ do
 			printf "search package dir: $buildroot/bin/targets/$platform/$subplatform/packages/\n"
 			for package in $(cat $info_dir/packages)
 			do
-				printf $C_YELLOW"process package: "$C_GREEN"$package"$C_NONE"\n"
+				printf "${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}\n"
 				filename=$(find $buildroot/bin/targets/$platform/$subplatform/packages/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
-				printf "package filename: $filename\n"
+				printf "package filename: [${filename}]\n"
 
-				test -z "$filename" && printf $C_ORANGE"WARNING: no package file found for "$C_NONE"$package\n"
+				test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
 				$ENABLE_COPY && {
 	#			printf "copy package: $package -> [$filename]\n"
 					test -n "$filename" && cp -a $filename $tmpTargetDir/packages/
 				}
 			done
 
-			printf $C_YELLOW"generate package index"$C_NONE"\n"
+			printf "${C_YELLOW}generate package index${C_NONE}\n"
 			p=$(pwd)
 			cd $tmpTargetDir/packages/
 			$buildroot/scripts/ipkg-make-index.sh . > Packages
