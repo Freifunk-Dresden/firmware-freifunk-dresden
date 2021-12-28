@@ -519,11 +519,11 @@ CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c7-v5=y
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-d50-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-d7-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-d7b-v1 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe210-v1 is not set
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe210-v1=y
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe210-v2=y
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe210-v3=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe220-v2=y
-CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe220-v3=y
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe220-v2 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe220-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe510-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe510-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_cpe510-v3 is not set
