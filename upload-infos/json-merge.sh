@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "script disabled, da ich nicht mehr weiss wofur"
+exit 1
+
 inputfile=fileinfo.json		# contains only filename (no model,model2 is set)
 lookupfile=y.json		# contains model,model2,filename
 outputfile=fileinfo.out.json	# merged new file
