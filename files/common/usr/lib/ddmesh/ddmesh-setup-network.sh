@@ -37,18 +37,22 @@ setup_ethernet()
 	# reconfigure lan as bridge if needed
 	for NET in lan wan
 	do
+		echo "check NET: $NET"
 		if [ -n "$(uci -q get network.${NET})" ]; then
+		echo "$NET found"
 
 			# ------- configure device -------
 			dev_name=$(uci -q get network.${NET}.device)
 			dev_config=$(get_device_section "$dev_name")
+			echo "[$NET] dev_name:$dev_name"
+			echo "[$NET] dev_config:$dev_config"
 
 			# check if we have a device section for lan/wan.
 			# and create one
 			if [ -z "$(uci -q get network.${dev_config})" ]; then
 
 				# use name that can not conflict with exisings
-				dev_config="ddmesh_dev_${NET}"
+				dev_config="dev_br_${NET}"
 				echo "create device section ${dev_config} for ${NET}"
 
 				uci add network device
@@ -58,9 +62,11 @@ setup_ethernet()
 			# device section will become a bridge (if not already)
 			# add ports if not present and use devname as bridge interface names
 			if [ -z "$(uci -q get network.${dev_config}.ports)" ]; then
+				echo "[$NET] set ports: ${dev_name}"
 				uci add_list network.${dev_config}.ports="${dev_name}"
 			fi
 
+			echo "[$NET] set type: bridge"
 			# overwrite if device config was already present
 			uci set network.${dev_config}.name="br-${NET}"
 			uci set network.${dev_config}.type='bridge'
@@ -68,13 +74,14 @@ setup_ethernet()
 			uci set network.${dev_config}.bridge_empty=1
 
 			# ------- create devices for all physical eth ports -------
+			echo "[$NET] create device sections for phy eth ports"
 			local count=0
 			for phy_name in $(uci -q get network.${dev_config}.ports)
 			do
 				phydev_config=$(get_device_section "${phy_name}")
 				if [ -z "$(uci -q get network.${phydev_config})" ]; then
 
-					phydev_config="ddmesh_phydev_${phy_name/./_}"
+					phydev_config="phydev_${phy_name/./_}"
 					echo "create phy-device section ${phydev_config}"
 
 					uci add network device
@@ -103,6 +110,8 @@ setup_ethernet()
 			done
 
 			# ------- configure interface (after device sections) ------
+			echo "[$NET] configure interface: br-${NET}"
+
 			# overwrite device name (after the previous name was extracted and used for device section (wan))
 			uci set network.${NET}.device="br-${NET}"
 
@@ -129,12 +138,14 @@ setup_mesh()
 {
 	# determine switch type configuration
 	if /usr/lib/ddmesh/ddmesh-utils-switch-info.sh isdsa >/dev/null; then
-		dsa=false
-	else
 		dsa=true
+	else
+		dsa=false
 	fi
+	echo "DSA: $dsa"
 
 	enable_vlan="$(uci -q get ddmesh.network.mesh_on_vlan)"
+	echo "enable_vlan=$enable_vlan"
 
 	# setup mesh vlan
 	if [ "${enable_vlan}" = "1" ]; then
@@ -210,9 +221,13 @@ setup_mesh()
 			do
 				br_dev_name=$(uci -q get network.${NET}.device)
 				br_dev_config=$(get_device_section "$br_dev_name")
+				echo "vlan:[$NET] br_dev_name=$br_dev_name"
+				echo "vlan:[$NET] br_dev_config=$br_dev_config"
 
 				# create bridge-vlan (similar to device section)
-				vlan_dev_config="vlan_dev_config_${NET}"
+				vlan_dev_config="vlan_device_${NET}"
+				echo "vlan: add bridge: $vlan_dev_config"
+
 				uci add network bridge-vlan
 				uci rename network.@bridge-vlan[-1]="${vlan_dev_config}"
 				uci set network.${vlan_dev_config}.name="${br_dev_name}"
@@ -221,15 +236,19 @@ setup_mesh()
 				ports="$(uci -q get network.${br_dev_config}.ports)"
 				for port in ${ports}
 				do
+					echo "vlan: add ports: ${port}:t"
 					uci add_list network.${vlan_dev_config}.ports="${port}:t"
 				done
 
+				echo "vlan: create interface: vlan_iface_${NET}"
 				# create vlan interface
 				vlan_if_config="vlan_iface_${NET}"
 				uci add network interface
 				uci rename network.@interface[-1]="${vlan_if_config}"
 				uci set network.${vlan_if_config}.device="${br_dev_name}.${mesh_vlan_id}"
 				uci set network.${vlan_if_config}.force_link='1'
+
+				vlan_ports="${vlan_ports} ${br_dev_name}.${mesh_vlan_id}"
 			done
 		fi
 	fi # if mesh_on_vlan
@@ -238,19 +257,10 @@ setup_mesh()
 	for NET in mesh_lan mesh_wan mesh_vlan
 	do
 		device="br-${NET}"
-
-		# create interface
-		uci add network interface
-		uci rename network.@interface[-1]="${NET}"
-		uci set network.${NET}.device="${device}"
-		uci set network.${NET}.ipaddr="$_ddmesh_nonprimary_ip"
-		uci set network.${NET}.netmask="$_ddmesh_netmask"
-		uci set network.${NET}.broadcast="$_ddmesh_broadcast"
-		uci set network.${NET}.proto='static'
-		uci set network.${NET}.force_link=1
+		echo "create mesh bridges device :$device"
 
 		# configure as bridge (dev_name is lowlevel name)
-		dev_config="device_${NET}"
+		dev_config="bridge_device_${NET}"
 		uci add network device
 		uci rename network.@device[-1]="${dev_config}"
 		uci set network.${dev_config}.name="${device}"
@@ -260,17 +270,24 @@ setup_mesh()
 
 		# add vlan ports
 		if [ "${enable_vlan}" = "1" -a "${NET}" = "mesh_vlan" ]; then
-			if ! $dsa; then
 				# need to "for" vlan_ports to remove spaces
 				for p in ${vlan_ports}
 				do
-					uci add_list network.${dev_config}.ports="$p"
+					uci add_list network.${dev_config}.ports="${p}"
 				done
-			else
-				uci add_list network.${dev_config}.ports="br-lan.${mesh_vlan_id}"
-				uci add_list network.${dev_config}.ports="br-wan.${mesh_vlan_id}"
-			fi
 		fi
+
+		# create interface
+		echo "create mesh bridge interface: ${NET} attached to device ${device}"
+		uci add network interface
+		uci rename network.@interface[-1]="${NET}"
+		uci set network.${NET}.device="${device}"
+		uci set network.${NET}.ipaddr="$_ddmesh_nonprimary_ip"
+		uci set network.${NET}.netmask="$_ddmesh_netmask"
+		uci set network.${NET}.broadcast="$_ddmesh_broadcast"
+		uci set network.${NET}.proto='static'
+		uci set network.${NET}.force_link=1
+
 	done
 }
 
@@ -441,11 +458,14 @@ setup_network()
  rm -f /etc/config/network
  /bin/config_generate
 
+#cat /etc/config/network >/tmp/devel-network-initial
+
  # setup_mesh AFTER setup_ethernet (setup_mesh needs lan network)
  for f in setup_ethernet setup_mesh setup_wwan setup_wifi setup_backbone setup_bmxd setup_ffgw setup_vpn setup_privnet
  do
 	echo "call ${f}()"
 	${f}
+#uci commit && cat /etc/config/network >/tmp/devel-network-${f}
  done
 }
 
