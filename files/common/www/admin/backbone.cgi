@@ -205,7 +205,11 @@ show_accept()
 	cat<<EOM
 	<tr class="colortoggle$TOGGEL">
 	<td><input onclick="form_submit_checked(document.forms.backbone_form_connection_in,'update_enabled','$config', this.checked)" type="checkbox" $(if [ "$disabled" != "1" ];then echo ' checked="checked"';fi)></td>
-	<td>$vtype</td> <td>$vnode</td> <td>$vkey</td>	<td>$vcomment</td>
+	<td>$vtype</td>
+EOM
+	[ -n "$WG_PATH" ] && echo "<td>$vnode</td>"
+cat<<EOM
+	 <td>$vkey</td>	<td>$vcomment</td>
 	<td><img title="$connect_title" src="$CONNECTED"></td>
 	<td><button onclick="if(ask('$vnode'))form_submit(document.forms.backbone_form_connection_in,'accept_del','$config')" title="Verbindung l&ouml;schen" type="button">
 	<img src="/images/loeschen.gif" align=bottom width=16 height=16 hspace=4></button></td>
@@ -259,9 +263,9 @@ show_outgoing()
 	<td><input onclick="form_submit_checked(document.forms.backbone_form_connection_out,'update_enabled','$config', this.checked)" type="checkbox" $(if [ "$disabled" != "1" ];then echo ' checked="checked"';fi)></td>
 	<td>$vtype</td><td>$vhost</td><td>$vport</td>
 EOM
-	[ -f "$WG_PATH" ] && echo '<td></td>'
+	[ -n "$WG_PATH" ] && echo "<td></td><td>$vnode</td>"
 cat<<EOM
-	<td>$vnode</td><td>$vkey</td>
+	<td>$vkey</td>
 	<td><img title="$connect_title" src="$CONNECTED"></td>
 	<td>
 	<button onclick="if(ask('$vhost'))form_submit(document.forms.backbone_form_connection_out,'client_del','$config')" title="Verbindung l&ouml;schen" type="button">
@@ -293,7 +297,7 @@ content()
 <tr>
 <th title="Port des fastd Servers">Fastd-Server-Port:</th>
 EOM
-if [ -f "$WG_PATH" ];then
+if [ -n "$WG_PATH" ];then
 cat<<EOM
 <th title="Port des wireguard Servers">Wireguard Server-Port:</th>
 EOM
@@ -305,7 +309,7 @@ cat<<EOM
 <tr>
 <td><input name="form_backbone_local_fastd_port" type="text" size="8" value="$backbone_local_fastd_port"</td>
 EOM
-if [ -f "$WG_PATH" ];then
+if [ -n "$WG_PATH" ];then
 cat<<EOM
 <td><input name="form_backbone_local_wg_port" type="text" size="8" value="$backbone_local_wg_port"</td>
 EOM
@@ -324,7 +328,7 @@ cat<<EOM
 <tr><th>Fastd Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.backbone_form_keygen,'keygen_fastd','none')" name="bb_btn_new" type="button">FastD Key Generieren</button></td></tr>
 EOM
-if [ -f "$WG_PATH" ];then
+if [ -n "$WG_PATH" ];then
 cat<<EOM
 <tr><th>Wireguard Public-Key:</th><td>$(uci get credentials.backbone_secret.wireguard_key | wg pubkey)</td>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.backbone_form_keygen,'keygen_wg','none')" name="bb_btn_new" type="button">Wireguard Key Generieren</button></td></tr>
@@ -342,7 +346,11 @@ cat<<EOM
 <input name="form_entry" value="none" type="hidden">
 <input name="form_checked" value="none" type="hidden">
 <table>
-<tr><th>Aktiviert</th><th>Typ</th><th>Knotennummer</th><th>Public-Key</th><th>Kommentar</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<tr><th>Aktiviert</th><th>Typ</th>
+EOM
+[ -n "$WG_PATH" ] && echo '<th>Knotennummer</th>'
+cat<<EOM
+<th>Public-Key</th><th>Kommentar</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -356,15 +364,17 @@ EOM
 	<td><input name="form_backbone_incomming_enabled" type="CHECKBOX" VALUE="1"></td>
 	<td title="Typ"><select onchange="enable_formfields_incomming();" name="form_backbone_incomming_peer_type" size="1">
 EOM
-	if [ -f "$WG_PATH" ]; then
+	if [ -n "$WG_PATH" ]; then
 		echo "<option selected value=\"wireguard\">wireguard</option>"
 	fi
-	if [ -f "$FASTD_PATH" ]; then
+	if [ -n "$FASTD_PATH" ]; then
 		echo "<option value=\"fastd\">fastd</option>"
 	fi
 	cat<<EOM
 	</select></td>
-	<td title="Knoten der Gegenstelle"> <input name="form_backbone_incomming_peer_node" type="text" size="5" value=""></td>
+EOM
+	[ -n "$WG_PATH" ] && echo '<td title="Knoten der Gegenstelle"> <input name="form_backbone_incomming_peer_node" type="text" size="5" value=""></td>'
+cat<<EOM
 	<td title="Public Key der Gegenstelle"> <input name="form_backbone_incomming_peer_key" type="text" size="40" value=""></td>
 	<td title="Kommentar"> <input name="form_backbone_incomming_peer_comment" type="text" size="20" value=""></td>
 	<td></td>
@@ -394,9 +404,9 @@ EOM
 <table>
 <tr><th>Aktiv</th><th>Typ</th><th>Server-Hostname (Freifunk-Router)</th><th>Server-Port</th>
 EOM
-[ -f "$WG_PATH" ] && echo '<th></th>'
+[ -n "$WG_PATH" ] && echo '<th></th><th>Knotennummer</th>'
 cat<<EOM
-<th>Knotennummer</th><th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
+<th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
 	TOGGEL=1
@@ -409,10 +419,10 @@ EOM
  <td><input name="form_backbone_outgoing_enabled" type="CHECKBOX" VALUE="1" checked></td>
  <td title="Typ"><select onchange="enable_formfields_outgoing();" name="form_backbone_outgoing_peer_type" size="1">
 EOM
-if [ -f "$WG_PATH" ]; then
+if [ -n "$WG_PATH" ]; then
 	echo "<option selected value=\"wireguard\">wireguard</option>"
 fi
-if [ -f "$FASTD_PATH" ]; then
+if [ -n "$FASTD_PATH" ]; then
 	echo "<option value=\"fastd\">fastd</option>"
 fi
 cat<<EOM
@@ -421,10 +431,11 @@ cat<<EOM
  <td title="Port des Servers"><input name="form_backbone_outgoing_peer_port" type="text" size="8" value="$DEFAULT_WG_PORT"></td>
 
 EOM
-[ -f "$WG_PATH" ] && echo '<td><button onclick="ajax_regwg(document.backbone_form_connection_out.form_backbone_outgoing_peer_hostname.value)" name="bb_btn_wgcheck" title="Pr&uuml;fe Zugriff" type="button"><img src="/images/key16.png"></button></td>'
-
+if [ -n "$WG_PATH" ]; then
+	echo '<td><button onclick="ajax_regwg(document.backbone_form_connection_out.form_backbone_outgoing_peer_hostname.value)" name="bb_btn_wgcheck" title="Pr&uuml;fe Zugriff" type="button"><img src="/images/key16.png"></button></td>'
+	echo '<td title="Zielknottennummer (nur f&uuml;r Wireguard)"><input id="wgcheck_node" name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>'
+fi
 cat<<EOM
- <td title="Zielknottennummer (nur f&uuml;r Wireguard)"><input id="wgcheck_node" name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>
  <td class="nowrap" title="Public Key der Gegenstelle"><input id="wgcheck_key" name="form_backbone_outgoing_peer_key" type="text" size="40" value=""></td>
  <td></td>
  <td><button onclick="if(checkinput_outgoing())form_submit(document.forms.backbone_form_connection_out,'client_add_outgoing','none')" name="bb_btn_new" title="Verbindung speichern" type="button">Neu</button></td>
