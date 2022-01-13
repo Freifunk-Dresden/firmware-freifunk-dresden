@@ -139,8 +139,8 @@
 		"name":"x86.64.offloader",
 		"target":"x86",
 		"subtarget":"64",
-		"variant":"offloader"
-#,		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
+		"variant":"offloader",
+		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
 	},
 	{
 		"name":"ramips.mt7621.generic",
@@ -206,10 +206,10 @@
 		"subtarget":"generic"
 	},
 	{
-		"name":"ipq40xx.generic.fr-1200",
+		"name":"ipq40xx.generic.fritz-tffs-nand",
 		"target":"ipq40xx",
 		"subtarget":"generic",
-		"variant":"fr-1200"
+		"variant":"fritz-tffs-nand"
 	},
 	{
 		"name":"bcm53xx.generic.arm",
