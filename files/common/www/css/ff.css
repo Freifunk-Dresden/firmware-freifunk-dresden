@@ -312,6 +312,10 @@ a[href^="http://"] {
 	padding-right: 13px;
 }
 
+td.direct_hop {
+	background-color: #00aaff;
+}
+
 td.quality {
 	padding-left: 15px;
 }

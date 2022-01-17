@@ -94,8 +94,12 @@ export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+
 	for(c=1,i=0;i<count;i++)
 	{
 		key=data_node[i]
-		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",
-		c,data_pref[key],data_active[key],data_comimg[key],data_stat[key],key,data_ip[key],data_ip[key],data_hop[key],data_brc[key],data_brc[key],data_speed[key]);
+		if(getnode(data_hop[key])==key)
+		{ css_hop="class=\"direct_hop\"" }
+		else
+		{ css_hop=""}
+		printf("<tr class=\"colortoggle%d\"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td %s>%s</td><td %s><a href=\"http://%s/\">%s</a></td><td %s>%s</td><td class=\"quality_%s\">%s</td><td>%s</td></tr>\n",
+		c,data_pref[key],data_active[key],data_comimg[key],data_stat[key],css_hop,key,css_hop,data_ip[key],data_ip[key],css_hop,data_hop[key],data_brc[key],data_brc[key],data_speed[key]);
 		if(c==1)c=2;else c=1;
 	}
 	if(count){brc=int(brc/count); printf("<tr><td colspan=\"7\"><b>Anzahl:</b>&nbsp;%d</td><td class=\"quality_%s\"><b>%s</b></td><td></td></tr>", count, brc, brc);}
@@ -118,7 +122,12 @@ EOM
 
 	if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
 	{
- 		printf("<tr class=\"colortoggle%d\"><td>%s</td><td><a href=\"http://%s/\">%s</a></td><td class=\"quality_%s\">%s</td><td>%s</td><td>%s</td></tr>\n",c,getnode($1),$1,$1,$4,$4,color_interface($2),$3);
+		node=getnode($1)
+		if(getnode($3)==node)
+		{ css_hop="class=\"direct_hop\"" }
+		else
+		{ css_hop=""}
+ 		printf("<tr class=\"colortoggle%d\"><td %s>%s</td><td %s><a href=\"http://%s/\">%s</a></td><td class=\"quality_%s\">%s</td><td %s>%s</td><td %s>%s</td></tr>\n",c,css_hop,getnode($1),css_hop,$1,$1,$4,$4,css_hop,color_interface($2),css_hop,$3);
 		if(c==1)c=2;else c=1;
 		count=count+1;
 		brc=brc+$4
