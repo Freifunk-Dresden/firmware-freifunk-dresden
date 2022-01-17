@@ -306,7 +306,7 @@ cat<<EOM
 <th></th>
 </tr>
 
-<tr>
+<tr class="colortoggle1">
 <td><input name="form_backbone_local_fastd_port" type="text" size="8" value="$backbone_local_fastd_port"</td>
 EOM
 if [ -n "$WG_PATH" ];then
@@ -325,11 +325,11 @@ cat<<EOM
 <input name="form_entry" value="none" type="hidden">
 <table>
 <tr><td colspan="3">&nbsp;</td></tr>
-<tr><th>Fastd Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td><td></td></tr>
+<tr class="colortoggle2"><th>Fastd Public-Key:</th><td colspan="2">$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td></tr>
 EOM
 if [ -n "$WG_PATH" ];then
 cat<<EOM
-<tr><th>Wireguard Public-Key:</th><td>$(uci get credentials.backbone_secret.wireguard_key | wg pubkey)</td><td></td></tr>
+<tr class="colortoggle2"><th>Wireguard Public-Key:</th><td colspan="2">$(uci get credentials.backbone_secret.wireguard_key | wg pubkey)</td></tr>
 EOM
 fi
 cat<<EOM
