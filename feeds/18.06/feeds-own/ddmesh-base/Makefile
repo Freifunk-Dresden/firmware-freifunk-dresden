@@ -17,13 +17,15 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)-base
   CATEGORY:=ddmesh
   DEFAULT:=y
-  DEPENDS:=	+kmod-ledtrig-timer +kmod-tun +libmbedtls +libustream-mbedtls \
+  DEPENDS:=	+base-files +busybox +dnsmasq +firewall +logd +uci +dropbear \
+		+firewall +iptables +ip-tiny \
+		+mtd +opkg \
 		+uhttpd \
+		+kmod-ledtrig-timer +kmod-leds-gpio +kmod-gpio-button-hotplug \
+		+kmod-tun \
+		+libmbedtls +libustream-mbedtls +px5g-mbedtls \
 		+bmxd +freifunk-upload \
 		+ddns-scripts +ddns-scripts_no-ip_com \
-		+iptables \
-		+px5g-mbedtls \
-		+ip-tiny \
 		+iperf3 \
 		+kmod-ipip \
 		+PACKAGE_fastd:nacl \
