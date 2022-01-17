@@ -324,14 +324,12 @@ cat<<EOM
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><td colspan="3"><font color="red">Achtung: Wird ein neuer Schl&uuml;ssel generiert, muss dieser bei <b>allen</b> Backbone-Servern aktualisiert werden, da sonst keine Verbindung mehr von diesem Router akzeptiert wird.</font></td></tr>
-<tr><th>Fastd Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td>
- <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.backbone_form_keygen,'keygen_fastd','none')" name="bb_btn_new" type="button">FastD Key Generieren</button></td></tr>
+<tr><td colspan="3">&nbsp;</td></tr>
+<tr><th>Fastd Public-Key:</th><td>$(/usr/lib/ddmesh/ddmesh-backbone.sh get_public_key)</td><td></td></tr>
 EOM
 if [ -n "$WG_PATH" ];then
 cat<<EOM
-<tr><th>Wireguard Public-Key:</th><td>$(uci get credentials.backbone_secret.wireguard_key | wg pubkey)</td>
- <td title="Einstellungen werden nach Neustart wirksam."><button onclick="form_submit(document.forms.backbone_form_keygen,'keygen_wg','none')" name="bb_btn_new" type="button">Wireguard Key Generieren</button></td></tr>
+<tr><th>Wireguard Public-Key:</th><td>$(uci get credentials.backbone_secret.wireguard_key | wg pubkey)</td><td></td></tr>
 EOM
 fi
 cat<<EOM
@@ -545,14 +543,6 @@ else
 				uci set ddmesh.${form_entry}.disabled='1'
 			fi
 			uci_commit.sh
-			;;
-
-		keygen_fastd)
-			/usr/lib/ddmesh/ddmesh-backbone.sh gen_secret_key
-			;;
-
-		keygen_wg)
-			/usr/lib/ddmesh/ddmesh-backbone.sh gen_wgsecret_key
 			;;
 
 		restart)

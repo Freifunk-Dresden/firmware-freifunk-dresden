@@ -39,6 +39,11 @@ gen_fastd_key()
 
 gen_wg_key()
 {
+	test -z "$(uci -q get credentials.backbone_secret)" && {
+		uci -q add credentials backbone_secret
+		uci -q rename credentials.@backbone_secret[-1]='backbone_secret'
+	}
+
 	WG_PRIV=$(wg genkey)
 	uci set credentials.backbone_secret.wireguard_key="$WG_PRIV"
 	uci_commit.sh
@@ -53,7 +58,7 @@ generate_fastd_conf()
  echo "generate fastd config"
  secret="$(uci -q get credentials.backbone_secret.fastd_key)"
  if [ -z "$secret" ]; then
-	logger -t $FASTD_LOGGER_TAG "no secret key - generating..."
+	logger -t $FASTD_LOGGER_TAG "no fastd secret key - generating..."
 	gen_fastd_key
 	secret="$(uci -q get credentials.backbone_secret.fastd_key)"
  fi
@@ -307,8 +312,15 @@ case "$1" in
 			local_wg_ip_netpre=$_ddmesh_netpre
 			local_wg_net=$_ddmesh_wireguard_network
 
-			# create tbbwg
+			# create key
 			secret=$(/sbin/uci -q get credentials.backbone_secret.wireguard_key)
+			if [ -z "$secret" ]; then
+				logger -t $WG_LOGGER_TAG "no wg secret key - generating..."
+				gen_wg_key
+				secret=$(/sbin/uci -q get credentials.backbone_secret.wireguard_key)
+			fi
+
+			# create tbbwg
 			if [ -n "$secret" ]; then
 				# setup local wg interface. this is used to receive/transmit data for/from
 				# all peers (hosts)
