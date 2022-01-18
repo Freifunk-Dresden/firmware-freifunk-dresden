@@ -3248,7 +3248,7 @@ CONFIG_PACKAGE_kmod-usb-core=y
 CONFIG_PACKAGE_kmod-usb-ehci=y
 # CONFIG_PACKAGE_kmod-usb-hid is not set
 # CONFIG_PACKAGE_kmod-usb-hid-cp2112 is not set
-CONFIG_PACKAGE_kmod-usb-ledtrig-usbport=y
+# CONFIG_PACKAGE_kmod-usb-ledtrig-usbport is not set
 # CONFIG_PACKAGE_kmod-usb-net is not set
 # CONFIG_PACKAGE_kmod-usb-net-aqc111 is not set
 # CONFIG_PACKAGE_kmod-usb-net-asix is not set
@@ -3307,7 +3307,7 @@ CONFIG_PACKAGE_kmod-usb-ohci=y
 # CONFIG_PACKAGE_kmod-usb-yealink is not set
 CONFIG_PACKAGE_kmod-usb2=y
 # CONFIG_PACKAGE_kmod-usb2-pci is not set
-CONFIG_PACKAGE_kmod-usb3=y
+# CONFIG_PACKAGE_kmod-usb3 is not set
 # CONFIG_PACKAGE_kmod-usbip is not set
 # CONFIG_PACKAGE_kmod-usbip-client is not set
 # CONFIG_PACKAGE_kmod-usbip-server is not set
