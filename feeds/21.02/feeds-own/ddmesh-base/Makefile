@@ -21,7 +21,7 @@ define Package/$(PKG_NAME)-base
     +firewall +iptables +ip-tiny \
     +mtd +opkg \
     +uhttpd \
-    +kmod-ledtrig-timer +kmod-leds-gpio +kmod-gpio-button-hotplug \
+    +kmod-leds-gpio +kmod-gpio-button-hotplug \
     +kmod-tun \
     +libmbedtls +libustream-mbedtls +px5g-mbedtls \
     +bmxd +freifunk-upload \
@@ -120,9 +120,8 @@ define Package/$(PKG_NAME)-usb-storage
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-  DEPENDS:= 	+kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
-    +kmod-fs-vfat \
-    +block-mount
+  DEPENDS:= +kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
+            +kmod-fs-vfat +block-mount
 
   TITLE:=Meta package to enable usb storage
 endef
@@ -132,15 +131,15 @@ define Package/$(PKG_NAME)-usb-storage/description
 endef
 
 ##########################################################
-#https://openwrt.org/docs/guide-user/network/wan/smartphone.usb.tethering
+# https://openwrt.org/docs/guide-user/network/wan/smartphone.usb.tethering
+
 define Package/$(PKG_NAME)-tethering
   CATEGORY:=ddmesh
-  # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-  DEPENDS:= 	+kmod-usb-core +kmod-usb2 +kmod-nls-base \
-              +kmod-usb-net +kmod-usb-net-cdc-ether \
-              +kmod-usb-net-rndis \
-              +kmod-usb-net-ipheth usbmuxd libimobiledevice usbutils
+  DEPENDS:= +kmod-usb-core +kmod-usb2 +kmod-nls-base \
+            +kmod-usb-net +kmod-usb-net-cdc-ether \
+            +kmod-usb-net-rndis \
+            +kmod-usb-net-ipheth +usbmuxd +libimobiledevice +usbutils
 
   TITLE:=Meta package to enable usb smartphone tethering
 endef
@@ -155,20 +154,20 @@ define Package/$(PKG_NAME)-lte
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
   # usb umts/lte sticks has storage device. but I is normally not needed.
-  DEPENDS:= 	+kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
-    +kmod-usb-ledtrig-usbport +kmod-usb-storage \
-    +usb-modeswitch \
-                +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
-                +kmod-usb-net-cdc-mbim +umbim \
-    +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
-                +kmod-usb-net-cdc-ether
+  DEPENDS:= +kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
+            +kmod-usb-ledtrig-usbport +kmod-usb-storage \
+            +usb-modeswitch \
+            +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
+            +kmod-usb-net-cdc-mbim +umbim \
+            +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
+            +kmod-usb-net-cdc-ether
 
   TITLE:=Meta package to enable usb LTE modem support
 endef
 
 define Package/$(PKG_NAME)-lte/description
-        Meta package to enable qmi LTE modem support
-        https://openwrt.org/docs/guide-user/network/wan/wwan/ltedongle
+   Meta package to enable qmi LTE modem support
+   https://openwrt.org/docs/guide-user/network/wan/wwan/ltedongle
 
   LTE Stick must be switch to "ndis" interface via AT commands instead of "modem"
   see: https://openwrt.org/docs/guide-user/network/wan/wwan/at_commands
@@ -307,6 +306,7 @@ endef
 $(eval $(call BuildPackage,$(PKG_NAME)-base))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi))
 $(eval $(call BuildPackage,$(PKG_NAME)-usb-storage))
+$(eval $(call BuildPackage,$(PKG_NAME)-tethering))
 $(eval $(call BuildPackage,$(PKG_NAME)-lte))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi-extra))
 $(eval $(call BuildPackage,$(PKG_NAME)-extra-modules))
