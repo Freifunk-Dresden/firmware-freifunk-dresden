@@ -137,6 +137,9 @@ define Package/$(PKG_NAME)-tethering
   CATEGORY:=ddmesh
   DEFAULT:=n
   DEPENDS:= +kmod-usb-core +kmod-usb2 +kmod-nls-base \
+            +kmod-usb-ohci +kmod-usb-ohci-pci +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ledtrig-usbport \
             +kmod-usb-net +kmod-usb-net-cdc-ether \
             +kmod-usb-net-rndis \
             +kmod-usb-net-ipheth +usbmuxd +libimobiledevice +usbutils

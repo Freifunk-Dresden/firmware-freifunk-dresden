@@ -28,6 +28,7 @@ config zone 'zone_wan'
 	option mtu_fix '1'
 	list network 'wan'
 	list network 'wwan_helper'
+	list network 'twan'
 
 config zone 'zone_wifi2'
 	option name 'wifi2'

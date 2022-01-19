@@ -57,10 +57,7 @@
 		  ],
 
 		# install addional packages from feeds (see feeds.conf)
-#		"packages":["libpam","libcap","libgnutls","libopenldap",
-#				"libidn2","libssh2","libnetsnmp",
-#				"libcap", "jansson", "kmod-cryptodev", "liblzma" ],
-		"packages":["libpam", "libnetsnmp"],
+		"packages":["libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"],
 
 		# apply additional target patches
 		"target-patches":[""]
@@ -228,7 +225,7 @@
 #		"name":"master.ath79.generic",	# can be any name
 #		"target":"ath79",
 #		"subtarget":"generic",
-#		"openwrt_rev":"master", # 
+#		"openwrt_rev":"master", #
 #		"selector-config":"master",		# used to select config
 #		"selector-feeds":"master",		# used to select feeds
 #		"selector-patches":"master",		# used to select patches

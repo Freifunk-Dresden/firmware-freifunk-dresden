@@ -103,6 +103,12 @@ start() {
 		/usr/lib/ddmesh/ddmesh-lte-monitor.sh &
 	fi
 
+	# needed for iOS smartphone tethering
+	if [ -x /usr/sbin/usbmuxd ]; then
+		logger -s -t $LOGGER_TAG "start usbmuxd"
+		usbmuxd
+	fi
+
 	if [ "$(uci -q get ddmesh.system.node_type)" = "mobile" ]; then
 		/usr/lib/ddmesh/ddmesh-geoloc.sh mobile &
 	fi
