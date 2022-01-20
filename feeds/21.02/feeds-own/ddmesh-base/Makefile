@@ -120,8 +120,12 @@ define Package/$(PKG_NAME)-usb-storage
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-  DEPENDS:= +kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
-            +kmod-fs-vfat +block-mount
+  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb-ledtrig-usbport \
+            \
+            +kmod-usb-storage +kmod-fs-vfat +block-mount
 
   TITLE:=Meta package to enable usb storage
 endef
@@ -136,13 +140,18 @@ endef
 define Package/$(PKG_NAME)-tethering
   CATEGORY:=ddmesh
   DEFAULT:=n
-  DEPENDS:= +kmod-usb-core +kmod-usb2 +kmod-nls-base \
-            +kmod-usb-ohci +kmod-usb-ohci-pci +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
-            +kmod-usb2-pci +kmod-usb3 \
+  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
             +kmod-usb-ledtrig-usbport \
+            \
             +kmod-usb-net +kmod-usb-net-cdc-ether \
             +kmod-usb-net-rndis \
             +kmod-usb-net-ipheth +usbmuxd +libimobiledevice +usbutils
+
+# +kmod-usb-storage +kmod-mii +kmod-usb-wdm
+# +kmod-usb-net-qmi-wwan +kmod-usb-net-cdc-mbim
+# +kmod-hwmon-core
 
   TITLE:=Meta package to enable usb smartphone tethering
 endef
@@ -157,8 +166,12 @@ define Package/$(PKG_NAME)-lte
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
   # usb umts/lte sticks has storage device. but I is normally not needed.
-  DEPENDS:= +kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
-            +kmod-usb-ledtrig-usbport +kmod-usb-storage \
+  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb-ledtrig-usbport \
+            \
+            +kmod-usb-storage \
             +usb-modeswitch \
             +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
             +kmod-usb-net-cdc-mbim +umbim \
