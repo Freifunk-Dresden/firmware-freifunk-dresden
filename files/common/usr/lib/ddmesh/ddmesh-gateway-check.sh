@@ -234,7 +234,7 @@ do
 		break
 	else
 		printf 'gateway NOT found: via [%s] dev [%s]\n' "$via" "$dev"
-		printf 'landev: [%s], wandev=[%s], vpndev=[%s], wwan=[%s], wwan=[%s]\n' "$default_lan_ifname" "$default_wan_ifname" "$default_vpn_ifname" "$default_twan_ifname" "$default_wwan_ifname"
+		printf 'landev: [%s], wandev=[%s], vpndev=[%s], twan=[%s], wwan=[%s]\n' "$default_lan_ifname" "$default_wan_ifname" "$default_vpn_ifname" "$default_twan_ifname" "$default_wwan_ifname"
 
 		#logger -s -t "$LOGGER_TAG" "remove local/public gateway: dev:$dev, ip:$via"
 		# remove default route only for interface that was tested! if wan and lan is set

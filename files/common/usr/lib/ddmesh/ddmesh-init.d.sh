@@ -106,7 +106,7 @@ start() {
 	# needed for iOS smartphone tethering
 	if [ -x /usr/sbin/usbmuxd ]; then
 		logger -s -t $LOGGER_TAG "start usbmuxd"
-		usbmuxd
+		/usr/sbin/usbmuxd --systemd -v
 	fi
 
 	if [ "$(uci -q get ddmesh.system.node_type)" = "mobile" ]; then
