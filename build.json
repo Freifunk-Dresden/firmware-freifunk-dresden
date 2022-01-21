@@ -158,11 +158,14 @@
 		"variant":"generic"
 	},
 	{
-		"name":"lantiq.xrx200",
-		"target":"lantiq",
-		"subtarget":"xrx200"
-#	,	"openwrt_variant":"patchset-1",
-#		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
+		"name":"lantiq-xrx200.generic",
+		"target":"lantiq-xrx200",
+		"subtarget":"generic"
+	},
+	{
+		"name":"lantiq-xrx200.small",
+		"target":"lantiq-xrx200",
+		"subtarget":"small"
 	},
 	{
 		"name":"lantiq.xway",
