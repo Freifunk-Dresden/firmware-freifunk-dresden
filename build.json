@@ -168,9 +168,14 @@
 		"subtarget":"small"
 	},
 	{
-		"name":"lantiq.xway",
-		"target":"lantiq",
-		"subtarget":"xway"
+		"name":"lantiq-xway.generic",
+		"target":"lantiq-xway",
+		"subtarget":"generic"
+	},
+	{
+		"name":"lantiq-xway.small",
+		"target":"lantiq-xway",
+		"subtarget":"small"
 	},
 	{	# created for Orange Pi R1
 		"name":"sunxi.cortexa7.offloader",
