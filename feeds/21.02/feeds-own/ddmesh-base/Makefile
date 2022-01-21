@@ -102,7 +102,7 @@ define Package/$(PKG_NAME)-wifi
   # the complete package "ddmesh-wifi" will also not be visible.
   # only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
   # This simply just selects wpa-cli without hiding current packet
-  DEPENDS:= +iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli
+  DEPENDS:= +iw +iwinfo +wpad-mini +kmod-owl-loader +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
 

@@ -1,5 +1,8 @@
+2021-04-00 8.0.2
+--------------------------------------------------
+usb-tethering             - add usb tethering for android/iOS (for selected devices)
 
-2021-04-00 8.1.0
+2021-04-00 8.0.1
 --------------------------------------------------
 openwrt 21                - upgrade to openwrt 21 (only from devices with openwrt 19)
 network                   - complete rework of internal network configuration
@@ -19,7 +22,7 @@ sub-community /bmxd       - add community default route for gateway that ensure 
                             sub-communities.
                           - add network id
 gui-backbone              - add possibility to enable/disable backbone configurations
-                          - wireguard: add ajax server registration 
+                          - wireguard: add ajax server registration
 gui-speedtest             - improve speedtest
 gui-syslog                - change color for wifi related entries (red to some other)
 gui-led                   - add option to control LEDs

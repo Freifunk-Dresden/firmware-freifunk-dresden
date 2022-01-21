@@ -181,6 +181,11 @@
 		"subtarget":"generic"
 	},
 	{
+		"name":"ath79.small",
+		"target":"ath79",
+		"subtarget":"small"
+	},
+	{
 		"name":"ath79.generic.gl-mifi",
 		"target":"ath79",
 		"subtarget":"generic",
