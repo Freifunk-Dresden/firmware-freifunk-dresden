@@ -13,9 +13,12 @@ export model="$(echo $model | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 export model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 
 ver=$(uci get ddmesh.boot.upgrade_version)
-CONF_FILE="config-${model2}-router-$(uci get ddmesh.system.node)-fw$ver-$(date +"%Y%b%d-%H%M%S").tgz"
+CONF_FILE="config-${model2}-node-$(uci get ddmesh.system.node)-fw$ver-$(date +"%Y_%b_%d-%H_%M_%S").tgz"
 PACKAGES="/etc/installed.packages"
 OPKG_ERROR="/tmp/opkg.error"
+
+# replace chars
+CONF_FILE="${CONF_FILE//[ ,:\$#\\\/]/-}"
 
 # check before freifunk-upload
 if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" ]; then
@@ -35,7 +38,7 @@ if [ "$form_action" = "download" ]; then
 	/usr/lib/ddmesh/ddmesh-installed-ipkg.sh > $PACKAGES
 
 	echo "Content-Type: application/x-compressed"
-	echo "Content-Disposition: attachment;filename=$CONF_FILE"
+	echo "Content-Disposition: attachment;filename=${CONF_FILE}"
 	echo ""
 	sysupgrade -b -
 
@@ -55,7 +58,7 @@ cat<<EOM
 	<form name="form_conf_download" action="config.cgi" method="POST">
 	<input name="form_action" value="download" type="hidden">
 	<table>
-	<tr><td><input name="form_download_submit" type="submit" value="Konfiguration sichern"></td></tr>
+	<tr><td><input title="$CONF_FILE" name="form_download_submit" type="submit" value="Konfiguration sichern"></td></tr>
 	</table>
 	</form>
 	</fieldset>
