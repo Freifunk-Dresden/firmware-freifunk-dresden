@@ -112,12 +112,6 @@
 	},
 # ---------- openwrt 21 -----------------------------------------------------------------------
 	{
-		"name":"x86.generic.offloader",
-		"config":"config.x86.generic.offloader",
-		"target":"x86",
-		"subtarget":"generic"
-	},
-	{
 		"name":"x86.64.offloader",
 		"config":"config.x86.64.offloader",
 		"target":"x86",
