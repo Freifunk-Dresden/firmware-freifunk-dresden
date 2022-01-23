@@ -34,6 +34,7 @@ DOCKER_CONTAINER_NAME="ffbuild"
 DL_DIR=dl
 WORK_DIR=workdir
 FINAL_OUTPUT_DIR="final_output" # used by gen-upload.sh (docker)
+LOCAL_OUTPUT_DIR="output"				# location to copy images/packages to, after each targets
 CONFIG_DIR=openwrt-configs
 CONFIG_DEFAULT_FILE="default.config"
 OPENWRT_PATCHES_DIR=openwrt-patches
@@ -252,8 +253,6 @@ listTargets()
  # first read default
  entry=$(echo "$cleanJson" | jq ".[0]")
  if [ -n "$entry" ]; then
-	_def_target=$(echo $entry | jq $OPT '.target')
-	_def_subtarget=$(echo $entry | jq $OPT '.subtarget')
 	_def_name=$(echo $entry | jq $OPT '.name')
 	_def_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
 	_def_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
@@ -264,8 +263,6 @@ listTargets()
 	_def_openwrt_variant=$(echo $entry | jq $OPT '.openwrt_variant')
 	_def_feeds=$(echo $entry | jq $OPT '.feeds')
 	_def_packages=$(echo $entry | jq $OPT '.packages')
-#echo target:$_def_target
-#echo subtarget:$_def_subtarget
 #echo name:$_def_name
 #echo orev:$_def_openwrt_rev
 #echo ovariant:$_def_openwrt_variant
@@ -296,15 +293,13 @@ listTargets()
 	_config_name=$(echo $entry | jq $OPT '.name')
 
 	# create env variables and parse with one call to jq (it is faster than repeatly call it)
-	x='"_config_name=\(.name); _target=\(.target);_openwrt_rev=\(.openwrt_rev); _openwrt_variant=\(.openwrt_variant); _subtarget=\(.subtarget); _selector_config=\(.["selector-config"]); _selector_feeds=\(.["selector-feeds"]); _selector_files=\(.["selector-files"]); _selector_patches=\(.["selector-patches"])	"'
+	x='"_config_name=\(.name); _openwrt_rev=\(.openwrt_rev); _openwrt_variant=\(.openwrt_variant); _selector_config=\(.["selector-config"]); _selector_feeds=\(.["selector-feeds"]); _selector_files=\(.["selector-files"]); _selector_patches=\(.["selector-patches"])	"'
 	eval $(echo $entry | jq $OPT "$x")
 
 	test -z "${_config_name}" && echo "error: configuration has no name" && break
 
-	test "$_target" = "null" && _target="$_def_target"
 	test "$_openwrt_rev" = "null"  && _openwrt_rev="$_def_openwrt_rev"
 	test "$_openwrt_variant" = "null"  && _openwrt_variant="$_def_openwrt_variant"
-	test "$_subtarget" = "null" && _subtarget="$_def_subtarget"
 	test "$_selector_config" = "null" && _selector_config="$_def_selector_config"
 	test "$_selector_files" = "null" && _selector_files="$_def_selector_files"
 	test "$_selector_feeds" = "null" && _selector_feeds="$_def_selector_feeds"
@@ -313,7 +308,8 @@ listTargets()
 	# get status
 	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
-	compile_status_file="$RUN_DIR/$buildroot/bin/${_target}-${_subtarget}-${compile_status_filename}"
+	compile_status_dir="$RUN_DIR/$buildroot/output/compile-status"
+	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
 
 	compile_status=""
 	compile_data=""
@@ -844,8 +840,6 @@ test -L $WORK_DIR || mkdir -p $WORK_DIR
 OPT="--raw-output" # do not excape values
 entry=$(getTargetsJson | jq ".[0]")
 if [ -n "$entry" ]; then
-	_def_target=$(echo $entry | jq $OPT '.target')
-	_def_subtarget=$(echo $entry | jq $OPT '.subtarget')
 	_def_name=$(echo $entry | jq $OPT '.name')
 	_def_config=$(echo $entry | jq $OPT '.config')
 	_def_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
@@ -926,12 +920,6 @@ do
 	_config_file=$(echo $entry | jq $OPT '.config')
 	test "${_config_file}" = "null" && _config_file="$_def_config"
 
-	_target=$(echo $entry | jq $OPT '.target')
-	test "$_target" = "null" && _target="$_def_target"
-
-	_subtarget=$(echo $entry | jq $OPT '.subtarget')
-	test "$_subtarget" = "null" && _subtarget="$_def_subtarget"
-
 	_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
 	test "$_openwrt_rev" = "null" && _openwrt_rev="$_def_openwrt_rev"
 
@@ -960,8 +948,6 @@ do
 	test "$_packages" = "null" && _packages="$_def_packages"
 #echo ${_config_name}
 #echo $_config_file
-#echo $_target
-#echo $_subtarget
 #echo $_openwrt_rev
 #echo $_openwrt_variant
 #echo $_selector_config, $_selector_feeds, $_selector_files, $_selector_patches
@@ -976,8 +962,6 @@ do
 	# summary
 	echo -e $C_GREY"----------------------------------------"$C_NONE
 	echo -e $C_YELLOW"Name$C_NONE              : $C_BLUE${_config_name}"$C_NONE
-	echo -e $C_YELLOW"Target$C_NONE            : $C_BLUE$_target"$C_NONE
-	echo -e $C_YELLOW"Sub-Target$C_NONE        : $C_BLUE$_subtarget"$C_NONE
 	echo -e $C_YELLOW"Openwrt Variant$C_NONE   : $C_BLUE$_openwrt_variant"$C_NONE
 	echo -e $C_YELLOW"Config-File$C_NONE       : $C_BLUE$config_file"$C_NONE
 	echo -e $C_GREY"----------------------------------------"$C_NONE
@@ -989,11 +973,18 @@ do
 	# (see git log --abbrev-commit)
 	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
-	target_dir="$RUN_DIR/$buildroot/bin/targets/$_target/$_subtarget"
-	compile_status_file="$RUN_DIR/$buildroot/bin/${_target}-${_subtarget}-${compile_status_filename}"
 
-	# ensure we have the target directory when writing/accessing status file
-	mkdir -p ${target_dir}
+	# between each target build; remove directory. at end images and packets are copied to
+	# target specfic directory.
+	# This is needed to avoid conflicts with packages when I have several configs that all
+	# use same target/subtarget directories.
+	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/${_config_name}"
+	rm -rf ${outdir}
+  rm -rf ${buildroot}/bin
+
+	compile_status_dir="$RUN_DIR/$buildroot/output/compile-status"
+	mkdir -p ${compile_status_dir}
+	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
 
 	# get compile status
 	if [ "$ARG_CompiledFailedOnly" = "1" ]; then
@@ -1099,16 +1090,6 @@ EOM
 
 	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh_own)"$C_NONE
 	./scripts/feeds install -a -p ddmesh_own
-
-
-#	# delete target dir, but only delete when no specific device/variant is built.
-#	# generic targets (that contains all devices) must come before specific targets.
-#	if [ -z "$_variant" ]; then
-#		echo -e "${C_CYAN}delete previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
-#		rm -rf ${status_file_dir}
-#	else
-#		echo -e "${C_CYAN}KEEP previous firmware${C_NONE}: ${C_GREEN}${target_dir}"
-#	fi
 
 	#try to apply target patches
 	mkdir -p $DDMESH_PATCH_STATUS_DIR
@@ -1244,14 +1225,22 @@ EOM
 	fi
 
 	# check if we have file
+	target_dir="${RUN_DIR}/${buildroot}/bin/targets"
 	if [ ! -d "${target_dir}" ]; then
 		echo -e "${C_RED}Error: build error - generated directory not found${C_NONE}"
 		echo "     ${target_dir}"
 		clean_up_exit 1
 	fi
+
+	# copy files to our own output directory
+	echo -e "${C_CYAN}copy images${C_NONE}"
+	mkdir -p ${outdir}/packages ${outdir}/target
+	cp -a ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/
+	cp -a ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/target/
+
 	# success status
 	progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
-	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${target_dir}${C_NONE}"
+	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
 
 done
 
