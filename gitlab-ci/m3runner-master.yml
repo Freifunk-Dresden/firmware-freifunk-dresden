@@ -53,18 +53,6 @@ m3:ar71xx.generic.lowmem:
   tags:
   - m3runner
 
-m3:x86.generic.offloader:
-  only:
-    - master
-  stage: build
-  needs: ["m3:init"]
-  script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-    - ./build.sh x86.generic.offloader rerun -j"$(( $(nproc) + 1))"
-  tags:
-  - m3runner
-
 m3:x86.64.offloader:
   only:
     - master
