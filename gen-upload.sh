@@ -425,7 +425,10 @@ do
 	# calling ipkg-make-index.sh
 	export PATH=$SAVED_SYSTEM_PATH:$buildroot/staging_dir/host/bin/
 
-	_platforms=$buildroot/bin/targets
+	_platforms=$buildroot/output/targets
+
+	# check directory
+	test -d ${_platforms} || continue
 
 #	# add directory entry into download json, so it can be displayed in dataTable (index.html)
 #	for platform in $(ls $_platforms)
@@ -438,58 +441,53 @@ do
 	do
 
 		printf "${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
-		mkdir -p $target_dir/$_buildroot/$platform
+		tmpTargetDir="$target_dir/$_buildroot/$platform"
+		mkdir -p ${tmpTargetDir}
 
-		for subplatform in $(ls $buildroot/bin/targets/$platform)
+		filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
+		$ENABLE_COPY && {
+			printf "copy ${_platforms}/${platform}/$filefilter $tmpTargetDir\n"
+			# use "eval" to resolv filefilter wildcards
+			eval cp -a ${_platforms}/${platform}/images/$filefilter $tmpTargetDir 2>/dev/null
+
+			# remove not-wanted files, because those are not used and added for different openwrt versions
+			# This would cause duplicate warning in gen-upload.sh
+			rm -f $tmpTargetDir/openwrt*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
+		}
+
+		#create md5sums file used when automatically or manually downloading via firmware.cgi
+		# solange das file erzeugen, wie software mit alter firmware drausen ist
+		# oder github
+		p=$(pwd)
+		cd $tmpTargetDir
+		printf "${C_YELLOW}calculate md5sum${C_NONE}\n"
+		md5sum * > $tmpTargetDir/md5sums
+		cd $p
+
+		#copy packages
+		mkdir -p $tmpTargetDir/packages
+		printf "search package dir: ${_platforms}/${platform}/packages/\n"
+		for package in $(cat $info_dir/packages)
 		do
-			tmpTargetDir="$target_dir/$_buildroot/$platform/$subplatform"
-			mkdir -p $tmpTargetDir
+			printf "${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}\n"
+			filename=$(find ${_platforms}/${platform}/packages/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
+			printf "package filename: [${filename}]\n"
 
-			filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
+			test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
 			$ENABLE_COPY && {
-				printf "copy $buildroot/bin/targets/$platform/$subplatform/$filefilter $tmpTargetDir\n"
-				# use "eval" to resolv filefilter wildcards
-				eval cp -a $buildroot/bin/targets/$platform/$subplatform/$filefilter $tmpTargetDir 2>/dev/null
-
-				# remove not-wanted files, because those are not used and added for different openwrt versions
-				# This would cause duplicate warning in gen-upload.sh
-				rm -f $tmpTargetDir/openwrt*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
+#			printf "copy package: $package -> [$filename]\n"
+				test -n "$filename" && cp -a $filename $tmpTargetDir/packages/
 			}
+		done
 
-			#create md5sums file used when automatically or manually downloading via firmware.cgi
-			# solange das file erzeugen, wie software mit alter firmware drausen ist
-			# oder github
-			p=$(pwd)
-			cd $tmpTargetDir
-			printf "${C_YELLOW}calculate md5sum${C_NONE}\n"
-			md5sum * > $tmpTargetDir/md5sums
-			cd $p
+		printf "${C_YELLOW}generate package index${C_NONE}\n"
+		p=$(pwd)
+		cd $tmpTargetDir/packages/
+		$buildroot/scripts/ipkg-make-index.sh . > Packages
+		gzip -f Packages
+		cd $p
 
-			#copy packages
-			mkdir -p $tmpTargetDir/packages
-			printf "search package dir: $buildroot/bin/targets/$platform/$subplatform/packages/\n"
-			for package in $(cat $info_dir/packages)
-			do
-				printf "${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}\n"
-				filename=$(find $buildroot/bin/targets/$platform/$subplatform/packages/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
-				printf "package filename: [${filename}]\n"
-
-				test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
-				$ENABLE_COPY && {
-	#			printf "copy package: $package -> [$filename]\n"
-					test -n "$filename" && cp -a $filename $tmpTargetDir/packages/
-				}
-			done
-
-			printf "${C_YELLOW}generate package index${C_NONE}\n"
-			p=$(pwd)
-			cd $tmpTargetDir/packages/
-			$buildroot/scripts/ipkg-make-index.sh . > Packages
-			gzip -f Packages
-			cd $p
-
-			gen_download_json_add_data $target_dir $_buildroot/$platform/$subplatform $filefilter
-		done # for sub platform
+		gen_download_json_add_data $target_dir ${_platforms}/${platform} $filefilter
 	done	# for platform
 done # for buildroot
 

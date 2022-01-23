@@ -978,7 +978,7 @@ do
 	# target specfic directory.
 	# This is needed to avoid conflicts with packages when I have several configs that all
 	# use same target/subtarget directories.
-	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/${_config_name}"
+	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/targets/${_config_name}"
 	rm -rf ${outdir}
   rm -rf ${buildroot}/bin
 
@@ -1234,9 +1234,9 @@ EOM
 
 	# copy files to our own output directory
 	echo -e "${C_CYAN}copy images${C_NONE}"
-	mkdir -p ${outdir}/packages ${outdir}/target
+	mkdir -p ${outdir}/packages ${outdir}/images
 	cp -a ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/
-	cp -a ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/target/
+	cp -a ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
 
 	# success status
 	progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
