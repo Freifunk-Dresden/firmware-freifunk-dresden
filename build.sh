@@ -239,7 +239,7 @@ s/^[ 	]*//
 s/[ 	]*$//
 /^$/d
 p
-" | jq "[ .targets[] ]"
+" | jq "[ .targets[] ] | sort_by(.name) "
 }
 
 listTargets()
@@ -251,7 +251,7 @@ listTargets()
 #	echo "$cleanJson" | jq --raw-output ".[] | select( .name | test (\"${ARG_regexTarget}\") ) | .name"
 
  # first read default
- entry=$(echo "$cleanJson" | jq ".[0]")
+ entry=$(echo "$cleanJson" | jq '.[] | select(.name == "default")')
  if [ -n "$entry" ]; then
 	_def_name=$(echo $entry | jq $OPT '.name')
 	_def_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
@@ -280,8 +280,8 @@ listTargets()
  printf  "  %-31s | %-8.8s | %-10s | %-8.8s | %-8.8s | %-8.8s | %-7.7s |\n" ""   Revision Variant Selector "" "" ""
  printf -- '---------------------------------------------+------------+----------+----------+----------+---------+------------------------------\n'
 
- # run through rest of json
- targetIdx=1
+ # run through all of json
+ targetIdx=0
  while true
  do
  	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
@@ -291,6 +291,12 @@ listTargets()
 	fi
 
 	_config_name=$(echo $entry | jq $OPT '.name')
+
+	# ignore default entry
+  if [ "${_config_name}" = "default" ]; then
+		targetIdx=$(( targetIdx + 1 ))
+		continue
+	fi
 
 	# create env variables and parse with one call to jq (it is faster than repeatly call it)
 	x='"_config_name=\(.name); _openwrt_rev=\(.openwrt_rev); _openwrt_variant=\(.openwrt_variant); _selector_config=\(.["selector-config"]); _selector_feeds=\(.["selector-feeds"]); _selector_files=\(.["selector-files"]); _selector_patches=\(.["selector-patches"])	"'
@@ -340,23 +346,9 @@ numberOfTargets()
  [ -z "$ARG_regexTarget" ] && ARG_regexTarget='.*'
 
 	cleanJson=$(getTargetsJson)
-# princip:
-# 1. separate each object from array and pip it to 'select'
-# 2. 'select' only let pass objects when true
-# 3. .name is piped to both 'test' functions at same time.
-# 4. 'not' function seams to have highere priority than 'and'. brackets are not needed, but I
-#    have added those for more clarifications
-#    The second 'test' outcome (true or false) are piped to 'not' and negates the output of the
-#    second 'test'
-# 5. first 'test' second 'test' are logical evaluated with 'and', and determines the input of
-#    'select' function
-#
-# 6. now an array from what 'select' filters, which in turn is
-# then counted by function 'length'
-echo "$cleanJson" | jq --raw-output "[  .[]
-			| select(	.name |
-			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
-					    ) ] | length"
+
+	echo "$cleanJson" | jq --raw-output "[  .[] | select(.name != \"default\")
+			| select(	.name | test (\"${ARG_regexTarget}\") ) ] | length"
 }
 
 search_target()
@@ -672,7 +664,7 @@ echo "$cleanJson" | jq --raw-output ".[]
 					    ) | .name"
 # same as first command; but creates an array from what 'select' filters, which in turn is
 # then counted by function 'length'
-echo "$cleanJson" | jq --raw-output "[  .[]
+echo "$cleanJson" | jq --raw-output "[ .[]
 			| select(	.name |
 			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
 					    ) ] | length"
@@ -838,7 +830,7 @@ test -L $WORK_DIR || mkdir -p $WORK_DIR
 # ---------- process all targets ------------
 # first read default values
 OPT="--raw-output" # do not excape values
-entry=$(getTargetsJson | jq ".[0]")
+entry=$(getTargetsJson | jq '.[] | select(.name == "default")')
 if [ -n "$entry" ]; then
 	_def_name=$(echo $entry | jq $OPT '.name')
 	_def_config=$(echo $entry | jq $OPT '.config')
@@ -881,7 +873,7 @@ if [ "${ARG_TARET_ALL}" = "1" -o "${MAKE_CLEAN}" = "1" ]; then
 fi
 
 # ---------------- build loop, run through all targets listed in build.json -----------------
-targetIdx=1	# index 0 holds default values
+targetIdx=0
 while true
 do
 	cd $RUN_DIR
@@ -893,13 +885,18 @@ do
 	# check if we have reached the end of all targets
 	test "$entry" = "null" && break
 
-	#check if configuration name matches the targetRegex (target parameter)
 	config_name=$(echo $entry | jq $OPT '.name')
+
+	# ignore default entry
+  if [ "${_config_name}" = "default" ]; then
+		continue
+	fi
+
+	#check if configuration name matches the targetRegex (target parameter)
 	# add '\' to each '|' only for sed command
 	sedTargetRegex=${targetRegex//|/\\|}
 	filterred=$(echo $config_name | sed -n "/$sedTargetRegex/p")
 	test -z "$filterred" && continue
-
 
 	# only enable progressbar for tty
 	if [ "$_TERM" = "1" ]; then

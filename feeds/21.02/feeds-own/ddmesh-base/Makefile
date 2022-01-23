@@ -146,7 +146,6 @@ define Package/$(PKG_NAME)-tethering
   #           +kmod-usb-net-rndis \
   #           +kmod-usb-net-ipheth +usbmuxd +libimobiledevice +usbutils
 
-#tplink2543
   DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb-ehci \
             +kmod-mii +kmod-usb-net +kmod-usb-net-cdc-ether +kmod-usb-net-rndis \
             +kmod-usb-net-ipheth +libimobiledevice +usbmuxd \

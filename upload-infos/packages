@@ -8,9 +8,9 @@ feinstaubsensor
 #----------------- usb tethering android ------------------
 libgcc1
 libc
-kernel_5.4.154-1-19250f523f04e4bc8c24e6addf1eda18_mips_24kc.ipk
+kernel
 kmod-nls-base
-kmod-usb-core_5.4.154-1_mips_24kc.ipk
+kmod-usb-core
 libpthread
 librt
 libusb-1.0-0 
