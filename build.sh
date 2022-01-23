@@ -53,6 +53,16 @@ compile_status_filename="compile-status.json"
 #Purple       0;35     Light Purple  1;35
 #Cyan         0;36     Light Cyan    1;36
 #Light Gray   0;37     White         1;37
+# 0 normal
+# 1 highlight
+# 2 darker
+# 3 kursiv
+# 4
+# 5 blink
+# 7 swap background/foreground
+# 8 fg/bg same color
+# 9 strike
+
 C_NONE='\033[0m' # No Color
 C_GREY='\033[1;30m'
 C_RED='\033[0;31m'
@@ -70,6 +80,15 @@ C_LCYAN='\033[1;36m'
 C_GREY='\033[0;37m'
 C_LGREY='\033[1;37m'
 C_BLINK='\033[5m'
+BG_BLACK='\033[40m'
+BG_RED='\033[41m'
+BG_GREEN='\033[42m'
+BG_YELLOW='\033[43m'
+BG_BLUE='\033[44m'
+BG_PURBLE='\033[45m'
+BG_CYAN='\033[46m'
+BG_WHITE='\033[47m'
+BG_GRAY='\033[48m'
 
 if true; then
 	PBC_RUNNING="${C_YELLOW}${C_BLINK}*${C_NONE}"
@@ -85,6 +104,12 @@ else
 	PBC_SKIP="-"
 fi
 
+# define color lookup table used when displaying targets via "list"
+declare -A list_color
+list_color['18.06']="${BG_CYAN}"
+list_color['21.02']="${BG_PURBLE}"
+#printf "${list_color['18.06']}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
+#printf "${list_color[$v]}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 
 #save current directory when copying config file
 RUN_DIR=$(pwd)
@@ -275,10 +300,10 @@ listTargets()
 
  fi
 
- printf -- '------------------------------------------------------------------------------------------------------------------------------------\n'
- printf  "  %-31s | %-8.8s | %-10s | %-8.8s | %-8.8s | %-8.8s | %-7.7s | Build date\n" Name Openwrt  Openwrt Openwrt Feeds Files Patches
- printf  "  %-31s | %-8.8s | %-10s | %-8.8s | %-8.8s | %-8.8s | %-7.7s |\n" ""   Revision Variant Selector "" "" ""
- printf -- '---------------------------------------------+------------+----------+----------+----------+---------+------------------------------\n'
+ printf -- '----------------------------------+----------+---------+----------+---------+---------+---------+------------------------------\n'
+ printf  "  %-31s | %-8.8s | %-7.7s | %-8.8s | %-7.7s | %-7.7s | %-7.7s | Build date\n" Name Openwrt  Openwrt Openwrt Feeds Files Patches
+ printf  "  %-31s | %-8.8s | %-7.7s | %-8.8s | %-7.7s | %-7.7s | %-7.7s |\n" ""   Revision Variant Selector "" "" ""
+ printf -- '----------------------------------+----------+---------+----------+---------+---------+---------+------------------------------\n'
 
  # run through all of json
  targetIdx=0
@@ -323,13 +348,13 @@ listTargets()
 		eval $(cat "${compile_status_file}" | jq $OPT '"compile_data=\"\(.date)\";compile_status=\(.status)"')
 	fi
 
-	cstatus="${C_RED}-${C_NONE}"
-	test "$compile_status" = "0" && cstatus="${C_GREEN}+${C_NONE}"
- 	printf  $cstatus" %-31s | %-8.8s | %-10.10s | %-8.8s | %-8.8s | %-8.8s | %-7.7s | %s\n" "${_config_name}" "${_openwrt_rev:0:7}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches" "$compile_data"
+	cstatus="${C_RED}${BG_RED}-${C_NONE}"
+	test "$compile_status" = "0" && cstatus="${C_GREEN}${BG_GREEN}+${C_NONE}"
+ 	printf  $cstatus" %-31s | %-8.8s | %-7.7s | ${list_color[$_selector_config]}%-8.8s${C_NONE} | ${list_color[$_selector_files]}%-7.7s${C_NONE} | ${list_color[$_selector_feeds]}%-7.7s${C_NONE} | ${list_color[$_selector_patches]}%-7.7s${C_NONE} | %s\n" "${_config_name}" "${_openwrt_rev:0:7}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches" "$compile_data"
 
 	targetIdx=$(( targetIdx + 1 ))
  done
- printf -- '------------------------------------------------------------------------------------------------------------------------------------\n'
+ printf -- '----------------------------------+----------+---------+----------+---------+---------+---------+------------------------------\n'
 }
 
 
@@ -888,7 +913,7 @@ do
 	config_name=$(echo $entry | jq $OPT '.name')
 
 	# ignore default entry
-  if [ "${_config_name}" = "default" ]; then
+  if [ "${config_name}" = "default" ]; then
 		continue
 	fi
 
