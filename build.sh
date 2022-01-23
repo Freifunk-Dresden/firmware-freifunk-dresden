@@ -996,14 +996,6 @@ do
 	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
 
-	# between each target build; remove directory. at end images and packets are copied to
-	# target specfic directory.
-	# This is needed to avoid conflicts with packages when I have several configs that all
-	# use same target/subtarget directories.
-	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/targets/${_config_name}"
-	rm -rf ${outdir}
-  rm -rf ${buildroot}/bin
-
 	compile_status_dir="$RUN_DIR/$buildroot/output/compile-status"
 	mkdir -p ${compile_status_dir}
 	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
@@ -1021,6 +1013,14 @@ do
 			continue;
 		}
 	fi
+	# --- only delete after "failed-check"
+	# between each target build; remove directory. at end images and packets are copied to
+	# target specfic directory.
+	# This is needed to avoid conflicts with packages when I have several configs that all
+	# use same target/subtarget directories.
+	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/targets/${_config_name}"
+	rm -rf ${outdir}
+  rm -rf ${buildroot}/bin
 
 	# progress bar: compiling
 	progbar_char_array[$((progress_counter-1))]="${PBC_RUNNING}"
