@@ -244,7 +244,7 @@ docker:gen-upload-test:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: deploy
-  needs: ["docker:ar71xx.tiny.lowmem","docker:ar71xx.generic.lowmem","docker:x86.generic.offloader","docker:x86.64.offloader","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx","docker:bcm53xx.generic.arm"]
+  needs: ["docker:ar71xx.tiny.lowmem","docker:ar71xx.generic.lowmem","docker:x86.64.offloader","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx","docker:bcm53xx.generic.arm"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl
