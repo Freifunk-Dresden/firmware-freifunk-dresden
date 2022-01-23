@@ -4,3 +4,33 @@ OVPNCerts
 openvpn-mbedtls
 liblzo
 feinstaubsensor
+
+#----------------- usb tethering android ------------------
+libgcc1
+libc
+kernel_5.4.154-1-19250f523f04e4bc8c24e6addf1eda18_mips_24kc.ipk
+kmod-nls-base
+kmod-usb-core_5.4.154-1_mips_24kc.ipk
+libpthread
+librt
+libusb-1.0-0 
+libevdev
+libudev-zero
+usbids
+usbutils
+# tplink 2543
+kmod-phy-ath79-usb
+kmod-usb-ehci
+kmod-usb2
+kmod-mii
+kmod-usb-net
+kmod-usb-net-cdc-ether
+kmod-usb-net-rndis
+
+# iOS support
+kmod-usb-net-ipheth
+libimobiledevice
+usbmuxd
+
+#---------------------------------------------
+

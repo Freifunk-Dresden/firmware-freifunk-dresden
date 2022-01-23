@@ -466,11 +466,11 @@ do
 
 		#copy packages
 		mkdir -p $tmpTargetDir/packages
-		printf "search package dir: ${_platforms}/${platform}/packages/\n"
-		for package in $(cat $info_dir/packages)
+		printf "search package dir: ${_platforms}/${platform}/\n"
+		for package in $(cat $info_dir/packages | sed 's/#.*//;/^[	 ]*$/d')
 		do
 			printf "${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}\n"
-			filename=$(find ${_platforms}/${platform}/packages/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
+			filename=$(find ${_platforms}/${platform}/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
 			printf "package filename: [${filename}]\n"
 
 			test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
