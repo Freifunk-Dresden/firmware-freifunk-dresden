@@ -120,8 +120,13 @@ define Package/$(PKG_NAME)-usb-storage
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb-ehci \
+  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb-ledtrig-usbport \
+            \
             +kmod-usb-storage +kmod-fs-vfat +block-mount \
+            \
             +usbutils
 
   TITLE:=Meta package to enable usb storage
@@ -137,25 +142,15 @@ endef
 define Package/$(PKG_NAME)-tethering
   CATEGORY:=ddmesh
   DEFAULT:=n
-  # DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
-  #           +kmod-usb-ohci +kmod-usb-ohci-pci \
-  #           +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
-  #           +kmod-usb-ledtrig-usbport \
-  #           \
-  #           +kmod-usb-net +kmod-usb-net-cdc-ether \
-  #           +kmod-usb-net-rndis \
-  #           +kmod-usb-net-ipheth +usbmuxd +libimobiledevice +usbutils
-
-  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb-ehci \
+  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb-ledtrig-usbport \
+            \
             +kmod-mii +kmod-usb-net +kmod-usb-net-cdc-ether +kmod-usb-net-rndis \
-            +kmod-usb-net-ipheth +libimobiledevice +usbmuxd \
+            +kmod-usb-net-ipheth +usbmuxd +libimobiledevice \
+            \
             +usbutils
-
-#+kmod-usb2-pci +kmod-usb3 \
-#           +kmod-usb-ohci +kmod-usb-ohci-pci \
-#           +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
-#           +kmod-usb-ledtrig-usbport \
-
 
   TITLE:=Meta package to enable usb smartphone tethering
 endef
@@ -170,25 +165,18 @@ define Package/$(PKG_NAME)-lte
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
   # usb umts/lte sticks has storage device. but I is normally not needed.
-  # DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
-  #           +kmod-usb-ohci +kmod-usb-ohci-pci \
-  #           +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
-  #           +kmod-usb-ledtrig-usbport \
-  #           \
-  #           +kmod-usb-storage \
-  #           +usb-modeswitch \
-  #           +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
-  #           +kmod-usb-net-cdc-mbim +umbim \
-  #           +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
-  #           +kmod-usb-net-cdc-ether
-
-  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb-ehci \
+  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb-ledtrig-usbport \
+            \
             +kmod-usb-storage \
             +usb-modeswitch \
             +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
             +kmod-usb-net-cdc-mbim +umbim \
             +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
             +kmod-usb-net-cdc-ether \
+            \
             +usbutils
 
   TITLE:=Meta package to enable usb LTE modem support
