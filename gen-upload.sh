@@ -185,6 +185,7 @@ gen_download_json_add_data()
 	printf "add files to download.json\n"
 	# progress info
 	printf "${C_LBLUE}# info complete${C_ORANGE}	+ some info missing${C_LRED}	- NO info${C_NONE}\n"
+  printf "  path: $subpath\n"
 
 	# get info for each filename
 	# eval is needed because file_filter must be avaluated
@@ -440,13 +441,13 @@ do
 	for platform in $(ls $_platforms)
 	do
 
-		printf "${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
+		printf "  ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
 		tmpTargetDir="$target_dir/$_buildroot/$platform"
 		mkdir -p ${tmpTargetDir}
 
 		filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
 		$ENABLE_COPY && {
-			printf "copy ${_platforms}/${platform}/$filefilter $tmpTargetDir\n"
+			printf "  copy ${_platforms}/${platform}/$filefilter $tmpTargetDir\n"
 			# use "eval" to resolv filefilter wildcards
 			eval cp -a ${_platforms}/${platform}/images/$filefilter $tmpTargetDir 2>/dev/null
 
@@ -460,18 +461,18 @@ do
 		# oder github
 		p=$(pwd)
 		cd $tmpTargetDir
-		printf "${C_YELLOW}calculate md5sum${C_NONE}\n"
+		printf "  ${C_YELLOW}calculate md5sum${C_NONE}\n"
 		md5sum * > $tmpTargetDir/md5sums
 		cd $p
 
 		#copy packages
 		mkdir -p $tmpTargetDir/packages
-		printf "search package dir: ${_platforms}/${platform}/\n"
+		printf "  search package dir: ${_platforms}/${platform}/\n"
 		for package in $(cat $info_dir/packages | sed 's/#.*//;/^[	 ]*$/d')
 		do
-			printf "${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}\n"
+			printf "  ${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}\n"
 			filename=$(find ${_platforms}/${platform}/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
-			printf "package filename: [${filename}]\n"
+			printf "  package filename: [${filename}]\n"
 
 			test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
 			$ENABLE_COPY && {
@@ -480,14 +481,14 @@ do
 			}
 		done
 
-		printf "${C_YELLOW}generate package index${C_NONE}\n"
+		printf "  ${C_YELLOW}generate package index${C_NONE}\n"
 		p=$(pwd)
 		cd $tmpTargetDir/packages/
 		$buildroot/scripts/ipkg-make-index.sh . > Packages
 		gzip -f Packages
 		cd $p
 
-		gen_download_json_add_data $target_dir ${_platforms}/${platform} $filefilter
+		gen_download_json_add_data $target_dir ${_buildroot}/${platform} $filefilter
 	done	# for platform
 done # for buildroot
 
