@@ -157,8 +157,8 @@
 		"config":"config.ath79.nand"
 	},
 	{
-		"name":"ath79.generic.smallbuffers",
-		"config":"config.ath79.generic.smallbuffers"
+		"name":"ath79.small.smallbuffers",
+		"config":"config.ath79.small.smallbuffers"
 	},
 	{	# created for fritzbox 4040
 		"name":"ipq40xx.generic",
