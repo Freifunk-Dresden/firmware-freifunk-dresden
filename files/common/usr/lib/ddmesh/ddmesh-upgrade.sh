@@ -22,8 +22,8 @@ test "$nightly_upgrade_running" = "1" && MESSAGE=" (Auto-Update)"
 
 # check if upgrade is needed
 test "$previous_version" = "$current_version" && {
-	echo "nothing to upgrade"
-	exit 0
+  echo "nothing to upgrade"
+  exit 0
 }
 
 node=$(uci get ddmesh.system.node)
@@ -40,34 +40,34 @@ run_upgrade()
 
  for v in $upgrade_version_list
  do
- 	echo -n $v
+   echo -n $v
 
- 	#if I find current version before previous_version -> error
-	test "$ignore" = "1" -a "$v" = "$current_version" && echo " ERROR: current version found before previous version" && break
+   #if I find current version before previous_version -> error
+   test "$ignore" = "1" -a "$v" = "$current_version" && echo " ERROR: current version found before previous version" && break
 
- 	#ignore all versions upto firmware previous_version
-	test "$ignore" = "1" -a "$v" != "$previous_version" && echo " ignored" && continue
-	ignore=0
-	previous_version_found=1
+   #ignore all versions upto firmware previous_version
+   test "$ignore" = "1" -a "$v" != "$previous_version" && echo " ignored" && continue
+   ignore=0
+   previous_version_found=1
 
-	#ignore if already on same version
-	test "$v" = "$previous_version" && echo " ignored (same)" && continue
+   #ignore if already on same version
+   test "$v" = "$previous_version" && echo " ignored (same)" && continue
 
-	#create name of upgrade function (version depended)
-	function_suffix=$(echo $v|sed 's#\.#_#g')
-	echo " upgrade to $v"
-	upgrade_${function_suffix};
+   #create name of upgrade function (version depended)
+   function_suffix=$(echo $v|sed 's#\.#_#g')
+   echo " upgrade to $v"
+   upgrade_${function_suffix};
 
- 	# force config update after next boot
-	# in case this script is called from terminal (manually)
- 	uci set ddmesh.boot.boot_step=2
+   # force config update after next boot
+   # in case this script is called from terminal (manually)
+   uci set ddmesh.boot.boot_step=2
 
-	#save current state in case of later errors
-	uci set ddmesh.boot.upgrade_version="${v}"
-	uci add_list ddmesh.boot.upgraded="$previous_version to ${v}${MESSAGE}"
+   #save current state in case of later errors
+   uci set ddmesh.boot.upgrade_version="${v}"
+   uci add_list ddmesh.boot.upgraded="$previous_version to ${v}${MESSAGE}"
 
-	#stop if we have reached "current version" (ignore other upgrades)
-	test "$v" = "$current_version" && echo "last valid upgrade finished" && uci_commit.sh && break;
+   #stop if we have reached "current version" (ignore other upgrades)
+   test "$v" = "$current_version" && echo "last valid upgrade finished" && uci_commit.sh && break;
  done
 
  test "$previous_version_found" = "0" && echo "ERROR: missing upgrade function for previous version $previous_version" && exit 1
@@ -106,22 +106,22 @@ upgrade_4_2_2()
  cp /rom/etc/config/credentials /etc/config/credentials
  for i in $(seq 0 4)
  do
-	host="$(uci -q get ddmesh.@backbone_client[$i].host)"
-	fastd_pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
-	if [ -n "$host" -a -z "$fastd_pubkey" ]; then
-		uci -q del ddmesh.@backbone_client[$i].password
- 		uci -q set ddmesh.@backbone_client[$i].port="5001"
-		#lookup key
-		for k in $(seq 1 10)
-		do
-			kk=$(( $k - 1))
-			h=$(uci -q get credentials.@backbone[$kk].host)
-			if [ "$h" = "$host" ]; then
-	 			uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
-				break;
-			fi
-		done
- 	fi
+  host="$(uci -q get ddmesh.@backbone_client[$i].host)"
+  fastd_pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
+  if [ -n "$host" -a -z "$fastd_pubkey" ]; then
+    uci -q del ddmesh.@backbone_client[$i].password
+    uci -q set ddmesh.@backbone_client[$i].port="5001"
+    #lookup key
+    for k in $(seq 1 10)
+    do
+      kk=$(( $k - 1))
+      h=$(uci -q get credentials.@backbone[$kk].host)
+      if [ "$h" = "$host" ]; then
+        uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
+        break;
+      fi
+    done
+   fi
  done
 }
 
@@ -151,10 +151,10 @@ upgrade_4_2_3()
  uci set ddmesh.backbone.default_server_port=5002
  for i in $(seq 0 4)
  do
-	host="$(uci -q get ddmesh.@backbone_client[$i].host)"
-	if [ -n "$host" ]; then
- 		uci -q set ddmesh.@backbone_client[$i].port="5002"
- 	fi
+  host="$(uci -q get ddmesh.@backbone_client[$i].host)"
+  if [ -n "$host" ]; then
+    uci -q set ddmesh.@backbone_client[$i].port="5002"
+  fi
  done
 
  uci del_list ddmesh.system.communities="Freifunk Meißen"
@@ -164,8 +164,8 @@ upgrade_4_2_3()
  uci set ddmesh.network.wifi_country="DE"
  for nt in node mobile server
  do
-	uci del_list ddmesh.system.node_types=$nt
-	uci add_list ddmesh.system.node_types=$nt
+  uci del_list ddmesh.system.node_types=$nt
+  uci add_list ddmesh.system.node_types=$nt
  done
 }
 
@@ -173,15 +173,15 @@ upgrade_4_2_4()
 {
  for n in wifi tbb bat; do
    for p in tcp udp; do
-	if [ -z "$(uci -q get firewall.iperf3_"$n"_"$p")" ]; then
-		uci add firewall rule
-	        uci rename firewall.@rule[-1]="iperf3_"$n"_"$p
-		uci set firewall.@rule[-1].name="Allow-iperf3-$p"
-	        uci set firewall.@rule[-1].src="$n"
-        	uci set firewall.@rule[-1].proto="$p"
-	        uci set firewall.@rule[-1].dest_port="5201"
-        	uci set firewall.@rule[-1].target="ACCEPT"
-	 fi
+    if [ -z "$(uci -q get firewall.iperf3_"$n"_"$p")" ]; then
+      uci add firewall rule
+      uci rename firewall.@rule[-1]="iperf3_"$n"_"$p
+      uci set firewall.@rule[-1].name="Allow-iperf3-$p"
+      uci set firewall.@rule[-1].src="$n"
+      uci set firewall.@rule[-1].proto="$p"
+      uci set firewall.@rule[-1].dest_port="5201"
+      uci set firewall.@rule[-1].target="ACCEPT"
+    fi
    done
  done
  #geoloc
@@ -200,11 +200,11 @@ upgrade_4_2_4()
 
 upgrade_4_2_5()
 {
-	#add network to fw zone tbb, to create rules with br-tbb_lan
-	uci delete firewall.zone_tbb.network
-        uci add_list firewall.zone_tbb.network='tbb'
-        uci add_list firewall.zone_tbb.network='tbb_fastd'
-	uci -q delete network.tbb_lan
+  #add network to fw zone tbb, to create rules with br-tbb_lan
+  uci delete firewall.zone_tbb.network
+  uci add_list firewall.zone_tbb.network='tbb'
+  uci add_list firewall.zone_tbb.network='tbb_fastd'
+  uci -q delete network.tbb_lan
 }
 
 
@@ -220,44 +220,44 @@ upgrade_4_2_7()
 
 upgrade_4_2_8()
 {
-	echo dummy
-	uci delete ddmesh.system.bmxd_nightly_restart
-	cp /rom/etc/config/dhcp /etc/config/
+  echo dummy
+  uci delete ddmesh.system.bmxd_nightly_restart
+  cp /rom/etc/config/dhcp /etc/config/
 }
 
 upgrade_4_2_9()
 {
-	uci rename overlay.@overlay[0]='data'
+  uci rename overlay.@overlay[0]='data'
 }
 
 upgrade_4_2_10()
 {
-	if [ -z "$(uci -q get credentials.backbone_secret)" ]; then
-		uci -q add credentials backbone_secret
-		uci -q rename credentials.@backbone_secret[-1]='backbone_secret'
-	fi
-	secret="$(uci -q get credentials.backbone.secret_key)"
-	if [ -n "$secret" ]; then
-		uci -q set credentials.backbone_secret.key="$secret"
-		uci -q delete credentials.backbone.secret_key
-	fi
-	uci -q delete credentials.backbone
+  if [ -z "$(uci -q get credentials.backbone_secret)" ]; then
+    uci -q add credentials backbone_secret
+    uci -q rename credentials.@backbone_secret[-1]='backbone_secret'
+  fi
+  secret="$(uci -q get credentials.backbone.secret_key)"
+  if [ -n "$secret" ]; then
+    uci -q set credentials.backbone_secret.key="$secret"
+    uci -q delete credentials.backbone.secret_key
+  fi
+  uci -q delete credentials.backbone
 
-	if [ -z "$(uci -q get credentials.privnet_secret)" ]; then
-		uci -q add credentials privnet_secret
-		uci -q rename credentials.@privnet_secret[-1]='privnet_secret'
-	fi
-	secret="$(uci -q get credentials.privnet.secret_key)"
-	if [ -n "$secret" ]; then
-		uci -q set credentials.privnet_secret.key="$secret"
-		uci -q delete credentials.privnet.secret_key
-	fi
-	uci -q delete credentials.privnet
+  if [ -z "$(uci -q get credentials.privnet_secret)" ]; then
+    uci -q add credentials privnet_secret
+    uci -q rename credentials.@privnet_secret[-1]='privnet_secret'
+  fi
+  secret="$(uci -q get credentials.privnet.secret_key)"
+  if [ -n "$secret" ]; then
+    uci -q set credentials.privnet_secret.key="$secret"
+    uci -q delete credentials.privnet.secret_key
+  fi
+  uci -q delete credentials.privnet
 
-	uci -q rename ddmesh.system.wifissh='meshssh'
-	uci -q rename ddmesh.system.wifisetup='meshsetup'
-	uci -q delete network.tbb # will be created with 'meshwire' on next boot
-	cp /rom/etc/config/firewall /etc/config/firewall
+  uci -q rename ddmesh.system.wifissh='meshssh'
+  uci -q rename ddmesh.system.wifisetup='meshsetup'
+  uci -q delete network.tbb # will be created with 'meshwire' on next boot
+  cp /rom/etc/config/firewall /etc/config/firewall
 }
 
 upgrade_4_2_11()
@@ -267,8 +267,8 @@ upgrade_4_2_11()
 
 upgrade_4_2_12()
 {
-	cp /rom/etc/config/firewall /etc/config/firewall
-	uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
+  cp /rom/etc/config/firewall /etc/config/firewall
+  uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
 }
 
 upgrade_4_2_13()
@@ -283,63 +283,63 @@ upgrade_4_2_14()
 
 upgrade_4_2_15()
 {
-	rm /etc/config/wireless
-	ln -s /var/etc/config/wireless /etc/config/wireless
-	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
+  rm /etc/config/wireless
+  ln -s /var/etc/config/wireless /etc/config/wireless
+  uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
 }
 
 upgrade_4_2_16()
 {
-	uci -q delete credentials.url.firmware_download_server
+  uci -q delete credentials.url.firmware_download_server
 }
 
 upgrade_4_2_17()
 {
- 	uci set network.wan.stp=1
-	cp /rom/etc/config/firewall /etc/config/firewall
+   uci set network.wan.stp=1
+  cp /rom/etc/config/firewall /etc/config/firewall
 }
 
 
 upgrade_4_2_18()
 {
-	uci set dhcp.dnsmasq.quietdhcp=1
+  uci set dhcp.dnsmasq.quietdhcp=1
 }
 
 upgrade_4_2_19()
 {
-	uci -q delete network.meshwire # mesh_lan/wan will be created on next boot
-	uci set network.tbb_fastd.ifname='tbb_fastd'
-	cp /rom/etc/config/firewall /etc/config/firewall
-	uci set dhcp.dnsmasq.logqueries=0
+  uci -q delete network.meshwire # mesh_lan/wan will be created on next boot
+  uci set network.tbb_fastd.ifname='tbb_fastd'
+  cp /rom/etc/config/firewall /etc/config/firewall
+  uci set dhcp.dnsmasq.logqueries=0
 }
 
 upgrade_5_0_1()
 {
-	uci -q set ddmesh.network.wifi2_dhcplease='5m'
+  uci -q set ddmesh.network.wifi2_dhcplease='5m'
 }
 
 upgrade_5_0_2()
 {
-	uci -q delete network.meshwire # mesh_lan/wan will be created on next boot
-	uci set network.tbb_fastd.ifname='tbb_fastd'
-	cp /rom/etc/config/firewall /etc/config/firewall
-	uci set dhcp.dnsmasq.logqueries=0
+  uci -q delete network.meshwire # mesh_lan/wan will be created on next boot
+  uci set network.tbb_fastd.ifname='tbb_fastd'
+  cp /rom/etc/config/firewall /etc/config/firewall
+  uci set dhcp.dnsmasq.logqueries=0
 }
 
 upgrade_5_0_3()
 {
-	uci add_list ddmesh.system.communities="Freifunk Waldheim"
-	# convert security
-	security=0 # default
-	if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" ]; then
-		if [ "$(uci -q get ddmesh.network.wifi3_security_open)" = "1" ]; then
-			security=0
-		else
-			security=1
-		fi
-	fi
-	uci -q set ddmesh.network.wifi3_security=$security
-	uci -q delete ddmesh.network.wifi3_security_open
+  uci add_list ddmesh.system.communities="Freifunk Waldheim"
+  # convert security
+  security=0 # default
+  if [ "$(uci -q get ddmesh.network.wifi3_enabled)" = "1" ]; then
+    if [ "$(uci -q get ddmesh.network.wifi3_security_open)" = "1" ]; then
+      security=0
+    else
+      security=1
+    fi
+  fi
+  uci -q set ddmesh.network.wifi3_security=$security
+  uci -q delete ddmesh.network.wifi3_security_open
 }
 
 upgrade_5_0_4()
@@ -483,12 +483,12 @@ upgrade_6_4_2()
  uci set ddmesh.network.wifi_ch_5g_outdoor_max=140
  uci set ddmesh.network.mesh_mode='adhoc+mesh'
  if [ -n "$(uci -q get network.wifi)" ]; then
-	uci -q rename network.wifi='wifi_adhoc'
+  uci -q rename network.wifi='wifi_adhoc'
  fi
  if [ -z "$(uci -q get credentials.network)" ]; then
-	uci add credentials network
-	uci rename credentials.@network[-1]='network'
-	uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
+  uci add credentials network
+  uci rename credentials.@network[-1]='network'
+  uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
  fi
  uci del network.wifi_mesh
 }
@@ -536,104 +536,104 @@ upgrade_7_0_3()
 
 upgrade_7_1_0()
 {
-	uci del_list firewall.zone_wifi.subnet
-	uci add_list firewall.zone_wifi.subnet="$_ddmesh_wifi2net"
+  uci del_list firewall.zone_wifi.subnet
+  uci add_list firewall.zone_wifi.subnet="$_ddmesh_wifi2net"
 }
 
 upgrade_7_1_1()
 {
-	for option in lan.ipaddr lan.netmask lan.gateway lan.dns wan.proto wan.ipaddr wan.netmask wan.gateway wan.dns
-	do
-		local v="$(uci -q get network.${option})"
-		if [ -n "$v" ]; then
-			local n="${option/./_}"
-			uci set ddmesh.network.${n}="${v}"
-		fi
-	done
-	rm /etc/config/uhttpd
-	cp /rom/etc/config/uhttpd /etc/config/uhttpd
-	rm /etc/config/wshaper
+  for option in lan.ipaddr lan.netmask lan.gateway lan.dns wan.proto wan.ipaddr wan.netmask wan.gateway wan.dns
+  do
+    local v="$(uci -q get network.${option})"
+    if [ -n "$v" ]; then
+      local n="${option/./_}"
+      uci set ddmesh.network.${n}="${v}"
+    fi
+  done
+  rm /etc/config/uhttpd
+  cp /rom/etc/config/uhttpd /etc/config/uhttpd
+  rm /etc/config/wshaper
 
-	uci add_list firewall.zone_mesh.network="mesh_vlan"
-	uci set ddmesh.network.mesh_on_vlan='0'
-	uci set ddmesh.network.mesh_vlan_id='9'
+  uci add_list firewall.zone_mesh.network="mesh_vlan"
+  uci set ddmesh.network.mesh_on_vlan='0'
+  uci set ddmesh.network.mesh_vlan_id='9'
 
-	uci set ddmesh.network.lan_ipaddr="$(uci get network.lan.ipaddr)"
-	uci set ddmesh.network.lan_netmask="$(uci get network.lan.netmask)"
-	uci set ddmesh.network.lan_gateway="$(uci get network.lan.gateway)"
-	uci set ddmesh.network.lan_dns="$(uci get network.lan.dns)"
-	uci set ddmesh.network.lan_proto="$(uci get network.lan.proto)"
-	uci -q delete ddmesh.network.wwan_4g
-	uci -q delete ddmesh.network.wwan_3g
-	uci -q delete ddmesh.network.wwan_2g
+  uci set ddmesh.network.lan_ipaddr="$(uci get network.lan.ipaddr)"
+  uci set ddmesh.network.lan_netmask="$(uci get network.lan.netmask)"
+  uci set ddmesh.network.lan_gateway="$(uci get network.lan.gateway)"
+  uci set ddmesh.network.lan_dns="$(uci get network.lan.dns)"
+  uci set ddmesh.network.lan_proto="$(uci get network.lan.proto)"
+  uci -q delete ddmesh.network.wwan_4g
+  uci -q delete ddmesh.network.wwan_3g
+  uci -q delete ddmesh.network.wwan_2g
 }
 
 upgrade_7_1_2()
 {
-	true
+  true
 }
 
 upgrade_7_1_3()
 {
-	true
+  true
 }
 
 upgrade_7_1_4()
 {
-	uci -q set ddmesh.system.mesh_network_id='0'
-	uci -q delete ddmesh.network.speed_enabled
-	uci -q delete ddmesh.network.speed_up
-	uci -q delete ddmesh.network.speed_down
-	uci -q delete ddmesh.network.speed_network
-	uci set ddmesh.network.wifi_country='DE'
-	uci set uhttpd.px5g.country='DE'
-	uci set uhttpd.px5g.state='Saxony'
-	uci set uhttpd.px5g.location='Dresden'
-	uci set uhttpd.px5g.commonname='Freifunk Dresden Communities'
-	uci set uhttpd.px5g.organisation='Freifunk Dresden'
+  uci -q set ddmesh.system.mesh_network_id='0'
+  uci -q delete ddmesh.network.speed_enabled
+  uci -q delete ddmesh.network.speed_up
+  uci -q delete ddmesh.network.speed_down
+  uci -q delete ddmesh.network.speed_network
+  uci set ddmesh.network.wifi_country='DE'
+  uci set uhttpd.px5g.country='DE'
+  uci set uhttpd.px5g.state='Saxony'
+  uci set uhttpd.px5g.location='Dresden'
+  uci set uhttpd.px5g.commonname='Freifunk Dresden Communities'
+  uci set uhttpd.px5g.organisation='Freifunk Dresden'
 }
 
 upgrade_7_1_5()
 {
- 	uci set ddmesh.system.firmware_autoupdate=1
-	cp /rom/etc/config/firewall /etc/config/firewall
+   uci set ddmesh.system.firmware_autoupdate=1
+  cp /rom/etc/config/firewall /etc/config/firewall
 }
 
 upgrade_7_1_6()
 {
-	uci -q del ddmesh.network.mesh_network_id
-	uci -q set ddmesh.system.mesh_network_id='0'
-	uci -q del ddmesh.system.communities
-	uci add ddmesh communities
-	uci rename ddmesh.@communities[-1]='communities'
-	uci add_list ddmesh.communities.community='0%Dresden'
-	uci add_list ddmesh.communities.community='1000%Dresden'
-	uci add_list ddmesh.communities.community='1001%Dresden NO'
-	uci add_list ddmesh.communities.community='1002%Dresden NW'
-	uci add_list ddmesh.communities.community='1003%Dresden SO'
-	uci add_list ddmesh.communities.community='1004%Dresden SW'
-	uci add_list ddmesh.communities.community='1020%Pirna'
-	uci add_list ddmesh.communities.community='1021%OL'
+  uci -q del ddmesh.network.mesh_network_id
+  uci -q set ddmesh.system.mesh_network_id='0'
+  uci -q del ddmesh.system.communities
+  uci add ddmesh communities
+  uci rename ddmesh.@communities[-1]='communities'
+  uci add_list ddmesh.communities.community='0%Dresden'
+  uci add_list ddmesh.communities.community='1000%Dresden'
+  uci add_list ddmesh.communities.community='1001%Dresden NO'
+  uci add_list ddmesh.communities.community='1002%Dresden NW'
+  uci add_list ddmesh.communities.community='1003%Dresden SO'
+  uci add_list ddmesh.communities.community='1004%Dresden SW'
+  uci add_list ddmesh.communities.community='1020%Pirna'
+  uci add_list ddmesh.communities.community='1021%OL'
   # convert
-	case "$(uci get ddmesh.system.community)" in
-		'Freifunk Dresden')  com='Dresden' ;;
-		'Freifunk Freiberg') com='Dresden SW' ;;
-		'Freifunk Freital')  com='Dresden SW' ;;
-		'Freifunk Tharandt') com='Dresden SW' ;;
-		'Freifunk Meissen')  com='Dresden NW' ;;
-		'Freifunk Radebeul') com='Dresden NW' ;;
-		'Freifunk Waldheim') com='Dresden NW' ;;
-		'Freifunk OL') com='OL' ;;
-		'Freifunk Pirna')	com='Pirna' ;;
-		*) com='Dresden' ;;
-	esac
-	uci set ddmesh.system.community="$com"
+  case "$(uci get ddmesh.system.community)" in
+    'Freifunk Dresden')  com='Dresden' ;;
+    'Freifunk Freiberg') com='Dresden SW' ;;
+    'Freifunk Freital')  com='Dresden SW' ;;
+    'Freifunk Tharandt') com='Dresden SW' ;;
+    'Freifunk Meissen')  com='Dresden NW' ;;
+    'Freifunk Radebeul') com='Dresden NW' ;;
+    'Freifunk Waldheim') com='Dresden NW' ;;
+    'Freifunk OL') com='OL' ;;
+    'Freifunk Pirna')	com='Pirna' ;;
+    *) com='Dresden' ;;
+  esac
+  uci set ddmesh.system.community="$com"
   uci set ddmesh.bmxd.only_community_gateways='1'
 }
 
 upgrade_8_0_1()
 {
-	true
+  uci add_list firewall.zone_wan.network='twan'
 }
 
 ##################################

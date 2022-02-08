@@ -160,7 +160,7 @@ else #form_action
 				rm -f $FIRMWARE_FILE
 				notebox 'Laden der Firmware abgebrochen.'
 			else
-				SECONDS=210
+				SECONDS=300
 				BARS=3
 
 				cat<<EOM
@@ -175,7 +175,7 @@ else #form_action
 				<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 					var t=$SECONDS * 1000;
 					var bars=$BARS;
-					var fields=20;
+					var fields=10;
 					var p = new GridField("progress", "myProgress", bars, fields, 10, 5, "#aaaaaa", "#0000ff");
 					p.autoCounter(t / (bars*fields), bars*fields);
 					window.setTimeout("window.location=\"/\"", t);

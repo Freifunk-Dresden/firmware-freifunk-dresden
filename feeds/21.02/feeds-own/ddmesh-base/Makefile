@@ -18,24 +18,24 @@ define Package/$(PKG_NAME)-base
   CATEGORY:=ddmesh
   DEFAULT:=y
   DEPENDS:=	+base-files +busybox +dnsmasq +firewall +logd +uci +dropbear \
-		+firewall +iptables +ip-tiny \
-		+mtd +opkg \
-		+uhttpd \
-		+kmod-ledtrig-timer +kmod-leds-gpio +kmod-gpio-button-hotplug \
-		+kmod-tun \
-		+libmbedtls +libustream-mbedtls +px5g-mbedtls \
-		+bmxd +freifunk-upload \
-		+ddns-scripts +ddns-scripts_no-ip_com \
-		+iperf3 \
-		+kmod-ipip \
-		+PACKAGE_fastd:nacl \
-		+PACKAGE_fastd:libuecc
+    +firewall +iptables +ip-tiny \
+    +mtd +opkg \
+    +uhttpd \
+    +kmod-leds-gpio +kmod-gpio-button-hotplug \
+    +kmod-tun \
+    +libmbedtls +libustream-mbedtls +px5g-mbedtls \
+    +bmxd +freifunk-upload \
+    +ddns-scripts +ddns-scripts_no-ip_com \
+    +iperf3 \
+    +kmod-ipip \
+    +PACKAGE_fastd:nacl \
+    +PACKAGE_fastd:libuecc
 
   TITLE:=Meta package to select all needed basic packages
 endef
 
 define Package/$(PKG_NAME)-base/description
-	Meta package to select all needed basic packages
+  Meta package to select all needed basic packages
 endef
 
 # This section holds only package configurations (compile switches).
@@ -43,51 +43,51 @@ endef
 # packages was selected
 define Package/$(PKG_NAME)-base/config
 
-	# menu is optional. It is directly inserted below current package menu entry (same window)
-	#menu "Modules"
-		# menu point is displayed when dependings are set
-		#depends on PACKAGE_ddmesh-base
+  # menu is optional. It is directly inserted below current package menu entry (same window)
+  #menu "Modules"
+    # menu point is displayed when dependings are set
+    #depends on PACKAGE_ddmesh-base
 
-		# use SYMBOL of package that should be selected
-		config PACKAGE_fastd
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-base
-			tristate "fastd"
-			help
-				Create fastd tunnel to backbone servers.
+    # use SYMBOL of package that should be selected
+    config PACKAGE_fastd
+      # menu point is displayed when dependings are set
+      depends on PACKAGE_ddmesh-base
+      tristate "fastd"
+      help
+        Create fastd tunnel to backbone servers.
 
-		config PACKAGE_wireguard-tools
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-base
-			tristate "wireguard"
-			help
-				Create wireguard tunnel to backbone servers.
+    config PACKAGE_wireguard-tools
+      # menu point is displayed when dependings are set
+      depends on PACKAGE_ddmesh-base
+      tristate "wireguard"
+      help
+        Create wireguard tunnel to backbone servers.
 
-		# use SYMBOL of package that should be selected
-		config PACKAGE_bmxd
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-base
-			tristate "bmxd"
-			help
-				required by firmware
+    # use SYMBOL of package that should be selected
+    config PACKAGE_bmxd
+      # menu point is displayed when dependings are set
+      depends on PACKAGE_ddmesh-base
+      tristate "bmxd"
+      help
+        required by firmware
 
-		# use SYMBOL of package that should be selected
-		config PACKAGE_ddns-scripts
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-base
-			tristate "ddns-scripts"
-			help
-				required by firmware
+    # use SYMBOL of package that should be selected
+    config PACKAGE_ddns-scripts
+      # menu point is displayed when dependings are set
+      depends on PACKAGE_ddmesh-base
+      tristate "ddns-scripts"
+      help
+        required by firmware
 
-		# use SYMBOL of package that should be selected
-		config PACKAGE_freifunk-upload
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-base
-			tristate "freifunk-upload"
-			help
-				required by firmware
+    # use SYMBOL of package that should be selected
+    config PACKAGE_freifunk-upload
+      # menu point is displayed when dependings are set
+      depends on PACKAGE_ddmesh-base
+      tristate "freifunk-upload"
+      help
+        required by firmware
 
-	#endmenu
+  #endmenu
 
 endef
 ##########################################################
@@ -96,13 +96,13 @@ define Package/$(PKG_NAME)-wifi
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-	# to enable basic wifi, kmod-mac80211 is needed
-	#
-	# If wpa-basic is not selected wpa-cli will not appear in menu. And because of this
-	# the complete package "ddmesh-wifi" will also not be visible.
-	# only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
-	# This simply just selects wpa-cli without hiding current packet
-  DEPENDS:= +iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli
+  # to enable basic wifi, kmod-mac80211 is needed
+  #
+  # If wpa-basic is not selected wpa-cli will not appear in menu. And because of this
+  # the complete package "ddmesh-wifi" will also not be visible.
+  # only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
+  # This simply just selects wpa-cli without hiding current packet
+  DEPENDS:= +iw +iwinfo +wpad-mini +kmod-owl-loader +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
 
@@ -120,9 +120,14 @@ define Package/$(PKG_NAME)-usb-storage
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-  DEPENDS:= 	+kmod-usb-core +kmod-usb2 +kmod-usb-ohci +kmod-usb-ledtrig-usbport +kmod-usb-storage \
-		+kmod-fs-vfat \
-		+block-mount
+  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb-ledtrig-usbport \
+            \
+            +kmod-usb-storage +kmod-fs-vfat +block-mount \
+            \
+            +usbutils
 
   TITLE:=Meta package to enable usb storage
 endef
@@ -132,47 +137,75 @@ define Package/$(PKG_NAME)-usb-storage/description
 endef
 
 ##########################################################
+# https://openwrt.org/docs/guide-user/network/wan/smartphone.usb.tethering
 
+define Package/$(PKG_NAME)-tethering
+  CATEGORY:=ddmesh
+  DEFAULT:=n
+  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb-ledtrig-usbport \
+            \
+            +kmod-mii +kmod-usb-net +kmod-usb-net-cdc-ether +kmod-usb-net-rndis \
+            +kmod-usb-net-ipheth +usbmuxd +libimobiledevice \
+            \
+            +usbutils
+
+  TITLE:=Meta package to enable usb smartphone tethering
+endef
+
+define Package/$(PKG_NAME)-tethering/description
+        Meta package to enable usb smartphone tethering
+endef
+
+##########################################################
 define Package/$(PKG_NAME)-lte
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
   # usb umts/lte sticks has storage device. but I is normally not needed.
-  DEPENDS:= 	+kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
-		+kmod-usb-ledtrig-usbport +kmod-usb-storage \
-		+usb-modeswitch \
-                +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
-                +kmod-usb-net-cdc-mbim +umbim \
-		+kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
-                +kmod-usb-net-cdc-ether
+  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb-ledtrig-usbport \
+            \
+            +kmod-usb-storage \
+            +usb-modeswitch \
+            +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
+            +kmod-usb-net-cdc-mbim +umbim \
+            +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
+            +kmod-usb-net-cdc-ether \
+            \
+            +usbutils
 
   TITLE:=Meta package to enable usb LTE modem support
 endef
 
 define Package/$(PKG_NAME)-lte/description
-        Meta package to enable qmi LTE modem support
-        https://openwrt.org/docs/guide-user/network/wan/wwan/ltedongle
+   Meta package to enable qmi LTE modem support
+   https://openwrt.org/docs/guide-user/network/wan/wwan/ltedongle
 
-	LTE Stick must be switch to "ndis" interface via AT commands instead of "modem"
-	see: https://openwrt.org/docs/guide-user/network/wan/wwan/at_commands
+  LTE Stick must be switch to "ndis" interface via AT commands instead of "modem"
+  see: https://openwrt.org/docs/guide-user/network/wan/wwan/at_commands
 
-	See: http://m2msupport.net/m2msupport/tutorial-for-huawei-modules/
-	Huawei: https://rychly.gitlab.io/post/huawei-e173s1/
+  See: http://m2msupport.net/m2msupport/tutorial-for-huawei-modules/
+  Huawei: https://rychly.gitlab.io/post/huawei-e173s1/
 
-	ACHTUNG:  Never turn Off PC interface (2:PCUI in this example)!
+  ACHTUNG:  Never turn Off PC interface (2:PCUI in this example)!
         Denn da diese Settings persistent sind, kann man nicht mehr via terminal auf
         den stick zu greifen und ihn mit AT commands konfigurieren
 
 
-	Huawei E173
-	-------------
-	GSM modem (1-port) converters attached to
+  Huawei E173
+  -------------
+  GSM modem (1-port) converters attached to
           - /dev/ttyUSB0 (AT commands),
           - /dev/ttyUSB1 (data),
           - /dev/ttyUSB2 (status & AT commands)
 
-	AT Commands (general)
-	  - ATI - displays gsm modul information
+  AT Commands (general)
+    - ATI - displays gsm modul information
             Manufacturer: huawei
             Model: E173
             Revision: 11.126.29.00.1130
@@ -208,21 +241,21 @@ define Package/$(PKG_NAME)-wifi-extra
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
   DEPENDS:= $(PKG_NAME)-wifi \
-		+kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
-		+kmod-ath10k-ct +kmod-ath5k +kmod-ath9k \
-		+kmod-p54-usb \
-		+kmod-rt2500-usb \
-		+kmod-rt2800-usb \
-		+kmod-rt2x00-usb \
-		+kmod-rt73-usb \
-		+kmod-rtl8187
+    +kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
+    +kmod-ath10k-ct +kmod-ath5k +kmod-ath9k \
+    +kmod-p54-usb \
+    +kmod-rt2500-usb \
+    +kmod-rt2800-usb \
+    +kmod-rt2x00-usb \
+    +kmod-rt73-usb \
+    +kmod-rtl8187
 
   TITLE:=Meta package to select extra wifi drivers
 endef
 
 define Package/$(PKG_NAME)-wifi-extra/description
         Meta package to select extra wifi drivers for usb sticks.
-	This is useful for Futro with usb stick wifi support
+  This is useful for Futro with usb stick wifi support
 endef
 
 ##########################################################
@@ -253,35 +286,35 @@ endef
 
 define Package/$(PKG_NAME)-extra-modules/config
 
-	# menu is optional. It is directly inserted below current package menu entry (same window)
-	# menu "Modules"
-		# menu point is displayed when dependings are set
-		# depends on PACKAGE_ddmesh-extra-modules
+  # menu is optional. It is directly inserted below current package menu entry (same window)
+  # menu "Modules"
+    # menu point is displayed when dependings are set
+    # depends on PACKAGE_ddmesh-extra-modules
 
-		# use SYMBOL of package that should be selected
-		config PACKAGE_tcpdump
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-extra-modules
-			tristate "tcpdump"
+    # use SYMBOL of package that should be selected
+    config PACKAGE_tcpdump
+      # menu point is displayed when dependings are set
+      depends on PACKAGE_ddmesh-extra-modules
+      tristate "tcpdump"
 
-		config PACKAGE_OVPNCerts
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-extra-modules
-			tristate "OVPNCerts"
-			help
-				Create openvpn tunnel used by router as public gateway.
+    config PACKAGE_OVPNCerts
+      # menu point is displayed when dependings are set
+      depends on PACKAGE_ddmesh-extra-modules
+      tristate "OVPNCerts"
+      help
+        Create openvpn tunnel used by router as public gateway.
 
 
-		config PACKAGE_feinstaubsensor
-			# menu point is displayed when dependings are set
-			depends on PACKAGE_ddmesh-extra-modules
-			tristate "Feinstaubensor (Stuttgard Project)"
-			help
-				This module simply includes a menu to display
-				Feinstaubsensor graphics.
-				Image link must be modified to display graphic for
-				your own sensor.
-				See http://luftdaten.info/
+    config PACKAGE_feinstaubsensor
+      # menu point is displayed when dependings are set
+      depends on PACKAGE_ddmesh-extra-modules
+      tristate "Feinstaubensor (Stuttgard Project)"
+      help
+        This module simply includes a menu to display
+        Feinstaubsensor graphics.
+        Image link must be modified to display graphic for
+        your own sensor.
+        See http://luftdaten.info/
 #	endmenu
 
 endef
@@ -290,6 +323,7 @@ endef
 $(eval $(call BuildPackage,$(PKG_NAME)-base))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi))
 $(eval $(call BuildPackage,$(PKG_NAME)-usb-storage))
+$(eval $(call BuildPackage,$(PKG_NAME)-tethering))
 $(eval $(call BuildPackage,$(PKG_NAME)-lte))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi-extra))
 $(eval $(call BuildPackage,$(PKG_NAME)-extra-modules))

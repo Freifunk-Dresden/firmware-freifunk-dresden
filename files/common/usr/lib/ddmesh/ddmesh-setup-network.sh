@@ -39,7 +39,7 @@ setup_ethernet()
 	do
 		echo "check NET: $NET"
 		if [ -n "$(uci -q get network.${NET})" ]; then
-		echo "$NET found"
+			echo "$NET found"
 
 			# ------- configure device -------
 			dev_name=$(uci -q get network.${NET}.device)
@@ -321,6 +321,30 @@ setup_wwan()
 	uci set network.wwan_helper.force_link='1'
 }
 
+# tether
+setup_twan()
+{
+	dev_config="dev_br_twan"
+	uci add network device
+	uci rename network.@device[-1]="${dev_config}"
+
+	uci set network.${dev_config}.name="br-twan"
+	uci set network.${dev_config}.type='bridge'
+	uci set network.${dev_config}.stp=1
+	uci set network.${dev_config}.bridge_empty=1
+	# avoid spaces in 'ports'
+	for p in usb0
+	do
+		uci add_list network.${dev_config}.ports="$p"
+	done
+
+	uci add network interface
+	uci rename network.@interface[-1]='twan'
+	uci set network.twan.device='br-twan'
+	uci set network.twan.proto='dhcp'
+	uci set network.twan.force_link='1'
+}
+
 setup_wifi()
 {
 	#############################################################################
@@ -461,7 +485,7 @@ setup_network()
 #cat /etc/config/network >/tmp/devel-network-initial
 
  # setup_mesh AFTER setup_ethernet (setup_mesh needs lan network)
- for f in setup_ethernet setup_mesh setup_wwan setup_wifi setup_backbone setup_bmxd setup_ffgw setup_vpn setup_privnet
+ for f in setup_ethernet setup_mesh setup_wwan setup_twan setup_wifi setup_backbone setup_bmxd setup_ffgw setup_vpn setup_privnet
  do
 	echo "call ${f}()"
 	${f}

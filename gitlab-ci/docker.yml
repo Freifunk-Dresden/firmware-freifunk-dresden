@@ -79,25 +79,6 @@ docker:ar71xx.generic.lowmem:
   tags:
   - docker
 
-docker:x86.generic.offloader:
-  except:
-    - schedules
-    - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
-  stage: build
-  needs: ["docker:init"]
-  script:
-    - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
-    - mkdir -p /mycache/workdir
-    - ln -s /mycache/workdir
-    - ./build.sh x86.generic.offloader rerun -j"$(( $(nproc) + 1))"
-  tags:
-  - docker
-
 docker:x86.64.offloader:
   except:
     - schedules
@@ -263,7 +244,7 @@ docker:gen-upload-test:
     - /^TESTING_FIRMWARE_.*$/
     - /^R_FIRMWARE_.*$/
   stage: deploy
-  needs: ["docker:ar71xx.tiny.lowmem","docker:ar71xx.generic.lowmem","docker:x86.generic.offloader","docker:x86.64.offloader","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx","docker:bcm53xx.generic.arm"]
+  needs: ["docker:ar71xx.tiny.lowmem","docker:ar71xx.generic.lowmem","docker:x86.64.offloader","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx","docker:bcm53xx.generic.arm"]
   script:
     - mkdir -p /mycache/dl
     - ln -s /mycache/dl

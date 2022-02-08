@@ -3,6 +3,9 @@ dl/
 coredumps/
 logs/
 final_output/
-upload-infos/
+
+# ignore generated
+upload-infos/fileinfo.json.*
+
 *.o
 docs/_build/

@@ -2,19 +2,6 @@
 # Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de
 # GNU General Public License Version 3
 #
-#   The order is important for device specific builds.
-#   In this case output directory is not deleted and device specific
-#   files (variants) are placed in exisiting directory.
-#
-#       Example for device specific:
-#               ramips.mt7621.ubnt-edge
-#
-#   If no variant is set, then platform directory is deleted before.
-#   So consider order and definition of variants when specifying targets!
-#
-# config file names:
-#	config.<target>.<subtarget>[.<variant>][.<openwrt_variant>]
-#
 #########################################################################
 
 {
@@ -23,14 +10,8 @@
 # this block must come always first, because the first block is used
 # as default
 	{
-		"name":"default",			# currently just an unused name (only displayed)
-							# if following blocks do not specifiy there own value
-		"target":"ath79",
-		"subtarget":"generic",
-		"variant":"",				# used to distinguish different configs
-							# e.g. 	could be name of a router or
-							#      	a set of routers when selecting "multiple devices"
-							#	via "make menuconfig"
+		"name":"default",			# target name
+		"config":"",				  # config file name
 
 		"openwrt_rev":"b4d7885af70a42df7577157b96f941500bd17bfb", # (HEAD, tag: v21.02.1)
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
@@ -57,10 +38,7 @@
 		  ],
 
 		# install addional packages from feeds (see feeds.conf)
-#		"packages":["libpam","libcap","libgnutls","libopenldap",
-#				"libidn2","libssh2","libnetsnmp",
-#				"libcap", "jansson", "kmod-cryptodev", "liblzma" ],
-		"packages":["libpam", "libnetsnmp"],
+		"packages":["libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"],
 
 		# apply additional target patches
 		"target-patches":[""]
@@ -72,8 +50,7 @@
 # ---------- openwrt 18 -----------------------------------------------------------------------
 	{
 		"name":"ar71xx.tiny.lowmem",	# can be any name
-		"target":"ar71xx",
-		"subtarget":"tiny",
+		"config":"config.ar71xx.tiny.lowmem",
 		"openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
 		"openwrt_variant":"lowmem",
 		"selector-config":"18.06",		# used to select config
@@ -91,8 +68,7 @@
 	},
 	{
 		"name":"ar71xx.generic.lowmem",	# can be any name
-		"target":"ar71xx",
-		"subtarget":"generic",
+		"config":"config.ar71xx.generic.lowmem",
 		"openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
 		"openwrt_variant":"lowmem",
 		"selector-config":"18.06",		# used to select config
@@ -110,9 +86,7 @@
 	},
 	{
 		"name":"ramips.rt305x.tiny.lowmem",	# can be any name
-		"target":"ramips",
-		"subtarget":"rt305x",
-		"variant":"tiny",
+		"config":"config.ramips.rt305x.tiny.lowmem",
 		"openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
 		"openwrt_variant":"lowmem",
 		"selector-config":"18.06",		# used to select config
@@ -130,116 +104,78 @@
 	},
 # ---------- openwrt 21 -----------------------------------------------------------------------
 	{
-		"name":"x86.generic.offloader",
-		"target":"x86",
-		"subtarget":"generic",
-		"variant":"offloader"
-	},
-	{
 		"name":"x86.64.offloader",
-		"target":"x86",
-		"subtarget":"64",
-		"variant":"offloader",
+		"config":"config.x86.64.offloader",
 		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
 	},
 	{
 		"name":"ramips.mt7621.generic",
-		"target":"ramips",
-		"subtarget":"mt7621",
-		"variant":"generic"
+		"config":"config.ramips.mt7621.generic"
 	},
 	{
 		"name":"ramips.mt7621.offloader",
-		"target":"ramips",
-		"subtarget":"mt7621",
-		"variant":"offloader"	# specific target (overwrites previous generic only for this device)
+		"config":"config.ramips.mt7621.offloader"
 	},
 	{
 		"name":"ramips.mt76x8.generic",
-		"target":"ramips",
-		"subtarget":"mt76x8",
-		"variant":"generic"
+		"config":"config.ramips.mt76x8.generic"
 	},
 	{
-		"name":"lantiq.xrx200",
-		"target":"lantiq",
-		"subtarget":"xrx200"
-#	,	"openwrt_variant":"patchset-1",
-#		"target-patches":["lantiq-0900-rollback.patch", "lantiq-0901-add-icu-smp-support.patch", "lantiq-0902-backport-vanilla-eth-driver.patch"]
+		"name":"lantiq-xrx200.generic",
+		"config":"config.lantiq-xrx200.generic"
 	},
 	{
-		"name":"lantiq.xway",
-		"target":"lantiq",
-		"subtarget":"xway"
+		"name":"lantiq-xrx200.small",
+		"config":"config.lantiq-xrx200.small"
+	},
+	{
+		"name":"lantiq-xway.generic",
+		"config":"config.lantiq-xway.generic"
+	},
+	{
+		"name":"lantiq-xway.small",
+		"config":"config.lantiq-xway.small"
 	},
 	{	# created for Orange Pi R1
 		"name":"sunxi.cortexa7.offloader",
-		"target":"sunxi",
-		"subtarget":"cortexa7",
-		"variant":"offloader"
+		"config":"config.sunxi.cortexa7.offloader"
 	},
 	{
 		"name":"ath79.generic",
-		"target":"ath79",
-		"subtarget":"generic"
+		"config":"config.ath79.generic"
+	},
+	{
+		"name":"ath79.small",
+		"config":"config.ath79.small"
 	},
 	{
 		"name":"ath79.generic.gl-mifi",
-		"target":"ath79",
-		"subtarget":"generic",
-		"variant":"gl-mifi"
+		"config":"config.ath79.generic.gl-mifi"
 	},
 	{
 		"name":"ath79.nand",
-		"target":"ath79",
-		"subtarget":"nand"
+		"config":"config.ath79.nand"
 	},
 	{
-		"name":"ath79.generic.smallbuffers",
-		"target":"ath79",
-		"subtarget":"generic",
-		"variant":"smallbuffers"
+		"name":"ath79.small.smallbuffers",
+		"config":"config.ath79.small.smallbuffers"
 	},
 	{	# created for fritzbox 4040
 		"name":"ipq40xx.generic",
-		"target":"ipq40xx",
-		"subtarget":"generic"
+		"config":"config.ipq40xx.generic"
 	},
 	{
 		"name":"ipq40xx.generic.fritz-tffs-nand",
-		"target":"ipq40xx",
-		"subtarget":"generic",
-		"variant":"fritz-tffs-nand"
+		"config":"config.ipq40xx.generic.fritz-tffs-nand"
 	},
 	{
 		"name":"bcm53xx.generic.arm",
-		"target":"bcm53xx",
-		"subtarget":"generic",
-		"openwrt_variant":"arm"
+		"config":"config.bcm53xx.generic.arm"
 	},
 	{
 		"name":"mpc85xx.p1020",
-		"target":"mpc85xx",
-		"subtarget":"p1020"
+		"config":"config.mpc85xx.p1020"
 	}
-
-# ---------- master 21 -----------------------------------------------------------------------
-#	,{
-#		"name":"master.ath79.generic",	# can be any name
-#		"target":"ath79",
-#		"subtarget":"generic",
-#		"openwrt_rev":"master", # 
-#		"selector-config":"master",		# used to select config
-#		"selector-feeds":"master",		# used to select feeds
-#		"selector-patches":"master",		# used to select patches
-#		"selector-files":"master",
-#		"packages":[ ],
-#		"feeds" : [
-#				{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
-#				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"master"},
-#				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"master"}
-#			  ]
-#	}
 
 
  ]
