@@ -79,7 +79,8 @@ if [ "$1" = "configure" ]; then
 	test -n "$nameserver2" && ns2=",$nameserver2"
 	test -n "$nameserver3" && ns3=",$nameserver3"
 
-	uci -q add_list dhcp.wifi2.dhcp_option="6,$_ddmesh_wifi2ip$ns1$ns2$ns3"	# dns
+	# always use fallback dns as second dns (most clients have only 2dns) !!!
+	uci -q add_list dhcp.wifi2.dhcp_option="6,$_ddmesh_wifi2ip$ns3$ns1$ns2"	# dns
 	uci -q add_list dhcp.wifi2.dhcp_option="3,$_ddmesh_wifi2ip"  # default route
 	uci -q add_list dhcp.wifi2.dhcp_option="1,$_ddmesh_wifi2netmask"
 	uci -q add_list dhcp.wifi2.dhcp_option="28,$_ddmesh_wifi2broadcast"
