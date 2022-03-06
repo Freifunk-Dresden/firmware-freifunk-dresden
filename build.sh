@@ -413,6 +413,7 @@ usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < ma
 
   commands:
    list              - lists all available targets
+   listwatch         - same as 'list' but updates display
    lt | list-targets - lists only target names for usage in IDE
    search <string>   - search specific router (target)
    clean             - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
@@ -565,6 +566,16 @@ fi
 #check if next argument is "menuconfig"
 if [ "$1" = "list" ]; then
 	listTargets
+	exit 0
+fi
+if [ "$1" = "listwatch" ]; then
+	while sleep 1
+	do
+		view=$(listTargets) 
+		clear
+		date
+		echo -e "$view"
+	done
 	exit 0
 fi
 
