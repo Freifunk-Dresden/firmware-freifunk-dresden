@@ -1031,13 +1031,14 @@ do
 	# use same target/subtarget directories.
 	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/targets/${_config_name}"
 	rm -rf ${outdir}
-  rm -rf ${buildroot}/bin
+	rm -rf ${buildroot}/bin
 
 	# progress bar: compiling
 	progbar_char_array[$((progress_counter-1))]="${PBC_RUNNING}"
 	show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
 
 	# reset compile status
+	echo -e $C_CYAN"reset compile status"$C_NONE 
 	rm -f ${compile_status_file}
 
 	openwrt_dl_dir="$DL_DIR"
@@ -1234,6 +1235,7 @@ EOM
 
 	# write build status which is displayed by "build.sh list"
 	# , \"\":\"\"
+	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
 	echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${compile_status_file}"
 
 	# continue with next target in build.targets
@@ -1266,9 +1268,10 @@ EOM
 	fi
 
 	# copy files to our own output directory
-	echo -e "${C_CYAN}copy images${C_NONE}"
 	mkdir -p ${outdir}/packages ${outdir}/images
-	cp -a ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/
+	echo -e "${C_CYAN}copy packages${C_NONE}"
+	cp -a ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
+	echo -e "${C_CYAN}copy images${C_NONE}"
 	cp -a ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
 
 	# success status
