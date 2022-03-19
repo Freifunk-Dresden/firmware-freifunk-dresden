@@ -636,6 +636,10 @@ upgrade_8_0_1()
   uci add_list firewall.zone_wan.network='twan'
 }
 
+upgrade_8_0_2()
+{
+  true
+}
 ##################################
 
 run_upgrade
