@@ -494,6 +494,13 @@ done # for buildroot
 
 gen_download_json_end $target_dir
 
+
+# make new generated fileinfo pretty, for easier comparison
+tmp=$(mktemp)
+cp ${OUTPUT_FILEINFO_JSON_FILENAME} ${tmp}
+cat ${tmp}| '{comment,json_version,"fileinfo":[ .fileinfo | sort_by(.filename) ]}'  > ${OUTPUT_FILEINFO_JSON_FILENAME}
+
+
 # generate js file
 cat << EOM > $target_dir/$OUTPUT_DOWNLOAD_JSON_JS_FILENAME
 var data = $(cat $target_dir/$OUTPUT_DOWNLOAD_JSON_FILENAME) ;
