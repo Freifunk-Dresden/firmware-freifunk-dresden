@@ -11,6 +11,7 @@ if [ "$form_action" = "overlay" ]; then
 	/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write >/dev/null
 fi
 
+eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 eval $(sed 's#:\(.*\)$#="\1"#' /etc/built_info)
 
 case  "$git_ddmesh_branch" in
@@ -78,8 +79,27 @@ cat<<EOM
 </table>
 </form>
 </fieldset>
-
 <br>
+
+<fieldset class="bubble">
+<legend>Knoten Infos</legend>
+<table>
+<tr class="colortoggle2"><th>Knoten-IP:</th><td colspan="6">$_ddmesh_ip</td></tr>
+<tr class="colortoggle2"><th>Nameserver:</th><td colspan="6">$(grep nameserver ${RESOLV_PATH}/resolv.conf.final | sed 's#nameserver##g')</td></tr>
+EOM
+if [ "$wifi_status_radio2g_up" = "1" -o "$wifi_status_radio5g_up" = "1" ]; then
+cat<<EOM
+<tr class="colortoggle1"><th>Wifi Client IP Bereich (DHCP)</th><td>${_ddmesh_wifi2dhcpstart} - ${_ddmesh_wifi2dhcpend}</td></tr>
+<tr class="colortoggle2"><th>Wifi Client IP Bereich (fest)</th><td>${_ddmesh_wifi2FixIpStart} - ${_ddmesh_wifi2FixIpEnd}</td></tr>
+EOM
+[ "$wifi_status_radio2g_up" = "1" ] && echo "<tr class=\"colortoggle1\"><th>Wifi 2G SSID</th><td>$(uci get wireless.wifi2_2g.ssid)</td></tr>"
+[ "$wifi_status_radio5g_up" = "1" ] && echo "<tr class=\"colortoggle1\"><th>Wifi 5G SSID</th><td>$(uci get wireless.wifi2_5g.ssid)</td></tr>"
+fi
+cat<<EOM
+</table>
+</fieldset>
+<br>
+
 <fieldset class="bubble">
 <legend>System-Version</legend>
 <table>
@@ -98,8 +118,6 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1
 <fieldset class="bubble">
 <legend>System Info</legend>
 <table>
-<tr class="colortoggle2"><th>Knoten-IP:</th><td colspan="6">$_ddmesh_ip</td></tr>
-<tr class="colortoggle2"><th>Nameserver:</th><td colspan="6">$(grep nameserver ${RESOLV_PATH}/resolv.conf.auto | sed 's#nameserver##g')</td></tr>
 <tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="6">$(uptime)</td></tr>
 <tr class="colortoggle2"><th>System:</th><td colspan="6">$(uname -m) $(sed -n '/system type/s#system[ 	]*type[ 	]*:##p' /proc/cpuinfo)</td></tr>
 <tr class="colortoggle2"><th>Ger&auml;teinfo:</th><td colspan="6"><b>Model:</b> $model ($model2) - <b>CPU:</b> $(sed -n '/system type/s#[^:]\+:[ 	]*##p' /proc/cpuinfo) - <b>Board:</b> $(cat /tmp/sysinfo/board_name)</td></tr>

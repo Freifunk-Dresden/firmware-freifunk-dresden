@@ -24,7 +24,7 @@ gps_alt=$(printf '%d' ${gps_alt:=0} 2>/dev/null)
 cat<<EOF
 <h2>$TITLE</h2>
 <br>
-<fieldset class="bubble">
+<fieldset class="bubble" style="width: 600px">
 <legend>Kontaktdaten</legend>
 <table border="0">
 <tr><th class="bubble">Name:</th><td>$(uhttpd -d "$(uci get ddmesh.contact.name)")</td></tr>
@@ -38,6 +38,29 @@ cat<<EOF
 <tr><th class="bubble">Notiz:&nbsp;</th><td>$(uhttpd -d "$(uci get ddmesh.contact.note)")</td></tr>
 </table>
 </fieldset>
+<br>
+
+<fieldset class="bubble" style="width: 600px">
+<legend>OpenStreetMap</legend>
+<div id="nodeMap"></div>
+<style>
+@import"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css";
+#nodeMap{height:300px;width:600px;}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.js"></script>
+<script>
+var map = L.map('nodeMap').setView([$gps_lat, $gps_lng], 18);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+L.marker([$gps_lat, $gps_lng]).addTo(map).bindPopup('$COMMUNITY [$_ddmesh_node]').openPopup();
+</script>
+</fieldset>
+
+EOF
+
+
+
 EOF
 
 . /usr/lib/www/page-post.sh

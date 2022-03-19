@@ -26,34 +26,45 @@ else
 fi
 }
 
-cat<<EOF
+cat<<EOM
 <h2>$TITLE</h2>
 <br>
 <fieldset class="bubble">
 <legend>Allgemeines</legend>
 <table>
-<tr><th>Knoten-IP-Adresse:</th><td><a href="https://$_ddmesh_ip/">$_ddmesh_ip</a></td></td></tr>
-<tr><th>Internet-Gateway:</th><td><a href="https://$INET_GW_IP/">$INET_GW</a></td></td></tr>
-<tr><th>Nameserver:</th><td>$(grep nameserver ${RESOLV_FINAL} | sed 's#nameserver##g')</td></tr>
-<tr><th>Ger&auml;telaufzeit:</th><td>$(uptime)</td></tr>
-<tr><th>System:</th><td>$(uname -m) $(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>
-<tr><th>Ger&auml;teinfo:</th><td><b>Model:</b> $model ($model2) - <b>CPU:</b> $(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p') - <b>Board:</b> $(cat /tmp/sysinfo/board_name)</td></tr>
-<tr><th>Firmware-Version:</th><td>Freifunk Dresden Edition $(cat /etc/version) / $DISTRIB_DESCRIPTION</td></tr>
-<tr><th>Freier Speicher:</th><td>$(cat /proc/meminfo | grep MemFree | cut -d':' -f2) von $(cat /proc/meminfo | grep MemTotal | cut -d':' -f2)</td></tr>
-EOF
+<tr class="colortoggle1"><th>Knoten-IP-Adresse:</th><td><a href="https://$_ddmesh_ip/">$_ddmesh_ip</a></td></td></tr>
+<tr class="colortoggle2"><th>Internet-Gateway:</th><td><a href="https://$INET_GW_IP/">$INET_GW</a></td></td></tr>
+EOM
+if [ "$wifi_status_radio2g_up" = "1" -o "$wifi_status_radio5g_up" = "1" ]; then
+cat<<EOM
+<tr class="colortoggle1"><th>Wifi Client IP Bereich (DHCP)</th><td>${_ddmesh_wifi2dhcpstart} - ${_ddmesh_wifi2dhcpend}</td></tr>
+<tr class="colortoggle2"><th>Wifi Client IP Bereich (fest)</th><td>${_ddmesh_wifi2FixIpStart} - ${_ddmesh_wifi2FixIpEnd}</td></tr>
+EOM
+[ "$wifi_status_radio2g_up" = "1" ] && echo "<tr class=\"colortoggle1\"><th>Wifi 2G SSID</th><td>$(uci get wireless.wifi2_2g.ssid)</td></tr>"
+[ "$wifi_status_radio5g_up" = "1" ] && echo "<tr class=\"colortoggle1\"><th>Wifi 5G SSID</th><td>$(uci get wireless.wifi2_5g.ssid)</td></tr>"
+fi
+cat<<EOM
+
+<tr class="colortoggle2"><th>Nameserver:</th><td>$(grep nameserver ${RESOLV_FINAL} | sed 's#nameserver##g')</td></tr>
+<tr class="colortoggle1"><th>Ger&auml;telaufzeit:</th><td>$(uptime)</td></tr>
+<tr class="colortoggle2"><th>System:</th><td>$(uname -m) $(cat /proc/cpuinfo | sed -n '/system type/s#system[ 	]*type[ 	]*:##p')</td></tr>
+<tr class="colortoggle1"><th>Ger&auml;teinfo:</th><td><b>Model:</b> $model ($model2) - <b>CPU:</b> $(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p') - <b>Board:</b> $(cat /tmp/sysinfo/board_name)</td></tr>
+<tr class="colortoggle2"><th>Firmware-Version:</th><td>Freifunk Dresden Edition $(cat /etc/version) / $DISTRIB_DESCRIPTION</td></tr>
+<tr class="colortoggle1"><th>Freier Speicher:</th><td>$(cat /proc/meminfo | grep MemFree | cut -d':' -f2) von $(cat /proc/meminfo | grep MemTotal | cut -d':' -f2)</td></tr>
+EOM
  if [ ! -z "$wifi_status_radio2g_airtime" ];then
-	echo "<tr><th><td> 2Ghz:"
+	echo "<tr  class=\"colortoggle2\"><th>WiFi Airtime 2GHz</th><td>"
 	getairtime $wifi_status_radio2g_airtime
 	echo "</td></tr>"
  fi
  if [ ! -z "$wifi_status_radio5g_airtime" ];then
-	echo "<tr><th><td> 5Ghz:"
+	echo "<tr class=\"colortoggle1\><th">WiFi Airtime 5GHz</th><td>"
 	getairtime $wifi_status_radio5g_airtime
 	echo "</td></tr>"
  fi
-cat<<EOF
+cat<<EOM
 </table>
 </fieldset>
-EOF
+EOM
 
 . /usr/lib/www/page-post.sh
