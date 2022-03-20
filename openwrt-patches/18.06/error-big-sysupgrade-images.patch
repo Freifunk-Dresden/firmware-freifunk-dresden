@@ -1,0 +1,14 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr include.ori/image-commands.mk include/image-commands.mk
+--- include.ori/image-commands.mk	2021-04-17 16:47:02.000000000 +0200
++++ include/image-commands.mk	2022-03-20 23:32:47.896110198 +0100
+@@ -217,8 +217,8 @@
+
+ define Build/check-size
+ 	@[ $$(($(subst k,* 1024,$(subst m, * 1024k,$(1))))) -ge "$$(stat -c%s $@)" ] || { \
+-		echo "WARNING: Image file $@ is too big" >&2; \
+-		rm -f $@; \
++		echo "ERROR: Image file $@ is too big" >&2; \
++		rm -f $@; exit 1; \
+ 	}
+ endef
+

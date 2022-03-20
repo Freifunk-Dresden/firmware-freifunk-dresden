@@ -339,7 +339,7 @@ listTargets()
 	# get status
 	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
-	compile_status_dir="$RUN_DIR/$buildroot/output/compile-status"
+	compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/compile-status"
 	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
 
 	compile_status=""
@@ -996,7 +996,7 @@ do
 	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
 
-	compile_status_dir="$RUN_DIR/$buildroot/output/compile-status"
+	compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/compile-status"
 	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
 
 	# get compile status
@@ -1017,8 +1017,9 @@ do
 	# target specfic directory.
 	# This is needed to avoid conflicts with packages when I have several configs that all
 	# use same target/subtarget directories.
-	# - resets also compile status ${compile_status_file}
+	# - reset also compile status ${compile_status_file}
 	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/targets/${_config_name}"
+	rm -f ${compile_status_file}
 	rm -rf ${outdir}
   rm -rf ${buildroot}/bin
 
