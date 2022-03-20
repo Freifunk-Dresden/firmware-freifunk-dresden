@@ -2,1843 +2,1841 @@
   "comment": "input file to generate final download.json via gen-upload.sh",
   "json_version": "1",
   "fileinfo": [
-    [
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-generic-tl-wr1043nd-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr1043nd",
-        "model2": "TP-Link TL-WR1043N/ND v1",
-        "filename": "openwrt-ar71xx-generic-tl-wr1043nd-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-generic-tl-wr842n-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-mr3420",
-        "model2": "TP-Link TL-WR842N/ND v1",
-        "filename": "openwrt-ar71xx-generic-tl-wr842n-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-generic-ubnt-bullet-m-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "bullet-m",
-        "model2": "Ubiquiti Bullet M",
-        "filename": "openwrt-ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "bullet-m",
-        "model2": "Ubiquiti Bullet M2",
-        "filename": "openwrt-ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "Ubiquiti Loco M XW (factory)",
-        "filename": "openwrt-ar71xx-generic-ubnt-loco-m-xw-squashfs-factory.bin",
-        "comment": "(XW) Kleines Gehäuse; Label: NanoStation Loco M2 (RAM: 64Mbyte)"
-      },
-      {
-        "name": "Ubiquiti Loco M XW",
-        "autoupdate": "1",
-        "model": "loco-m-xw",
-        "model2": "Ubiquiti Loco M XW",
-        "filename": "openwrt-ar71xx-generic-ubnt-loco-m-xw-squashfs-sysupgrade.bin",
-        "comment": "(XW) Kleines Gehäuse; Label: NanoStation Loco M2 (RAM: 64Mbyte)"
-      },
-      {
-        "name": "Ubiquiti NanoStation Loco M2 (XM) (factory)",
-        "filename": "openwrt-ar71xx-generic-ubnt-nano-m-squashfs-factory.bin",
-        "comment": "(XM) Kleine/Groß Gehäuse; Label: NanoStation (Loco) M2 (RAM: 32Mbyte)"
-      },
-      {
-        "name": "Ubiquiti NanoStation Loco M2 (XM)",
-        "autoupdate": "1",
-        "model": "nanostation-m",
-        "model2": "Ubiquiti NanoStation M2",
-        "filename": "openwrt-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
-        "comment": "(XM) Kleine/Groß Gehäuse; Label: NanoStation (Loco) M2 (RAM: 32Mbyte)"
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "nanostation-m",
-        "model2": "Ubiquiti NanoStation loco M2",
-        "filename": "openwrt-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
-        "comment": "(XM) Kleines Gehäuse (RAM: 32Mbyte)"
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-generic-ubnt-nano-m-xw-squashfs-factory.bin",
-        "comment": "(XW) Großes Gehäuse (RAM: 64Mbyte)"
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "nanostation-m-xw",
-        "model2": "Ubiquiti Nanostation M XW",
-        "filename": "openwrt-ar71xx-generic-ubnt-nano-m-xw-squashfs-sysupgrade.bin",
-        "comment": "(XW) Großes Gehäuse (RAM: 64Mbyte)"
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-mr3020-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-mr3020",
-        "model2": "TP-Link TL-MR3020 v1",
-        "filename": "openwrt-ar71xx-tiny-tl-mr3020-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa701nd-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa701nd-v2",
-        "model2": "TP-Link TL-WA701N/ND v2",
-        "filename": "openwrt-ar71xx-tiny-tl-wa701nd-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa901nd",
-        "model2": "TP-Link TL-WA801N/ND v1",
-        "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa801nd-v2",
-        "model2": "TP-Link TL-WA801N/ND v2",
-        "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v3-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa801nd-v3",
-        "model2": "TP-Link TL-WA801N/ND v3",
-        "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v3-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa830re-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa830re-v2",
-        "model2": "TP-Link TL-WA830RE v2",
-        "filename": "openwrt-ar71xx-tiny-tl-wa830re-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa850re-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa850re",
-        "model2": "TP-Link TL-WA850RE v1",
-        "filename": "openwrt-ar71xx-tiny-tl-wa850re-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa860re-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa860re",
-        "model2": "TP-Link TL-WA860RE v1",
-        "filename": "openwrt-ar71xx-tiny-tl-wa860re-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa901nd-v2",
-        "model2": "TP-Link TL-WA901N/ND v2",
-        "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v3-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa901nd-v3",
-        "model2": "TP-Link TL-WA901N/ND v3",
-        "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v3-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v4-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa901nd-v4",
-        "model2": "TP-Link TL-WA901N/ND v4",
-        "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v4-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v5-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wa901nd-v5",
-        "model2": "TP-Link TL-WA901N/ND v5",
-        "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v5-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr740n-v4-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr741nd-v4",
-        "model2": "TP-Link TL-WR740N/ND v4",
-        "filename": "openwrt-ar71xx-tiny-tl-wr740n-v4-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr741nd-v4-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr741nd-v4",
-        "model2": "TP-Link TL-WR741N/ND v4",
-        "filename": "openwrt-ar71xx-tiny-tl-wr741nd-v4-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr840n-v2-squashfs-factory-eu.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr840n-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr840n-v2",
-        "model2": "TP-LINK TL-WR840N v2",
-        "filename": "openwrt-ar71xx-tiny-tl-wr840n-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v10-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr841n-v9",
-        "model2": "TP-Link TL-WR841N/ND v10",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v10-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v11-squashfs-factory-eu.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v11-squashfs-factory-us.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v11-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr841n-v11",
-        "model2": "TP-Link TL-WR841N/ND v11",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v11-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v12-squashfs-factory-eu.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v12-squashfs-factory-us.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v12-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "tl-wr841n-v11",
-        "model2": "TP-Link TL-WR841N/ND v12",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v12-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v5-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr741nd",
-        "model2": "TP-Link TL-WR841N/ND v5",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v5-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v7-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr841n-v7",
-        "model2": "TP-Link TL-WR841N/ND v7",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v7-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v8-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr841n-v8",
-        "model2": "TP-Link TL-WR841N/ND v8",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v8-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v9-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr841n-v9",
-        "model2": "TP-Link TL-WR841N/ND v9",
-        "filename": "openwrt-ar71xx-tiny-tl-wr841-v9-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-br.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-eu.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-us.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr940n-v4",
-        "model2": "TP-Link TL-WR940N v4",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-br.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-eu.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-us.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr940n-v6",
-        "model2": "TP-Link TL-WR940N v6",
-        "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr941nd",
-        "model2": "TP-Link TL-WR941N/ND v2",
-        "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v5-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr941nd-v5",
-        "model2": "TP-Link TL-WR941N/ND v5",
-        "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v5-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v6-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tl-wr941nd-v6",
-        "model2": "TP-Link TL-WR941N/ND v6",
-        "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v6-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-avm_fritz4020-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "fritz4020",
-        "model2": "AVM FRITZ!Box 4020",
-        "filename": "openwrt-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-avm_fritz450e-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-generic-avm_fritz450e-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-comfast_cf-e110n-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "comfast,cf-e110n-v2",
-        "model2": "COMFAST CF-E110N v2",
-        "filename": "openwrt-ath79-generic-comfast_cf-e110n-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-comfast_cf-e130n-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "comfast,cf-e130n-v2",
-        "model2": "COMFAST CF-E130N v2",
-        "filename": "openwrt-ath79-generic-comfast_cf-e130n-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-comfast_cf-e314n-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "comfast,cf-e314n-v2",
-        "model2": "COMFAST CF-E314N v2",
-        "filename": "openwrt-ath79-generic-comfast_cf-e314n-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-dlink_dir-825-b1-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "dlink,dir-825-b1",
-        "model2": "D-Link DIR825B1",
-        "filename": "openwrt-ath79-generic-dlink_dir-825-b1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-glinet_gl-ar150-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "gl-ar150",
-        "model2": "GL.iNet GL-AR150",
-        "filename": "openwrt-ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-glinet_gl-ar300m-lite-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-generic-glinet_gl-ar300m-lite-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-glinet_gl-ar300m16-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-generic-glinet_gl-ar300m16-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-glinet_gl-ar750-initramfs-kernel.bin",
-        "comment": "new file"
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-generic-glinet_gl-ar750-squashfs-sysupgrade.bin",
-        "comment": "new file"
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-glinet_gl-mifi-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-generic-glinet_gl-mifi-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-joyit_jt-or750i-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "joyit,jt-or750i",
-        "model2": "Joy-IT JT-OR750i",
-        "filename": "openwrt-ath79-generic-joyit_jt-or750i-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wndr3700-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wndr3700-squashfs-factory-NA.img",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wndr3700-squashfs-factory.img",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "netgear,wndr3700",
-        "model2": "Netgear WNDR3700",
-        "filename": "openwrt-ath79-generic-netgear_wndr3700-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-squashfs-factory.img",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "netgear,wndr3700v2",
-        "model2": "Netgear WNDR3700v2",
-        "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wnr2200-16m-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wnr2200-16m-squashfs-factory.img",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-generic-netgear_wnr2200-16m-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wnr2200-8m-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wnr2200-8m-squashfs-factory-NA.img",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-netgear_wnr2200-8m-squashfs-factory.img",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-generic-netgear_wnr2200-8m-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "archer-c5",
-        "model2": "TP-Link Archer C5 v1",
-        "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c6-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c6-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tplink,archer-c6-v2",
-        "model2": "TP-Link Archer C6 v2",
-        "filename": "openwrt-ath79-generic-tplink_archer-c6-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c60-v1-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c60-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tplink,archer-c60-v1",
-        "model2": "TP-Link Archer C60 v1",
-        "filename": "openwrt-ath79-generic-tplink_archer-c60-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c60-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c60-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tplink,archer-c60-v2",
-        "model2": "TP-Link Archer C60 v2",
-        "filename": "openwrt-ath79-generic-tplink_archer-c60-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-factory-eu.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-factory-us.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "archer-c7",
-        "model2": "TP-Link Archer C7 v2",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "archer-c7-v4",
-        "model2": "TP-LINK Archer C7 v4",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "archer-c7-v5",
-        "model2": "TP-LINK Archer C7 v5",
-        "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v1-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "cpe210",
-        "model2": "TP-Link CPE210 v1.0",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "cpe210",
-        "model2": "TP-Link CPE210 v1.1",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "cpe210-v2",
-        "model2": "TP-Link CPE210 v2.0",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v3-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v3-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "cpe210-v3",
-        "model2": "TP-Link CPE210 v3.0",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "cpe210-v3",
-        "model2": "TP-Link CPE210 v3.20",
-        "filename": "openwrt-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "tplink,eap225-outdoor-v1",
-        "model2": "TP-Link EAP225-Outdoor v1",
-        "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr3600-v1-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr3600-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "tl-wdr4300",
-        "model2": "TP-Link TL-WDR3600 v1",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr3600-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "tplink,tl-wdr4300-v1",
-        "model2": "TP-Link TL-WDR4300 v1",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "tl-wdr4300",
-        "model2": "TP-Link TL-WDR4300 v1",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr7500-v3-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr7500-v3-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wdr7500-v3-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043n-v5-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tplink,tl-wr1043n-v5",
-        "model2": "TP-Link TL-WR1043N v5",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043n-v5-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tplink,tl-wr1043nd-v2",
-        "model2": "TP-Link TL-WR1043ND v2",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v3-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tplink,tl-wr1043nd-v3",
-        "model2": "TP-Link TL-WR1043ND v3",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v4-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tplink,tl-wr1043nd-v4",
-        "model2": "TP-Link TL-WR1043ND v4",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr2543-v1-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr2543-v1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "tplink,tl-wr2543-v1",
-        "model2": "TP-Link TL-WR2543N/ND",
-        "filename": "openwrt-ath79-generic-tplink_tl-wr2543-v1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-ubnt_rocket-m-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "rocket-m",
-        "model2": "Ubiquiti Rocket M",
-        "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "rocket-m",
-        "model2": "Ubiquiti Rocket M2",
-        "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "unifi-outdoor-plus",
-        "model2": "Ubiquiti UniFiAP Outdoor+",
-        "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-ubnt_unifi-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-ubnt_unifi-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "ubnt,unifi",
-        "model2": "Ubiquiti UniFi AP",
-        "filename": "openwrt-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "ubnt,unifiac-lite",
-        "model2": "Ubiquiti UniFi-AC-LITE",
-        "filename": "openwrt-ath79-generic-ubnt_unifiac-lite-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-pro-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-pro-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "ubnt,unifiac-mesh",
-        "model2": "Ubiquiti UniFi AC Mesh",
-        "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-wd_mynet-n750-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-generic-wd_mynet-n750-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "wd,mynet-n750",
-        "model2": "Western Digital My Net N750",
-        "filename": "openwrt-ath79-generic-wd_mynet-n750-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-nand-aerohive_hiveap-121-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-nand-aerohive_hiveap-121-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "hiveap-121",
-        "model2": "Aerohive HiveAP-121",
-        "filename": "openwrt-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nand-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nand-squashfs-factory.img",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nand-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nor-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nor-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-initramfs-kernel.bin",
-        "comment": "new file"
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-nand-initramfs-kernel.bin",
-        "comment": "new file"
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-nand-squashfs-sysupgrade.bin",
-        "comment": "new file"
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-squashfs-sysupgrade.bin",
-        "comment": "new file"
-      },
-      {
-        "name": "",
-        "filename": "openwrt-bcm53xx-generic-asus_rt-ac56u-squashfs.trx",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-eva.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "avm,fritzbox-4040",
-        "model2": "AVM FRITZ!Box 4040",
-        "filename": "openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ipq40xx-generic-avm_fritzbox-7530-squashfs-sysupgrade.bin",
-        "comment": "new file"
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ipq40xx-generic-avm_fritzrepeater-1200-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-hynix-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-filesystem.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-micron-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-filesystem.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "avm,fritz3370-rev2-micron",
-        "model2": "AVM FRITZ!Box 3370 Rev. 2 (Micron NAND)",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7360-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7360-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7360sl-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7360sl-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7362sl-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "avm,fritz7362sl",
-        "model2": "AVM FRITZ!Box 7362 SL",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7362sl-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7412-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "avm,fritz7412",
-        "model2": "AVM FRITZ!Box 7412",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7412-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7430-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-lantiq-xrx200-avm_fritz7430-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-tplink_tdw8970-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-lantiq-xrx200-tplink_tdw8970-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xrx200-tplink_tdw8980-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-lantiq-xrx200-tplink_tdw8980-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xway-arcadyan_arv752dpw22-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "arcadyan,arv752dpw22",
-        "model2": "Arcor 803",
-        "filename": "openwrt-lantiq-xway-arcadyan_arv752dpw22-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xway-arcadyan_arv8539pw22-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "arcadyan,arv8539pw22",
-        "model2": "Speedport W 504V Typ A",
-        "filename": "openwrt-lantiq-xway-arcadyan_arv8539pw22-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xway-avm_fritz7312-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-lantiq-xway-avm_fritz7312-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-lantiq-xway-avm_fritz7320-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-lantiq-xway-avm_fritz7320-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-squashfs-fdt.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "aerohive,hiveap-330",
-        "model2": "Aerohive HiveAP-330",
-        "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "d-team,newifi-d2",
-        "model2": "Newifi-D2",
-        "filename": "openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-glinet_gl-mt1300-initramfs-kernel.bin",
-        "comment": "new file"
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ramips-mt7621-glinet_gl-mt1300-squashfs-sysupgrade.bin",
-        "comment": "new file"
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-mtc_wr1201-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "mtc,wr1201",
-        "model2": "MTC Wireless Router WR1201",
-        "filename": "openwrt-ramips-mt7621-mtc_wr1201-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-netgear_r6220-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-factory.img",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-rootfs.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "r6220",
-        "model2": "Netgear R6220",
-        "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "netgear,r6220",
-        "model2": "Netgear R6220",
-        "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-sfp-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-sfp-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "ubnt-erx",
-        "model2": "UBNT-ERX",
-        "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "ubnt,edgerouter-x",
-        "model2": "Ubiquiti EdgeRouter X",
-        "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-xiaomi_mi-router-4a-gigabit-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "xiaomi,mi-router-4a-gigabit",
-        "model2": "Xiaomi Mi Router 4A Gigabit Edition",
-        "filename": "openwrt-ramips-mt7621-xiaomi_mi-router-4a-gigabit-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt7621-youhua_wr1200js-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "youhua,wr1200js",
-        "model2": "YouHua WR1200JS",
-        "filename": "openwrt-ramips-mt7621-youhua_wr1200js-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt76x8-glinet_gl-mt300n-v2-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-ramips-mt76x8-glinet_gl-mt300n-v2-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt76x8-netgear_r6120-initramfs-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-mt76x8-netgear_r6120-squashfs-factory.img",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "netgear,r6120",
-        "model2": "Netgear R6120",
-        "filename": "openwrt-ramips-mt76x8-netgear_r6120-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-rt305x-dir-615-d-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "dir-615-d",
-        "model2": "dir-615-d",
-        "filename": "openwrt-ramips-rt305x-dir-615-d-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-rt305x-dir-615-h1-squashfs-factory.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "1",
-        "model": "dir-615-h1",
-        "model2": "D-Link DIR-615 H1",
-        "filename": "openwrt-ramips-rt305x-dir-615-h1-squashfs-sysupgrade.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-ramips-rt305x-uImage.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-ext4-sdcard.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-squashfs-sdcard.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-x86-64-generic-ext4-combined-efi.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-x86-64-generic-ext4-combined.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-x86-64-generic-ext4-rootfs.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-x86-64-generic-kernel.bin",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-x86-64-generic-squashfs-combined-efi.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "fujitsu-siemens-futro-s550",
-        "model2": "FUJITSU SIEMENS FUTRO S550",
-        "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "fujitsu-futro-s550-2",
-        "model2": "FUJITSU FUTRO S550-2",
-        "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "igel-technology-gmbh-h830c",
-        "model2": "IGEL Technology GmbH H830C",
-        "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "qemu-standard-pc-i440fx-piix-1996",
-        "model2": "QEMU Standard PC (i440FX + PIIX, 1996)",
-        "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
-        "comment": ""
-      },
-      {
-        "name": "",
-        "autoupdate": "0",
-        "model": "",
-        "model2": "",
-        "filename": "openwrt-x86-64-generic-squashfs-rootfs.img.gz",
-        "comment": ""
-      }
-    ]
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-generic-tl-wr1043nd-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr1043nd",
+      "model2": "TP-Link TL-WR1043N/ND v1",
+      "filename": "openwrt-ar71xx-generic-tl-wr1043nd-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-generic-tl-wr842n-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-mr3420",
+      "model2": "TP-Link TL-WR842N/ND v1",
+      "filename": "openwrt-ar71xx-generic-tl-wr842n-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-generic-ubnt-bullet-m-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "bullet-m",
+      "model2": "Ubiquiti Bullet M",
+      "filename": "openwrt-ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "bullet-m",
+      "model2": "Ubiquiti Bullet M2",
+      "filename": "openwrt-ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "Ubiquiti Loco M XW (factory)",
+      "filename": "openwrt-ar71xx-generic-ubnt-loco-m-xw-squashfs-factory.bin",
+      "comment": "(XW) Kleines Gehäuse; Label: NanoStation Loco M2 (RAM: 64Mbyte)"
+    },
+    {
+      "name": "Ubiquiti Loco M XW",
+      "autoupdate": "1",
+      "model": "loco-m-xw",
+      "model2": "Ubiquiti Loco M XW",
+      "filename": "openwrt-ar71xx-generic-ubnt-loco-m-xw-squashfs-sysupgrade.bin",
+      "comment": "(XW) Kleines Gehäuse; Label: NanoStation Loco M2 (RAM: 64Mbyte)"
+    },
+    {
+      "name": "Ubiquiti NanoStation Loco M2 (XM) (factory)",
+      "filename": "openwrt-ar71xx-generic-ubnt-nano-m-squashfs-factory.bin",
+      "comment": "(XM) Kleine/Groß Gehäuse; Label: NanoStation (Loco) M2 (RAM: 32Mbyte)"
+    },
+    {
+      "name": "Ubiquiti NanoStation Loco M2 (XM)",
+      "autoupdate": "1",
+      "model": "nanostation-m",
+      "model2": "Ubiquiti NanoStation M2",
+      "filename": "openwrt-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
+      "comment": "(XM) Kleine/Groß Gehäuse; Label: NanoStation (Loco) M2 (RAM: 32Mbyte)"
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "nanostation-m",
+      "model2": "Ubiquiti NanoStation loco M2",
+      "filename": "openwrt-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
+      "comment": "(XM) Kleines Gehäuse (RAM: 32Mbyte)"
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-generic-ubnt-nano-m-xw-squashfs-factory.bin",
+      "comment": "(XW) Großes Gehäuse (RAM: 64Mbyte)"
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "nanostation-m-xw",
+      "model2": "Ubiquiti Nanostation M XW",
+      "filename": "openwrt-ar71xx-generic-ubnt-nano-m-xw-squashfs-sysupgrade.bin",
+      "comment": "(XW) Großes Gehäuse (RAM: 64Mbyte)"
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-mr3020-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-mr3020",
+      "model2": "TP-Link TL-MR3020 v1",
+      "filename": "openwrt-ar71xx-tiny-tl-mr3020-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa701nd-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa701nd-v2",
+      "model2": "TP-Link TL-WA701N/ND v2",
+      "filename": "openwrt-ar71xx-tiny-tl-wa701nd-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa901nd",
+      "model2": "TP-Link TL-WA801N/ND v1",
+      "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa801nd-v2",
+      "model2": "TP-Link TL-WA801N/ND v2",
+      "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v3-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa801nd-v3",
+      "model2": "TP-Link TL-WA801N/ND v3",
+      "filename": "openwrt-ar71xx-tiny-tl-wa801nd-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa830re-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa830re-v2",
+      "model2": "TP-Link TL-WA830RE v2",
+      "filename": "openwrt-ar71xx-tiny-tl-wa830re-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa850re-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa850re",
+      "model2": "TP-Link TL-WA850RE v1",
+      "filename": "openwrt-ar71xx-tiny-tl-wa850re-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa860re-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa860re",
+      "model2": "TP-Link TL-WA860RE v1",
+      "filename": "openwrt-ar71xx-tiny-tl-wa860re-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa901nd-v2",
+      "model2": "TP-Link TL-WA901N/ND v2",
+      "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v3-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa901nd-v3",
+      "model2": "TP-Link TL-WA901N/ND v3",
+      "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v4-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa901nd-v4",
+      "model2": "TP-Link TL-WA901N/ND v4",
+      "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v4-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v5-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wa901nd-v5",
+      "model2": "TP-Link TL-WA901N/ND v5",
+      "filename": "openwrt-ar71xx-tiny-tl-wa901nd-v5-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr740n-v4-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr741nd-v4",
+      "model2": "TP-Link TL-WR740N/ND v4",
+      "filename": "openwrt-ar71xx-tiny-tl-wr740n-v4-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr741nd-v4-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr741nd-v4",
+      "model2": "TP-Link TL-WR741N/ND v4",
+      "filename": "openwrt-ar71xx-tiny-tl-wr741nd-v4-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr840n-v2-squashfs-factory-eu.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr840n-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr840n-v2",
+      "model2": "TP-LINK TL-WR840N v2",
+      "filename": "openwrt-ar71xx-tiny-tl-wr840n-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v10-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr841n-v9",
+      "model2": "TP-Link TL-WR841N/ND v10",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v10-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v11-squashfs-factory-eu.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v11-squashfs-factory-us.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v11-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr841n-v11",
+      "model2": "TP-Link TL-WR841N/ND v11",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v11-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v12-squashfs-factory-eu.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v12-squashfs-factory-us.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v12-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "tl-wr841n-v11",
+      "model2": "TP-Link TL-WR841N/ND v12",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v12-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v5-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr741nd",
+      "model2": "TP-Link TL-WR841N/ND v5",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v5-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v7-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr841n-v7",
+      "model2": "TP-Link TL-WR841N/ND v7",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v7-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v8-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr841n-v8",
+      "model2": "TP-Link TL-WR841N/ND v8",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v8-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v9-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr841n-v9",
+      "model2": "TP-Link TL-WR841N/ND v9",
+      "filename": "openwrt-ar71xx-tiny-tl-wr841-v9-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-br.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-eu.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-us.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr940n-v4",
+      "model2": "TP-Link TL-WR940N v4",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v4-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-br.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-eu.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-us.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr940n-v6",
+      "model2": "TP-Link TL-WR940N v6",
+      "filename": "openwrt-ar71xx-tiny-tl-wr940n-v6-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr941nd",
+      "model2": "TP-Link TL-WR941N/ND v2",
+      "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v5-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr941nd-v5",
+      "model2": "TP-Link TL-WR941N/ND v5",
+      "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v5-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v6-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tl-wr941nd-v6",
+      "model2": "TP-Link TL-WR941N/ND v6",
+      "filename": "openwrt-ar71xx-tiny-tl-wr941nd-v6-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-avm_fritz4020-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "fritz4020",
+      "model2": "AVM FRITZ!Box 4020",
+      "filename": "openwrt-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-avm_fritz450e-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-avm_fritz450e-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-comfast_cf-e110n-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "comfast,cf-e110n-v2",
+      "model2": "COMFAST CF-E110N v2",
+      "filename": "openwrt-ath79-generic-comfast_cf-e110n-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-comfast_cf-e130n-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "comfast,cf-e130n-v2",
+      "model2": "COMFAST CF-E130N v2",
+      "filename": "openwrt-ath79-generic-comfast_cf-e130n-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-comfast_cf-e314n-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "comfast,cf-e314n-v2",
+      "model2": "COMFAST CF-E314N v2",
+      "filename": "openwrt-ath79-generic-comfast_cf-e314n-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-dlink_dir-825-b1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "dlink,dir-825-b1",
+      "model2": "D-Link DIR825B1",
+      "filename": "openwrt-ath79-generic-dlink_dir-825-b1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-glinet_gl-ar150-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "gl-ar150",
+      "model2": "GL.iNet GL-AR150",
+      "filename": "openwrt-ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-glinet_gl-ar300m-lite-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-glinet_gl-ar300m-lite-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-glinet_gl-ar300m16-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-glinet_gl-ar300m16-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-glinet_gl-ar750-initramfs-kernel.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-glinet_gl-ar750-squashfs-sysupgrade.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-glinet_gl-mifi-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-glinet_gl-mifi-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-joyit_jt-or750i-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "joyit,jt-or750i",
+      "model2": "Joy-IT JT-OR750i",
+      "filename": "openwrt-ath79-generic-joyit_jt-or750i-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wndr3700-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wndr3700-squashfs-factory-NA.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wndr3700-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "netgear,wndr3700",
+      "model2": "Netgear WNDR3700",
+      "filename": "openwrt-ath79-generic-netgear_wndr3700-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "netgear,wndr3700v2",
+      "model2": "Netgear WNDR3700v2",
+      "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wnr2200-16m-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wnr2200-16m-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-netgear_wnr2200-16m-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wnr2200-8m-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wnr2200-8m-squashfs-factory-NA.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-netgear_wnr2200-8m-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-netgear_wnr2200-8m-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "archer-c5",
+      "model2": "TP-Link Archer C5 v1",
+      "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c6-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c6-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,archer-c6-v2",
+      "model2": "TP-Link Archer C6 v2",
+      "filename": "openwrt-ath79-generic-tplink_archer-c6-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c60-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c60-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,archer-c60-v1",
+      "model2": "TP-Link Archer C60 v1",
+      "filename": "openwrt-ath79-generic-tplink_archer-c60-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c60-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c60-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,archer-c60-v2",
+      "model2": "TP-Link Archer C60 v2",
+      "filename": "openwrt-ath79-generic-tplink_archer-c60-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-factory-eu.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-factory-us.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "archer-c7",
+      "model2": "TP-Link Archer C7 v2",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "archer-c7-v4",
+      "model2": "TP-LINK Archer C7 v4",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "archer-c7-v5",
+      "model2": "TP-LINK Archer C7 v5",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "cpe210",
+      "model2": "TP-Link CPE210 v1.0",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "cpe210",
+      "model2": "TP-Link CPE210 v1.1",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "cpe210-v2",
+      "model2": "TP-Link CPE210 v2.0",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v3-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v3-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "cpe210-v3",
+      "model2": "TP-Link CPE210 v3.0",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "cpe210-v3",
+      "model2": "TP-Link CPE210 v3.20",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "tplink,eap225-outdoor-v1",
+      "model2": "TP-Link EAP225-Outdoor v1",
+      "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr3600-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr3600-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "tl-wdr4300",
+      "model2": "TP-Link TL-WDR3600 v1",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr3600-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "tplink,tl-wdr4300-v1",
+      "model2": "TP-Link TL-WDR4300 v1",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "tl-wdr4300",
+      "model2": "TP-Link TL-WDR4300 v1",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr7500-v3-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr7500-v3-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wdr7500-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043n-v5-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,tl-wr1043n-v5",
+      "model2": "TP-Link TL-WR1043N v5",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043n-v5-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,tl-wr1043nd-v2",
+      "model2": "TP-Link TL-WR1043ND v2",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v3-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,tl-wr1043nd-v3",
+      "model2": "TP-Link TL-WR1043ND v3",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v4-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,tl-wr1043nd-v4",
+      "model2": "TP-Link TL-WR1043ND v4",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr2543-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr2543-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,tl-wr2543-v1",
+      "model2": "TP-Link TL-WR2543N/ND",
+      "filename": "openwrt-ath79-generic-tplink_tl-wr2543-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_rocket-m-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "rocket-m",
+      "model2": "Ubiquiti Rocket M",
+      "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "rocket-m",
+      "model2": "Ubiquiti Rocket M2",
+      "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "unifi-outdoor-plus",
+      "model2": "Ubiquiti UniFiAP Outdoor+",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "ubnt,unifi",
+      "model2": "Ubiquiti UniFi AP",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "ubnt,unifiac-lite",
+      "model2": "Ubiquiti UniFi-AC-LITE",
+      "filename": "openwrt-ath79-generic-ubnt_unifiac-lite-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-pro-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-pro-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "ubnt,unifiac-mesh",
+      "model2": "Ubiquiti UniFi AC Mesh",
+      "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-wd_mynet-n750-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-wd_mynet-n750-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "wd,mynet-n750",
+      "model2": "Western Digital My Net N750",
+      "filename": "openwrt-ath79-generic-wd_mynet-n750-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-nand-aerohive_hiveap-121-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-nand-aerohive_hiveap-121-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "hiveap-121",
+      "model2": "Aerohive HiveAP-121",
+      "filename": "openwrt-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nand-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nand-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nand-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nor-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nor-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-initramfs-kernel.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-nand-initramfs-kernel.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-nand-squashfs-sysupgrade.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-squashfs-sysupgrade.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "filename": "openwrt-bcm53xx-generic-asus_rt-ac56u-squashfs.trx",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-eva.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "avm,fritzbox-4040",
+      "model2": "AVM FRITZ!Box 4040",
+      "filename": "openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ipq40xx-generic-avm_fritzbox-7530-squashfs-sysupgrade.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ipq40xx-generic-avm_fritzrepeater-1200-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-hynix-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-filesystem.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-micron-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-filesystem.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "avm,fritz3370-rev2-micron",
+      "model2": "AVM FRITZ!Box 3370 Rev. 2 (Micron NAND)",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7360-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7360-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7360sl-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7360sl-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7362sl-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "avm,fritz7362sl",
+      "model2": "AVM FRITZ!Box 7362 SL",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7362sl-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7412-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "avm,fritz7412",
+      "model2": "AVM FRITZ!Box 7412",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7412-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7430-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-lantiq-xrx200-avm_fritz7430-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-tplink_tdw8970-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-lantiq-xrx200-tplink_tdw8970-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xrx200-tplink_tdw8980-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-lantiq-xrx200-tplink_tdw8980-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xway-arcadyan_arv752dpw22-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "arcadyan,arv752dpw22",
+      "model2": "Arcor 803",
+      "filename": "openwrt-lantiq-xway-arcadyan_arv752dpw22-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xway-arcadyan_arv8539pw22-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "arcadyan,arv8539pw22",
+      "model2": "Speedport W 504V Typ A",
+      "filename": "openwrt-lantiq-xway-arcadyan_arv8539pw22-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xway-avm_fritz7312-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-lantiq-xway-avm_fritz7312-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-lantiq-xway-avm_fritz7320-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-lantiq-xway-avm_fritz7320-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-squashfs-fdt.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "aerohive,hiveap-330",
+      "model2": "Aerohive HiveAP-330",
+      "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "d-team,newifi-d2",
+      "model2": "Newifi-D2",
+      "filename": "openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-glinet_gl-mt1300-initramfs-kernel.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-glinet_gl-mt1300-squashfs-sysupgrade.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-mtc_wr1201-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "mtc,wr1201",
+      "model2": "MTC Wireless Router WR1201",
+      "filename": "openwrt-ramips-mt7621-mtc_wr1201-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-netgear_r6220-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-rootfs.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "r6220",
+      "model2": "Netgear R6220",
+      "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "netgear,r6220",
+      "model2": "Netgear R6220",
+      "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-sfp-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-sfp-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "ubnt-erx",
+      "model2": "UBNT-ERX",
+      "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "ubnt,edgerouter-x",
+      "model2": "Ubiquiti EdgeRouter X",
+      "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-xiaomi_mi-router-4a-gigabit-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "xiaomi,mi-router-4a-gigabit",
+      "model2": "Xiaomi Mi Router 4A Gigabit Edition",
+      "filename": "openwrt-ramips-mt7621-xiaomi_mi-router-4a-gigabit-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-youhua_wr1200js-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "youhua,wr1200js",
+      "model2": "YouHua WR1200JS",
+      "filename": "openwrt-ramips-mt7621-youhua_wr1200js-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-glinet_gl-mt300n-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-glinet_gl-mt300n-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-netgear_r6120-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-netgear_r6120-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "netgear,r6120",
+      "model2": "Netgear R6120",
+      "filename": "openwrt-ramips-mt76x8-netgear_r6120-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-rt305x-dir-615-d-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "dir-615-d",
+      "model2": "dir-615-d",
+      "filename": "openwrt-ramips-rt305x-dir-615-d-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-rt305x-dir-615-h1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "dir-615-h1",
+      "model2": "D-Link DIR-615 H1",
+      "filename": "openwrt-ramips-rt305x-dir-615-h1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-rt305x-uImage.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-ext4-sdcard.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-squashfs-sdcard.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-x86-64-generic-ext4-combined-efi.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-x86-64-generic-ext4-combined.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-x86-64-generic-ext4-rootfs.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-x86-64-generic-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-x86-64-generic-squashfs-combined-efi.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "fujitsu-siemens-futro-s550",
+      "model2": "FUJITSU SIEMENS FUTRO S550",
+      "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "fujitsu-futro-s550-2",
+      "model2": "FUJITSU FUTRO S550-2",
+      "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "igel-technology-gmbh-h830c",
+      "model2": "IGEL Technology GmbH H830C",
+      "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "qemu-standard-pc-i440fx-piix-1996",
+      "model2": "QEMU Standard PC (i440FX + PIIX, 1996)",
+      "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-x86-64-generic-squashfs-rootfs.img.gz",
+      "comment": ""
+    }
   ]
 }

@@ -62,7 +62,7 @@ case "$1" in
 			printf "missing file\n"
 			exit 1
 		fi
-		cat "$2" | jq '{comment,json_version,"fileinfo":[ .fileinfo | sort_by(.filename) ]}'
+		cat "$2" | jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename) }'
 		exit 0
 		;;
 
@@ -203,7 +203,7 @@ gen_download_json_add_data()
 		comment="new file"
 
 		# search file info
-		# jq: first selects the array with all entries and every entry is pass it to select().
+		# jq: first selects the array with all entries and every entry is pass to select().
 		#	select() checks a condition and returns the input data (current array entry)
 		#	if condition is true
 		# Die eckigen klammern erzeugt ein array, in welches alle gefundenen objekte mit gleichem FILENAMEN gesammelt werden.
@@ -214,7 +214,7 @@ gen_download_json_add_data()
 		else
 			info_array="[]"
 		fi
-#printf "info_array:$info_array\n"
+#printf "$file=info_array:$info_array\n"
 
 
 		OPT="--raw-output"
@@ -304,7 +304,7 @@ gen_download_json_add_data()
 				search="$file"
 				result=$(grep "$search" $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME)
 				if [ -n "$result" ]; then
-					printf "\n{C_LRED}Warning: duplicate found: ${C_NONE}[$search] at ${C_YELLOW}$subpath${C_NONE}\n"
+					printf "\n${C_LRED}Warning: duplicate found: ${C_NONE}[$search] at ${C_YELLOW}$subpath${C_NONE}\n"
 					error=1
 				fi
 
@@ -498,7 +498,7 @@ gen_download_json_end $target_dir
 # make new generated fileinfo pretty, for easier comparison
 tmp=$(mktemp)
 cp ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ${tmp}
-cat ${tmp}| jq '{comment,json_version,"fileinfo":[ .fileinfo | sort_by(.filename) ]}'  > ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}
+cat ${tmp}| jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename) }'  > ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}
 
 
 # generate js file
@@ -506,5 +506,18 @@ cat << EOM > $target_dir/$OUTPUT_DOWNLOAD_JSON_JS_FILENAME
 var data = $(cat $target_dir/$OUTPUT_DOWNLOAD_JSON_FILENAME) ;
 EOM
 
+#------ now compare fileinfo.json and generated file.------
+# check for missing firmware files (not generated)
+echo "----------------------------------------------------"
+echo "missing firmware files (not built, but expected):"
+jq -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current.fileinfo - $generated.fileinfo '
 
-printf "FINISHED: files are copied to directory [$target_dir]\n"
+echo "----------------------------------------------------"
+echo "new devices found:"
+jq -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $generated.fileinfo - $current.fileinfo '
+
+
+ 
+
+
+
