@@ -997,7 +997,6 @@ do
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
 
 	compile_status_dir="$RUN_DIR/$buildroot/output/compile-status"
-	mkdir -p ${compile_status_dir}
 	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
 
 	# get compile status
@@ -1018,6 +1017,7 @@ do
 	# target specfic directory.
 	# This is needed to avoid conflicts with packages when I have several configs that all
 	# use same target/subtarget directories.
+	# - resets also compile status ${compile_status_file}
 	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/targets/${_config_name}"
 	rm -rf ${outdir}
   rm -rf ${buildroot}/bin
@@ -1026,8 +1026,6 @@ do
 	progbar_char_array[$((progress_counter-1))]="${PBC_RUNNING}"
 	show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
 
-	# reset compile status
-	rm -f ${compile_status_file}
 
 	openwrt_dl_dir="$DL_DIR"
 	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector_patches"
@@ -1223,6 +1221,7 @@ EOM
 
 	# write build status which is displayed by "build.sh list"
 	# , \"\":\"\"
+	mkdir -p ${compile_status_dir}
 	echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${compile_status_file}"
 
 	# continue with next target in build.targets
