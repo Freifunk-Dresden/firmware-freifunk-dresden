@@ -497,8 +497,8 @@ gen_download_json_end $target_dir
 
 # make new generated fileinfo pretty, for easier comparison
 tmp=$(mktemp)
-cp ${OUTPUT_FILEINFO_JSON_FILENAME} ${tmp}
-cat ${tmp}| '{comment,json_version,"fileinfo":[ .fileinfo | sort_by(.filename) ]}'  > ${OUTPUT_FILEINFO_JSON_FILENAME}
+cp ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ${tmp}
+cat ${tmp}| jq '{comment,json_version,"fileinfo":[ .fileinfo | sort_by(.filename) ]}'  > ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}
 
 
 # generate js file
