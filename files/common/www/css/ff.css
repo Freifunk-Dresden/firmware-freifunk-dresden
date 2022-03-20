@@ -14,10 +14,17 @@ table.nowrap th {
 	white-space:nowrap;
 }
 table.nowrap th.heading {
-	color:blue
+	color:blue;
 }
 pre {
 	background-color: lightgrey;
+}
+div.note {
+	color:blue;
+	font-size: medium;
+}
+div.note b {
+	color:black;
 }
 
 A:link {

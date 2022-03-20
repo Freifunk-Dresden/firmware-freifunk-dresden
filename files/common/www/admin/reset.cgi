@@ -24,6 +24,7 @@ cat<<EOM
 	</table>
 	</form>
 	</fieldset>
+
 EOM
 
 else #form_action
@@ -82,5 +83,12 @@ EOM
 		;;
 	esac
 fi
+
+cat <<EOM
+<br/><br/>
+<div class="note"><b>Hinweis</b>: <div> Nach einem Neustart des Routers, dauert es bis zu <b>5 Minuten</b>, bis der Router alle
+Informationen f&uuml;r den Zugang zum Freifunk-Netz gesammelt hat.</div>
+</div>
+EOM
 
 . /usr/lib/www/page-post.sh ${0%/*}

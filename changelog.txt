@@ -1,6 +1,7 @@
 2021-04-00 8.0.2
 --------------------------------------------------
 usb-tethering             - add usb tethering for android/iOS (for selected devices)
+gui                       - several minor improvments
 
 2021-04-00 8.0.1
 --------------------------------------------------

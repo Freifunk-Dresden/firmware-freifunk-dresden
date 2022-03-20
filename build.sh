@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="15"
+SCRIPT_VERSION="16"
 
 
 # gitlab variables

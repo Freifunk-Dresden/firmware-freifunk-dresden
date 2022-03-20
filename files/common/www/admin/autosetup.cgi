@@ -33,6 +33,11 @@ cat<<EOM
 	der Registrierungs-Schl&uuml;ssel neu erzeugt werden muss und es beim Registrator bereits eine Registrierung mit der gleichen Knoten-Nr.
 	gibt, wird dabei eine neue Knoten-Nr. automatisch vergeben. Der Router erh&auml;lt dadurch ebenfalls eine neue Freifunk-IP-Adresse.<br />
 	<br />
+	<br />
+	<div class="note"><b>Hinweis</b>: <div> Nach einem Neustart des Routers, dauert es bis zu <b>5 Minuten</b>, bis der Router alle
+	Informationen f&uuml;r den Zugang zum Freifunk-Netz gesammelt hat.</div>
+	</div>
+	<br />
 	Hat der Router keine Verbindung zum Registrator, wird eine tempor&auml;re Knoten-Nr. vergeben, die später bei erfolgreicher Verbindung automatisch aktualisiert wird.<br />
 	</td>
 	</tr>
