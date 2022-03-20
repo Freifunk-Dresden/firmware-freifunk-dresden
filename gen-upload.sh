@@ -508,16 +508,17 @@ EOM
 
 #------ now compare fileinfo.json and generated file.------
 # check for missing firmware files (not generated)
+error=0
 echo "----------------------------------------------------"
-echo "missing firmware files (not built, but expected):"
-jq -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current.fileinfo - $generated.fileinfo '
+if ! jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current.fileinfo - $generated.fileinfo | if length > 0 then ., false else true end'; then
+	echo -e "${C_RED}ERROR: missing firmware files${C_NONE}"
+	error=1
+fi
 
 echo "----------------------------------------------------"
-echo "new devices found:"
-jq -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $generated.fileinfo - $current.fileinfo '
+if ! jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $generated.fileinfo - $current.fileinfo | if length > 0 then ., false else true end'; then
+	echo -e "${C_BLUE}INFO: new devices found${C_NONE}"
+fi
 
-
- 
-
-
-
+test $error -eq 1 && exit 1
+exit 0
