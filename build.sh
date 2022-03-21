@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="16"
+SCRIPT_VERSION="17"
 
 
 # gitlab variables
@@ -382,6 +382,23 @@ search_target()
 	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{print FILENAME}' openwrt-configs/*/*
 }
 
+print_devices_for_target()
+{
+	target=$1
+	cleanJson=$(getTargetsJson)
+
+
+	# get selector
+	def_selector=$(echo "$cleanJson" | jq --raw-output '.[] | select(.name == "default") | . "selector-config"')
+	selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | . \"selector-config\"")
+	test "${selector}" = "null" && selector=${def_selector}
+
+	# get config
+	config=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | .config")
+
+	grep "^CONFIG_TARGET_DEVICE.*=y" "openwrt-configs/${selector}/${config}"
+}
+
 setup_dynamic_firmware_config()
 {
 	FILES="$1"
@@ -412,13 +429,14 @@ usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < ma
    -s    open docker shell
 
   commands:
-   list              - lists all available targets
-   lt | list-targets - lists only target names for usage in IDE
-   search <string>   - search specific router (target)
-   clean             - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
-   feed-revisions    - returns the git HEAD revision hash for current date (now).
-                       The revisions then could be set in build.json
-   target            - target to build (can have regex)
+   list                    - lists all available targets
+   lt | list-targets       - lists only target names for usage in IDE
+	 target-devices <target> - displays all selected routers for a target
+   search <string>         - search specific router (target)
+   clean                   - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
+   feed-revisions          - returns the git HEAD revision hash for current date (now).
+                             The revisions then could be set in build.json
+   target                  - target to build (can have regex)
            that are defined by build.json. use 'list' for supported targets.
            'all'                   - builds all targets
            'failed'                - builds only previously failed or not built targets
@@ -581,6 +599,17 @@ if [ "$1" = "search" ]; then
 	search_target $2
 	exit 0
 fi
+
+# displays all selected devices for a target (e.g. ath79.generic)
+if [ "$1" = "target-devices" ]; then
+	if [ -z "$2" ]; then
+		echo "Error: missing target"
+		exit 1
+	fi
+	print_devices_for_target $2
+	exit 0
+fi
+
 
 if [ "$1" = "feed-revisions" ]; then
 
@@ -1164,7 +1193,14 @@ EOM
 
 			# remove any old config from build root
 			rm -f .config
-			#cp ${DEFAULT_CONFIG} .config
+			# default config contains important configs that must exist before creating
+			# a new config via menuconfig. this default config overwrites also some
+			# important configs after running menuconfig.
+			# SEE: CONFIG_VERSION_FILENAMES is not set
+			# -- per device rootfs MUST BE SET BEFORE selecting it in menuconfig
+			#    else this option is not applied, as all packages are already added via '*'
+			#    instead of 'M'. See comment on this option in menuconfig menu
+			cp ${DEFAULT_CONFIG} .config
 		else
 			# no config and no menuconfig -> continue with next target; do not create config yet.
 			# it only should be down by menuconfig
