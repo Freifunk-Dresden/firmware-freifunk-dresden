@@ -1312,11 +1312,6 @@
     },
     {
       "name": "",
-      "filename": "openwrt-bcm53xx-generic-asus_rt-ac56u-squashfs.trx",
-      "comment": ""
-    },
-    {
-      "name": "",
       "filename": "openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-eva.bin",
       "comment": ""
     },
