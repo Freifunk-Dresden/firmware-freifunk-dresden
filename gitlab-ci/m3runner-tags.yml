@@ -191,7 +191,7 @@ m3tags:upload:
     - /^TESTING_FIRMWARE_/
     - /^T_FIRMWARE_/
   stage: deploy
-  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx", "m3tags:bcm53xx.generic.arm"]
+  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
