@@ -141,7 +141,7 @@ m3:test:
   only:
     - master
   stage: test
-  needs: ["m3:ar71xx.tiny.lowmem","m3:ar71xx.generic.lowmem","m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx", "m3:bcm53xx.generic.arm"]
+  needs: ["m3:ar71xx.tiny.lowmem","m3:ar71xx.generic.lowmem","m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
