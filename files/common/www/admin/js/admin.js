@@ -125,14 +125,14 @@ function swupdate_callback(data)
 		$("#firmware_testing_url").val(data.firmware_testing_url);
 		$("#firmware_testing_url_info").val(data.firmware_testing_url);
 
-		# enable buttons
-		$("#ajax_swupdate_latest").val("Download: 'latest'-Version (data.firmware_release_version)");
+		// enable buttons
+		$("#ajax_swupdate_latest").val("Download: 'latest'-Version " + (data.firmware_release_version));
 		if(data.firmware_release_enable_button == "1")
 		{	$("#ajax_swupdate_latest").disabled = false; }
 		else
 		{	$("#ajax_swupdate_latest").disabled = true; }
 
-		$("#ajax_swupdate_testing").val("Download: 'testing'-Version (data.firmware_testing_version)");
+		$("#ajax_swupdate_testing").val("Download: 'testing'-Version " + (data.firmware_testing_version));
 		if(data.firmware_testing_enable_button == "1")
 		{	$("#ajax_swupdate_testing").disabled = false; }
 		else
