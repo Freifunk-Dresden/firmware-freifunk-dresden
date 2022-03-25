@@ -58,7 +58,7 @@ EOM
 cat<<EOM
 	<hr size="1">
 	<table class="firmware">
-  <tr><td><button onclick="ajax_swupdate()" type="button" >Update-Info</button></td></tr>
+  <tr><td><button onclick="ajax_swupdate()" type="button" >Update-Info</button><div id="progress"></div></td></tr>
 	<tr><td class="nowrap">&nbsp;</td>
 
 	<tr><th colspan="2">Weitere Infos sind nur verf&uuml;gbar, wenn der Download-Server erreichbar ist:</th></tr>
