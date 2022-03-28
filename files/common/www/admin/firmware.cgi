@@ -58,20 +58,20 @@ EOM
 cat<<EOM
 	<hr size="1">
 	<table class="firmware">
-  <tr><td><button onclick="ajax_swupdate()" type="button" >Update-Info</button><div id="progress"></div></td></tr>
+	<tr><td><button onclick="ajax_swupdate()" type="button" >Update-Info</button><div id="progress"></div></td></tr>
 	<tr><td class="nowrap">&nbsp;</td>
 
 	<tr><th colspan="2">Weitere Infos sind nur verf&uuml;gbar, wenn der Download-Server erreichbar ist:</th></tr>
-	<tr><th width="100" style="white-space: nowrap;">- Erwartete Firmware-Datei:</th><td id="firmware_release_filename">$firmware_release_filename</td></tr>
-	<tr><th width="100" style="white-space: nowrap;">- Kommentar:</th><td id="firmware_release_comment">$firmware_release_comment</td></tr>
+	<tr><th width="100" style="white-space: nowrap;">- Erwartete Firmware-Datei:</th><td id="firmware_release_filename"></td></tr>
+	<tr><th width="100" style="white-space: nowrap;">- Kommentar:</th><td id="firmware_release_comment"></td></tr>
 	<tr><td class="nowrap">&nbsp;</td>
 
 	<tr><td class="nowrap">
 	<form name="form_firmware_dl_release" action="firmware.cgi" method="POST" style="text-align: left;">
 	<input name="form_action" value="download" type="hidden">
-	<input id="firmware_release_url" name="form_fileinfo_url" value="$firmware_release_url" type="hidden">
-	<input id="firmware_release_version" name="form_fileinfo_version" value="$firmware_release_version" type="hidden">
-	<input id="firmware_release_md5sum" name="form_fileinfo_md5sum" value="$firmware_release_md5sum" type="hidden">
+	<input id="firmware_release_url" name="form_fileinfo_url" type="hidden">
+	<input id="firmware_release_version" name="form_fileinfo_version" type="hidden">
+	<input id="firmware_release_md5sum" name="form_fileinfo_md5sum" type="hidden">
 	<input disabled id="ajax_swupdate_latest" name="form_firmware_submit" type="submit" value="Download: 'latest'-Version (unbekannt)">
 	</form>
 	</td> </td><td id="firmware_release_url_info"></td>
@@ -82,7 +82,7 @@ cat<<EOM
 	<input name="form_action" value="download" type="hidden">
 	<input id="firmware_testing_url" name="form_fileinfo_url" value="$firmware_testing_url" type="hidden">
 	<input id="firmware_testing_version" name="form_fileinfo_version" value="$firmware_testing_version" type="hidden">
-	<input name="form_fileinfo_md5sum" value="$firmware_testing_md5sum" type="hidden">
+	<input id="firmware_testing_md5sum" name="form_fileinfo_md5sum" type="hidden">
 	<input disabled id="ajax_swupdate_testing" name="form_firmware_submit" type="submit" value="Download: 'testing'-Version (unbekannt)">
 	</form>
 	</td><td id="firmware_testing_url_info"></td>
@@ -180,7 +180,8 @@ EOM
 					do_update=0
 				else
 					cur_version="$(cat /etc/version)"
-					compare_versions "$VER"  "$cur_version" || VERSION_WARNING="<div style=\"color: red;\">Hinweis: Die Firmware-Version ist kleiner oder gleich der aktuellen Firmware (<b>$VER <= $cur_version</b>)!</div>"
+					compare_versions "$VER"  "$cur_version" || VERSION_WARNING="<div style=\"color: red;\">Hinweis: Die Firmware-Version ist kleiner oder gleich der aktuellen Firmware (<b>$VER <= $cur_version</b>)!<br/>
+					 Die Funktion oder Stabilit&auml;t kann nicht sichergestellt werden! </div>"
 					MD5_WARNING=""
 					MD5_OK='<div style="color: green;">korrekt</div>'
 					do_update=1
@@ -207,11 +208,11 @@ EOM
 					 <tr><th>Firmware-MD5-Summe</th><td>$file_md5sum $MD5_OK</td></tr>
 					 <tr><th>Werkseinstellungen:</th><td><input name="form_firmware_factory" type="checkbox" value="1"></td></tr>
 					 <tr><td colspan="2">
-					  $MD5_WARNING</br>
-	  				  Das Speichern der Firmware dauert einige Zeit. Bitte schalte das Ger&auml;t nicht aus. Es ist m&ouml;glich, dass sich der Router
-	    				  mehrfach neustartet, um alle Aktualisierungen vorzunehmen.<br />
-		     			  Wird das Zur&uuml;cksetzen auf Werkseinstellungen aktiviert, erh&auml;lt der Router bei der n&auml;chsten Registrierung eine neue Node-Nummer und damit auch
-        	     			  eine neue IP-Adresse im Freifunknetz.</td></tr>
+						$MD5_WARNING</br>
+							Das Speichern der Firmware dauert einige Zeit. Bitte schalte das Ger&auml;t nicht aus. Es ist m&ouml;glich, dass sich der Router
+								mehrfach neustartet, um alle Aktualisierungen vorzunehmen.<br />
+				 				Wird das Zur&uuml;cksetzen auf Werkseinstellungen aktiviert, erh&auml;lt der Router bei der n&auml;chsten Registrierung eine neue Node-Nummer und damit auch
+							 				eine neue IP-Adresse im Freifunknetz.</td></tr>
 					 <tr><td colspan="2"> $VERSION_WARNING </td></tr>
 					 <tr><td colspan="2">
 					 <input name="form_update_submit" type="submit" value="Firmware speichern">

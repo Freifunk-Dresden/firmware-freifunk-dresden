@@ -72,8 +72,6 @@ cat <<EOM
 "firmware_testing_version" : "${firmware_testing_version}",
 "firmware_testing_url" : "${firmware_testing_url}",
 "firmware_testing_md5sum" : "${firmware_testing_md5sum}",
-"firmware_testing_filename" : "${firmware_testing_filename}",
-"firmware_testing_comment" : "${firmware_testing_comment}",
 
 "firmware_release_enable_button" : "$firmware_release_version_ok",
 "firmware_testing_enable_button" : "$firmware_testing_version_ok"
