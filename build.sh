@@ -431,6 +431,7 @@ usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < ma
   commands:
    list                    - lists all available targets
    lt | list-targets       - lists only target names for usage in IDE
+   watch                   - same as 'list' but updates display
    target-devices <target> - displays all selected routers for a target
    search <string>         - search specific router (target)
    clean                   - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
@@ -585,7 +586,7 @@ if [ "$1" = "list" ]; then
 	listTargets
 	exit 0
 fi
-if [ "$1" = "listwatch" ]; then
+if [ "$1" = "watch" ]; then
 	while sleep 1
 	do
 		view=$(listTargets) 
