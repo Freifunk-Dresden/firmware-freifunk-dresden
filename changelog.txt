@@ -1,7 +1,9 @@
 2021-04-00 8.0.2
 --------------------------------------------------
 usb-tethering             - add usb tethering for android/iOS (for selected devices)
-gui                       - several minor improvments
+gui-ajax                  - add info when using ajax request
+                          - rework firmware download to avoid blocking when loading firmware infos
+                          - serveral minor improvments
 
 2021-04-00 8.0.1
 --------------------------------------------------

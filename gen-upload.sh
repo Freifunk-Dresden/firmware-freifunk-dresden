@@ -442,7 +442,7 @@ do
 	do
 
 		printf "  ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
-		tmpTargetDir="$target_dir/$_buildroot/$platform"
+		tmpTargetDir="$target_dir/firmware/$platform"
 		mkdir -p ${tmpTargetDir}
 
 		filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
@@ -488,7 +488,7 @@ do
 		gzip -f Packages
 		cd $p
 
-		gen_download_json_add_data $target_dir ${_buildroot}/${platform} $filefilter
+		gen_download_json_add_data "$target_dir" "firmware/${platform}" $filefilter
 	done	# for platform
 done # for buildroot
 
