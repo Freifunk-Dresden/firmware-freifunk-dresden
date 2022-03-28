@@ -431,7 +431,7 @@ usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < ma
   commands:
    list                    - lists all available targets
    lt | list-targets       - lists only target names for usage in IDE
-	 target-devices <target> - displays all selected routers for a target
+   target-devices <target> - displays all selected routers for a target
    search <string>         - search specific router (target)
    clean                   - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    feed-revisions          - returns the git HEAD revision hash for current date (now).
@@ -583,6 +583,16 @@ fi
 #check if next argument is "menuconfig"
 if [ "$1" = "list" ]; then
 	listTargets
+	exit 0
+fi
+if [ "$1" = "listwatch" ]; then
+	while sleep 1
+	do
+		view=$(listTargets) 
+		clear
+		date
+		echo -e "$view"
+	done
 	exit 0
 fi
 
@@ -1259,6 +1269,7 @@ EOM
 	# write build status which is displayed by "build.sh list"
 	# , \"\":\"\"
 	mkdir -p ${compile_status_dir}
+	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
 	echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${compile_status_file}"
 
 	# continue with next target in build.targets
@@ -1291,9 +1302,10 @@ EOM
 	fi
 
 	# copy files to our own output directory
-	echo -e "${C_CYAN}copy images${C_NONE}"
 	mkdir -p ${outdir}/packages ${outdir}/images
+  echo -e "${C_CYAN}copy packages${C_NONE}"
 	cp -a ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/
+  echo -e "${C_CYAN}copy images${C_NONE}"
 	cp -a ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
 
 	# success status
