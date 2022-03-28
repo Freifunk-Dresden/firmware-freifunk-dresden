@@ -53,7 +53,7 @@ cat<<EOF
 <html>
 <head>
 	$SPLASH_BASE
-	<title>$in_ifname: $_ddmesh_hostname.$_ddmesh_domain - $TITLE</title>
+	<title>$_ddmesh_node [$in_ifname] - $TITLE</title>
 	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 	<meta content="no-cache" http-equiv="cache-control">
 	<meta http-equiv="expires" content="0">
