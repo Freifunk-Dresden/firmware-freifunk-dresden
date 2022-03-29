@@ -509,8 +509,8 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "fritz4020",
+      "autoupdate": "1",
+      "model": "avm,fritz4020",
       "model2": "AVM FRITZ!Box 4020",
       "filename": "openwrt-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
       "comment": ""
@@ -1174,7 +1174,7 @@
       "name": "",
       "autoupdate": "1",
       "model": "ubnt,unifi",
-      "model2": "Ubiquiti UniFi AP",
+      "model2": "Ubiquiti UniFi",
       "filename": "openwrt-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1745,6 +1745,9 @@
     },
     {
       "name": "",
+      "autoupdate": "0",
+      "model": "xunlong,orangepi-r1",
+      "model2": "Xunlong Orange Pi R1",
       "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-ext4-sdcard.img.gz",
       "comment": ""
     },

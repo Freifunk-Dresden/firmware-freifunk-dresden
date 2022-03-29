@@ -121,15 +121,22 @@ function swupdate_callback(data)
 		$("#firmware_release_url").val(data.firmware_release_url);
 		$("#firmware_release_url_info").val(data.firmware_release_url);
 		$("#firmware_release_md5sum").val(data.firmware_release_md5sum);
-		$("#firmware_release_filename").html(data.firmware_release_filename);
-		$("#firmware_release_comment").html(data.firmware_release_comment);
-
 
 		$("#firmware_testing_version").val(data.firmware_testing_version);
 		$("#firmware_testing_url").val(data.firmware_testing_url);
 		$("#firmware_testing_url_info").val(data.firmware_testing_url);
 		$("#firmware_testing_md5sum").val(data.firmware_testing_md5sum);
 		$("#firmware_testing_filename").val(data.firmware_testing_filename);
+
+		expected_filename = data.firmware_release_filename;
+		if(expected_filename=="")
+		{ expected_filename = data.firmware_testing_filename;}
+		$("#firmware_expected_filename").html(expected_filename);
+
+		comment = data.firmware_release_comment;
+		if(comment=="")
+		{ comment = data.firmware_testing_comment;}
+		$("#firmware_comment").html(comment);
 
 		// enable buttons
 		$("#ajax_swupdate_latest").val("Download: 'latest'-Version " + (data.firmware_release_version));

@@ -62,8 +62,8 @@ cat<<EOM
 	<tr><td class="nowrap">&nbsp;</td>
 
 	<tr><th colspan="2">Weitere Infos sind nur verf&uuml;gbar, wenn der Download-Server erreichbar ist:</th></tr>
-	<tr><th width="100" style="white-space: nowrap;">- Erwartete Firmware-Datei:</th><td id="firmware_release_filename"></td></tr>
-	<tr><th width="100" style="white-space: nowrap;">- Kommentar:</th><td id="firmware_release_comment"></td></tr>
+	<tr><th width="100" style="white-space: nowrap;">- Erwartete Firmware-Datei:</th><td id="firmware_expected_filename"></td></tr>
+	<tr><th width="100" style="white-space: nowrap;">- Kommentar:</th><td id="firmware_comment"></td></tr>
 	<tr><td class="nowrap">&nbsp;</td>
 
 	<tr><td class="nowrap">
