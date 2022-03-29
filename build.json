@@ -20,7 +20,7 @@
 							# dependencies to kernel modules/libs, that are included
 							# in image also if package is optional (ipk)
 							# This value is added to config file name
-							# Example value could be : "lowmem" or "ram32mbyte"
+							# Example value could be : "lowmem"
 
 		"selector-config":"21.02",		# used to select config
 		"selector-feeds":"21.02",		# used to select feeds
