@@ -169,10 +169,6 @@
 		"config":"config.ipq40xx.generic.fritz-tffs-nand"
 	},
 	{
-		"name":"bcm53xx.generic.arm",
-		"config":"config.bcm53xx.generic.arm"
-	},
-	{
 		"name":"mpc85xx.p1020",
 		"config":"config.mpc85xx.p1020"
 	}

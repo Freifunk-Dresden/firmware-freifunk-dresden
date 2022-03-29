@@ -157,21 +157,6 @@ m3tags:mpc85xx:
   tags:
   - m3runner
 
-m3tags:bcm53xx.generic.arm:
-  only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^T_FIRMWARE_/
-  stage: build
-  needs: ["m3tags:init"]
-  script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-    - ./build.sh bcm53xx.generic.arm rerun -j"$(( $(nproc) + 1))"
-  tags:
-  - m3runner
-
-
 m3tags:21.ath79:
   only:
     - /^R_FIRMWARE_/
@@ -192,7 +177,7 @@ m3tags:test:
     - /^TESTING_FIRMWARE_/
     - /^T_FIRMWARE_/
   stage: test
-  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx", "m3tags:bcm53xx.generic.arm"]
+  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -206,7 +191,7 @@ m3tags:upload:
     - /^TESTING_FIRMWARE_/
     - /^T_FIRMWARE_/
   stage: deploy
-  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx", "m3tags:bcm53xx.generic.arm"]
+  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir

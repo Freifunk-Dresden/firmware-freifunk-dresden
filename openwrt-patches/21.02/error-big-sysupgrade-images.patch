@@ -1,0 +1,14 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr include.ori/image-commands.mk include/image-commands.mk
+--- include.ori/image-commands.mk	2021-11-14 01:40:59.000000000 +0100
++++ include/image-commands.mk	2022-03-20 23:37:11.045205841 +0100
+@@ -154,8 +154,8 @@
+ 	@imagesize="$$(stat -c%s $@)"; \
+ 	limitsize="$$(($(subst k,* 1024,$(subst m, * 1024k,$(if $(1),$(1),$(IMAGE_SIZE))))))"; \
+ 	[ $$limitsize -ge $$imagesize ] || { \
+-		echo "WARNING: Image file $@ is too big: $$imagesize > $$limitsize" >&2; \
+-		rm -f $@; \
++		echo "ERROR: Image file $@ is too big: $$imagesize > $$limitsize" >&2; \
++		rm -f $@; exit 1; \
+ 	}
+ endef
+

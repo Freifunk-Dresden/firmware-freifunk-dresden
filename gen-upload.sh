@@ -442,7 +442,7 @@ do
 	do
 
 		printf "  ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
-		tmpTargetDir="$target_dir/$_buildroot/$platform"
+		tmpTargetDir="$target_dir/firmware/$platform"
 		mkdir -p ${tmpTargetDir}
 
 		filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
@@ -488,7 +488,7 @@ do
 		gzip -f Packages
 		cd $p
 
-		gen_download_json_add_data $target_dir ${_buildroot}/${platform} $filefilter
+		gen_download_json_add_data "$target_dir" "firmware/${platform}" $filefilter
 	done	# for platform
 done # for buildroot
 
@@ -508,16 +508,18 @@ EOM
 
 #------ now compare fileinfo.json and generated file.------
 # check for missing firmware files (not generated)
-echo "----------------------------------------------------"
-echo "missing firmware files (not built, but expected):"
-jq -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current.fileinfo - $generated.fileinfo '
+error=0
+if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current.fileinfo - $generated.fileinfo | if length > 0 then . else empty end'; then
+	echo -e "${C_RED}ERROR: missing firmware files${C_NONE}"
+	error=1
+fi
 
-echo "----------------------------------------------------"
-echo "new devices found:"
-jq -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $generated.fileinfo - $current.fileinfo '
+[ $error -eq 1 ] && echo "----------------------------------------------------"
 
+if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $generated.fileinfo - $current.fileinfo | if length > 0 then . else empty end'; then
+	echo -e "${C_BLUE}INFO: new devices found${C_NONE}"
+	error=1
+fi
 
- 
-
-
-
+[ $error -eq 1 ] && exit 1
+exit 0

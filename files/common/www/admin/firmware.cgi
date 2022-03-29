@@ -2,21 +2,6 @@
 # Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
-#return 0 if new > cur
-compare_versions() {
-	new=$1
-	cur=$2
-	local IFS='.';
-	set $new; a1=$1; a2=$2; a3=$3
-	set $cur; b1=$1; b2=$2; b3=$3
-	[ "$a1" -lt "$b1" ] && return 1
-		[ "$a1" -eq "$b1" ] && {
-		[ "$a2" -lt "$b2" ] && return 1
-			[ "$a2" -eq "$b2" ] &&  [ "$a3" -le "$b3" ] && return 1
-		}
-	return 0
-}
-
 export TITLE="Verwaltung &gt; Wartung: Firmware"
 
 # check before calling freifunk-upload
@@ -34,27 +19,6 @@ eval $(/usr/bin/freifunk-upload -e 2>/dev/null)
 
 FIRMWARE_FILE="/tmp/firmware.bin"
 
-download_file_info()
-{
-	# download file info
-	RELEASE_FILE_INFO_JSON="$(/usr/lib/ddmesh/ddmesh-get-firmware-name.sh)"
-	error=$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.error')
-	test -n "$error" && RELEASE_FILE_INFO_JSON=""
-
-	TESTING_FILE_INFO_JSON="$(/usr/lib/ddmesh/ddmesh-get-firmware-name.sh testing)"
-	error=$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.error')
-	test -n "$error" && TESTING_FILE_INFO_JSON=""
-
-	firmware_release_version=$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.firmware_version')
-	firmware_release_url="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.firmware_url')"
-	firmware_release_md5sum="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.md5sum')"
-	firmware_release_filename="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.filename')"
-	firmware_release_comment="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.comment')"
-
-	firmware_testing_version=$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.firmware_version')
-	firmware_testing_url="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.firmware_url')"
-	firmware_testing_md5sum="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.md5sum')"
-}
 
 echo "<H1>$TITLE</H1>"
 
@@ -62,8 +26,6 @@ test "$form_action" != "flash" && rm -f $FIRMWARE_FILE
 
 
 if [ -z "$form_action" ]; then
-
-	download_file_info
 
 cat<<EOM
 	<fieldset class="bubble">
@@ -74,9 +36,6 @@ cat<<EOM
 	<tr><th>Ger&auml;teinfo:</th><td><b>Model:</b> $model ($model2) - <b>CPU:</b> $(cat /proc/cpuinfo | sed -n '/system type/s#[^:]\+:[ 	]*##p')</td></tr>
 	<tr><th>Filesystem:</th><td>$(cat /proc/cmdline | sed -n 's#.*rootfstype=\([a-z0-9]\+\).*$#\1#p')</td></tr>
 	<tr><th colspan="2">&nbsp;</th></tr>
-	<tr><th colspan="2">Weitere Infos sind nur verf&uuml;gbar, wenn der Download-Server erreichbar ist:</th></tr>
-	<tr><th width="100" style="white-space: nowrap;">- Erwartete Firmware-Datei:</th><td>$firmware_release_filename</td></tr>
-	<tr><th width="100" style="white-space: nowrap;">- Kommentar:</th><td>$firmware_release_comment</td></tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
 EOM
 
@@ -94,45 +53,46 @@ cat<<EOM
 	<br/>
 EOM
 
-	cur_version="$(cat /etc/version)"
-
-	if [ -n "$RELEASE_FILE_INFO_JSON" ]; then
-		compare_versions "$firmware_release_version" "$cur_version" && firmware_release_version_ok=1
-	fi
-
-	if [ -n "$TESTING_FILE_INFO_JSON" ]; then
-		keep_btn_enabled="$(uci -q get ddmesh.system.fwupdate_always_allow_testing)"
-		compare_versions "$firmware_testing_version" "$cur_version" || [ "$keep_btn_enabled" = "1" ] && firmware_testing_version_ok=1
-	fi
 
 
 cat<<EOM
+	<hr size="1">
 	<table class="firmware">
+	<tr><td><button onclick="ajax_swupdate()" type="button" >Update-Info</button><div id="progress"></div></td></tr>
+	<tr><td class="nowrap">&nbsp;</td>
+
+	<tr><th colspan="2">Weitere Infos sind nur verf&uuml;gbar, wenn der Download-Server erreichbar ist:</th></tr>
+	<tr><th width="100" style="white-space: nowrap;">- Erwartete Firmware-Datei:</th><td id="firmware_release_filename"></td></tr>
+	<tr><th width="100" style="white-space: nowrap;">- Kommentar:</th><td id="firmware_release_comment"></td></tr>
+	<tr><td class="nowrap">&nbsp;</td>
 
 	<tr><td class="nowrap">
 	<form name="form_firmware_dl_release" action="firmware.cgi" method="POST" style="text-align: left;">
 	<input name="form_action" value="download" type="hidden">
-	<input name="form_fileinfo_url" value="$firmware_release_url" type="hidden">
-	<input name="form_fileinfo_version" value="$firmware_release_version" type="hidden">
-	<input name="form_fileinfo_md5sum" value="$firmware_release_md5sum" type="hidden">
-	<input title="$firmware_release_url" $(test -z "$firmware_release_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download: 'latest'-Version ($firmware_release_version)">
+	<input id="firmware_release_url" name="form_fileinfo_url" type="hidden">
+	<input id="firmware_release_version" name="form_fileinfo_version" type="hidden">
+	<input id="firmware_release_md5sum" name="form_fileinfo_md5sum" type="hidden">
+	<input disabled id="ajax_swupdate_latest" name="form_firmware_submit" type="submit" value="Download: 'latest'-Version (unbekannt)">
 	</form>
-	</td>
+	</td> </td><td id="firmware_release_url_info"></td>
 	</tr>
 
 	<tr><td class="nowrap">
 	<form name="form_firmware_dl_testing" action="firmware.cgi" method="POST" style="text-align: left;">
 	<input name="form_action" value="download" type="hidden">
-	<input name="form_fileinfo_url" value="$firmware_testing_url" type="hidden">
-	<input name="form_fileinfo_version" value="$firmware_testing_version" type="hidden">
-	<input name="form_fileinfo_md5sum" value="$firmware_testing_md5sum" type="hidden">
-	<input title="$firmware_testing_url" $(test -z "$firmware_testing_version_ok" && echo disabled) name="form_firmware_submit" type="submit" value="Download: 'testing'-Version ($firmware_testing_version)">
+	<input id="firmware_testing_url" name="form_fileinfo_url" value="$firmware_testing_url" type="hidden">
+	<input id="firmware_testing_version" name="form_fileinfo_version" value="$firmware_testing_version" type="hidden">
+	<input id="firmware_testing_md5sum" name="form_fileinfo_md5sum" type="hidden">
+	<input disabled id="ajax_swupdate_testing" name="form_firmware_submit" type="submit" value="Download: 'testing'-Version (unbekannt)">
 	</form>
-	</td>
+	</td><td id="firmware_testing_url_info"></td>
 	</tr>
-	<tr><td>(Wenn der direkte Download nicht verf&uuml;gbar ist, konnte der Download-Server nicht erreicht werden. Bitte Seite neu laden.)</td></tr>
 	</table>
 	</fieldset>
+
+<SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
+ajax_swupdate();
+//--></SCRIPT>
 
 	<br/><br/>
 
@@ -220,7 +180,8 @@ EOM
 					do_update=0
 				else
 					cur_version="$(cat /etc/version)"
-					compare_versions "$VER"  "$cur_version" || VERSION_WARNING="<div style=\"color: red;\">Hinweis: Die Firmware-Version ist kleiner oder gleich der aktuellen Firmware (<b>$VER <= $cur_version</b>)!</div>"
+					compare_versions "$VER"  "$cur_version" || VERSION_WARNING="<div style=\"color: red;\">Hinweis: Die Firmware-Version ist kleiner oder gleich der aktuellen Firmware (<b>$VER <= $cur_version</b>)!<br/>
+					 Die Funktion oder Stabilit&auml;t kann nicht sichergestellt werden! </div>"
 					MD5_WARNING=""
 					MD5_OK='<div style="color: green;">korrekt</div>'
 					do_update=1
@@ -247,11 +208,11 @@ EOM
 					 <tr><th>Firmware-MD5-Summe</th><td>$file_md5sum $MD5_OK</td></tr>
 					 <tr><th>Werkseinstellungen:</th><td><input name="form_firmware_factory" type="checkbox" value="1"></td></tr>
 					 <tr><td colspan="2">
-					  $MD5_WARNING</br>
-	  				  Das Speichern der Firmware dauert einige Zeit. Bitte schalte das Ger&auml;t nicht aus. Es ist m&ouml;glich, dass sich der Router
-	    				  mehrfach neustartet, um alle Aktualisierungen vorzunehmen.<br />
-		     			  Wird das Zur&uuml;cksetzen auf Werkseinstellungen aktiviert, erh&auml;lt der Router bei der n&auml;chsten Registrierung eine neue Node-Nummer und damit auch
-        	     			  eine neue IP-Adresse im Freifunknetz.</td></tr>
+						$MD5_WARNING</br>
+							Das Speichern der Firmware dauert einige Zeit. Bitte schalte das Ger&auml;t nicht aus. Es ist m&ouml;glich, dass sich der Router
+								mehrfach neustartet, um alle Aktualisierungen vorzunehmen.<br />
+				 				Wird das Zur&uuml;cksetzen auf Werkseinstellungen aktiviert, erh&auml;lt der Router bei der n&auml;chsten Registrierung eine neue Node-Nummer und damit auch
+							 				eine neue IP-Adresse im Freifunknetz.</td></tr>
 					 <tr><td colspan="2"> $VERSION_WARNING </td></tr>
 					 <tr><td colspan="2">
 					 <input name="form_update_submit" type="submit" value="Firmware speichern">

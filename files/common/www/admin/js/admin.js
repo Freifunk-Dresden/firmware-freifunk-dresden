@@ -9,6 +9,7 @@ var lock_wlan=0
 var lock_register=0
 var lock_geoloc=0
 var lock_regwg=0
+var lock_swupdate=0
 
 
 function ajax_dhcp(data)
@@ -65,13 +66,13 @@ function onMapClick(event)
 function geoloc_callback(data)
 {
 	try {
+		$("#progress").html("");
 		lat=data.location.lat.toFixed(5)
 		lng=data.location.lng.toFixed(5)
 		$("#geoloc_lat").val(lat);
 		$("#geoloc_lng").val(lng);
 		marker.bindPopup('Neue Koordinaten:<br/> <div style="color: #ff0000;">' + lat + ',' + lng + '</div>').openPopup()
 		marker.setLatLng([lat, lng]);
-
 	} catch (e) {}
 }
 function ajax_geoloc(data)
@@ -79,6 +80,7 @@ function ajax_geoloc(data)
 	if(lock_geoloc)return;
 	lock_geoloc=1;
 	t=Math.random();
+	$("#progress").html("Lade Informationen....");
 	var request = $.ajax({url:"/admin/ajax-geoloc.cgi", dataType:"json", dummy:t});
 	request.done(geoloc_callback)
 	lock_geoloc=0;
@@ -105,9 +107,54 @@ function ajax_regwg(host)
 	if(host == "")return;
 	lock_regwg=1;
 	t=Math.random();
+	$("#wgcheck_key").val("Lade Informationen....");
 	var request = $.ajax({url:"/admin/ajax-regwg.cgi", dataType:"json",method:"POST",data:{host: host}, dummy:t});
 	request.done(regwg_callback)
 	lock_regwg=0;
+}
+
+function swupdate_callback(data)
+{
+	try {
+		$("#progress").html("");
+		$("#firmware_release_version").val(data.firmware_release_version);
+		$("#firmware_release_url").val(data.firmware_release_url);
+		$("#firmware_release_url_info").val(data.firmware_release_url);
+		$("#firmware_release_md5sum").val(data.firmware_release_md5sum);
+		$("#firmware_release_filename").html(data.firmware_release_filename);
+		$("#firmware_release_comment").html(data.firmware_release_comment);
+
+
+		$("#firmware_testing_version").val(data.firmware_testing_version);
+		$("#firmware_testing_url").val(data.firmware_testing_url);
+		$("#firmware_testing_url_info").val(data.firmware_testing_url);
+		$("#firmware_testing_md5sum").val(data.firmware_testing_md5sum);
+		$("#firmware_testing_filename").val(data.firmware_testing_filename);
+
+		// enable buttons
+		$("#ajax_swupdate_latest").val("Download: 'latest'-Version " + (data.firmware_release_version));
+		if(data.firmware_release_enable_button == "1")
+		{	$("#ajax_swupdate_latest").prop("disabled", false); }
+		else
+		{	$("#ajax_swupdate_latest").prop("disabled", true); }
+
+		$("#ajax_swupdate_testing").val("Download: 'testing'-Version " + (data.firmware_testing_version));
+		if(data.firmware_testing_enable_button == "1")
+		{	$("#ajax_swupdate_testing").prop("disabled", false); }
+		else
+		{	$("#ajax_swupdate_testing").prop("disabled", true); }
+
+	} catch (e) {}
+}
+function ajax_swupdate(data)
+{
+	if(lock_swupdate)return;
+	lock_swupdate=1;
+	t=Math.random();
+	$("#progress").html("Lade Informationen....");
+	var request = $.ajax({url:"/admin/ajax-swupdate.cgi", dataType:"json", dummy:t});
+	request.done(swupdate_callback)
+	lock_swupdate=0;
 }
 
 

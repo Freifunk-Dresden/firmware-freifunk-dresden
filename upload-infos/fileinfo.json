@@ -622,7 +622,7 @@
     {
       "name": "",
       "filename": "openwrt-ath79-generic-glinet_gl-ar750-initramfs-kernel.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -630,7 +630,7 @@
       "model": "",
       "model2": "",
       "filename": "openwrt-ath79-generic-glinet_gl-ar750-squashfs-sysupgrade.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -639,9 +639,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "glinet,gl-mifi",
+      "model2": "GL.iNet GL-MiFi",
       "filename": "openwrt-ath79-generic-glinet_gl-mifi-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1287,12 +1287,12 @@
     {
       "name": "",
       "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-initramfs-kernel.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
       "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-nand-initramfs-kernel.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1300,7 +1300,7 @@
       "model": "",
       "model2": "",
       "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-nand-squashfs-sysupgrade.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1308,11 +1308,6 @@
       "model": "",
       "model2": "",
       "filename": "openwrt-ath79-nand-glinet_gl-ar750s-nor-squashfs-sysupgrade.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
-      "filename": "openwrt-bcm53xx-generic-asus_rt-ac56u-squashfs.trx",
       "comment": ""
     },
     {
@@ -1334,7 +1329,7 @@
       "model": "",
       "model2": "",
       "filename": "openwrt-ipq40xx-generic-avm_fritzbox-7530-squashfs-sysupgrade.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1567,7 +1562,7 @@
     {
       "name": "",
       "filename": "openwrt-ramips-mt7621-glinet_gl-mt1300-initramfs-kernel.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1575,7 +1570,7 @@
       "model": "",
       "model2": "",
       "filename": "openwrt-ramips-mt7621-glinet_gl-mt1300-squashfs-sysupgrade.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",

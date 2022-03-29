@@ -71,7 +71,7 @@ $(lang text-dsgvo)
 <tr title="GPS-Longitude">
 <th>L&auml;ngengrad:</th>
 <td><input id="geoloc_lng" name="form_gps_longitude" size="20" type="text" value="$lon">(Beispiel: 13.72053)</td>
-<td></td>
+<td id="progress"></td>
 </tr>
 
 <tr title="Notizen und kurze Hinweise zu diesem Access-Point. Die Notiz sollte nicht l&auml;nger als 500 Zeichen sein.">
