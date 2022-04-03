@@ -1325,11 +1325,11 @@
     },
     {
       "name": "",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "avm,fritzbox-4040",
       "model2": "AVM FRITZ!Box 4040",
       "filename": "openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "Autoupdate abgeschaltet, da selten der Router nur noch via ftp/bootloader geflasht werden kann. [<a href=https://wiki.freifunk-dresden.de/index.php/Fritzbox4040>Wiki</a>]"
     },
     {
       "name": "",
@@ -1754,21 +1754,21 @@
     {
       "name": "",
       "autoupdate": "0",
-      "model": "xunlong,orangepi-r1",
-      "model2": "Xunlong Orange Pi R1",
+      "model": "",
+      "model2": "",
       "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-ext4-sdcard.img.gz",
       "comment": ""
     },
     {
       "name": "",
+      "autoupdate": "0",
+      "model": "xunlong,orangepi-r1",
+      "model2": "Xunlong Orange Pi R1",
       "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-squashfs-sdcard.img.gz",
       "comment": ""
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
       "filename": "openwrt-x86-64-generic-ext4-combined-efi.img.gz",
       "comment": ""
     },
@@ -1782,25 +1782,16 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
       "filename": "openwrt-x86-64-generic-ext4-rootfs.img.gz",
       "comment": ""
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
       "filename": "openwrt-x86-64-generic-kernel.bin",
       "comment": ""
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
       "filename": "openwrt-x86-64-generic-squashfs-combined-efi.img.gz",
       "comment": ""
     },
@@ -1838,9 +1829,6 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
       "filename": "openwrt-x86-64-generic-squashfs-rootfs.img.gz",
       "comment": ""
     }

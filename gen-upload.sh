@@ -44,6 +44,7 @@ usage()
 	printf "Version 5\n"
 	printf "   all                  - generates all (incl.copying files)\n"
 	printf "   json                 - only updates download.json\n"
+	printf "   compare-json         - only compare fileinfo.json  against last generated version\n"
 	printf "   directory-suffix     - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
 	printf "   pretty <file>        - reads file info json from file and prints sorted (by filename) json on stdout\n"
 	printf "\n"
@@ -53,8 +54,16 @@ usage()
 # DEVEL: can be set to false to when only debugging index-generation and generation of download.json stuff
 case "$1" in
 	"all") 	ENABLE_COPY=true
+		ENABLE_GENERATE=true
 		;;
+
 	"json") ENABLE_COPY=false
+		ENABLE_GENERATE=true
+		;;
+
+	"compare-json")
+		ENABLE_COPY=false	
+		ENABLE_GENERATE=false
 		;;
 
 	"pretty")
@@ -236,18 +245,18 @@ gen_download_json_add_data()
 				autoupdate="$(echo $info | jq $OPT '.autoupdate')"
 				[ "$autoupdate" = "null" ] && autoupdate="0"		# default disable auto update
 
-				model="$(echo $info | jq $OPT '.model')"
-				model2="$(echo $info | jq $OPT '.model2')"
+				model="$(echo $info | jq $OPT '.model')"; [ "$model" = "null" ] && model=""
+				model2="$(echo $info | jq $OPT '.model2')"; [ "$model2" = "null" ] && model2=""
 				filename="$(echo $info | jq $OPT '.filename')"
-				comment="$(echo $info | jq $OPT '.comment')"
-				name="$(echo $info | jq $OPT '.name')"
+				comment="$(echo $info | jq $OPT '.comment')"; [ "$comment" = "null" ] && comment=""
+				name="$(echo $info | jq $OPT '.name')"; [ "$name" = "null" ] && name=""
 			fi
 #printf "##$name:$autoupdate:$model:$model2:$filename::$comment\n"
 
 			# determine "sysupgrade" files
-			if [   	-z "${file/*sysupgrade*/}" \
-			     -o	-z "${file/*x86-generic*/}" \
-			     -o	-z "${file/*x86-64*/}" ]
+			if [   	-z "${file/openwrt-*-sysupgrade.bin*/}" \
+			     -o	-z "${file/openwrt-*-combined.img.gz*/}" \
+			     -o	-z "${file/openwrt-*-sdcard.img.gz*/}" ]
 			then
 				sysupgrade=1
 			else
@@ -372,6 +381,8 @@ printf "$fwversion\n" >$target_dir/version
 #################################################################################################
 # start json
 #################################################################################################
+$ENABLE_GENERATE && {
+
 gen_download_json_start "$target_dir" "$fwversion" "$fwdate" "$fw_branch" "$fw_rev"
 
 
@@ -412,8 +423,6 @@ printf "finished.\n"
 #################################################################################################
 # copy firmware
 #################################################################################################
-
-
 
 # run through all openwrt version (targets may be created for different openwrt versions)
 for _buildroot in $(ls -1 $firmwareroot/workdir/)
@@ -506,10 +515,16 @@ cat << EOM > $target_dir/$OUTPUT_DOWNLOAD_JSON_JS_FILENAME
 var data = $(cat $target_dir/$OUTPUT_DOWNLOAD_JSON_FILENAME) ;
 EOM
 
+# ENABLE_GENERATE
+}
+
 #------ now compare fileinfo.json and generated file.------
 # check for missing firmware files (not generated)
 error=0
 if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current.fileinfo - $generated.fileinfo | if length > 0 then . else empty end'; then
+
+# only consider filenames
+#if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' ([$current.fileinfo[] | .filename]) - ([$generated.fileinfo[] | .filename]) | if length > 0 then . else empty end'; then
 	echo -e "${C_RED}ERROR: missing firmware files${C_NONE}"
 	error=1
 fi
@@ -517,6 +532,9 @@ fi
 [ $error -eq 1 ] && echo "----------------------------------------------------"
 
 if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $generated.fileinfo - $current.fileinfo | if length > 0 then . else empty end'; then
+
+# only consider filenames
+#if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' ([$generated.fileinfo[] | .filename]) - ([$current.fileinfo[] | .filename]) | if length > 0 then . else empty end'; then
 	echo -e "${C_BLUE}INFO: new devices found${C_NONE}"
 	error=1
 fi
