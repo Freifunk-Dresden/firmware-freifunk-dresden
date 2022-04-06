@@ -1188,6 +1188,14 @@
     },
     {
       "name": "",
+      "autoupdate": "1",
+      "model": "ubnt,unifi",
+      "model2": "Ubiquiti UniFi AP",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
       "comment": ""
     },

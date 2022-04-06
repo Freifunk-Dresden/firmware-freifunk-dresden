@@ -16,6 +16,8 @@ LOCAL_FILE="/tmp/download.json"
 eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
 model="$(echo $model | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
+#echo "[$model]"
+#echo "[$model2]"
 
 rm -f $LOCAL_FILE
 
