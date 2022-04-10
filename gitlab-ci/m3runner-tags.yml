@@ -180,7 +180,11 @@ m3tags:upload:
   needs: ["m3tags:test"]
   when: manual
   script:
-    - [ -z "${FF_UPLOAD_DIR}" -o "${FF_UPLOAD_DIR}" = "nightly" ] && { echo "FF_UPLOAD_DIR not defined! Aborting." } && exit 1
+    -|
+      if [ -z "${FF_UPLOAD_DIR}" -o "${FF_UPLOAD_DIR}" = "nightly" ]; then
+        echo "FF_UPLOAD_DIR not defined! Aborting."
+        exit 1
+      fi
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
