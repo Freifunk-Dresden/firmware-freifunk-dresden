@@ -29,7 +29,7 @@ m3tags:init:
     - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
     - /bin/true
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:ar71xx.tiny.lowmem:
   only:
@@ -43,7 +43,7 @@ m3tags:ar71xx.tiny.lowmem:
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:ar71xx.generic.lowmem:
   only:
@@ -57,7 +57,7 @@ m3tags:ar71xx.generic.lowmem:
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:x86.64.offloader:
   only:
@@ -71,7 +71,7 @@ m3tags:x86.64.offloader:
     - ln -s ~/mycache/workdir
     - ./build.sh x86.64.offloader rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:ramips:
   only:
@@ -85,7 +85,7 @@ m3tags:ramips:
     - ln -s ~/mycache/workdir
     - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:ipq40xx:
   only:
@@ -99,7 +99,7 @@ m3tags:ipq40xx:
     - ln -s ~/mycache/workdir
     - ./build.sh ipq40xx.generic.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:lantiq:
   only:
@@ -113,7 +113,7 @@ m3tags:lantiq:
     - ln -s ~/mycache/workdir
     - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:ath79:
   only:
@@ -127,7 +127,7 @@ m3tags:ath79:
     - ln -s ~/mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:sunxi:
   only:
@@ -141,7 +141,7 @@ m3tags:sunxi:
     - ln -s ~/mycache/workdir
     - ./build.sh sunxi.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:mpc85xx:
   only:
@@ -155,7 +155,7 @@ m3tags:mpc85xx:
     - ln -s ~/mycache/workdir
     - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:test:
   only:
@@ -169,7 +169,7 @@ m3tags:test:
     - ln -s ~/mycache/workdir
     - ./build.sh list
   tags:
-  - m3runner
+    - m3runner
 
 m3tags:upload:
   only:
@@ -180,7 +180,7 @@ m3tags:upload:
   needs: ["m3tags:test"]
   when: manual
   script:
-    -|
+    - |
       if [ -z "${FF_UPLOAD_DIR}" -o "${FF_UPLOAD_DIR}" = "nightly" ]; then
         echo "FF_UPLOAD_DIR not defined! Aborting."
         exit 1
@@ -189,16 +189,12 @@ m3tags:upload:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./gen-upload.sh all
-    # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys.
-    # On download server there is a user "deploy-firmware" who owns the download directories.
-    - ([ -n "${FF_UPLOAD_DIR}" ] && rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/)
-    - rm -rf final_output
-# artifacts are not needed (waste of disk storage), because they are uploaded to download server
-#  artifacts:
-#    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
-#    expire_in: 2 days
-#    paths:
-#    - dl
-#    - final_output
+    - |
+      # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys.
+      # On download server there is a user "deploy-firmware" who owns the download directories.
+      if [ -n "${FF_UPLOAD_DIR}" ]; then
+        rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/
+      fi
+      rm -rf final_output
   tags:
-  - m3runner
+    - m3runner
