@@ -157,20 +157,6 @@ m3tags:mpc85xx:
   tags:
   - m3runner
 
-m3tags:21.ath79:
-  only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^T_FIRMWARE_/
-  stage: build
-  needs: ["m3tags:init"]
-  script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-    - ./build.sh 21.ath79.* rerun -j"$(( $(nproc) + 1))"
-  tags:
-  - m3runner
-
 m3tags:test:
   only:
     - /^R_FIRMWARE_/
@@ -191,15 +177,16 @@ m3tags:upload:
     - /^TESTING_FIRMWARE_/
     - /^T_FIRMWARE_/
   stage: deploy
-  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
+  needs: ["m3tags:test"]
   when: manual
   script:
+    - [ -z "${FF_UPLOAD_DIR}" -o "${FF_UPLOAD_DIR}" = "nightly" ] && { echo "FF_UPLOAD_DIR not defined! Aborting." } && exit 1
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./gen-upload.sh all
     # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys.
     # On download server there is a user "deploy-firmware" who owns the download directories.
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ([ -n "${FF_UPLOAD_DIR}" ] && rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/)
     - rm -rf final_output
 # artifacts are not needed (waste of disk storage), because they are uploaded to download server
