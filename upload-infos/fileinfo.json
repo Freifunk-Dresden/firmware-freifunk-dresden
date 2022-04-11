@@ -1686,6 +1686,29 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-initramfs-kernel.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-kernel1.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-rootfs0.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-sysupgrade.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
       "filename": "openwrt-ramips-mt7621-youhua_wr1200js-initramfs-kernel.bin",
       "comment": ""
     },
