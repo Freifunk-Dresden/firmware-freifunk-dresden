@@ -11,7 +11,18 @@ m3tags:init:
     - /^TESTING_FIRMWARE_/
     - /^T_FIRMWARE_/
   stage: init       # special state, run before all other stages
+  when: manual
   script:
+    - |
+      if [ -z "${FF_BUILD_TAG}" ]; then
+        echo "FF_BUILD_TAG not defined! Aborting."
+        exit 1
+      fi
+      if [ -z "${FF_UPLOAD_DIR}" -o "${FF_UPLOAD_DIR}" = "nightly" ]; then
+        echo "FF_UPLOAD_DIR not defined! Aborting."
+        exit 1
+      fi
+
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
   # ensure that we have no old data. This is important when
@@ -180,11 +191,6 @@ m3tags:upload:
   needs: ["m3tags:test"]
   when: manual
   script:
-    - |
-      if [ -z "${FF_UPLOAD_DIR}" -o "${FF_UPLOAD_DIR}" = "nightly" ]; then
-        echo "FF_UPLOAD_DIR not defined! Aborting."
-        exit 1
-      fi
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
