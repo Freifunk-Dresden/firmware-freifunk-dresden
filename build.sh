@@ -337,7 +337,7 @@ listTargets()
 	test "$_selector_patches" = "null" && _selector_patches="$_def_selector_patches"
 
 	# get status
-	buildroot="$WORK_DIR/${_openwrt_rev:0:7}"
+	buildroot="$WORK_DIR/${_openwrt_rev:0:9}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
 	compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/compile-status"
 	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
