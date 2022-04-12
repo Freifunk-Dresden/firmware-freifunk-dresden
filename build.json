@@ -10,10 +10,10 @@
 # this block must come always first, because the first block is used
 # as default
 	{
-		"name":"default",			# target name
-		"config":"",				  # config file name
+		"name":"default", # target name
+		"config":"",      # config file name
 
-		"openwrt_rev":"b4d7885af70a42df7577157b96f941500bd17bfb", # (HEAD, tag: v21.02.1)
+		"openwrt_rev":"30e2782e0647a837044ada77ce86b29c5af8a9f2",	# v21.02.2
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
 							# Note that selecting some packages as module could have
@@ -33,8 +33,8 @@
 
 		"feeds" : [
 			{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
-			{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"26e9cbc4c"}, # 21.02
-			{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"c524118"}    # 21.02
+			{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"031fbb16a"}, # 21.02
+			{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"a0d61bd"}    # 21.02
 		  ],
 
 		# install addional packages from feeds (see feeds.conf)
