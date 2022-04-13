@@ -32,6 +32,7 @@ m3tags:init:
 
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
 
   # dont delete dl, it is not so important to have different old version for
@@ -51,6 +52,10 @@ m3tags:ar71xx.tiny.lowmem:
   stage: build
   needs: ["m3tags:init"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
@@ -65,6 +70,10 @@ m3tags:ar71xx.generic.lowmem:
   stage: build
   needs: ["m3tags:init"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
@@ -79,6 +88,10 @@ m3tags:x86.64.offloader:
   stage: build
   needs: ["m3tags:init"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh x86.64.offloader rerun -j"$(( $(nproc) + 1))"
@@ -93,6 +106,10 @@ m3tags:ramips:
   stage: build
   needs: ["m3tags:init"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
@@ -107,6 +124,10 @@ m3tags:ipq40xx:
   stage: build
   needs: ["m3tags:init"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ipq40xx.generic.* rerun -j"$(( $(nproc) + 1))"
@@ -121,6 +142,10 @@ m3tags:lantiq:
   stage: build
   needs: ["m3tags:init"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
@@ -135,6 +160,10 @@ m3tags:ath79:
   stage: build
   needs: ["m3tags:init"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
@@ -149,6 +178,10 @@ m3tags:sunxi:
   stage: build
   needs: ["m3tags:init"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh sunxi.* rerun -j"$(( $(nproc) + 1))"
@@ -163,6 +196,10 @@ m3tags:mpc85xx:
   stage: build
   needs: ["m3tags:init"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
@@ -177,6 +214,10 @@ m3tags:test:
   stage: test
   needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh list
@@ -193,6 +234,9 @@ m3tags:upload:
   when: manual
   allow_failure: false
   script:
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
