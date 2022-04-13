@@ -13,6 +13,10 @@ m3tags:init:
   stage: init       # special state, run before all other stages
   when: manual
   allow_failure: false
+  artifacts:
+    paths:
+      - gitlab.environment
+    expire_in: 1 day
   script:
     - |
       if [ -z "${FF_BUILD_TAG}" ]; then
@@ -40,7 +44,11 @@ m3tags:init:
   # every night. so just only delete workdirs to always have a clean build
     - test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl/*
     - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
-    - /bin/true
+
+  # create artifact to transfer variable gitlab.environment to jobs else
+  # each job gets its value from default gitlab values
+    - echo "export FF_BUILD_TAG=\"${FF_BUILD_TAG}\" >> gitlab.environment
+    - echo "export FF_UPLOAD_DIR=\"${FF_UPLOAD_DIR}\" >> gitlab.environment
   tags:
     - m3runner
 
@@ -51,11 +59,10 @@ m3tags:ar71xx.tiny.lowmem:
     - /^T_/
   stage: build
   needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
@@ -69,11 +76,10 @@ m3tags:ar71xx.generic.lowmem:
     - /^T_/
   stage: build
   needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
@@ -87,11 +93,10 @@ m3tags:x86.64.offloader:
     - /^T_/
   stage: build
   needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh x86.64.offloader rerun -j"$(( $(nproc) + 1))"
@@ -105,11 +110,10 @@ m3tags:ramips:
     - /^T_/
   stage: build
   needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
@@ -123,11 +127,10 @@ m3tags:ipq40xx:
     - /^T_/
   stage: build
   needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ipq40xx.generic.* rerun -j"$(( $(nproc) + 1))"
@@ -141,11 +144,10 @@ m3tags:lantiq:
     - /^T_/
   stage: build
   needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
@@ -159,11 +161,10 @@ m3tags:ath79:
     - /^T_/
   stage: build
   needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
@@ -177,11 +178,10 @@ m3tags:sunxi:
     - /^T_/
   stage: build
   needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh sunxi.* rerun -j"$(( $(nproc) + 1))"
@@ -195,11 +195,10 @@ m3tags:mpc85xx:
     - /^T_/
   stage: build
   needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
@@ -213,11 +212,9 @@ m3tags:test:
     - /^T_/
   stage: test
   needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
-    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
+    - eval $(cat gitlab.environment)
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
     - ./build.sh list
@@ -233,10 +230,9 @@ m3tags:upload:
   needs: ["m3tags:test"]
   when: manual
   allow_failure: false
+  dependencies: ["m3tags:init"]
   script:
-    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
-    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - eval $(cat gitlab.environment)
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
