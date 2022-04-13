@@ -211,7 +211,7 @@ m3tags:test:
     - /^TESTING/
     - /^T_/
   stage: test
-  needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
+  needs: ["m3tags:init","m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
   dependencies: ["m3tags:init"]
   script:
     - eval $(cat gitlab.environment)
@@ -227,7 +227,7 @@ m3tags:upload:
     - /^TESTING/
     - /^T_/
   stage: deploy
-  needs: ["m3tags:test"]
+  needs: ["m3tags:init","m3tags:test"]
   when: manual
   allow_failure: false
   dependencies: ["m3tags:init"]
