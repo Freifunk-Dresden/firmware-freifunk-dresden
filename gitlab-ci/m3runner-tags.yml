@@ -16,7 +16,6 @@ m3tags:init:
   artifacts:
     paths:
       - gitlab.environment
-    expire_in: 1 day
   script:
     - |
       if [ -z "${FF_BUILD_TAG}" ]; then
