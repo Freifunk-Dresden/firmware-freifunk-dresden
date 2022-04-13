@@ -12,6 +12,7 @@ m3tags:init:
     - /^T_/
   stage: init       # special state, run before all other stages
   when: manual
+  allow_failure: false
   script:
     - |
       if [ -z "${FF_BUILD_TAG}" ]; then
@@ -190,6 +191,7 @@ m3tags:upload:
   stage: deploy
   needs: ["m3tags:test"]
   when: manual
+  allow_failure: false
   script:
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
