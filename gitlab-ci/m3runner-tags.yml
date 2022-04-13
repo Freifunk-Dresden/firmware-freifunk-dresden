@@ -47,8 +47,8 @@ m3tags:init:
 
   # create artifact to transfer variable gitlab.environment to jobs else
   # each job gets its value from default gitlab values
-    - echo "export FF_BUILD_TAG=\"${FF_BUILD_TAG}\" >> gitlab.environment
-    - echo "export FF_UPLOAD_DIR=\"${FF_UPLOAD_DIR}\" >> gitlab.environment
+    - echo "export FF_BUILD_TAG=\"${FF_BUILD_TAG}\"" >> gitlab.environment
+    - echo "export FF_UPLOAD_DIR=\"${FF_UPLOAD_DIR}\"" >> gitlab.environment
   tags:
     - m3runner
 
