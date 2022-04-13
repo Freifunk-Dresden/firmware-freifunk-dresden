@@ -7,10 +7,9 @@
 
 m3tags:init:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: init       # special state, run before all other stages
   when: manual
   script:
@@ -45,10 +44,9 @@ m3tags:init:
 
 m3tags:ar71xx.tiny.lowmem:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: build
   needs: ["m3tags:init"]
   script:
@@ -60,10 +58,9 @@ m3tags:ar71xx.tiny.lowmem:
 
 m3tags:ar71xx.generic.lowmem:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: build
   needs: ["m3tags:init"]
   script:
@@ -75,10 +72,9 @@ m3tags:ar71xx.generic.lowmem:
 
 m3tags:x86.64.offloader:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: build
   needs: ["m3tags:init"]
   script:
@@ -90,10 +86,9 @@ m3tags:x86.64.offloader:
 
 m3tags:ramips:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: build
   needs: ["m3tags:init"]
   script:
@@ -105,10 +100,9 @@ m3tags:ramips:
 
 m3tags:ipq40xx:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: build
   needs: ["m3tags:init"]
   script:
@@ -120,10 +114,9 @@ m3tags:ipq40xx:
 
 m3tags:lantiq:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: build
   needs: ["m3tags:init"]
   script:
@@ -135,10 +128,9 @@ m3tags:lantiq:
 
 m3tags:ath79:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: build
   needs: ["m3tags:init"]
   script:
@@ -150,10 +142,9 @@ m3tags:ath79:
 
 m3tags:sunxi:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: build
   needs: ["m3tags:init"]
   script:
@@ -165,10 +156,9 @@ m3tags:sunxi:
 
 m3tags:mpc85xx:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: build
   needs: ["m3tags:init"]
   script:
@@ -180,10 +170,9 @@ m3tags:mpc85xx:
 
 m3tags:test:
   only:
-    - /^R_FIRMWARE_/
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
   stage: test
   needs: ["m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
   script:
@@ -196,9 +185,8 @@ m3tags:test:
 m3tags:upload:
   only:
     # DO NOT UPLOAD for branch: R_FIRMWARE....
-    - /^TESTING_FIRMWARE_/
-    - /^TESTING_GITLAB/
-    - /^T_FIRMWARE_/
+    - /^TESTING/
+    - /^T_/
   stage: deploy
   needs: ["m3tags:test"]
   when: manual

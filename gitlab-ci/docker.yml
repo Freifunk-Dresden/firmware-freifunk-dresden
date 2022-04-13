@@ -21,10 +21,10 @@ docker:init:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: init
   script:
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
@@ -44,10 +44,10 @@ docker:ar71xx.tiny.lowmem:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -64,10 +64,10 @@ docker:ar71xx.generic.lowmem:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -83,10 +83,10 @@ docker:x86.64.offloader:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -103,10 +103,10 @@ docker:ramips:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -123,10 +123,10 @@ docker:lantiq:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -142,10 +142,10 @@ docker:ath79:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -161,10 +161,10 @@ docker:ipq40xx:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -180,10 +180,10 @@ docker:sunxi:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -199,10 +199,10 @@ docker:mpc85xx:
   except:
     - schedules
     - master
-    - /^yaro-.*$/
-    - /^T_FIRMWARE_.*$/
-    - /^TESTING_FIRMWARE_.*$/
-    - /^R_FIRMWARE_.*$/
+    - /^yaro-/
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
   stage: build
   needs: ["docker:init"]
   script:
