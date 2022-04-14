@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="17"
+SCRIPT_VERSION="18"
 
 
 # gitlab variables
@@ -589,7 +589,7 @@ fi
 if [ "$1" = "watch" ]; then
 	while sleep 1
 	do
-		view=$(listTargets) 
+		view=$(listTargets)
 		clear
 		date
 		echo -e "$view"
@@ -1304,8 +1304,8 @@ EOM
 
 	# copy files to our own output directory
 	mkdir -p ${outdir}/packages ${outdir}/images
-  echo -e "${C_CYAN}copy packages${C_NONE}"
-	cp -a ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/
+  echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
+	cp -a ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
   echo -e "${C_CYAN}copy images${C_NONE}"
 	cp -a ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
 
