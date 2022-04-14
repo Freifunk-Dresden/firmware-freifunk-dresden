@@ -27,12 +27,17 @@ m3tags:init:
         exit 1
       fi
 
+  # create link to local storage to avoid downloading every time and to have
+  # a place to "backup" packages. Also keep prevous cross-compilers and avoid
+  # rebuilding every time.
+  # symlink creation is neede for every job, because gilab will checkout the sources
+  # in new empty directory.
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
+
   # ensure that we have no old data. This is important when
   # generating download.json. Else all old openwrt images would be
   # included and mixed
-
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
@@ -227,8 +232,6 @@ m3tags:upload:
     - /^T_/
   stage: deploy
   needs: ["m3tags:init","m3tags:test"]
-  when: manual
-  allow_failure: false
   dependencies: ["m3tags:init"]
   script:
     - eval $(cat gitlab.environment)
