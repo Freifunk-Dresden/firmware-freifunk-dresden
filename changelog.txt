@@ -1,11 +1,16 @@
-2021-04-00 8.0.2
+2022-04-15 8.0.3
+--------------------------------------------------
+wifi                      - change ath10 firmware for more stable connection for Fritzbox 4040
+openwrt                   - update to 21.02.2
+
+2022-04-00 8.0.2
 --------------------------------------------------
 usb-tethering             - add usb tethering for android/iOS (for selected devices)
 gui-ajax                  - add info when using ajax request
                           - rework firmware download to avoid blocking when loading firmware infos
                           - serveral minor improvments
 
-2021-04-00 8.0.1
+2022-04-00 8.0.1
 --------------------------------------------------
 openwrt 21                - upgrade to openwrt 21 (only from devices with openwrt 19)
 network                   - complete rework of internal network configuration
