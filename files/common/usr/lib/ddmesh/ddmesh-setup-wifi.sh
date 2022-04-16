@@ -65,14 +65,21 @@ setup_wireless()
  # - wifi -
 
  case "$(uci -q get ddmesh.network.mesh_mode)" in
-	mesh)		wifi_mode_mesh=1
-			wifi_mode_adhoc=1
+	adhoc)
+		wifi_mode_mesh=0
+		wifi_mode_adhoc=1
 	;;
-	adhoc+mesh)	wifi_mode_mesh=1
-			wifi_mode_adhoc=1
+	mesh)
+		wifi_mode_mesh=1
+		wifi_mode_adhoc=0
 	;;
-	*)		wifi_mode_mesh=0
-			wifi_mode_adhoc=1
+	adhoc+mesh)
+		wifi_mode_mesh=1
+		wifi_mode_adhoc=1
+	;;
+	*)
+		wifi_mode_mesh=1
+		wifi_mode_adhoc=1
 	;;
  esac
 

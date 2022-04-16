@@ -146,7 +146,7 @@ EOM
 
 				if [ "$form_firmware_factory" = "1" ]; then
 					rm /tmp/freifunk-running # disable cron and hotplug
-					sysupgrade -n $FIRMWARE_FILE 2>&1 >/dev/null &
+					(sleep 10 ; sysupgrade -n $FIRMWARE_FILE 2>&1 >/dev/null) &
 				else
 					#update configs after firmware update
 					uci set ddmesh.boot.boot_step=2
@@ -154,7 +154,7 @@ EOM
 					uci_commit.sh
 					sync
 					rm /tmp/freifunk-running # disable cron and hotplug
-					sysupgrade $FIRMWARE_FILE 2>&1 >/dev/null &
+					(sleep 10 ; sysupgrade $FIRMWARE_FILE 2>&1 >/dev/null) &
 				fi
 			fi
 			;;

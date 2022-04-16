@@ -643,7 +643,12 @@ upgrade_8_0_2()
 
 upgrade_8_0_3()
 {
-  true
+  eval $(cat /etc/board.json | jsonfilter -e model='@.model.id' -e model2='@.model.name')
+	case "$model"	in
+		"avm,fritzbox-4040")
+			uci set ddmesh.network.mesh_mode='mesh'
+			;;
+	esac
 }
 
 ##################################

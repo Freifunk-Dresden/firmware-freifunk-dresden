@@ -123,7 +123,7 @@ config network 'network'
 	option	wifi2_dhcplease '5m'
 	option	wifi2_isolate '1'
 	option  wifi2_roaming_enabled '0'
-	option	mesh_mode 'adhoc+mesh' #adhoc,mesh,adhoc+mesh
+	option	mesh_mode 'mesh' #adhoc,mesh,adhoc+mesh
 	option	lan_local_internet '0'
 	option	internal_dns1 '10.200.0.4'
 	option	internal_dns2 '10.200.0.16'
