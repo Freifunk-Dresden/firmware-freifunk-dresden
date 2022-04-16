@@ -16,12 +16,9 @@ ROUTER="${ROUTER} 10.200.19.207"
 for i in ${ROUTER}
 do
 	echo $i
-#	scp files/common/etc/config/firewall root@$i:/etc/config
-#	ssh -x root@$i "(sleep 20;reboot)&"
-#	ssh -x root@$i "bmxd -c --status --links"
-#	ssh -x root@$i "uci set ddmesh.boot.boot_step=2; uci commit;"
-#	ssh -x root@$i "md5sum /rom/etc/config/firewall /etc/config/firewall"
-#	ssh -x root@$i "/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write"
-#	ssh -x root@$i "(sleep 20;reboot)&"
-	ssh root@$i "uci set ddmesh.system.fwupdate_always_allow_testing=1 && uci set credentials.url.firmware_download_testing=https://selfsigned.download.freifunk-dresden.de/firmware/.8.0.2 && uci commit"	
+#	COMMAND="(sleep 20;reboot)&"
+#	COMMAND="bmxd -c --status --links"
+	COMMAND="uci set ddmesh.system.fwupdate_always_allow_testing=1 && uci set credentials.url.firmware_download_testing=https://selfsigned.download.freifunk-dresden.de/firmware/.nightly && uci commit"	
+
+	ssh -x root@$i "${COMMAND}"
 done
