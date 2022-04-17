@@ -49,23 +49,25 @@ get_switch_info()
 	$json && echo "{"
 
 	if [ "$(isDsa)" = "0" ]; then
-		for dev in $(swconfig list | awk '{print $2}')
-		do
-			$json && echo "\"$dev\" : ["
-			for entry in $(swconfig dev $dev show | awk '/link:/{$0=gensub(/([^ ]*):/,"\\1=","g"); print $2";"$3";"$4}')
+		if [ -n "$(which swconfig)" ]; then
+			for dev in $(swconfig list | awk '{print $2}')
 			do
-				unset port; unset link; unset speed
-				eval $entry
-				$json && {
-						$comma && echo -n ","
-						echo "{ \"port\":\"$port\", \"carrier\":\"$link\", \"speed\":\"$speed\"}"
-				}
-				comma=true
-				$csv && echo "$port,$link,$speed"
+				$json && echo "\"$dev\" : ["
+				for entry in $(swconfig dev $dev show | awk '/link:/{$0=gensub(/([^ ]*):/,"\\1=","g"); print $2";"$3";"$4}')
+				do
+					unset port; unset link; unset speed
+					eval $entry
+					$json && {
+							$comma && echo -n ","
+							echo "{ \"port\":\"$port\", \"carrier\":\"$link\", \"speed\":\"$speed\"}"
+					}
+					comma=true
+					$csv && echo "$port,$link,$speed"
+				done
+				$json && echo "]"
+				break; # only one switch
 			done
-			$json && echo "]"
-			break; # only one switch
-		done
+		fi
 	else
 		$json && echo "\"switch\" : ["
 		for dev in $(getDsaInterfaces)

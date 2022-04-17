@@ -4212,7 +4212,8 @@ CONFIG_PACKAGE_wpad-mini=y
 # CONFIG_PACKAGE_bpftool-full is not set
 # CONFIG_PACKAGE_bpftool-minimal is not set
 # CONFIG_PACKAGE_chat is not set
-# CONFIG_PACKAGE_ethtool is not set
+CONFIG_PACKAGE_ethtool=y
+CONFIG_ETHTOOL_PRETTY_DUMP=y
 # CONFIG_PACKAGE_gre is not set
 CONFIG_PACKAGE_iperf3=y
 # CONFIG_PACKAGE_iperf3-ssl is not set

@@ -269,16 +269,17 @@ $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 		},
 		"statistic" : {
 EOM
-		for wifi in 2g 5g
-		do
-			ifname=$(uci -q get wireless.wifi2_${wifi}.ifname)
-			if [ -n "$ifname" ]; then
-				echo "\"client${wifi}\" :" >> $OUTPUT
-				parseWifiDump $ifname /var/statistic/wifi${wifi}.stat >> $OUTPUT
-				echo "," >> $OUTPUT
-			fi
-		done
-
+		if [ "$wifi_status_radio2g_up" = "1" ]; then
+			for wifi in 2g 5g
+			do
+				ifname=$(uci -q get wireless.wifi2_${wifi}.ifname)
+				if [ -n "$ifname" ]; then
+					echo "\"client${wifi}\" :" >> $OUTPUT
+					parseWifiDump $ifname /var/statistic/wifi${wifi}.stat >> $OUTPUT
+					echo "," >> $OUTPUT
+				fi
+			done
+		fi
 cat<<EOM >> $OUTPUT
 		"interfaces" : {
 EOM
@@ -286,15 +287,18 @@ EOM
 		comma=0
 		for entry in $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh list)
 		do
-			ifname=${entry#*=}
-			ifname=${ifname/+/}
-			[ -n "$ifname" ] && ifname="$(basename /sys/class/net/${ifname}*)"
-			ifpath="/sys/class/net/${ifname}"
-
 			net=${entry%%=*}
 			net=${net#net_}
+
 			case "$net" in
-				mesh_lan|mesh_wan|mesh_vlan|tbb_wg|tbb_fastd|bat|ffgw|vpn|wifi2|wifi_adhoc|wifi_mesh2g|wifi_mesh5g)
+				mesh_lan|mesh_wan|mesh_vlan|tbbwg|tbb_fastd|bat|ffgw|vpn|wifi2|wifi_adhoc|wifi_mesh2g|wifi_mesh5g)
+
+					ifname=${entry#*=}
+					ifname=${ifname/+/}
+
+					[ -n "$ifname" ] && ifname="$(basename /sys/class/net/${ifname}*)"
+					ifpath="/sys/class/net/${ifname}"
+
 					if [ -n "${ifname}" -a -d ${ifpath} ]; then
 						[ $comma = 1 ] && echo -n "," >> $OUTPUT
 						comma=1
@@ -302,6 +306,7 @@ EOM
 						tx="$(cat ${ifpath}/statistics/tx_bytes)"
 						# fix fastd statistic
 						test ${net} = "tbb_fastd" -a "$rx" = "0" && tx="0"
+						test ${net} = "tbbwg" && net="tbb_wg"
 
 						echo "\"${net}_rx\":\"$rx\"" >> $OUTPUT
 						echo ",\"${net}_tx\":\"$tx\"" >> $OUTPUT
