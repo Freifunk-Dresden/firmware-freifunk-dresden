@@ -1,10 +1,13 @@
 2022-04-15 8.0.3
 --------------------------------------------------
 wifi                      - change ath10 firmware for more stable connection for Fritzbox 4040
-                          - ath10k, disable dnyack (could be the reason for bad connections speeds for IPQ4018 (fritzbox 4040)
+                          - ath10k, disable dnyack (could be the reason for bad connections 
+                            speeds for IPQ4018 (fritzbox 4040)
                             Targets with this chip are not stable with openwrt. 
-                          - disable adhoc per default (which is not supported by some wifi firmwares and is replaced with 802.11s)
+                          - disable adhoc per default (which is not supported by some wifi
+                            firmwares and is replaced with 802.11s)
 openwrt                   - update to 21.02.2
+network                   - add option to force ethernet port to 100mbit/s (only "big" routers)
 
 
 2022-04-00 8.0.2

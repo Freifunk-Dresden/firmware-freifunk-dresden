@@ -246,6 +246,19 @@ cat<<EOM
 <td>DNS-IP-Adresse wird zus&auml;tzlich an Wifi-Ger&auml;te per DHCP als alternativen Nameserver mitgeteilt, falls DNS im Freifunk gest&ouml;rt ist.</td>
 </TR>
 
+EOM
+if [ -n "$(which ethtool)" ]; then
+cat <<EOM
+<TR>
+<TH>- Force Ethernet 100Mbit</TH>
+<TD><INPUT NAME="form_ethernet_speed" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.force_ether_100mbit)" = "1" ];then echo ' checked="checked"';fi)>
+</td>
+<td><td>
+</TR>
+EOM
+fi
+cat <<EOM
+
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
 <TR><TH COLSPAN="3" class="heading">Cron</TH></TR>
 
@@ -387,7 +400,7 @@ else
 			uci set ddmesh.network.mesh_on_lan=${form_lan_meshing:-0}
 			uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
 #		fi
-
+		uci set ddmesh.network.force_ether_100mbit=${form_ethernet_speed:-0}
 		test -n "$form_bmxd_preferred_gateway" && prefgw="$(uhttpd -d $form_bmxd_preferred_gateway)"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.bmxd.only_community_gateways=${form_bmxd_only_community:-0}

@@ -127,6 +127,7 @@ config network 'network'
 	option	lan_local_internet '0'
 	option	internal_dns1 '10.200.0.4'
 	option	internal_dns2 '10.200.0.16'
+	option	force_ether_100mbit 0
 
 	option	mesh_mtu 1200
 	option	mesh_on_lan 0
@@ -446,6 +447,19 @@ if [ "$(uci -q get ddmesh.system.firmware_autoupdate)" = "1" ];then
 cat<<EOM >> /var/etc/crontabs/root
 $m ${maintenance} * * *  /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run nightly >/dev/null 2>/dev/null
 EOM
+fi
+
+# set eth ifaces to 100 mbit wehn selected
+if [ -n "$(which ethtool)" -a "$(uci -q get ddmesh.network.force_ether_100mbit)" = "1" ]; then
+for ifname in /sys/class/net/*
+do
+	ifname=$(basename $ifname)
+	# only consider "external" interfaces (assuming those are lan ports)
+	if [ -n "$(ethtool $ifname | grep -i 'Transceiver:.*external')" ]; then
+		logger -s -t "$LOGGER_TAG" "set speed for $ifname to 100Mbit/s"
+		ethtool -s $ifname speed 100 duplex full
+	fi
+done
 fi
 
 }
