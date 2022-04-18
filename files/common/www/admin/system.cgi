@@ -250,10 +250,10 @@ EOM
 if [ -n "$(which ethtool)" ]; then
 cat <<EOM
 <TR>
-<TH>- Force Ethernet 100Mbit</TH>
+<TH>- Ethernet Link-Speed 100Mbit</TH>
 <TD><INPUT NAME="form_ethernet_speed" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.force_ether_100mbit)" = "1" ];then echo ' checked="checked"';fi)>
 </td>
-<td><td>
+<td>LAN/WAN Ports werden auf 100Mbit/s beschr&auml;nkt.<td>
 </TR>
 EOM
 fi
