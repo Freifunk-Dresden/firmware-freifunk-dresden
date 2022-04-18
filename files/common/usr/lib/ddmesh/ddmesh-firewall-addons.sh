@@ -63,6 +63,12 @@ setup_custom_rules() {
 # temp firewall rules (fw uci can not add custom chains)
 	logger -s -t $TAG "setup_custom_rules"
 
+	# remove "ctstate RELATED,ESTABLISHED" rule from OUTPUT, at this accepts pakets (e.g. wireguard)
+        # where firewall is not ready but a package gets out because rules not yet fully setup.
+        # backbone/vpn can setup connections through freifunk network.
+	logger -s -t $TAG "delete OUTPUT rule '--ctstate RELATED,ESTABLISHED'"
+	iptables -D OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT -m comment --comment '!fw3'
+
 	#input rules for backbone packets ( to restrict tunnel pakets only via allowed interfaces )
 	#tbb traffic is controlled by zone rules tbb+
 	$IPT -N input_backbone_accept
