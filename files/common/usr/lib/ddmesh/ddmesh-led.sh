@@ -45,6 +45,8 @@ do
 	test -n "$tmp" && break
 done
 _led_status="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
+# default "done" = on
+_led_flag_status_done="on"
 
 #---- wwan
 _led_wwan=""
@@ -71,6 +73,17 @@ case "$platform" in
 		case  "$boardname" in
 			*)
 					_led_status="$(uci -q get system.led_dsl.sysfs)"
+					;;
+		esac
+		;;
+
+	ramips)
+		case  "$boardname" in
+			"xiaomi,mi-router-4a-gigabit")
+					_led_wifi2g="blue:status"
+					_led_wifi5g=""
+					_led_status="yellow:status"
+					_led_flag_status_done="off"
 					;;
 		esac
 		;;
@@ -154,7 +167,12 @@ case "$ARG_LED" in
 					;;
 				off)  led_off $_led_status
 					;;
-				done|on)	led_on $_led_status
+				done|on)
+					if [ "${_led_flag_status_done}" = "on" ]; then
+						led_on $_led_status
+					else
+						led_off $_led_status
+					fi
 					;;
 			esac
 		fi
