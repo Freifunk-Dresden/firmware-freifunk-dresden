@@ -1,4 +1,10 @@
-2022-04-15 8.0.3
+
+2022-04-x [8.0.4]
+--------------------------------------------------
+firewall                  - fix issue where seldomly backbone connection was created through
+                            freifunk network / freifunk gateway
+
+2022-04-15 [8.0.3]
 --------------------------------------------------
 wifi                      - change ath10 firmware for more stable connection for Fritzbox 4040
                           - ath10k, disable dnyack (could be the reason for bad connections 
@@ -8,16 +14,17 @@ wifi                      - change ath10 firmware for more stable connection for
                             firmwares and is replaced with 802.11s)
 openwrt                   - update to 21.02.2
 network                   - add option to force ethernet port to 100mbit/s (only "big" routers)
+LED                       - fix LED for xiaomi router
 
 
-2022-04-00 8.0.2
+2022-04-00 [8.0.2]
 --------------------------------------------------
 usb-tethering             - add usb tethering for android/iOS (for selected devices)
 gui-ajax                  - add info when using ajax request
                           - rework firmware download to avoid blocking when loading firmware infos
                           - serveral minor improvments
 
-2022-04-00 8.0.1
+2022-04-00 [8.0.1]
 --------------------------------------------------
 openwrt 21                - upgrade to openwrt 21 (only from devices with openwrt 19)
 network                   - complete rework of internal network configuration
@@ -56,7 +63,7 @@ build-system              - fix some configuration dependencies
                           - support to build images via docker
 
 
-2021-05-2 7.0.3 (release)
+2021-05-2 [7.0.3] (release)
 --------------------------------------------------
 bmxd                      - improvments to bmxd watchdog
 gui                       - minor text corrections
