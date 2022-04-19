@@ -15,6 +15,7 @@ fi
 eval $(/usr/bin/freifunk-upload -e 2>/dev/null)
 
 . /lib/functions.sh
+. /usr/lib/www/compare_versions.sh
 . /usr/lib/www/page-pre.sh ${0%/*}
 
 FIRMWARE_FILE="/tmp/firmware.bin"
@@ -161,6 +162,10 @@ EOM
 
 		# first step
 		upload|download)
+
+			VERSION_WARNING=""
+			MD5_WARNING=""
+			do_update=0
 
 			if [ "$form_action" = "download" ]; then
 
