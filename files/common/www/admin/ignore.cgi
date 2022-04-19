@@ -7,6 +7,9 @@
 export TITLE="Verwaltung &gt; Konfiguration: Knoten ignorieren"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
+adhoc=true
+[ "$(uci -q get ddmesh.network.mesh_mode)" = "mesh" ] && adhoc=false
+
 cat<<EOM
 <script type="text/javascript">
 
@@ -20,7 +23,7 @@ EOM
 [ -n "$mesh_vlan_ifname" ] && echo '|| document.form_node_new.form_opt_vlan.checked'
 [ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo '|| document.form_node_new.form_opt_lan.checked'
 [ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo '|| document.form_node_new.form_opt_tbb.checked'
-[ -n "$wifi_adhoc_ifname" ] && echo '|| document.form_node_new.form_opt_wifi_adhoc.checked'
+${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo '|| document.form_node_new.form_opt_wifi_adhoc.checked'
 [ -n "$wifi_mesh2g_ifname" ] && echo '|| document.form_node_new.form_opt_wifi_mesh2g.checked'
 [ -n "$wifi_mesh5g_ifname" ] && echo '|| document.form_node_new.form_opt_wifi_mesh5g.checked'
 cat<<EOM
@@ -54,7 +57,7 @@ EOM
 [ -n "$mesh_vlan_ifname" ] && echo "<th>VLAN</th>"
 [ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo "<th>LAN/WAN</th>"
 [ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo "<th>Backbone</th>"
-[ -n "$wifi_adhoc_ifname" ] && echo "<th>Wifi-Adhoc</th>"
+${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo "<th>Wifi-Adhoc</th>"
 [ -n "$wifi_mesh2g_ifname" ] && echo "<th>Wifi-802.11s 2.4GHz</th>"
 [ -n "$wifi_mesh5g_ifname" ] && echo "<th>Wifi-802.11s 5GHz</th>"
 echo "<th></th></tr>"
@@ -82,7 +85,7 @@ print_node() {
 		[ -n "$mesh_vlan_ifname" ] && echo "<td><input disabled name=\"form_opt_vlan\" type=\"checkbox\" value=\"1\" $(if [ "$opt_vlan" = "1" ];then echo 'checked="checked"';fi)></td>"
 		[ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo "<td><input disabled name=\"form_opt_lan\" type=\"checkbox\" value=\"1\" $(if [ "$opt_lan" = "1" ];then echo 'checked="checked"';fi)></td>"
 		[ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo "<td><input disabled name=\"form_opt_tbb\" type=\"checkbox\" value=\"1\" $(if [ "$opt_tbb" = "1" ];then echo 'checked="checked"';fi)></td>"
-		[ -n "$wifi_adhoc_ifname" ] && echo "<td><input disabled name=\"form_opt_wifi_adhoc\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_adhoc" = "1" ];then echo 'checked="checked"';fi)></td>"
+		${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo "<td><input disabled name=\"form_opt_wifi_adhoc\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_adhoc" = "1" ];then echo 'checked="checked"';fi)></td>"
 		[ -n "$wifi_mesh2g_ifname" ] && echo "<td><input disabled name=\"form_opt_wifi_mesh2g\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_mesh2g" = "1" ];then echo 'checked="checked"';fi)></td>"
 		[ -n "$wifi_mesh5g_ifname" ] && echo "<td><input disabled name=\"form_opt_wifi_mesh5g\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_mesh5g" = "1" ];then echo 'checked="checked"';fi)></td>"
 		echo "<td valign=bottom><FORM name=\"form_node_del_"$C"\" ACTION=\"ignore.cgi\" METHOD=\"POST\">"
@@ -115,7 +118,7 @@ EOM
 	[ -n "$mesh_vlan_ifname" ] && echo "<th>VLAN</th>"
 	[ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo "<th>LAN/WAN</th>"
 	[ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo "<th>Backbone</th>"
-	[ -n "$wifi_adhoc_ifname" ] && echo "<th>Wifi-Adhoc</th>"
+	${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo "<th>Wifi-Adhoc</th>"
 	[ -n "$wifi_mesh2g_ifname" ] && echo "<th>Wifi-802.11s 2.4GHz</th>"
 	[ -n "$wifi_mesh5g_ifname" ] && echo "<th>Wifi-802.11s 5GHz</th>"
 	echo "<th></th></tr>"
@@ -125,7 +128,7 @@ EOM
 	[ -n "$mesh_vlan_ifname" ] && echo '<td><input name="form_opt_vlan" type="checkbox" value="1" ></td>'
 	[ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo '<td><input name="form_opt_lan" type="checkbox" value="1" ></td>'
 	[ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo '<td><input name="form_opt_tbb" type="checkbox" value="1" ></td>'
-	[ -n "$wifi_adhoc_ifname" ] && echo '<td><input name="form_opt_wifi_adhoc" type="checkbox" value="1" ></td>'
+	${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo '<td><input name="form_opt_wifi_adhoc" type="checkbox" value="1" ></td>'
 	[ -n "$wifi_mesh2g_ifname" ] && echo '<td><input name="form_opt_wifi_mesh2g" type="checkbox" value="1" ></td>'
 	[ -n "$wifi_mesh5g_ifname" ] && echo '<td><input name="form_opt_wifi_mesh5g" type="checkbox" value="1" ></td>'
 cat<<EOM

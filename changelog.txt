@@ -3,13 +3,14 @@
 --------------------------------------------------
 firewall                  - fix issue where seldomly backbone connection was created through
                             freifunk network / freifunk gateway
+wifi                      - use 802.11s meshing only (adhoc can not supported anymore)
 
 2022-04-15 [8.0.3]
 --------------------------------------------------
 wifi                      - change ath10 firmware for more stable connection for Fritzbox 4040
-                          - ath10k, disable dnyack (could be the reason for bad connections 
+                          - ath10k, disable dnyack (could be the reason for bad connections
                             speeds for IPQ4018 (fritzbox 4040)
-                            Targets with this chip are not stable with openwrt. 
+                            Targets with this chip are not stable with openwrt.
                           - disable adhoc per default (which is not supported by some wifi
                             firmwares and is replaced with 802.11s)
 openwrt                   - update to 21.02.2

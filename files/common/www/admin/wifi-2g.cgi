@@ -106,6 +106,9 @@ $(iwinfo $wifi_status_radio2g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
 
+EOM
+if [ "$(uci -q get ddmesh.network.mesh_mode)" != "mesh" ]; then
+cat<<EOM
 <tr><th>Ad-hoc-SSID:</th>
 <td><input name="form_wifi_adhoc_ssid" size="32" type="text" value="$(uci get wireless.wifi_adhoc.ssid)" disabled></td>
 </tr>
@@ -113,6 +116,9 @@ $(iwinfo $wifi_status_radio2g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 <tr><th>BSSID:</th>
 <td><input name="form_wifi_bssid" size="32" type="text" value="$(uci get credentials.wifi_2g.bssid)" disabled></td>
 </tr>
+EOM
+fi
+cat<<EOM
 
 <tr><th></th><td></td></tr>
 <tr><th>Access-Point-SSID:</th>
