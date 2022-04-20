@@ -1,4 +1,9 @@
 
+2022-04-x [8.0.5]
+--------------------------------------------------
+wifi                      - fix 2.4ghz band selection for Aerohive router
+
+
 2022-04-x [8.0.4]
 --------------------------------------------------
 firewall                  - fix issue where seldomly backbone connection was created through

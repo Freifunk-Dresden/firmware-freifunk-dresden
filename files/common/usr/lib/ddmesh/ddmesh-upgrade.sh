@@ -651,6 +651,11 @@ upgrade_8_0_4()
 	uci set ddmesh.network.mesh_mode='mesh'
 }
 
+upgrade_8_0_5()
+{
+	true
+}
+
 ##################################
 
 run_upgrade
