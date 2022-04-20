@@ -26,6 +26,7 @@ setup_wireless()
  # --- devices ---
  # 2.4Ghz
  uci -q delete wireless.radio2g.disabled
+ uci set wireless.radio2g.band="2g"
  uci set wireless.radio2g.hwmode="11n"
  uci set wireless.radio2g.country="$(uci -q get ddmesh.network.wifi_country)"
  uci set wireless.radio2g.channel="$(uci get ddmesh.network.wifi_channel)"
@@ -47,6 +48,7 @@ setup_wireless()
  # 5 GHz
  if [ -n "$wifi_status_radio5g_up" ]; then
  	uci -q delete wireless.radio5g.disabled
+	uci set wireless.radio5g.band="5g"
  	uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
 	if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
 		uci set wireless.radio5g.channel="$(uci -q get ddmesh.network.wifi_channel_5g)"

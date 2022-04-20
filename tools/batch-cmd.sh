@@ -18,7 +18,10 @@ do
 	echo $i
 #	COMMAND="(sleep 20;reboot)&"
 #	COMMAND="bmxd -c --status --links"
-	COMMAND="uci set ddmesh.system.fwupdate_always_allow_testing=1 && uci set credentials.url.firmware_download_testing=https://selfsigned.download.freifunk-dresden.de/firmware/.nightly && uci commit"	
+
+#	COMMAND="uci set ddmesh.system.fwupdate_always_allow_testing=1 && uci set credentials.url.firmware_download_testing=https://selfsigned.download.freifunk-dresden.de/firmware/.nightly && uci commit"	
+
+	COMMAND="uci set ddmesh.system.fwupdate_always_allow_testing=1 && uci set credentials.url.firmware_download_testing=https://selfsigned.download.freifunk-dresden.de/firmware/testing && uci commit"	
 
 	ssh -x root@$i "${COMMAND}"
 done
