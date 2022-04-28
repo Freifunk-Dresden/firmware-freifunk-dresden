@@ -189,7 +189,7 @@ CONFIG_TARGET_ALL_PROFILES=y
 CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3020-v1=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3040-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3040-v2 is not set
-# CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3220-v1 is not set
+CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3220-v1=y
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3220-v2 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3420-v1 is not set
 # CONFIG_TARGET_DEVICE_ar71xx_tiny_DEVICE_tl-mr3420-v2 is not set
