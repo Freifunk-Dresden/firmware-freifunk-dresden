@@ -1,0 +1,26 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr src.org/protocols/ec25519_fhmqvc/util.c src/protocols/ec25519_fhmqvc/util.c
+--- fastd/src.org/protocols/ec25519_fhmqvc/util.c	2015-12-14 22:38:41.000000000 +0100
++++ fastd/src/protocols/ec25519_fhmqvc/util.c	2015-12-22 15:35:41.511078349 +0100
+@@ -47,7 +47,7 @@
+ 	ecc_int256_t public_key;
+
+ 	if (!conf.machine_readable)
+-		pr_info("Reading 32 bytes from /dev/random...");
++		pr_info("Reading 32 bytes from /dev/urandom...");
+
+ 	fastd_random_bytes(secret_key.p, SECRETKEYBYTES, true);
+ 	ecc_25519_gf_sanitize_secret(&secret_key, &secret_key);
+diff -Naur --suppress-blank-empty --strip-trailing-cr src.org/random.c src/random.c
+--- fastd/src.org/random.c	2015-12-14 22:38:41.000000000 +0100
++++ fastd/src/random.c	2015-12-14 22:38:41.504133446 +0100
+@@ -42,6 +42,10 @@
+ 	int fd;
+ 	size_t read_bytes = 0;
+
++//stephan: always use /dev/urandom, because it is same secure and random 
++//         as /dev/random, but random blocks key generation
++secure=false;
++
+ 	if (secure)
+ 		fd = open("/dev/random", O_RDONLY);
+ 	else
