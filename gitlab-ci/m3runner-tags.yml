@@ -209,13 +209,30 @@ m3tags:mpc85xx:
   tags:
     - m3runner
 
+m3tags:mediatek:
+  only:
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
+  stage: build
+  needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
+  script:
+    - eval $(cat gitlab.environment)
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh mediatek.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
 m3tags:test:
   only:
     - /^R_/
     - /^TESTING/
     - /^T_/
   stage: test
-  needs: ["m3tags:init","m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx"]
+  needs: ["m3tags:init","m3tags:ar71xx.tiny.lowmem","m3tags:ar71xx.generic.lowmem","m3tags:x86.64.offloader","m3tags:ramips","m3tags:lantiq","m3tags:ath79","m3tags:ipq40xx","m3tags:sunxi","m3tags:mpc85xx","m3tags:mediatek"]
   dependencies: ["m3tags:init"]
   script:
     - eval $(cat gitlab.environment)
