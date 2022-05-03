@@ -108,6 +108,7 @@ fi
 declare -A list_color
 list_color['18.06']="${BG_CYAN}"
 list_color['21.02']="${BG_PURBLE}"
+list_color['22.03']="${BG_YELLOW}"
 #printf "${list_color['18.06']}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 #printf "${list_color[$v]}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 
