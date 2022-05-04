@@ -431,9 +431,14 @@ do
 
 	buildroot=$firmwareroot/workdir/$_buildroot
 
-	# add binaries to host tools so mkhash will be found when
+	# add binaries to host tools so 'mkhash' will be found when
 	# calling ipkg-make-index.sh
+	# needed until 21.02
 	export PATH=$SAVED_SYSTEM_PATH:$buildroot/staging_dir/host/bin/
+	
+	# set variable MKHASH, unless script ipkg-make-index.sh will fail
+	# needed since openwrt 22.03
+	export MKHASH=$buildroot/staging_dir/host/bin/mkhash
 
 	_platforms=$buildroot/output/targets
 
