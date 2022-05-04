@@ -22,19 +22,6 @@
     },
     {
       "name": "",
-      "filename": "openwrt-ar71xx-tiny-tl-mr3220-v1-squashfs-factory.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
-      "filename": "openwrt-ar71xx-tiny-tl-mr3220-v1-squashfs-sysupgrade.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
       "autoupdate": "1",
       "model": "tl-mr3420",
       "model2": "TP-Link TL-WR842N/ND v1",
@@ -120,6 +107,19 @@
       "model": "tl-mr3020",
       "model2": "TP-Link TL-MR3020 v1",
       "filename": "openwrt-ar71xx-tiny-tl-mr3020-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-mr3220-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "tl-mr3420",
+      "model2": "TP-Link TL-WR842N/ND v1",
+      "filename": "openwrt-ar71xx-tiny-tl-mr3220-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1559,6 +1559,19 @@
     },
     {
       "name": "",
+      "filename": "openwrt-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "xiaomi,redmi-router-ax6s",
+      "model2": "Xiaomi Redmi Router AX6S",
+      "filename": "openwrt-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
       "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1715,8 +1728,8 @@
     {
       "name": "",
       "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "model": "xiaomi,redmi-router-ac2100",
+      "model2": "Xiaomi Redmi Router AC2100",
       "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-sysupgrade.bin",
       "comment": "new file"
     },

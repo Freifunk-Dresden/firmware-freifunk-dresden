@@ -171,8 +171,30 @@
 	{
 		"name":"mpc85xx.p1020",
 		"config":"config.mpc85xx.p1020"
-	}
+	},
+	{
+		"name":"mediatek.mt7622.generic",
+		"config":"config.mediatek.mt7622.generic",
+		"openwrt_rev":"6945ddde9b196081c7f0ce54aad0e12ebf85adbe", #22.03.0-rc1
 
+		"selector-config":"22.03",              # used to select config
+                "selector-feeds":"22.03",               # used to select feeds
+                "selector-patches":"22.03",             # used to select patches
+                "selector-files":"22.03",
+
+                "feeds" : [
+                        {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
+                        {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git",      "rev":"3d33fa3"},   # 22.03
+                        {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",       "rev":"48f6120"}    # 22.03
+		],
+
+                # install addional packages from feeds (see feeds.conf)
+                "packages":["libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"],
+
+                # apply additional target patches
+                "target-patches":[""]
+
+	}
 
  ]
 }

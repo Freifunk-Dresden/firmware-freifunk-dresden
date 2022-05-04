@@ -108,6 +108,7 @@ fi
 declare -A list_color
 list_color['18.06']="${BG_CYAN}"
 list_color['21.02']="${BG_PURBLE}"
+list_color['22.03']="${BG_YELLOW}"
 #printf "${list_color['18.06']}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 #printf "${list_color[$v]}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 
@@ -1039,12 +1040,11 @@ do
 	compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/compile-status"
 	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
 
-	# get compile status
+	# get compile status, default is error (==1)
+	compile_status=1
 	if [ "$ARG_CompiledFailedOnly" = "1" ]; then
 		if [ -f "${compile_status_file}" ]; then
 			eval $(cat "${compile_status_file}" | jq $OPT '"compile_status=\(.status)"')
-		else
-			compile_status=1
 		fi
 		# ignore successfull targetes
 		test "$compile_status" = "0" && {
@@ -1061,7 +1061,7 @@ do
 	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/targets/${_config_name}"
 	rm -f ${compile_status_file}
 	rm -rf ${outdir}
-  rm -rf ${buildroot}/bin
+	rm -rf ${buildroot}/bin
 
 	# progress bar: compiling
 	progbar_char_array[$((progress_counter-1))]="${PBC_RUNNING}"
