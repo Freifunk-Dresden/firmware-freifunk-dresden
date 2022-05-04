@@ -2515,10 +2515,7 @@ CONFIG_FASTD_ENABLE_CIPHER_SALSA2012=y
 # end of Configuration
 
 # CONFIG_PACKAGE_feinstaubsensor is not set
-# CONFIG_PACKAGE_fix_428 is not set
 CONFIG_PACKAGE_freifunk-upload=y
-# CONFIG_PACKAGE_gnupg is not set
-# CONFIG_PACKAGE_haserl is not set
 CONFIG_PACKAGE_libuecc=y
 CONFIG_PACKAGE_nacl=y
 # end of Packages
