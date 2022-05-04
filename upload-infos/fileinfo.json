@@ -22,6 +22,19 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ar71xx-tiny-tl-mr3220-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ar71xx-tiny-tl-mr3220-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "autoupdate": "1",
       "model": "tl-mr3420",
       "model2": "TP-Link TL-WR842N/ND v1",
