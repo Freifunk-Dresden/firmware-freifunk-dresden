@@ -11,6 +11,7 @@ RUN apt-get install -y nodejs git build-essential devscripts debhelper \
                 dh-systemd python python3 dh-python libssl-dev libncurses5-dev unzip \
                 gawk zlib1g-dev subversion gcc-multilib flex gettext curl \
                 wget time rsync jq \
+                libjson-c-dev libjsoncpp-dev \
                 python3-pip python3-pypathlib python-pathlib2 python-scandir \
 		automake autoconf m4 \
 		vim tmux
