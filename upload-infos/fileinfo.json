@@ -1779,6 +1779,19 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4c-initramfs-kernel.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4c-squashfs-sysupgrade.bin",
+      "comment": "new file"
+    },
+    {
+      "name": "",
       "filename": "openwrt-ramips-rt305x-dir-615-d-squashfs-factory.bin",
       "comment": ""
     },
