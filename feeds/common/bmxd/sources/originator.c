@@ -1009,8 +1009,10 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 
 			//loesche orig_node in avl nur bei
 			// -alte knoten (purge_orig(batman_time, NULL))
+			// -all cleanup fuer ein interface (purge_orig(0, bif)
 			// -all cleanup (purge_orig(0, NULL)
-			//  ABER nur wenn alle referencen zu diesen knoten aufgeloest sind.
+			//
+			// ABER nur wenn alle referencen zu diesen knoten aufgeloest sind.
 			// Das ist der fall, wenn es sich um ein "angehaengten" node handelt von einem
 			// link-interface, der auf den haupt originator verweisst.
 			// Wenn  die reihenfolge bloed ist,
@@ -1019,7 +1021,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			// entstehen (vorallem wenn bmxd beendet wird.)
 			// um das aufzuloesen, muss in diesem fall
 			// orig_ip=0 gesetzt werden, damit die schleife
-			// nochmal von von startet.
+			// nochmal von startet.
 
 			if (!bif && ( 		(!curr_time && orig_node->pog_refcnt == 0) 		// if flush
 										|| 	(purge_old && orig_node->pog_refcnt == 0) ))	// if old
@@ -1038,7 +1040,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 				// auch fuer curr_gateway strukturen.
 				//
 				// damit bei einem "flush" letztlich auch die primary orig_node geloescht
-				// werden, muss der refcount ueberacht werden. Sobal der letzte nicht-primary
+				// werden, muss der refcount ueberwacht werden. Sobald der letzte nicht-primary
 				// orgin_node geloescht wird, muss der avl-tree wieder von vorn beginnen, um
 				// letztlich das primary orgin_node ebenfalls zu loeschen.
 				//
