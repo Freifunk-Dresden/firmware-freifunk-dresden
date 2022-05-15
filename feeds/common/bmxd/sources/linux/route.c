@@ -1622,7 +1622,7 @@ void if_deactivate(struct batman_if *bif)
 
 	if (bif == primary_if && !is_aborted())
 	{
-		purge_orig(0, 0);
+		purge_orig(0, 0); // primary iface deaktivate
 
 		dbg_mute(30, DBGL_SYS, DBGT_WARN,
 						 "You SHOULD always configure a loopback-alias interface for %s/32 to remain reachable under your primary IP!",
@@ -1630,7 +1630,7 @@ void if_deactivate(struct batman_if *bif)
 	}
 	else
 	{
-		purge_orig(0, bif);
+		purge_orig(0, bif); // non-primary iface deaktivate
 	}
 }
 

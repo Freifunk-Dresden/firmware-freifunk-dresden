@@ -252,7 +252,7 @@ void cleanup_all(int status)
 
 		cleanup_schedule();
 
-		purge_orig(0, NULL);
+		purge_orig(0, NULL); // cleanup_all()
 
 		cleanup_plugin();
 		cleanup_config(); //cleanup_init()
