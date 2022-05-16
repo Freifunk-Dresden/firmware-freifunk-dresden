@@ -147,6 +147,8 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 	prof_stop(PROF_update_routes);
 }
 
+// removes next hop route for this originator.
+// this function is called, when a nexthop should be deleted from node.
 static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
 {
 
@@ -981,6 +983,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 		// purge_orig(0, NULL)  - flush all ifaces
 		// purge_orig(0, bif)   - flush specific iface
 		// purge_orig( *, * )   - delete if old
+//Hier gehts es um die orig_nodes die geloescht werden
 		if (!curr_time || bif || purge_old )
 		{
 			/* purge outdated originators completely */
@@ -1087,6 +1090,9 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 		}
 		else
 		{
+//hier geht es um orig_nodes-nachhbarn. Also die nachbar nodes fuer diesen
+// aktuellen orgi_node, wo interfaces wegfallen und die entfernt werden.
+//und um 	die nachbarn selbst, die dann entfernt werden fuer diesen origi_node
 			// nur direkte nachbarn
 			if (orig_node->link_node)
 			{
@@ -1128,12 +1134,35 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			/* purge outdated neighbor nodes, except our best-ranking neighbor */
 
 			/* for all neighbours towards this originator ... */
+//SE: ??? evt ist gemeint, gehe durch alle meine nachbarn, ueber die der orig_node
+// erreichbar ist.
+// pruefe welcher dieser nachbarn zu alt ist, und entferne diesen fuer diesen orig_node,
+// da dieser nachbar nicht mehr verfuegbar ist.
+//
+// Frage, warum sollte hier ein ein nachbar ignroiert werden, wenn die router (nexthop)
+// dieser nachbar ist?
+// solte hier nicht diese bedingung raus sein, damit dieser tote nachbar auch geloscht
+// wird?
+// und zusatzlich sollte in diesem fall der router neu gesetzt werden?
 			OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 			{
+#if 0 //original
 				if (    (neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time
 				     &&	orig_node->router != neigh_node
 					 )
 				{
+#else
+				if ( (neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time )
+				{
+
+				 // router nicht mehr nutztbar, da nachbar tot ist
+				 if( orig_node->router == neigh_node )
+				 {
+						update_routes(orig_node, NULL);
+
+						cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_FLUSH);
+				 }
+#endif
 					addr_to_str(neigh_node->key.addr, neigh_str);
 					dbgf_all(DBGT_INFO,
 									 "Neighbour timeout: originator %s, neighbour: %s, last_aware %u",
