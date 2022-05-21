@@ -44,6 +44,7 @@ config communities 'communities'
 	list	community '1004%Dresden SW'
 	list	community '1020%Pirna'
 	list	community '1021%OL'
+	list	community '2000%Leipzig'
 
 config system 'system'
 	option	mesh_network_id '0'

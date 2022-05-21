@@ -147,6 +147,8 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 	prof_stop(PROF_update_routes);
 }
 
+// removes next hop route for this originator.
+// this function is called, when a nexthop should be deleted from node.
 static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
 {
 
@@ -426,12 +428,19 @@ static int8_t init_pifnb_node(struct orig_node *orig_node)
 	return SUCCESS;
 }
 
+// link-node representiert einen direkten nachbarn.
+// diese struktur wird zweimal gehalten:
+//  - globalen avl baum
+//  - globalen link list
+//  link-node hat wiederum eine liste von interfaces, die zuerst freigeben werden.
+//  so ein nachbar, kann naemlich ueber mehrere interfaces erreichba sein.
 static void free_link_node(struct orig_node *orig_node, struct batman_if *bif)
 {
 	dbgf_all(DBGT_INFO, "of orig %s", orig_node->orig_str);
 
 	paranoia(-500010, (orig_node->link_node == NULL)); //free_link_node(): requested to free non-existing link_node
 
+	// - remove interfaces from link_node object
 	// when removing entries, I can modify lndev (because OLForEach() is a macro)
 	OLForEach(lndev, struct link_node_dev, orig_node->link_node->lndev_list)
 	{
@@ -449,6 +458,7 @@ static void free_link_node(struct orig_node *orig_node, struct batman_if *bif)
 		}
 	}
 
+	// - remove link_node from global link_list and avl baum
 	OLForEach(ln, struct link_node, link_list)
 	{
 		if (ln->orig_node == orig_node && OLIsListEmpty(&ln->lndev_list))
@@ -970,6 +980,10 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 
 		purge_old = (orig_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time ? 1 : 0;
 
+		// purge_orig(0, NULL)  - flush all ifaces
+		// purge_orig(0, bif)   - flush specific iface
+		// purge_orig( *, * )   - delete if old
+//Hier gehts es um die orig_nodes die geloescht werden
 		if (!curr_time || bif || purge_old )
 		{
 			/* purge outdated originators completely */
@@ -980,8 +994,8 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			flush_orig(orig_node, bif);
 
 //SE: siehe commentare unten
-			if (!bif && ( 		(!curr_time && orig_node->pog_refcnt == 0) 		// if flush
-										|| 	(purge_old && orig_node->pog_refcnt == 0) ))  // if old
+			if (!bif && ( 		(!curr_time && orig_node->pog_refcnt == 0) 		// if flush ( purge_orig(0, NULL) )
+										|| 	(purge_old && orig_node->pog_refcnt == 0) ))  // if old  (  purge_orig(curr_time, NULL) )
 			{
 				cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_DESTROY);
 			}
@@ -1003,14 +1017,20 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			}
 
 			/* remove link information of node */
+      // der aktuelle node ist ein direkter nachbar zum uns und hat damit
+			// eine Liste von hinterfaces (meine), uber die dieser node erreichbar ist.
+			// ebenso wird dieser node in der globalen link_list und globale avl baum
+			// für direkte nachbarn gehalten und muessen ebenso geloescht werden.
 
 			if (orig_node->link_node)
 				free_link_node(orig_node, bif);
 
 			//loesche orig_node in avl nur bei
 			// -alte knoten (purge_orig(batman_time, NULL))
+			// -all cleanup fuer ein interface (purge_orig(0, bif)
 			// -all cleanup (purge_orig(0, NULL)
-			//  ABER nur wenn alle referencen zu diesen knoten aufgeloest sind.
+			//
+			// ABER nur wenn alle referencen zu diesen knoten aufgeloest sind.
 			// Das ist der fall, wenn es sich um ein "angehaengten" node handelt von einem
 			// link-interface, der auf den haupt originator verweisst.
 			// Wenn  die reihenfolge bloed ist,
@@ -1019,11 +1039,13 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			// entstehen (vorallem wenn bmxd beendet wird.)
 			// um das aufzuloesen, muss in diesem fall
 			// orig_ip=0 gesetzt werden, damit die schleife
-			// nochmal von von startet.
+			// nochmal von startet.
 
 			if (!bif && ( 		(!curr_time && orig_node->pog_refcnt == 0) 		// if flush
 										|| 	(purge_old && orig_node->pog_refcnt == 0) ))	// if old
 			{
+				// gib die ID wieder frei, diese wird auch in einer liste von ids gehalten
+				// und die id kann dann wieder verwendet werden.
 				if (orig_node->id4him)
 					free_pifnb_node(orig_node);
 
@@ -1038,7 +1060,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 				// auch fuer curr_gateway strukturen.
 				//
 				// damit bei einem "flush" letztlich auch die primary orig_node geloescht
-				// werden, muss der refcount ueberacht werden. Sobal der letzte nicht-primary
+				// werden, muss der refcount ueberwacht werden. Sobald der letzte nicht-primary
 				// orgin_node geloescht wird, muss der avl-tree wieder von vorn beginnen, um
 				// letztlich das primary orgin_node ebenfalls zu loeschen.
 				//
@@ -1052,7 +1074,9 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 							&& orig_node->primary_orig_node
 							&& orig_node->primary_orig_node->pog_refcnt == 1)
 				{
-					orig_ip = 0;
+					orig_ip = 0; // restart loop and get first entry. because all non-primary node
+					 // objects are removed and primary node object (of the node which should be deleted)
+					 // has no references anymore and is delete last.
 				}
 
 				//SE: when curr_time is zero then all data is destroyed
@@ -1066,17 +1090,18 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 		}
 		else
 		{
-			// hier wird nur neigh zeug geloscht, wenn zu alt.
-
-			/* purge selected outdated originator elements */
-
-			/* purge outdated links */
-
+//hier geht es um orig_nodes-nachhbarn. Also die nachbar nodes fuer diesen
+// aktuellen orgi_node, wo interfaces wegfallen und die entfernt werden.
+//und um 	die nachbarn selbst, die dann entfernt werden fuer diesen origi_node
+			// nur direkte nachbarn
 			if (orig_node->link_node)
 			{
 				uint8_t free_ln = YES;
 
 				// when removing entries, I can modify lndev (because OLForEach() is a macro)
+				//
+				// pruefe alle interaces eines direkten nachbarn node , und entferne die lokalen interfaces,
+				// die keine daten mehr fuer diese nachbarn geliefert haben.
 				OLForEach(lndev, struct link_node_dev, orig_node->link_node->lndev_list)
 				{
 					if ( (lndev->last_lndev + (1000 * ((batman_time_t)purge_to))) < curr_time )
@@ -1096,6 +1121,8 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 					}
 				}
 
+				// link_node freigeben,wenn es keine interface mehr gibt, weil die
+				// zu alt waren
 				if (free_ln)
 					free_link_node(orig_node, NULL);
 			}
@@ -1107,12 +1134,35 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			/* purge outdated neighbor nodes, except our best-ranking neighbor */
 
 			/* for all neighbours towards this originator ... */
+//SE: ??? evt ist gemeint, gehe durch alle meine nachbarn, ueber die der orig_node
+// erreichbar ist.
+// pruefe welcher dieser nachbarn zu alt ist, und entferne diesen fuer diesen orig_node,
+// da dieser nachbar nicht mehr verfuegbar ist.
+//
+// Frage, warum sollte hier ein ein nachbar ignroiert werden, wenn die router (nexthop)
+// dieser nachbar ist?
+// solte hier nicht diese bedingung raus sein, damit dieser tote nachbar auch geloscht
+// wird?
+// und zusatzlich sollte in diesem fall der router neu gesetzt werden?
 			OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 			{
+#if 0 //original
 				if (    (neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time
 				     &&	orig_node->router != neigh_node
 					 )
 				{
+#else
+				if ( (neigh_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time )
+				{
+
+				 // router nicht mehr nutztbar, da nachbar tot ist
+				 if( orig_node->router == neigh_node )
+				 {
+						update_routes(orig_node, NULL);
+
+						cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_FLUSH);
+				 }
+#endif
 					addr_to_str(neigh_node->key.addr, neigh_str);
 					dbgf_all(DBGT_INFO,
 									 "Neighbour timeout: originator %s, neighbour: %s, last_aware %u",
@@ -1812,7 +1862,7 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 static int32_t opt_purge(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
 {
 	if (cmd == OPT_APPLY)
-	 	purge_orig(0, NULL);
+	 	purge_orig(0, NULL); // opt_purge()
 
 	return SUCCESS;
 }

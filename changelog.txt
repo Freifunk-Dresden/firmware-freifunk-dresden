@@ -1,4 +1,14 @@
 
+
+2022-05-x [8.0.6]
+--------------------------------------------------
+bmxd                      - reduce dead-node timeout
+                          - update routes immediately after removing next-hop node
+                          - remove bat0 tunnel stuff (safes 20kbyte)
+community                 - add Leipzig
+router                    - add CPE 510, TP-Link Archer C50
+
+
 2022-04-x [8.0.5]
 --------------------------------------------------
 wifi                      - fix 2.4ghz band selection for Aerohive router

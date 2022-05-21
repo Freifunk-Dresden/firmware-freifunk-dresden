@@ -36,6 +36,11 @@ REVISION_VERSION ="\" [md5:$(SOURCE_MD5)]\""
 
 # experimental or advanced defines (please dont touch):
 # -DNOPARANOIA		(makes bug-hunting impossible)		- ~2k
+#
+# -DUSE_BAT       will use old bat0 tunnel, but still calles the script that might
+#                 bypass this routing/usage of bat0
+#                 adds 20kbyte more code
+#
 
 #CFLAGS += -DDISABLE_NETWORK_ID_CHECK
 

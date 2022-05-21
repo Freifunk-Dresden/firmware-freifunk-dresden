@@ -109,6 +109,10 @@
 		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
 	},
 	{
+		"name":"ramips.mt7620.small",
+		"config":"config.ramips.mt7620.small"
+	},
+	{
 		"name":"ramips.mt7621.generic",
 		"config":"config.ramips.mt7621.generic"
 	},
