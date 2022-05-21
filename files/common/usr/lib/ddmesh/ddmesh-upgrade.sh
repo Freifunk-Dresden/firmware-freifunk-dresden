@@ -656,6 +656,11 @@ upgrade_8_0_5()
 	true
 }
 
+upgrade_8_0_6()
+{
+	uci add_list ddmesh.communities.community='2000%Leipzig'
+}
+
 ##################################
 
 run_upgrade
