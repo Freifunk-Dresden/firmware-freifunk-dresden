@@ -910,6 +910,14 @@
     {
       "name": "",
       "autoupdate": "1",
+      "model": "tplink,cpe210-v1",
+      "model2": "TP-Link CPE210 v1",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
       "model": "cpe210",
       "model2": "TP-Link CPE210 v1.1",
       "filename": "openwrt-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
@@ -1284,6 +1292,14 @@
     },
     {
       "name": "",
+      "autoupdate": "1",
+      "model": "aerohive,hiveap-121",
+      "model2": "Aerohive HiveAP 121",
+      "filename": "openwrt-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nand-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1568,7 +1584,7 @@
       "model": "xiaomi,redmi-router-ax6s",
       "model2": "Xiaomi Redmi Router AX6S",
       "filename": "openwrt-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1591,17 +1607,17 @@
     {
       "name": "",
       "filename": "openwrt-ramips-mt7620-tplink_archer-c50-v1-initramfs-kernel.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
       "filename": "openwrt-ramips-mt7620-tplink_archer-c50-v1-squashfs-factory-eu.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
       "filename": "openwrt-ramips-mt7620-tplink_archer-c50-v1-squashfs-factory-us.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1609,7 +1625,7 @@
       "model": "",
       "model2": "",
       "filename": "openwrt-ramips-mt7620-tplink_archer-c50-v1-squashfs-sysupgrade.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1736,17 +1752,17 @@
     {
       "name": "",
       "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-initramfs-kernel.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
       "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-kernel1.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
       "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-rootfs0.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1754,7 +1770,7 @@
       "model": "xiaomi,redmi-router-ac2100",
       "model2": "Xiaomi Redmi Router AC2100",
       "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-sysupgrade.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1803,7 +1819,7 @@
     {
       "name": "",
       "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4c-initramfs-kernel.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",
@@ -1811,7 +1827,7 @@
       "model": "",
       "model2": "",
       "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4c-squashfs-sysupgrade.bin",
-      "comment": "new file"
+      "comment": ""
     },
     {
       "name": "",

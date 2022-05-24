@@ -6,7 +6,9 @@ bmxd                      - reduce dead-node timeout
                           - update routes immediately after removing next-hop node
                           - remove bat0 tunnel stuff (safes 20kbyte)
 community                 - add Leipzig
-router                    - add CPE 510, TP-Link Archer C50
+router                    - add TP-Link Archer C50
+gui                       - speed up
+backbone                  - process port number when requesting backbone parameters
 
 
 2022-04-x [8.0.5]
