@@ -261,10 +261,10 @@ show_outgoing()
 	cat<<EOM
 	<tr class="colortoggle$TOGGEL">
 	<td><input onclick="form_submit_checked(document.forms.backbone_form_connection_out,'update_enabled','$config', this.checked)" type="checkbox" $(if [ "$disabled" != "1" ];then echo ' checked="checked"';fi)></td>
-	<td>$vtype</td><td>$vhost</td><td>$vport</td>
-EOM
-	[ -n "$WG_PATH" ] && echo "<td></td><td>$vnode</td>"
-cat<<EOM
+	<td>$vtype</td><td>$vhost</td>
+	<td></td>
+	<td>$vport</td>
+	<td>$vnode</td>
 	<td>$vkey</td>
 	<td><img title="$connect_title" src="$CONNECTED"></td>
 	<td>
@@ -400,10 +400,10 @@ EOM
 <input name="form_entry" value="none" type="hidden">
 <input name="form_checked" value="none" type="hidden">
 <table>
-<tr><th>Aktiv</th><th>Typ</th><th>Server-Hostname (Freifunk-Router)</th><th>Server-Port</th>
-EOM
-[ -n "$WG_PATH" ] && echo '<th></th><th>Knotennummer</th>'
-cat<<EOM
+<tr><th>Aktiv</th><th>Typ</th><th>Server-Hostname (Freifunk-Router)</th>
+<th></th>
+<th>Server-Port</th>
+<th>Knotennummer</th>
 <th>Public-Key</th><th>Verbunden</th><th>&nbsp;</th></tr>
 EOM
 
@@ -426,14 +426,16 @@ fi
 cat<<EOM
  </select></td>
  <td title="Hostname oder IP Adresse &uuml;ber den ein anderer Freifunk Router erreichbar ist (z.b. xxx.dyndns.org). Kann eine IP im LAN oder IP/Hostname im Internet sein."><input name="form_backbone_outgoing_peer_hostname" type="text" size="15" value=""></td>
- <td title="Port des Servers"><input name="form_backbone_outgoing_peer_port" type="text" size="8" value="$DEFAULT_WG_PORT"></td>
-
 EOM
 if [ -n "$WG_PATH" ]; then
 	echo '<td><button onclick="ajax_regwg(document.backbone_form_connection_out.form_backbone_outgoing_peer_hostname.value)" name="bb_btn_wgcheck" title="Pr&uuml;fe Zugriff" type="button"><img src="/images/key16.png"></button></td>'
-	echo '<td title="Zielknottennummer (nur f&uuml;r Wireguard)"><input id="wgcheck_node" name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>'
+else
+	echo '<td></td>'
 fi
+
 cat<<EOM
+ <td title="Port des Servers"><input id="wgcheck_port" name="form_backbone_outgoing_peer_port" type="text" size="8" value="$DEFAULT_WG_PORT"></td>
+ <td title="Zielknottennummer (nur f&uuml;r Wireguard)"><input id="wgcheck_node" name="form_backbone_outgoing_peer_node" type="text" size="5" value=""></td>
  <td class="nowrap" title="Public Key der Gegenstelle"><input id="wgcheck_key" name="form_backbone_outgoing_peer_key" type="text" size="40" value=""></td>
  <td></td>
  <td><button onclick="if(checkinput_outgoing())form_submit(document.forms.backbone_form_connection_out,'client_add_outgoing','none')" name="bb_btn_new" title="Verbindung speichern" type="button">Neu</button></td>
