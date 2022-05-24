@@ -961,60 +961,6 @@
     },
     {
       "name": "",
-      "filename": "openwrt-ath79-generic-tplink_cpe510-v1-initramfs-kernel.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
-      "filename": "openwrt-ath79-generic-tplink_cpe510-v1-squashfs-factory.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
-      "filename": "openwrt-ath79-generic-tplink_cpe510-v1-squashfs-sysupgrade.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
-      "filename": "openwrt-ath79-generic-tplink_cpe510-v2-initramfs-kernel.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
-      "filename": "openwrt-ath79-generic-tplink_cpe510-v2-squashfs-factory.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
-      "filename": "openwrt-ath79-generic-tplink_cpe510-v2-squashfs-sysupgrade.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
-      "filename": "openwrt-ath79-generic-tplink_cpe510-v3-initramfs-kernel.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
-      "filename": "openwrt-ath79-generic-tplink_cpe510-v3-squashfs-factory.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
-      "filename": "openwrt-ath79-generic-tplink_cpe510-v3-squashfs-sysupgrade.bin",
-      "comment": "new file"
-    },
-    {
-      "name": "",
       "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-initramfs-kernel.bin",
       "comment": ""
     },
