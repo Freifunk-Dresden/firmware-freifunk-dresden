@@ -19,7 +19,7 @@ setup_wireless()
  wifi_mesh_key="$(uci -c /rom/etc/config get credentials.network.wifi_mesh_key)"
 
  # --- detect 2/5GHz radios
- eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
+ eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh store)
  test -n "$wifi_status_radio2g_config_index" && uci -q rename wireless.@wifi-device[$wifi_status_radio2g_config_index]='radio2g'
  test -n "$wifi_status_radio5g_config_index" && uci -q rename wireless.@wifi-device[$wifi_status_radio5g_config_index]='radio5g'
 
