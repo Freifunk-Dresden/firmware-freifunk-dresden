@@ -121,20 +121,20 @@ setup_wireless()
  # - wifi2 - 2G
  if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" -a "$_ddmesh_wifi2roaming" = "1" ]; then
 	essid2="$(uci -q get ddmesh.system.community)"
-	essid5="$(uci -q get ddmesh.system.community) 5GHz"
+	essid5="$(uci -q get ddmesh.system.community) 5G"
  else
 	if [ "$(uci -q get ddmesh.network.custom_essid)" = "1" ]; then
 		custom="$(uci -q get ddmesh.network.essid_ap)"
 		if [ -n "$(echo "$custom" | sed 's#^ *$##')" ]; then
 			essid2="$(uci -q get ddmesh.system.community):$(uci get ddmesh.network.essid_ap)"
-			essid5="$(uci -q get ddmesh.system.community) 5GHz:$(uci get ddmesh.network.essid_ap)"
+			essid5="$(uci -q get ddmesh.system.community) 5G:$(uci get ddmesh.network.essid_ap)"
 		else
 			essid2="$(uci -q get ddmesh.system.community)"
-			essid5="$(uci -q get ddmesh.system.community) 5GHz"
+			essid5="$(uci -q get ddmesh.system.community) 5G"
 		fi
 	else
 		essid2="$(uci -q get ddmesh.system.community) [$node]"
-		essid5="$(uci -q get ddmesh.system.community) 5GHz [$node]"
+		essid5="$(uci -q get ddmesh.system.community) 5G [$node]"
 	fi
  fi
 
@@ -148,7 +148,8 @@ setup_wireless()
  isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
  isolate="${isolate:-1}" #default isolate
  uci set wireless.@wifi-iface[$iface].isolate="$isolate"
- uci set wireless.@wifi-iface[$iface].ssid="Freifunk ${essid2:0:32}"
+ ssid="Freifunk ${essid2}"
+ uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
  test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
  #uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
  #uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
@@ -169,7 +170,8 @@ setup_wireless()
 	isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
 	isolate="${isolate:-1}" #default isolate
 	uci set wireless.@wifi-iface[$iface].isolate="$isolate"
-	uci set wireless.@wifi-iface[$iface].ssid="Freifunk ${essid5:0:32}"
+	ssid="Freifunk ${essid5}"
+	uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
 	#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
 	#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
 	#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
