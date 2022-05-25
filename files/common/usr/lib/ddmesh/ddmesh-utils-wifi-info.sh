@@ -83,13 +83,18 @@ if [ "$1" == "store" ]; then
  uci -q commit
 fi
 
+_radio2g_up="$(uci -q get wireless.ddmesh.radio2g_up)"
+echo export $prefix"_radio2g_up"="$_radio2g_up"
+if [ "$_radio2g_up" = "1" ]; then
+	echo export $prefix"_radio2g_phy"="$(uci -q get wireless.ddmesh.radio2g_phy)"
+	echo export $prefix"_radio2g_config_index"="$(uci -q get wireless.ddmesh.radio2g_config_index)"
+	echo export $prefix"_radio2g_airtime"="$(airtime $(uci -q get wireless.ddmesh.radio2g_dev))"
+fi
 
-echo export $prefix"_radio2g_up"="$(uci -q get wireless.ddmesh.radio2g_up)"
-echo export $prefix"_radio2g_phy"="$(uci -q get wireless.ddmesh.radio2g_phy)"
-echo export $prefix"_radio2g_config_index"="$(uci -q get wireless.ddmesh.radio2g_config_index)"
-echo export $prefix"_radio2g_airtime"="$(airtime $(uci -q get wireless.ddmesh.radio2g_dev))"
-
-echo export $prefix"_radio5g_up"="$(uci -q get wireless.ddmesh.radio5g_up)"
-echo export $prefix"_radio5g_phy"="$(uci -q get wireless.ddmesh.radio5g_phy)"
-echo export $prefix"_radio5g_config_index"="$(uci -q get wireless.ddmesh.radio5g_config_index)"
-echo export $prefix"_radio5g_airtime"="$(airtime $(uci -q get wireless.ddmesh.radio5g_dev))"
+_radio5g_up="$(uci -q get wireless.ddmesh.radio5g_up)"
+echo export $prefix"_radio5g_up"="$_radio5g_up"
+if [ "$_radio5g_up" = "1" ]; then
+	echo export $prefix"_radio5g_phy"="$(uci -q get wireless.ddmesh.radio5g_phy)"
+	echo export $prefix"_radio5g_config_index"="$(uci -q get wireless.ddmesh.radio5g_config_index)"
+	echo export $prefix"_radio5g_airtime"="$(airtime $(uci -q get wireless.ddmesh.radio5g_dev))"
+fi
