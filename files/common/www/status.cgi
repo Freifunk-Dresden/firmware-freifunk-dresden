@@ -6,7 +6,6 @@ export TITLE="Infos &gt; Status"
 
 . /usr/share/libubox/jshn.sh
 . /usr/lib/www/page-pre.sh
-eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 RESOLV_PATH="/tmp/resolv.conf.d"
 RESOLV_FINAL="${RESOLV_PATH}/resolv.conf.final"

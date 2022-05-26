@@ -9,12 +9,6 @@ echo ''
 }
 
 WIDTH=150
-
-
-eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
-
-
-
 SCAN_RESULT=/tmp/wifi_scan
 
 /usr/sbin/iw dev wifi2ap scan > $SCAN_RESULT

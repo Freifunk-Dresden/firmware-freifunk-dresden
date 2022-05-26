@@ -11,7 +11,6 @@ if [ "$form_action" = "overlay" ]; then
 	/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write >/dev/null
 fi
 
-eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 eval $(sed 's#:\(.*\)$#="\1"#' /etc/built_info)
 
 case  "$git_ddmesh_branch" in

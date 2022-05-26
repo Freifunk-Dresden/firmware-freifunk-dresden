@@ -10,7 +10,6 @@ else
 fi
 
 . /usr/lib/www/page-pre.sh ${0%/*}
-eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 WIDTH=100
 
