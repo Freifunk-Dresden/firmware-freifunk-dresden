@@ -10,6 +10,7 @@ echo ''
 
 WIDTH=150
 SCAN_RESULT=/tmp/wifi_scan
+eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 /usr/sbin/iw dev wifi2ap scan > $SCAN_RESULT
 [ "$wifi_status_radio5g_up" = "1" ] && /usr/sbin/iw dev wifi5ap scan >> $SCAN_RESULT
