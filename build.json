@@ -179,7 +179,7 @@
 	{
 		"name":"mediatek.mt7622.generic",
 		"config":"config.mediatek.mt7622.generic",
-		"openwrt_rev":"6945ddde9b196081c7f0ce54aad0e12ebf85adbe", #22.03.0-rc1
+		"openwrt_rev":"4f6f9caf1f054d9a52f50ecb766fb3aa9de8d429", #22.03.0-rc2
 
 		"selector-config":"22.03",              # used to select config
                 "selector-feeds":"22.03",               # used to select feeds
@@ -188,8 +188,8 @@
 
                 "feeds" : [
                         {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
-                        {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git",      "rev":"3d33fa3"},   # 22.03
-                        {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",       "rev":"48f6120"}    # 22.03
+                        {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git",      "rev":"b708cf5"},   # 22.03
+                        {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",       "rev":"f6d2b09"}    # 22.03
 		],
 
                 # install addional packages from feeds (see feeds.conf)
