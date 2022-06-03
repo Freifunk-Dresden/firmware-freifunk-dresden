@@ -1,0 +1,15 @@
+diff --git a/target/linux/lantiq/xrx200/base-files/etc/board.d/02_network b/target/linux/lantiq/xrx200/base-files/etc/board.d/02_network
+index f7af17995f..7e7cf93ba5 100755
+--- a/target/linux/lantiq/xrx200/base-files/etc/board.d/02_network
++++ b/target/linux/lantiq/xrx200/base-files/etc/board.d/02_network
+@@ -44,6 +44,10 @@ lantiq_setup_interfaces()
+ 		ucidef_add_switch "switch0" \
+ 			"0:lan:3" "1:lan:4" "2:lan:2" "4:lan:1" "6t@eth0"
+ 		;;
++	avm,fritz7412)
++		ucidef_add_switch "switch0" \
++			"2:lan" "6t@eth0"
++		;;
+ 	avm,fritz7430)
+ 		ucidef_add_switch "switch0" \
+ 			"2:lan:3" "3:lan:4" "4:lan:1" "5:lan:2" "6t@eth0"
