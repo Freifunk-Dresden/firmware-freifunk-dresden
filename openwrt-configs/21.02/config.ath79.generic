@@ -518,8 +518,10 @@ CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_netgear_wnr2200-16m=""
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c5-v1=y
 CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_tplink_archer-c5-v1=""
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c58-v1 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c59-v1 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c59-v2 is not set
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c59-v1=y
+CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_tplink_archer-c59-v1=""
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c59-v2=y
+CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_tplink_archer-c59-v2=""
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c6-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c60-v1 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c60-v2 is not set
@@ -604,10 +606,14 @@ CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_tplink_tl-wr1043n-v5=""
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanobridge-m is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-ac is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-ac-loco is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-loco-m is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-loco-m-xw is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-m is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-m-xw is not set
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-loco-m=y
+CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_ubnt_nanostation-loco-m=""
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-loco-m-xw=y
+CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_ubnt_nanostation-loco-m-xw=""
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-m=y
+CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_ubnt_nanostation-m=""
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_nanostation-m-xw=y
+CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_ubnt_nanostation-m-xw=""
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_picostation-m is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_powerbeam-5ac-500 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_powerbeam-5ac-gen2 is not set
@@ -710,6 +716,7 @@ CONFIG_DEFAULT_ppp-mod-pppoe=y
 CONFIG_MODULE_DEFAULT_ppp-mod-pppoe=y
 CONFIG_DEFAULT_procd=y
 CONFIG_MODULE_DEFAULT_procd=y
+CONFIG_MODULE_DEFAULT_rssileds=y
 CONFIG_DEFAULT_swconfig=y
 CONFIG_MODULE_DEFAULT_swconfig=y
 CONFIG_DEFAULT_uboot-envtools=y
@@ -4630,7 +4637,7 @@ CONFIG_PACKAGE_ppp-mod-pppoe=m
 # CONFIG_PACKAGE_pppoe-discovery is not set
 # CONFIG_PACKAGE_pppstats is not set
 # CONFIG_PACKAGE_rpcapd is not set
-# CONFIG_PACKAGE_rssileds is not set
+CONFIG_PACKAGE_rssileds=m
 # CONFIG_PACKAGE_snmp-mibs is not set
 # CONFIG_PACKAGE_snmp-utils is not set
 # CONFIG_PACKAGE_snmpd is not set
