@@ -57,7 +57,7 @@ EOM
 	echo "</td></tr>"
  fi
  if [ ! -z "$wifi_status_radio5g_airtime" ];then
-	echo "<tr class=\"colortoggle1\><th">WiFi Airtime 5GHz</th><td>"
+	echo "<tr class=\"colortoggle1\"><th>WiFi Airtime 5GHz</th><td>"
 	getairtime $wifi_status_radio5g_airtime
 	echo "</td></tr>"
  fi
