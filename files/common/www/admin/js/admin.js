@@ -93,7 +93,10 @@ function regwg_callback(data)
 		{
 			$("#wgcheck_key").val(data.server.key);
 			$("#wgcheck_node").val(data.server.node);
-			$("#wgcheck_port").val(data.server.port);
+			if(data.server.port)
+			{
+				$("#wgcheck_port").val(data.server.port);
+			}
 		}
 		else
 		{
