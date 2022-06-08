@@ -36,12 +36,13 @@ start() {
 
 	eval $(cat /etc/openwrt_release)
 
-	/usr/lib/ddmesh/ddmesh-led.sh wifi off
-
 	#initial setup and node depended setup (crond calles ddmesh-register-node.sh to update node)
 	logger -s -t $LOGGER_TAG "inital boot setting"
 	#check if boot process should be stopped
 	/usr/lib/ddmesh/ddmesh-bootconfig.sh || exit
+
+	# depends on ddmesh-bootconfig.sh
+	/usr/lib/ddmesh/ddmesh-led.sh wifi off
 
 	# wait for wifi before setting firewall, because it would be run parallel
 	[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
