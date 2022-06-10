@@ -47,17 +47,21 @@ setup_ethernet()
 			echo "[$NET] dev_name:$dev_name"
 			echo "[$NET] dev_config:$dev_config"
 
+			# use name that can not conflict with exisings
+			dev_config_name="dev_br_${NET}"
+			echo "[$NET] dev_config_name:$dev_config_name"
+
 			# check if we have a device section for lan/wan.
 			# and create one
 			if [ -z "$(uci -q get network.${dev_config})" ]; then
-
-				# use name that can not conflict with exisings
-				dev_config="dev_br_${NET}"
-				echo "create device section ${dev_config} for ${NET}"
-
+				echo "create device section ${dev_config_name} for ${NET}"
 				uci add network device
-				uci rename network.@device[-1]="${dev_config}"
+				uci rename network.@device[-1]="${dev_config_name}"
+			else
+			  # give this section a valid name for easier access
+				uci rename network.${dev_config}="${dev_config_name}"
 			fi
+			dev_config=${dev_config_name}
 
 			# device section will become a bridge (if not already)
 			# add ports if not present and use devname as bridge interface names
