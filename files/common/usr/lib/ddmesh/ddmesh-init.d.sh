@@ -108,9 +108,9 @@ start() {
 		/usr/lib/ddmesh/ddmesh-geoloc.sh mobile &
 	fi
 
-	if [ -x /etc/ddmesh/post_init.sh ]; then
-		logger -s -t $LOGGER_TAG "post init script"
-		/etc/ddmesh/post_init.sh
+	if [ -x /etc/ddmesh/post-init.sh ]; then
+		logger -s -t $LOGGER_TAG "call post init script"
+		/etc/ddmesh/post-init.sh
 	fi
 
 	logger -s -t $LOGGER_TAG "register node"
