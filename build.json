@@ -33,12 +33,12 @@
 
 		"feeds" : [
 			{"type":"src-link", 	"name":"ddmesh_own",	"src":"feeds-own" },
-			{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"031fbb16a"}, # 21.02
-			{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"a0d61bd"}    # 21.02
+			{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"ce0446269"}, # 21.02
+			{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"bdefc83"}    # 21.02
 		  ],
 
 		# install addional packages from feeds (see feeds.conf)
-		"packages":["libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"],
+		"packages":["libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "iperf3"],
 
 		# apply additional target patches
 		"target-patches":[""]

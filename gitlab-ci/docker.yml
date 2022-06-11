@@ -232,3 +232,6 @@ docker:mediatek:
     - ./build.sh mediatek.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
+
+# gen-upload.sh is not possible, because images are generated on different runners and I want to avoid
+# wasting memory on m3-server when other users create branches and compile
