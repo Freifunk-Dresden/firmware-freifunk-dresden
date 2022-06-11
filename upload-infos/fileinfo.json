@@ -773,6 +773,42 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c59-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c59-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c59-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c59-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c59-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-tplink_archer-c59-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c6-v2-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1814,6 +1850,24 @@
       "model": "netgear,r6120",
       "model2": "Netgear R6120",
       "filename": "openwrt-ramips-mt76x8-netgear_r6120-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_tl-wr902ac-v3-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_tl-wr902ac-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_tl-wr902ac-v3-squashfs-tftp-recovery.bin",
       "comment": ""
     },
     {

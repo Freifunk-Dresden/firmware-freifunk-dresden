@@ -166,6 +166,10 @@ m3:upload:
     - master
   stage: deploy
   needs: ["m3:test"]
+  artifacts:
+    # keep this as artifact, so I can compare it also when building firmware on gitlab
+    # other artifacts are not needed (waste of disk storage), because they are uploaded to download server
+    - upload-infos/fileinfo.json.new-generated
   script:
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
@@ -178,6 +182,6 @@ m3:upload:
         rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/
       fi
       rm -rf final_output
-# artifacts are not needed (waste of disk storage), because they are uploaded to download server
+
   tags:
   - m3runner

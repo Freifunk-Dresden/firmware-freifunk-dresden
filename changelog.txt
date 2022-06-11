@@ -6,9 +6,11 @@ bmxd                      - reduce dead-node timeout
                           - update routes immediately after removing next-hop node
                           - remove bat0 tunnel stuff (safes 20kbyte)
 community                 - add Leipzig
-router                    - add TP-Link Archer C50
+router                    - add TP-Link Archer C50/C59, TP-Link WR902AC
 gui                       - speed up
 backbone                  - process port number when requesting backbone parameters
+internals                 - add script (/etc/ddmesh/post-init.sh) to run user code after 
+                            freifunk init has finished
 
 
 2022-04-x [8.0.5]

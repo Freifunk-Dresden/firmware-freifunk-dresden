@@ -209,7 +209,7 @@ gen_download_json_add_data()
 		model2=""
 		md5sum=""
 		filename=""
-		comment="new file"
+		comment=""
 
 		# search file info
 		# jq: first selects the array with all entries and every entry is pass to select().
