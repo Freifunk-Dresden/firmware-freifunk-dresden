@@ -233,7 +233,7 @@ docker:mediatek:
   tags:
   - docker
 
-m3:test:
+docker:test:
   except:
     - schedules
     - master
@@ -242,7 +242,7 @@ m3:test:
     - /^TESTING/
     - /^R_/
   stage: test
-  needs: ["m3:ar71xx.tiny.lowmem","m3:ar71xx.generic.lowmem","m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx","m3:mediatek"]
+  needs: ["docker:ar71xx.tiny.lowmem","docker:ar71xx.generic.lowmem","docker:x86.64.offloader","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx","docker:mediatek"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
