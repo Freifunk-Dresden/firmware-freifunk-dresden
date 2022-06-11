@@ -233,20 +233,5 @@ docker:mediatek:
   tags:
   - docker
 
-docker:test:
-  except:
-    - schedules
-    - master
-    - /^yaro-/
-    - /^T_/
-    - /^TESTING/
-    - /^R_/
-  stage: test
-  needs: ["docker:ar71xx.tiny.lowmem","docker:ar71xx.generic.lowmem","docker:x86.64.offloader","docker:ramips","docker:lantiq","docker:ath79","docker:ipq40xx","docker:sunxi","docker:mpc85xx","docker:mediatek"]
-  script:
-    - ln -s /mycache/dl
-    - ln -s /mycache/workdir
-    - ./gen-upload.sh all
-    - ./build.sh list
-  tags:
-  - docker
+# gen-upload.sh is not possible, because images are generated on different runners and I want to avoid
+# wasting memory on m3-server when other users create branches and compile
