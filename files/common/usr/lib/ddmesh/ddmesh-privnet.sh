@@ -79,11 +79,12 @@ callback_accept_config ()
 	config_get key "$config" public_key
 	config_get comment "$config" comment
 
-	if [ -n "$key" -a -n "$comment" ]; then
+	if [ -n "$key" ]; then
 		#echo "[$key:$comment]"
 		FILE=$CONF_DIR/$CONF_PEERS/accept_$key.conf
 		echo "# $comment" > $FILE
 		echo "key \"$key\";" >> $FILE
+		config_count=$((config_count + 1))
 	fi
 }
 
@@ -105,6 +106,7 @@ callback_outgoing_config ()
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		echo "key \"$key\";" > $FILE
 		echo "remote ipv4 \"$_ddmesh_ip\":$port;" >> $FILE
+    config_count=$((config_count + 1))
 	fi
 }
 
@@ -136,6 +138,8 @@ case "$1" in
 
 		setup_firewall
 
+		config_count=0
+
 		# accept clients
 	 	config_load ddmesh
  		config_foreach callback_accept_config privnet_accept
@@ -144,7 +148,7 @@ case "$1" in
 	 	config_load ddmesh
 	 	config_foreach callback_outgoing_config privnet_client
 
-		fastd --config $FASTD_CONF --pid-file $PID_FILE --daemon
+		[ ${config_count} -gt 0 ] && fastd --config $FASTD_CONF --pid-file $PID_FILE --daemon
 	fi
 	;;
 

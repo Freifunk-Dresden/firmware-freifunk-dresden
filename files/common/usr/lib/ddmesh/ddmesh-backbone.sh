@@ -100,12 +100,13 @@ callback_accept_fastd_config ()
 	config_get disabled "$config" disabled
 
 	#echo "fastd process accept: disabled:$disabled, $key # $comment"
-	if [ "$disabled" != "1" -a -n "$key" -a -n "$comment" ]; then
+	if [ "$disabled" != "1" -a -n "$key" ]; then
 		FILE=$FASTD_CONF_DIR/$FASTD_CONF_PEERS/accept_$key.conf
 		echo "fastd accept peer: [$key:$comment] ($FILE)"
 
 		echo "# $comment" > $FILE
 		echo "key \"$key\";" >> $FILE
+		config_count=$((config_count + 1))
 	fi
 }
 
@@ -131,6 +132,7 @@ callback_outgoing_fastd_config ()
 		#echo "fastd out: add peer ($FILE)"
 		echo "key \"$key\";" > $FILE
 		echo "remote ipv4 \"$host\":$port;" >> $FILE
+		config_count=$((config_count + 1))
 	fi
 }
 
@@ -292,6 +294,8 @@ case "$1" in
 
 			generate_fastd_conf $fastd_ifname
 
+			config_count=0
+
 			# accept fastd clients
 			config_load ddmesh
 			config_foreach callback_accept_fastd_config backbone_accept
@@ -300,7 +304,7 @@ case "$1" in
 			config_load ddmesh
 			config_foreach callback_outgoing_fastd_config backbone_client
 
-			fastd --config $FASTD_CONF --pid-file $FASTD_PID_FILE --daemon
+			[ ${config_count} -gt 0 ] && fastd --config $FASTD_CONF --pid-file $FASTD_PID_FILE --daemon
 		fi
 
 		if [ -n "$WG_BIN" ]; then
