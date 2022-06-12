@@ -1,5 +1,5 @@
 #!/bin/ash
-# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
 if [ "$wifi_status_radio5g_up" = "1" ]; then

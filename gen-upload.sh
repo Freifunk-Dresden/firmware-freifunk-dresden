@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de
 # GNU General Public License Version 3
 
 #
@@ -62,7 +62,7 @@ case "$1" in
 		;;
 
 	"compare-json")
-		ENABLE_COPY=false	
+		ENABLE_COPY=false
 		ENABLE_GENERATE=false
 		;;
 
@@ -435,7 +435,7 @@ do
 	# calling ipkg-make-index.sh
 	# needed until 21.02
 	export PATH=$SAVED_SYSTEM_PATH:$buildroot/staging_dir/host/bin/
-	
+
 	# set variable MKHASH, unless script ipkg-make-index.sh will fail
 	# needed since openwrt 22.03
 	export MKHASH=$buildroot/staging_dir/host/bin/mkhash

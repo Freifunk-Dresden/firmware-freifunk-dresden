@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
 test -x /usr/bin/iperf3 || exit 0

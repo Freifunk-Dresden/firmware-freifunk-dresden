@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2010 Stephan Enderlein <stephan@freifunk-dresden.de>
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
 if [ "$(uci get ddmesh.system.node)" -le "$(uci get ddmesh.system.tmp_max_node)" ]; then
