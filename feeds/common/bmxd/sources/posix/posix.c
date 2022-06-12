@@ -61,7 +61,7 @@ void update_batman_time(struct timeval *precise_tv)
 	timercpy(&acceptable_m_tv, &new_tv);
 	gettimeofday(&new_tv, NULL);
 
-	if (timercmp(&new_tv, &acceptable_p_tv, >))
+	if (timercmp(&new_tv, &acceptable_p_tv, >)) // cppcheck-suppress syntaxError
 	{
 		timersub(&new_tv, &acceptable_p_tv, &diff_tv);
 		timeradd(&start_time_tv, &diff_tv, &start_time_tv);

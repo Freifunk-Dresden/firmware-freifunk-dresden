@@ -1485,7 +1485,7 @@ int update_interface_rules(uint8_t cmd)
 
 		for (i = 0; i < sizeof(struct key); i++)
 		{
-			checksum += ((unsigned char *)(&key))[i];
+			checksum += ((unsigned char *)(&key))[i]; // cppcheck-suppress objectIndex
 			checksum += (checksum << 10);
 			checksum ^= (checksum >> 6);
 		}
