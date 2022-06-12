@@ -9,8 +9,9 @@ community                 - add Leipzig
 router                    - add TP-Link Archer C50/C59, TP-Link WR902AC
 gui                       - speed up
 backbone                  - process port number when requesting backbone parameters
-internals                 - add script (/etc/ddmesh/post-init.sh) to run user code after 
+internals                 - add script (/etc/ddmesh/post-init.sh) to run user code after
                             freifunk init has finished
+                          - prevent starting fastd if no backbone/privnet was configured
 
 
 2022-04-x [8.0.5]
