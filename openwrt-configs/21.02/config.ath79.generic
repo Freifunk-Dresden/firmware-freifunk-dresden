@@ -222,6 +222,8 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_xiaomi_mi-router-4q is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_yuncore_a770 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_yuncore_a782 is not set
+# CONFIG_TARGET_ath79_generic_DEVICE_yuncore_a930 is not set
+# CONFIG_TARGET_ath79_generic_DEVICE_yuncore_xd3200 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_yuncore_xd4200 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_zbtlink_zbt-wd323 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_zyxel_nbg6616 is not set
@@ -273,9 +275,6 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wdr4900-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wdr7500-v3 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wpa8630-v1 is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wpa8630p-v2-int is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wpa8630p-v2.0-eu is not set
-# CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wpa8630p-v2.1-eu is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr1043nd-v1 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr1043nd-v2 is not set
 # CONFIG_TARGET_ath79_generic_DEVICE_tplink_tl-wr1043nd-v3 is not set
@@ -566,9 +565,6 @@ CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_tplink_eap225-outdoor-v1=""
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr4900-v2 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wdr7500-v3 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wpa8630-v1 is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wpa8630p-v2-int is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wpa8630p-v2.0-eu is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wpa8630p-v2.1-eu is not set
 CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043n-v5=y
 CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_tplink_tl-wr1043n-v5=""
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_tl-wr1043nd-v1 is not set
@@ -638,6 +634,8 @@ CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_wd_mynet-n750=""
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_xiaomi_mi-router-4q is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_yuncore_a770 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_yuncore_a782 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_yuncore_a930 is not set
+# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_yuncore_xd3200 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_yuncore_xd4200 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_zbtlink_zbt-wd323 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_zyxel_nbg6616 is not set
@@ -712,7 +710,6 @@ CONFIG_DEFAULT_ppp-mod-pppoe=y
 CONFIG_MODULE_DEFAULT_ppp-mod-pppoe=y
 CONFIG_DEFAULT_procd=y
 CONFIG_MODULE_DEFAULT_procd=y
-CONFIG_MODULE_DEFAULT_rssileds=y
 CONFIG_DEFAULT_swconfig=y
 CONFIG_MODULE_DEFAULT_swconfig=y
 CONFIG_DEFAULT_uboot-envtools=y
@@ -3172,12 +3169,9 @@ CONFIG_PACKAGE_ath10k-firmware-qca988x-ct=m
 # CONFIG_PACKAGE_cypress-firmware-4356-pcie is not set
 # CONFIG_PACKAGE_cypress-firmware-4356-sdio is not set
 # CONFIG_PACKAGE_cypress-firmware-43570-pcie is not set
-# CONFIG_PACKAGE_cypress-firmware-4359-pcie is not set
-# CONFIG_PACKAGE_cypress-firmware-4359-sdio is not set
 # CONFIG_PACKAGE_cypress-firmware-4373-sdio is not set
 # CONFIG_PACKAGE_cypress-firmware-4373-usb is not set
 # CONFIG_PACKAGE_cypress-firmware-54591-pcie is not set
-# CONFIG_PACKAGE_cypress-firmware-89459-pcie is not set
 # CONFIG_PACKAGE_e100-firmware is not set
 # CONFIG_PACKAGE_edgeport-firmware is not set
 # CONFIG_PACKAGE_eip197-mini-firmware is not set
