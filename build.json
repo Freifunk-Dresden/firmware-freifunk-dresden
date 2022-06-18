@@ -13,7 +13,7 @@
 		"name":"default", # target name
 		"config":"",      # config file name
 
-		"openwrt_rev":"30e2782e0647a837044ada77ce86b29c5af8a9f2",	# v21.02.2
+		"openwrt_rev":"42a15ca378e1bc52f125f894d748c31ce3c52903",	# v21.02.3
 		"openwrt_variant":"",			# creates a separate buildroot. use it for low-mem devices
 							# where no kernel modules (e.g.: usb) must be included.
 							# Note that selecting some packages as module could have
@@ -179,7 +179,7 @@
 	{
 		"name":"mediatek.mt7622.generic",
 		"config":"config.mediatek.mt7622.generic",
-		"openwrt_rev":"4f6f9caf1f054d9a52f50ecb766fb3aa9de8d429", #22.03.0-rc2
+		"openwrt_rev":"677e3c18fe4ce65afd0f0dc3bdacedf3854fb2e6", #22.03.0-rc4
 
 		"selector-config":"22.03",              # used to select config
                 "selector-feeds":"22.03",               # used to select feeds
@@ -188,8 +188,8 @@
 
                 "feeds" : [
                         {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
-                        {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git",      "rev":"b708cf5"},   # 22.03
-                        {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",       "rev":"f6d2b09"}    # 22.03
+                        {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git",      "rev":"afea2bc"},   # 22.03
+                        {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",       "rev":"4b2b6b3"}    # 22.03
 		],
 
                 # install addional packages from feeds (see feeds.conf)
