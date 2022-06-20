@@ -82,11 +82,10 @@ fi
 
 function parseWifiDump()
 {
- ifname="$1"
- statfile="$2"
+ statfile="$1"
  touch $statfile
 
- iw dev $ifname station dump | awk -v statfile=$statfile '
+ awk -v statfile=$statfile '
         function uptime()
 	{
 		cmd = "cat /proc/uptime"
@@ -269,13 +268,19 @@ $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 		},
 		"statistic" : {
 EOM
+		# devel: process lan clients
+		# tmp_ifname="br-lan"
+		# echo "\"client2g\" :" >> $OUTPUT
+		# cat /proc/net/arp | awk '/'${tmp_ifname}'/{if(match("0x2",$3)){printf("Station %s\n",$4);}}' | parseWifiDump /var/statistic/${tmp_ifname}.stat >> $OUTPUT
+		# echo "," >> $OUTPUT
+
 		if [ "$wifi_status_radio2g_up" = "1" ]; then
 			for wifi in 2g 5g
 			do
 				ifname=$(uci -q get wireless.wifi2_${wifi}.ifname)
 				if [ -n "$ifname" ]; then
 					echo "\"client${wifi}\" :" >> $OUTPUT
-					parseWifiDump $ifname /var/statistic/wifi${wifi}.stat >> $OUTPUT
+					iw dev $ifname station dump | parseWifiDump /var/statistic/wifi${wifi}.stat >> $OUTPUT
 					echo "," >> $OUTPUT
 				fi
 			done
