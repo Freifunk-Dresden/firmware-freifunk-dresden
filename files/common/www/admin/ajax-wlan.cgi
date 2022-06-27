@@ -15,6 +15,7 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 /usr/sbin/iw dev wifi2ap scan > $SCAN_RESULT
 [ "$wifi_status_radio5g_up" = "1" ] && /usr/sbin/iw dev wifi5ap scan >> $SCAN_RESULT
 
+# when searching for "^BSS" defaults are set and overwritten later
 json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne'
 s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="";wifi_essid="";wifi_meshid="";wifi_signal="0";wifi_open="yes";#p
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
@@ -27,7 +28,7 @@ s#	freq: \(.*\)#wifi_freq="\1";#p
 s#	signal: -*\([^. ]*\).*#wifi_signal="\1";#p
 s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 }' | sed ':a;N;$!ba;s#\n##g;s#;wifi_bssid#\nwifi_bssid#g'  | while read line; do
-#echo "### $line ###" >>/tmp/weg
+# echo "### $line ###" >>/tmp/ajax-wifi.line
 	eval $line
 
 	#clean essid
@@ -82,7 +83,7 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	echo "$line"
 done ) ]}"
 
-#echo "$json" >/tmp/wegj
+# echo "$json" >/tmp/ajax-wifi.json
 
 cat<<EOM
 <table>
