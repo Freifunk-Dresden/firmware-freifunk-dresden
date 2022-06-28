@@ -128,6 +128,8 @@ EOM
 test "$URI_PATH" = "/www/admin" && check_passwd && {
 	echo "<font size="+1" color="red"><span class="blink">!!! BITTE Password setzen !!!</span</font>"
 }
+tmp_name=$(uhttpd -d "$(uci get ddmesh.contact.name)")
+tmp_location=$(uhttpd -d "$(uci get ddmesh.contact.location)")
 cat<<EOM
   </td>
   <TD HEIGHT="33" WIDTH="150" valign="bottom"><IMG ALT="" BORDER="0" HEIGHT="33" SRC="/images/ff-logo-1r.gif" WIDTH="150"></TD></tr>
@@ -135,7 +137,7 @@ cat<<EOM
  <tr><td COLSPAN="5">
   <table class="navibar" width="100%" CELLPADDING="0" CELLSPACING="0">
   <tr>
-  <TD COLSPAN="4" HEIGHT="19" class="infobar" >Model: <span class="infobarvalue">$model2</span>, Version:<span class="infobarvalue">$(cat /etc/version)</span></TD>
+  <TD COLSPAN="4" HEIGHT="19" class="infobar" >Model: <span class="infobarvalue">${model2}</span>, Version: <span class="infobarvalue">$(cat /etc/version)</span>, Name: <span class="infobarvalue">${tmp_name}</span>, Standort: <span class="infobarvalue">${tmp_location}</span></TD>
   <TD HEIGHT="19" WIDTH="150"><IMG ALT="" BORDER="0" HEIGHT="19" SRC="/images/ff-logo-2.gif" WIDTH="150"></TD></TR>
   </table></td></tr>
  <TR><TD class="ie_color" HEIGHT="100%" VALIGN="top">
