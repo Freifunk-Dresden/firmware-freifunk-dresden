@@ -162,9 +162,7 @@ endef
 ##########################################################
 define Package/$(PKG_NAME)-lte
   CATEGORY:=ddmesh
-  # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-  # usb umts/lte sticks has storage device. but I is normally not needed.
   DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
             +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
             +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
@@ -176,6 +174,8 @@ define Package/$(PKG_NAME)-lte
             +kmod-usb-net-cdc-mbim +umbim \
             +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
             +kmod-usb-net-cdc-ether \
+            \
+            +comgt-ncm +kmod-usb-net-huawei-cdc-ncm \
             \
             +usbutils
 
@@ -235,29 +235,29 @@ define Package/$(PKG_NAME)-lte/description
 endef
 
 ##########################################################
-
-define Package/$(PKG_NAME)-wifi-extra
-  CATEGORY:=ddmesh
-  # keep it as default. if I create a new config for non-wifi targets, it would select wifi
-  DEFAULT:=n
-  DEPENDS:= $(PKG_NAME)-wifi \
-    +kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
-    +kmod-ath10k-ct +kmod-ath5k +kmod-ath9k \
-    +kmod-p54-usb \
-    +kmod-rt2500-usb \
-    +kmod-rt2800-usb \
-    +kmod-rt2x00-usb \
-    +kmod-rt73-usb \
-    +kmod-rtl8187
-
-  TITLE:=Meta package to select extra wifi drivers
-endef
-
-define Package/$(PKG_NAME)-wifi-extra/description
-        Meta package to select extra wifi drivers for usb sticks.
-  This is useful for Futro with usb stick wifi support
-endef
-
+# wifi-extra: bisher niemals verwendet
+# define Package/$(PKG_NAME)-wifi-extra
+#   CATEGORY:=ddmesh
+#   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
+#   DEFAULT:=n
+#   DEPENDS:= $(PKG_NAME)-wifi \
+#     +kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
+#     +kmod-ath10k-ct +kmod-ath5k +kmod-ath9k \
+#     +kmod-p54-usb \
+#     +kmod-rt2500-usb \
+#     +kmod-rt2800-usb \
+#     +kmod-rt2x00-usb \
+#     +kmod-rt73-usb \
+#     +kmod-rtl8187
+#
+#   TITLE:=Meta package to select extra wifi drivers
+# endef
+#
+# define Package/$(PKG_NAME)-wifi-extra/description
+#         Meta package to select extra wifi drivers for usb sticks.
+#   This is useful for Futro with usb stick wifi support
+# endef
+#
 ##########################################################
 define Package/$(PKG_NAME)-extra-modules
   CATEGORY:=ddmesh
@@ -325,5 +325,5 @@ $(eval $(call BuildPackage,$(PKG_NAME)-wifi))
 $(eval $(call BuildPackage,$(PKG_NAME)-usb-storage))
 $(eval $(call BuildPackage,$(PKG_NAME)-tethering))
 $(eval $(call BuildPackage,$(PKG_NAME)-lte))
-$(eval $(call BuildPackage,$(PKG_NAME)-wifi-extra))
+# $(eval $(call BuildPackage,$(PKG_NAME)-wifi-extra))
 $(eval $(call BuildPackage,$(PKG_NAME)-extra-modules))
