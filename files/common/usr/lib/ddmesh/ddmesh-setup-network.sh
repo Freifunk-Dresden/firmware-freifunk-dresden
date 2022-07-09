@@ -336,11 +336,9 @@ setup_twan()
 	uci set network.${dev_config}.type='bridge'
 	uci set network.${dev_config}.stp=1
 	uci set network.${dev_config}.bridge_empty=1
-	# avoid spaces in 'ports'
-	for p in usb0
-	do
-		uci add_list network.${dev_config}.ports="$p"
-	done
+
+	# /etc/hotplug.d/usb/02-ddmesh-tether will
+	# add new interfaces with correct names to bridge
 
 	uci add network interface
 	uci rename network.@interface[-1]='twan'

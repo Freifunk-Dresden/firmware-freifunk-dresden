@@ -1,0 +1,32 @@
+#!/bin/sh
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
+# determines and adds cdc_ether interfaces to br-twan. /etc/hotplug.d/net does
+# not have all information to distinguish usb teather interface eth1 from normal eth1
+# see ddmesh-setup-network.sh (setup_twan)
+
+# only process cdc_ether
+[ "$ACTION" = 'add' -a "$DEVTYPE" = 'usb_interface' -a -n "$DEVPATH" ] || exit 0
+
+TAG="hotplug.tether"
+
+if [ -n "$DEVPATH" ]; then
+	vid=$(cat /sys$DEVPATH/../idVendor)
+	pid=$(cat /sys$DEVPATH/../idProduct)
+	product=$(cat /sys$DEVPATH/../product)
+	speed=$(cat /sys$DEVPATH/../speed)
+	ifname="$(ls /sys${DEVPATH}/net/)"
+
+	if [ -n "$ifname" ]; then
+		logger -t ${TAG} "ifname=[${ifname}], vid=[$vid], pid=[$pid], product:[$product], usbspeed=[$speed]"
+		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh twan)
+		/sbin/ip link set ${ifname} up
+		/usr/sbin/brctl addif ${net_ifname} ${ifname}
+
+		# update dhcp
+		pid="$(cat /var/run/udhcpc-br-twan.pid)"
+		/bin/kill -USR2 $pid
+		/bin/kill -USR1 $pid
+	fi
+fi
