@@ -156,7 +156,8 @@ define Package/$(PKG_NAME)-tethering
 endef
 
 define Package/$(PKG_NAME)-tethering/description
-        Meta package to enable usb smartphone tethering
+        Meta package to enable usb smartphone tethering. Some LTE Router usb sticks
+        offer also a network interface directly via cdc-ether (ZTE MF79U)
 endef
 
 ##########################################################
@@ -235,30 +236,6 @@ define Package/$(PKG_NAME)-lte/description
 endef
 
 ##########################################################
-# wifi-extra: bisher niemals verwendet
-# define Package/$(PKG_NAME)-wifi-extra
-#   CATEGORY:=ddmesh
-#   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
-#   DEFAULT:=n
-#   DEPENDS:= $(PKG_NAME)-wifi \
-#     +kmod-usb-core +kmod-usb2 +kmod-usb-ohci \
-#     +kmod-ath10k-ct +kmod-ath5k +kmod-ath9k \
-#     +kmod-p54-usb \
-#     +kmod-rt2500-usb \
-#     +kmod-rt2800-usb \
-#     +kmod-rt2x00-usb \
-#     +kmod-rt73-usb \
-#     +kmod-rtl8187
-#
-#   TITLE:=Meta package to select extra wifi drivers
-# endef
-#
-# define Package/$(PKG_NAME)-wifi-extra/description
-#         Meta package to select extra wifi drivers for usb sticks.
-#   This is useful for Futro with usb stick wifi support
-# endef
-#
-##########################################################
 define Package/$(PKG_NAME)-extra-modules
   CATEGORY:=ddmesh
 
@@ -325,5 +302,4 @@ $(eval $(call BuildPackage,$(PKG_NAME)-wifi))
 $(eval $(call BuildPackage,$(PKG_NAME)-usb-storage))
 $(eval $(call BuildPackage,$(PKG_NAME)-tethering))
 $(eval $(call BuildPackage,$(PKG_NAME)-lte))
-# $(eval $(call BuildPackage,$(PKG_NAME)-wifi-extra))
 $(eval $(call BuildPackage,$(PKG_NAME)-extra-modules))
