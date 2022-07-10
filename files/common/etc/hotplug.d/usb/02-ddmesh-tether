@@ -29,10 +29,10 @@ if [ -n "$DEVPATH" ]; then
 
 	if [ -n "${ifname}" ]; then
 		logger -t ${TAG} "ifname=[${ifname}], vid=[$vid], pid=[$pid], product:[$product], usbspeed=[$speed]"
-    logger -t ${TAG} "rename [${ifname}] to [${nifname}]"
+		logger -t ${TAG} "rename [${ifname}] to [${nifname}]"
 		/sbin/ip link set ${ifname} down
 		/sbin/ip link set ${ifname} name ${nifname}
-		/sbin/ip link set ${ifname} up
+		/sbin/ip link set ${nifname} up
 
 		# update dhcp
 		pid="$(cat /var/run/udhcpc-br-twan.pid)"

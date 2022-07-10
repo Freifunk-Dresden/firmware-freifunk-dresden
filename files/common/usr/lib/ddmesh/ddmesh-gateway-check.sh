@@ -132,16 +132,6 @@ network_is_up wan  && {
 }
 printf 'WAN:%s via %s\n' "$default_wan_ifname" "$default_wan_gateway"
 
-network_is_up twan  && {
-	#get network infos using /lib/functions/network.sh
-	network_get_device default_twan_ifname twan
-	default_twan_gateway=$(ip route | sed -n "/default via [0-9.]\+ dev $default_twan_ifname/{s#.*via \([0-9.]\+\).*#\1#p}")
-	if [ -n "$default_twan_gateway" -a -n "$default_twan_ifname" ]; then
-		twan_default_route="$default_twan_gateway:$default_twan_ifname"
-	fi
-}
-printf 'TWAN:%s via %s\n' "$default_twan_ifname" "$default_twan_gateway"
-
 network_is_up lan && {
 	#get network infos using /lib/functions/network.sh
 	network_get_device default_lan_ifname lan
@@ -151,6 +141,16 @@ network_is_up lan && {
 	fi
 }
 printf 'LAN:%s via %s\n' "$default_lan_ifname" "$default_lan_gateway"
+
+network_is_up twan  && {
+	#get network infos using /lib/functions/network.sh
+	network_get_device default_twan_ifname twan
+	default_twan_gateway=$(ip route | sed -n "/default via [0-9.]\+ dev $default_twan_ifname/{s#.*via \([0-9.]\+\).*#\1#p}")
+	if [ -n "$default_twan_gateway" -a -n "$default_twan_ifname" ]; then
+		twan_default_route="$default_twan_gateway:$default_twan_ifname"
+	fi
+}
+printf 'TWAN:%s via %s\n' "$default_twan_ifname" "$default_twan_gateway"
 
 #network_is_up vpn && {
 true && {
@@ -168,8 +168,8 @@ ok=0
 IFS=' '
 # start with vpn, because this is prefered gateway, then WAN and lates LAN
 # (there is no forwarding to lan allowed by firewall)
-# wwan after wan: assume wan is faster than wwan
-for g in $vpn_default_route $wan_default_route $twan_default_route $wwan_default_route $lan_default_route
+# wwan+teth after wan/lan: assume wan/lan is faster than wwan/tether (tether is fallback for wired connection)
+for g in $vpn_default_route $wan_default_route $lan_default_route $twan_default_route $wwan_default_route
 do
 	printf '===========\n'
 	printf 'try: %s\n' "$g"
