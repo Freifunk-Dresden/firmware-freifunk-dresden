@@ -7,9 +7,13 @@
 # see ddmesh-setup-network.sh (setup_twan)
 
 # only process cdc_ether
-[ "$ACTION" = 'add' -a "$DEVTYPE" = 'usb_interface' -a -n "$DEVPATH" ] || exit 0
+# during boot (coldplug) only "bind" is used
+[ "$ACTION" = 'bind' -a "$DEVTYPE" = 'usb_interface' -a -n "$DEVPATH" ] || exit 0
 
 TAG="hotplug.tether"
+
+# ddmesh-utils-network-info.sh can not be used during boot (data are not ready yet)
+nifname="teth"
 
 if [ -n "$DEVPATH" ]; then
 	vid=$(cat /sys$DEVPATH/../idVendor)
@@ -18,11 +22,12 @@ if [ -n "$DEVPATH" ]; then
 	speed=$(cat /sys$DEVPATH/../speed)
 	ifname="$(ls /sys${DEVPATH}/net/)"
 
-	if [ -n "$ifname" ]; then
+	if [ -n "${ifname}" ]; then
 		logger -t ${TAG} "ifname=[${ifname}], vid=[$vid], pid=[$pid], product:[$product], usbspeed=[$speed]"
-		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh twan)
+    logger -t ${TAG} "rename [${ifname}] to [${nifname}]"
+		/sbin/ip link set ${ifname} down
+		/sbin/ip link set ${ifname} name ${nifname}
 		/sbin/ip link set ${ifname} up
-		/usr/sbin/brctl addif ${net_ifname} ${ifname}
 
 		# update dhcp
 		pid="$(cat /var/run/udhcpc-br-twan.pid)"

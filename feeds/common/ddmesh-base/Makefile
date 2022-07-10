@@ -147,93 +147,58 @@ define Package/$(PKG_NAME)-tethering
             +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
             +kmod-usb-ledtrig-usbport \
             \
-            +kmod-mii +kmod-usb-net +kmod-usb-net-cdc-ether +kmod-usb-net-rndis \
+            +kmod-mii +kmod-usb-net \
+            +kmod-usb-net-cdc-ether \
+            +kmod-usb-net-rndis \
+            +comgt-ncm +kmod-usb-net-huawei-cdc-ncm \
             +kmod-usb-net-ipheth +usbmuxd +libimobiledevice \
+            +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
+            +kmod-usb-net-cdc-mbim +umbim \
             \
+            +kmod-usb-storage \
+            +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
+            +usb-modeswitch \
             +usbutils
 
-  TITLE:=Meta package to enable usb smartphone tethering
+  TITLE:=Meta package to enable usb smartphone/LTE router tethering
 endef
 
 define Package/$(PKG_NAME)-tethering/description
-        Meta package to enable usb smartphone tethering. Some LTE Router usb sticks
+        Meta package to enable usb smartphone and LTE router tethering.
+        - used for Gl.inet GL-Mifi router with built in LTE module
+        - android usb tethering (usb network interface)
+        - LTE Router. Some LTE Router usb sticks
         offer also a network interface directly via cdc-ether (ZTE MF79U)
 endef
 
 ##########################################################
-define Package/$(PKG_NAME)-lte
-  CATEGORY:=ddmesh
-  DEFAULT:=n
-  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
-            +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
-            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
-            +kmod-usb-ledtrig-usbport \
-            \
-            +kmod-usb-storage \
-            +usb-modeswitch \
-            +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
-            +kmod-usb-net-cdc-mbim +umbim \
-            +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
-            +kmod-usb-net-cdc-ether \
-            \
-            +comgt-ncm +kmod-usb-net-huawei-cdc-ncm \
-            \
-            +usbutils
+# define Package/$(PKG_NAME)-lte
+#   CATEGORY:=ddmesh
+#   DEFAULT:=n
+#   DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+#             +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
+#             +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+#             +kmod-usb-ledtrig-usbport \
+#             \
+#             +kmod-usb-storage \
+#             +usb-modeswitch \
+#             +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
+#             +kmod-usb-net-cdc-mbim +umbim \
+#             +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
+#             +kmod-usb-net-cdc-ether \
+#             \
+#             +comgt-ncm +kmod-usb-net-huawei-cdc-ncm \
+#             \
+#             +usbutils
 
-  TITLE:=Meta package to enable usb LTE modem support
-endef
+#   TITLE:=Meta package to enable usb LTE modem support
+# endef
 
-define Package/$(PKG_NAME)-lte/description
-   Meta package to enable qmi LTE modem support
-   https://openwrt.org/docs/guide-user/network/wan/wwan/ltedongle
+# define Package/$(PKG_NAME)-lte/description
+#    Meta package to enable qmi LTE modem support
+#    https://openwrt.org/docs/guide-user/network/wan/wwan/ltedongle
 
-  LTE Stick must be switch to "ndis" interface via AT commands instead of "modem"
-  see: https://openwrt.org/docs/guide-user/network/wan/wwan/at_commands
-
-  See: http://m2msupport.net/m2msupport/tutorial-for-huawei-modules/
-  Huawei: https://rychly.gitlab.io/post/huawei-e173s1/
-
-  ACHTUNG:  Never turn Off PC interface (2:PCUI in this example)!
-        Denn da diese Settings persistent sind, kann man nicht mehr via terminal auf
-        den stick zu greifen und ihn mit AT commands konfigurieren
-
-
-  Huawei E173
-  -------------
-  GSM modem (1-port) converters attached to
-          - /dev/ttyUSB0 (AT commands),
-          - /dev/ttyUSB1 (data),
-          - /dev/ttyUSB2 (status & AT commands)
-
-  AT Commands (general)
-    - ATI - displays gsm modul information
-            Manufacturer: huawei
-            Model: E173
-            Revision: 11.126.29.00.1130
-            IMEI: xxxxxxxx
-            +GCAP: +CGSM,+DS,+ES
-
-          - AT+COPS? – get active network Name and ID
-            +COPS: 1,0,"disco",2
-
-          - AT+CSQ – get signal strength as +CSQ rssi (higher is better) and ber (lower is better; 99 = unknown)
-
-          -
-        AT Commands for Huawei
-          - AT^GETPORTMODE to display a list of devices present in a USB-stick
-            ^GETPORTMODE:TYPE:WCDMA:Qualcomm,MDM:0,NDIS:1,DIAG:2,PCUI:3,CDROM:4,SD:5
-
-          - AT^SYSCFG? to display network-mode preferences
-            ^SYSCFG:2,2,3FFFFFFF,1,2
-
-          - AT^U2DIAG? for reading/controlling default mode (an alternative to usb_modeswitch)
-            276 - means: currently factory reset values are set (all enabled)
-
-          usb_modeswitch will do all the needed steps to switch from SDCard to Modem.
-
-
-
-endef
+# endef
 
 ##########################################################
 define Package/$(PKG_NAME)-extra-modules
@@ -301,5 +266,5 @@ $(eval $(call BuildPackage,$(PKG_NAME)-base))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi))
 $(eval $(call BuildPackage,$(PKG_NAME)-usb-storage))
 $(eval $(call BuildPackage,$(PKG_NAME)-tethering))
-$(eval $(call BuildPackage,$(PKG_NAME)-lte))
+#$(eval $(call BuildPackage,$(PKG_NAME)-lte))
 $(eval $(call BuildPackage,$(PKG_NAME)-extra-modules))

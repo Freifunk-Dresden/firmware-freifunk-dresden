@@ -338,7 +338,9 @@ setup_twan()
 	uci set network.${dev_config}.bridge_empty=1
 
 	# /etc/hotplug.d/usb/02-ddmesh-tether will
-	# add new interfaces with correct names to bridge
+	# add rename new interfaces to teth. needed this way to make coldplug
+	# reliable
+	uci add_list network.${dev_config}.ports="teth"
 
 	uci add network interface
 	uci rename network.@interface[-1]='twan'

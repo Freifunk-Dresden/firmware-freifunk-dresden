@@ -13,5 +13,5 @@ if [ -n "$DEVPATH" ]; then
 	speed=$(cat /sys$DEVPATH/../speed)
 	ifname="$(ls /sys${DEVPATH}/net/)"
 
-	logger -t ${TAG} "---> ifname=[${ifname}], vid=[$vid], pid=[$pid], product:[$product], usbspeed=[$speed]"
+	logger -t ${TAG} "    ifname=[${ifname}], vid=[$vid], pid=[$pid], product:[$product], usbspeed=[$speed]"
 fi
