@@ -313,7 +313,7 @@ setup_wwan()
 	uci set network.wwan.autoconnect='1'
 	uci set network.wwan.pdptype='IP'	# IPv4 only
 	uci set network.wwan.delay='30' 	# wait for SIMCard being ready
-	uci set network.wwan.metric='50'	# avoids overwriting WAN default route
+	uci set network.wwan.metric='50'	# avoids overwriting WAN/LAN default route
 	uci set network.wwan.modes="lte"
 
 	# helper network, to setup firewall rules for wwan network.
@@ -347,6 +347,7 @@ setup_twan()
 	uci set network.twan.device='br-twan'
 	uci set network.twan.proto='dhcp'
 	uci set network.twan.force_link='1'
+	uci set network.twan.metric='60' # avoids overwriting WAN/LAN default route
 }
 
 setup_wifi()
