@@ -20,7 +20,7 @@ for t in main local_gateway fallback_gateway public_gateway bat_route ; do
 EOF
 
 	ip route list table $t | sed '
-s@^\([^ ]*\)[ ]\?[ ]*\(via [^ ]*\)\?[ ]\?[ ]*\(dev [^ ]*\)\?[ ]\?[ ]*\(proto [^ ]*\)\?[ ]\?[ ]*\(scope [^ ]*\)\?[ ]\?[ ]*\(metric [^ ]*\)\?[ ]\?[ ]*\(src [^ ]*\)\?[ ]\?[ ]*@\1 \2 \3 \4 \5 \6 \7@
+s@^\(default\|throw [^ ]\+\|[^ ]*\)[ ]\?[ ]*\(via [^ ]*\)\?[ ]\?[ ]*\(dev [^ ]*\)\?[ ]\?[ ]*\(proto [^ ]*\)\?[ ]\?[ ]*\(scope [^ ]*\)\?[ ]\?[ ]*\(metric [^ ]*\)\?[ ]\?[ ]*\(src [^ ]*\)\?[ ]\?[ ]*\(metric [^ ]*\)\?[ ]\?[ ]*@\1 \2 \3 \4 \5 \6 \7 \8@
 ' | sed '
 s@via @@
 s@dev @@
@@ -30,13 +30,15 @@ s@src @@
 s@linkdown @@
 s@proto @@
 ' | sed -n -e '
-s@^\(default[^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\)@<tr class="colortoggle3"><td>\1</td><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>@
-s@^\([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\)@<tr class="colortoggle1"><td>\1</td><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>@
+s@^\(default[^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\)@<tr class="colortoggle3"><td>\1</td><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\8</td><td>\7</td></tr>@
+s@^\(throw .*\)@<tr class="colortoggle1"><td>\1 \2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>@
+s@^\([^ <]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\)@<tr class="colortoggle1"><td>\1</td><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>@
 s@\([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\)\([^/]\)@\1\2@g
 p
 n
-s@^\(default[^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\)@<tr class="colortoggle3"><td>\1</td><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>@
-s@^\([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\)@<tr class="colortoggle2"><td>\1</td><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>@
+s@^\(default[^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\)@<tr class="colortoggle3"><td>\1</td><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\8</td><td>\7</td></tr>@
+s@^\(throw .*\)@<tr class="colortoggle2"><td>\1 \2</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>@
+s@^\([^ <]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\) \([^ ]*\)@<tr class="colortoggle2"><td>\1</td><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>@
 s@\([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\)\([^/]\)@\1\2@g
 p
 '
