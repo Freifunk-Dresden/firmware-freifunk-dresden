@@ -1,0 +1,42 @@
+#!/bin/sh
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
+# determines and adds cdc_ether interfaces to br-twan. /etc/hotplug.d/net does
+# not have all information to distinguish usb teather interface eth1 from normal eth1
+# see ddmesh-setup-network.sh (setup_twan)
+
+# during boot (coldplug) only "bind" is used
+[ "$ACTION" = 'bind' -a "$DEVTYPE" = 'usb_interface' -a -n "$DEVPATH" ] || exit 0
+
+# only process cdc_ether, other driver (e.g. qmi) will provide wwan0 interfaces that should
+# be still available (gl-mifi)
+# - rndis_host (android tehter)
+[ "$DRIVER" = "cdc_ether" -o "$DRIVER" = "rndis_host" ] || exit 0
+
+TAG="hotplug.tether"
+logger -t ${TAG} "event: action:[$ACTION] type:[$DEVTYPE] dev:[$DEVICENAME] drv:[$DRIVER] devpath:[$DEVPATH]"
+
+# ddmesh-utils-network-info.sh can not be used during boot (data are not ready yet)
+nifname="teth"
+
+if [ -n "$DEVPATH" ]; then
+	vid=$(cat /sys$DEVPATH/../idVendor)
+	pid=$(cat /sys$DEVPATH/../idProduct)
+	product=$(cat /sys$DEVPATH/../product)
+	speed=$(cat /sys$DEVPATH/../speed)
+	ifname="$(ls /sys${DEVPATH}/net/)"
+
+	if [ -n "${ifname}" ]; then
+		logger -t ${TAG} "ifname=[${ifname}], vid=[$vid], pid=[$pid], product:[$product], usbspeed=[$speed]"
+		logger -t ${TAG} "rename [${ifname}] to [${nifname}]"
+		/sbin/ip link set ${ifname} down
+		/sbin/ip link set ${ifname} name ${nifname}
+		/sbin/ip link set ${nifname} up
+
+		# update dhcp
+		pid="$(cat /var/run/udhcpc-br-twan.pid)"
+		/bin/kill -USR2 $pid
+		/bin/kill -USR1 $pid
+	fi
+fi
