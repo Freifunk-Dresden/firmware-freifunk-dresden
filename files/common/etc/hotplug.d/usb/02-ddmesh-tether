@@ -38,5 +38,9 @@ if [ -n "$DEVPATH" ]; then
 		pid="$(cat /var/run/udhcpc-br-twan.pid)"
 		/bin/kill -USR2 $pid
 		/bin/kill -USR1 $pid
+
+		# ensure that interface is added after remove/insert. openwrt does somethimes
+		# not add the interace
+		/usr/sbin/brctl addif br-twan ${nifname}
 	fi
 fi
