@@ -49,6 +49,7 @@ get_switch_info()
 	$json && echo "{"
 
 	if [ "$(isDsa)" = "0" ]; then
+	  $json && echo "\"dsa\": false,"
 		if [ -n "$(which swconfig)" ]; then
 			for dev in $(swconfig list | awk '{print $2}')
 			do
@@ -69,6 +70,7 @@ get_switch_info()
 			done
 		fi
 	else
+		$json && echo "\"dsa\": true,"
 		$json && echo "\"switch\" : ["
 		for dev in $(getDsaInterfaces)
 		do
