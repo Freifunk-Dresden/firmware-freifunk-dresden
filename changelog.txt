@@ -1,4 +1,11 @@
 
+2022-05-x [8.0.7] (testing)
+--------------------------------------------------
+sysinfo                   - add wifi channel info
+usb-tethering             - rework usb tethering to support IPhone, Huawei 3372h-320, ZTE MF79U, TP-Link M7300
+                          - add support for TP-Link routers TL-WR2543N, TL-WDR3600, TL-WDR4300
+community                 - add group_id to group routers for any statistic/mapping reasons
+
 
 2022-05-x [8.0.6]
 --------------------------------------------------
@@ -6,16 +13,12 @@ bmxd                      - reduce dead-node timeout
                           - update routes immediately after removing next-hop node
                           - remove bat0 tunnel stuff (safes 20kbyte)
 community                 - add Leipzig
-                          - add group_id to group routers for any statistic/mapping reasons
 router                    - add TP-Link Archer C50/C59, TP-Link WR902AC
 gui                       - speed up
 backbone                  - process port number when requesting backbone parameters
 internals                 - add script (/etc/ddmesh/post-init.sh) to run user code after
                             freifunk init has finished
                           - prevent starting fastd if no backbone/privnet was configured
-sysinfo                   - add wifi channel info
-usb-tethering             - rework usb tethering to support IPhone, Huawei 3372h-320, ZTE MF79U
-
 
 2022-04-x [8.0.5]
 --------------------------------------------------
