@@ -234,6 +234,8 @@ $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*
 			"bmxd" : "$(cat $BMXD_DB_PATH/status)",
 			"essid":"$(uci get wireless.wifi2_2g.ssid)",
 			"wifi_roaming" : "$roaming",
+			"wifi_2g_channel": "$(uci -q get ddmesh.network.wifi_channel)",
+			"wifi_5g_channel": "$(uci -q get ddmesh.network.wifi_channel_5g)",
 			"node_type":"$node_type",
 			"splash":$splash,
 			"email_notification":$email_notification,
@@ -245,7 +247,8 @@ $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*
 $(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
 		},
 		"common":{
-			"community":"$(uci get ddmesh.system.community)",
+			"community":"$(uci -q get ddmesh.system.community)",
+			"group_id":"$(uci -q get ddmesh.system.group_id)",
 			"node":"$_ddmesh_node",
 			"domain":"$_ddmesh_domain",
 			"ip":"$_ddmesh_ip",

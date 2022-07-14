@@ -101,7 +101,13 @@ cat<<EOM
 <TR>
 <TH>- Netzwerk-ID <font class="marked-input-fg">*</font>:</TH>
 <TD><INPUT class="marked-input-bg" NAME="form_mesh_network_id" TYPE="TEXT" VALUE="$(uci -q get ddmesh.system.mesh_network_id)"></TD>
-<td></td>
+<td>Knoten-Netzwerkzuordnung. <font color="#ff0000"><b>Achtung:</b>&Auml;nderung nach &Uuml;bernahme sofort aktiv.</font></td>
+</TR>
+<TR>
+<TR><TD COLSPAN="3">&nbsp;</TD></TR>
+<TH>Router-Gruppe<font class="marked-input-fg">*</font>:</TH>
+<TD><INPUT class="marked-input-bg" NAME="form_group_id" TYPE="TEXT" VALUE="$(uci -q get ddmesh.system.group_id)"></TD>
+<td>optional: Gruppiert Router zu einer Gruppe. Verwendet von Statistik/Kartendarstellungen</td>
 </TR>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
@@ -371,10 +377,11 @@ else
 
 # process form abort or save
 	if [ -n "$form_submit" ]; then
-		uci set ddmesh.system.node_type="$(uhttpd -d $form_node_type)"
+		uci set ddmesh.system.node_type="$(uhttpd -d ${form_node_type})"
 		# community und network id muessen noch zusammen gefuehrt werden
-		uci set ddmesh.system.community="$(uhttpd -d $form_community)"
+		uci set ddmesh.system.community="$(uhttpd -d ${form_community})"
 		uci set ddmesh.system.mesh_network_id=${form_mesh_network_id:-0}
+		uci set ddmesh.system.group_id="$(uhttpd -d ${form_group_id:-0})"
 
 		uci set ddmesh.system.wanssh=${form_wanssh:-0}
 		uci set ddmesh.system.wanhttp=${form_wanhttp:-0}
@@ -401,15 +408,15 @@ else
 			uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
 #		fi
 		uci set ddmesh.network.force_ether_100mbit=${form_ethernet_speed:-0}
-		test -n "$form_bmxd_preferred_gateway" && prefgw="$(uhttpd -d $form_bmxd_preferred_gateway)"
+		test -n "$form_bmxd_preferred_gateway" && prefgw="$(uhttpd -d ${form_bmxd_preferred_gateway})"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.bmxd.only_community_gateways=${form_bmxd_only_community:-0}
 		uci set ddmesh.system.firmware_autoupdate=${form_firmware_autoupdate:-0}
 		uci set ddmesh.system.nightly_reboot=${form_nightly_reboot:-0}
 		uci set ddmesh.system.ignore_factory_reset_button=${form_ignore_factory_reset_button:-0}
-		test -n "$form_internal_dns1" && uci set ddmesh.network.internal_dns1="$(uhttpd -d $form_internal_dns1)"
-		test -n "$form_internal_dns2" && uci set ddmesh.network.internal_dns2="$(uhttpd -d $form_internal_dns2)"
-		test -n "$form_fallback_dns" && uci set ddmesh.network.fallback_dns="$(uhttpd -d $form_fallback_dns)"
+		test -n "$form_internal_dns1" && uci set ddmesh.network.internal_dns1="$(uhttpd -d ${form_internal_dns1})"
+		test -n "$form_internal_dns2" && uci set ddmesh.network.internal_dns2="$(uhttpd -d ${form_internal_dns2})"
+		test -n "$form_fallback_dns" && uci set ddmesh.network.fallback_dns="$(uhttpd -d ${form_fallback_dns})"
 		uci set ddmesh.led.wifi="${form_led_wifi:-status}"
 		uci set ddmesh.led.status="${form_led_status:-status}"
 		uci set ddmesh.led.wwan="${form_led_wwan:-status}"

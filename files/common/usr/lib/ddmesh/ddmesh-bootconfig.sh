@@ -50,6 +50,7 @@ config system 'system'
 	option	mesh_network_id '0'
 	option	community 'Dresden'
 #	option 	node 0
+	option	group_id 0
 	option 	tmp_min_node 900
 	option	tmp_max_node 999
 #	option 	register_key ''
