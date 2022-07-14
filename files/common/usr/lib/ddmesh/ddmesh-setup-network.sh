@@ -162,7 +162,7 @@ setup_mesh()
 
 		if ! $dsa ; then
 
-			# collect all ports
+			# collect all ports (normally only lan, but can be wan too. can not distinguish between lan/wan)
 			local tmp_switch_ports=""
 			cb_switch_vlan()
 			{
@@ -178,7 +178,7 @@ setup_mesh()
 			config_load network
 			config_foreach cb_switch_vlan switch_vlan
 
-			# add tag to each port
+			# add tag to each port (normally only lan, but can be wan too. can not distinguish between lan/wan)
 			for p in ${tmp_switch_ports}
 			do
 				# check if already added
@@ -187,7 +187,7 @@ setup_mesh()
 				fi
 			done
 
-			# vlan config
+			# vlan config (lan and wan possible, can not distinguish between lan/wan)
 			vlan_dev_config="switch_vlan_mesh"
 			uci add network switch_vlan
 			uci rename network.@switch_vlan[-1]="${vlan_dev_config}"
