@@ -326,6 +326,10 @@ case "$1" in
 
 			# create tbbwg
 			if [ -n "$secret" ]; then
+
+				# refresh registration in case node has changed
+				/usr/lib/ddmesh/ddmesh-backbone-regwg.sh refresh >/dev/null 2>/dev/null
+
 				# setup local wg interface. this is used to receive/transmit data for/from
 				# all peers (hosts)
 				secret_file="/tmp/wg.pki"
