@@ -5,10 +5,13 @@
 prefix="wifi_status"
 radio2g_up=""
 radio2g_phy=""
+radio2g_dev="wifi2ap"	# use interface that is always present
 radio2g_config_index=""
 radio2g_airtime=""
+
 radio5g_up=""
 radio5g_phy=""
+radio5g_dev="wifi5ap"	# use interface that is always present
 radio5g_config_index=""
 radio5g_airtime=""
 
@@ -43,7 +46,10 @@ if [ "$1" == "store" ]; then
 		[ -d "${devpath}" ] || break;
 
 		phy=$(ls ${devpath}/ieee80211/)
-		dev=$(ls ${devpath}/net/ | sed -n '1p')
+
+		# can not rely on dev after firmware update, because openwrt uses old wireless config
+		# with old interface names (if renamed).
+		# ${devpath}/net/ | sed -n '1p'
 
 		unset freq2
 		unset freq5
@@ -59,12 +65,10 @@ if [ "$1" == "store" ]; then
 			radio2g_up=1
 			radio2g_phy=$phy
 			radio2g_config_index=$idx
-			radio2g_dev="$dev"
 		elif [ "$freq5" = "5" ]; then
 			radio5g_up=1
 			radio5g_phy=$phy
 			radio5g_config_index=$idx
-			radio5g_dev="$dev"
 		fi
 	done
 
@@ -74,12 +78,10 @@ if [ "$1" == "store" ]; then
  uci -q set wireless.ddmesh.radio2g_up="$radio2g_up"
  uci -q set wireless.ddmesh.radio2g_phy="$radio2g_phy"
  uci -q set wireless.ddmesh.radio2g_config_index="$radio2g_config_index"
- uci -q set wireless.ddmesh.radio2g_dev="$radio2g_dev"
 
  uci -q set wireless.ddmesh.radio5g_up="$radio5g_up"
  uci -q set wireless.ddmesh.radio5g_phy="$radio5g_phy"
  uci -q set wireless.ddmesh.radio5g_config_index="$radio5g_config_index"
- uci -q set wireless.ddmesh.radio5g_dev="$radio5g_dev"
  uci -q commit
 fi
 
@@ -88,7 +90,7 @@ echo export $prefix"_radio2g_up"="$_radio2g_up"
 if [ "$_radio2g_up" = "1" ]; then
 	echo export $prefix"_radio2g_phy"="$(uci -q get wireless.ddmesh.radio2g_phy)"
 	echo export $prefix"_radio2g_config_index"="$(uci -q get wireless.ddmesh.radio2g_config_index)"
-	echo export $prefix"_radio2g_airtime"="$(airtime $(uci -q get wireless.ddmesh.radio2g_dev))"
+	echo export $prefix"_radio2g_airtime"="$(airtime ${radio2g_dev})"
 fi
 
 _radio5g_up="$(uci -q get wireless.ddmesh.radio5g_up)"
@@ -96,5 +98,5 @@ echo export $prefix"_radio5g_up"="$_radio5g_up"
 if [ "$_radio5g_up" = "1" ]; then
 	echo export $prefix"_radio5g_phy"="$(uci -q get wireless.ddmesh.radio5g_phy)"
 	echo export $prefix"_radio5g_config_index"="$(uci -q get wireless.ddmesh.radio5g_config_index)"
-	echo export $prefix"_radio5g_airtime"="$(airtime $(uci -q get wireless.ddmesh.radio5g_dev))"
+	echo export $prefix"_radio5g_airtime"="$(airtime ${radio5g_dev})"
 fi
