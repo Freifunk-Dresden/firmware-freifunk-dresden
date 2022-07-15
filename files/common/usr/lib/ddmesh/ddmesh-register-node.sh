@@ -128,14 +128,17 @@ case "$j_status" in
 
 				echo "commit node [$node]"
 				uci set ddmesh.system.node=$node
-				#config depending on node must be updated and causes a second reboot
-				uci set ddmesh.boot.boot_step=2
-			  	uci_commit.sh
 
 				echo "update https certificate"
 				rm /etc/uhttpd.key
 				rm /etc/uhttpd.crt
 
+				echo "delete wireguard key for old node"
+				uci -q delete credentials.backbone_secret.wireguard_key
+
+				#config depending on node must be updated and causes a second reboot
+				uci set ddmesh.boot.boot_step=2
+				uci_commit.sh
 				rebooting=1
 			}
 
