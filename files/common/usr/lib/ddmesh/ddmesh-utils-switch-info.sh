@@ -49,10 +49,10 @@ get_switch_info()
 	$json && echo "{"
 
 	if [ "$(isDsa)" = "0" ]; then
-	  $json && echo "\"dsa\": false,"
 		if [ -n "$(which swconfig)" ]; then
 			for dev in $(swconfig list | awk '{print $2}')
 			do
+				$json && echo "\"dsa\": false,"
 				$json && echo "\"$dev\" : ["
 				for entry in $(swconfig dev $dev show | awk '/link:/{$0=gensub(/([^ ]*):/,"\\1=","g"); print $2";"$3";"$4}')
 				do
