@@ -7,6 +7,7 @@
 # copy firwmare,packets and generate download.json
 
 # -------------------------------------------------------------------
+VERSION="6"
 
 #Black        0;30     Dark Gray     1;30
 #Red          0;31     Light Red     1;31
@@ -41,7 +42,7 @@ C_LGREY='\033[1;37m'
 usage()
 {
 	printf "${0##*/} (all | json [<directory-suffix>] ) | pretty <fileinfo.json>\n"
-	printf "Version 5\n"
+	printf "Version ${VERSION}\n"
 	printf "   all                  - generates all (incl.copying files)\n"
 	printf "   json                 - only updates download.json\n"
 	printf "   compare-json         - only compare fileinfo.json  against last generated version\n"
@@ -113,8 +114,8 @@ else
 		git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
 	fi
 fi
-echo "git_ddmesh_branch:$git_ddmesh_branch"
-echo "git_ddmesh_rev:$git_ddmesh_rev"
+printf "${C_LPURPLE}git_ddmesh_branch:${C_NONE} $git_ddmesh_branch\n"
+printf "${C_LPURPLE}git_ddmesh_rev:${C_NONE} $git_ddmesh_rev\n"
 fw_branch="$git_ddmesh_branch"
 fw_rev="$git_ddmesh_rev"
 
@@ -124,7 +125,7 @@ if [ -z "$fwversion" ]; then
 	exit 1
 fi
 
-printf "detected firmware version: $fwversion\n"
+printf "${C_LPURPLE}detected firmware version:${C_NONE} $fwversion\n"
 
 #get path of this script (upload dir) and change to it
 cd $PWD/${0%/*}
@@ -191,10 +192,11 @@ gen_download_json_add_data()
 
   error=0
 
-	printf "add files to download.json\n"
+	printf "    ${C_YELLOW}adding firmware to download.json${C_NONE} - file filter: $file_filter\n"
+
 	# progress info
-	printf "${C_LBLUE}# info complete${C_ORANGE}	+ some info missing${C_LRED}	- NO info${C_NONE}\n"
-  printf "  path: $subpath\n"
+	printf "    ${C_LBLUE}# model info complete${C_NONE} | ${C_ORANGE}+ partly model info missing${C_NONE} | ${C_LRED}- NO model info${C_NONE}\n"
+  printf "    "
 
 	# get info for each filename
 	# eval is needed because file_filter must be avaluated
@@ -343,7 +345,7 @@ gen_download_json_end()
 {
  	output_path=$1	# output path "firmware/4.2.15"
 
-	printf "close download.json\n"
+	#printf "close download.json\n"
 	printf " ]\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf "}\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 
@@ -418,7 +420,6 @@ $ENABLE_COPY && {
 	cp -a $info_dir/files/index.html $target_dir/
 	cp -a $info_dir/files/_res $target_dir/
 }
-printf "finished.\n"
 
 #################################################################################################
 # copy firmware
@@ -451,9 +452,10 @@ do
 #		gen_download_json_add_single_link "[$platform]" "$platform" $target_dir
 #	done
 
-
 	for platform in $(ls $_platforms)
 	do
+
+		printf -- "  ---------------------------------------------------------\n"
 
 		printf "  ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
 		tmpTargetDir="$target_dir/firmware/$platform"
@@ -475,18 +477,18 @@ do
 		# oder github
 		p=$(pwd)
 		cd $tmpTargetDir
-		printf "  ${C_YELLOW}calculate md5sum${C_NONE}\n"
-		md5sum * > $tmpTargetDir/md5sums
+		printf "    ${C_YELLOW}calculate md5sum${C_NONE}\n"
+		md5sum * > $tmpTargetDir/md5sums 2>/dev/null
 		cd $p
 
 		#copy packages
 		mkdir -p $tmpTargetDir/packages
-		printf "  search package dir: ${_platforms}/${platform}/\n"
+		printf "    ${C_YELLOW}search package dir:${C_NONE} ${_platforms}/${platform}/\n"
 		for package in $(cat $info_dir/packages | sed 's/#.*//;/^[	 ]*$/d')
 		do
-			printf "  ${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}\n"
+
 			filename=$(find ${_platforms}/${platform}/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
-			printf "  package filename: [${filename}]\n"
+			printf "      ${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE} [${filename}]\n"
 
 			test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
 			$ENABLE_COPY && {
@@ -495,15 +497,18 @@ do
 			}
 		done
 
-		printf "  ${C_YELLOW}generate package index${C_NONE}\n"
+		printf "    ${C_YELLOW}generate package index${C_NONE}\n"
 		p=$(pwd)
 		cd $tmpTargetDir/packages/
-		$buildroot/scripts/ipkg-make-index.sh . > Packages
+		$buildroot/scripts/ipkg-make-index.sh . > Packages 2>/dev/null
 		gzip -f Packages
 		cd $p
 
 		gen_download_json_add_data "$target_dir" "firmware/${platform}" $filefilter
+
 	done	# for platform
+  printf -- "\n=========================================================\n\n"
+
 done # for buildroot
 
 gen_download_json_end $target_dir
