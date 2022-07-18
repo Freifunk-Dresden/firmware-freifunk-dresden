@@ -234,8 +234,8 @@ $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*
 			"bmxd" : "$(cat $BMXD_DB_PATH/status)",
 			"essid":"$(uci get wireless.wifi2_2g.ssid)",
 			"wifi_roaming" : "$roaming",
-			"wifi_2g_channel": "$(uci -q get ddmesh.network.wifi_channel)",
-			"wifi_5g_channel": "$(uci -q get ddmesh.network.wifi_channel_5g)",
+			$([ "$wifi_status_radio2g_up" == "1" ] && echo "\"wifi_2g_channel\": $(iwinfo wifi2ap info | grep Channel: | tr -s ' ' | cut -d' ' -f5),")
+			$([ "$wifi_status_radio5g_up" == "1" ] && echo "\"wifi_5g_channel\": $(iwinfo wifi5ap info | grep Channel: | tr -s ' ' | cut -d' ' -f5),")
 			"node_type":"$node_type",
 			"splash":$splash,
 			"email_notification":$email_notification,
