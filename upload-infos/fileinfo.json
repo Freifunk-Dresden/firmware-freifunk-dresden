@@ -1724,19 +1724,19 @@
     },
     {
       "name": "",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "r6220",
       "model2": "Netgear R6220",
       "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "Achtung: manche Geräte verlieren ihr 2.4Ghz Wifi seit Openwrt 21"
     },
     {
       "name": "",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "netgear,r6220",
       "model2": "Netgear R6220",
       "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "Achtung: manche Geräte verlieren ihr 2.4Ghz Wifi seit Openwrt 21"
     },
     {
       "name": "",
