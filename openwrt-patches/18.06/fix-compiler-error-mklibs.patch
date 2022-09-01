@@ -1,0 +1,472 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/include/download.mk 18.ninja/include/download.mk
+--- a/include/download.mk	2021-04-17 16:47:02.000000000 +0200
++++ b/include/download.mk	2022-09-02 01:04:41.430004614 +0200
+@@ -19,17 +19,23 @@
+
+ DOWNLOAD_RDEP=$(STAMP_PREPARED) $(HOST_STAMP_PREPARED)
+
++define dl_method_git
++$(if $(filter https://github.com/% git://github.com/%,$(1)),github_archive,git)
++endef
++
+ # Try to guess the download method from the URL
+ define dl_method
+ $(strip \
+-  $(if $(2),$(2), \
+-    $(if $(filter @APACHE/% @GITHUB/% @GNOME/% @GNU/% @KERNEL/% @SF/% @SAVANNAH/% ftp://% http://% https://% file://%,$(1)),default, \
+-      $(if $(filter git://%,$(1)),git, \
+-        $(if $(filter svn://%,$(1)),svn, \
+-          $(if $(filter cvs://%,$(1)),cvs, \
+-            $(if $(filter hg://%,$(1)),hg, \
+-              $(if $(filter sftp://%,$(1)),bzr, \
+-                unknown \
++  $(if $(filter git,$(2)),$(call dl_method_git,$(1),$(2)),
++    $(if $(2),$(2), \
++      $(if $(filter @OPENWRT @APACHE/% @DEBIAN/% @GITHUB/% @GNOME/% @GNU/% @KERNEL/% @SF/% @SAVANNAH/% ftp://% http://% https://% file://%,$(1)),default, \
++        $(if $(filter git://%,$(1)),$(call dl_method_git,$(1),$(2)), \
++          $(if $(filter svn://%,$(1)),svn, \
++            $(if $(filter cvs://%,$(1)),cvs, \
++              $(if $(filter hg://%,$(1)),hg, \
++                $(if $(filter sftp://%,$(1)),bzr, \
++                  unknown \
++                ) \
+               ) \
+             ) \
+           ) \
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/Makefile b/tools/mklibs/Makefile
+--- a/tools/mklibs/Makefile	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/Makefile	2022-07-30 15:40:44.001648789 +0200
+@@ -7,17 +7,18 @@
+ include $(TOPDIR)/rules.mk
+
+ PKG_NAME:=mklibs
+-PKG_VERSION:=0.1.35
++PKG_VERSION:=0.1.45
+
+-PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.gz
+-PKG_SOURCE_URL:=http://ftp.de.debian.org/debian/pool/main/m/mklibs/
+-PKG_HASH:=ccb1023dc1729c5a37ca6c3eca8e4bac3491116763c8820dfce8eea4845c8567
++PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.xz
++PKG_SOURCE_URL:=@DEBIAN/pool/main/m/mklibs/
++PKG_HASH:=dd92a904b3942566f713fe536cd77dd1a5cfc62243c0e0bc6bb5d866e37422f3
+
+ HOST_FIXUP:=autoreconf
+
+ include $(INCLUDE_DIR)/host-build.mk
+
+ HOST_CFLAGS += -I$(CURDIR)/include
++HOST_CPPFLAGS += -std=gnu++98
+
+ define Host/Install
+        $(INSTALL_BIN) \
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/002-disable_symbol_checks.patch b/tools/mklibs/patches/002-disable_symbol_checks.patch
+--- a/tools/mklibs/patches/002-disable_symbol_checks.patch	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/patches/002-disable_symbol_checks.patch	2022-07-30 15:40:44.001648789 +0200
+@@ -1,20 +1,20 @@
+ --- a/src/mklibs
+ +++ b/src/mklibs
+-@@ -524,7 +524,7 @@ while 1:
++@@ -533,7 +533,7 @@ while 1:
+          # No progress in last pass. Verify all remaining symbols are weak.
+          for name in unresolved:
+              if not needed_symbols[name].weak:
+ -                raise Exception("Unresolvable symbol %s" % name)
+-+                print "WARNING: Unresolvable symbol %s" % name
+++                print("WARNING: Unresolvable symbol %s" % name)
+          break
+  
+      previous_pass_unresolved = unresolved
+-@@ -559,7 +559,7 @@ while 1:
++@@ -568,7 +568,7 @@ while 1:
+      for name in needed_symbols:
+          if not name in symbol_provider:
+              if not needed_symbols[name].weak:
+ -                raise Exception("No library provides non-weak %s" % name)
+-+                print "WARNING: Unresolvable symbol %s" % name
+++                print("WARNING: Unresolvable symbol %s" % name)
+          else:
+              lib = symbol_provider[name]
+              library_symbols_used[lib].add(library_symbols[lib][name])
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/003-no_copy.patch b/tools/mklibs/patches/003-no_copy.patch
+--- a/tools/mklibs/patches/003-no_copy.patch	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/patches/003-no_copy.patch	2022-07-30 15:40:44.001648789 +0200
+@@ -1,6 +1,6 @@
+ --- a/src/mklibs
+ +++ b/src/mklibs
+-@@ -463,7 +463,7 @@ while 1:
++@@ -472,7 +472,7 @@ while 1:
+      passnr = passnr + 1
+      # Gather all already reduced libraries and treat them as objects as well
+      small_libs = []
+@@ -9,7 +9,7 @@
+          obj = dest_path + "/" + lib
+          small_libs.append(obj)
+          inode = os.stat(obj)[ST_INO]
+-@@ -579,12 +579,7 @@ while 1:
++@@ -588,12 +588,7 @@ while 1:
+          if not so_file:
+              sys.exit("File not found:" + library)
+          pic_file = find_pic(library)
+@@ -23,7 +23,7 @@
+              # we have a pic file, recompile
+              debug(DEBUG_SPAM, "extracting from:", pic_file, "so_file:", so_file)
+              soname = extract_soname(so_file)
+-@@ -627,22 +622,14 @@ while 1:
++@@ -636,22 +631,14 @@ while 1:
+              cmd.append(library_depends_gcc_libnames(so_file))
+              command(target + "gcc", *cmd)
+  
+@@ -32,11 +32,11 @@
+ -                      dest_path + "/" + so_file_name + "-so",
+ -                      dest_path + "/" + so_file_name + "-so-stripped")
+              ## DEBUG
+-             debug(DEBUG_VERBOSE, so_file, "\t", `os.stat(so_file)[ST_SIZE]`)
++             debug(DEBUG_VERBOSE, so_file, "\t", str(os.stat(so_file)[ST_SIZE]))
+              debug(DEBUG_VERBOSE, dest_path + "/" + so_file_name + "-so", "\t",
+-                   `os.stat(dest_path + "/" + so_file_name + "-so")[ST_SIZE]`)
++                   str(os.stat(dest_path + "/" + so_file_name + "-so")[ST_SIZE]))
+ -            debug(DEBUG_VERBOSE, dest_path + "/" + so_file_name + "-so-stripped",
+--                  "\t", `os.stat(dest_path + "/" + so_file_name + "-so-stripped")[ST_SIZE]`)
++-                  "\t", str(os.stat(dest_path + "/" + so_file_name + "-so-stripped")[ST_SIZE]))
+  
+  # Finalising libs and cleaning up
+ -for lib in regexpfilter(os.listdir(dest_path), "(.*)-so-stripped$"):
+@@ -47,4 +47,4 @@
+ +    os.rename(dest_path + "/" + lib + "-so", dest_path + "/" + lib)
+  
+  # Canonicalize library names.
+- for lib in regexpfilter(os.listdir(dest_path), "(.*so[.\d]*)$"):
++ for lib in sorted(regexpfilter(os.listdir(dest_path), "(.*so[.\d]*)$")):
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/004-libpthread_link.patch b/tools/mklibs/patches/004-libpthread_link.patch
+--- a/tools/mklibs/patches/004-libpthread_link.patch	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/patches/004-libpthread_link.patch	2022-07-30 15:20:20.018514082 +0200
+@@ -17,7 +17,7 @@
+              if match.group('ld'):
+                  ret.append(find_lib(match.group(0)))
+              elif match.group('lib'):
+-@@ -619,7 +619,7 @@ while 1:
++@@ -628,7 +628,7 @@ while 1:
+              cmd.extend(extra_flags)
+              cmd.append("-lgcc")
+              cmd.extend(["-L%s" % a for a in [dest_path] + [sysroot + b for b in lib_path if sysroot == "" or b not in ("/" + libdir + "/", "/usr/" + libdir + "/")]])
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/005-duplicate_syms.patch b/tools/mklibs/patches/005-duplicate_syms.patch
+--- a/tools/mklibs/patches/005-duplicate_syms.patch	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/patches/005-duplicate_syms.patch	2022-07-30 15:40:44.001648789 +0200
+@@ -1,6 +1,6 @@
+ --- a/src/mklibs
+ +++ b/src/mklibs
+-@@ -531,7 +531,6 @@ while 1:
++@@ -540,7 +540,6 @@ while 1:
+  
+      library_symbols = {}
+      library_symbols_used = {}
+@@ -8,7 +8,7 @@
+  
+      # WORKAROUND: Always add libgcc on old-abi arm
+      header = elf_header(find_lib(libraries.copy().pop()))
+-@@ -549,20 +548,13 @@ while 1:
++@@ -558,20 +557,13 @@ while 1:
+          library_symbols_used[library] = set()
+          for symbol in symbols:
+              for name in symbol.base_names():
+@@ -23,7 +23,7 @@
+      for name in needed_symbols:
+ -        if not name in symbol_provider:
+ -            if not needed_symbols[name].weak:
+--                print "WARNING: Unresolvable symbol %s" % name
++-                print("WARNING: Unresolvable symbol %s" % name)
+ -        else:
+ -            lib = symbol_provider[name]
+ -            library_symbols_used[lib].add(library_symbols[lib][name])
+@@ -32,4 +32,4 @@
+ +                library_symbols_used[lib].add(library_symbols[lib][name])
+  
+      # reduce libraries
+-     for library in libraries:
++     for library in sorted(libraries):
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/006-uclibc_init.patch b/tools/mklibs/patches/006-uclibc_init.patch
+--- a/tools/mklibs/patches/006-uclibc_init.patch	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/patches/006-uclibc_init.patch	1970-01-01 01:00:00.000000000 +0100
+@@ -1,14 +0,0 @@
+---- a/src/mklibs
+-+++ b/src/mklibs
+-@@ -595,6 +595,11 @@ while 1:
+-                 extra_post_obj.append(sysroot + libc_extras_dir + "/sofini.o")
+-                 symbols.add(ProvidedSymbol('__dso_handle', None, None, True))
+- 
+-+            if soname in ("libc.so.0"):
+-+                symbols.add(ProvidedSymbol('__uClibc_init', None, None, True))
+-+                symbols.add(ProvidedSymbol('__uClibc_fini', None, None, True))
+-+                extra_flags.append("-Wl,-init,__uClibc_init")
+-+
+-             map_file = find_pic_map(library)
+-             if map_file:
+-                 extra_flags.append("-Wl,--version-script=" + map_file)
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/007-gc_sections.patch b/tools/mklibs/patches/007-gc_sections.patch
+--- a/tools/mklibs/patches/007-gc_sections.patch	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/patches/007-gc_sections.patch	2022-07-30 15:40:44.001648789 +0200
+@@ -1,6 +1,6 @@
+ --- a/src/mklibs
+ +++ b/src/mklibs
+-@@ -607,7 +607,7 @@ while 1:
++@@ -611,7 +611,7 @@ while 1:
+              # compile in only used symbols
+              cmd = []
+              cmd.extend(gcc_options)
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/008-uclibc_libgcc_link.patch b/tools/mklibs/patches/008-uclibc_libgcc_link.patch
+--- a/tools/mklibs/patches/008-uclibc_libgcc_link.patch	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/patches/008-uclibc_libgcc_link.patch	2022-07-30 15:40:44.001648789 +0200
+@@ -14,7 +14,7 @@
+      return ' '.join(ret)
+  
+  class Symbol(object):
+-@@ -584,6 +581,7 @@ while 1:
++@@ -593,6 +590,7 @@ while 1:
+              extra_flags = []
+              extra_pre_obj = []
+              extra_post_obj = []
+@@ -22,7 +22,7 @@
+  
+              symbols.update(library_symbols_used[library])
+  
+-@@ -614,9 +612,10 @@ while 1:
++@@ -618,9 +616,10 @@ while 1:
+              cmd.append(pic_file)
+              cmd.extend(extra_post_obj)
+              cmd.extend(extra_flags)
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/009-uclibc_libpthread_symbols.patch b/tools/mklibs/patches/009-uclibc_libpthread_symbols.patch
+--- a/tools/mklibs/patches/009-uclibc_libpthread_symbols.patch	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/patches/009-uclibc_libpthread_symbols.patch	1970-01-01 01:00:00.000000000 +0100
+@@ -1,63 +0,0 @@
+---- a/src/mklibs
+-+++ b/src/mklibs
+-@@ -162,9 +162,10 @@ def undefined_symbols(obj):
+-     return result
+- 
+- class ProvidedSymbol(Symbol):
+--    def __init__(self, name, version, library, default_version):
+-+    def __init__(self, name, version, library, default_version, weak):
+-         super(ProvidedSymbol, self).__init__(name, version, library)
+-         self.default_version = default_version
+-+        self.weak = weak
+- 
+-     def base_names(self):
+-         ret = []
+-@@ -205,11 +206,15 @@ def provided_symbols(obj):
+-         if version_string.lower() not in ('base', 'none'):
+-             version = version_string
+- 
+-+        weak = False
+-+        if weak_string.lower() == 'true':
+-+            weak = True
+-+
+-         default_version = False
+-         if default_version_string.lower() == 'true':
+-             default_version = True
+- 
+--        result.append(ProvidedSymbol(name, version, library, default_version))
+-+        result.append(ProvidedSymbol(name, version, library, default_version, weak))
+- 
+-     return result
+-     
+-@@ -500,6 +505,9 @@ while 1:
+-             debug(DEBUG_SPAM, "present_symbols adding %s" % symbol)
+-             names = symbol.base_names()
+-             for name in names:
+-+                if name in present_symbols:
+-+                    if symbol.library != present_symbols[name].library:
+-+                        needed_symbols[name] = UndefinedSymbol(name, True, symbol.version, symbol.library)
+-                 present_symbols[name] = symbol
+- 
+-     # are we finished?
+-@@ -591,12 +599,16 @@ while 1:
+-                 # may segfault in ptmalloc_init due to undefined weak reference
+-                 extra_pre_obj.append(sysroot + libc_extras_dir + "/soinit.o")
+-                 extra_post_obj.append(sysroot + libc_extras_dir + "/sofini.o")
+--                symbols.add(ProvidedSymbol('__dso_handle', None, None, True))
+-+                symbols.add(ProvidedSymbol('__dso_handle', None, None, True, True))
+- 
+--            if soname in ("libc.so.0"):
+--                symbols.add(ProvidedSymbol('__uClibc_init', None, None, True))
+--                symbols.add(ProvidedSymbol('__uClibc_fini', None, None, True))
+--                extra_flags.append("-Wl,-init,__uClibc_init")
+-+            if soname == "libc.so.0":
+-+                symbols.add(ProvidedSymbol('__uClibc_init', None, None, True, True))
+-+                symbols.add(ProvidedSymbol('__uClibc_fini', None, None, True, True))
+-+                extra_pre_obj.append("-Wl,-init,__uClibc_init")
+-+
+-+            if soname == "libpthread.so.0":
+-+                symbols.add(ProvidedSymbol('__pthread_initialize_minimal_internal', None, None, True, True))
+-+                extra_flags.append("-Wl,-z,nodelete,-z,initfirst,-init=__pthread_initialize_minimal_internal")
+- 
+-             map_file = find_pic_map(library)
+-             if map_file:
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/011-remove_multiarch.patch b/tools/mklibs/patches/011-remove_multiarch.patch
+--- a/tools/mklibs/patches/011-remove_multiarch.patch	2021-04-17 16:47:02.000000000 +0200
++++ b/tools/mklibs/patches/011-remove_multiarch.patch	2022-07-30 15:40:44.001648789 +0200
+@@ -1,6 +1,6 @@
+ --- a/src/mklibs
+ +++ b/src/mklibs
+-@@ -263,6 +263,7 @@ def extract_soname(so_file):
++@@ -269,6 +269,7 @@ def extract_soname(so_file):
+      return ""
+  
+  def multiarch(paths):
+diff -Naur --suppress-blank-empty --strip-trailing-cr a/tools/mklibs/patches/100-apply-2to3.patch b/tools/mklibs/patches/100-apply-2to3.patch
+--- a/tools/mklibs/patches/100-apply-2to3.patch	1970-01-01 01:00:00.000000000 +0100
++++ b/tools/mklibs/patches/100-apply-2to3.patch	2022-07-30 15:40:44.001648789 +0200
+@@ -0,0 +1,154 @@
++--- a/src/mklibs
+++++ b/src/mklibs
++@@ -57,17 +57,17 @@ debuglevel = DEBUG_NORMAL
++ 
++ def debug(level, *msg):
++     if debuglevel >= level:
++-        print(string.join(msg))
+++        print(' '.join(msg))
++ 
++ # return a list of lines of output of the command
++ def command(command, *args):
++-    debug(DEBUG_SPAM, "calling", command, string.join(args))
+++    debug(DEBUG_SPAM, "calling", command, ' '.join(args))
++     pipe = os.popen(command + ' ' + ' '.join(args), 'r')
++     output = pipe.read().strip()
++     status = pipe.close() 
++     if status is not None and os.WEXITSTATUS(status) != 0:
++         print("Command failed with status", os.WEXITSTATUS(status),  ":", \
++-               command, string.join(args))
+++               command, ' '.join(args))
++         print("With output:", output)
++         sys.exit(1)
++     return [i for i in output.split('\n') if i]
++@@ -296,7 +296,7 @@ def usage(was_err):
++     print("Make a set of minimal libraries for FILE(s, file=outfd) in DEST.", file=outfd)
++     print("" , file=outfd)
++     print("  -d, --dest-dir DIRECTORY     create libraries in DIRECTORY", file=outfd)
++-    print("  -D, --no-default-lib         omit default libpath (", ':'.join(default_lib_path, file=outfd), ", file=outfd)", file=outfd)
+++    print("  -D, --no-default-lib         omit default libpath (", ':'.join(default_lib_path), ")", file=outfd)
++     print("  -L DIRECTORY[:DIRECTORY]...  add DIRECTORY(s, file=outfd) to the library search path", file=outfd)
++     print("  -l LIBRARY                   add LIBRARY always", file=outfd)
++     print("      --ldlib LDLIB            use LDLIB for the dynamic linker", file=outfd)
++@@ -372,7 +372,7 @@ for opt, arg in optlist:
++         if debuglevel < DEBUG_SPAM:
++             debuglevel = debuglevel + 1
++     elif opt == "-L":
++-        lib_path.extend(string.split(arg, ":"))
+++        lib_path.extend(arg.split(":"))
++     elif opt in ("-d", "--dest-dir"):
++         dest_path = arg
++     elif opt in ("-D", "--no-default-lib"):
++@@ -391,7 +391,7 @@ for opt, arg in optlist:
++     elif opt in ("-l",):
++         force_libs.append(arg)
++     elif opt == "--gcc-options":
++-        gcc_options.extend(string.split(arg, " "))
+++        gcc_options.extend(arg.split(" "))
++     elif opt == "--libdir":
++         libdir = arg
++     elif opt in ("--help", "-h"):
++@@ -419,17 +419,17 @@ if ldlib == "LDLIB":
++ objects = {}  # map from inode to filename
++ for prog in proglist:
++     inode = os.stat(prog)[ST_INO]
++-    if objects.has_key(inode):
+++    if inode in objects:
++         debug(DEBUG_SPAM, prog, "is a hardlink to", objects[inode])
++     elif so_pattern.match(prog):
++         debug(DEBUG_SPAM, prog, "is a library")
++-    elif script_pattern.match(open(prog).read(256)):
+++    elif script_pattern.match(open(prog, 'r', encoding='iso-8859-1').read(256)):
++         debug(DEBUG_SPAM, prog, "is a script")
++     else:
++         objects[inode] = prog
++ 
++ if not ldlib:
++-    for obj in objects.values():
+++    for obj in list(objects.values()):
++         output = command("mklibs-readelf", "--print-interp", obj)
++         if output:
++             ldlib = output.pop()
++@@ -462,9 +462,9 @@ previous_pass_unresolved = set()
++ while 1:
++     debug(DEBUG_NORMAL, "I: library reduction pass", str(passnr))
++     if debuglevel >= DEBUG_VERBOSE:
++-        print("Objects:",)
++-        for obj in sorted([x[string.rfind(x, '/') + 1:] for x in objects.values()]):
++-            print(obj,)
+++        print("Objects:", end=' ')
+++        for obj in sorted([x[x.rfind('/') + 1:] for x in list(objects.values())]):
+++            print(obj, end=' ')
++         print()
++ 
++     passnr = passnr + 1
++@@ -474,7 +474,7 @@ while 1:
++         obj = dest_path + "/" + lib
++         small_libs.append(obj)
++         inode = os.stat(obj)[ST_INO]
++-        if objects.has_key(inode):
+++        if inode in objects:
++             debug(DEBUG_SPAM, obj, "is hardlink to", objects[inode])
++         else:
++             objects[inode] = obj
++@@ -504,7 +504,7 @@ while 1:
++     present_symbols = {}
++     checked_libs = small_libs
++     checked_libs.extend(available_libs)
++-    checked_libs.append(ldlib)
+++    checked_libs.append(sysroot + "/" + ldlib)
++     for lib in checked_libs:
++         for symbol in provided_symbols(lib):
++             debug(DEBUG_SPAM, "present_symbols adding %s" % symbol)
++--- a/src/mklibs-copy
+++++ b/src/mklibs-copy
++@@ -159,7 +159,7 @@ if include_default_lib_path:
++ objects = {}  # map from inode to filename
++ for prog in proglist:
++     inode = os.stat(prog)[ST_INO]
++-    if objects.has_key(inode):
+++    if inode in objects:
++         logger.debug("%s is a hardlink to %s", prog, objects[inode])
++     elif so_pattern.match(prog):
++         logger.debug("%s is a library", prog)
++@@ -169,7 +169,7 @@ for prog in proglist:
++         logger.debug("%s is no ELF", prog)
++ 
++ if not ldlib:
++-    for obj in objects.values():
+++    for obj in list(objects.values()):
++         output = command("mklibs-readelf", "-i", obj)
++         for x in output:
++                 ldlib = x
++@@ -182,7 +182,7 @@ if not ldlib:
++ logger.info('Using %s as dynamic linker', ldlib)
++ 
++ # Check for rpaths
++-for obj in objects.values():
+++for obj in list(objects.values()):
++     rpath_val = rpath(obj)
++     if rpath_val:
++         if root:
++@@ -208,18 +208,18 @@ while 1:
++         obj = dest_path + "/" + lib
++         small_libs.append(obj)
++         inode = os.stat(obj)[ST_INO]
++-        if objects.has_key(inode):
+++        if inode in objects:
++             logger.debug("%s is hardlink to %s", obj, objects[inode])
++         else:
++             objects[inode] = obj
++ 
++-    for obj in objects.values():
+++    for obj in list(objects.values()):
++         small_libs.append(obj)
++ 
++-    logger.verbose('Objects: %r', ' '.join([i[i.rfind('/') + 1:] for i in objects.itervalues()]))
+++    logger.verbose('Objects: %r', ' '.join([i[i.rfind('/') + 1:] for i in objects.values()]))
++ 
++     libraries = set()
++-    for obj in objects.values():
+++    for obj in list(objects.values()):
++         libraries.update(library_depends(obj))
++ 
++     if libraries == previous_pass_libraries:

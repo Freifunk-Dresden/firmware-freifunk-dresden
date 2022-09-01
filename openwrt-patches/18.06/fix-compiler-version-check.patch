@@ -1,0 +1,24 @@
+--- buildroot/include/prereq-build.mk.ori	2022-08-31 23:44:06.774474828 +0200
++++ buildroot/include/prereq-build.mk	2022-08-31 23:45:09.383071551 +0200
+@@ -28,8 +28,8 @@
+
+ $(eval $(call SetupHostCommand,gcc, \
+ 	Please install the GNU C Compiler (gcc) 4.8 or later, \
+-	$(CC) -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|10\.?)', \
+-	gcc -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|10\.?)', \
++	$(CC) -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|1[0-9]\.?)', \
++	gcc -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|1[0-9]\.?)', \
+ 	gcc --version | grep -E 'Apple.(LLVM|clang)' ))
+
+ $(eval $(call TestHostCommand,working-gcc, \
+@@ -40,8 +40,8 @@
+
+ $(eval $(call SetupHostCommand,g++, \
+ 	Please install the GNU C++ Compiler (g++) 4.8 or later, \
+-	$(CXX) -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|10\.?)', \
+-	g++ -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|10\.?)', \
++	$(CXX) -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|1[0-9]\.?)', \
++	g++ -dumpversion | grep -E '^(4\.[8-9]|[5-9]\.?|1[0-9]\.?)', \
+ 	g++ --version | grep -E 'Apple.(LLVM|clang)' ))
+
+ $(eval $(call TestHostCommand,working-g++, \

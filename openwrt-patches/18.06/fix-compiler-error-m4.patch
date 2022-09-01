@@ -1,0 +1,18 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr 18.ori/tools/m4/patches/200-fix-compile-error-SIGSTKSZ.patch 18/tools/m4/patches/200-fix-compile-error-SIGSTKSZ.patch
+--- 18.ori/tools/m4/patches/200-fix-compile-error-SIGSTKSZ.patch	1970-01-01 01:00:00.000000000 +0100
++++ 18/tools/m4/patches/200-fix-compile-error-SIGSTKSZ.patch	2022-09-01 01:44:12.102685314 +0200
+@@ -0,0 +1,14 @@
++diff -Naur --suppress-blank-empty --strip-trailing-cr m4-1.4.18.ori/lib/c-stack.c m4-1.4.18/lib/c-stack.c
++--- a/lib/c-stack.c	2016-12-31 14:54:41.000000000 +0100
+++++ b/lib/c-stack.c	2022-09-01 01:34:00.736971341 +0200
++@@ -50,6 +50,10 @@
++ #if ! HAVE_STACK_T && ! defined stack_t
++ typedef struct sigaltstack stack_t;
++ #endif
+++
+++# undef SIGSTKSZ
+++# define SIGSTKSZ 16384
+++
++ #ifndef SIGSTKSZ
++ # define SIGSTKSZ 16384
++ #elif HAVE_LIBSIGSEGV && SIGSTKSZ < 16384
