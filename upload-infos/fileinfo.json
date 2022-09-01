@@ -1872,6 +1872,19 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4a-100m-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4a-100m-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4c-initramfs-kernel.bin",
       "comment": ""
     },
