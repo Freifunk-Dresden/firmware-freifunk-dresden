@@ -162,6 +162,11 @@ m3:test:
     - m3runner
 
 m3:upload:
+#devel start -----
+  when: manual
+  allow_failure: false
+# devel end -----
+
   only:
     - master
   stage: deploy
