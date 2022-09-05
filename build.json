@@ -62,7 +62,7 @@
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
 			  ],
-		"packages":["libpam","libcap","libgnutls","libopenldap",
+		"packages":["libpam","libcap","libopenldap",
 				"libidn2","libssh2","libnetsnmp",
 				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
@@ -80,7 +80,7 @@
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
 			  ],
-		"packages":["libpam","libcap","libgnutls","libopenldap",
+		"packages":["libpam","libcap","libopenldap",
 				"libidn2","libssh2","libnetsnmp",
 				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
@@ -98,7 +98,7 @@
 				{"type":"src-git", 	"name":"packages",	"src":"https://git.openwrt.org/feed/packages.git",	"rev":"de3766173"},
 				{"type":"src-git", 	"name":"routing",	"src":"https://git.openwrt.org/feed/routing.git",	"rev":"ff5100e"}
 			  ],
-		"packages":["libpam","libcap","libgnutls","libopenldap",
+		"packages":["libpam","libcap","libopenldap",
 				"libidn2","libssh2","libnetsnmp",
 				"libcap", "jansson", "kmod-cryptodev", "liblzma" ]
 	},
@@ -106,7 +106,7 @@
 	{
 		"name":"x86.64.offloader",
 		"config":"config.x86.64.offloader",
-		"packages":["qemu", "libpam", "libgnutls", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
+		"packages":["qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
 	},
 	{
 		"name":"ramips.mt7620.small",

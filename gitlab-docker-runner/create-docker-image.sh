@@ -1,1 +1,1 @@
-docker  build -t openwrt-docker-build .
+docker build -t openwrt-docker-build .

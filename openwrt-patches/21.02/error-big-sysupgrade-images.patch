@@ -1,5 +1,5 @@
 diff -Naur --suppress-blank-empty --strip-trailing-cr include.ori/image-commands.mk include/image-commands.mk
---- buildroot/include.ori/image-commands.mk	2021-11-14 01:40:59.000000000 +0100
+--- buildroot.ori/include/image-commands.mk	2021-11-14 01:40:59.000000000 +0100
 +++ buildroot/include/image-commands.mk	2022-03-20 23:37:11.045205841 +0100
 @@ -154,8 +154,8 @@
  	@imagesize="$$(stat -c%s $@)"; \

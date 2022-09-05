@@ -1,5 +1,5 @@
 diff -Naur --suppress-blank-empty --strip-trailing-cr include.ori/image-commands.mk include/image-commands.mk
---- buildroot/include.ori/image-commands.mk	2021-04-17 16:47:02.000000000 +0200
+--- buildroot.ori/include/image-commands.mk	2021-04-17 16:47:02.000000000 +0200
 +++ buildroot/include/image-commands.mk	2022-03-20 23:32:47.896110198 +0100
 @@ -217,8 +217,8 @@
 

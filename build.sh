@@ -452,6 +452,14 @@ usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < ma
    rerun            - enables a second compilation with make option 'V=s'
                       If first make failes a second make is tried with this option
    make params      - all paramerters that follows are passed to make command
+
+
+Devel-Notes:
+
+ To compile a specific feed change to workdir and call something like:
+
+     make package/feeds/ddmesh_own/fastd/compile -j1 V=s
+
 EOM
 }
 

@@ -7,11 +7,17 @@ Step by step guide
 
 ## 2. Install all required dependencies to build firmware
 
-```
-apt-get install unzip wget time rsync jq gawk gettext
-apt-get install git subversion build-essential flex python
-apt-get install libssl-dev libncurses5-dev zlib1g-dev zlib1g-dev gcc-multilib
-```
+~~~sh
+apt-get install nodejs git build-essential cmake devscripts debhelper \
+                dh-systemd python python3 dh-python libssl-dev libncurses5-dev unzip \
+                gawk zlib1g-dev subversion gcc-multilib flex gettext curl \
+                wget time rsync jq \
+                libjson-c-dev libjsoncpp-dev \
+                python3-pip python3-pypathlib python-pathlib2 python-scandir \
+                automake autoconf m4 \
+                vim tmux
+
+~~~
 
 ## 3. Configure SSL certificates (additional hosts)
 
@@ -19,7 +25,7 @@ apt-get install libssl-dev libncurses5-dev zlib1g-dev zlib1g-dev gcc-multilib
 
 Download and copy let's encrypt root certificates
 
-```
+~~~sh
 wget https://letsencrypt.org/certs/isrgrootx1.pem.txt -O /etc/ssl/certs/letencrypt-isrgrootx1.pem
 wget https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem.txt -O /etc/ssl/certs/lets-encrypt-x3-cross-signed.pem
 wget https://letsencrypt.org/certs/letsencryptauthorityx3.pem.txt -O /etc/ssl/certs/letsencryptauthorityx3.pe
@@ -29,14 +35,14 @@ update-ca-certificates --verbose --fresh
 
 # check if website is accessable
 wget -O - https://gitlab.freifunk-dresden.de/
-```
+~~~
 
 ### 3b. Or allow *ANY* SSL cerificates and add user defined domain name (example with docker executor and local cache)
 
 Add enviroment variable "GIT_SSL_NO_VERIFY" and "tls_verify = false" in /etc/gitlab-runner/config.toml
 
 
-```
+~~~
 [[runners]]
   name = "gitlab-docker"
   url = "https://gitlab.freifunk-dresden.de/"
@@ -59,7 +65,7 @@ Add enviroment variable "GIT_SSL_NO_VERIFY" and "tls_verify = false" in /etc/git
     shm_size = 0
   [runners.cache]
     Insecure = false
-```
+~~~
 
 ## 4. Install gitlab-runner and assing a tag to it. so it can be selected by gitlab
 
@@ -69,7 +75,7 @@ Add enviroment variable "GIT_SSL_NO_VERIFY" and "tls_verify = false" in /etc/git
 Each runner type (here gitlab-runner without docker) should have its own job definition.
 The job is selected by gitlab by checking for matching *tags*.
 
-```
+~~~
 stages:
 - build
 
@@ -89,7 +95,7 @@ build:ar71xx.tiny:
   tags:
   - m2runner
 
-```
+~~~
 - https://docs.gitlab.com/runner/
 - https://docs.gitlab.com/ce/ci/yaml/
 - https://gitlab.freifunk-dresden.de/help/ci/pipelines.md
