@@ -394,10 +394,43 @@ print_devices_for_target()
 	selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | . \"selector-config\"")
 	test "${selector}" = "null" && selector=${def_selector}
 
-	# get config
+	# get config filename
 	config=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | .config")
 
 	grep "^CONFIG_TARGET_DEVICE.*=y" "openwrt-configs/${selector}/${config}"
+}
+
+# this function checks if all firmware files are generated for selected devices for a specific target
+verify_firmware_present()
+{
+	target=$1
+	firmware_path=$2
+	cleanJson=$(getTargetsJson)
+
+	# get selector
+	def_selector=$(echo "$cleanJson" | jq --raw-output '.[] | select(.name == "default") | . "selector-config"')
+	selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | . \"selector-config\"")
+	test "${selector}" = "null" && selector=${def_selector}
+
+	# get config filename
+	config=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | .config")
+
+	status=0
+	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "openwrt-configs/${selector}/${config}")
+	do
+		# extract firmware device name part
+		dev="${dev/*_DEVICE_/}"
+		dev_str="${dev/=*/}"
+		printf "verify device: ${dev_str}: "
+		if ls ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null >/dev/null; then
+			printf -- "${C_GREEN}ok${C_NONE}\n"
+		else
+			printf -- "${C_RED}ok${C_NONE}\n"
+			status=1
+		fi
+
+	done
+	return ${status};
 }
 
 setup_dynamic_firmware_config()
@@ -627,6 +660,7 @@ if [ "$1" = "target-devices" ]; then
 		exit 1
 	fi
 	print_devices_for_target $2
+verify_firmware_present $2 $3 && echo ok || echo fehler
 	exit 0
 fi
 
@@ -1315,6 +1349,12 @@ EOM
 
 	echo -e "${C_CYAN}copy images${C_NONE}"
 	mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
+
+	# verify presens of all images
+	if verify_firmware_present "${_config_name}" "${outdir}/images"; then
+		echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
+		clean_up_exit 1
+	fi
 
 	# success status
 	progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
