@@ -415,17 +415,20 @@ verify_firmware_present()
 	# get config filename
 	config=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | .config")
 
+	# extract selected devices from openwrt config file and check
+	# if sysupgrade file is present
 	status=0
-	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "openwrt-configs/${selector}/${config}")
+	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/openwrt-configs/${selector}/${config}")
 	do
 		# extract firmware device name part
 		dev="${dev/*_DEVICE_/}"
 		dev_str="${dev/=*/}"
-		printf "verify device: ${dev_str}: "
+
+		printf "verify firmware for: ${dev_str}: "
 		if ls ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null >/dev/null; then
 			printf -- "${C_GREEN}ok${C_NONE}\n"
 		else
-			printf -- "${C_RED}ok${C_NONE}\n"
+			printf -- "${C_RED}failed${C_NONE}\n"
 			status=1
 		fi
 
@@ -1306,12 +1309,6 @@ EOM
 	error=$?
 	echo "make ret: $error"
 
-	# write build status which is displayed by "build.sh list"
-	# , \"\":\"\"
-	mkdir -p ${compile_status_dir}
-	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
-	echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${compile_status_file}"
-
 	# continue with next target in build.targets
 	if [ $error -ne 0 ]; then
 		global_error=1
@@ -1351,10 +1348,17 @@ EOM
 	mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
 
 	# verify presens of all images
-	if verify_firmware_present "${_config_name}" "${outdir}/images"; then
+	echo -e "${C_CYAN}verify images${C_NONE} for ${_config_name}"
+	if ! verify_firmware_present "${_config_name}" "${outdir}/images"; then
 		echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
 		clean_up_exit 1
 	fi
+
+	# write build status which is displayed by "build.sh list"
+	# , \"\":\"\"
+	mkdir -p ${compile_status_dir}
+	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
+	echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${compile_status_file}"
 
 	# success status
 	progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
