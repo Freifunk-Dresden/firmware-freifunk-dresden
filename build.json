@@ -4,6 +4,11 @@
 #
 #########################################################################
 
+# determination of feed revisions:
+# 1. checkout openwrt tag
+# 2. check feeds.conf.default for revisions used
+#
+
 {
  "targets": [
 # ------------- default values ------------------------------

@@ -801,7 +801,7 @@ setup_buildroot ()
 
 		#apply openwrt patches
 		if [ -d $openwrt_patches_dir ]; then
-			for i in $openwrt_patches_dir/*
+			for i in $openwrt_patches_dir/*.patch
 			do
 				echo -e "${C_CYAN}apply openwrt patch:${C_NONE} $i to buildroot:$buildroot"
 				# --no-backup-if-mismatch avoids creating backup files for files
@@ -1261,10 +1261,7 @@ EOM
 		clean_up_exit 0
 	fi
 
-	# make clean because openwrt could fail building targets after building different targets before
-	# but keep generated directories (ddmesh-makefile-lightclean.patch).
-	# It keeps generated images and packages.
-	make lightclean
+	make clean
 
 	echo -e $C_CYAN"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
 	cp .config $RUN_DIR/$config_file
@@ -1312,10 +1309,12 @@ EOM
 
 	# copy files to our own output directory
 	mkdir -p ${outdir}/packages ${outdir}/images
-  echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
-	cp -a ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
-  echo -e "${C_CYAN}copy images${C_NONE}"
-	cp -a ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
+
+	echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
+	mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
+
+	echo -e "${C_CYAN}copy images${C_NONE}"
+	mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
 
 	# success status
 	progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
