@@ -25,7 +25,6 @@ define Package/$(PKG_NAME)-base
     +kmod-tun \
     +libmbedtls +libustream-mbedtls +px5g-mbedtls \
     +bmxd +freifunk-upload \
-    +ddns-scripts +ddns-scripts_no-ip_com \
     +iperf3 \
     +kmod-ipip \
     +PACKAGE_fastd:nacl \
@@ -68,14 +67,6 @@ define Package/$(PKG_NAME)-base/config
       # menu point is displayed when dependings are set
       depends on PACKAGE_ddmesh-base
       tristate "bmxd"
-      help
-        required by firmware
-
-    # use SYMBOL of package that should be selected
-    config PACKAGE_ddns-scripts
-      # menu point is displayed when dependings are set
-      depends on PACKAGE_ddmesh-base
-      tristate "ddns-scripts"
       help
         required by firmware
 
@@ -172,35 +163,6 @@ define Package/$(PKG_NAME)-tethering/description
 endef
 
 ##########################################################
-# define Package/$(PKG_NAME)-lte
-#   CATEGORY:=ddmesh
-#   DEFAULT:=n
-#   DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
-#             +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
-#             +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
-#             +kmod-usb-ledtrig-usbport \
-#             \
-#             +kmod-usb-storage \
-#             +usb-modeswitch \
-#             +kmod-mii +kmod-usb-net +kmod-usb-wdm +kmod-usb-net-qmi-wwan +uqmi \
-#             +kmod-usb-net-cdc-mbim +umbim \
-#             +kmod-usb-serial-option +kmod-usb-serial +kmod-usb-serial-wwan \
-#             +kmod-usb-net-cdc-ether \
-#             \
-#             +comgt-ncm +kmod-usb-net-huawei-cdc-ncm \
-#             \
-#             +usbutils
-
-#   TITLE:=Meta package to enable usb LTE modem support
-# endef
-
-# define Package/$(PKG_NAME)-lte/description
-#    Meta package to enable qmi LTE modem support
-#    https://openwrt.org/docs/guide-user/network/wan/wwan/ltedongle
-
-# endef
-
-##########################################################
 define Package/$(PKG_NAME)-extra-modules
   CATEGORY:=ddmesh
 
@@ -266,5 +228,4 @@ $(eval $(call BuildPackage,$(PKG_NAME)-base))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi))
 $(eval $(call BuildPackage,$(PKG_NAME)-usb-storage))
 $(eval $(call BuildPackage,$(PKG_NAME)-tethering))
-#$(eval $(call BuildPackage,$(PKG_NAME)-lte))
 $(eval $(call BuildPackage,$(PKG_NAME)-extra-modules))

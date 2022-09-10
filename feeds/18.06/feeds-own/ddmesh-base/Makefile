@@ -25,7 +25,6 @@ define Package/$(PKG_NAME)-base
     +kmod-tun \
     +libmbedtls +libustream-mbedtls +px5g-mbedtls \
     +bmxd +freifunk-upload \
-    +ddns-scripts +ddns-scripts_no-ip_com \
     +iperf3 \
     +kmod-ipip \
     +PACKAGE_fastd:nacl \
@@ -61,14 +60,6 @@ define Package/$(PKG_NAME)-base/config
       # menu point is displayed when dependings are set
       depends on PACKAGE_ddmesh-base
       tristate "bmxd"
-      help
-        required by firmware
-
-    # use SYMBOL of package that should be selected
-    config PACKAGE_ddns-scripts
-      # menu point is displayed when dependings are set
-      depends on PACKAGE_ddmesh-base
-      tristate "ddns-scripts"
       help
         required by firmware
 
