@@ -425,7 +425,11 @@ verify_firmware_present()
 		dev_str="${dev/=*/}"
 
 		printf "verify firmware for: ${dev_str}: "
-		if ls ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null >/dev/null; then
+
+		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
+		p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
+
+		if [ -n "$p1" -o -n "$p2" ]; then
 			printf -- "${C_GREEN}ok${C_NONE}\n"
 		else
 			printf -- "${C_RED}failed${C_NONE}\n"
@@ -663,7 +667,7 @@ if [ "$1" = "target-devices" ]; then
 		exit 1
 	fi
 	print_devices_for_target $2
-verify_firmware_present $2 $3 && echo ok || echo fehler
+#verify_firmware_present $2 $3 && echo ok || echo fehler
 	exit 0
 fi
 
@@ -1347,11 +1351,15 @@ EOM
 	echo -e "${C_CYAN}copy images${C_NONE}"
 	mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
 
+	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
+
 	# verify presens of all images
 	echo -e "${C_CYAN}verify images${C_NONE} for ${_config_name}"
 	if ! verify_firmware_present "${_config_name}" "${outdir}/images"; then
 		echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
-		clean_up_exit 1
+		error=1
+		global_error=1
+		# clean_up_exit 1
 	fi
 
 	# write build status which is displayed by "build.sh list"
@@ -1361,8 +1369,11 @@ EOM
 	echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${compile_status_file}"
 
 	# success status
-	progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
-	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
+	if [ ${error} == 0 ]; then
+		progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
+	else
+		progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
+	fi
 
 done
 
