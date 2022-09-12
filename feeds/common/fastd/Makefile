@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2014 OpenWrt.org
+# Copyright (C) 2012-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,17 +8,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=fastd
-#PKG_VERSION:=1
-
-#file
-#PKG_MAINTAINER:=Matthias Schiffer <mschiffer@universe-factory.net>
-#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-#PKG_SOURCE_URL:=https://projects.universe-factory.net/attachments/download/78
-#PKG_MD5SUM:=135b3083d2743e335738de3bd4bb0c3c
-#git
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/NeoRaider/fastd.git
-PKG_REV:=92bc1c105119c08e340045a157e9bace9a04bb6a
+PKG_REV:=0f47d83eac2047d33efdab6eeaa9f81f17e3ebd1
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_REV)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
@@ -26,36 +18,74 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 PKG_VERSION:=$(PKG_REV)
 
 
-PKG_CONFIG_DEPENDS:=\
-	CONFIG_FASTD_ENABLE_METHOD_CIPHER_TEST \
-	CONFIG_FASTD_ENABLE_METHOD_COMPOSED_GMAC \
-	CONFIG_FASTD_ENABLE_METHOD_GENERIC_GMAC \
-	CONFIG_FASTD_ENABLE_METHOD_GENERIC_POLY1305 \
-	CONFIG_FASTD_ENABLE_METHOD_NULL \
-	CONFIG_FASTD_ENABLE_CIPHER_AES128_CTR \
-	CONFIG_FASTD_ENABLE_CIPHER_NULL \
-	CONFIG_FASTD_ENABLE_CIPHER_SALSA20 \
-	CONFIG_FASTD_ENABLE_CIPHER_SALSA2012 \
-	CONFIG_FASTD_ENABLE_MAC_GHASH \
-	CONFIG_FASTD_WITH_CMDLINE_USER \
-	CONFIG_FASTD_WITH_CMDLINE_LOGGING \
-	CONFIG_FASTD_WITH_CMDLINE_OPERATION \
-	CONFIG_FASTD_WITH_CMDLINE_COMMANDS
+PKG_LICENSE:=BSD-2-Clause
+PKG_LICENSE_FILES:=COPYRIGHT
 
-# IMPORTANT: nacl can be replaced by libsodium. but this would increase size by 110kbyte
+PKG_CONFIG_DEPENDS:=\
+  CONFIG_FASTD_ENABLE_METHOD_CIPHER_TEST \
+  CONFIG_FASTD_ENABLE_METHOD_COMPOSED_GMAC \
+  CONFIG_FASTD_ENABLE_METHOD_COMPOSED_UMAC \
+  CONFIG_FASTD_ENABLE_METHOD_GENERIC_GMAC \
+  CONFIG_FASTD_ENABLE_METHOD_GENERIC_POLY1305 \
+  CONFIG_FASTD_ENABLE_METHOD_GENERIC_UMAC \
+  CONFIG_FASTD_ENABLE_METHOD_NULL \
+  CONFIG_FASTD_ENABLE_CIPHER_NULL \
+  CONFIG_FASTD_ENABLE_CIPHER_SALSA20 \
+  CONFIG_FASTD_ENABLE_CIPHER_SALSA2012 \
+  CONFIG_FASTD_ENABLE_MAC_GHASH \
+  CONFIG_FASTD_ENABLE_MAC_UHASH \
+  CONFIG_FASTD_WITH_CAPABILITIES \
+  CONFIG_FASTD_WITH_CMDLINE_USER \
+  CONFIG_FASTD_WITH_CMDLINE_LOGGING \
+  CONFIG_FASTD_WITH_CMDLINE_OPERATION \
+  CONFIG_FASTD_WITH_CMDLINE_COMMANDS \
+  CONFIG_FASTD_WITH_DYNAMIC_PEERS \
+  CONFIG_FASTD_WITH_STATUS_SOCKET
+
+# ddmesh: IMPORTANT: nacl can be replaced by libsodium. but this would increase size by 110kbyte
 #            Also a more efficient chiper 20/12 is not supported by libsodium
-PKG_BUILD_DEPENDS:=nacl libuecc libjson-c
+PKG_BUILD_DEPENDS:= nacl libuecc libjson-c
+PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/cmake.mk
 
+
+# openwrt 18 has no python3 but meson/ninja/fastd needs it. I can not install
+# python3 into openwrt18 as this would conflict openwrt builds.
+# Because staging_dir/host/bin/ onyl contains symlinks into ubuntu, I add a symlink
+# if no python3 was found.
+# see: https://openwrt.org/docs/guide-developer/package-policies
+# I create my own prepare and call then default
+define Build/Prepare
+	test -x "$(STAGING_DIR_HOST)/bin/python3" || ln -s /usr/bin/python3 $(STAGING_DIR_HOST)/bin/python3
+	$(call Build/Prepare/Default)
+endef
+
+# the different openwrt versions use different path to meson.mk
+# openwrt 22 already has meson+ninja in buildroot
+# openwrt 21 needs extra devel packages
+# openwrt 18 does not have any meson nor ninja
+#  -> I created a patch that adds both  to openwrt 18 tools
+
+# openwrt22 + openwrt18 patched
+ifneq ("$(wildcard $(INCLUDE_DIR)/meson.mk)","")
+  include $(INCLUDE_DIR)/meson.mk
+endif
+
+# openwrt 21 (extra packet)
+ifneq ("$(wildcard $(TOPDIR)/feeds/packages/devel/meson/meson.mk)","")
+  include $(TOPDIR)/feeds/packages/devel/meson/meson.mk
+endif
+
+# ddmesh: add "+@FASTD_ENABLE_METHOD_NULL +@FASTD_ENABLE_CIPHER_NULL +@FASTD_ENABLE_CIPHER_SALSA2012"
+# because we need it
 define Package/fastd
   CATEGORY:=ddmesh
-#  no dependencies to +libuecc +nacl (they are linked, not installed)
-  DEPENDS:= +kmod-tun +librt +libpthread +libjson-c \
-	+@FASTD_ENABLE_METHOD_NULL +@FASTD_ENABLE_CIPHER_NULL +@FASTD_ENABLE_CIPHER_SALSA2012
+  #  no dependencies to +libuecc +nacl (they are linked, not installed)
+  DEPENDS:=+kmod-tun +kmod-l2tp-eth +libpthread +libmnl +FASTD_WITH_STATUS_SOCKET:libjson-c +FASTD_WITH_CAPABILITIES:libcap \
+           +@FASTD_ENABLE_METHOD_NULL +@FASTD_ENABLE_CIPHER_NULL +@FASTD_ENABLE_CIPHER_SALSA2012
   TITLE:=Fast and Secure Tunneling Daemon
-  URL:=https://projects.universe-factory.net/projects/fastd
+  URL:=https://github.com/NeoRaider/fastd/
   SUBMENU:=Packages
 endef
 
@@ -63,110 +93,42 @@ define Package/fastd/config
   source "$(SOURCE)/Config.in"
 endef
 
-TARGET_CFLAGS += -ffunction-sections -fdata-sections
-TARGET_LDFLAGS += -Wl,--gc-sections
+feature = $(if $(CONFIG_FASTD_$(1)),enabled,disabled)
 
-CMAKE_OPTIONS += \
-	-DCMAKE_BUILD_TYPE:STRING=MINSIZEREL \
-	-DWITH_METHOD_CIPHER_TEST:BOOL=FALSE \
-	-DWITH_METHOD_COMPOSED_GMAC:BOOL=FALSE \
-	-DWITH_METHOD_GENERIC_GMAC:BOOL=FALSE \
-	-DWITH_METHOD_GENERIC_POLY1305:BOOL=FALSE \
-	-DWITH_METHOD_NULL:BOOL=FALSE \
-	-DWITH_CIPHER_AES128_CTR:BOOL=FALSE \
-	-DWITH_CIPHER_NULL:BOOL=FALSE \
-	-DWITH_CIPHER_SALSA20:BOOL=FALSE \
-	-DWITH_CIPHER_SALSA2012:BOOL=FALSE \
-	-DWITH_MAC_GHASH:BOOL=FALSE \
-	-DWITH_CMDLINE_USER:BOOL=FALSE \
-	-DWITH_CMDLINE_LOGGING:BOOL=FALSE \
-	-DWITH_CMDLINE_OPERATION:BOOL=FALSE \
-	-DWITH_CMDLINE_COMMANDS:BOOL=FALSE \
-	-DWITH_CAPABILITIES:BOOL=FALSE \
-	-DENABLE_SYSTEMD:BOOL=FALSE \
-	-DENABLE_LIBSODIUM:BOOL=FALSE \
-	-DENABLE_LTO:BOOL=TRUE
-
-
-ifeq ($(CONFIG_FASTD_ENABLE_METHOD_CIPHER_TEST),y)
-CMAKE_OPTIONS += -DWITH_METHOD_CIPHER_TEST:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_ENABLE_METHOD_COMPOSED_GMAC),y)
-CMAKE_OPTIONS += -DWITH_METHOD_COMPOSED_GMAC:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_ENABLE_METHOD_GENERIC_GMAC),y)
-CMAKE_OPTIONS += -DWITH_METHOD_GENERIC_GMAC:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_ENABLE_METHOD_GENERIC_POLY1305),y)
-CMAKE_OPTIONS += -DWITH_METHOD_GENERIC_POLY1305:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_ENABLE_METHOD_NULL),y)
-CMAKE_OPTIONS += -DWITH_METHOD_NULL:BOOL=TRUE
-endif
-
-
-ifeq ($(CONFIG_FASTD_ENABLE_CIPHER_AES128_CTR),y)
-CMAKE_OPTIONS += -DWITH_CIPHER_AES128_CTR:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_ENABLE_CIPHER_NULL),y)
-CMAKE_OPTIONS += -DWITH_CIPHER_NULL:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_ENABLE_CIPHER_SALSA20),y)
-CMAKE_OPTIONS += -DWITH_CIPHER_SALSA20:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_ENABLE_CIPHER_SALSA2012),y)
-CMAKE_OPTIONS += -DWITH_CIPHER_SALSA2012:BOOL=TRUE
-endif
-
-
-ifeq ($(CONFIG_FASTD_ENABLE_MAC_GHASH),y)
-CMAKE_OPTIONS += -DWITH_MAC_GHASH:BOOL=TRUE
-endif
-
-
-ifeq ($(CONFIG_FASTD_WITH_CMDLINE_USER),y)
-CMAKE_OPTIONS += -DWITH_CMDLINE_USER:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_WITH_CMDLINE_LOGGING),y)
-CMAKE_OPTIONS += -DWITH_CMDLINE_LOGGING:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_WITH_CMDLINE_OPERATION),y)
-CMAKE_OPTIONS += -DWITH_CMDLINE_OPERATION:BOOL=TRUE
-endif
-
-ifeq ($(CONFIG_FASTD_WITH_CMDLINE_COMMANDS),y)
-CMAKE_OPTIONS += -DWITH_CMDLINE_COMMANDS:BOOL=TRUE
-endif
-
+MESON_ARGS += \
+  -Dcapabilities=$(call feature,WITH_CAPABILITIES) \
+  -Dcipher_aes128-ctr=disabled \
+  -Dcipher_null=$(call feature,ENABLE_CIPHER_NULL) \
+  -Dcipher_salsa20=$(call feature,ENABLE_CIPHER_SALSA20) \
+  -Dcipher_salsa2012=$(call feature,ENABLE_CIPHER_SALSA2012) \
+  -Dcmdline_commands=$(call feature,WITH_CMDLINE_COMMANDS) \
+  -Dcmdline_logging=$(call feature,WITH_CMDLINE_LOGGING) \
+  -Dcmdline_operation=$(call feature,WITH_CMDLINE_OPERATION) \
+  -Dcmdline_user=$(call feature,WITH_CMDLINE_USER) \
+  -Ddynamic_peers=$(call feature,WITH_DYNAMIC_PEERS) \
+  -Dmac_ghash=$(call feature,ENABLE_MAC_GHASH) \
+  -Dmac_uhash=$(call feature,ENABLE_MAC_UHASH) \
+  -Dmethod_cipher-test=$(call feature,ENABLE_METHOD_CIPHER_TEST) \
+  -Dmethod_composed-gmac=$(call feature,ENABLE_METHOD_COMPOSED_GMAC) \
+  -Dmethod_composed-umac=$(call feature,ENABLE_METHOD_COMPOSED_UMAC) \
+  -Dmethod_generic-gmac=$(call feature,ENABLE_METHOD_GENERIC_GMAC) \
+  -Dmethod_generic-poly1305=$(call feature,ENABLE_METHOD_GENERIC_POLY1305) \
+  -Dmethod_generic-umac=$(call feature,ENABLE_METHOD_GENERIC_UMAC) \
+  -Dmethod_null=$(call feature,ENABLE_METHOD_NULL) \
+  -Dstatus_socket=$(call feature,WITH_STATUS_SOCKET) \
+  -Dsystemd=disabled \
+  -Duse_nacl=true \
+  -Db_lto=true \
+  -Dprefix=/usr
 
 define Package/fastd/description
  Fast and secure tunneling daemon, which is optimized on small code size and few dependencies
 endef
 
-# ddmesh: not used
-#define Package/fastd/conffiles
-#/etc/config/fastd
-#endef
-
+# use tabs
 define Package/fastd/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/fastd $(1)/usr/bin/
-
-# ddmesh: not used
-#	$(INSTALL_DIR) $(1)/etc/init.d/
-#	$(INSTALL_BIN) files/fastd.init $(1)/etc/init.d/fastd
-#	$(INSTALL_DIR) $(1)/etc/config
-#	$(INSTALL_CONF) files/fastd.config $(1)/etc/config/fastd
-#	$(INSTALL_DIR) $(1)/etc/fastd
 endef
 
 $(eval $(call BuildPackage,fastd))

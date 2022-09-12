@@ -28,7 +28,9 @@ define Package/$(PKG_NAME)-base
     +iperf3 \
     +kmod-ipip \
     +PACKAGE_fastd:nacl \
-    +PACKAGE_fastd:libuecc
+    +PACKAGE_fastd:libuecc \
+    +PACKAGE_fastd:libmnl \
+    +PACKAGE_fastd:kmod-l2tp-eth
 
   TITLE:=Meta package to select all needed basic packages
 endef
