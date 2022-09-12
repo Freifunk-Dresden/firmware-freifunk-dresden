@@ -666,6 +666,11 @@ upgrade_8_0_7()
 	uci set ddmesh.system.group_id='0'
 }
 
+upgrade_8_0_8()
+{
+	rm -f /etc/config/ddns
+}
+
 ##################################
 
 run_upgrade
