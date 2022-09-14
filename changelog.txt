@@ -1,4 +1,9 @@
 
+2022-09-15 [8.0.8] (testing)
+--------------------------------------------------
+router                    - add router xiaomi_mi-router-4a-100m
+ddns                      - remove unused ddns
+
 2022-05-x [8.0.7] (testing)
 --------------------------------------------------
 sysinfo                   - add wifi channel info
