@@ -9,6 +9,7 @@ FASTD_CONF=$CONF_DIR/privnet-fastd.conf
 CONF_PEERS=privnet-peers
 PID_FILE=/var/run/privnet-fastd.pid
 LOGGER_TAG="fastd-privnet"
+FASTD_RUNNING_STATE="/var/state/privnet-fastd.running"
 
 DEFAULT_PORT=$(uci -q get ddmesh.privnet.default_fastd_port)
 privnet_server_port=$(uci -q get ddmesh.privnet.fastd_port)
@@ -148,7 +149,10 @@ case "$1" in
 	 	config_load ddmesh
 	 	config_foreach callback_outgoing_config privnet_client
 
-		[ ${config_count} -gt 0 ] && fastd --config $FASTD_CONF --pid-file $PID_FILE --daemon
+		if [ ${config_count} -gt 0 ]; then
+			fastd --config $FASTD_CONF --pid-file $PID_FILE --daemon
+			touch ${FASTD_RUNNING_STATE}
+		fi
 	fi
 	;;
 
@@ -160,6 +164,7 @@ case "$1" in
 			rm -f $PID_FILE
 		fi
 	fi
+	rm -f ${FASTD_RUNNING_STATE}
 	;;
 
   restart)
@@ -178,8 +183,8 @@ case "$1" in
 	;;
 
   runcheck)
-	if [ "$(uci -q get ddmesh.network.mesh_on_lan)" != "1" ]; then
-		present="$(grep $FASTD_CONF /proc/$(cat $PID_FILE)/cmdline 2>/dev/null)"
+	if [ -f ${FASTD_RUNNING_STATE} -a "$(uci -q get ddmesh.network.mesh_on_lan)" != "1" ]; then
+		[ -f $PID_FILE ] && present="$(grep $FASTD_CONF /proc/$(cat $PID_FILE)/cmdline 2>/dev/null)"
 		if [ -z "$present" ]; then
 			logger -t $LOGGER_TAG "fastd not running -> restarting"
 			$0 start
