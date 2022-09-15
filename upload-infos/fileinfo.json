@@ -116,7 +116,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "tl-mr3420",
       "model2": "TP-Link TL-WR842N/ND v1",
       "filename": "openwrt-ar71xx-tiny-tl-mr3220-v1-squashfs-sysupgrade.bin",
@@ -362,7 +362,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "tl-wr841n-v11",
       "model2": "TP-Link TL-WR841N/ND v12",
       "filename": "openwrt-ar71xx-tiny-tl-wr841-v12-squashfs-sysupgrade.bin",
@@ -765,7 +765,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "archer-c5",
       "model2": "TP-Link Archer C5 v1",
       "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
@@ -901,7 +901,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "archer-c7-v4",
       "model2": "TP-LINK Archer C7 v4",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-sysupgrade.bin",
@@ -1015,7 +1015,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "tplink,eap225-outdoor-v1",
       "model2": "TP-Link EAP225-Outdoor v1",
       "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-squashfs-sysupgrade.bin",
@@ -1033,7 +1033,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "tl-wdr4300",
       "model2": "TP-Link TL-WDR3600 v1",
       "filename": "openwrt-ath79-generic-tplink_tl-wdr3600-v1-squashfs-sysupgrade.bin",
@@ -1041,7 +1041,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "tplink,tl-wdr3600-v1",
       "model2": "TP-Link TL-WDR3600 v1",
       "filename": "openwrt-ath79-generic-tplink_tl-wdr3600-v1-squashfs-sysupgrade.bin",
@@ -1059,7 +1059,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "tplink,tl-wdr4300-v1",
       "model2": "TP-Link TL-WDR4300 v1",
       "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
@@ -1067,7 +1067,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "tl-wdr4300",
       "model2": "TP-Link TL-WDR4300 v1",
       "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
@@ -1193,7 +1193,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "rocket-m",
       "model2": "Ubiquiti Rocket M",
       "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-sysupgrade.bin",
@@ -1201,7 +1201,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "rocket-m",
       "model2": "Ubiquiti Rocket M2",
       "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-sysupgrade.bin",
@@ -1219,7 +1219,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "unifi-outdoor-plus",
       "model2": "Ubiquiti UniFiAP Outdoor+",
       "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-sysupgrade.bin",
@@ -1616,7 +1616,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "xiaomi,redmi-router-ax6s",
       "model2": "Xiaomi Redmi Router AX6S",
       "filename": "openwrt-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.bin",
@@ -1758,7 +1758,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "ubnt-erx",
       "model2": "UBNT-ERX",
       "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
@@ -1766,7 +1766,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "ubnt,edgerouter-x",
       "model2": "Ubiquiti EdgeRouter X",
       "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
@@ -1779,7 +1779,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "xiaomi,mi-router-4a-gigabit",
       "model2": "Xiaomi Mi Router 4A Gigabit Edition",
       "filename": "openwrt-ramips-mt7621-xiaomi_mi-router-4a-gigabit-squashfs-sysupgrade.bin",
@@ -1802,7 +1802,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "xiaomi,redmi-router-ac2100",
       "model2": "Xiaomi Redmi Router AC2100",
       "filename": "openwrt-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-sysupgrade.bin",
@@ -1933,7 +1933,7 @@
       "model": "xunlong,orangepi-r1",
       "model2": "Xunlong Orange Pi R1",
       "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-squashfs-sdcard.img.gz",
-      "comment": ""
+      "comment": "Offloader: could change partions"
     },
     {
       "name": "",
@@ -1951,7 +1951,7 @@
       "model": "fujitsu-siemens-futro-s550",
       "model2": "FUJITSU SIEMENS FUTRO S550",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
-      "comment": ""
+      "comment": "Offloader: could change partions"
     },
     {
       "name": "",
@@ -1959,7 +1959,7 @@
       "model": "fujitsu-futro-s550-2",
       "model2": "FUJITSU FUTRO S550-2",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
-      "comment": ""
+      "comment": "Offloader: could change partions"
     },
     {
       "name": "",
@@ -1967,7 +1967,7 @@
       "model": "igel-technology-gmbh-h830c",
       "model2": "IGEL Technology GmbH H830C",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
-      "comment": ""
+      "comment": "Offloader: could change partions"
     },
     {
       "name": "",
@@ -1975,7 +1975,7 @@
       "model": "qemu-standard-pc-i440fx-piix-1996",
       "model2": "QEMU Standard PC (i440FX + PIIX, 1996)",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
-      "comment": ""
+      "comment": "Offloader: could change partions"
     },
     {
       "name": "",
