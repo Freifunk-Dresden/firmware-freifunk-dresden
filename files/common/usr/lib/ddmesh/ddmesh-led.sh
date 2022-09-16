@@ -165,9 +165,11 @@ case "$ARG_LED" in
 					;;
 				boot3)	led_timer $_led_status 150 150
 					;;
-				off)  led_off $_led_status
+				off)	led_off $_led_status
 					;;
-				done|on)
+				on)	led_on $_led_status
+					;;
+				done)
 					if [ "${_led_flag_status_done}" = "on" ]; then
 						led_on $_led_status
 					else
