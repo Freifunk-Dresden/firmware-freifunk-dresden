@@ -469,13 +469,13 @@ usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < ma
 
    -d    use docker for compiling (keep workdir)
    -D    use docker for compiling (clear workdir)
-   -s    opens a shell to running docker 
+   -s    opens a shell to running docker
 
   commands:
    list                    - lists all available targets
    lt | list-targets       - lists only target names for usage in IDE
    watch                   - same as 'list' but updates display
-   target-devices <target> - displays all selected routers for a target
+   devices <target>        - displays all selected routers for a target
    search <string>         - search specific router (target)
    clean                   - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    feed-revisions          - returns the git HEAD revision hash for current date (now).
@@ -590,7 +590,7 @@ if $USE_DOCKER; then
 		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "rm -rf files feeds openwrt-configs; tar -xzf ${docker_tar} && rm ${docker_tar}"
 		rm /tmp/${docker_tar}
 
-		# remove workdir from previous usage of this container (when still available) 
+		# remove workdir from previous usage of this container (when still available)
 		${DOCKER_RM_WORKDIR} && {
 			echo -e "$${C_LCYAN}remove workdir${C_NONE}"
 			docker exec -it ${DOCKER_CONTAINER_NAME} rm -rf ${WORK_DIR}
@@ -672,7 +672,7 @@ if [ "$1" = "search" ]; then
 fi
 
 # displays all selected devices for a target (e.g. ath79.generic)
-if [ "$1" = "target-devices" ]; then
+if [ "$1" = "devices" ]; then
 	if [ -z "$2" ]; then
 		echo "Error: missing target"
 		exit 1
