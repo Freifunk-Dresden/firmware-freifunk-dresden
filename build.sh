@@ -1300,7 +1300,7 @@ EOM
 	# 1. cd workdir/buildroot
 	# 2. rm .config
 	# 3. unselect all unwanted configuration that should be removed from (e.g. IPV6,PPP,....)
-	# 4. run ./scripts/diffconfig.sh firmware/openwrt-configs/21.02/default.config
+
 	echo -e "${C_CYAN}post-overwrite configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
 	cat ${DEFAULT_CONFIG} >> .config
 	echo -e "${C_CYAN}reprocess configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"

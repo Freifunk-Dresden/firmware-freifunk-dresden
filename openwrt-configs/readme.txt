@@ -1,6 +1,3 @@
-
-
-
 # naming convention config files
 
 - config/targets with "small" are devices with 
