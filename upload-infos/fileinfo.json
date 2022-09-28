@@ -614,8 +614,8 @@
     {
       "name": "",
       "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "model": "glinet,gl-ar300m-lite",
+      "model2": "GL.iNet GL-AR300M-Lite",
       "filename": "openwrt-ath79-generic-glinet_gl-ar300m-lite-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -767,6 +767,14 @@
       "name": "",
       "autoupdate": "1",
       "model": "archer-c5",
+      "model2": "TP-Link Archer C5 v1",
+      "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
+      "comment": "alte Kennung"
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,archer-c5-v1",
       "model2": "TP-Link Archer C5 v1",
       "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
       "comment": ""
@@ -941,7 +949,7 @@
       "model": "cpe210",
       "model2": "TP-Link CPE210 v1.0",
       "filename": "openwrt-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "alte Kennung"
     },
     {
       "name": "",
@@ -1037,7 +1045,7 @@
       "model": "tl-wdr4300",
       "model2": "TP-Link TL-WDR3600 v1",
       "filename": "openwrt-ath79-generic-tplink_tl-wdr3600-v1-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "alte Kennung"
     },
     {
       "name": "",
@@ -1060,15 +1068,15 @@
     {
       "name": "",
       "autoupdate": "1",
-      "model": "tplink,tl-wdr4300-v1",
+      "model": "tl-wdr4300",
       "model2": "TP-Link TL-WDR4300 v1",
       "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "alte Kennung"
     },
     {
       "name": "",
       "autoupdate": "1",
-      "model": "tl-wdr4300",
+      "model": "tplink,tl-wdr4300-v1",
       "model2": "TP-Link TL-WDR4300 v1",
       "filename": "openwrt-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
       "comment": ""
@@ -1324,7 +1332,7 @@
       "model": "hiveap-121",
       "model2": "Aerohive HiveAP-121",
       "filename": "openwrt-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "alte Kennung"
     },
     {
       "name": "",
@@ -1360,8 +1368,8 @@
     {
       "name": "",
       "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "model": "glinet,gl-ar300m-nor",
+      "model2": "GL.iNet GL-AR300M (NOR)",
       "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nor-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1728,7 +1736,7 @@
       "model": "r6220",
       "model2": "Netgear R6220",
       "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
-      "comment": "Achtung: manche Geräte verlieren ihr 2.4Ghz Wifi seit Openwrt 21"
+      "comment": "alte Kennung; Achtung: manche Geräte verlieren ihr 2.4Ghz Wifi seit Openwrt 21"
     },
     {
       "name": "",
@@ -1762,7 +1770,7 @@
       "model": "ubnt-erx",
       "model2": "UBNT-ERX",
       "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "alte Kennung"
     },
     {
       "name": "",
