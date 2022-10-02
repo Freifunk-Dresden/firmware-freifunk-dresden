@@ -671,6 +671,11 @@ upgrade_8_0_8()
 	rm -f /etc/config/ddns
 }
 
+upgrade_8_1_0()
+{
+	true
+}
+
 ##################################
 
 run_upgrade
