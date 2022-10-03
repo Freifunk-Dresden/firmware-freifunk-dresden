@@ -517,6 +517,19 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ath79-generic-aruba_ap-105-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-aruba_ap-105-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ath79-generic-avm_fritz4020-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1013,6 +1026,42 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe220-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe220-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe220-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe220-v3-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe220-v3-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-tplink_cpe220-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1027,6 +1076,60 @@
       "model": "tplink,eap225-outdoor-v1",
       "model2": "TP-Link EAP225-Outdoor v1",
       "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_re450-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_re450-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-tplink_re450-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_re450-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_re450-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-tplink_re450-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_re450-v3-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-tplink_re450-v3-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-tplink_re450-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1650,6 +1753,19 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt7620-tplink_archer-c2-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7620-tplink_archer-c2-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ramips-mt7620-tplink_archer-c50-v1-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1669,6 +1785,24 @@
       "model": "",
       "model2": "",
       "filename": "openwrt-ramips-mt7620-tplink_archer-c50-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7620-tplink_re200-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7620-tplink_re200-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7620-tplink_re200-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1858,6 +1992,96 @@
       "model": "netgear,r6120",
       "model2": "Netgear R6120",
       "filename": "openwrt-ramips-mt76x8-netgear_r6120-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_archer-c20-v4-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_archer-c20-v4-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_archer-c20-v4-squashfs-tftp-recovery.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_re200-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_re200-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_re200-v3-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_re200-v3-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_re200-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_re200-v4-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_re200-v4-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_re200-v4-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_tl-wr841n-v13-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_tl-wr841n-v13-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-tplink_tl-wr841n-v13-squashfs-tftp-recovery.bin",
       "comment": ""
     },
     {

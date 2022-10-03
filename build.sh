@@ -463,17 +463,19 @@ usage()
 Version: $SCRIPT_VERSION
 usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < make params ... > ]
  options:
-   -h    docker host, if not specifies environment variable 'export DOCKER_HOST' is used.
+   -h    docker host, if not specified environment variable 'FF_DOCKER_HOST' or 'DOCKER_HOST' is used.
+         FF_DOCKER_HOST is used in favour to DOCKER_HOST. -h still has highest preference
          e.g: tcp://192.168.123.123
+
    -d    use docker for compiling (keep workdir)
    -D    use docker for compiling (clear workdir)
-   -s    open docker shell
+   -s    opens a shell to running docker
 
   commands:
    list                    - lists all available targets
    lt | list-targets       - lists only target names for usage in IDE
    watch                   - same as 'list' but updates display
-   target-devices <target> - displays all selected routers for a target
+   devices <target>        - displays all selected routers for a target
    search <string>         - search specific router (target)
    clean                   - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    feed-revisions          - returns the git HEAD revision hash for current date (now).
@@ -502,6 +504,9 @@ Devel-Notes:
 
 EOM
 }
+
+# overwrite DOCKER_HOST variable if FF_DOCKER_HOST is present. this value can still be overwritten by -h option
+test -n "${FF_DOCKER_HOST}" && export DOCKER_HOST="${FF_DOCKER_HOST}"
 
 # check if there are options
 while getopts "sDdh:" arg
@@ -561,7 +566,7 @@ if $USE_DOCKER; then
 		exit 1
 	}
 
-	# create container and upload current directory
+	# create container if it does not exisits and upload current directory
 	docker inspect ${DOCKER_CONTAINER_NAME} >/dev/null 2>/dev/null || {
 		echo -e "${C_CYAN}create container${C_NONE}"
   	docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
@@ -585,19 +590,22 @@ if $USE_DOCKER; then
 		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "rm -rf files feeds openwrt-configs; tar -xzf ${docker_tar} && rm ${docker_tar}"
 		rm /tmp/${docker_tar}
 
-		# run build
+		# remove workdir from previous usage of this container (when still available)
 		${DOCKER_RM_WORKDIR} && {
 			echo -e "$${C_LCYAN}remove workdir${C_NONE}"
 			docker exec -it ${DOCKER_CONTAINER_NAME} rm -rf ${WORK_DIR}
 		}
+
 		docker exec -it ${DOCKER_CONTAINER_NAME} git config --global http.sslverify false
+
 		echo -e "${C_CYAN}run build${C_NONE}"
+
 		# need to pass target as one parameter. $@ does separate target list ("ar71xx.tiny.lowmem ath79.generic lantiq.xrx200")
 		target="$1"
 		shift
 		docker exec -it -e FF_REGISTERKEY_PREFIX=$FF_REGISTERKEY_PREFIX ${DOCKER_CONTAINER_NAME} ./build.sh "$target" $@
 
-		# ignore some operations for some arguments
+		# ignore some operations for some arguments. it makes no sence to start those short commands. can be done locally
 		case "$1" in
 		list) ;;
 		lt | list-targets) ;;
@@ -605,23 +613,26 @@ if $USE_DOCKER; then
 		clean) ;;
 		feed-revisions) ;;
 		*)
-			echo -e "${C_CYAN}generate upload${C_NONE}"
-			docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
+			if [ "$target" = "all" ]; then
+				echo -e "${C_CYAN}generate upload${C_NONE}"
+				docker exec -it ${DOCKER_CONTAINER_NAME} ./gen-upload.sh all
+			fi
 
-			# copy back results
+			# create tar and copy results back
 			echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_FINAL_TGZ}]${C_NONE}"
-			docker exec -it ${DOCKER_CONTAINER_NAME} tar -cvzf ${DOCKER_FINAL_TGZ} final_output
+
+			docker exec -it ${DOCKER_CONTAINER_NAME} tar czf ${DOCKER_FINAL_TGZ} final_output
 			docker cp ${DOCKER_CONTAINER_NAME}:/builds/${DOCKER_FINAL_TGZ} "${DOCKER_FINAL_TGZ}"
-			tar xvzf "${DOCKER_FINAL_TGZ}"
+
+			# extract it in local folder
+			tar xzf "${DOCKER_FINAL_TGZ}"
 			rm "${DOCKER_FINAL_TGZ}"
 			;;
 		esac
 
-		# stop and delete
+		# stop (keep container)
 		echo -e "${C_CYAN}stop container${C_NONE}"
 		docker stop -t0 ${DOCKER_CONTAINER_NAME}
-	#	docker rm ${DOCKER_CONTAINER_NAME}
-
 	fi
 
 	exit 0
@@ -661,7 +672,7 @@ if [ "$1" = "search" ]; then
 fi
 
 # displays all selected devices for a target (e.g. ath79.generic)
-if [ "$1" = "target-devices" ]; then
+if [ "$1" = "devices" ]; then
 	if [ -z "$2" ]; then
 		echo "Error: missing target"
 		exit 1
@@ -1289,7 +1300,7 @@ EOM
 	# 1. cd workdir/buildroot
 	# 2. rm .config
 	# 3. unselect all unwanted configuration that should be removed from (e.g. IPV6,PPP,....)
-	# 4. run ./scripts/diffconfig.sh firmware/openwrt-configs/21.02/default.config
+
 	echo -e "${C_CYAN}post-overwrite configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
 	cat ${DEFAULT_CONFIG} >> .config
 	echo -e "${C_CYAN}reprocess configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"

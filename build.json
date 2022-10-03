@@ -4,6 +4,16 @@
 #
 #########################################################################
 
+# - config/targets with "small" are devices with either or both
+#  - <=  8Mbyte Flash
+#  - <= 32Mbyte RAM
+#
+#  Does devices will have:
+#   - usb
+#   - tether
+#   - tcpdump
+#   + wireguard
+
 # determination of feed revisions:
 # 1. checkout openwrt tag
 # 2. check feeds.conf.default for revisions used
@@ -116,6 +126,10 @@
 	{
 		"name":"ramips.mt7620.small",
 		"config":"config.ramips.mt7620.small"
+	},
+	{
+		"name":"ramips.mt7620.generic",
+		"config":"config.ramips.mt7620.generic"
 	},
 	{
 		"name":"ramips.mt7621.generic",
