@@ -543,14 +543,22 @@
     },
     {
       "name": "",
+      "autoupdate": "1",
+      "model": "fritz4020",
+      "model2": "AVM FRITZ!Box 4020",
+      "filename": "openwrt-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
+      "comment": "alte Kennung"
+    },
+    {
+      "name": "",
       "filename": "openwrt-ath79-generic-avm_fritz450e-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "avm,fritz450e",
+      "model2": "AVM FRITZ!WLAN Repeater 450E",
       "filename": "openwrt-ath79-generic-avm_fritz450e-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -720,8 +728,8 @@
     {
       "name": "",
       "autoupdate": "1",
-      "model": "netgear,wndr3700v2",
-      "model2": "Netgear WNDR3700v2",
+      "model": "netgear,wndr3700-v2",
+      "model2": "Netgear WNDR3700 v2",
       "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -804,9 +812,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "tplink,archer-c59-v1",
+      "model2": "TP-Link Archer C59 v1",
       "filename": "openwrt-ath79-generic-tplink_archer-c59-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -905,10 +913,18 @@
     {
       "name": "",
       "autoupdate": "1",
-      "model": "archer-c7",
+      "model": "tplink,archer-c7-v2",
       "model2": "TP-Link Archer C7 v2",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
       "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "archer-c7",
+      "model2": "TP-Link Archer C7 v2",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
+      "comment": "alte Kennung"
     },
     {
       "name": "",
@@ -923,10 +939,18 @@
     {
       "name": "",
       "autoupdate": "1",
-      "model": "archer-c7-v4",
+      "model": "tplink,archer-c7-v4",
       "model2": "TP-LINK Archer C7 v4",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-sysupgrade.bin",
       "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "archer-c7-v4",
+      "model2": "TP-LINK Archer C7 v4",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-sysupgrade.bin",
+      "comment": "alte Kennung"
     },
     {
       "name": "",
@@ -941,10 +965,18 @@
     {
       "name": "",
       "autoupdate": "1",
+      "model": "tplink,archer-c7-v5",
+      "model2": "TP-Link Archer C7 v5",
+      "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
       "model": "archer-c7-v5",
       "model2": "TP-LINK Archer C7 v5",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "alte Kennung"
     },
     {
       "name": "",
@@ -993,10 +1025,18 @@
     {
       "name": "",
       "autoupdate": "1",
+      "model": "tplink,cpe210-v2",
+      "model2": "TP-Link CPE210 v2",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
       "model": "cpe210-v2",
       "model2": "TP-Link CPE210 v2.0",
       "filename": "openwrt-ath79-generic-tplink_cpe210-v2-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "alte Kennung"
     },
     {
       "name": "",
@@ -1011,8 +1051,8 @@
     {
       "name": "",
       "autoupdate": "1",
-      "model": "cpe210-v3",
-      "model2": "TP-Link CPE210 v3.0",
+      "model": "tplink,cpe210-v3",
+      "model2": "TP-Link CPE210 v3",
       "filename": "openwrt-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1020,9 +1060,17 @@
       "name": "",
       "autoupdate": "1",
       "model": "cpe210-v3",
+      "model2": "TP-Link CPE210 v3.0",
+      "filename": "openwrt-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
+      "comment": "alte Kennung"
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "cpe210-v3",
       "model2": "TP-Link CPE210 v3.20",
       "filename": "openwrt-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
-      "comment": ""
+      "comment": "alte Kennung"
     },
     {
       "name": "",
@@ -1432,18 +1480,18 @@
     {
       "name": "",
       "autoupdate": "1",
-      "model": "hiveap-121",
-      "model2": "Aerohive HiveAP-121",
-      "filename": "openwrt-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
-      "comment": "alte Kennung"
-    },
-    {
-      "name": "",
-      "autoupdate": "1",
       "model": "aerohive,hiveap-121",
       "model2": "Aerohive HiveAP 121",
       "filename": "openwrt-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
       "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "hiveap-121",
+      "model2": "Aerohive HiveAP-121",
+      "filename": "openwrt-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
+      "comment": "alte Kennung"
     },
     {
       "name": "",
@@ -1517,17 +1565,17 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "avm,fritzbox-7530",
+      "model2": "AVM FRITZ!Box 7530",
       "filename": "openwrt-ipq40xx-generic-avm_fritzbox-7530-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "avm,fritzrepeater-1200",
+      "model2": "AVM FRITZ!Repeater 1200",
       "filename": "openwrt-ipq40xx-generic-avm_fritzrepeater-1200-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1548,9 +1596,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "avm,fritz3370-rev2-hynix",
+      "model2": "AVM FRITZ!Box 3370 Rev. 2 (Hynix NAND)",
       "filename": "openwrt-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1597,9 +1645,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "avm,fritz7360sl",
+      "model2": "AVM FRITZ!Box 7360 SL",
       "filename": "openwrt-lantiq-xrx200-avm_fritz7360sl-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1636,9 +1684,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "avm,fritz7430",
+      "model2": "AVM FRITZ!Box 7430",
       "filename": "openwrt-lantiq-xrx200-avm_fritz7430-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1649,9 +1697,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "tplink,tdw8970",
+      "model2": "TP-LINK TD-W8970",
       "filename": "openwrt-lantiq-xrx200-tplink_tdw8970-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1701,9 +1749,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "avm,fritz7312",
+      "model2": "AVM FRITZ!Box 7312",
       "filename": "openwrt-lantiq-xway-avm_fritz7312-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -2091,9 +2139,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "tplink,tl-wr902ac-v3",
+      "model2": "TP-Link TL-WR902AC v3",
       "filename": "openwrt-ramips-mt76x8-tplink_tl-wr902ac-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -2122,9 +2170,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "xiaomi,mi-router-4c",
+      "model2": "Xiaomi Mi Router 4C",
       "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4c-squashfs-sysupgrade.bin",
       "comment": ""
     },
