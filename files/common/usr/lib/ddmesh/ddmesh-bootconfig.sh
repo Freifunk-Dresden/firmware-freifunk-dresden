@@ -427,29 +427,18 @@ EOM
 
 # setup cron.d
 mkdir -p /var/etc/crontabs
-m=$(( $_ddmesh_node % 60))
+# mod 50 avoids wrap when adding 5min (m2)
+reg_min=$(( $_ddmesh_node % 50 ))
+nightly_min=$((reg_min + 5))
+nightly_hour="$(uci -q get ddmesh.system.maintenance_time)"
+nightly_hour="${nightly_hour:=4}"
+
 cat<<EOM > /var/etc/crontabs/root
-$m */1 * * * /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
+${reg_min} */1 * * * /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
 * * * * * /usr/lib/ddmesh/ddmesh-tasks.sh watchdog
 * */6 * * * /usr/lib/ddmesh/ddmesh-backbone-regwg.sh refresh >/dev/null 2>/dev/null
+${nightly_min} ${nightly_hour} * * *  [ "$(uci -q get ddmesh.system.firmware_autoupdate)" = "1" ] && /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run nightly >/dev/null 2>/dev/null || ([ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ] && /sbin/reboot)
 EOM
-
-maintenance="$(uci -q get ddmesh.system.maintenance_time)"
-maintenance="${maintenance:=4}"
-
-if [ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ];then
-cat<<EOM >> /var/etc/crontabs/root
-0 ${maintenance} * * *  /sbin/reboot
-EOM
-fi
-
-# ALWAYS update check AFTER nightly reboot
-maintenance=$((maintenance+1))
-if [ "$(uci -q get ddmesh.system.firmware_autoupdate)" = "1" ];then
-cat<<EOM >> /var/etc/crontabs/root
-$m ${maintenance} * * *  /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run nightly >/dev/null 2>/dev/null
-EOM
-fi
 
 # set eth ifaces to 100 mbit wehn selected
 if [ -n "$(which ethtool)" -a "$(uci -q get ddmesh.network.force_ether_100mbit)" = "1" ]; then
