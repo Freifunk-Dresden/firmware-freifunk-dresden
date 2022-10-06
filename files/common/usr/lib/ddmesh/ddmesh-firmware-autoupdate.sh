@@ -30,10 +30,10 @@ fi
 
 rm -f $ERROR_FILE
 
-allowed="$(cat /var/etc/tmp_config/allow_autoupdate 2>/dev/null)"
-allowed=${allowed:=0}
-enabled="$(uci get ddmesh.system.firmware_autoupdate)"
-enabled=${enabled:=1}
+node_autoupdate_allowed="$(cat /var/etc/tmp_config/node_autoupdate_allowed 2>/dev/null)"
+node_autoupdate_allowed=${node_autoupdate_allowed:=0}
+cfg_autoupdate_enabled="$(uci get ddmesh.system.firmware_autoupdate)"
+cfg_autoupdate_enabled=${cfg_autoupdate_enabled:=1}
 
 #return 0 if new > cur
 compare_versions() {
@@ -78,10 +78,10 @@ case "$1" in
 	run)
 		nightly=$2
 
-		autoupdate=$(echo $FILE_INFO_JSON | jsonfilter -e '@.fileinfo.autoupdate')
+		firmware_autoupdate_enabled=$(echo $FILE_INFO_JSON | jsonfilter -e '@.fileinfo.autoupdate')
 
-		logger -s -t "$TAG" "Auto Update: Router enabled: $enabled; firmware enabled: $autoupdate; node allowed: $allowed"
-		[ "$allowed" = "1" -a "$enabled" = "1" -a "$autoupdate" = "1" ] || exit 1
+		logger -s -t "$TAG" "Auto Update: Router enabled: $cfg_autoupdate_enabled; firmware enabled: $firmware_autoupdate_enabled; node autoupdate allowed: $node_autoupdate_allowed"
+		[ "$node_autoupdate_allowed" = "1" -a "$cfg_autoupdate_enabled" = "1" -a "$firmware_autoupdate_enabled" = "1" ] || exit 1
 
 		check_version || exit 1
 		logger -s -t "$TAG" "new version available"
@@ -119,15 +119,15 @@ case "$1" in
 		;;
 
 	check)
-		autoupdate=$(echo $FILE_INFO_JSON | jsonfilter -e '@.fileinfo.autoupdate')
+		firmware_autoupdate_enabled=$(echo $FILE_INFO_JSON | jsonfilter -e '@.fileinfo.autoupdate')
 
-		echo "Auto Update: Router enabled: $enabled; Firmware enabled: $autoupdate; Node allowed: $allowed"
+		echo "Auto Update: Router enabled: $cfg_autoupdate_enabled; Firmware enabled: $firmware_autoupdate_enabled; Node autoupdate allowed: $node_autoupdate_allowed"
 
 		check_version || echo "no new firmware"
 		echo "your version: $firmware_current_version"
 		echo "version on server: $firmware_release_version"
 		run="no"
-		[ "$allowed" = "1" -a "$enabled" = "1" -a "$autoupdate" = "1" ] && run="yes"
+		[ "$node_autoupdate_allowed" = "1" -a "$cfg_autoupdate_enabled" = "1" -a "$firmware_autoupdate_enabled" = "1" ] && run="yes"
 	       	echo "-> run: $run"
 		exit 0
 		;;
