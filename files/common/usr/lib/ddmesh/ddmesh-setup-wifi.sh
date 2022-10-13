@@ -40,10 +40,9 @@ setup_wireless()
 	uci add_list wireless.radio2g.supported_rates='6000 9000 12000 18000 24000 36000 48000 54000'
  fi
 
-# wird auf HT20 gesetzt oder bei usbsticks auf nix, wenn kein support da ist.
-# falsche werte sorgen fuer nicht funktionieren von wifi
- #test -z "$(uci -q get ddmesh.network.wifi_htmode)" && uci set ddmesh.network.wifi_htmode="HT20"
- #uci set wireless.radio2g.htmode="$(uci get ddmesh.network.wifi_htmode)"
+ # set HT20 for 2.4Ghz. higher values are not supported by all devices
+ # and meshing 802.11s might not work
+ uci set wireless.radio2g.htmode="HT20"
 
  # 5 GHz
  if [ -n "$wifi_status_radio5g_up" ]; then

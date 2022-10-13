@@ -312,10 +312,15 @@ cat<<EOM
 <TR><TH COLSPAN="3" class="heading">LEDs</TH></TR>
 EOM
 
-for led in wifi status wwan
+# simulate array
+led_comment_wifi="Gateway Status:<ul><li>blink-kurz: kein Gatway gefunden/selektiert</li><li>blink normal: Gateway selektiert</li><li>blink schnell: <font color="red">Router selbst ist ein Gateway !</font></li></ul>"
+led_comment_status="Boot-Status"
+led_comment_wwan="LTE Status"
+
+for led in wifi status $([ "$wwan_iface_present" = "1" ] && echo 'wwan')
 do
 cat<<EOM
-<tr>
+<tr style="vertical-align:top;">
 <th>- ${led}-LED:</th>
 <td>
 EOM
@@ -334,12 +339,15 @@ case "$ddmesh_led" in
 		check_led_status='checked="checked"'
 		;;
 esac
+
+eval comment=$(echo \$led_comment_${led})
+
 cat <<EOM
 <input name="form_led_${led}" type="radio" value="status" $check_led_status>Status
 <input name="form_led_${led}" type="radio" value="on" $check_led_on>On
 <input name="form_led_${led}" type="radio" value="off" $check_led_off>Off
 </td>
-<td><td>
+<td>${comment}</td>
 </th>
 EOM
 done

@@ -162,10 +162,8 @@ m3:test:
     - m3runner
 
 m3:upload:
-#devel start -----
-  when: manual
-  allow_failure: false
-# devel end -----
+  # do not use 'manual' job, because the build result may
+  # have gone (overwritten by following builds) in /mycache/...
 
   only:
     - master

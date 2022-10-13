@@ -12,6 +12,8 @@ m3tags:init:
     - /^T_/
   stage: init       # special state, run before all other stages
   when: manual
+
+  # ensure that this stage failes when no env variables are set
   allow_failure: false
   artifacts:
     paths:
@@ -243,6 +245,9 @@ m3tags:test:
     - m3runner
 
 m3tags:upload:
+  # do not use 'manual' job, because the build result may
+  # have gone (overwritten by following builds) in /mycache/...
+
   only:
     # DO NOT UPLOAD for branch: R_FIRMWARE....
     - /^TESTING/

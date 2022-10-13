@@ -8,6 +8,7 @@ WG_BIN=$(which wg)
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbbwg tbbwg)
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_wg wg)
 WG_LOGGER_TAG="wg-backbone"
+FASTD_RUNNING_STATE="/var/state/backbone-fastd.running"
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh tbb_fastd fastd)
 FASTD_CONF_DIR=/var/etc/fastd
@@ -304,7 +305,10 @@ case "$1" in
 			config_load ddmesh
 			config_foreach callback_outgoing_fastd_config backbone_client
 
-			[ ${config_count} -gt 0 ] && fastd --config $FASTD_CONF --pid-file $FASTD_PID_FILE --daemon
+			if [ ${config_count} -gt 0 ]; then
+				fastd --config $FASTD_CONF --pid-file $FASTD_PID_FILE --daemon
+				touch ${FASTD_RUNNING_STATE}
+			fi
 		fi
 
 		if [ -n "$WG_BIN" ]; then
@@ -390,7 +394,9 @@ case "$1" in
 				kill $(cat $FASTD_PID_FILE)
 				rm -f $FASTD_PID_FILE
 			fi
+			rm -f ${FASTD_RUNNING_STATE}
 		fi
+
 		if [ -n "$WG_BIN" -a -n "$wg_ifname" ]; then
 			# delete all ipip tunnels
 			LS=$(which ls)
@@ -440,7 +446,7 @@ case "$1" in
 		;;
 
 	runcheck)
-		if [ -n "$FASTD_BIN" ]; then
+		if [ -n "$FASTD_BIN" -a -f ${FASTD_RUNNING_STATE} ]; then
 			present="$(grep $FASTD_CONF /proc/$(cat $FASTD_PID_FILE)/cmdline 2>/dev/null)"
 			if [ -z "$present" ]; then
 				logger -t $FASTD_LOGGER_TAG "fastd not running -> restarting"

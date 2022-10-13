@@ -41,13 +41,15 @@ C_LGREY='\033[1;37m'
 #parameter check
 usage()
 {
-	printf "${0##*/} (all | json [<directory-suffix>] ) | pretty <fileinfo.json>\n"
+	printf "${0##*/} (all | json <commands>\n"
 	printf "Version ${VERSION}\n"
-	printf "   all                  - generates all (incl.copying files)\n"
-	printf "   json                 - only updates download.json\n"
-	printf "   compare-json         - only compare fileinfo.json  against last generated version\n"
-	printf "   directory-suffix     - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
-	printf "   pretty <file>        - reads file info json from file and prints sorted (by filename) json on stdout\n"
+	printf "commands:"
+	printf "   all                      - generates all (incl.copying files)\n"
+	printf "   json                     - only updates download.json\n"
+	printf "   compare-json             - only compare fileinfo.json  against last generated version\n"
+	printf "   directory-suffix         - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
+	printf "   pretty <file>            - reads file info json from file and prints sorted (by filename) json on stdout\n"
+	printf "   show-duplicates <file>   - shows filenames that are used more than once"
 	printf "\n"
 	exit 1
 }
@@ -73,6 +75,15 @@ case "$1" in
 			exit 1
 		fi
 		cat "$2" | jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename) }'
+		exit 0
+		;;
+
+	"show-duplicates")
+		if [ -z "$2" ]; then
+			printf "missing file\n"
+			exit 1
+		fi
+		cat "$2" | jq '[ .fileinfo[] | select(.filename | contains("sysupgrade")) ] |  (.  - unique_by(.filename))[] | .filename'
 		exit 0
 		;;
 
