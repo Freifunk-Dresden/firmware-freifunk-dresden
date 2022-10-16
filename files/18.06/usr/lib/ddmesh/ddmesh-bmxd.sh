@@ -121,8 +121,9 @@ case "$ARG1" in
 		OPTS="${OPTS} --network $_ddmesh_meshnet --netid $MESH_NETWORK_ID --only_community-gw $ONLY_COMMUNITY"
 		OPTS="${OPTS} --gateway_hysteresis $GATEWAY_HYSTERESIS --path_hysteresis 3  --script /usr/lib/bmxd/bmxd-gateway.sh"
 		OPTS="${OPTS} ${ROUTING_CLASS} ${PREFERRED_GATEWAY}"
-		# 5s OGM interval, 22s purge timeout == 4 OGM
-		OPTS="${OPTS} --hop_penalty 5 --lateness_penalty 10 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 5000 --purge_timeout 22"
+		# 10s OGM interval, purge timeout 35 -> 3 OGM
+		# 5s OGM interval, purge timeout 35 -> 7 OGM
+		OPTS="${OPTS} --hop_penalty 5 --lateness_penalty 10 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 5000 --purge_timeout 35"
 		DAEMON_OPTS="${OPTS} ${_IF}"
 
 		# set initial wifi ssid to "FF no-inet"
