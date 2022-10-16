@@ -483,19 +483,19 @@ else
 		local)
 			uci set ddmesh.backbone.fastd_port=$form_backbone_local_fastd_port
 			uci set ddmesh.backbone.wg_port=$form_backbone_local_wg_port
-			uci_commit.sh
+			uci commit
 			MSG=2
 		;;
 
 		client_del)
 			uci delete ddmesh.$form_entry;
-			uci_commit.sh
+			uci commit
 			MSG=4
 		;;
 
 		accept_del)
 			uci delete ddmesh.$form_entry;
-			uci_commit.sh
+			uci commit
 			MSG=4;
 		;;
 
@@ -512,7 +512,7 @@ else
 				else
 					uci set ddmesh.@backbone_client[-1].disabled='1'
 				fi
-				uci_commit.sh
+				uci commit
 				MSG=3;
 			else
 				MSG=6;
@@ -531,7 +531,7 @@ else
 				else
 					uci set ddmesh.@backbone_accept[-1].disabled='1'
 				fi
-				uci_commit.sh
+				uci commit
 				MSG=3;
 			else
 				MSG=6;
@@ -544,7 +544,7 @@ else
 			else
 				uci set ddmesh.${form_entry}.disabled='1'
 			fi
-			uci_commit.sh
+			uci commit
 			;;
 
 		restart)

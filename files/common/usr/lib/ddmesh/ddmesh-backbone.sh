@@ -35,7 +35,7 @@ gen_fastd_key()
 		uci -q rename credentials.@backbone_secret[-1]='backbone_secret'
 	}
 	uci -q set credentials.backbone_secret.fastd_key="$(fastd --machine-readable --generate-key)"
-	uci_commit.sh
+	uci commit
 }
 
 gen_wg_key()
@@ -47,7 +47,7 @@ gen_wg_key()
 
 	WG_PRIV=$(wg genkey)
 	uci set credentials.backbone_secret.wireguard_key="$WG_PRIV"
-	uci_commit.sh
+	uci commit
 }
 
 generate_fastd_conf()

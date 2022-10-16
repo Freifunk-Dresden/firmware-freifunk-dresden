@@ -40,18 +40,18 @@ if [ -n "$QUERY_STRING" ]; then
 		add)
 			entry="$form_data_sensor $form_data_period"
 			uci add_list fine-particle.sensors.entries="$entry"
-			uci_commit.sh
+			uci commit
 			;;
 		del)
 			entry="$(uhttpd -d $form_entry)"
 			uci del_list fine-particle.sensors.entries="$entry"
-			uci_commit.sh
+			uci commit
 			;;
 	esac
 
 	if [ -n "$post_sensor" ]; then
 		uci -q set fine-particle.sensors.id="$id_sensor"
-		uci_commit.sh
+		uci commit
 		notbox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind sofort aktiv."
 	fi
 
@@ -192,7 +192,7 @@ show_img() {
 
 	echo "<img hight=\"$hight\" width=\"$width\" src=\"$url-$id-$sensor-$period.png\" alt="$id-$sensor-$period">"
 	test $((count % columns)) -eq 0 && echo "<br>"
-	
+
 }
 config_get vid sensors id
 config_get vurl sensors url

@@ -88,7 +88,7 @@ if [ "$1" = "configure" ]; then
 	uci -q add_list dhcp.wifi2.dhcp_option="15,$domain"		# domain
 	uci -q add_list dhcp.wifi2.dhcp_option="119,$domain"		# search path
 
-	uci_commit.sh
+	uci commit
 fi
 
 if [ "$1" == start ]; then

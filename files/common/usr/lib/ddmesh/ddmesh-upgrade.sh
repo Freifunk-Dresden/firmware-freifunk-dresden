@@ -67,7 +67,7 @@ run_upgrade()
    uci add_list ddmesh.boot.upgraded="$previous_version to ${v}${MESSAGE}"
 
    #stop if we have reached "current version" (ignore other upgrades)
-   test "$v" = "$current_version" && echo "last valid upgrade finished" && uci_commit.sh && break;
+   test "$v" = "$current_version" && echo "last valid upgrade finished" && uci commit && break;
  done
 
  test "$previous_version_found" = "0" && echo "ERROR: missing upgrade function for previous version $previous_version" && exit 1
@@ -76,7 +76,7 @@ run_upgrade()
 
 #############################################
 ### keep ORDER - only change below
-### uci_commit.sh is called after booting via ddmesh.boot_step=2
+### uci commit is called after booting via ddmesh.boot_step=2
 # a function for current version is needed for this algorithm
 
 upgrade_4_2_2()

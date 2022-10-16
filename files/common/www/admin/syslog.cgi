@@ -9,7 +9,7 @@ export TITLE="Verwaltung &gt; Wartung: Remote-Syslog"
 if [ -n "$form_syslog_submit" ]; then
 	uci set system.@system[0].log_ip="$form_syslog_ip"
 	uci set system.@system[0].log_port="$form_syslog_port"
-	uci_commit.sh
+	uci commit
 	/etc/init.d/log restart
 	notebox "Die Einstellungen wurden &uuml;bernommen und sind sofort aktiv."
 fi

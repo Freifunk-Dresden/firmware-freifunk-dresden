@@ -152,7 +152,7 @@ EOM
 					#update configs after firmware update
 					uci set ddmesh.boot.boot_step=2
 					uci set ddmesh.boot.upgrade_running=1
-					uci_commit.sh
+					uci commit
 					sync
 					rm /tmp/freifunk-running # disable cron and hotplug
 					(sleep 10 ; sysupgrade $FIRMWARE_FILE 2>&1 >/dev/null) &

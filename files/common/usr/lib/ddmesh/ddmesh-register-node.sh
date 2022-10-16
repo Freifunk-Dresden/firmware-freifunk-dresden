@@ -4,6 +4,7 @@
 
 LOGGER_TAG="register.node"
 AUTO_REBOOT=1
+REGISTER_FW_UPDATE_STATE_FILE="/var/state/node_autoupdate_allowed"
 
 #check if initial setup was run before
 if [ ! -f /etc/config/ddmesh ]; then logger -t $LOGGER_TAG "ddmesh not ready - ignore register.node" ; exit; fi
@@ -117,11 +118,11 @@ case "$j_status" in
 
 			# enable autoupdate (tmp)
 			if [ -n "$j_autoupdate" ]; then
-				echo "$j_autoupdate" > /var/etc/tmp_config/allow_autoupdate
+				echo "$j_autoupdate" > ${REGISTER_FW_UPDATE_STATE_FILE}
 				logger -s -t $LOGGER_TAG "allow_autoupdate $j_autoupdate."
 			fi
 
-			test "$uci_commit" = 1 && uci_commit.sh
+			test "$uci_commit" = 1 && uci commit
 
 			# update new node number
 			[ -n "$node" ] && [ "$(uci get ddmesh.system.node)" != "$node" ] && {
@@ -138,7 +139,7 @@ case "$j_status" in
 
 				#config depending on node must be updated and causes a second reboot
 				uci set ddmesh.boot.boot_step=2
-				uci_commit.sh
+				uci commit
 				rebooting=1
 			}
 

@@ -192,7 +192,7 @@ else #query string
 			fi
 
 			uci set ddmesh.boot.boot_step=2
-			uci_commit.sh
+			uci commit
 			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 		else #empty
 			notebox "TX-Power falsch."
