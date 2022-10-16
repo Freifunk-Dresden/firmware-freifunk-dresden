@@ -107,7 +107,7 @@ case "$1" in
 			test -n "$nightly" && uci set ddmesh.boot.nightly_upgrade_running=1
 			# used to reset overlay md5sum
 			uci set ddmesh.boot.upgrade_running=1
-			uci_commit.sh
+			uci commit
 			sync
 			logger -s -t "$TAG" "sysupgrade started..."
 			sysupgrade $FIRMWARE_FILE 2>&1 >/dev/null &

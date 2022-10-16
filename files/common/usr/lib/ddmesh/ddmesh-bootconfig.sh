@@ -471,7 +471,7 @@ case "$boot_step" in
 		logger -s -t "$LOGGER_TAG" "boot step 1"
 		config_boot_step1
 		uci set ddmesh.boot.boot_step=2
-		uci_commit.sh
+		uci commit
 		logger -s -t "$LOGGER_TAG" "reboot boot step 1"
 		reboot
 		#stop boot process
@@ -504,7 +504,7 @@ case "$boot_step" in
 			uci set ddmesh.boot.nightly_upgrade_running=0
 			uci set ddmesh.boot.upgrade_running=0
 
-			uci_commit.sh
+			uci commit
 			sync
 
 			# after uci commit and only when fw was upgraded

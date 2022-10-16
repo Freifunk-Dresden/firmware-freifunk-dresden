@@ -197,14 +197,14 @@ if [ -n "$QUERY_STRING" ]; then
 		  add)
 			mac=$(uhttpd -d $form_splash_mac)
 			uci add_list ddmesh.network.splash_mac="$mac"
-			uci_commit.sh
+			uci commit
 			/usr/lib/ddmesh/ddmesh-splash.sh addmac $mac >/dev/null
 			notebox "MAC-Adresse <b>$mac</b> hinzugef&uuml;gt."
 			;;
 		  del)
 			mac=$(uhttpd -d $form_splash_mac)
 			uci del_list ddmesh.network.splash_mac="$mac"
-			uci_commit.sh
+			uci commit
 			/usr/lib/ddmesh/ddmesh-splash.sh delmac $mac >/dev/null
 			notebox "MAC-Adresse <b>$mac</b> gel&ouml;scht."
 			;;
@@ -215,7 +215,7 @@ if [ -n "$QUERY_STRING" ]; then
 			;;
 		  delall)
 			uci delete ddmesh.network.splash_mac
-			uci_commit.sh
+			uci commit
 			notebox "Alle MAC-Adressen gel&ouml;scht."
 			;;
 		  disable)
@@ -225,11 +225,11 @@ if [ -n "$QUERY_STRING" ]; then
 		  		uci set ddmesh.system.disable_splash="0"
 		  	fi
 			notebox "Die Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst nach dem n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
-			uci_commit.sh
+			uci commit
 		  	;;
 		  disconnect)
 			uci set ddmesh.network.client_disconnect_timeout="$form_disconnect_timeout"
-			uci_commit.sh
+			uci commit
 			notebox "WLAN-Clientverbindungen werden ab sofort nach $form_disconnect_timeout Minuten unterbrochen."
 			;;
 		esac

@@ -94,7 +94,7 @@ else # query
 		uci set ddmesh.network.wwan_apn="$(uhttpd -d "$form_wwan_apn")"
 		uci set ddmesh.network.wwan_pincode="$(uhttpd -d "$form_wwan_pincode")"
 		uci set ddmesh.boot.boot_step=2
-		uci_commit.sh
+		uci commit
 		notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
 	fi
 fi # query

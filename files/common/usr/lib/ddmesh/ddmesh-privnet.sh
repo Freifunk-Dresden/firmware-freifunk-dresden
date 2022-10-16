@@ -33,7 +33,7 @@ genkey()
 		uci -q rename credentials.@privnet_secret[-1]='privnet_secret'
 	}
 	uci -q set credentials.privnet_secret.key="$(fastd --machine-readable --generate-key)"
-	uci_commit.sh
+	uci commit
 }
 
 generate_fastd_conf()

@@ -27,7 +27,7 @@ fi
 
 test "$1" = "write" && {
 	uci set overlay.data.md5sum="$md5"
-	uci_commit.sh
+	uci commit
 	echo "saved."
 }
 
