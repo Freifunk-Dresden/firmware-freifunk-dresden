@@ -500,51 +500,109 @@ static unsigned char get_gw_class(int down, int up)
   return class;
 }
 
+//se: update_gw_list() ist called when an ogm is received. this ogm contains a
+//    list of gateways. BUT it might not carry gateways infos. Another OGM could contain
+//    gateway infos that are not in this ogm.
+// This means: I can not assume that gw is gone if it is not in THIS ogm (in extension of this)
 static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, struct ext_packet *gw_array)
 {
   struct gw_node *gw_node;
   int download_speed, upload_speed;
   struct tun_orig_data *tuno = orig_node->plugin_data[tun_orig_registry];
 
+  dbg(DBGL_SYS, DBGT_INFO, "RCV OGM [%lu] from %s", orig_node->last_valid_sqn, orig_node->orig_str);
+
+  // --- check if we already have this gw in our list
   // search and update gateway tunnel object from ext_packet
   OLForEach(gw_node, struct gw_node, gw_list)
   {
+    // do only some action if the node in the list is the selected.
     if (gw_node->orig_node == orig_node)
     {
-      dbg(DBGL_SYS, DBGT_INFO,
-          "Gateway class of originator %s changed from %i -> %i, community %d->%d, port %d, addr %s",
-          orig_node->orig_str,
-          tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS : 0,
-          gw_array ? gw_array[0].EXT_GW_FIELD_GWFLAGS : 0,
-          tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY: 0,
-          gw_array ? gw_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY : 0,
+      if(tuno && !gw_array)
+      {
+        dbg(DBGL_SYS, DBGT_INFO,
+            "originator %s local: Gateway class %i, community %d, incomming: no info",
+            orig_node->orig_str,
+            tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS,
+            tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
 
-          tuno ? ntohs(tuno->tun_array[0].EXT_GW_FIELD_GWPORT) : 0,
-          ipStr(tuno ? tuno->tun_array[0].EXT_GW_FIELD_GWADDR : 0));
+//schauen ob notwendig, hier ein test rein zu machen, der erst nach 3xogm das loescht
+        // free old tunnel
+        debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
+        orig_node->plugin_data[tun_orig_registry] = NULL;
 
-      //SE: reset current_gateway before gw_node is set to zero in case.
+        // current node is no gw anymore -> remove from gw_list
+        OLRemoveEntry(gw_node);
+        debugFree(gw_node, 1103);
+        dbg(DBGL_SYS, DBGT_INFO, "NO gw_array in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
+      }
+
+// folgende bedingung duerfte nicht da sein, da wir hier durch die schleife gueltiger
+// gw nodes laufen. da muss immer ien tuno vorhanden sein. (siehe unten, da wird es ja
+// erzeugt falls nicht in liste)
+      if(!tuno && gw_array)
+      {
+        dbg(DBGL_SYS, DBGT_INFO,
+            "originator %s local: NO tunnel info, incomming: Gateway class %i, community %d",
+            orig_node->orig_str,
+            gw_array[0].EXT_GW_FIELD_GWFLAGS,
+            gw_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
+        dbg(DBGL_SYS, DBGT_ERR, "there shouldn't be here");
+      }
+
+      if(tuno && gw_array)
+      {
+        dbg(DBGL_SYS, DBGT_INFO,
+            "originator %s local: Gateway class %i, community %d, incomming: Gateway class %i, community %d",
+            orig_node->orig_str,
+            tuno->tun_array[0].EXT_GW_FIELD_GWFLAGS,
+            tuno->tun_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY,
+            gw_array[0].EXT_GW_FIELD_GWFLAGS,
+            gw_array[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
+
+        // free old tunnel
+        debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
+        orig_node->plugin_data[tun_orig_registry] = NULL;
+
+        // store new gw info
+        tuno = debugMalloc(sizeof(struct tun_orig_data) + gw_array_len * sizeof(struct ext_packet), 123);
+        orig_node->plugin_data[tun_orig_registry] = tuno;
+        memcpy(tuno->tun_array, gw_array, gw_array_len * sizeof(struct ext_packet));
+        tuno->tun_array_len = gw_array_len;
+
+        dbg(DBGL_SYS, DBGT_INFO, "gw info updated");
+      }
+
+#if 0
+      //SE: reset current_gateway before gw_node is set to zero.
       // this function is called via purge_orig()->flush_orig() when a
       // node is removed
+//hier nur cleanup wenn node nach 3x ogm_interval nicht mehr da ist.
       if (gw_node == curr_gateway)
       {
         gwc_cleanup();
         curr_gateway = NULL;
       }
 
-      // free old tunnel object data
+      // free old tunnel object data. either it is recreated or stays deleted
       if (tuno)
       {
         debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
-
         tuno = NULL;
         orig_node->plugin_data[tun_orig_registry] = NULL;
 
+        //in case the gw_array is not present in the received ogm.
+        //but still could mean, that gw could be in other ogm that carry the "rest" of all ogms
+// es macht hier keinen sinn, das gw aus der liste zu nehmen, wenn die naechste ogm das gw enthalten koennte.
+// heisst, ich darf curr_gateway nur auf NULL setzen und hier aus der liste nehmen, wenn es 3x ogm_intervall
+// nichht mehr da war.
         if (!gw_array)
         {
           OLRemoveEntry(gw_node);
           debugFree(gw_node, 1103);
           gw_node = NULL;
-//					dbg(DBGL_SYS, DBGT_INFO, "Gateway %s removed from gateway list", orig_node->orig_str);
+dbg(DBGL_SYS, DBGT_INFO, "NO gw_array in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
         }
       }
 
@@ -559,13 +617,24 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
 
         tuno->tun_array_len = gw_array_len;
       }
+#endif //1
 
+      // ogm has been processed, do not process it as 'new'
       return;
     }
   }
 
-  // when this was the first gw
-  if (gw_array && !tuno)
+  // --- new gw found
+  // we shouldn't have any valid tuno here
+  if (tuno)
+  {
+    dbg(DBGL_SYS, DBGT_ERR, "there shouldn't be any valid tuno");
+    debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
+    orig_node->plugin_data[tun_orig_registry] = NULL;
+  }
+
+  // check if new gw infos was received
+  if (gw_array)
   {
     get_gw_speeds(gw_array->EXT_GW_FIELD_GWFLAGS, &download_speed, &upload_speed);
 
@@ -579,18 +648,17 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
         (upload_speed > 2048 ? upload_speed / 1024 : upload_speed),
         (upload_speed > 2048 ? "MBit" : "KBit")	);
 
+    // create new gw node object
     gw_node = debugMalloc(sizeof(struct gw_node), 103);
     memset(gw_node, 0, sizeof(struct gw_node));
     OLInitializeListHead(&gw_node->list);
 
     gw_node->orig_node = orig_node;
 
+    // store new gw info
     tuno = debugMalloc(sizeof(struct tun_orig_data) + gw_array_len * sizeof(struct ext_packet), 123);
-
     orig_node->plugin_data[tun_orig_registry] = tuno;
-
     memcpy(tuno->tun_array, gw_array, gw_array_len * sizeof(struct ext_packet));
-
     tuno->tun_array_len = gw_array_len;
 
 #if USE_BAT
@@ -598,6 +666,7 @@ static void update_gw_list(struct orig_node *orig_node, int16_t gw_array_len, st
     gw_node->last_failure = batman_time;
 #endif //#if USE_BAT
 
+    // add new gw node object to gw_list
     OLInsertTailList(&gw_list, &gw_node->list);
 
     return;
@@ -615,20 +684,25 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
   uint16_t gw_array_len = mb->rcv_ext_len[EXT_TYPE_64B_GW] / sizeof(struct ext_packet);
   struct ext_packet *gw_array = gw_array_len ? mb->rcv_ext_array[EXT_TYPE_64B_GW] : NULL;
 
+  int reselect = 0;
+
   if (tuno && !gw_array)
   {
     // remove cached gw_msg
+    dbg(DBGL_SYS, DBGT_INFO, "cb_tun_ogm_hook(tuno && !gw_array) == DELETE");
     update_gw_list(on, 0, NULL);
   }
   else if (!tuno && gw_array)
   {
-    // memorize new gw_msg
+    // save new gw_msg
+    dbg(DBGL_SYS, DBGT_INFO, "cb_tun_ogm_hook(!tuno && gw_array) == NEW ");
     update_gw_list(on, gw_array_len, gw_array);
   }
   else if (tuno && gw_array &&
            (tuno->tun_array_len != gw_array_len || memcmp(tuno->tun_array, gw_array, gw_array_len * sizeof(struct ext_packet))))
   {
     // update existing gw_msg
+    dbg(DBGL_SYS, DBGT_INFO, "cb_tun_ogm_hook(tuno && gw_array) == UPDATE");
     update_gw_list(on, gw_array_len, gw_array);
   }
 
@@ -641,12 +715,10 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
       curr_gateway->orig_node != on 	// if new originator is different from current selected
      )
   {
-    int reselect = 0;
-
     // in case orig_node is gone
     if (!curr_gateway->orig_node)
     {
-//			dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - orig_node gone");
+			dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - orig_node gone");
       reselect = 1;
     }
 
@@ -666,16 +738,18 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
           && curr_gateway->orig_node->router->longtm_sqr.wa_val + (gw_hysteresis * PROBE_TO100) <= on->router->longtm_sqr.wa_val
       )
       {
-//				dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - better found");
+        dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - better found");
         reselect = 1;
       }
     }
+  }
 
-    if(reselect)
-    {
-      gwc_cleanup();
-      curr_gateway = NULL;
-    }
+  // reselect either when required by this function or when gateway was reset
+  // by update_gw_list()
+  if(reselect || !curr_gateway )
+  {
+    gwc_cleanup();
+    curr_gateway = NULL;
   }
 
   return CB_OGM_ACCEPT;
@@ -1219,7 +1293,7 @@ static void cb_tun_conf_changed(void *unused)
 #if USE_BAT
       && !gwc_args
 #else
-		 && _bmxdMode != BmxdMode_Client
+     && _bmxdMode != BmxdMode_Client
 #endif //#if USE_BAT
       ))
   {
@@ -1267,7 +1341,10 @@ static void cb_tun_orig_flush(void *data)
   struct orig_node *on = data;
 
   if (on->plugin_data[tun_orig_registry])
+  {
+    dbg(DBGL_SYS, DBGT_INFO, "cb_tun_orig_flush()");
     update_gw_list(on, 0, NULL);
+  }
 }
 
 static void cb_choose_gw(void *unused)
@@ -1450,9 +1527,9 @@ static int32_t opt_gateways(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 #if USE_BAT
                  gw_node->unavail_factor
 #else
-									0
+                  0
 #endif //#if USE_BAT
-								);
+                );
 
       batman_count++;
     }
