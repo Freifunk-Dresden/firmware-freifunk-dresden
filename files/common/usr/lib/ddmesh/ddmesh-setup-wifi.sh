@@ -7,6 +7,8 @@ LOGGER_TAG="ddmesh-wifi"
 node=$(uci get ddmesh.system.node)
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
+POST_SCRIPT="/etc/ddmesh/post-setup-wifi.sh"
+
 setup_wireless()
 {
  rm -f /etc/config/wireless
@@ -251,6 +253,12 @@ if [ "$boot_step" = "2" -o ! -f /etc/config/wireless ];
 then
 	logger -s -t "$LOGGER_TAG" "setup wifi config"
 	setup_wireless
- 	uci commit
+
+	if [ -x "${POST_SCRIPT}" ]; then
+		logger -s -t $LOGGER_TAG "call: ${POST_SCRIPT}"
+		${POST_SCRIPT}
+	fi
+
+	uci commit
 fi
 exit 0

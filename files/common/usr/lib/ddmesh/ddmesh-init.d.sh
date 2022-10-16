@@ -3,6 +3,7 @@
 # GNU General Public License Version 3
 
 LOGGER_TAG="ddmesh-boot"
+POST_SCRIPT="/etc/ddmesh/post-init.sh"
 
 wait_for_wifi()
 {
@@ -108,9 +109,9 @@ start() {
 		/usr/lib/ddmesh/ddmesh-geoloc.sh mobile &
 	fi
 
-	if [ -x /etc/ddmesh/post-init.sh ]; then
-		logger -s -t $LOGGER_TAG "call post init script"
-		/etc/ddmesh/post-init.sh
+	if [ -x "${POST_SCRIPT}" ]; then
+		logger -s -t $LOGGER_TAG "call: ${POST_SCRIPT}"
+		${POST_SCRIPT}
 	fi
 
 	logger -s -t $LOGGER_TAG "register node"
