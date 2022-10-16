@@ -167,7 +167,7 @@ static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
 	if (!bif || (orig_node->router && orig_node->router->key.iif == bif))
 	{
 		update_routes(orig_node, NULL);
-
+dbg(DBGL_SYS, DBGT_INFO,"flush_orig()");
 		cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_FLUSH);
 	}
 }
@@ -349,6 +349,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 				on->orig_str, on->pws, ogm->ogm_pws);
 
 		on->pws = ogm->ogm_pws;
+dbg(DBGL_SYS, DBGT_INFO,"flush_orig()-A");
 		flush_orig(on, NULL);
 		prof_stop(PROF_update_originator);
 		return NULL;
@@ -957,6 +958,7 @@ struct orig_node *find_or_create_orig_node_in_avl(uint32_t addr)
 //  wird nur geprueft, ob in der neighbour liste abgelaufene eintraege
 //  liegen und diese aus neighbour liste geloescht.
 //  die avl-liste bleibt wie sie ist
+// curr_time = batman_time (milli seconds)
 void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 {
 	prof_start(PROF_purge_originator);
@@ -988,9 +990,9 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 		{
 			/* purge outdated originators completely */
 
-			dbgf_all(DBGT_INFO, "originator timeout: %s, last_valid %llu, last_aware %llu",
+dbg(DBGL_SYS, DBGT_INFO, "originator timeout: %s, last_valid %llu, last_aware %llu",
 							 orig_node->orig_str, (unsigned long long)orig_node->last_valid_time, (unsigned long long)orig_node->last_aware);
-
+dbg(DBGL_SYS, DBGT_INFO,"flush_orig()-B");
 			flush_orig(orig_node, bif);
 
 //SE: siehe commentare unten
@@ -1159,7 +1161,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 				 if( orig_node->router == neigh_node )
 				 {
 						update_routes(orig_node, NULL);
-
+dbg(DBGL_SYS, DBGT_INFO,"purge-timeout: last: %llu, purge_to: %lu, curr:%llu", neigh_node->last_aware, purge_to, curr_time);
 						cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_FLUSH);
 				 }
 #endif
@@ -1476,6 +1478,7 @@ void process_ogm(struct msg_buff *mb)
 	// check if ogm_hooks would reject new_router
 	if (cb_ogm_hooks(mb, oCtx, old_router) != CB_OGM_ACCEPT)
 	{
+dbg(DBGL_SYS, DBGT_INFO,"flush_orig()-C");
 		flush_orig(orig_node, NULL);
 		goto process_ogm_end;
 	}

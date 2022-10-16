@@ -504,7 +504,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
   int download_speed, upload_speed;
   struct ext_packet *gw_ext = orig_node->plugin_data[tun_orig_registry];
 
-  dbg(DBGL_SYS, DBGT_INFO, "RCV OGM [%lu] from %s", orig_node->last_valid_sqn, orig_node->orig_str);
+  dbg(DBGL_SYS, DBGT_INFO, "RCV OGM [%lu] from %s, last:%llu", orig_node->last_valid_sqn, orig_node->orig_str, orig_node->last_aware);
 
   // --- check if we already have this gw in our list
   // search and update gateway tunnel object from ext_packet
@@ -521,7 +521,6 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
             gw_ext->EXT_GW_FIELD_GWFLAGS,
             gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
 
-//schauen ob notwendig, hier ein test rein zu machen, der erst nach 3xogm das loescht
         // free old tunnel
         debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
         orig_node->plugin_data[tun_orig_registry] = NULL;
@@ -530,6 +529,13 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
         OLRemoveEntry(gw_node);
         debugFree(gw_node, 1103);
         dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
+
+        // current gateway does not exisit any more -> reselect
+        if(curr_gateway == gw_node)
+        {
+          curr_gateway = NULL;
+        }
+
         return; // ogm has been processed, do not process it as 'new'
       }
 
@@ -711,7 +717,7 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
     // in case orig_node is gone
     if (!curr_gateway->orig_node)
     {
-			dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - orig_node gone");
+      dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - orig_node gone");
       reselect = 1;
     }
     else
@@ -1454,9 +1460,6 @@ static void cb_choose_gw(void *unused)
 
   if (curr_gateway != tmp_curr_gw)
   {
-    if (curr_gateway != NULL)
-      dbg(DBGL_SYS, DBGT_INFO, "removing old default route");
-
     /* may be the last gateway is now gone */
     if (tmp_curr_gw != NULL)
     {
