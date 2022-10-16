@@ -714,25 +714,27 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 			dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - orig_node gone");
       reselect = 1;
     }
-
-    // either process all gateways or only community gw
-    if (   ! onlyCommunityGateway
-          || (onlyCommunityGateway && gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY) )
+    else
     {
-      // if the new gw (orig) is preferred gw and not currently selected
-      if ( pref_gateway == on->orig && pref_gateway != curr_gateway->orig_node->orig)
+      // either process all gateways or only community gw
+      if (   ! onlyCommunityGateway
+            || (onlyCommunityGateway && gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY) )
       {
-        dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - preferred found");
-        reselect = 1;
-      }
+        // if the new gw (orig) is preferred gw and not currently selected
+        if ( pref_gateway == on->orig && pref_gateway != curr_gateway->orig_node->orig)
+        {
+          dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - preferred found");
+          reselect = 1;
+        }
 
-      // ignore "better-check" if current selected is the preferred gw
-      if (   pref_gateway != curr_gateway->orig_node->orig
-          && curr_gateway->orig_node->router->longtm_sqr.wa_val + (gw_hysteresis * PROBE_TO100) <= on->router->longtm_sqr.wa_val
-      )
-      {
-        dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - better found");
-        reselect = 1;
+        // ignore "better-check" if current selected is the preferred gw
+        if (   pref_gateway != curr_gateway->orig_node->orig
+            && curr_gateway->orig_node->router->longtm_sqr.wa_val + (gw_hysteresis * PROBE_TO100) <= on->router->longtm_sqr.wa_val
+        )
+        {
+          dbg(DBGL_SYS, DBGT_INFO, "Restart gateway selection - better found");
+          reselect = 1;
+        }
       }
     }
   }
