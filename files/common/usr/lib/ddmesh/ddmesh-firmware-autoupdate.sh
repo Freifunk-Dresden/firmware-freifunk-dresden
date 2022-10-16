@@ -8,6 +8,7 @@
 TAG="AutoFirmwareUpdate"
 FIRMWARE_FILE="/tmp/firmware.bin"
 ERROR_FILE=/tmp/wget.error
+REGISTER_FW_UPDATE_STATE_FILE="/var/state/node_autoupdate_allowed"
 
 usage() {
 	echo "$0 <run [nightly] | check | compare new old>"
@@ -30,7 +31,7 @@ fi
 
 rm -f $ERROR_FILE
 
-node_autoupdate_allowed="$(cat /var/etc/tmp_config/node_autoupdate_allowed 2>/dev/null)"
+node_autoupdate_allowed="$(cat ${REGISTER_FW_UPDATE_STATE_FILE} 2>/dev/null)"
 node_autoupdate_allowed=${node_autoupdate_allowed:=0}
 cfg_autoupdate_enabled="$(uci get ddmesh.system.firmware_autoupdate)"
 cfg_autoupdate_enabled=${cfg_autoupdate_enabled:=1}
@@ -102,7 +103,7 @@ case "$1" in
 		if m=$(sysupgrade -T $FIRMWARE_FILE) ;then
 			#update configs after firmware update
 			uci set ddmesh.boot.boot_step=2
-			# used for updated history
+			# used for update history
 			test -n "$nightly" && uci set ddmesh.boot.nightly_upgrade_running=1
 			# used to reset overlay md5sum
 			uci set ddmesh.boot.upgrade_running=1

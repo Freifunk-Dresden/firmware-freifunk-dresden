@@ -72,7 +72,7 @@ do
 
 #	COMMAND="uci set ddmesh.system.fwupdate_always_allow_testing=1 && uci set credentials.url.firmware_download_testing=https://selfsigned.download.freifunk-dresden.de/firmware/testing && uci commit"
 
-#	COMMAND="uci set ddmesh.system.maintenance_time='20' && uci set ddmesh.boot.boot_step=2 && uci commit && echo 1 >/var/etc/tmp_config/allow_autoupdate && sleep 2 && reboot"
+#	COMMAND="uci set ddmesh.system.maintenance_time='20' && uci set ddmesh.boot.boot_step=2 && uci commit && echo 1 >/var/state/allow_autoupdate && sleep 2 && reboot"
 
 	ssh -x root@$i "${COMMAND}"
 done

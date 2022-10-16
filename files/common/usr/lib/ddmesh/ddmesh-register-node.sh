@@ -4,6 +4,7 @@
 
 LOGGER_TAG="register.node"
 AUTO_REBOOT=1
+REGISTER_FW_UPDATE_STATE_FILE="/var/state/node_autoupdate_allowed"
 
 #check if initial setup was run before
 if [ ! -f /etc/config/ddmesh ]; then logger -t $LOGGER_TAG "ddmesh not ready - ignore register.node" ; exit; fi
@@ -117,7 +118,7 @@ case "$j_status" in
 
 			# enable autoupdate (tmp)
 			if [ -n "$j_autoupdate" ]; then
-				echo "$j_autoupdate" > /var/etc/tmp_config/allow_autoupdate
+				echo "$j_autoupdate" > ${REGISTER_FW_UPDATE_STATE_FILE}
 				logger -s -t $LOGGER_TAG "allow_autoupdate $j_autoupdate."
 			fi
 
