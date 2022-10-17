@@ -196,6 +196,7 @@ void *debugMalloc(uint32_t length, int32_t tag)
 		dbg(DBGL_SYS, DBGT_ERR, "Cannot allocate %u bytes, malloc tag = %d",
 				(unsigned int)(length + sizeof(struct chunkHeader) + sizeof(magicNumberTrailor)), tag);
 		cleanup_all(-500076);
+		return NULL;
 	}
 
 	chunkHeader = (struct chunkHeader *)memory;
