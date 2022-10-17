@@ -70,6 +70,9 @@ case "$1" in
 	run)
 		setup
 
+		# wenn dns nicht mehr geht, dann resolver nochmal starten
+		systemctl restart systemd-resolved
+
 		# when USE_BAT was define when compiling
 		# CMD="./sources/bmxd --network 10.200.0.0/16 --netid 0 --throw-rules 0 --prio-rules 0 --gateway_tunnel_network 10.200.0.0/16 --gateway_hysteresis 20 --path_hysteresis 3  -r 3 -p 10.200.1.2 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 5000 --purge_timeout i35 -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1"
 
