@@ -575,52 +575,6 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
         dbg(DBGL_SYS, DBGT_INFO, "gw info updated");
         return; // ogm has been processed, do not process it as 'new'
       }
-
-#if 0
-      //SE: reset current_gateway before gw_node is set to zero.
-      // this function is called via purge_orig()->flush_orig() when a
-      // node is removed
-//hier nur cleanup wenn node nach 3x ogm_interval nicht mehr da ist.
-      if (gw_node == curr_gateway)
-      {
-        gwc_cleanup();
-        curr_gateway = NULL;
-      }
-
-      // free old tunnel object data. either it is recreated or stays deleted
-      if (gw_ext)
-      {
-        debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
-        gw_ext = NULL;
-        orig_node->plugin_data[tun_orig_registry] = NULL;
-
-        //in case the new_gw_extension is not present in the received ogm.
-        //but still could mean, that gw could be in other ogm that carry the "rest" of all ogms
-// es macht hier keinen sinn, das gw aus der liste zu nehmen, wenn die naechste ogm das gw enthalten koennte.
-// heisst, ich darf curr_gateway nur auf NULL setzen und hier aus der liste nehmen, wenn es 3x ogm_intervall
-// nichht mehr da war.
-        if (!new_gw_extension)
-        {
-          OLRemoveEntry(gw_node);
-          debugFree(gw_node, 1103);
-          gw_node = NULL;
-dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
-        }
-      }
-
-      // create new tunnel object and copy all gw infos (ext_packet) to it.
-      if (!gw_ext && new_gw_extension)
-      {
-        gw_ext = debugMalloc(gw_extension_len * sizeof(struct ext_packet), 123);
-
-        orig_node->plugin_data[tun_orig_registry] = gw_ext;
-
-        memcpy(gw_ext, new_gw_extension, gw_extension_len * sizeof(struct ext_packet));
-
-      }
-
-      return; // ogm has been processed, do not process it as 'new'
-#endif //1
     }
   }
 

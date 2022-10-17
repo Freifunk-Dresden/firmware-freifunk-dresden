@@ -127,7 +127,7 @@ enum ADGSN
    Otherwise OGMs + extension headers exceeding this size
    could not be send by nodes with the old MAX_PACKET_SIZE = 256 */
 #define MIN_UDPD_SIZE 24
-#define DEF_UDPD_SIZE 256
+#define DEF_UDPD_SIZE 512
 #define MAX_UDPD_SIZE (255 << 2) //the maximum packet size which could be defined with the bat_header->size field
 #define ARG_UDPD_SIZE "udp_data_size"
 
