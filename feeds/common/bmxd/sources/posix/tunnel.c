@@ -504,7 +504,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
   int download_speed, upload_speed;
   struct ext_packet *gw_ext = orig_node->plugin_data[tun_orig_registry];
 
-  dbg(DBGL_SYS, DBGT_INFO, "RCV OGM [%lu] from %s, last:%llu", orig_node->last_valid_sqn, orig_node->orig_str, orig_node->last_aware);
+//  dbg(DBGL_SYS, DBGT_INFO, "RCV OGM [%lu] from %s, last:%llu", orig_node->last_valid_sqn, orig_node->orig_str, orig_node->last_aware);
 
   // --- check if we already have this gw in our list
   // search and update gateway tunnel object from ext_packet
@@ -528,7 +528,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
         // current node is no gw anymore -> remove from gw_list
         OLRemoveEntry(gw_node);
         debugFree(gw_node, 1103);
-        dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
+//        dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
 
         // current gateway does not exisit any more -> reselect
         if(curr_gateway == gw_node)
@@ -572,7 +572,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
         orig_node->plugin_data[tun_orig_registry] = gw_ext;
         memcpy(gw_ext, new_gw_extension, sizeof(struct ext_packet));
 
-        dbg(DBGL_SYS, DBGT_INFO, "gw info updated");
+//        dbg(DBGL_SYS, DBGT_INFO, "gw info updated");
         return; // ogm has been processed, do not process it as 'new'
       }
     }
@@ -1298,7 +1298,6 @@ static void cb_tun_orig_flush(void *data)
 
   if (on->plugin_data[tun_orig_registry])
   {
-    dbg(DBGL_SYS, DBGT_INFO, "cb_tun_orig_flush()");
     update_gw_list(on, NULL);
   }
 }
