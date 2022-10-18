@@ -77,7 +77,6 @@ static int32_t routing_class = 0;
 static uint32_t pref_gateway = 0;
 static int32_t my_gw_port = 0;
 static uint32_t my_gw_addr = 0;
-static int32_t tun_orig_registry = FAILURE;
 static LIST_ENTRY gw_list;
 
 // field accessor and flags for gateway announcement extension packets
@@ -183,7 +182,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
 {
   struct gw_node *gw_node;
   int download_speed, upload_speed;
-  struct ext_packet *gw_ext = orig_node->plugin_data[tun_orig_registry];
+  struct ext_packet *gw_ext = orig_node->gw_ext;
 
 //  dbg(DBGL_SYS, DBGT_INFO, "RCV OGM [%lu] from %s, last:%llu", orig_node->last_valid_sqn, orig_node->orig_str, orig_node->last_aware);
 
@@ -203,8 +202,8 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
             gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
 
         // free old tunnel
-        debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
-        orig_node->plugin_data[tun_orig_registry] = NULL;
+        debugFree(orig_node->gw_ext, 1123);
+        orig_node->gw_ext = NULL;
 
         // current gateway does not exisit any more -> reselect
         if(curr_gateway == gw_node)
@@ -245,12 +244,12 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
             new_gw_extension[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
 
         // free old tunnel
-        debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
-        orig_node->plugin_data[tun_orig_registry] = NULL;
+        debugFree(orig_node->gw_ext, 1123);
+        orig_node->gw_ext = NULL;
 
         // store new gw info
         gw_ext = debugMalloc(sizeof(struct ext_packet), 123);
-        orig_node->plugin_data[tun_orig_registry] = gw_ext;
+        orig_node->gw_ext = gw_ext;
         memcpy(gw_ext, new_gw_extension, sizeof(struct ext_packet));
 
 //        dbg(DBGL_SYS, DBGT_INFO, "gw info updated");
@@ -264,8 +263,8 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
   if (gw_ext)
   {
     dbg(DBGL_SYS, DBGT_ERR, "there shouldn't be any valid gw_ext");
-    debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
-    orig_node->plugin_data[tun_orig_registry] = NULL;
+    debugFree(orig_node->gw_ext, 1123);
+    orig_node->gw_ext = NULL;
   }
 
   // check if new gw infos was received
@@ -292,7 +291,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
 
     // store new gw info
     gw_ext = debugMalloc(sizeof(struct ext_packet), 123);
-    orig_node->plugin_data[tun_orig_registry] = gw_ext;
+    orig_node->gw_ext = gw_ext;
     memcpy(gw_ext, new_gw_extension, sizeof(struct ext_packet));
 
     // add new gw node object to gw_list
@@ -307,7 +306,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
 static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router)
 {
   struct orig_node *on = mb->orig_node;
-  struct ext_packet *gw_ext = on->plugin_data[tun_orig_registry];
+  struct ext_packet *gw_ext = on->gw_ext;
 
   /* may be GW announcements changed */
   uint16_t ext_array_len = mb->rcv_ext_len[EXT_TYPE_64B_GW] / sizeof(struct ext_packet);
@@ -411,7 +410,7 @@ static int8_t gwc_init(void)
     return FAILURE;
   }
 
-  if (!curr_gateway || !curr_gateway->orig_node || !curr_gateway->orig_node->plugin_data[tun_orig_registry])
+  if (!curr_gateway || !curr_gateway->orig_node || !curr_gateway->orig_node->gw_ext)
   {
     dbgf(DBGL_SYS, DBGT_ERR, "curr_gateway invalid!");
     gwc_cleanup(1); //on error
@@ -525,7 +524,7 @@ static void cb_tun_orig_flush(void *data)
 {
   struct orig_node *on = data;
 
-  if (on->plugin_data[tun_orig_registry])
+  if (on->gw_ext)
   {
     update_gw_list(on, NULL);
   }
@@ -553,7 +552,7 @@ static void cb_choose_gw(void *unused)
   {
     // check that the gw node has valid tunnel object data (received via ext_packet)
     struct orig_node *on = gw_node->orig_node;
-    struct ext_packet *gw_ext = on->plugin_data[tun_orig_registry];
+    struct ext_packet *gw_ext = on->gw_ext;
     if (!on->router || !gw_ext)
     {
       continue;
@@ -679,7 +678,7 @@ static int32_t opt_gateways(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
     OLForEach(gw_node, struct gw_node, gw_list)
     {
       struct orig_node *on = gw_node->orig_node;
-      struct ext_packet *gw_ext = on->plugin_data[tun_orig_registry];
+      struct ext_packet *gw_ext = on->gw_ext;
 
       if (!gw_ext || on->router == NULL)
         continue;
@@ -903,9 +902,6 @@ static void tun_cleanup(void)
 static int32_t tun_init(void)
 {
   register_options_array(tunnel_options, sizeof(tunnel_options));
-
-  if ((tun_orig_registry = reg_plugin_data(PLUGIN_DATA_ORIG)) < 0)
-    return FAILURE;
 
   set_ogm_hook(cb_tun_ogm_hook, ADD);
 

@@ -550,7 +550,7 @@ struct orig_node /* structure for orig_list maintaining nodes of mesh */
 	struct link_node *link_node;
 
 	/*size of plugin data is defined during intialization and depends on registered plugin-data hooks */
-	void *plugin_data[];
+	struct ext_packet *gw_ext;
 };
 
 #define SQN_LOUNGE_SIZE (8 * sizeof(uint32_t)) /* must correspond to bits of neigh_node->considered_seqnos */

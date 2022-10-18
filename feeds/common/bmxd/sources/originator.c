@@ -918,16 +918,15 @@ struct orig_node *find_or_create_orig_node_in_avl(uint32_t addr)
 		return orig_node;
 	}
 
-	orig_node = debugMalloc((sizeof(struct orig_node) + (plugin_data_registries[PLUGIN_DATA_ORIG] * sizeof(void *))), 402);
-	memset(orig_node, 0, (sizeof(struct orig_node) + (plugin_data_registries[PLUGIN_DATA_ORIG] * sizeof(void *))));
+	orig_node = debugMalloc(sizeof(struct orig_node) , 402);
+	memset(orig_node, 0, sizeof(struct orig_node) );
 
 	OLInitializeListHead(&orig_node->neigh_list_head);
 	orig_node->neigh_avl.root = NULL;
 	orig_node->neigh_avl.key_size = sizeof(struct neigh_node_key);
 
 	addr_to_str(addr, orig_node->orig_str);
-	dbgf_all(DBGT_INFO, "creating new originator: %s with %d plugin_data_registries",
-					 orig_node->orig_str, plugin_data_registries[PLUGIN_DATA_ORIG]);
+	dbgf_all(DBGT_INFO, "creating new originator: %s", orig_node->orig_str);
 
 	orig_node->orig = addr;
 	orig_node->last_aware = batman_time;

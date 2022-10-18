@@ -33,8 +33,6 @@ static LIST_ENTRY plugin_list;
 
 struct cb_snd_ext snd_ext_hooks[EXT_TYPE_MAX + 1];
 
-int32_t plugin_data_registries[PLUGIN_DATA_SIZE];
-
 void cb_plugin_hooks(void *data, int32_t cb_id)
 {
 	struct plugin_node *prev_pn = NULL;
@@ -184,25 +182,6 @@ int32_t cb_snd_ext_hook(uint16_t ext_type, unsigned char *ext_buff)
 		return SUCCESS;
 }
 
-int32_t reg_plugin_data(uint8_t data_type)
-{
-	static int initialized = NO;
-
-	if (!initialized)
-	{
-		memset(plugin_data_registries, 0, sizeof(plugin_data_registries));
-		initialized = YES;
-	}
-
-	if (on_the_fly || data_type >= PLUGIN_DATA_SIZE)
-		return FAILURE;
-
-	// do NOT return the incremented value!
-	plugin_data_registries[data_type]++;
-
-	return (plugin_data_registries[data_type] - 1);
-}
-
 static int is_plugin_active(void *plugin)
 {
 	OLForEach(pn, struct plugin_node, plugin_list)
@@ -300,7 +279,6 @@ void init_plugin(void)
 	OLInitializeListHead(&plugin_list);
 
 	set_snd_ext_hook(0, NULL, YES);		 //ensure correct initialization of extension hooks
-	reg_plugin_data(PLUGIN_DATA_SIZE); // ensure correct initialization of plugin_data
 
 	struct plugin_v1 *pv1;
 

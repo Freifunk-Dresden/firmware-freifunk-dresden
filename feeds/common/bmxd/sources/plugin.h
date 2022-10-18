@@ -107,18 +107,6 @@ int32_t set_ogm_hook(int32_t (*cb_ogm_handler)(struct msg_buff *mb, uint16_t oCt
 
 int32_t set_snd_ext_hook(uint16_t ext_type, int32_t (*cb_snd_ext_handler)(unsigned char *ext_buff), int8_t del);
 
-//for registering data hooks:
-
-enum
-{
-	PLUGIN_DATA_ORIG,
-	PLUGIN_DATA_SIZE
-};
-
-extern int32_t plugin_data_registries[PLUGIN_DATA_SIZE];
-
-int32_t reg_plugin_data(uint8_t data_type);
-
 /**************************************
  *to be used by batman sceleton...
  */
