@@ -842,9 +842,8 @@ static int32_t opt_gw_class(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 
       dbg(DBGL_SYS, DBGT_INFO, "gateway class: %i -> propagating: %s", gateway_class, gwarg);
 
-      // trigger tunnel changes
-      trigger_tun_update();
-
+      // trigger new gw selection
+      curr_gateway = NULL;
     }
   }
 
