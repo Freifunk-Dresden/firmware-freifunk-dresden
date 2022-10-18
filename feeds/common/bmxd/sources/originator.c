@@ -167,7 +167,7 @@ static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
 	if (!bif || (orig_node->router && orig_node->router->key.iif == bif))
 	{
 		update_routes(orig_node, NULL);
-		cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_FLUSH);
+		flush_tun_orig(orig_node);
 	}
 }
 
@@ -994,7 +994,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			if (!bif && ( 		(!curr_time && orig_node->pog_refcnt == 0) 		// if flush ( purge_orig(0, NULL) )
 										|| 	(purge_old && orig_node->pog_refcnt == 0) ))  // if old  (  purge_orig(curr_time, NULL) )
 			{
-				cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_FLUSH);
+				flush_tun_orig(orig_node);
 			}
 
 			//remove all neighbours of this originator ...
@@ -1155,9 +1155,10 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 				 // router nicht mehr nutztbar, da nachbar tot ist
 				 if( orig_node->router == neigh_node )
 				 {
-						update_routes(orig_node, NULL);
 //dbg(DBGL_SYS, DBGT_INFO,"purge-timeout: last: %llu, purge_to: %lu, curr:%llu", neigh_node->last_aware, purge_to, curr_time);
-//						cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_FLUSH);
+
+						update_routes(orig_node, NULL);
+						flush_tun_orig(orig_node);
 				 }
 #endif
 					addr_to_str(neigh_node->key.addr, neigh_str);

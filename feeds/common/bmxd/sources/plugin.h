@@ -29,30 +29,6 @@ enum
 	PLUGIN_CB_SIZE  // used as number of callbacks per plugin
 };
 
-struct plugin_v1
-{
-	uint32_t plugin_version;
-	uint32_t plugin_size;
-	char *plugin_name;
-	int32_t (*cb_init)(void);
-	void (*cb_cleanup)(void);
-
-	//some more advanced (rarely called) callbacks hooks
-	void (*cb_plugin_handler[PLUGIN_CB_SIZE])(void *);
-
-	//some other attributes
-};
-
-struct plugin_node
-{
-	LIST_ENTRY list;
-	int32_t version;
-	void *plugin;
-	struct plugin_v1 *plugin_v1;
-	void *dlhandle;
-	char *dlname;
-};
-
 struct cb_ogm_node
 {
 	LIST_ENTRY list;
@@ -96,14 +72,6 @@ int32_t set_snd_ext_hook(uint16_t ext_type, int32_t (*cb_snd_ext_handler)(unsign
  *to be used by batman sceleton...
  */
 void init_plugin(void);
-void cleanup_plugin(void);
-
-//void cb_config_hooks( void );
-void cb_plugin_hooks(void *data, int32_t cb_id);
-
-// //returns number of called packet hooks for this packet_type
-// uint32_t cb_packet_hooks(int32_t packet_type, struct msg_buff *mb);
-
 
 int32_t cb_snd_ext_hook(uint16_t ext_type, unsigned char *ext_buff);
 

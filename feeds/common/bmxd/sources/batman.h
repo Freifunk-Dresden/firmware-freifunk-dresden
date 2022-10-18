@@ -49,7 +49,6 @@
  * ln			struct link_node*
  * tn			struct task_node*
  * cdn			struct struct cb_fd_node*
- * pn			struct plugin_node*
  * ogm			struct bat_packet_ogm*
  *
  */

@@ -39,6 +39,7 @@
 #include "originator.h"
 #include "plugin.h"
 #include "schedule.h"
+#include "tunnel.h"
 
 int32_t base_port = DEF_BASE_PORT;
 
@@ -1149,7 +1150,7 @@ static void if_activate(struct batman_if *bif)
 	change_selects();
 
 	//trigger plugins interested in changed interface configuration
-	cb_plugin_hooks(NULL, PLUGIN_CB_CONF);
+	trigger_tun_update();
 
 	return;
 
@@ -1632,7 +1633,7 @@ void check_interfaces()
 	if_conf_hard_changed = NO;
 
 	if (cb_conf_hooks)
-		cb_plugin_hooks(NULL, PLUGIN_CB_CONF);
+		trigger_tun_update();
 
 	if (on_the_fly) // opt_policy_rt() is responsible for this during init
 		update_interface_rules(IF_RULE_CHK_IPS);

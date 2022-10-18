@@ -186,6 +186,4 @@ extern int32_t Gateway_class;
 #define ARG_RT_CLASS "routing_class"
 #define ARG_GW_CLASS "gateway_class"
 
-struct plugin_v1 *tun_get_plugin_v1(void);
-
 #endif

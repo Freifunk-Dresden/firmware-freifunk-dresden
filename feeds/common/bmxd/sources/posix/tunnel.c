@@ -472,7 +472,7 @@ static int32_t gws_init(void)
   return SUCCESS;
 }
 
-static void cb_tun_conf_changed(void *unused)
+void trigger_tun_update(void)
 {
   static int32_t prev_routing_class = 0;
   static int32_t prev_gateway_class = 0;
@@ -489,7 +489,7 @@ static void cb_tun_conf_changed(void *unused)
      && _bmxdMode != BmxdMode_Client
       ))
   {
-//if(_bmxdMode != BmxdMode_None)dbg(DBGL_SYS, DBGT_INFO, "cb_tun_conf_changed()");
+//if(_bmxdMode != BmxdMode_None)dbg(DBGL_SYS, DBGT_INFO, "trigger_tun_update()");
     switch(_bmxdMode)
     {
       case BmxdMode_Client: gwc_cleanup(0); break; //evt muss beim wechsel von Gateway<->Client immer die routen
@@ -519,10 +519,8 @@ static void cb_tun_conf_changed(void *unused)
   return;
 }
 
-static void cb_tun_orig_flush(void *data)
+void flush_tun_orig(struct orig_node *on)
 {
-  struct orig_node *on = data;
-
   if (on->gw_ext)
   {
     update_gw_list(on, NULL);
@@ -646,7 +644,7 @@ static void cb_choose_gw(void *unused)
 
     update_community_route();
 
-    cb_plugin_hooks(NULL, PLUGIN_CB_CONF);
+    trigger_tun_update();
   }
 }
 
@@ -845,7 +843,7 @@ static int32_t opt_gw_class(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
       dbg(DBGL_SYS, DBGT_INFO, "gateway class: %i -> propagating: %s", gateway_class, gwarg);
 
       // trigger tunnel changes
-      cb_plugin_hooks(NULL, PLUGIN_CB_CONF);
+      trigger_tun_update();
 
     }
   }
@@ -883,7 +881,7 @@ static struct opt_type tunnel_options[] = {
     {ODI, 5, 0, ARG_GATEWAYS, 0, A_PS0, A_USR, A_DYN, A_ARG, A_END, 0, 0, 0, 0, opt_gateways, 0,
      "show currently available gateways\n"}};
 
-static void tun_cleanup(void)
+void tun_cleanup(void)
 {
   set_snd_ext_hook(EXT_TYPE_64B_GW, cb_send_my_tun_ext, DEL);
 
@@ -896,39 +894,18 @@ static void tun_cleanup(void)
     }
 }
 
-static int32_t tun_init(void)
+void init_tunnel(void)
 {
+  OLInitializeListHead(&gw_list);
+
   register_options_array(tunnel_options, sizeof(tunnel_options));
 
   set_snd_ext_hook(EXT_TYPE_64B_GW, cb_send_my_tun_ext, ADD);
 
   register_task(1000, cb_choose_gw, NULL);
 
-  cb_tun_conf_changed(NULL);
+  trigger_tun_update();
 
-  return SUCCESS;
-}
-
-struct plugin_v1 *tun_get_plugin_v1(void)
-{
-  static struct plugin_v1 tun_plugin_v1;
-  memset(&tun_plugin_v1, 0, sizeof(struct plugin_v1));
-
-  tun_plugin_v1.plugin_version = PLUGIN_VERSION_01;
-  tun_plugin_v1.plugin_size = sizeof(struct plugin_v1);
-  tun_plugin_v1.plugin_name = "bmx_tunnel_plugin";
-  tun_plugin_v1.cb_init = tun_init;
-  tun_plugin_v1.cb_cleanup = tun_cleanup;
-
-  tun_plugin_v1.cb_plugin_handler[PLUGIN_CB_CONF] = cb_tun_conf_changed;
-  tun_plugin_v1.cb_plugin_handler[PLUGIN_CB_ORIG_FLUSH] = cb_tun_orig_flush;
-
-  return &tun_plugin_v1;
-}
-
-void init_tunnel(void)
-{
-  OLInitializeListHead(&gw_list);
 }
 
 

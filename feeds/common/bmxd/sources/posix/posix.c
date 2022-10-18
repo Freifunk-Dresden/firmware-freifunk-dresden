@@ -37,9 +37,7 @@
 #include "metrics.h"
 #include "plugin.h"
 #include "schedule.h"
-//#include "avl.h"
-
-void init_tunnel(void); //defined in tunnel.c
+#include "tunnel.h"
 
 static int8_t stop = 0;
 
@@ -253,7 +251,8 @@ void cleanup_all(int status)
 
 		purge_orig(0, NULL); // cleanup_all()
 
-		cleanup_plugin();
+		tun_cleanup();
+
 		cleanup_config(); //cleanup_init()
 		cleanup_route();
 		cleanup_originator();
@@ -322,13 +321,13 @@ int main(int argc, char *argv[])
 
 	init_route();
 
-	init_tunnel();
-
 	init_route_args();
 
 	init_originator();
 
 	init_schedule();
+
+	init_tunnel(); // uses tasks. must come after init_schedule()
 
 	init_plugin();
 
