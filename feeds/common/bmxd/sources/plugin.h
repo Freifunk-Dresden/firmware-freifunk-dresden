@@ -22,8 +22,6 @@
 
 #define ARG_PLUGIN "plugin"
 
-extern LIST_ENTRY cb_fd_list;
-
 enum
 {
 	PLUGIN_CB_CONF,
@@ -87,10 +85,6 @@ struct cb_snd_ext
 {
 	int32_t (*cb_snd_ext_handler)(unsigned char *ext_buff);
 };
-
-// cb_fd_handler is called when fd received data
-// called function may remove itself
-int32_t set_fd_hook(int32_t fd, void (*cb_fd_handler)(int32_t fd), int8_t del);
 
 #define CB_OGM_ACCEPT 0
 #define CB_OGM_REJECT -1

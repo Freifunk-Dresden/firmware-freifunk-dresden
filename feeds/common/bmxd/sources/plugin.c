@@ -27,7 +27,6 @@
 #include "plugin.h"
 #include "schedule.h"
 
-LIST_ENTRY cb_fd_list;
 static LIST_ENTRY cb_ogm_list;
 static LIST_ENTRY plugin_list;
 
@@ -97,14 +96,6 @@ static int32_t add_del_thread_hook(int32_t cb_type, void (*cb_handler)(void), in
 
 		return SUCCESS;
 	}
-}
-
-int32_t set_fd_hook(int32_t fd, void (*cb_fd_handler)(int32_t fd), int8_t del)
-{
-	int32_t ret = add_del_thread_hook(fd, (void (*)(void))cb_fd_handler, del, &cb_fd_list);
-
-	change_selects();
-	return ret;
 }
 
 
@@ -273,8 +264,6 @@ static void deactivate_plugin(void *p)
 
 void init_plugin(void)
 {
-
-	OLInitializeListHead(&cb_fd_list);
 	OLInitializeListHead(&cb_ogm_list);
 	OLInitializeListHead(&plugin_list);
 

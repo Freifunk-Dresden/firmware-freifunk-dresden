@@ -116,11 +116,6 @@ static void check_selects(void)
 		}
 	}
 
-	OLForEach(cdn, struct cb_fd_node, cb_fd_list)
-	{
-		receive_max_sock = MAX(receive_max_sock, cdn->fd);
-		FD_SET(cdn->fd, &receive_wait_set);
-	}
 }
 
 void register_task(uint32_t timeout, void (*task)(void *), void *data)
@@ -1217,31 +1212,6 @@ loop4Event:
 		}
 
 		prof_start(PROF_wait4Event_5);
-
-	loop4ActivePlugins:
-
-		// plugins have registerred FD, which are now checked if
-		// data was received on those FD (sockets). If yes the
-		// callback function is called.
-		// gw tunnel is implemented as plugin
-		// check active plugins...
-		OLForEach(cdn, struct cb_fd_node, cb_fd_list)
-		{
-			if (FD_ISSET(cdn->fd, &tmp_wait_set))
-			{
-				FD_CLR(cdn->fd, &tmp_wait_set);
-
-				(*(cdn->cb_fd_handler))(cdn->fd);
-
-				// list might have changed, due to unregistered handlers, reiterate NOW
-				//TBD: check if fd was really consumed !
-				if (--selected == 0)
-					goto loop4Event;
-				//goto wait4Event_end;
-
-				goto loop4ActivePlugins;
-			}
-		}
 
 		// check for new control clients...
 		if (FD_ISSET(unix_sock, &tmp_wait_set))
