@@ -306,10 +306,8 @@ void init_plugin(void)
 
 	pv1 = NULL;
 
-#ifndef NOTUNNEL
 	if ((pv1 = tun_get_plugin_v1()) != NULL)
 		activate_plugin(pv1, PLUGIN_VERSION_01, NULL, NULL);
-#endif
 }
 
 void cleanup_plugin(void)

@@ -643,10 +643,6 @@ struct gw_node
 {
 	LIST_ENTRY list;
 	struct orig_node *orig_node;
-#if USE_BAT
-	uint16_t unavail_factor;
-	batman_time_t last_failure;
-#endif //#if USE_BAT
 };
 
 struct gw_client

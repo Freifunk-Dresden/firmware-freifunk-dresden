@@ -42,7 +42,7 @@ setup()
 	ip link set ${PrimeDEV} up
 
 	# vlan
-	ip link add link ${LanDEV} ${LinkDEV} type vlan id ${VLAN} 
+	ip link add link ${LanDEV} ${LinkDEV} type vlan id ${VLAN}
 	ip addr add ${LinkIP}/16 broadcast ${BROADCAST} dev ${LinkDEV}
 	ip link set ${LinkDEV} up
 	ip rule add to 10.200.0.0/16 ta 64
@@ -73,10 +73,6 @@ case "$1" in
 		# wenn dns nicht mehr geht, dann resolver nochmal starten
 		systemctl restart systemd-resolved
 
-		# when USE_BAT was define when compiling
-		# CMD="./sources/bmxd --network 10.200.0.0/16 --netid 0 --throw-rules 0 --prio-rules 0 --gateway_tunnel_network 10.200.0.0/16 --gateway_hysteresis 20 --path_hysteresis 3  -r 3 -p 10.200.1.2 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 5000 --purge_timeout i35 -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1"
-
-		# no USE_BAT defined when compiling
 		CMD="./sources/bmxd --network 10.200.0.0/16 --netid 0 --gateway_hysteresis 20 --path_hysteresis 3  -r 3 -p 10.200.1.2 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 5000 --purge_timeout 35 -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1"
 		echo "valgrind: [${VALGRIND_OPT}]"
 		echo "cmd: [${CMD}]"

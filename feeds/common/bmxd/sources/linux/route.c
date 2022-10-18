@@ -48,9 +48,6 @@ int32_t base_port = DEF_BASE_PORT;
 #define MAX_RT_TABLE 254
 #define RT_TABLE_HOSTS_OFFS 0
 //#define RT_TABLE_NETS_OFFS 1
-#if USE_BAT
-	#define RT_TABLE_TUNS_OFFS 2
-#endif //#if USE_BAT
 #define RT_TABLE_MAX_OFFS 2
 static int32_t Rt_table = DEF_RT_TABLE;
 
@@ -177,14 +174,6 @@ static int rt_macro_to_table(int rt_macro)
 
 	if (rt_macro == RT_TABLE_HOSTS)
 		return Rt_table + RT_TABLE_HOSTS_OFFS;
-
-	// else if (rt_macro == RT_TABLE_NETWORKS)
-	// 	return Rt_table + RT_TABLE_NETS_OFFS;
-
-#if USE_BAT
-	else if (rt_macro == RT_TABLE_TUNNEL)
-		return Rt_table + RT_TABLE_TUNS_OFFS;
-#endif //#if USE_BAT
 
 	else if (rt_macro > MAX_RT_TABLE)
 		cleanup_all(-500170);
@@ -549,13 +538,7 @@ static void flush_routes_rules(int8_t is_rule)
 
 			nh = NLMSG_NEXT(nh, len);
 
-			if (/* rtm->rtm_table == 0 || */
-					rtm->rtm_table == Rt_table + RT_TABLE_HOSTS_OFFS
-//				||rtm->rtm_table == Rt_table + RT_TABLE_NETS_OFFS
-#if USE_BAT
-					|| rtm->rtm_table == Rt_table + RT_TABLE_TUNS_OFFS
-#endif
-					)
+			if ( rtm->rtm_table == Rt_table + RT_TABLE_HOSTS_OFFS )
 			{
 				int8_t rule_type = RTA_UNSPEC;
 				uint32_t dest = 0;
@@ -908,21 +891,6 @@ static char *get_ip4conf_buffer(struct ifconf *ifc)
 
 	return buf;
 }
-
-#if USE_BAT
-static int is_batman_if(char *dev, struct batman_if **bif)
-{
-	OLForEach(batman_if, struct batman_if, if_list)
-	{
-		(*bif) = batman_if;
-
-		if (wordsEqual((*bif)->dev, dev))
-			return YES;
-	}
-
-	return NO;
-}
-#endif //#if USE_BAT
 
 static int is_interface_up(char *dev)
 {
@@ -1406,11 +1374,6 @@ void add_del_route(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32
 
 int update_interface_rules(uint8_t cmd)
 {
-#if USE_BAT
-	static uint8_t setup_tunnel = NO;
-#endif //#if USE_BAT
-//	static uint8_t setup_networks = NO;
-
 	static uint64_t checksum = 0;
 	uint64_t old_checksum = checksum;
 	checksum = 0;
@@ -1418,40 +1381,11 @@ int update_interface_rules(uint8_t cmd)
 	struct ifreq *ifr;
 	struct ifconf ifc;
 
-#if USE_BAT
-	uint8_t if_count = 1;
-	struct batman_if *batman_if;
-
-	uint32_t no_netmask;
-#endif //#if USE_BAT
-
 	if (cmd != IF_RULE_CHK_IPS)
 	{
 		flush_tracked_routes(TRACK_MY_NET);
 		flush_tracked_rules(TRACK_MY_NET);
 	}
-
-#if USE_BAT
-	if (cmd == IF_RULE_SET_TUNNEL)
-	{
-		setup_tunnel = YES;
-		return SUCCESS; //will be called again when bat0s' IP is set
-	}
-	else if (cmd == IF_RULE_CLR_TUNNEL)
-	{
-		setup_tunnel = NO;
-		return SUCCESS; //will be called again when bat0s' IP gets removed
-	}
-#endif //#if USE_BAT
-
-	// else if (cmd == IF_RULE_SET_NETWORKS)
-	// {
-	// 	setup_networks = YES;
-	// }
-	// else if (cmd == IF_RULE_CLR_NETWORKS)
-	// {
-	// 	setup_networks = NO;
-	// }
 
 	if (!(buf = get_ip4conf_buffer(&ifc)))
 		return FAILURE;
@@ -1493,50 +1427,6 @@ int update_interface_rules(uint8_t cmd)
 		// onyl check for changes of interfaces
 		if (cmd == IF_RULE_CHK_IPS)
 			continue;
-
-#if USE_BAT
-		uint8_t add_this_rule = YES;
-
-		OLForEach(throw_node, struct throw_node, throw_list)
-		{
-			no_netmask = htonl(0xFFFFFFFF << (32 - throw_node->netmask));
-
-			if (((throw_node->addr & no_netmask) == (bif.if_netaddr & no_netmask)))
-				add_this_rule = NO;
-		}
-
-
-		if (prio_rules && setup_tunnel == YES)
-		{
-			if (!Lo_rule &&
-					(bif.if_netaddr & htonl(0xFF000000)) == (htonl(0x7F000000 /*127.0.0.0*/)))
-				add_this_rule = NO;
-
-			if (add_this_rule)
-			{
-				add_del_rule(bif.if_netaddr, bif.if_prefix_length,
-										 RT_TABLE_TUNNEL, RT_PRIO_TUNNEL, 0, RTA_SRC, ADD, TRACK_MY_NET);
-				if_count++;
-			}
-
-			if (Lo_rule && strncmp(ifr->ifr_name, "lo", IFNAMSIZ - 1) == 0)
-			{
-				add_del_rule(0, 0, RT_TABLE_TUNNEL, RT_PRIO_TUNNEL, "lo", RTA_IIF, ADD, TRACK_MY_NET);
-			}
-		}
-
-		if (throw_rules && setup_tunnel == YES)
-			add_del_route(bif.if_netaddr, bif.if_prefix_length,
-										0, 0, 0, ifr->ifr_name, RT_TABLE_TUNNEL, RTN_THROW, ADD, TRACK_MY_NET);
-
-		if (is_batman_if(ifr->ifr_name, &batman_if))
-			continue;
-
-#endif //#if USE_BAT
-
-//		if (throw_rules && setup_networks == YES)
-//			add_del_route(bif.if_netaddr, bif.if_prefix_length,
-//										0, 0, 0, ifr->ifr_name, RT_TABLE_NETWORKS, RTN_THROW, ADD, TRACK_MY_NET);
 	}
 
 	debugFree(buf, 1601);
@@ -1547,12 +1437,6 @@ int update_interface_rules(uint8_t cmd)
 		{
 			add_del_route(throw_node->addr, throw_node->netmask,
 										0, 0, 0, "unknown", RT_TABLE_HOSTS, RTN_THROW, ADD, TRACK_MY_NET);
-			// add_del_route(throw_node->addr, throw_node->netmask,
-			// 							0, 0, 0, "unknown", RT_TABLE_NETWORKS, RTN_THROW, ADD, TRACK_MY_NET);
-#if USE_BAT
-			add_del_route(throw_node->addr, throw_node->netmask,
-										0, 0, 0, "unknown", RT_TABLE_TUNNEL, RTN_THROW, ADD, TRACK_MY_NET);
-#endif //#if USE_BAT
 		}
 	}
 
@@ -1787,115 +1671,6 @@ static int32_t opt_policy_rt(uint8_t cmd, uint8_t _save, struct opt_type *opt, s
 	return SUCCESS;
 }
 
-#if USE_BAT
-static int32_t opt_throw(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct opt_parent *patch, struct ctrl_node *cn)
-{
-	uint32_t ip;
-	int32_t mask;
-	char tmp[30];
-	struct throw_node *throw_node = NULL;
-
-	if (cmd == OPT_ADJUST || cmd == OPT_CHECK || cmd == OPT_APPLY)
-	{
-		if (patch->p_val[0] >= '0' && patch->p_val[0] <= '9')
-		{
-			// configure an unnamed throw-rule
-
-			if (str2netw(patch->p_val, &ip, '/', cn, &mask, 32) == FAILURE)
-				return FAILURE;
-
-			sprintf(tmp, "%s/%d", ipStr(validate_net_mask(ip, mask, 0)), mask);
-			set_opt_parent_val(patch, tmp);
-		}
-		else
-		{
-			// configure a named throw-rule
-
-			// just for adjust and check
-			if (adj_patched_network(opt, patch, tmp, &ip, &mask, cn) == FAILURE)
-				return FAILURE;
-
-			if (patch->p_diff == ADD)
-			{
-				if (adj_patched_network(opt, patch, tmp, &ip, &mask, cn) == FAILURE)
-					return FAILURE;
-			}
-			else
-			{
-				// re-configure network and netmask parameters of an already configured and named throw-rule
-				if (get_tracked_network(opt, patch, tmp, &ip, &mask, cn) == FAILURE)
-					return FAILURE;
-			}
-		}
-
-		OLForEach(throw_node_tmp, struct throw_node, throw_list)
-		{
-			throw_node = throw_node_tmp;
-
-			if (throw_node->addr == ip && throw_node->netmask == mask)
-				break;
-
-			throw_node = NULL;
-		}
-
-		if (cmd == OPT_ADJUST)
-			return SUCCESS;
-
-		if ((patch->p_diff != ADD && !throw_node) || (patch->p_diff == ADD && throw_node))
-		{
-			dbg_cn(cn, DBGL_SYS, DBGT_ERR, "%s %s does %s exist!",
-						 ARG_THROW, tmp, patch->p_diff == ADD ? "already" : "not");
-			return FAILURE;
-		}
-
-		if (cmd == OPT_CHECK)
-			return SUCCESS;
-
-		if (patch->p_diff == DEL || patch->p_diff == NOP)
-		{
-			OLRemoveEntry(throw_node);
-			debugFree(throw_node, 1224);
-		}
-
-		if (patch->p_diff == NOP)
-		{
-			// get new network again
-			if (adj_patched_network(opt, patch, tmp, &ip, &mask, cn) == FAILURE)
-				return FAILURE;
-		}
-
-		if (patch->p_diff == ADD || patch->p_diff == NOP)
-		{
-			throw_node = debugMalloc(sizeof(struct throw_node), 224);
-			memset(throw_node, 0, sizeof(struct throw_node));
-			throw_node->addr = ip;
-			throw_node->netmask = mask;
-
-			OLInitializeListHead(&throw_node->list);
-			OLInsertTailList(&throw_list, &throw_node->list);
-		}
-
-		if (on_the_fly)
-		{
-			/* add rules and routes for interfaces */
-			if (update_interface_rules(IF_RULE_UPD_ALL) < 0)
-				cleanup_all(CLEANUP_FAILURE);
-		}
-
-		return SUCCESS;
-	}
-	else if (cmd == OPT_UNREGISTER)
-	{
-		while (!OLIsListEmpty(&throw_list))
-		{
-			debugFree(OLRemoveHeadList(&throw_list), 1224);
-		}
-	}
-
-	return SUCCESS;
-}
-
-#endif //#if USE_BAT
 
 static struct opt_type route_options[] =
 		{
@@ -1929,17 +1704,6 @@ static struct opt_type route_options[] =
 
 				{ODI, 4, 0, "lo_rule", 0, A_PS1, A_ADM, A_INI, A_CFA, A_ANY, &Lo_rule, 0, 1, DEF_LO_RULE, 0,
 				 ARG_VALUE_FORM, "disable/enable autoconfiguration of lo rule"},
-#endif
-
-#if USE_BAT
-				{ODI, 5, 0, ARG_THROW, 0, A_PMN, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_throw,
-				 ARG_PREFIX_FORM, "do NOT route packets matching src or dst IP range(s) into gateway tunnel or announced networks"},
-
-				{ODI, 5, ARG_THROW, ARG_NETW, 'n', A_CS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_throw,
-				 ARG_NETW_FORM, "specify network of throw rule"},
-
-				{ODI, 5, ARG_THROW, ARG_MASK, 'm', A_CS1, A_ADM, A_DYI, A_CFA, A_ANY, 0, 0, 0, 0, opt_throw,
-				 ARG_MASK_FORM, "specify network of throw rule"},
 #endif
 
 #ifndef LESS_OPTIONS

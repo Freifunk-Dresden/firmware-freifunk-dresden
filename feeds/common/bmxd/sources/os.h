@@ -105,12 +105,6 @@ extern int32_t base_port;
 
 #define RT_TABLE_HOSTS -1
 
-#if USE_BAT
-	//#define RT_TABLE_NETWORKS -2
-	#define RT_TABLE_TUNNEL -3
-#endif //#if USE_BAT
-
-
 
 extern uint8_t if_conf_soft_changed; // temporary enabled to trigger changed interface configuration
 extern uint8_t if_conf_hard_changed; // temporary enabled to trigger changed interface configuration
@@ -165,12 +159,6 @@ void add_del_route(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32
 
 enum
 {
-#if USE_BAT
-	IF_RULE_SET_TUNNEL,
-	IF_RULE_CLR_TUNNEL,
-#endif //#if USE_BAT
-	// IF_RULE_SET_NETWORKS,
-	// IF_RULE_CLR_NETWORKS,
 	IF_RULE_UPD_ALL,
 	IF_RULE_CHK_IPS
 };
@@ -198,8 +186,6 @@ extern int32_t Gateway_class;
 #define ARG_RT_CLASS "routing_class"
 #define ARG_GW_CLASS "gateway_class"
 
-#ifndef NOTUNNEL
 struct plugin_v1 *tun_get_plugin_v1(void);
-#endif
 
 #endif
