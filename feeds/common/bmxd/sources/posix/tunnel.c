@@ -303,7 +303,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
   cleanup_all(-500018);
 }
 
-static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router)
+void process_tun_ogm(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router)
 {
   struct orig_node *on = mb->orig_node;
   struct ext_packet *gw_ext = on->gw_ext;
@@ -317,20 +317,20 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
   if (gw_ext && !new_gw_extension)
   {
     // remove cached gw_msg
-    dbg(DBGL_SYS, DBGT_INFO, "cb_tun_ogm_hook(gw_ext && !new_gw_extension) == DELETE");
+    dbg(DBGL_SYS, DBGT_INFO, "process_tun_ogm(gw_ext && !new_gw_extension) == DELETE");
     update_gw_list(on, NULL);
   }
   else if (!gw_ext && new_gw_extension)
   {
     // save new gw_msg
-    dbg(DBGL_SYS, DBGT_INFO, "cb_tun_ogm_hook(!gw_ext && new_gw_extension) == NEW ");
+    dbg(DBGL_SYS, DBGT_INFO, "process_tun_ogm(!gw_ext && new_gw_extension) == NEW ");
     update_gw_list(on, new_gw_extension);
   }
   else if (gw_ext && new_gw_extension &&
            ( memcmp(gw_ext, new_gw_extension, sizeof(struct ext_packet))))
   {
     // update existing gw_msg
-    dbg(DBGL_SYS, DBGT_INFO, "cb_tun_ogm_hook(gw_ext && new_gw_extension) == UPDATE");
+    dbg(DBGL_SYS, DBGT_INFO, "process_tun_ogm(gw_ext && new_gw_extension) == UPDATE");
     update_gw_list(on, new_gw_extension);
   }
 
@@ -381,7 +381,6 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
     curr_gateway = NULL; // trigger reselection
   }
 
-  return CB_OGM_ACCEPT;
 }
 
 static void gwc_cleanup(int bCallScript)
@@ -888,8 +887,6 @@ static void tun_cleanup(void)
 {
   set_snd_ext_hook(EXT_TYPE_64B_GW, cb_send_my_tun_ext, DEL);
 
-  set_ogm_hook(cb_tun_ogm_hook, DEL);
-
 //if(_bmxdMode != BmxdMode_None) dbg(DBGL_SYS, DBGT_INFO, "tun_cleanup()");
     switch(_bmxdMode)
     {
@@ -902,8 +899,6 @@ static void tun_cleanup(void)
 static int32_t tun_init(void)
 {
   register_options_array(tunnel_options, sizeof(tunnel_options));
-
-  set_ogm_hook(cb_tun_ogm_hook, ADD);
 
   set_snd_ext_hook(EXT_TYPE_64B_GW, cb_send_my_tun_ext, ADD);
 

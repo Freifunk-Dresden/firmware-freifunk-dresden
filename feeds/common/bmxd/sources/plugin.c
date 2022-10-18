@@ -27,7 +27,7 @@
 #include "plugin.h"
 #include "schedule.h"
 
-static LIST_ENTRY cb_ogm_list;
+
 static LIST_ENTRY plugin_list;
 
 struct cb_snd_ext snd_ext_hooks[EXT_TYPE_MAX + 1];
@@ -46,95 +46,6 @@ void cb_plugin_hooks(void *data, int32_t cb_id)
 
 	if (prev_pn && prev_pn->plugin_v1 && prev_pn->plugin_v1->cb_plugin_handler[cb_id])
 		(*(prev_pn->plugin_v1->cb_plugin_handler[cb_id]))(data);
-}
-
-static int32_t add_del_thread_hook(int32_t cb_type, void (*cb_handler)(void), int8_t del, PLIST_ENTRY cb_list)
-{
-
-	if (!cb_type || !cb_handler)
-	{
-		cleanup_all(-500143);
-		//dbgf( DBGL_SYS, DBGT_ERR, "cb_type or cb_handler == 0");
-		//return FAILURE;
-	}
-
-	OLForEach(cbn, struct cb_node, *cb_list)
-	{
-		if (cb_type == cbn->cb_type && cb_handler == cbn->cb_handler)
-		{
-			if (del)
-			{
-				OLRemoveEntry(cbn);
-				debugFree(cbn, 1315);
-				return SUCCESS;
-			}
-			else
-			{
-				cleanup_all(-500144);
-				//dbgf( DBGL_SYS, DBGT_ERR, "cb_hook for cb_type %d and cb_handler already registered", cb_type );
-				//return FAILURE;
-			}
-		}
-	}
-
-	if (del)
-	{
-		cleanup_all(-500145);
-		//dbgf( DBGL_SYS, DBGT_ERR, "cb_type %d and handler not registered", cb_type );
-		return FAILURE;
-	}
-	else
-	{
-		struct cb_node *cbn;
-		cbn = debugMalloc(sizeof(struct cb_node), 315);
-		memset(cbn, 0, sizeof(struct cb_node));
-		OLInitializeListHead(&cbn->list);
-
-		cbn->cb_type = cb_type;
-		cbn->cb_handler = cb_handler;
-		OLInsertTailList(cb_list, &cbn->list);
-
-		return SUCCESS;
-	}
-}
-
-
-int32_t set_ogm_hook(int32_t (*cb_ogm_handler)(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router), int8_t del)
-{
-	return add_del_thread_hook(1, (void (*)(void))cb_ogm_handler, del, &cb_ogm_list);
-}
-
-int32_t cb_ogm_hooks(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router)
-{
-	prof_start(PROF_cb_ogm_hooks);
-
-	struct cb_ogm_node *prev_con = NULL;
-
-	OLForEach(con, struct cb_ogm_node, cb_ogm_list)
-	{
-		if (prev_con)
-		{
-			if (((*(prev_con->cb_ogm_handler))(mb, oCtx, old_router)) == CB_OGM_REJECT)
-			{
-				prof_stop(PROF_cb_ogm_hooks);
-				return CB_OGM_REJECT;
-			}
-		}
-
-		prev_con = con;
-	}
-
-	if (prev_con)
-	{
-		if (((*(prev_con->cb_ogm_handler))(mb, oCtx, old_router)) == FAILURE)
-		{
-			prof_stop(PROF_cb_ogm_hooks);
-			return CB_OGM_REJECT;
-		}
-	}
-
-	prof_stop(PROF_cb_ogm_hooks);
-	return CB_OGM_ACCEPT;
 }
 
 int32_t set_snd_ext_hook(uint16_t ext_type, int32_t (*cb_snd_ext_handler)(unsigned char *ext_buff), int8_t del)
@@ -264,7 +175,6 @@ static void deactivate_plugin(void *p)
 
 void init_plugin(void)
 {
-	OLInitializeListHead(&cb_ogm_list);
 	OLInitializeListHead(&plugin_list);
 
 	set_snd_ext_hook(0, NULL, YES);		 //ensure correct initialization of extension hooks

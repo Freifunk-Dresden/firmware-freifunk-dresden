@@ -31,7 +31,7 @@
 #include "originator.h"
 #include "plugin.h"
 #include "schedule.h"
-//#include "avl.h"
+#include "tunnel.h"
 
 void update_community_route(void);
 
@@ -1467,15 +1467,7 @@ void process_ogm(struct msg_buff *mb)
 						 ipStr(old_router ? old_router->key.addr : 0), mb->neigh_str, mb->iif->dev);
 	}
 
-	// new_router can be zero !!!
-	//paranoia( -500195, ( !new_router || new_router != orig_node->router ) );
-
-	// check if ogm_hooks would reject new_router
-	if (cb_ogm_hooks(mb, oCtx, old_router) != CB_OGM_ACCEPT)
-	{
-		flush_orig(orig_node, NULL);
-		goto process_ogm_end;
-	}
+	process_tun_ogm(mb, oCtx, old_router);
 
 	dbgf_all(DBGT_INFO,
 					 "done OGM accepted %s  acceptable %s  bidirectLink %s  new %s  BNTOG %s  asocial %s(%d)  tq %d  "
