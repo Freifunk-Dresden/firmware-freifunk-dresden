@@ -939,8 +939,6 @@ struct orig_node *find_or_create_orig_node_in_avl(uint32_t addr)
 
 	avl_insert(&orig_avl, /*(uint32_t*)*/ &orig_node->orig, orig_node);
 
-	cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_CREATE);
-
 	prof_stop(PROF_find_or_create_orig_node_in_avl);
 	return orig_node;
 }
@@ -997,7 +995,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 			if (!bif && ( 		(!curr_time && orig_node->pog_refcnt == 0) 		// if flush ( purge_orig(0, NULL) )
 										|| 	(purge_old && orig_node->pog_refcnt == 0) ))  // if old  (  purge_orig(curr_time, NULL) )
 			{
-				cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_DESTROY);
+				cb_plugin_hooks(orig_node, PLUGIN_CB_ORIG_FLUSH);
 			}
 
 			//remove all neighbours of this originator ...

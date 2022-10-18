@@ -27,11 +27,8 @@ extern LIST_ENTRY cb_fd_list;
 enum
 {
 	PLUGIN_CB_CONF,
-	PLUGIN_CB_ORIG_CREATE,
 	PLUGIN_CB_ORIG_FLUSH,
-	PLUGIN_CB_ORIG_DESTROY,
-	PLUGIN_CB_TERM,
-	PLUGIN_CB_SIZE
+	PLUGIN_CB_SIZE  // used as number of callbacks per plugin
 };
 
 struct plugin_v1

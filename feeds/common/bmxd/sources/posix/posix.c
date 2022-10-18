@@ -156,7 +156,6 @@ static void handler(int32_t sig)
 	printf("\n"); // to have a newline after ^C
 
 	stop = 1;
-	cb_plugin_hooks(NULL, PLUGIN_CB_TERM);
 }
 
 /* counting bits based on http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetTable */

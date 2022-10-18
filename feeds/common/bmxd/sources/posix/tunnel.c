@@ -230,7 +230,7 @@ static BmxdMode_t _bmxdMode = { BmxdMode_None };
 
 #endif
 
-static void gwc_cleanup(void);
+static void gwc_cleanup(int bCallScript);
 
 #if USE_BAT
 static struct gwc_args *gwc_args = NULL;
@@ -494,10 +494,6 @@ static unsigned char get_gw_class(int down, int up)
   return class;
 }
 
-//se: update_gw_list() ist called when an ogm is received. this ogm contains a
-//    list of gateways. BUT it might not carry gateways infos. Another OGM could contain
-//    gateway infos that are not in this ogm.
-// This means: I can not assume that gw is gone if it is not in THIS ogm (in extension of this)
 static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_gw_extension)
 {
   struct gw_node *gw_node;
@@ -525,16 +521,16 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
         debugFree(orig_node->plugin_data[tun_orig_registry], 1123);
         orig_node->plugin_data[tun_orig_registry] = NULL;
 
-        // current node is no gw anymore -> remove from gw_list
-        OLRemoveEntry(gw_node);
-        debugFree(gw_node, 1103);
-//        dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
-
         // current gateway does not exisit any more -> reselect
         if(curr_gateway == gw_node)
         {
           curr_gateway = NULL;
         }
+
+        // current node is no gw anymore -> remove from gw_list
+        OLRemoveEntry(gw_node);
+        debugFree(gw_node, 1103);
+//        dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
 
         return; // ogm has been processed, do not process it as 'new'
       }
@@ -701,11 +697,10 @@ static int32_t cb_tun_ogm_hook(struct msg_buff *mb, uint16_t oCtx, struct neigh_
 
   // reselect either when required by this function or when gateway was reset
   // by update_gw_list()
-  if(reselect || !curr_gateway )
-  {
-    gwc_cleanup();
-    curr_gateway = NULL;
-  }
+	if(reselect /* || !curr_gateway */)
+	{
+		curr_gateway = NULL; // trigger reselection
+	}
 
   return CB_OGM_ACCEPT;
 }
@@ -726,7 +721,7 @@ static void gwc_recv_tun(int32_t fd_in)
     dbgf(DBGL_SYS, DBGT_ERR, "called while curr_gateway_changed  %s",
          gwc_args ? "with invalid gwc_args..." : "");
 
-    gwc_cleanup();
+    gwc_cleanup(1);
     return;
   }
 
@@ -750,7 +745,7 @@ static void gwc_recv_tun(int32_t fd_in)
 
       dbgf(DBGL_SYS, DBGT_ERR, "No vitual IP! Ignoring this GW for %d secs",
            (gwc_args->gw_node->unavail_factor * gwc_args->gw_node->unavail_factor * GW_UNAVAIL_TIMEOUT) / 1000);
-      gwc_cleanup();
+      gwc_cleanup(1);
       curr_gateway = NULL;
       return;
     }
@@ -761,7 +756,7 @@ static void gwc_recv_tun(int32_t fd_in)
                  (struct sockaddr *)&gwc_args->gw_addr, sizeof(struct sockaddr_in)) < 0)
       {
         dbg_mute(30, DBGL_SYS, DBGT_ERR, "can't send data to gateway: %s", strerror(errno));
-        gwc_cleanup();
+        gwc_cleanup(1);
         curr_gateway = NULL;
         return;
       }
@@ -782,7 +777,7 @@ static void gwc_recv_tun(int32_t fd_in)
 
       if (tp.u.iphdr.saddr == gwc_args->gw_addr.sin_addr.s_addr)
       {
-        gwc_cleanup();
+        gwc_cleanup(1);
         return;
       }
     }
@@ -790,7 +785,7 @@ static void gwc_recv_tun(int32_t fd_in)
 }
 #endif //#if USE_BAT
 
-static void gwc_cleanup(void)
+static void gwc_cleanup(int bCallScript)
 {
 #if USE_BAT
   if (gwc_args)
@@ -805,7 +800,10 @@ static void gwc_cleanup(void)
       add_del_route(0, 0, 0, 0, gwc_args->tun_ifi, gwc_args->tun_dev, RT_TABLE_TUNNEL, RTN_UNICAST, DEL, TRACK_TUNNEL);
       //dbg(DBGL_SYS, DBGT_INFO,"Tunnel del");
 
-      call_script("del");
+      if(bCallScript)
+			{
+				call_script("del");
+			}
     }
 
     // check for valid fd, because if tun dev couldn't created, no
@@ -831,9 +829,12 @@ static void gwc_cleanup(void)
 
   if (_bmxdMode == BmxdMode_Client)
   {
-    dbg(DBGL_SYS, DBGT_INFO, "gwc clean-up");
     _bmxdMode = BmxdMode_None;
-    call_script("del");
+		if(bCallScript)
+		{
+	    dbg(DBGL_SYS, DBGT_INFO, "gwc clean-up(del)");
+			call_script("del");
+		}
   }
 
 #endif //#if USE_BAT
@@ -987,7 +988,7 @@ gwc_init_failure:
   // critical syntax: may be used for nameserver updates
   dbg(DBGL_SYS, DBGT_INFO, "GWT: GW-client tunnel init failed");
 
-  gwc_cleanup();
+  gwc_cleanup(1); //on error
   curr_gateway = NULL;
 
   return FAILURE;
@@ -1259,15 +1260,16 @@ static void cb_tun_conf_changed(void *unused)
 
     if (gwc_args)
     {
-      gwc_cleanup();
+      gwc_cleanup(0);
     }
 #else //#if USE_BAT
+if(_bmxdMode != BmxdMode_None)dbg(DBGL_SYS, DBGT_INFO, "cb_tun_conf_changed()");
     switch(_bmxdMode)
     {
-      case BmxdMode_Client: gwc_cleanup(); break;
-      case BmxdMode_Gateway: gws_cleanup(); break;
-      default: break;
-    }
+      case BmxdMode_Client: gwc_cleanup(0); break; //evt muss beim wechsel von Gateway<->Client immer die routen
+      case BmxdMode_Gateway: gws_cleanup(); break; // aufgeraumt werden, wie es aktuell passiert. aber nicht "del"
+      default: break;                              // ans bmxd script gliefert werden. da hier curr_gateway nicht
+    }                                              // benutzt wird, eine gw selection zu triggern
 #endif
 
     if (primary_addr)
@@ -1411,16 +1413,25 @@ static void cb_choose_gw(void *unused)
     }
   } //for gw list
 
+	// when we have not found any gw -> delete
+	if(!tmp_curr_gw)
+	{
+		gwc_cleanup(1); // "del" if we have no gw found
+	}
+	else // update
+	{
+		gwc_cleanup(0); // just cleanup
+	}
+
   if (curr_gateway != tmp_curr_gw)
   {
     /* may be the last gateway is now gone */
-    if (tmp_curr_gw != NULL)
+    if (tmp_curr_gw)
     {
       dbg(DBGL_SYS, DBGT_INFO, "using new default tunnel to GW %s (gw_flags: %i, packet_count: %i, gw_product: %i)",
           tmp_curr_gw->orig_node->orig_str, max_gw_class, best_wa_val / PROBE_TO100, max_gw_factor);
     }
 
-    gwc_cleanup();
     curr_gateway = tmp_curr_gw;
 
     update_community_route();
@@ -1557,7 +1568,6 @@ static int32_t opt_rt_pref(uint8_t cmd, uint8_t _save, struct opt_type *opt, str
       pref_gateway = test_ip;
 
       // trigger new gw selection
-      gwc_cleanup();
       curr_gateway = NULL;
 
       /* use routing class 3 if none specified */
@@ -1576,7 +1586,6 @@ static int32_t opt_only_commuity_gw(uint8_t cmd, uint8_t _save, struct opt_type 
   if (cmd == OPT_APPLY)
   {
     // trigger new gw selection
-    gwc_cleanup();
     curr_gateway = NULL;
   }
 
@@ -1663,6 +1672,10 @@ static int32_t opt_gw_class(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
       }
 
       dbg(DBGL_SYS, DBGT_INFO, "gateway class: %i -> propagating: %s", gateway_class, gwarg);
+
+			// trigger tunnel changes
+      cb_plugin_hooks(NULL, PLUGIN_CB_CONF);
+
     }
   }
 
@@ -1721,12 +1734,14 @@ static void tun_cleanup(void)
 
     if (gwc_args)
     {
-      gwc_cleanup();
+      gwc_cleanup(1);
     }
 #else //#if USE_BAT
+
+if(_bmxdMode != BmxdMode_None) dbg(DBGL_SYS, DBGT_INFO, "tun_cleanup()");
     switch(_bmxdMode)
     {
-      case BmxdMode_Client: gwc_cleanup(); break;
+      case BmxdMode_Client: gwc_cleanup(1); break; //sehe zeile 1275 fuer gleichen kommentar
       case BmxdMode_Gateway: gws_cleanup(); break;
       default: break;
     }
@@ -1765,7 +1780,6 @@ struct plugin_v1 *tun_get_plugin_v1(void)
 
   tun_plugin_v1.cb_plugin_handler[PLUGIN_CB_CONF] = cb_tun_conf_changed;
   tun_plugin_v1.cb_plugin_handler[PLUGIN_CB_ORIG_FLUSH] = cb_tun_orig_flush;
-  tun_plugin_v1.cb_plugin_handler[PLUGIN_CB_ORIG_DESTROY] = cb_tun_orig_flush;
 
   return &tun_plugin_v1;
 }

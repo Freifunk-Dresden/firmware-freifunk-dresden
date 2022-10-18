@@ -344,8 +344,6 @@ void handle_ctrl_node(struct ctrl_node *cn)
 		}
 
 		respect_opt_order(OPT_APPLY, 0, 99, NULL, NO /*load_cofig*/, OPT_POST, 0 /*probably closed*/);
-
-		cb_plugin_hooks(NULL, PLUGIN_CB_CONF);
 	}
 	else
 	{
