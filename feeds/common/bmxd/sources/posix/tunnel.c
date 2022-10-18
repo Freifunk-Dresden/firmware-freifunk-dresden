@@ -842,8 +842,12 @@ static int32_t opt_gw_class(uint8_t cmd, uint8_t _save, struct opt_type *opt, st
 
       dbg(DBGL_SYS, DBGT_INFO, "gateway class: %i -> propagating: %s", gateway_class, gwarg);
 
-      // trigger new gw selection
+      // trigger new gw selection (scripts are not called when node is gateway)
       curr_gateway = NULL;
+
+      // trigger tunnel changes; causes to call the bmx script correcly
+      trigger_tun_update();
+
     }
   }
 
