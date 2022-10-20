@@ -15,7 +15,7 @@
 
 REVISION =	"$(shell git show --abbrev-commit | sed -n '1{s/.* //p}')"
 DATE=		"$(shell git show --abbrev-commit | sed -n '3{s/Date:[ ]\+\(.*\) +.*/\1/p}' )"
-SOURCE_MD5=	$(shell md5sum *.[ch] linux/*.[cp] posix/*.[cp] Makefile | md5sum | cut -d' ' -f1)
+SOURCE_MD5=	$(shell md5sum *.[ch] Makefile | md5sum | cut -d' ' -f1)
 REVISION_VERSION ="\" [md5:$(SOURCE_MD5)]\""
 
 # Recommended defines and approximate binary sizes with gcc-x86
@@ -56,8 +56,8 @@ CFLAGS += -Os -g0
 # -static
 # -pg
 
-SRC_C= objlist.c batman.c originator.c schedule.c plugin.c allocate.c avl.c profile.c control.c metrics.c posix/posix.c posix/tunnel.c linux/route.c
-SRC_H= objlist.h batman.h originator.h schedule.h plugin.h allocate.h avl.h profile.h control.h metrics.h os.h
+SRC_C= objlist.c batman.c originator.c schedule.c plugin.c allocate.c avl.c profile.c control.c metrics.c posix.c tunnel.c route.c
+SRC_H= objlist.h batman.h originator.h schedule.h plugin.h allocate.h avl.h profile.h control.h metrics.h tunnel.h  os.h
 OBJS=  $(SRC_C:.c=.o)
 
 BINARY_NAME=	bmxd
@@ -79,4 +79,4 @@ strip:	all
 	strip $(BINARY_NAME)
 
 clean:
-	rm -f $(BINARY_NAME) *.o posix/*.o linux/*.o
+	rm -f $(BINARY_NAME) *.o

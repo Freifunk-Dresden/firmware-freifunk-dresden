@@ -196,7 +196,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
       if(gw_ext && !new_gw_extension)
       {
         dbg(DBGL_SYS, DBGT_INFO,
-            "originator %s local: Gateway class %i, community %d, incomming: no info",
+            "originator %s local: Gateway class %i, community %d, incomming: no info == DELETE",
             orig_node->orig_str,
             gw_ext->EXT_GW_FIELD_GWFLAGS,
             gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
@@ -224,8 +224,8 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
 // erzeugt falls nicht in liste)
       if(!gw_ext && new_gw_extension)
       {
-        dbg(DBGL_SYS, DBGT_INFO,
-            "originator %s local: NO tunnel info, incomming: Gateway class %i, community %d",
+        dbg(DBGL_SYS, DBGT_ERR,
+            "originator %s local: NO tunnel info, incomming: Gateway class %i, community %d == NEW-error",
             orig_node->orig_str,
             new_gw_extension[0].EXT_GW_FIELD_GWFLAGS,
             new_gw_extension[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
@@ -236,7 +236,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
       if(gw_ext && new_gw_extension)
       {
         dbg(DBGL_SYS, DBGT_INFO,
-            "originator %s local: Gateway class %i, community %d, incomming: Gateway class %i, community %d",
+            "originator %s local: Gateway class %i, community %d, incomming: Gateway class %i, community %d == UPDATE",
             orig_node->orig_str,
             gw_ext->EXT_GW_FIELD_GWFLAGS,
             gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY,
@@ -271,8 +271,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
   if (new_gw_extension)
   {
     get_gw_speeds(new_gw_extension->EXT_GW_FIELD_GWFLAGS, &download_speed, &upload_speed);
-
-    dbg(DBGL_SYS, DBGT_INFO, "found new gateway %s, announced by %s -> community: %i, class: %i - %i%s/%i%s",
+    dbg(DBGL_SYS, DBGT_INFO, "found new gateway %s, announced by %s -> community: %i, class: %i - %i%s/%i%s == NEW",
         ipStr(new_gw_extension->EXT_GW_FIELD_GWADDR),
         orig_node->orig_str,
         new_gw_extension->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY,
@@ -317,20 +316,17 @@ void process_tun_ogm(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_
   if (gw_ext && !new_gw_extension)
   {
     // remove cached gw_msg
-    dbg(DBGL_SYS, DBGT_INFO, "process_tun_ogm(gw_ext && !new_gw_extension) == DELETE");
     update_gw_list(on, NULL);
   }
   else if (!gw_ext && new_gw_extension)
   {
     // save new gw_msg
-    dbg(DBGL_SYS, DBGT_INFO, "process_tun_ogm(!gw_ext && new_gw_extension) == NEW ");
     update_gw_list(on, new_gw_extension);
   }
   else if (gw_ext && new_gw_extension &&
            ( memcmp(gw_ext, new_gw_extension, sizeof(struct ext_packet))))
   {
     // update existing gw_msg
-    dbg(DBGL_SYS, DBGT_INFO, "process_tun_ogm(gw_ext && new_gw_extension) == UPDATE");
     update_gw_list(on, new_gw_extension);
   }
 
