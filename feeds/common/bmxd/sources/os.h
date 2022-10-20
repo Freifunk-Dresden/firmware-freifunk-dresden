@@ -180,7 +180,6 @@ void cleanup_route(void);
 /* tunnel.c */
 
 extern int32_t Gateway_class;
-#define ARG_GWTUN_NETW "gateway_tunnel_network"
 #define ARG_GATEWAYS "gateways"
 
 #define ARG_RT_CLASS "routing_class"
