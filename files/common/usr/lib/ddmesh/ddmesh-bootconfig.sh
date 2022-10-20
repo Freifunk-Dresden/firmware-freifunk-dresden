@@ -124,7 +124,7 @@ config network 'network'
 	option	wifi_slow_rates 0
 	option	wifi2_dhcplease '5m'
 	option	wifi2_isolate '1'
-	option  wifi2_roaming_enabled '0'
+	option  wifi2_roaming_enabled '1'
 	option	mesh_mode 'mesh' #adhoc,mesh,adhoc+mesh
 	option	lan_local_internet '0'
 	option	internal_dns1 '10.200.0.4'
