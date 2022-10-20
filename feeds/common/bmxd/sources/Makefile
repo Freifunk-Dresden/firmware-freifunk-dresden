@@ -57,7 +57,7 @@ CFLAGS += -Os -g0
 # -pg
 
 SRC_C= objlist.c batman.c originator.c schedule.c plugin.c allocate.c avl.c profile.c control.c metrics.c posix.c tunnel.c route.c
-SRC_H= objlist.h batman.h originator.h schedule.h plugin.h allocate.h avl.h profile.h control.h metrics.h tunnel.h  os.h
+SRC_H= objlist.h batman.h originator.h schedule.h plugin.h allocate.h avl.h profile.h control.h metrics.h tunnel.h os.h
 OBJS=  $(SRC_C:.c=.o)
 
 BINARY_NAME=	bmxd
