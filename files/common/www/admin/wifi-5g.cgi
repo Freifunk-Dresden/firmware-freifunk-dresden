@@ -139,8 +139,8 @@ $(iwinfo $wifi_status_radio5g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 <fieldset class="bubble">
 <legend>Kanal-Info</legend>
 <table>
-<tr><th>Frequenz</th><th>Kanal</th><th>Maximale Sendeleistung</th></tr>
-$(iw $wifi_status_radio5g_phy info | sed -n '/[      ]*\*[   ]*[0-9]* MHz/{s#[       *]\+\([0-9]\+\) MHz \[\([0-9]\+\)\] (\(\([0-9.]\+\) \(dBm\)\))(*\(.*\))*#<tr><td>\1 MHz</td><td>\2</td><td>\4 \5\6</td></tr>#;p}')
+<tr><th width="80" >Frequenz</th><th width="30">Kanal</th><th width="150">Maximale Sendeleistung</th><th width="30">Bandbreite</th><th>Modes</th></tr>
+$(iw $wifi_status_radio5g_phy channels | sed '/Radar/d;/DFS/d' | awk 'BEGIN{ RS="*"} (NR>1){ch=substr($3,2,length($3)-2);printf("<tr><td>%s %s</td><td>%s</td><td>%s %s</td><td>%s</td><td>%s %s %s %s %s %s %s %s %s</td></tr>\n",$1,$2,ch,$7,$8,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20);}')
 </table>
 </fieldset>
 
