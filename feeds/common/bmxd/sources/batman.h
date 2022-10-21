@@ -49,7 +49,6 @@
  * ln			struct link_node*
  * tn			struct task_node*
  * cdn			struct struct cb_fd_node*
- * pn			struct plugin_node*
  * ogm			struct bat_packet_ogm*
  *
  */
@@ -58,7 +57,7 @@
  * Global Variables and definitions
  */
 
-#define SOURCE_VERSION "1.1-freifunk-dresden"
+#define SOURCE_VERSION "1.2-freifunk-dresden"
 
 #define COMPAT_VERSION 10
 
@@ -127,7 +126,7 @@ enum ADGSN
    Otherwise OGMs + extension headers exceeding this size
    could not be send by nodes with the old MAX_PACKET_SIZE = 256 */
 #define MIN_UDPD_SIZE 24
-#define DEF_UDPD_SIZE 256
+#define DEF_UDPD_SIZE 512
 #define MAX_UDPD_SIZE (255 << 2) //the maximum packet size which could be defined with the bat_header->size field
 #define ARG_UDPD_SIZE "udp_data_size"
 
@@ -550,7 +549,7 @@ struct orig_node /* structure for orig_list maintaining nodes of mesh */
 	struct link_node *link_node;
 
 	/*size of plugin data is defined during intialization and depends on registered plugin-data hooks */
-	void *plugin_data[];
+	struct ext_packet *gw_ext;
 };
 
 #define SQN_LOUNGE_SIZE (8 * sizeof(uint32_t)) /* must correspond to bits of neigh_node->considered_seqnos */
@@ -643,10 +642,6 @@ struct gw_node
 {
 	LIST_ENTRY list;
 	struct orig_node *orig_node;
-#if USE_BAT
-	uint16_t unavail_factor;
-	batman_time_t last_failure;
-#endif //#if USE_BAT
 };
 
 struct gw_client

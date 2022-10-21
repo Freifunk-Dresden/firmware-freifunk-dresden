@@ -18,7 +18,7 @@ if [ "$1" = "configure" ]; then
 	# set domains resolved by freifunk dns
 	nameserver1="$(uci get ddmesh.network.internal_dns1 | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
 	nameserver2="$(uci get ddmesh.network.internal_dns2 | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p')"
-	uci -q set dhcp.dnsmasq.rebind_domain='ffdd' # 'ffdd/mei'
+	uci -q set dhcp.dnsmasq.rebind_domain='ffdd'
 	uci -q delete dhcp.dnsmasq.server
 	[ -n "$nameserver1" ] && uci -q add_list dhcp.dnsmasq.server="/ffdd/$nameserver1"
 	[ -n "$nameserver2" ] && uci -q add_list dhcp.dnsmasq.server="/ffdd/$nameserver2"
