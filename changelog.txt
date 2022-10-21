@@ -1,6 +1,7 @@
-2022-10-02 [8.1.1] (devel)
+2022-10-02 [8.1.2] (devel)
 --------------------------------------------------
-
+bmxd                      - rework gateway selection to minimize wifi disconnections
+gui                       - give more information about wifi channels
 
 2022-10-02 [8.1.0] (release)
 --------------------------------------------------
