@@ -168,7 +168,7 @@ EOM
 			uci set ddmesh.gps.latitude="$j_lat"
 			uci set ddmesh.gps.longitude="$j_lng"
 			uci set ddmesh.gps.altitude="0"
-			uci_commit.sh
+			uci commit
 			logger -s -t $SYSLOG_TAG "geoloc saved"
 		fi
 	else

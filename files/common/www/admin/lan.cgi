@@ -77,7 +77,7 @@ else #query string
 			uci set ddmesh.network.dhcp_lan_limit="$form_dhcp_limit"
 			uci set ddmesh.network.dhcp_lan_lease="$form_dhcp_lease"
 			uci set ddmesh.boot.boot_step=2	#let update fw
-			uci_commit.sh
+			uci commit
 			notebox "Die Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst nach dem n&auml;chsten <a href="reset.cgi">Neustart</a> aktiv."
 		else #empty
 			notebox "IP-Adresse oder Netzmaske sind falsch."

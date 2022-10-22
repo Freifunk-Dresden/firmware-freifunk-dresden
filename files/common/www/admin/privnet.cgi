@@ -271,15 +271,15 @@ else
 	case $form_action in
 		local)
 			uci set ddmesh.privnet.fastd_port=$form_privnet_server_port
-			uci_commit.sh
+			uci commit
 			MSG=2
 		;;
 		client_del) uci delete ddmesh.$form_entry;
-		uci_commit.sh
+		uci commit
 		MSG=4
 		;;
 		accept_del) uci delete ddmesh.$form_entry;
-		uci_commit.sh
+		uci commit
 		MSG=4;
 		;;
 		client_add)
@@ -288,7 +288,7 @@ else
 				uci set ddmesh.@privnet_client[-1].node="$form_privnet_peer_node"
 				uci set ddmesh.@privnet_client[-1].port="$form_privnet_peer_port"
 				uci set ddmesh.@privnet_client[-1].public_key="$form_privnet_peer_key"
-				uci_commit.sh
+				uci commit
 				MSG=3;
 			else
 				MSG=6;
@@ -299,7 +299,7 @@ else
 				uci add ddmesh privnet_accept >/dev/null
 				uci set ddmesh.@privnet_accept[-1].comment="$form_privnet_peer_comment"
 				uci set ddmesh.@privnet_accept[-1].public_key="$form_privnet_peer_key"
-				uci_commit.sh
+				uci commit
 				MSG=3;
 			else
 				MSG=6;

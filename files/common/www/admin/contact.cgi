@@ -130,7 +130,7 @@ if [ -n "$QUERY_STRING" ]; then
 		uci set ddmesh.gps.latitude="$form_gps_latitude"
 		uci set ddmesh.gps.longitude="$form_gps_longitude"
 		uci set ddmesh.gps.altitude="$form_gps_altitude"
-		uci_commit.sh
+		uci commit
 		notebox 'Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind sofort aktiv.'
 	else
 		notebox 'Es wurden keine Einstellungen ge&auml;ndert.'

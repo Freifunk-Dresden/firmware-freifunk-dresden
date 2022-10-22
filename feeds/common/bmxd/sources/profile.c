@@ -93,7 +93,6 @@ void init_profile(void)
 	prof_init(PROF_debugMalloc, "debugMalloc");
 	prof_init(PROF_debugFree, "debugFree");
 	prof_init(PROF_debugRealloc, "debugRealloc");
-	prof_init(PROF_cb_ogm_hooks, "cb_ogm_hooks");
 	prof_init(PROF_process_ogm, "process_ogm");
 }
 

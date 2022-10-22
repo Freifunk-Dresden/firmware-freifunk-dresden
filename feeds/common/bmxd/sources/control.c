@@ -39,6 +39,7 @@
 #include "plugin.h"
 #include "schedule.h"
 #include "objlist.h"
+#include "tunnel.h"
 
 static char run_dir[MAX_PATH_SIZE] = DEF_RUN_DIR;
 
@@ -344,8 +345,6 @@ void handle_ctrl_node(struct ctrl_node *cn)
 		}
 
 		respect_opt_order(OPT_APPLY, 0, 99, NULL, NO /*load_cofig*/, OPT_POST, 0 /*probably closed*/);
-
-		cb_plugin_hooks(NULL, PLUGIN_CB_CONF);
 	}
 	else
 	{
@@ -2526,7 +2525,7 @@ void apply_init_args(int argc, char *argv[])
 
 	close_ctrl_node(CTRL_CLOSE_STRAIGHT, cn);
 
-	cb_plugin_hooks(NULL, PLUGIN_CB_CONF);
+	trigger_tun_update();
 
 	free_init_string();
 }

@@ -87,7 +87,7 @@ extern int32_t my_path_lounge;
 #define DEF_DROP_2HLOOP NO
 #define ARG_DROP_2HLOOP "drop_two_hop_loops"
 
-#define DEF_PURGE_TO 100
+#define DEF_PURGE_TO 35		//in s;  for ogm_interval of 5000ms = 7 OGM. when server has 10s, then 3OGM
 #define MIN_PURGE_TO 10
 #define MAX_PURGE_TO 864000 /*10 days*/
 #define ARG_PURGE_TO "purge_timeout"

@@ -1386,6 +1386,24 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-ap-pro-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-ap-pro-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifi-ap-pro-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifi-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1447,6 +1465,19 @@
       "model": "ubnt,unifiac-mesh",
       "model2": "Ubiquiti UniFi AC Mesh",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifiac-pro-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-generic-ubnt_unifiac-pro-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {

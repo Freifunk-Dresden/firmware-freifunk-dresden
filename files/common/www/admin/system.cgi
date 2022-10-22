@@ -430,7 +430,7 @@ else
 		uci set ddmesh.led.wwan="${form_led_wwan:-status}"
 
 		uci set ddmesh.boot.boot_step=2
-		uci_commit.sh
+		uci commit
 		notebox  'Die Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv.'
 		/usr/lib/ddmesh/ddmesh-bmxd.sh prefered_gateway "$prefgw" 2>&1 >/dev/null
 		/usr/lib/ddmesh/ddmesh-bmxd.sh netid "${form_mesh_network_id:-0}" 2>&1 >/dev/null

@@ -102,7 +102,7 @@ else
 	case $form_action in
 		del)
 			uci delete ddmesh.$form_rule_config
-			uci_commit.sh
+			uci commit
 			notebox "Regel $form_rule_number ($form_rule_name) wurde gel&ouml;scht. &Auml;nderungen sind sofort aktiv."
 			/usr/lib/ddmesh/ddmesh-portfw.sh load
 		;;
@@ -113,7 +113,7 @@ else
 			uci set ddmesh.@portforwarding[-1].src_dport="$form_rule_src_dport"
 			uci set ddmesh.@portforwarding[-1].dest_ip="$form_rule_dest_ip"
 			uci set ddmesh.@portforwarding[-1].dest_port="$form_rule_dest_port"
-			uci_commit.sh
+			uci commit
 			notebox "&Auml;nderungen sind sofort aktiv."
 			/usr/lib/ddmesh/ddmesh-portfw.sh load
 		;;

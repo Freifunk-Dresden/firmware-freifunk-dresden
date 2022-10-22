@@ -46,7 +46,7 @@ EOM
 				if [ -n "$form_reset_reconfig" ]; then
 					echo "Konfiguration wird an neue Hardware angepasst.<br/>"
 					uci -q set ddmesh.boot.boot_step=2
-					uci_commit.sh
+					uci commit
 				fi
 
 				if [ "$(uci -q get ddmesh.boot.boot_step)" = "3" ]; then
