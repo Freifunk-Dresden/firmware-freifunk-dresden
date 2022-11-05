@@ -1961,6 +1961,24 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_archer-a6-v3-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_archer-a6-v3-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-tplink_archer-a6-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-initramfs-kernel.bin",
       "comment": ""
     },
