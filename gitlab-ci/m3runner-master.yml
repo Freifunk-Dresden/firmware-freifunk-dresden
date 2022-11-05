@@ -164,7 +164,9 @@ m3:test:
     - ln -s ~/mycache/workdir
     - ./build.sh list
     # generate upload-infos/fileinfo.json.new-generated and let store it also on error
-    - ./gen-upload.sh json || true
+    # "all" needed to copy all firmware to output from which
+    # the json is generated
+    - ./gen-upload.sh all || true
   tags:
     - m3runner
 
