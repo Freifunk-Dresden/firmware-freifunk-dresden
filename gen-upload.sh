@@ -539,10 +539,6 @@ EOM
 # ENABLE_GENERATE
 }
 
-# copy OUTPUT_FILEINFO_JSON_FILENAME to output directory, so I can copy the new file into
-# upload-info dir if needed
-cp ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ${target_dir}
-
 
 #------ now compare fileinfo.json and generated file.------
 # check for missing firmware files (not generated)
