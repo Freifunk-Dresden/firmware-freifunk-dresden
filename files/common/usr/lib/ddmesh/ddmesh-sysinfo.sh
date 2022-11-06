@@ -380,7 +380,8 @@ $(cat $BMXD_DB_PATH/gateways | sed -n '
 			"info":[
 $(cat $BMXD_DB_PATH/info | sed 's#^[ 	]*\(.*\)$#\t\t\t\t"\1",#; $s#,[ 	]*$##') ]
 		},
-		"airtime":{"radio2g":"$(echo $wifi_status_radio2g_airtime)"$([ ! -z "$wifi_status_radio5g_airtime" ] && echo ", \"radio5g\":\"$wifi_status_radio5g_airtime\"" )},
+		"airtime":{"radio2g":"$(echo $wifi_status_radio2g_airtime)"
+		$([ -n "$wifi_status_radio5g_airtime" -a "$wifi_status_radio5g_airtime" != ",,," ] && echo ", \"radio5g\":\"$wifi_status_radio5g_airtime\"" )},
 		"network_switch":$(/usr/lib/ddmesh/ddmesh-utils-switch-info.sh json)
 EOM
 

@@ -11,7 +11,7 @@ RESOLV_PATH="/tmp/resolv.conf.d"
 RESOLV_FINAL="${RESOLV_PATH}/resolv.conf.final"
 
 getairtime() {
-if [ -n "$1" ]; then
+if [ -n "$1" -a "$1" != ",,," ]; then
 	let ACT=$(echo "$1" | cut -d',' -f1)
 	let BUS=$(echo "$1" | cut -d',' -f2)
 	let REC=$(echo "$1" | cut -d',' -f3)
@@ -51,12 +51,12 @@ cat<<EOM
 <tr class="colortoggle2"><th>Firmware-Version:</th><td>Freifunk Dresden Edition $(cat /etc/version) / $DISTRIB_DESCRIPTION</td></tr>
 <tr class="colortoggle1"><th>Freier Speicher:</th><td>$(cat /proc/meminfo | grep MemFree | cut -d':' -f2) von $(cat /proc/meminfo | grep MemTotal | cut -d':' -f2)</td></tr>
 EOM
- if [ ! -z "$wifi_status_radio2g_airtime" ];then
+ if [ "$wifi_status_radio2g_up" = "1" ];then
 	echo "<tr  class=\"colortoggle2\"><th>WiFi Airtime 2GHz</th><td>"
 	getairtime $wifi_status_radio2g_airtime
 	echo "</td></tr>"
  fi
- if [ ! -z "$wifi_status_radio5g_airtime" ];then
+ if [ "$wifi_status_radio5g_up" = "1" ];then
 	echo "<tr class=\"colortoggle1\"><th>WiFi Airtime 5GHz</th><td>"
 	getairtime $wifi_status_radio5g_airtime
 	echo "</td></tr>"
