@@ -16,12 +16,13 @@ if [ $node -ge $tmpmin -a $node -le $tmpmax ]; then
 cat<<EOM
 <h1>Auto-Setup</h1>
 Diese Seite wird automatisch aufgerufen, wenn das erste Mal eine Freifunk Firmware auf den Router gespielt wurde.<br />
-Der Router wurde mit den am h&auml;ufigsten verwendeten Einstellungen konfiguriert. Die Einstellungen k&ouml;nnen sp&auml;ter ge&auml;ndert werden.<br />
-Bei Start des Auto-Setups wird nach einem Nutzernamen und Passwort gefragt. Wurden diese bisher nicht ge&auml;ndert, so lauten der
-Nutzername "root" und das Passwort "admin".<br />
+Der Router wurde mit den am h&auml;ufigsten verwendeten Einstellungen konfiguriert. Die Einstellungen k&ouml;nnen sp&auml;ter
+ge&auml;ndert werden.<br />
+<br />
 Das Passwort sollte nach dem Durchlaufen des Auto-Setups ge&auml;ndert werden.<br><br>
-Dem Router wurde eine tempor&auml;re Knoten-Nummer vergeben, wenn ihm nicht zuvor schon eine Knoten-Nummer von $FFDD zugewiesen wurde.
-Nach einem Update mit Werkseinstellungen oder nach dem erstmaligem Aufspielen der Freifunk-Firmware erh&auml;lt der Router unter Umst&auml;nden eine andere Knoten-Nummer und ist dann im Freifunk-Netz unter einer anderen IP-Adresse erreichbar.<br />
+Dem Router wurde eine tempor&auml;re Knoten-Nummer vergeben.
+Nach einem Update mit Werkseinstellungen oder nach dem erstmaligem Aufspielen der Freifunk-Firmware erh&auml;lt der Router
+eine neue Knoten-Nummer und ist dann im Freifunk-Netz unter einer anderen IP-Adresse erreichbar.<br />
 <a href="/admin/autosetup.cgi">Starte Auto-Setup</a>
 EOM
 
