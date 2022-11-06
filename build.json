@@ -217,7 +217,29 @@
                 # apply additional target patches
                 "target-patches":[""]
 
-	}
+	},
+	{
+		"name":"ramips.mt7621.generic.22",
+		"config":"config.ramips.mt7621.generic",
+		"openwrt_rev":"677e3c18fe4ce65afd0f0dc3bdacedf3854fb2e6", #22.03.0-rc4
 
+		"selector-config":"22.03",              # used to select config
+                "selector-feeds":"22.03",               # used to select feeds
+                "selector-patches":"22.03",             # used to select patches
+                "selector-files":"22.03",
+
+                "feeds" : [
+                        {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
+                        {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git",      "rev":"afea2bc"},   # 22.03
+                        {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",       "rev":"4b2b6b3"}    # 22.03
+		],
+
+                # install addional packages from feeds (see feeds.conf)
+                "packages":["libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"],
+
+                # apply additional target patches
+                "target-patches":[""]
+
+	}
  ]
 }

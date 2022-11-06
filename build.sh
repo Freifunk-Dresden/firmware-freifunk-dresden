@@ -1278,7 +1278,6 @@ EOM
 			echo -e $C_CYAN"no configuration, continue with next target if any$C_NONE"
 			progbar_char_array[$((progress_counter-1))]="${PBC_IGNORE}"
 			continue
-
 		fi
 	else
 		# copy specific config
