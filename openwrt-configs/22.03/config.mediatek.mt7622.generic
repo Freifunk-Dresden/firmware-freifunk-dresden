@@ -2479,7 +2479,6 @@ CONFIG_PACKAGE_usign=y
 #
 # Packages
 #
-# CONFIG_PACKAGE_OVPNCerts is not set
 CONFIG_PACKAGE_bmxd=y
 CONFIG_PACKAGE_fastd=y
 
@@ -2507,7 +2506,6 @@ CONFIG_FASTD_ENABLE_CIPHER_SALSA2012=y
 # CONFIG_FASTD_WITH_STATUS_SOCKET is not set
 # end of Configuration
 
-# CONFIG_PACKAGE_feinstaubsensor is not set
 CONFIG_PACKAGE_freifunk-upload=y
 CONFIG_PACKAGE_libuecc=y
 CONFIG_PACKAGE_nacl=y
@@ -3037,7 +3035,7 @@ CONFIG_PACKAGE_kmod-ipt-nat=y
 # CONFIG_PACKAGE_kmod-ipt-nat-extra is not set
 # CONFIG_PACKAGE_kmod-ipt-nflog is not set
 # CONFIG_PACKAGE_kmod-ipt-nfqueue is not set
-# CONFIG_PACKAGE_kmod-ipt-offload is not set
+CONFIG_PACKAGE_kmod-ipt-offload=y
 # CONFIG_PACKAGE_kmod-ipt-physdev is not set
 # CONFIG_PACKAGE_kmod-ipt-raw is not set
 # CONFIG_PACKAGE_kmod-ipt-rpfilter is not set
@@ -3057,7 +3055,7 @@ CONFIG_PACKAGE_kmod-nf-nat=y
 CONFIG_PACKAGE_kmod-nf-reject=y
 # CONFIG_PACKAGE_kmod-nf-socket is not set
 # CONFIG_PACKAGE_kmod-nf-tproxy is not set
-CONFIG_PACKAGE_kmod-nfnetlink=y
+# CONFIG_PACKAGE_kmod-nfnetlink is not set
 # CONFIG_PACKAGE_kmod-nfnetlink-log is not set
 # CONFIG_PACKAGE_kmod-nfnetlink-queue is not set
 # CONFIG_PACKAGE_kmod-nft-arp is not set
@@ -3574,7 +3572,7 @@ CONFIG_PACKAGE_libmbedtls=y
 # end of libimobiledevice
 
 # CONFIG_PACKAGE_argp-standalone is not set
-CONFIG_PACKAGE_jansson=y
+# CONFIG_PACKAGE_jansson is not set
 # CONFIG_PACKAGE_libasm is not set
 # CONFIG_PACKAGE_libaudit is not set
 # CONFIG_PACKAGE_libbfd is not set

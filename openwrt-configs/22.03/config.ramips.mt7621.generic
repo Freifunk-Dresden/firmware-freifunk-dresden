@@ -2771,7 +2771,6 @@ CONFIG_PACKAGE_usign=y
 #
 # Packages
 #
-# CONFIG_PACKAGE_OVPNCerts is not set
 CONFIG_PACKAGE_bmxd=y
 CONFIG_PACKAGE_fastd=y
 
@@ -2799,7 +2798,6 @@ CONFIG_FASTD_ENABLE_CIPHER_SALSA2012=y
 # CONFIG_FASTD_WITH_STATUS_SOCKET is not set
 # end of Configuration
 
-# CONFIG_PACKAGE_feinstaubsensor is not set
 CONFIG_PACKAGE_freifunk-upload=y
 CONFIG_PACKAGE_libuecc=y
 CONFIG_PACKAGE_nacl=y
@@ -3330,7 +3328,7 @@ CONFIG_PACKAGE_kmod-ipt-nat=y
 # CONFIG_PACKAGE_kmod-ipt-nat-extra is not set
 # CONFIG_PACKAGE_kmod-ipt-nflog is not set
 # CONFIG_PACKAGE_kmod-ipt-nfqueue is not set
-# CONFIG_PACKAGE_kmod-ipt-offload is not set
+CONFIG_PACKAGE_kmod-ipt-offload=y
 # CONFIG_PACKAGE_kmod-ipt-physdev is not set
 # CONFIG_PACKAGE_kmod-ipt-raw is not set
 # CONFIG_PACKAGE_kmod-ipt-rpfilter is not set
@@ -3341,7 +3339,7 @@ CONFIG_PACKAGE_kmod-ipt-nat=y
 # CONFIG_PACKAGE_kmod-ipt-ulog is not set
 CONFIG_PACKAGE_kmod-nf-conntrack=y
 # CONFIG_PACKAGE_kmod-nf-conntrack-netlink is not set
-# CONFIG_PACKAGE_kmod-nf-flow is not set
+CONFIG_PACKAGE_kmod-nf-flow=y
 CONFIG_PACKAGE_kmod-nf-ipt=y
 CONFIG_PACKAGE_kmod-nf-log=y
 CONFIG_PACKAGE_kmod-nf-nat=y
@@ -3710,7 +3708,7 @@ CONFIG_PACKAGE_kmod-ath=y
 CONFIG_ATH_USER_REGD=y
 # CONFIG_PACKAGE_ATH_DEBUG is not set
 CONFIG_PACKAGE_ATH_DFS=y
-# CONFIG_PACKAGE_ATH_DYNACK is not set
+CONFIG_PACKAGE_ATH_DYNACK=y
 # CONFIG_PACKAGE_kmod-ath10k is not set
 # CONFIG_PACKAGE_kmod-ath10k-ct is not set
 # CONFIG_PACKAGE_kmod-ath10k-ct-smallbuffers is not set
