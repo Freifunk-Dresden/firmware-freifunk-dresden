@@ -18,7 +18,8 @@ define Package/$(PKG_NAME)-base
   CATEGORY:=ddmesh
   DEFAULT:=y
   DEPENDS:=	+base-files +busybox +dnsmasq +firewall +logd +uci +dropbear \
-    +firewall +iptables +ip-tiny \
+    +firewall +iptables +kmod-nf-flow +kmod-ipt-offload \
+    +ip-tiny \
     +mtd +opkg \
     +uhttpd \
     +kmod-leds-gpio +kmod-gpio-button-hotplug \
@@ -44,43 +45,43 @@ endef
 # packages was selected
 define Package/$(PKG_NAME)-base/config
 
-  # menu is optional. It is directly inserted below current package menu entry (same window)
-  #menu "Modules"
-    # menu point is displayed when dependings are set
-    #depends on PACKAGE_ddmesh-base
+ # menu is optional. It is directly inserted below current package menu entry (same window)
+ #menu "Modules"
+   # menu point is displayed when dependencies are selected
+   #depends on PACKAGE_ddmesh-base
 
-    # use SYMBOL of package that should be selected
-    config PACKAGE_fastd
-      # menu point is displayed when dependings are set
-      depends on PACKAGE_ddmesh-base
-      tristate "fastd"
-      help
-        Create fastd tunnel to backbone servers.
+   # use SYMBOL of package that should be selected
+   config PACKAGE_fastd
+     # menu point is displayed when dependencies are selected
+     depends on PACKAGE_ddmesh-base
+     tristate "fastd"
+     help
+       Create fastd tunnel to backbone servers.
 
-    config PACKAGE_wireguard-tools
-      # menu point is displayed when dependings are set
-      depends on PACKAGE_ddmesh-base
-      tristate "wireguard"
-      help
-        Create wireguard tunnel to backbone servers.
+   config PACKAGE_wireguard-tools
+     # menu point is displayed when dependencies are selected
+     depends on PACKAGE_ddmesh-base
+     tristate "wireguard"
+     help
+       Create wireguard tunnel to backbone servers.
 
-    # use SYMBOL of package that should be selected
-    config PACKAGE_bmxd
-      # menu point is displayed when dependings are set
-      depends on PACKAGE_ddmesh-base
-      tristate "bmxd"
-      help
-        required by firmware
+   # use SYMBOL of package that should be selected
+   config PACKAGE_bmxd
+     # menu point is displayed when dependencies are selected
+     depends on PACKAGE_ddmesh-base
+     tristate "bmxd"
+     help
+       required by firmware
 
-    # use SYMBOL of package that should be selected
-    config PACKAGE_freifunk-upload
-      # menu point is displayed when dependings are set
-      depends on PACKAGE_ddmesh-base
-      tristate "freifunk-upload"
-      help
-        required by firmware
+   # use SYMBOL of package that should be selected
+   config PACKAGE_freifunk-upload
+     # menu point is displayed when dependencies are selected
+     depends on PACKAGE_ddmesh-base
+     tristate "freifunk-upload"
+     help
+       required by firmware
 
-  #endmenu
+ #endmenu
 
 endef
 ##########################################################
@@ -95,7 +96,8 @@ define Package/$(PKG_NAME)-wifi
   # the complete package "ddmesh-wifi" will also not be visible.
   # only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
   # This simply just selects wpa-cli without hiding current packet
-  DEPENDS:= +iw +iwinfo +wpad-mini +kmod-owl-loader +@PACKAGE_wpa-cli
+  DEPENDS:= $(PKG_NAME)-base \
+            +iw +iwinfo +wpad-mini +kmod-owl-loader +@PACKAGE_wpa-cli
 
   TITLE:=Selects all addtional wifi tools.
 
@@ -113,7 +115,8 @@ define Package/$(PKG_NAME)-usb-storage
   CATEGORY:=ddmesh
   # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
-  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+  DEPENDS:= $(PKG_NAME)-base \
+            +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
             +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
             +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
             +kmod-usb-ledtrig-usbport \
@@ -135,7 +138,8 @@ endef
 define Package/$(PKG_NAME)-tethering
   CATEGORY:=ddmesh
   DEFAULT:=n
-  DEPENDS:= +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+  DEPENDS:= $(PKG_NAME)-base \
+            +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
             +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
             +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
             +kmod-usb-ledtrig-usbport \
@@ -175,10 +179,9 @@ define Package/$(PKG_NAME)-extra-modules
   # go below package DEFAULT. Means:  N -> <N|M|Y>  OR M -> {M|Y}  OR Y -> {Y}
   #
   # The "default" value of the menu below is completely ignored
-  DEFAULT:=m
-  # I do not select all possible modules, so I can disable them
-  #DEPENDS:= +tcpdump +OVPNCerts +feinstaubsensor
-  #DEPENDS:= +tcpdump +OVPNCerts
+  # DEFAULT:=y
+
+  DEPENDS:= $(PKG_NAME)-base
 
   TITLE:=Meta package to select extra packages
   # when MENU:=1 than this package also has a submenu.
@@ -194,34 +197,34 @@ define Package/$(PKG_NAME)-extra-modules/config
 
   # menu is optional. It is directly inserted below current package menu entry (same window)
   # menu "Modules"
-    # menu point is displayed when dependings are set
+    # menu point is displayed when dependencies are selected
     # depends on PACKAGE_ddmesh-extra-modules
 
     # use SYMBOL of package that should be selected
     config PACKAGE_tcpdump
-      # menu point is displayed when dependings are set
+      # menu point is displayed when dependencies are selected
       depends on PACKAGE_ddmesh-extra-modules
       tristate "tcpdump"
 
-    config PACKAGE_OVPNCerts
-      # menu point is displayed when dependings are set
-      depends on PACKAGE_ddmesh-extra-modules
-      tristate "OVPNCerts"
-      help
-        Create openvpn tunnel used by router as public gateway.
+#    config PACKAGE_OVPNCerts
+#      # menu point is displayed when dependencies are selected
+#      depends on PACKAGE_ddmesh-extra-modules
+#      tristate "OVPNCerts"
+#      help
+#        Create openvpn tunnel used by router as public gateway.
 
+#    config PACKAGE_feinstaubsensor
+#      # menu point is displayed when dependencies are selected
+#      depends on PACKAGE_ddmesh-extra-modules
+#      tristate "Feinstaubensor (Stuttgard Project)"
+#      help
+#        This module simply includes a menu to display
+#        Feinstaubsensor graphics.
+#        Image link must be modified to display graphic for
+#        your own sensor.
+#        See http://luftdaten.info/
 
-    config PACKAGE_feinstaubsensor
-      # menu point is displayed when dependings are set
-      depends on PACKAGE_ddmesh-extra-modules
-      tristate "Feinstaubensor (Stuttgard Project)"
-      help
-        This module simply includes a menu to display
-        Feinstaubsensor graphics.
-        Image link must be modified to display graphic for
-        your own sensor.
-        See http://luftdaten.info/
-#	endmenu
+  # endmenu
 
 endef
 
