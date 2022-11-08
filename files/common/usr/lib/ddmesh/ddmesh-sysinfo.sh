@@ -91,7 +91,8 @@ function parseWifiDump()
 		cmd = "cat /proc/uptime"
 		cmd | getline line
 		split(line, arr, ".")
-		return arr[1]
+		# add '0' to convert string to integer, else comparision wont work correctly
+		return arr[1]+0
 	}
 	BEGIN {
 		while(getline line < statfile > 0)
@@ -125,11 +126,17 @@ function parseWifiDump()
 		for(i=1;i<=12;i++)
 		{ count[i]=0 }
 
+#printf("\"debugging\",\n")
+
 		for(m in mac)
 		{
 			expired="-"
 			seen="+"
 			d = cur - mac[m]
+
+			# init for debugging
+			for(i=1;i<=12;i++)
+			{ s[i]="0" }
 
 			# default mark all stat columns
 			s[1]=seen
@@ -144,6 +151,8 @@ function parseWifiDump()
 			if( up > (86400*14)) s[10]=seen
 			if( up > (86400*30)) s[11]=seen
 			if( up > (86400*90)) s[12]=seen
+
+			# printf("\"debug-A\":\"%s (up:%s,diff:%s) %s %s %s %s %s %s %s %s %s %s %s %s\",\n", m, up, d, s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10], s[11], s[12])
 
 			# s1 expired 1min
 			if( d > 60) s[1]=expired
@@ -167,13 +176,12 @@ function parseWifiDump()
 			if( d > (86400*30)) s[10]=expired
 			# s11 expired 3m
 			if( d > (86400*90)) s[11]=expired
-
-			# s12 counts unlimited time
+			# s12 counts unlimited time, dont set to expired
 
 			# write back statfile
 			printf("%s %d\n", m, mac[m]) > statfile
 
-			#printf("%s %s %s %s %s %s %s %s %s %s %s %s %s,\n", m, s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10], s[11], s[12])
+			# printf("\"debug-B\":\"%s (up:%s,diff:%s) %s %s %s %s %s %s %s %s %s %s %s %s\",\n", m, up, d, s[1], s[2], s[3], s[4], s[5], s[6], s[7], s[8], s[9], s[10], s[11], s[12])
 
 			# count each column
 			for(i=1;i<=12;i++)
