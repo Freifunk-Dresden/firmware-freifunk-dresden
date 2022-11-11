@@ -49,10 +49,12 @@ call_task()
 
 
 #--------- user functions ----
-# still needed in 7.0.2 (openwrt 1806, ar71xx TP-Link TL-WR1043N/ND )
+# still needed in 8.1.2 (openwrt 1806, ar71xx TP-Link TL-WR1043N/ND + issue 139 )
 task_wifi_scanfix()
 {
-	/usr/sbin/iw dev wifi2ap scan >/dev/null
+	eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
+	[ "$wifi_status_radio2g_up" == "1" ] && /usr/sbin/iw dev wifi2ap scan >/dev/null
+	[ "$wifi_status_radio5g_up" == "1" ] && /usr/sbin/iw dev wifi5ap scan >/dev/null
 }
 
 task_routing()
