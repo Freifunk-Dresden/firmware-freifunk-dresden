@@ -33,19 +33,19 @@ case "$1" in
 	;;
 	addmac)
 		test -z "$2" && echo "arg 2 (MAC) missing" && exit 1
-		test -z "$(iptables -t nat -L -n | grep SPLASH_AUTH_USERS)" && exit 1
+		test -z "$(iptables -w -t nat -L -n | grep SPLASH_AUTH_USERS)" && exit 1
  		mac=$(echo $2 | sed 'y#ABCDEF#abcdef#')
 		logger -t splash "addmac $mac"
-		iptables -t nat -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
-		iptables -t nat -I SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
-		iptables -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
-		iptables -I SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
+		iptables -w -t nat -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
+		iptables -w -t nat -I SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
+		iptables -w -D SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
+		iptables -w -I SPLASH_AUTH_USERS -m mac --mac-source $mac -j RETURN -m comment --comment 'accepted client' >/dev/null 2>&1
 		#add mac to auto disconnect db only if do-not-add-to-db flag was added.
 		test -z "$3" && echo "$(date +%s)" > $AD/$mac
 	;;
   	delmac)
 		test -z "$2" && echo "arg 2 (MAC) missing" && exit 1
-		test -z "$(iptables -t nat -L -n | grep SPLASH_AUTH_USERS)" && exit 1
+		test -z "$(iptables -w -t nat -L -n | grep SPLASH_AUTH_USERS)" && exit 1
  		mac=$(echo $2 | sed 'y#ABCDEF#abcdef#')
  		echo "process $mac"
 
@@ -63,14 +63,14 @@ case "$1" in
 
   	;;
 	listmac)
-		test -z "$(iptables -t nat -L -n | grep SPLASH_AUTH_USERS)" && exit 1
-		iptables -t nat -L SPLASH_AUTH_USERS | sed 's/ \+/ /g' | grep MAC | cut -d' ' -f7 | sed 'y#ABCDEF#abcdef#'
+		test -z "$(iptables -w -t nat -L -n | grep SPLASH_AUTH_USERS)" && exit 1
+		iptables -w -t nat -L SPLASH_AUTH_USERS | sed 's/ \+/ /g' | grep MAC | cut -d' ' -f7 | sed 'y#ABCDEF#abcdef#'
 	;;
 	checkmac)
 		test -z "$2" && echo "arg 2 (MAC) missing" && exit 1
-		test -z "$(iptables -t nat -L -n | grep SPLASH_AUTH_USERS)" && exit 1
+		test -z "$(iptables -w -t nat -L -n | grep SPLASH_AUTH_USERS)" && exit 1
 		m=$(echo $2 | sed 'y#ABCDEF#abcdef#')
-		iptables -t nat -L SPLASH_AUTH_USERS | sed 's/ \+/ /g' | grep MAC | cut -d' ' -f7 | sed 'y#ABCDEF#abcdef#' | grep $m >/dev/null
+		iptables -w -t nat -L SPLASH_AUTH_USERS | sed 's/ \+/ /g' | grep MAC | cut -d' ' -f7 | sed 'y#ABCDEF#abcdef#' | grep $m >/dev/null
 	;;
   	firewall-update)
 		rm -f $STORED/*

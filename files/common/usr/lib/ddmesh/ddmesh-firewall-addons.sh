@@ -14,11 +14,12 @@ TAG="ddmesh-firewall-addons"
 
 fwprint()
 {
-# logger -s -t "addon" "iptables $*"
- iptables -w $*
+ logger -s -t "addon" "iptables $*"
+ iptables $*
 }
 
-export IPT=fwprint
+# export IPT=fwprint
+export IPT=iptables
 
 
 setup_splash() {
@@ -30,33 +31,33 @@ setup_splash() {
 	WIFIPRE=$PREFIX
 
 	# table: nat
-	$IPT -t nat -N SPLASH
-	$IPT -t nat -N SPLASH_AUTH_USERS
-	$IPT -t nat -N SPLASH_PUBLIC_SERVICES
-	$IPT -t nat -A SPLASH -j SPLASH_AUTH_USERS
-	$IPT -t nat -A SPLASH_AUTH_USERS -j SPLASH_PUBLIC_SERVICES
+	$IPT -w -t nat -N SPLASH
+	$IPT -w -t nat -N SPLASH_AUTH_USERS
+	$IPT -w -t nat -N SPLASH_PUBLIC_SERVICES
+	$IPT -w -t nat -A SPLASH -j SPLASH_AUTH_USERS
+	$IPT -w -t nat -A SPLASH_AUTH_USERS -j SPLASH_PUBLIC_SERVICES
 
-	$IPT -t nat -A SPLASH_AUTH_USERS -p tcp --dport 80 -j DNAT --to $WIFIADR:81
+	$IPT -w -t nat -A SPLASH_AUTH_USERS -p tcp --dport 80 -j DNAT --to $WIFIADR:81
 	#force any manuell configured dns to this local dns
-	$IPT -t nat -A SPLASH_AUTH_USERS -p udp --dport 53 -j DNAT --to $WIFIADR:53
+	$IPT -w -t nat -A SPLASH_AUTH_USERS -p udp --dport 53 -j DNAT --to $WIFIADR:53
 
-	$IPT -t nat -A prerouting_wifi2_rule -s $WIFIADR/$WIFIPRE -j SPLASH
+	$IPT -w -t nat -A prerouting_wifi2_rule -s $WIFIADR/$WIFIPRE -j SPLASH
 
 	# table: filter
-	$IPT -N SPLASH
-	$IPT -N SPLASH_AUTH_USERS
-	$IPT -N SPLASH_PUBLIC_SERVICES
+	$IPT -w -N SPLASH
+	$IPT -w -N SPLASH_AUTH_USERS
+	$IPT -w -N SPLASH_PUBLIC_SERVICES
 
-	$IPT -A SPLASH -j SPLASH_AUTH_USERS
-	$IPT -A SPLASH_AUTH_USERS -j SPLASH_PUBLIC_SERVICES
-	$IPT -A SPLASH_PUBLIC_SERVICES -p icmp -j RETURN
-	$IPT -A SPLASH_PUBLIC_SERVICES -p udp -j REJECT --reject-with icmp-port-unreachable
-	$IPT -A SPLASH_PUBLIC_SERVICES -p tcp -j REJECT --reject-with tcp-reset
-	$IPT -A SPLASH_PUBLIC_SERVICES -j DROP
+	$IPT -w -A SPLASH -j SPLASH_AUTH_USERS
+	$IPT -w -A SPLASH_AUTH_USERS -j SPLASH_PUBLIC_SERVICES
+	$IPT -w -A SPLASH_PUBLIC_SERVICES -p icmp -j RETURN
+	$IPT -w -A SPLASH_PUBLIC_SERVICES -p udp -j REJECT --reject-with icmp-port-unreachable
+	$IPT -w -A SPLASH_PUBLIC_SERVICES -p tcp -j REJECT --reject-with tcp-reset
+	$IPT -w -A SPLASH_PUBLIC_SERVICES -j DROP
 
-	#$IPT -A forwarding_wifi2_rule -s $WIFIADR/$WIFIPRE -j SPLASH
+	#$IPT -w -A forwarding_wifi2_rule -s $WIFIADR/$WIFIPRE -j SPLASH
 	#before iptable rule ctstate ESTABLISHED
-	$IPT -A forwarding_rule -i $wifi2_ifname -s $WIFIADR/$WIFIPRE -j SPLASH
+	$IPT -w -A forwarding_rule -i $wifi2_ifname -s $WIFIADR/$WIFIPRE -j SPLASH
 }
 
 setup_custom_rules() {
@@ -67,67 +68,67 @@ setup_custom_rules() {
         # where firewall is not ready but a package gets out because rules not yet fully setup.
         # backbone/vpn can setup connections through freifunk network.
 	logger -s -t $TAG "delete OUTPUT rule '--ctstate RELATED,ESTABLISHED'"
-	iptables -D OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT -m comment --comment '!fw3'
+	$IPT -w -D OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT -m comment --comment '!fw3'
 
 	#input rules for backbone packets ( to restrict tunnel pakets only via allowed interfaces )
 	#tbb traffic is controlled by zone rules tbb+
-	$IPT -N input_backbone_accept
-	$IPT -N input_backbone_reject
-	$IPT -A input_wan_rule -j input_backbone_accept
-	$IPT -A input_lan_rule -j input_backbone_accept
-	$IPT -A input_mesh_rule -j input_backbone_reject
-	$IPT -A input_bat_rule -j input_backbone_reject
-	$IPT -A input_wifi2_rule -j input_backbone_reject
+	$IPT -w -N input_backbone_accept
+	$IPT -w -N input_backbone_reject
+	$IPT -w -A input_wan_rule -j input_backbone_accept
+	$IPT -w -A input_lan_rule -j input_backbone_accept
+	$IPT -w -A input_mesh_rule -j input_backbone_reject
+	$IPT -w -A input_bat_rule -j input_backbone_reject
+	$IPT -w -A input_wifi2_rule -j input_backbone_reject
 
-	$IPT -N output_backbone_accept
-	$IPT -N output_backbone_reject
-	$IPT -A output_wan_rule -j output_backbone_accept
-	$IPT -A output_lan_rule -j output_backbone_accept
-	$IPT -A output_mesh_rule -j output_backbone_reject
-	$IPT -A output_bat_rule -j output_backbone_reject
-	$IPT -A output_wifi2_rule -j output_backbone_reject
+	$IPT -w -N output_backbone_accept
+	$IPT -w -N output_backbone_reject
+	$IPT -w -A output_wan_rule -j output_backbone_accept
+	$IPT -w -A output_lan_rule -j output_backbone_accept
+	$IPT -w -A output_mesh_rule -j output_backbone_reject
+	$IPT -w -A output_bat_rule -j output_backbone_reject
+	$IPT -w -A output_wifi2_rule -j output_backbone_reject
 
 	#input rules for privnet packets( to restrict tunnel pakets only via allowed interfaces )
 	#private data traffic is controlled by zone rules lan (br-lan)
-	$IPT -N input_privnet_accept
-	$IPT -N input_privnet_reject
-	$IPT -A input_wan_rule -j input_privnet_reject
-	$IPT -A input_lan_rule -j input_privnet_reject
-	$IPT -A input_mesh_rule -j input_privnet_accept
-	$IPT -A input_bat_rule -j input_privnet_reject
-	$IPT -A input_wifi2_rule -j input_privnet_reject
+	$IPT -w -N input_privnet_accept
+	$IPT -w -N input_privnet_reject
+	$IPT -w -A input_wan_rule -j input_privnet_reject
+	$IPT -w -A input_lan_rule -j input_privnet_reject
+	$IPT -w -A input_mesh_rule -j input_privnet_accept
+	$IPT -w -A input_bat_rule -j input_privnet_reject
+	$IPT -w -A input_wifi2_rule -j input_privnet_reject
 
 	#add tables that are later filled with IPs that should be blocked.
 	# loop through zones
 	for i in mesh wifi2 bat lan wan vpn
 	do
-	        $IPT -N input_"$i"_deny
-	        $IPT -I input_"$i"_rule -j input_"$i"_deny
+	        $IPT -w -N input_"$i"_deny
+	        $IPT -w -I input_"$i"_rule -j input_"$i"_deny
 	done
 
 	# allow dhcp because "subnet" definition. client has no ip yet.
-	# $IPT -A input_rule -i $wifi2_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-wifi2-request'
-	# $IPT -A output_rule -o $wifi2_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-wifi2-response'
-	# $IPT -A input_rule -i $lan_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-lan-request'
-	# $IPT -A output_rule -o $lan_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-lan-response'
+	# $IPT -w -A input_rule -i $wifi2_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-wifi2-request'
+	# $IPT -w -A output_rule -o $wifi2_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-wifi2-response'
+	# $IPT -w -A input_rule -i $lan_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-lan-request'
+	# $IPT -w -A output_rule -o $lan_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-lan-response'
 
 	#snat mesh from 10.201.xxx to 10.200.xxxx
-	$IPT -t nat -A postrouting_mesh_rule -p udp --dport 4305:4307 -j ACCEPT
-	$IPT -t nat -A postrouting_mesh_rule -p tcp --dport 4305:4307 -j ACCEPT
+	$IPT -w -t nat -A postrouting_mesh_rule -p udp --dport 4305:4307 -j ACCEPT
+	$IPT -w -t nat -A postrouting_mesh_rule -p tcp --dport 4305:4307 -j ACCEPT
 	# don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
-	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -p icmp -j ACCEPT
-	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_linknet -j SNAT --to-source $_ddmesh_ip
-	$IPT -t nat -A postrouting_mesh_rule -s $_ddmesh_wifi2net -j SNAT --to-source $_ddmesh_ip
+	$IPT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -p icmp -j ACCEPT
+	$IPT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_linknet -j SNAT --to-source $_ddmesh_ip
+	$IPT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_wifi2net -j SNAT --to-source $_ddmesh_ip
 }
 
 setup_openvpn_rules() {
 	logger -s -t $TAG "setup_openvpn_rules"
 	CONF=/etc/openvpn/openvpn.conf
-	$IPT -N output_openvpn_reject
-	$IPT -A output_mesh_rule -j output_openvpn_reject
-	$IPT -A output_bat_rule -j output_openvpn_reject
-	$IPT -A output_wifi2_rule -j output_openvpn_reject
-	$IPT -A output_vpn_rule -j output_openvpn_reject
+	$IPT -w -N output_openvpn_reject
+	$IPT -w -A output_mesh_rule -j output_openvpn_reject
+	$IPT -w -A output_bat_rule -j output_openvpn_reject
+	$IPT -w -A output_wifi2_rule -j output_openvpn_reject
+	$IPT -w -A output_vpn_rule -j output_openvpn_reject
 
 	IFS='
 '
@@ -136,7 +137,7 @@ setup_openvpn_rules() {
 		do
 			proto=${opt%,*}
 			port=${opt#*,}
-			$IPT -A output_openvpn_reject -p $proto --dport $port -j reject
+			$IPT -w -A output_openvpn_reject -p $proto --dport $port -j reject
 		done
 	fi
 	unset IFS
@@ -164,23 +165,23 @@ callback_add_ignored_nodes() {
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 	if [ "$opt_lan" = "1" ]; then
-		$IPT -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
-		$IPT -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 	if [ "$opt_tbb" = "1" ]; then
-		$IPT -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 	if [ "$opt_wifi_adhoc" = "1" ]; then
-		$IPT -A input_ignore_nodes_wifia -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_wifia -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 	if [ "$opt_wifi_mesh2g" = "1" ]; then
-		$IPT -A input_ignore_nodes_wifi2m -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_wifi2m -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 	if [ "$opt_wifi_mesh5g" = "1" ]; then
-		$IPT -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 	if [ "$opt_vlan" = "1" ]; then
-		$IPT -A input_ignore_nodes_vlan -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_vlan -s $_ddmesh_nonprimary_ip -j DROP
 	fi
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
@@ -189,23 +190,23 @@ callback_add_ignored_nodes() {
 setup_ignored_nodes() {
 	logger -s -t $TAG "setup_ignored_nodes"
 
-	$IPT -N input_ignore_nodes_wifia
-	$IPT -N input_ignore_nodes_wifi2m
-	$IPT -N input_ignore_nodes_wifi5m
-	$IPT -N input_ignore_nodes_lan
-	$IPT -N input_ignore_nodes_wan
-	$IPT -N input_ignore_nodes_vlan
-	$IPT -N input_ignore_nodes_tbb # fastd+wg
+	$IPT -w -N input_ignore_nodes_wifia
+	$IPT -w -N input_ignore_nodes_wifi2m
+	$IPT -w -N input_ignore_nodes_wifi5m
+	$IPT -w -N input_ignore_nodes_lan
+	$IPT -w -N input_ignore_nodes_wan
+	$IPT -w -N input_ignore_nodes_vlan
+	$IPT -w -N input_ignore_nodes_tbb # fastd+wg
 
 	#add tables to deny some nodes to prefer backbone connections
-	[ -n "$wifi_adhoc_ifname" ] && $IPT -I input_mesh_rule -i $wifi_adhoc_ifname -j input_ignore_nodes_wifia
-	[ -n "$wifi_mesh2g_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh2g_ifname -j input_ignore_nodes_wifi2m
-	[ -n "$wifi_mesh5g_ifname" ] && $IPT -I input_mesh_rule -i $wifi_mesh5g_ifname -j input_ignore_nodes_wifi5m
-	[ -n "$mesh_lan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
-	[ -n "$mesh_wan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
-	[ -n "$mesh_vlan_ifname" ] && $IPT -I input_mesh_rule -i $mesh_vlan_ifname -j input_ignore_nodes_vlan
-	[ -n "$tbb_fastd_ifname" ] && $IPT -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
-	[ -n "$tbb_wg_ifname" ] && $IPT -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
+	[ -n "$wifi_adhoc_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_adhoc_ifname -j input_ignore_nodes_wifia
+	[ -n "$wifi_mesh2g_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_mesh2g_ifname -j input_ignore_nodes_wifi2m
+	[ -n "$wifi_mesh5g_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_mesh5g_ifname -j input_ignore_nodes_wifi5m
+	[ -n "$mesh_lan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
+	[ -n "$mesh_wan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
+	[ -n "$mesh_vlan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_vlan_ifname -j input_ignore_nodes_vlan
+	[ -n "$tbb_fastd_ifname" ] && $IPT -w -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
+	[ -n "$tbb_wg_ifname" ] && $IPT -w -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
 
 
 	config_load ddmesh
@@ -213,13 +214,13 @@ setup_ignored_nodes() {
 }
 
 update_ignored_nodes() {
-	$IPT -F input_ignore_nodes_wifia
-	$IPT -F input_ignore_nodes_wifi2m
-	$IPT -F input_ignore_nodes_wifi5m
-	$IPT -F input_ignore_nodes_lan
-	$IPT -F input_ignore_nodes_wan
-	$IPT -F input_ignore_nodes_vlan
-	$IPT -F input_ignore_nodes_tbb
+	$IPT -w -F input_ignore_nodes_wifia
+	$IPT -w -F input_ignore_nodes_wifi2m
+	$IPT -w -F input_ignore_nodes_wifi5m
+	$IPT -w -F input_ignore_nodes_lan
+	$IPT -w -F input_ignore_nodes_wan
+	$IPT -w -F input_ignore_nodes_vlan
+	$IPT -w -F input_ignore_nodes_tbb
 
 	config_load ddmesh
 	config_list_foreach ignore_nodes node callback_add_ignored_nodes
@@ -238,25 +239,25 @@ _update()
 {
 	# ips are not valid if iface went down -> clear tables
 	# use reject instead of DROP, else it is possible to scan for ip timeout
-	$IPT -F input_wan_deny
-	$IPT -F input_lan_deny
-	$IPT -F input_mesh_deny
-	$IPT -F input_wifi2_deny
-	$IPT -F input_bat_deny
-	$IPT -F input_vpn_deny
+	$IPT -w -F input_wan_deny
+	$IPT -w -F input_lan_deny
+	$IPT -w -F input_mesh_deny
+	$IPT -w -F input_wifi2_deny
+	$IPT -w -F input_bat_deny
+	$IPT -w -F input_vpn_deny
 
 	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
 		for n in wan mesh wifi2 bat vpn
 		do
-			$IPT -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
-			$IPT -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
+			$IPT -w -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
+			$IPT -w -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
 		done
 
 		# remove/add SNAT rule when iface becomes available
 		for cmd in D A
 		do
-			$IPT -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null
-			$IPT -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'lan-to-mesh' 2>/dev/null
+			$IPT -w -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null
+			$IPT -w -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'lan-to-mesh' 2>/dev/null
 		done
 
 		#add rules if gateway is on lan
@@ -264,9 +265,9 @@ _update()
 			# remove/add SNAT rule when iface becomes available
 			for cmd in D A
 			do
-				$IPT -$cmd forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
-				$IPT -$cmd forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
-				$IPT -t nat -$cmd postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway' 2>/dev/null
+				$IPT -w -$cmd forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
+				$IPT -w -$cmd forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
+				$IPT -w -t nat -$cmd postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway' 2>/dev/null
 			done
 		fi
 
@@ -275,8 +276,8 @@ _update()
 	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
 		for n in lan mesh wifi2 bat vpn
 		do
- 			$IPT -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
-			$IPT -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject
+ 			$IPT -w -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
+			$IPT -w -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject
 		done
 	fi
 
@@ -284,7 +285,7 @@ _update()
 		# remove/add SNAT rule when iface becomes available
 		for cmd in D A
 		do
-			$IPT -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2' 2>/dev/null
+			$IPT -w -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2' 2>/dev/null
 		done
 	fi
 

@@ -124,15 +124,15 @@ if [ "$1" = "start" ]; then
 
 	createconf
 
-	iptables -F input_privnet_accept
-	iptables -F input_privnet_reject
+	iptables -w -F input_privnet_accept
+	iptables -w -F input_privnet_reject
 
  	if [ "$privnet_server_enabled" = "1" ]; then
  		config_load ddmesh
  		config_foreach callback_accept_config privnet_accept
 
-  		iptables -A input_privnet_accept -p $PROTO --dport $privnet_server_port -j ACCEPT
-  		iptables -A input_privnet_reject -p $PROTO --dport $privnet_server_port -j reject
+  		iptables -w -A input_privnet_accept -p $PROTO --dport $privnet_server_port -j ACCEPT
+  		iptables -w -A input_privnet_reject -p $PROTO --dport $privnet_server_port -j reject
 
 		$VTUND -s -f $CONF -P $privnet_server_port -I "vtund-privnet[s]: "
 		echo "vtund - server started."

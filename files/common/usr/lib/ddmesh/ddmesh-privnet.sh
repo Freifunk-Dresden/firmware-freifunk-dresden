@@ -113,10 +113,10 @@ callback_outgoing_config ()
 
 setup_firewall()
 {
-	iptables -F input_privnet_accept
-	iptables -F input_privnet_reject
-	iptables -A input_privnet_accept -p udp --dport $privnet_server_port -j ACCEPT
-  	iptables -A input_privnet_reject -p udp --dport $privnet_server_port -j reject
+	iptables -w -F input_privnet_accept
+	iptables -w -F input_privnet_reject
+	iptables -w -A input_privnet_accept -p udp --dport $privnet_server_port -j ACCEPT
+	iptables -w -A input_privnet_reject -p udp --dport $privnet_server_port -j reject
 }
 
 case "$1" in
