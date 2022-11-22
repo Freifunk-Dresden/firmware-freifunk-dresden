@@ -705,15 +705,11 @@ case "$1" in
 					exit 0
 					;;
 
-
 		failed)
 						ARG_CompiledFailedOnly=1
 						targetRegex=".*"
 						;;
-		all)
-						ARG_TARET_ALL=1
-						targetRegex=".*"
-						;;
+
 		*)
 					# targets, menuconfig, rerun and make parameters are passed as argument with its parameters
 					# check for "menuconfig"
@@ -742,6 +738,11 @@ case "$1" in
 											BUILD_PARAMS=$*
 											endLoop=1
 											;;
+							all)
+											ARG_TARET_ALL=1
+											targetRegex=".*"
+											;;
+
 							*)
 								# process and append target "${arg}" to targetRegex
 								echo "target:${arg}"
@@ -1003,11 +1004,6 @@ fi
 #
 unset progbar_char_array
 
-# if "all" target is selected, then remove all compile status files
-if [ "${ARG_TARET_ALL}" = "1" ]; then
- rm -rf $WORK_DIR/*/bin/*
-fi
-
 # ---------------- build loop, run through all targets listed in build.json -----------------
 targetIdx=0
 while true
@@ -1111,7 +1107,7 @@ do
 	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
 
 	# remove compile status
-	[ "${MAKE_CLEAN}" = "1" ] && rm ${compile_status_file}
+	[ "${MAKE_CLEAN}" = "1" ] && rm -f ${compile_status_file}
 
 	# get compile status, default is error (==1)
 	compile_status=1
