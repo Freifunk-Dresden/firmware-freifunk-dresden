@@ -856,6 +856,24 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c60-v1-initramfs-kernel.bin",
       "comment": ""
     },
