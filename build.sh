@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="18"
+SCRIPT_VERSION="19"
 
 
 # gitlab variables
@@ -461,7 +461,7 @@ usage()
 	# create a simple menu
 	cat <<EOM
 Version: $SCRIPT_VERSION
-usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < make params ... > ]
+usage: $(basename $0) [options] <command> | <target> [flags] [-- < make params ... > ]
  options:
    -h    docker host, if not specified environment variable 'FF_DOCKER_HOST' or 'DOCKER_HOST' is used.
          FF_DOCKER_HOST is used in favour to DOCKER_HOST. -h still has highest preference
@@ -477,23 +477,22 @@ usage: $(basename $0) [options] <command> | <target> [menuconfig | rerun] [ < ma
    watch                   - same as 'list' but updates display
    devices <target>        - displays all selected routers for a target
    search <string>         - search specific router (target)
-   clean                   - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    feed-revisions          - returns the git HEAD revision hash for current date (now).
                              The revisions then could be set in build.json
-   target                  - target to build (can have regex)
+   target                  - target to build
            that are defined by build.json. use 'list' for supported targets.
            'all'                   - builds all targets
            'failed'                - builds only previously failed or not built targets
-           'ramips.*'              - builds all ramips targets only
+           'ramips* '              - builds all ramips targets only
            'ramips.rt305x.generic' - builds exact this target
-           '^rt30.*'               - builds all that start with 'rt30'
-           'ramips.mt7621.generic ar71xx.tiny.lowmem' - space or pipe separates targets
-           'ramips.mt7621.generic | ar71xx.tiny.lowmem'
+           '*generic'              - builds all that end with generic
 
+  flags
+   clean                   - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    menuconfig       - displays configuration menu
    rerun            - enables a second compilation with make option 'V=s'
                       If first make failes a second make is tried with this option
-   make params      - all paramerters that follows are passed to make command
+   -- make params   - all paramerters that follows are passed to make command
 
 
 Devel-Notes:
@@ -640,138 +639,149 @@ else
 	echo -e "${C_CYAN}build locally.${C_NONE}"
 fi
 
+#---- process parameters -----------
+targetRegex=""
+case "$1" in
+		list)
+						listTargets;
+						exit 0
+						;;
 
-#check if next argument is "menuconfig"
-if [ "$1" = "list" ]; then
-	listTargets
-	exit 0
-fi
-if [ "$1" = "watch" ]; then
-	while sleep 1
-	do
-		view=$(listTargets)
-		clear
-		date
-		echo -e "$view"
-	done
-	exit 0
-fi
+		watch)
+						while sleep 1
+						do
+							view=$(listTargets)
+							clear
+							date
+							echo -e "$view"
+						done
+						exit 0
+						;;
 
-if [ "$1" = "list-targets" -o "$1" = "lt" ]; then
-	listTargetsNames
-	exit 0
-fi
+		lt|list-targets)
+						listTargetsNames
+						exit 0
+						;;
 
-if [ "$1" = "search" ]; then
-	if [ -z "$2" ]; then
-		echo "Error: missing parameter"
-		exit 1
-	fi
-	search_target $2
-	exit 0
-fi
+		search)
+					if [ -z "$2" ]; then
+						echo "Error: missing parameter"
+						exit 1
+					fi
+					search_target $2
+					exit 0
+					;;
 
-# displays all selected devices for a target (e.g. ath79.generic)
-if [ "$1" = "devices" ]; then
-	if [ -z "$2" ]; then
-		echo "Error: missing target"
-		exit 1
-	fi
-	print_devices_for_target $2
-#verify_firmware_present $2 $3 && echo ok || echo fehler
-	exit 0
-fi
+		devices)
+					if [ -z "$2" ]; then
+						echo "Error: missing target"
+						exit 1
+					fi
+					print_devices_for_target $2
+				#verify_firmware_present $2 $3 && echo ok || echo fehler
+					exit 0
+					;;
 
+		feed-revisions)
+					REPOS=""
+					REPOS="${REPOS} https://git.openwrt.org/feed/packages.git"
+					# REPOS="${REPOS} https://git.openwrt.org/project/luci.git"
+					REPOS="${REPOS} https://git.openwrt.org/feed/routing.git"
+					REPOS="${REPOS} https://git.openwrt.org/feed/telephony.git"
 
-if [ "$1" = "feed-revisions" ]; then
-
-	REPOS="https://git.openwrt.org/feed/packages.git"
-	# REPOS="$REPOS https://git.openwrt.org/project/luci.git"
-	REPOS="$REPOS https://git.openwrt.org/feed/routing.git"
-	REPOS="$REPOS https://git.openwrt.org/feed/telephony.git"
-
-	_date=$(date +"%b %d %Y")
-	p=$(pwd)
-	for r in $REPOS
-	do
-		name=${r##*/}
-		d=/tmp/ffbuild_$name
-		rm -rf $d
-		git clone $r $d 2>/dev/null
-		cd $d
-		echo "[$name] "
-		git log -1 --oneline --until="$_date"
-		cd $p
-	done
-	exit 0
-fi
-
-#it only cleans /bin and /build_dir of openwrt directory. toolchains and staging_dir ar kept
-if [ "$1" = "clean" ]; then
-	MAKE_CLEAN=1
-	targetRegex=".*"	# loop through all targets. Note that targets can have different
-			# buildroots (openwrt versions)
-
-	# do not shift
-else
-	# target is passed as argument with its parameters
-
-	# get target (addtional arguments are passt to command line make)
-	# last value will become DEFAULT
-	targetRegex="$1"
-#echo "1:targetRegex=[$targetRegex]"
-	shift
-
-	if [ "$targetRegex" = "failed" ]; then
-		ARG_CompiledFailedOnly=1
-		targetRegex=".*"
-	fi
+					_date=$(date +"%b %d %Y")
+					p=$(pwd)
+					for r in ${REPOS}
+					do
+						name=${r##*/}
+						d=/tmp/ffbuild_$name
+						rm -rf $d
+						git clone $r $d 2>/dev/null
+						cd $d
+						echo "[$name] "
+						git log -1 --oneline --until="$_date"
+						cd $p
+					done
+					exit 0
+					;;
 
 
-	if [ "$targetRegex" = "all" ]; then
-		ARG_TARET_ALL=1
-		targetRegex=".*"
-	fi
+		failed)
+						ARG_CompiledFailedOnly=1
+						targetRegex=".*"
+						;;
+		all)
+						ARG_TARET_ALL=1
+						targetRegex=".*"
+						;;
+		*)
+					# targets, menuconfig, rerun and make parameters are passed as argument with its parameters
+					# check for "menuconfig"
+					# check for "rerun"
+					# check for make parameters "--"
+					while [ -n "$1" ]
+					do
+					  endLoop=0;
+						arg="$1"
+						shift			# prepare for next loop
+						case "${arg}" in
+							clean)
+											MAKE_CLEAN=1
+											endLoop=1
+										;;
 
+							menuconfig)
+											MENUCONFIG=1
+											endLoop=1
+											;;
+							rerun)
+											REBUILD_ON_FAILURE=1
+											endLoop=1
+											;;
+							--)
+											BUILD_PARAMS=$*
+											endLoop=1
+											;;
+							*)
+								# process and append target "${arg}" to targetRegex
+								echo "target:${arg}"
+								# replace wildcard with regex wildcard
+								targetRegex="${targetRegex} ${arg//\*/.*}"
+								;;
+						esac
 
-	# remove invalid characters: '/','$'
-	chars='[/$]'
-	targetRegex=${targetRegex//$chars/}
+						[ $endLoop = 1 ] && break
+					done
+					;;
+esac
 
-	# remove leading and trailing spaces
-	targetRegex=$(echo "${targetRegex}" | sed 's#[ 	]\+$##;s#^[ 	]\+##')
-
-	# replace any "space" with '$|^'. space can be used as separator lile '|'
-	# This ensures that full target names are only considered instead of processing
-	# targets that just start with the given name
-	# If wildecards are needed, user has to add them
-	targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#$|^#g')
-
-	# append '$' to targetRegex, to ensure that 'ar71xx.generic.xyz' is not built
-	# when 'ar71xx.generic' was specified. Use 'ar71xx.generic.*' if both
-	# targets should be created
-
-	targetRegex="^$targetRegex\$"
-	echo "targetRegex:[$targetRegex]"
-
-	#check if next argument is "menuconfig"
-	if [ "$1" = "menuconfig" ]; then
-		MENUCONFIG=1
-		shift;
-	fi
-
-	#check if next argument is "rerun"
-	if [ "$1" = "rerun" ]; then
-		REBUILD_ON_FAILURE=1
-		shift;
-	fi
-
-	BUILD_PARAMS=$*
+# check of we have a targetRegex
+if [ -z "$targetRegex" ]; then
+	echo "Error: no target specified"
+	exit 1
 fi
 
+#--- process targets ---
+# remove invalid characters: '/','$'
+chars='[/$]'
+targetRegex=${targetRegex//$chars/}
 
-echo "### target-regex:[$targetRegex] MENUCONFIG=$MENUCONFIG CLEAN=$MAKE_CLEAN REBUILD_ON_FAILURE=$REBUILD_ON_FAILURE"
+# remove leading and trailing spaces
+targetRegex=$(echo "${targetRegex}" | sed 's#[ 	]\+$##;s#^[ 	]\+##')
 
+# replace any "space" with '$|^'. space can be used as separator lile '|'
+# This ensures that full target names are only considered instead of processing
+# targets that just start with the given name
+# If wildecards are needed, user has to add them
+targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#$|^#g')
+
+# append '$' to targetRegex, to ensure that 'ar71xx.generic.xyz' is not built
+# when 'ar71xx.generic' was specified. Use 'ar71xx.generic.*' if both
+# targets should be created
+
+targetRegex="^$targetRegex\$"
+
+echo "### target-regex:[$targetRegex] MENUCONFIG=${MENUCONFIG} CLEAN=${MAKE_CLEAN} REBUILD_ON_FAILURE=${REBUILD_ON_FAILURE} BUILD_PARAMS=[${BUILD_PARAMS}]"
 cleanJson=$(getTargetsJson)
 
 # prinzip:
@@ -937,7 +947,7 @@ setup_buildroot ()
 
 } # setup_buildroot
 
-# ---------- create directories: dl/workdir -----------
+# ---------- create directories: dl, workdir -----------
 # only create top-level directories if thoses do not not
 # exisist. I do not simply call 'mkdir -p'. This is because
 # gitlab runner may store the content somewhere else to
@@ -994,7 +1004,7 @@ fi
 unset progbar_char_array
 
 # if "all" target is selected, then remove all compile status files
-if [ "${ARG_TARET_ALL}" = "1" -o "${MAKE_CLEAN}" = "1" ]; then
+if [ "${ARG_TARET_ALL}" = "1" ]; then
  rm -rf $WORK_DIR/*/bin/*
 fi
 
@@ -1099,6 +1109,9 @@ do
 
 	compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/compile-status"
 	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
+
+	# remove compile status
+	[ "${MAKE_CLEAN}" = "1" ] && rm ${compile_status_file}
 
 	# get compile status, default is error (==1)
 	compile_status=1
