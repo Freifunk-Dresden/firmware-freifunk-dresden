@@ -216,6 +216,19 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
         debugFree(gw_node, 1103);
 //        dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
 
+			//SE: teste ob alle nodes weg sind und rufe nutzer script auf
+			// um dns zuruek zu setzen.
+			// Test: 	router mesht NICHT via wifi, lan,wan,vlan.
+			// 				router ist mit wan internet verbnden und hat fritzbox dns
+			//				router baut dann backone auf und setzt via bmxd dns auf gw
+			//				wenn jetzt backbone neu gestartet wird, fallen alle knoten
+			//				weg (auch gw)
+			if(OLIsListEmpty(&gw_list))
+			{
+				dbg(DBGL_SYS, DBGT_INFO, "no more gateways -> reset dns");
+				call_script("del");
+			}
+
         return; // ogm has been processed, do not process it as 'new'
       }
 
