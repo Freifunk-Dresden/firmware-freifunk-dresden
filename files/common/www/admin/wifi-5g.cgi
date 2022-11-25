@@ -56,10 +56,10 @@ function checkInput()
 		var key = document.getElementById('id_wifi3_key').value;
 		var ssid = document.getElementById('id_wifi3_ssid').value;
 		if(   ssid === undefined
-		   || ( security &&
+			 || ( security &&
 			( key === undefined || key.length < 8
-			  || !checkWifiKey(document.getElementById('id_wifi3_key').value)))
-		  )
+				|| !checkWifiKey(document.getElementById('id_wifi3_key').value)))
+			)
 		{
 			alert("Ungültige WiFi-Konfiguration!\nWiFi-Key/-SSID zu kurz oder enthält ungültige Zeichen.");
 			return false;
@@ -139,8 +139,33 @@ $(iwinfo $wifi_status_radio5g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 <fieldset class="bubble">
 <legend>Kanal-Info</legend>
 <table>
-<tr><th width="80" >Frequenz</th><th width="30">Kanal</th><th width="150">Maximale Sendeleistung</th><th width="30">Bandbreite</th><th>Modes</th></tr>
-$(iw $wifi_status_radio5g_phy channels | sed '/Radar/d;/DFS/d' | awk 'BEGIN{ RS="*"} (NR>1){ch=substr($3,2,length($3)-2);printf("<tr><td>%s %s</td><td>%s</td><td>%s %s</td><td>%s</td><td>%s %s %s %s %s %s %s %s %s</td></tr>\n",$1,$2,ch,$7,$8,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20);}')
+<tr><th width="100" >Frequenz</th><th width="50">Sendeleistung</th><th>Modes</th><th>Radar</th><th>DFS Status</th><th>DFS CAC</th></tr>
+EOM
+
+iw $wifi_status_radio5g_phy channels | awk '
+				BEGIN{ RS="*";FS="\n" }
+				(NR==1){next}
+				{
+								power=""
+								radar=""
+								width=""
+								dfs_state=""
+								dfs_cac=""
+								for( f=1; f<NF;f++)
+								{
+												split($(f),a,":")
+												if(f==1) ch=$(f)
+												if($(f) ~ /TX power/) power=a[2]
+												if($(f) ~ /Radar/) radar="Radar"
+												if($(f) ~ /Channel widths/) width=a[2]
+												if($(f) ~ /DFS state/) dfs_state=a[2]
+												if($(f) ~ /DFS CAC/) dfs_cac=a[2]
+								}
+								printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",ch,power,width,radar,dfs_state, dfs_cac);
+				}
+'
+
+cat << EOM
 </table>
 </fieldset>
 
