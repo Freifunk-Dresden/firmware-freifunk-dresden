@@ -52,8 +52,8 @@ BEGIN{
         }
 
 	# ignore hotspots: Freifunk+LTE router with hidden ssid
-	if(match(essid,/Freifunk/)) { continue; }
-	if(essid == "unknown") { continue; }
+	if(match(essid,/Freifunk/)) { next; }
+	if(essid == "unknown") { next; }
 
 	found=0
 	for(m in ignore_macs)
