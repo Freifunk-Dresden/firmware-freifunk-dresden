@@ -281,10 +281,10 @@ EOM
 
 content()
 {
-	backbone_local_fastd_port=$(uci get ddmesh.backbone.fastd_port)
+	backbone_local_fastd_port=$(uci -q get ddmesh.backbone.fastd_port)
 	backbone_local_fastd_port=${backbone_local_fastd_port:-$DEFAULT_FASTD_PORT}
 
-	backbone_local_wg_port=$(uci get ddmesh.backbone.wg_port)
+	backbone_local_wg_port=$(uci -q get ddmesh.backbone.wg_port)
 	backbone_local_wg_port=${backbone_local_wg_port:-$DEFAULT_WG_PORT}
 
 	cat<<EOM

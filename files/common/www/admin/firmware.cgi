@@ -84,7 +84,7 @@ cat<<EOM
 	<input id="firmware_testing_url" name="form_fileinfo_url" value="$firmware_testing_url" type="hidden">
 	<input id="firmware_testing_version" name="form_fileinfo_version" value="$firmware_testing_version" type="hidden">
 	<input id="firmware_testing_md5sum" name="form_fileinfo_md5sum" type="hidden">
-	<input title="$(uci get credentials.url.firmware_download_testing)" disabled id="ajax_swupdate_testing" name="form_firmware_submit" type="submit" value="Download: 'testing'-Version (unbekannt)">
+	<input title="$(uci -q get credentials.url.firmware_download_testing)" disabled id="ajax_swupdate_testing" name="form_firmware_submit" type="submit" value="Download: 'testing'-Version (unbekannt)">
 	</form>
 	</td><td id="firmware_testing_url_info"></td>
 	</tr>

@@ -21,7 +21,7 @@ fi
 
 # workaround to pass key with " and ' to input field
 # javascript setWifi3_key reads content and assigns it to value of input field
-wifi3_key="$(uci get credentials.wifi_2g.private_key)"
+wifi3_key="$(uci -q get credentials.wifi_2g.private_key)"
 echo "<div style=\"visibility: hidden;\" id=\"wifi3_key\">$wifi3_key</div>"
 
 cat<<EOM
@@ -101,7 +101,7 @@ Der Bereich von <b>$_ddmesh_wifi2FixIpStart</b> bis <b>$_ddmesh_wifi2FixIpEnd</b
 <tr><th>TX-Power:</th>
 <td><select name="form_wifi_txpower" size="1">
 $(iwinfo $wifi_status_radio2g_phy txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;txt=$0}else{sel="";v=$1;txt=$0}; print "<option "sel" value=\""v"\">"txt"</option>"}')
-</select> (konfiguriert: $(uci get ddmesh.network.wifi_txpower) dBm) <b>Aktuell:</b> $(iwinfo $wifi_status_radio2g_phy info | awk '/Tx-Power:/{print $2,$3}')</td>
+</select> (konfiguriert: $(uci -q get ddmesh.network.wifi_txpower) dBm) <b>Aktuell:</b> $(iwinfo $wifi_status_radio2g_phy info | awk '/Tx-Power:/{print $2,$3}')</td>
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
 
@@ -109,11 +109,11 @@ EOM
 if [ "$(uci -q get ddmesh.network.mesh_mode)" != "mesh" ]; then
 cat<<EOM
 <tr><th>Ad-hoc-SSID:</th>
-<td><input name="form_wifi_adhoc_ssid" size="32" type="text" value="$(uci get wireless.wifi_adhoc.ssid)" disabled></td>
+<td><input name="form_wifi_adhoc_ssid" size="32" type="text" value="$(uci -q get wireless.wifi_adhoc.ssid)" disabled></td>
 </tr>
 
 <tr><th>BSSID:</th>
-<td><input name="form_wifi_bssid" size="32" type="text" value="$(uci get credentials.wifi_2g.bssid)" disabled></td>
+<td><input name="form_wifi_bssid" size="32" type="text" value="$(uci -q get credentials.wifi_2g.bssid)" disabled></td>
 </tr>
 EOM
 fi
@@ -121,9 +121,9 @@ cat<<EOM
 
 <tr><th></th><td></td></tr>
 <tr><th>Access-Point-SSID:</th>
-<TD class="nowrap"><INPUT NAME="form_wifi_ap_ssid_prefix" SIZE="16" TYPE="TEXT" VALUE="Freifunk $(uci get ddmesh.system.community)" disabled>
-<INPUT onchange="enable_custom_essid();" NAME="form_wifi_custom_essid" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci get ddmesh.network.custom_essid)" = "1" ];then echo ' checked="checked"';fi)>
-<INPUT NAME="form_wifi_ap_ssid" SIZE="23" maxlength="15" TYPE="TEXT" VALUE="$(uci get ddmesh.network.essid_ap)"> aktuell: $(uci get wireless.wifi2_2g.ssid)</TD>
+<TD class="nowrap"><INPUT NAME="form_wifi_ap_ssid_prefix" SIZE="16" TYPE="TEXT" VALUE="Freifunk $(uci -q get ddmesh.system.community)" disabled>
+<INPUT onchange="enable_custom_essid();" NAME="form_wifi_custom_essid" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.custom_essid)" = "1" ];then echo ' checked="checked"';fi)>
+<INPUT NAME="form_wifi_ap_ssid" SIZE="23" maxlength="15" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.essid_ap)"> aktuell: $(uci -q get wireless.wifi2_2g.ssid)</TD>
 </tr>
 <tr><th>Reduziere WLAN-Datenrate:</th><td><INPUT NAME="form_wifi_slow_rates" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" = "1" ];then echo ' checked="checked"';fi)> (Nicht empfohlen. Wenn aktiviert, kann Reichweite auf Kosten der &Uuml;bertragungsrate erh&ouml;ht werden. Dies gilt auch f&uuml;r Verbindungen zu anderen Knoten.)</td></tr>
 
@@ -132,7 +132,7 @@ cat<<EOM
 <tr><th>Aktiviere privates WiFi:</th>
 <td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_2g_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es, ein zusätzliches privates WiFi zu aktivieren.</td></tr>
 <tr><th>SSID:</th>
-<td><input id="id_wifi3_ssid" name="form_wifi3_ssid" size="32" type="text" value="$(uci get credentials.wifi_2g.private_ssid)"></td>
+<td><input id="id_wifi3_ssid" name="form_wifi3_ssid" size="32" type="text" value="$(uci -q get credentials.wifi_2g.private_ssid)"></td>
 </tr>
 <tr><th>Verschl&uuml;sselung:</th>
 <td><INPUT onchange="enable_wifi_security();" id="id_wifi3_security" NAME="form_wifi3_security" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_2g_security)" = "1" ];then echo ' checked="checked"';fi)>WPA2-PSK</td></tr>
@@ -205,7 +205,7 @@ else #query string
 			uci set ddmesh.network.custom_essid="$form_wifi_custom_essid"
 			uci set ddmesh.network.wifi_slow_rates="$form_wifi_slow_rates"
 			uci set ddmesh.network.wifi2_roaming_enabled="$form_wifi2_roaming"
-			[ "$form_wifi2_roaming" = "1" ] && uci get ddmesh.system.disable_splash='1'
+			[ "$form_wifi2_roaming" = "1" ] && uci -q get ddmesh.system.disable_splash='1'
 
 			uci set ddmesh.network.wifi3_2g_enabled="$form_wifi3_enabled"
 			# avoid clearing values when disabled

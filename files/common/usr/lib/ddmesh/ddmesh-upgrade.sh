@@ -558,11 +558,11 @@ upgrade_7_1_1()
   uci set ddmesh.network.mesh_on_vlan='0'
   uci set ddmesh.network.mesh_vlan_id='9'
 
-  uci set ddmesh.network.lan_ipaddr="$(uci get network.lan.ipaddr)"
-  uci set ddmesh.network.lan_netmask="$(uci get network.lan.netmask)"
-  uci set ddmesh.network.lan_gateway="$(uci get network.lan.gateway)"
-  uci set ddmesh.network.lan_dns="$(uci get network.lan.dns)"
-  uci set ddmesh.network.lan_proto="$(uci get network.lan.proto)"
+  uci set ddmesh.network.lan_ipaddr="$(uci -q get network.lan.ipaddr)"
+  uci set ddmesh.network.lan_netmask="$(uci -q get network.lan.netmask)"
+  uci set ddmesh.network.lan_gateway="$(uci -q get network.lan.gateway)"
+  uci set ddmesh.network.lan_dns="$(uci -q get network.lan.dns)"
+  uci set ddmesh.network.lan_proto="$(uci -q get network.lan.proto)"
   uci -q delete ddmesh.network.wwan_4g
   uci -q delete ddmesh.network.wwan_3g
   uci -q delete ddmesh.network.wwan_2g

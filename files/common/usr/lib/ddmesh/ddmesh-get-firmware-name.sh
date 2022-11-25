@@ -5,9 +5,9 @@
 ARG=$1
 
 if [ "$ARG" = "testing" ]; then
-	URL_DL="$(uci get credentials.url.firmware_download_testing)"
+	URL_DL="$(uci -q get credentials.url.firmware_download_testing)"
 else
-	URL_DL="$(uci get credentials.url.firmware_download_release)"
+	URL_DL="$(uci -q get credentials.url.firmware_download_release)"
 fi
 
 DL_INFO_FILE="download.json"

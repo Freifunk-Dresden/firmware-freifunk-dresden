@@ -22,19 +22,19 @@ LAN- und WAN-IP-Adressen/-Bereiche sollten sich nicht &uuml;berschneiden!</th></
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
 <th>LAN-IP-Adresse:</th>
-<td><input name="form_lan_ip" size="32" type="text" value="$(uci get ddmesh.network.lan_ipaddr)"></td>
+<td><input name="form_lan_ip" size="32" type="text" value="$(uci -q get ddmesh.network.lan_ipaddr)"></td>
 </tr>
 <tr>
 <th>LAN-Netzmaske:</th>
-<td><input name="form_lan_netmask" size="32" type="text" value="$(uci get ddmesh.network.lan_netmask)"></td>
+<td><input name="form_lan_netmask" size="32" type="text" value="$(uci -q get ddmesh.network.lan_netmask)"></td>
 </tr>
 <tr>
 <th>LAN-Gateway:</th>
-<td><input name="form_lan_gateway" size="32" type="text" value="$(uci get ddmesh.network.lan_gateway)"></td>
+<td><input name="form_lan_gateway" size="32" type="text" value="$(uci -q get ddmesh.network.lan_gateway)"></td>
 </tr>
 <tr>
 <th>LAN-DNS-IP-Adresse:</th>
-<td><input name="form_lan_dns" size="32" type="text" value="$(uci get ddmesh.network.lan_dns)"></td>
+<td><input name="form_lan_dns" size="32" type="text" value="$(uci -q get ddmesh.network.lan_dns)"></td>
 </tr>
 
 
@@ -47,12 +47,12 @@ LAN- und WAN-IP-Adressen/-Bereiche sollten sich nicht &uuml;berschneiden!</th></
 
 <TR TITLE="Anzahl der vom DHCP-Server verwalteten IP-Adressen. Die Summe aus Startwert und Anzahl sollte kleiner als 255 sein.">
 <TH>DHCP-Benutzeranzahl:</TH>
-<TD><INPUT NAME="form_dhcp_limit" SIZE="6" TYPE="TEXT" VALUE="$(uci get ddmesh.network.dhcp_lan_limit)">(DHCP-Server abschalten mit &quot;0&quot;)</TD>
+<TD><INPUT NAME="form_dhcp_limit" SIZE="6" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.dhcp_lan_limit)">(DHCP-Server abschalten mit &quot;0&quot;)</TD>
 </TR>
 
 <TR TITLE="Zeit (in Stunden), nach der eine zuvor belegte IP-Adresse neu vergeben werden kann. F&uuml;r die Vorgabe von 12 Stunden (43200) das Eingabefeld leer oder auf 0 lassen.">
 <TH>DHCP-Lease-Dauer:</TH>
-<TD><INPUT NAME="form_dhcp_lease" SIZE="6" TYPE="TEXT" VALUE="$(uci get ddmesh.network.dhcp_lan_lease)">(h-Stunden, s-Sekunden)</TD>
+<TD><INPUT NAME="form_dhcp_lease" SIZE="6" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.dhcp_lan_lease)">(h-Stunden, s-Sekunden)</TD>
 </TR>
 
 <TR><TD COLSPAN="2">&nbsp;</TD></TR>

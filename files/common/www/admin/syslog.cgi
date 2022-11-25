@@ -33,10 +33,10 @@ template(name="myfile" type="string" string="/var/log/freifunk-router/%syslogtag
 
 	<tr>
 	<th width="120">Syslog-Server-IP-Adresse</th>
-	<td class="nowrap"><input name="form_syslog_ip" size="15" type="text" value="$(uci get system.@system[0].log_ip)"></td></tr>
+	<td class="nowrap"><input name="form_syslog_ip" size="15" type="text" value="$(uci -q get system.@system[0].log_ip)"></td></tr>
 	<tr>
 	<th >Syslog-Server-Port (UDP)</th>
-	<td class="nowrap"><input name="form_syslog_port" size="5"  type="text" value="$(uci get system.@system[0].log_port)"></td></tr>
+	<td class="nowrap"><input name="form_syslog_port" size="5"  type="text" value="$(uci -q get system.@system[0].log_port)"></td></tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
 	<tr>
 	<td colspan="2" class="nowrap"><input name="form_syslog_submit" title="Einstellungen &uuml;bernehmen." type="SUBMIT" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_syslog_abort" title="Abbrechen und &Auml;nderungen verwerfen." type="submit" value="Abbrechen"></td> </tr>

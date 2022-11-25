@@ -21,7 +21,7 @@ fi
 
 # workaround to pass key with " and ' to input field
 # javascript setWifi3_key reads content and assigns it to value of input field
-wifi3_key="$(uci get credentials.wifi_5g.private_key)"
+wifi3_key="$(uci -q get credentials.wifi_5g.private_key)"
 echo "<div style=\"visibility: hidden;\" id=\"wifi3_key\">$wifi3_key</div>"
 range=$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)
 wifi_5g_channels_min="${range%-*}"
@@ -102,13 +102,13 @@ Indoor: fester Kanal; AccessPoint und Mesh 802.11s
 <tr><th>TX-Power:</th>
 <td><select name="form_wifi_txpower" size="1">
 $(iwinfo $wifi_status_radio5g_phy txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;txt=$0}else{sel="";v=$1;txt=$0}; print "<option "sel" value=\""v"\">"txt"</option>"}')
-</select> (konfiguriert: $(uci get ddmesh.network.wifi_txpower_5g) dBm) <b>Aktuell:</b> $(iwinfo $wifi_status_radio5g_phy info | awk '/Tx-Power:/{print $2,$3}')</td>
+</select> (konfiguriert: $(uci -q get ddmesh.network.wifi_txpower_5g) dBm) <b>Aktuell:</b> $(iwinfo $wifi_status_radio5g_phy info | awk '/Tx-Power:/{print $2,$3}')</td>
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
 
 <tr><th></th><td></td></tr>
 <tr><th>Access-Point-SSID:</th>
-<TD class="nowrap">$(uci get wireless.wifi2_5g.ssid)</TD>
+<TD class="nowrap">$(uci -q get wireless.wifi2_5g.ssid)</TD>
 </tr>
 
 <tr><td colspan="2"><hr size=1></td></tr>
@@ -116,7 +116,7 @@ $(iwinfo $wifi_status_radio5g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 <tr><th>Aktiviere privates WiFi:</th>
 <td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_5g_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es, ein zusätzliches privates WiFi zu aktivieren.</td></tr>
 <tr><th>SSID:</th>
-<td><input id="id_wifi3_ssid" name="form_wifi3_ssid" size="32" type="text" value="$(uci get credentials.wifi_5g.private_ssid)"></td>
+<td><input id="id_wifi3_ssid" name="form_wifi3_ssid" size="32" type="text" value="$(uci -q get credentials.wifi_5g.private_ssid)"></td>
 </tr>
 <tr><th>Verschl&uuml;sselung:</th>
 <td><INPUT onchange="enable_wifi_security();" id="id_wifi3_security" NAME="form_wifi3_security" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_5g_security)" = "1" ];then echo ' checked="checked"';fi)>WPA2-PSK</td></tr>
