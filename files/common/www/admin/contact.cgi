@@ -12,10 +12,10 @@ EOF
 
 display()
 {
-tmp_name=$(uhttpd -d "$(uci get ddmesh.contact.name)")
-tmp_email=$(uhttpd -d "$(uci get ddmesh.contact.email)")
-tmp_location=$(uhttpd -d "$(uci get ddmesh.contact.location)")
-tmp_note=$(uhttpd -d "$(uci get ddmesh.contact.note)")
+tmp_name=$(uhttpd -d "$(uci -q get ddmesh.contact.name)")
+tmp_email=$(uhttpd -d "$(uci -q get ddmesh.contact.email)")
+tmp_location=$(uhttpd -d "$(uci -q get ddmesh.contact.location)")
+tmp_note=$(uhttpd -d "$(uci -q get ddmesh.contact.note)")
 lat=$(uci -q get ddmesh.gps.latitude)
 lon=$(uci -q get ddmesh.gps.longitude)
 alt=$(uci -q get ddmesh.gps.altitude)
