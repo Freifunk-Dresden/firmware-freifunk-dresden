@@ -22,7 +22,7 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 #---- wifi2g
 # "link2" nanostation
-for i in wifi wlan wlan2g link2 ${wifi_status_radio2g_phy} usb
+for i in wifi wlan wifi2g wlan2g link2 ${wifi_status_radio2g_phy} usb
 do
 	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
@@ -30,7 +30,7 @@ done
 _led_wifi2g="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
 
 #---- wifi5g
-for i in wlan5g ${wifi_status_radio5g_phy}
+for i in wifi5g wlan5g ${wifi_status_radio5g_phy}
 do
 	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
