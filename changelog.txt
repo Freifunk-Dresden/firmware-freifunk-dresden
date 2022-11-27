@@ -1,7 +1,16 @@
+
+2022-12-01 [8.1.3] (release)
+--------------------------------------------------
+
 2022-10-02 [8.1.2] (devel)
 --------------------------------------------------
 bmxd                      - rework gateway selection to minimize wifi disconnections
+                          - reset DNS when no GW is selected
 gui                       - give more information about wifi channels
+                          - fix 5Ghz wifi scan
+sysinfo                   - set valid values for wifi channel when not present
+                          - set airtime to zero when wifi is not present
+router                    - add TP-Link Archer C6 v3, TP-Link Archer C6U v1
 
 2022-10-02 [8.1.0] (release)
 --------------------------------------------------
