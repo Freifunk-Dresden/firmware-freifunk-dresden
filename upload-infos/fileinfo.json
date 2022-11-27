@@ -647,9 +647,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "glinet,gl-ar300m16",
+      "model2": "GL.iNet GL-AR300M16",
       "filename": "openwrt-ath79-generic-glinet_gl-ar300m16-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -660,9 +660,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "glinet,gl-ar750",
+      "model2": "GL.iNet GL-AR750",
       "filename": "openwrt-ath79-generic-glinet_gl-ar750-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -831,8 +831,8 @@
     {
       "name": "",
       "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "model": "tplink,archer-c59-v2",
+      "model2": "TP-Link Archer C59 v2",
       "filename": "openwrt-ath79-generic-tplink_archer-c59-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -866,7 +866,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "tplink,archer-c6u-v1",
       "model2": "TP-Link Archer C6U v1",
       "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-squashfs-sysupgrade.bin",
@@ -1492,9 +1492,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "ubnt,unifiac-pro",
+      "model2": "Ubiquiti UniFi AC Pro",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-pro-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1896,9 +1896,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "tplink,re200-v1",
+      "model2": "TP-Link RE200 v1",
       "filename": "openwrt-ramips-mt7620-tplink_re200-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1922,9 +1922,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "glinet,gl-mt1300",
+      "model2": "GL.iNet GL-MT1300",
       "filename": "openwrt-ramips-mt7621-glinet_gl-mt1300-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1989,9 +1989,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "tplink,archer-c6-v3",
+      "model2": "TP-Link Archer C6 v3",
       "filename": "openwrt-ramips-mt7621-tplink_archer-c6-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -2085,9 +2085,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "glinet,gl-mt300n-v2",
+      "model2": "GL-MT300N-V2",
       "filename": "openwrt-ramips-mt76x8-glinet_gl-mt300n-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -2116,9 +2116,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "tplink,archer-c20-v4",
+      "model2": "TP-Link Archer C20 v4",
       "filename": "openwrt-ramips-mt76x8-tplink_archer-c20-v4-squashfs-sysupgrade.bin",
       "comment": ""
     },
