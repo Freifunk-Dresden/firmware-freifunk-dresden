@@ -669,6 +669,7 @@ upgrade_8_0_7()
 upgrade_8_0_8()
 {
 	rm -f /etc/config/ddns
+	uci set ddmesh.system.firmware_autoupdate=1
 }
 
 upgrade_8_1_0()
@@ -687,6 +688,11 @@ upgrade_8_1_2()
 }
 
 upgrade_8_1_3()
+{
+	true
+}
+
+upgrade_8_1_4()
 {
 	true
 }
