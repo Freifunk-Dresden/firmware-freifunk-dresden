@@ -83,7 +83,7 @@ define Package/fastd
   CATEGORY:=ddmesh
   #  no dependencies to +libuecc +nacl (they are linked, not installed)
   DEPENDS:=+kmod-tun +kmod-l2tp-eth +libpthread +libmnl +FASTD_WITH_STATUS_SOCKET:libjson-c +FASTD_WITH_CAPABILITIES:libcap \
-           +@FASTD_ENABLE_METHOD_NULL +@FASTD_ENABLE_CIPHER_NULL +@FASTD_ENABLE_CIPHER_SALSA2012
+           +@FASTD_ENABLE_METHOD_NULL +@FASTD_ENABLE_CIPHER_NULL +@FASTD_ENABLE_CIPHER_SALSA2012 +@FASTD_ENABLE_METHOD_GENERIC_UMAC
   TITLE:=Fast and Secure Tunneling Daemon
   URL:=https://github.com/NeoRaider/fastd/
   SUBMENU:=Packages
