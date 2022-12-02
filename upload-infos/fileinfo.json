@@ -856,24 +856,6 @@
     },
     {
       "name": "",
-      "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-initramfs-kernel.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-squashfs-factory.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "autoupdate": "1",
-      "model": "tplink,archer-c6u-v1",
-      "model2": "TP-Link Archer C6U v1",
-      "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-squashfs-sysupgrade.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c60-v1-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1993,6 +1975,24 @@
       "model": "tplink,archer-c6-v3",
       "model2": "TP-Link Archer C6 v3",
       "filename": "openwrt-ramips-mt7621-tplink_archer-c6-v3-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "tplink,archer-c6u-v1",
+      "model2": "TP-Link Archer C6U v1",
+      "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
