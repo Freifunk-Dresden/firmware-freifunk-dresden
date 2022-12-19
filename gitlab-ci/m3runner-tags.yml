@@ -19,6 +19,7 @@ m3tags:init:
       variables:
         FF_BUILD_TAG: "Release-Branch-Head"
         FF_UPLOAD_DIR: "/dev/null"
+        TTT: "test"
 
   # ensure that this stage failes when no env variables are set
   allow_failure: false
@@ -29,6 +30,7 @@ m3tags:init:
 
     - echo "CI_COMMIT_TAG = [$CI_COMMIT_TAG]"
     - echo "CI_COMMIT_REF_NAME = [$CI_COMMIT_REF_NAME]"
+    - echo "TTT = [$TTT]"
 
     # create link to local storage to avoid downloading every time and to have
     # a place to "backup" packages. Also keep prevous cross-compilers and avoid
