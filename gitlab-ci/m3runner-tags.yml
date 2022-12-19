@@ -33,8 +33,8 @@ m3tags:init:
   artifacts:
     paths:
       - gitlab.environment
-  script:
 
+  script:
     - echo "CI_COMMIT_TAG = [$CI_COMMIT_TAG]"
     - echo "CI_COMMIT_REF_NAME = [$CI_COMMIT_REF_NAME]"
 
@@ -49,12 +49,12 @@ m3tags:init:
     # ensure that we have no old data. This is important when
     # generating download.json. Else all old openwrt images would be
     # included and mixed
-    - echo "global: FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
-    - echo "global: FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
-    - echo "global: FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - echo "global: FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
-    - echo "local: local_FF_BUILD_TAG = [${local_FF_BUILD_TAG}]"
-    - echo "local: local_FF_UPLOAD_DIR = [${local_FF_UPLOAD_DIR}]"
+    - echo "global FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "global FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "global FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - echo "global FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
+    - echo "local local_FF_BUILD_TAG = [${local_FF_BUILD_TAG}]"
+    - echo "local local_FF_UPLOAD_DIR = [${local_FF_UPLOAD_DIR}]"
 
 
     # check variables
