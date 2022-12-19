@@ -15,7 +15,7 @@ m3tags:init:
       when: manual
     - if: $CI_COMMIT_TAG =~ /^TESTING/
       when: manual
-    - if: $CI_COMMIT_REF_NAME =~ /^xR_/
+    - if: $CI_COMMIT_REF_NAME =~ /^R_/
       variables:
         FF_BUILD_TAG: "Release-Branch-Head"
         FF_UPLOAD_DIR: "/dev/null"
