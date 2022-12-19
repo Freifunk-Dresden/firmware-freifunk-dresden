@@ -70,7 +70,7 @@ static void check_selects(void)
 	if (changed_readfds == 0)
 		return;
 
-	dbgf_all(DBGT_INFO, "%d select fds changed... ", changed_readfds);
+	dbgf_all(0, DBGT_INFO, "%d select fds changed... ", changed_readfds);
 
 	changed_readfds = 0;
 
@@ -209,7 +209,7 @@ static void send_aggregated_ogms(void)
 		OLForEach(bif, struct batman_if, if_list)
 		{
 
-			dbgf_all(DBGT_INFO, "dev: %s, linklayer %d iftype %d len %d min_len %d...",
+			dbgf_all(0, DBGT_INFO, "dev: %s, linklayer %d iftype %d len %d min_len %d...",
 							 bif->dev, bif->if_linklayer, iftype, bif->aggregation_len,
 							 (int32_t)sizeof(struct bat_header));
 
@@ -233,7 +233,7 @@ static void send_aggregated_ogms(void)
 				if (send_udp_packet(bif->aggregation_out, bif->aggregation_len,
 														&bif->if_netwbrc_addr, bif->if_unicast_sock) < 0)
 				{
-					dbg_mute(60, DBGL_SYS, DBGT_ERR,
+					dbg_mute(0, 60, DBGL_SYS, DBGT_ERR,
 									 "send_aggregated_ogms() cant send via dev %s %s fd %d",
 									 bif->dev, bif->if_ip_str, bif->if_unicast_sock);
 				}
@@ -359,7 +359,7 @@ static void aggregate_outstanding_ogms(void *unused)
 		if (aggregated_size > (int32_t)sizeof(struct bat_header) &&
 				aggregated_size + send_node->ogm_buff_len > pref_udpd_size)
 		{
-			dbgf_all(DBGT_INFO, "max aggregated size %d", aggregated_size);
+			dbgf_all(0, DBGT_INFO, "max aggregated size %d", aggregated_size);
 			send_aggregated_ogms();
 			aggregated_size = sizeof(struct bat_header);
 		}
@@ -373,7 +373,7 @@ static void aggregate_outstanding_ogms(void *unused)
 		{
 			if (aggregated_size <= (int32_t)sizeof(struct bat_header))
 			{
-				dbg_mute(30, DBGL_SYS, DBGT_ERR,
+				dbg_mute(0, 30, DBGL_SYS, DBGT_ERR,
 								 "Drop OGM, single packet (own=%d) to large to fit legal packet size"
 								 "scheduled %llu, agg_size %d, next_len %d, pref_udpd_size %d  !!",
 								 send_node->own_if, (unsigned long long)send_node->send_time,
@@ -429,7 +429,7 @@ static void aggregate_outstanding_ogms(void *unused)
  singlehomed bedeutet nur, dass der node nur ein interface hat.
  ist das nicht gesetzt, so werden OGMs an alle interfaces angehängt und dann später versendet.
 
- im original wird nur eine "grosse" OGM erzeugt (mit gateway,...) und �beralle alle interfaces mit
+ im original wird nur eine "grosse" OGM erzeugt (mit gateway,...) und �beralle alle interfaces mit
  TTL 50 verschickt. "kleine" OGM enthalten nur die ip des interfaces und als einzige erweiterung
  die ip und seqno der grossen OGM. diese werden mit ttl=1 verschickt, so dass diese ip von den
  non-prim interfaces nicht im netz gestreut werden.
@@ -515,7 +515,7 @@ static void aggregate_outstanding_ogms(void *unused)
 
 			send_node->send_bucket += 100;
 
-			dbgf_all(DBGT_INFO,
+			dbgf_all(0, DBGT_INFO,
 							 "OG %-16s, seqno %5d, TTL %2d, DirectF %d, UniF %d, CloneF %d "
 							 "iter %d len %3d max agg_size %3d IFs %s",
 							 ipStr(send_node->ogm->orig),
@@ -548,7 +548,7 @@ static void aggregate_outstanding_ogms(void *unused)
 	{
 		send_aggregated_ogms();
 
-		dbgf_all(DBGT_INFO, "max aggregated size %d", aggregated_size);
+		dbgf_all(0, DBGT_INFO, "max aggregated size %d", aggregated_size);
 	}
 
 	OLForEach(bif, struct batman_if, if_list)
@@ -600,12 +600,12 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 		{
 			if (oCtx & IS_ASOCIAL)
 			{
-				dbgf_all(DBGT_INFO, "re-brc (accepted) neighb OGM with direct link and unidirect flag");
+				dbgf_all(0, DBGT_INFO, "re-brc (accepted) neighb OGM with direct link and unidirect flag");
 				with_unidirectional_flag = 1;
 			}
 			else
 			{ // mark direct link on incoming interface
-				dbgf_all(DBGT_INFO, "rebroadcast neighbour (accepted) packet with direct link flag");
+				dbgf_all(0, DBGT_INFO, "rebroadcast neighbour (accepted) packet with direct link flag");
 			}
 
 			/* if an unidirectional direct neighbour sends us a packet or
@@ -614,19 +614,19 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 		}
 		else if (!(oCtx & HAS_CLONED_FLAG))
 		{
-			dbgf_all(DBGT_INFO, "re-brc (answer back) neighb OGM with direct link and unidirect flag");
+			dbgf_all(0, DBGT_INFO, "re-brc (answer back) neighb OGM with direct link and unidirect flag");
 			with_unidirectional_flag = 1;
 		}
 		else
 		{
-			dbgf_all(DBGT_INFO, "drop OGM: no reason to re-brc!");
+			dbgf_all(0, DBGT_INFO, "drop OGM: no reason to re-brc!");
 			prof_stop(PROF_schedule_rcvd_ogm);
 			return;
 		}
 	}
 	else if (oCtx & IS_ASOCIAL)
 	{
-		dbgf_all(DBGT_INFO, "drop OGM, asocial devices re-brc almost nothing :-(");
+		dbgf_all(0, DBGT_INFO, "drop OGM, asocial devices re-brc almost nothing :-(");
 		prof_stop(PROF_schedule_rcvd_ogm);
 		return;
 
@@ -634,18 +634,18 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	}
 	else if ((oCtx & IS_ACCEPTED) && (oCtx & IS_BEST_NEIGH_AND_NOT_BROADCASTED))
 	{
-		dbgf_all(DBGT_INFO, "re-brc accepted OGM");
+		dbgf_all(0, DBGT_INFO, "re-brc accepted OGM");
 	}
 	else
 	{
-		dbgf_all(DBGT_INFO, "drop multihop OGM, not accepted or not via best link !");
+		dbgf_all(0, DBGT_INFO, "drop multihop OGM, not accepted or not via best link !");
 		prof_stop(PROF_schedule_rcvd_ogm);
 		return;
 	}
 
 	if (!(((mb->ogm)->ogm_ttl == 1 && directlink) || (mb->ogm)->ogm_ttl > 1))
 	{
-		dbgf_all(DBGT_INFO, "ttl exceeded");
+		dbgf_all(0, DBGT_INFO, "ttl exceeded");
 		prof_stop(PROF_schedule_rcvd_ogm);
 		return;
 	}
@@ -709,7 +709,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	sn->ogm->ogm_seqno = htons(sn->ogm->ogm_seqno);
 
 	// we send the ogm back as answer with direct link, unidirect, to tell neighbour that we are direct connected
-	dbgf_all(DBGT_INFO, "prepare send re-brc OGM TTL %d DirectF %d UniF %d ", sn->ogm->ogm_ttl, directlink, with_unidirectional_flag );
+	dbgf_all(0, DBGT_INFO, "prepare send re-brc OGM TTL %d DirectF %d UniF %d ", sn->ogm->ogm_ttl, directlink, with_unidirectional_flag );
 
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
@@ -783,7 +783,7 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 					}
 					else
 					{
-						dbg_mute(75, DBGL_SYS, DBGT_ERR,
+						dbg_mute(2, 75, DBGL_SYS, DBGT_ERR,
 										 "Drop packet! Rcvd incompatible extension message order: "
 										 "via NB %s  OG? %s  size? %i, ext_type %d",
 										 mb->neigh_str, ipStr(mb->ogm->orig),
@@ -819,7 +819,7 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 				udp_len = udp_len - ((((struct bat_packet_common *)pos)->bat_size) << 2);
 				pos = pos + ((((struct bat_packet_common *)pos)->bat_size) << 2);
 
-				dbg_mute(60, DBGL_SYS, DBGT_ERR,
+				dbg_mute(2, 60, DBGL_SYS, DBGT_ERR,
 								 "Drop packet! Rcvd corrupted packet size via NB %s: "
 								 "processed bytes: %d , indicated bytes %d, flags. %X, remaining bytes %d",
 								 mb->neigh_str,
@@ -831,14 +831,14 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 				return;
 			}
 
-			dbgf_all(DBGT_INFO,
+			dbgf_all(1, DBGT_INFO,
 							 "rcvd OGM: flags. %X, remaining bytes %d", (mb->ogm)->flags, udp_len);
 
 			process_ogm(mb);
 		}
 		else
 		{
-			dbg_mute(47, DBGL_CHANGES, DBGT_WARN,
+			dbg_mute(2, 47, DBGL_CHANGES, DBGT_WARN,
 								"Drop single unkown bat_type via NB %s, bat_type %X, size %i,  "
 								"OG? %s, remaining len %d. Maybe you need an update",
 								mb->neigh_str,
@@ -865,7 +865,7 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 
 	if (mb->total_length < (int32_t)(sizeof(struct bat_header) + sizeof(struct bat_packet_common)))
 	{
-		dbg_mute(35, DBGL_SYS, DBGT_ERR, "Invalid packet length from %s, len %d",
+		dbg_mute(0, 35, DBGL_SYS, DBGT_ERR, "Invalid packet length from %s, len %d",
 						 ipStr(rcvd_neighbor), mb->total_length);
 
 		prof_stop(PROF_process_packet);
@@ -875,7 +875,7 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 	// immediately drop my own packets
 	if (rcvd_neighbor == mb->iif->if_addr)
 	{
-		dbgf_all(DBGT_INFO, "Drop packet: received my own broadcast iif %s", mb->iif->dev);
+		dbgf_all(0, DBGT_INFO, "Drop packet: received my own broadcast iif %s", mb->iif->dev);
 
 		prof_stop(PROF_process_packet);
 		return;
@@ -895,7 +895,7 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 	{
 		if (mb->total_length >= (int32_t)(sizeof(struct bat_header) /*+ sizeof(struct bat_packet_common) */))
 		{
-			dbg_mute(60, DBGL_SYS, DBGT_WARN,
+			dbg_mute(0, 60, DBGL_SYS, DBGT_WARN,
 							 "Drop packet: rcvd incompatible batman packet via NB %s "
 							 "(version %i, networkId %u, size %i), "
 							 "rcvd udp_len %d  My version is %d",
@@ -907,7 +907,7 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 		}
 		else
 		{
-			dbg_mute(40, DBGL_SYS, DBGT_ERR, "Rcvd to small packet via NB %s, rcvd udp_len %i",
+			dbg_mute(0, 40, DBGL_SYS, DBGT_ERR, "Rcvd to small packet via NB %s, rcvd udp_len %i",
 							 mb->neigh_str, mb->total_length);
 		}
 
@@ -918,7 +918,7 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 	mb->neigh = rcvd_neighbor;
 
 
-	dbgf_all(DBGT_INFO, "version %i, "
+	dbgf_all(0, DBGT_INFO, "version %i, "
 											"networkId %u, size %i, rcvd udp_len %d via NB %s %s %s",
 					 ((struct bat_header *)pos)->version,
 					 mb->networkId,
@@ -929,7 +929,7 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 		//se: check networkId against our
 		if ( mb->networkId != gNetworkId)
 		{
-			dbgf_all(DBGT_INFO, "Drop packet: invalid networkId %u iif %s", mb->iif->dev);
+			dbgf_all(0, DBGT_INFO, "Drop packet: invalid networkId %u iif %s", mb->iif->dev);
 
 			prof_stop(PROF_process_packet);
 			return;
@@ -959,7 +959,7 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 			else
 				addr_to_str(0, orig_str);
 
-			dbg_mute(70, DBGL_SYS, DBGT_ERR,
+			dbg_mute(0, 70, DBGL_SYS, DBGT_ERR,
 							 "Drop jumbo packet: rcvd incorrect size or order via NB %s, Originator? %s: "
 							 "ext_msg %d, reserved %X, OGM size field %d aggregated OGM size %i, via IF: %s",
 							 mb->neigh_str, orig_str,
@@ -978,7 +978,7 @@ static void process_packet(struct msg_buff *mb, unsigned char *pos, uint32_t rcv
 
 	if (check_len != check_done)
 	{
-		dbg_mute(40, DBGL_SYS, DBGT_ERR,
+		dbg_mute(0, 40, DBGL_SYS, DBGT_ERR,
 						 "Drop jumbo packet via %s: End of packet does not match indicated size",
 						 mb->neigh_str);
 
@@ -1068,7 +1068,7 @@ loop4Event:
 				goto wait4Event_end;
 			}
 
-			dbg_mute(50, DBGL_CHANGES, DBGT_WARN,
+			dbg_mute(0, 50, DBGL_CHANGES, DBGT_WARN,
 							 "select() returned %d without reason!! return_time %llu, curr_time %llu",
 							 selected, return_time, batman_time);
 
@@ -1078,7 +1078,7 @@ loop4Event:
 		// check for changed interface status...
 		if (FD_ISSET(ifevent_sk, &tmp_wait_set))
 		{
-			dbg_mute(40, DBGL_CHANGES, DBGT_INFO,
+			dbg_mute(0, 40, DBGL_CHANGES, DBGT_INFO,
 							 "select() indicated changed interface status! Going to check interfaces!");
 
 			recv_ifevent_netlink_sk();
@@ -1097,6 +1097,7 @@ loop4Event:
 			if (mb->iif->if_linklayer == VAL_DEV_LL_LO)
 				continue;
 
+			// check if we got an packages via boadcast ip 10.201.255.255 (broacast ip of interface ip)
 			if (FD_ISSET(mb->iif->if_netwbrc_sock, &tmp_wait_set))
 			{
 				mb->unicast = NO;
@@ -1123,6 +1124,7 @@ loop4Event:
 					goto loop4Event;
 			}
 
+			// check if we got an packages via boadcast ip 255.255.255.255
 			if (FD_ISSET(mb->iif->if_fullbrc_sock, &tmp_wait_set))
 			{
 				mb->unicast = NO;
@@ -1149,6 +1151,7 @@ loop4Event:
 					goto loop4Event;
 			}
 
+			// check for package to exact ip address of interface
 			if (FD_ISSET(mb->iif->if_unicast_sock, &tmp_wait_set))
 			{
 				mb->unicast = YES;
@@ -1216,7 +1219,7 @@ loop4Event:
 		// check for new control clients...
 		if (FD_ISSET(unix_sock, &tmp_wait_set))
 		{
-			dbgf_all(DBGT_INFO, "new control client...");
+			dbgf_all(0, DBGT_INFO, "new control client...");
 
 			accept_ctrl_node();
 
@@ -1257,7 +1260,7 @@ loop4Event:
 
 wait4Event_end:
 
-	dbgf_all(DBGT_INFO, "end of function");
+	dbgf_all(0, DBGT_INFO, "end of function");
 
 	prof_stop(PROF_wait4Event);
 	prof_stop(PROF_wait4Event_5);
@@ -1291,7 +1294,7 @@ void schedule_own_ogm(struct batman_if *bif)
 			|| sn->send_time > (batman_time + my_ogi)
 		 )
 	{
-		dbg_mute(50, DBGL_SYS, DBGT_WARN,
+		dbg_mute(0, 50, DBGL_SYS, DBGT_WARN,
 						 "strange own OGM schedule, rescheduling IF %10s SQN %d from %llu to %llu. "
 						 "Maybe we just woke up from power-save mode, --%s too small, --%s to big or too much --%s",
 						 bif->dev, bif->if_seqno, (unsigned long long)sn->send_time, (unsigned long long)batman_time + my_ogi,
@@ -1302,7 +1305,7 @@ void schedule_own_ogm(struct batman_if *bif)
 
 	bif->if_seqno_schedule = sn->send_time;
 
-	dbgf_all(DBGT_INFO, "for %s seqno %u at %llu", bif->dev, bif->if_seqno, (unsigned long long)sn->send_time);
+	dbgf_all(0, DBGT_INFO, "for %s seqno %u at %llu", bif->dev, bif->if_seqno, (unsigned long long)sn->send_time);
 
 	sn->if_outgoing = bif;
 	sn->own_if = 1;
@@ -1354,7 +1357,7 @@ void schedule_own_ogm(struct batman_if *bif)
 
 	sn->ogm->ogm_misc = MIN(s_curr_avg_cpu_load, 255);
 
-	dbgf_all(DBGT_INFO, "prepare send own OGM");
+	dbgf_all(0, DBGT_INFO, "prepare send own OGM");
 
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)

@@ -104,7 +104,7 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 	prof_start(PROF_update_routes);
 	static char old_nh_str[ADDR_STR_LEN], new_nh_str[ADDR_STR_LEN];
 
-	dbgf_all(DBGT_INFO, " ");
+	dbgf_all(0, DBGT_INFO, " ");
 
 	addr_to_str((new_router ? new_router->key.addr : 0), new_nh_str);
 	addr_to_str((orig_node->router ? orig_node->router->key.addr : 0), old_nh_str);
@@ -113,7 +113,7 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 	{
 		if (new_router)
 		{
-			dbgf_all(DBGT_INFO, "Route to %s via %s", orig_node->orig_str, new_nh_str);
+			dbgf_all(0, DBGT_INFO, "Route to %s via %s", orig_node->orig_str, new_nh_str);
 		}
 
 		/* route altered or deleted */
@@ -152,7 +152,7 @@ static void update_routes(struct orig_node *orig_node, struct neigh_node *new_ro
 static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
 {
 
-	dbgf_all(DBGT_INFO, "%s", ipStr(orig_node->orig));
+	dbgf_all(0, DBGT_INFO, "%s", ipStr(orig_node->orig));
 
 	OLForEach(neigh_node, struct neigh_node, orig_node->neigh_list_head)
 	{
@@ -174,7 +174,7 @@ static void flush_orig(struct orig_node *orig_node, struct batman_if *bif)
 static struct neigh_node *init_neigh_node(struct orig_node *orig_node,
 																					uint32_t neigh, struct batman_if *iif, batman_time_t last_aware)
 {
-	dbgf_all(DBGT_INFO, " ");
+	dbgf_all(0, DBGT_INFO, " ");
 
 	struct neigh_node *neigh_node = debugMalloc(sizeof(struct neigh_node), 403);
 	memset(neigh_node, 0, sizeof(struct neigh_node));
@@ -201,7 +201,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 	uint32_t max_othr_longtm_val = 0;
 	uint32_t max_othr_recent_val = 0;
 
-	dbgf_all(DBGT_INFO, "%s", on->orig_str);
+	dbgf_all(0, DBGT_INFO, "%s", on->orig_str);
 
 	/* only used for debugging purposes */
 	if (!on->first_valid_sec)
@@ -286,7 +286,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 		on->last_decided_sqn = ogm->ogm_seqno;
 		*oCtx |= IS_BEST_NEIGH_AND_NOT_BROADCASTED;
 		changed = YES;
-		dbgf_all(DBGT_INFO, "%s, (1) IS_BEST_NEIGH_AND_NOT_BROADCASTED, ogm_seqno=%d, RXB=%d, RCB=%d, LCB=%d, last_decided_sqn=%d, my_rcnt_fk=%d", on->orig_str, ogm->ogm_seqno, RXB, RCB, LCB, on->last_decided_sqn, my_rcnt_fk);
+		dbgf_all(0, DBGT_INFO, "%s, (1) IS_BEST_NEIGH_AND_NOT_BROADCASTED, ogm_seqno=%d, RXB=%d, RCB=%d, LCB=%d, last_decided_sqn=%d, my_rcnt_fk=%d", on->orig_str, ogm->ogm_seqno, RXB, RCB, LCB, on->last_decided_sqn, my_rcnt_fk);
 		//wenn ogm ueber gleiche route (ip) kommt.
 	}
 	else if ((curr_rt == incm_rt) &&
@@ -305,7 +305,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 	{
 		on->last_decided_sqn = ogm->ogm_seqno;
 		*oCtx |= IS_BEST_NEIGH_AND_NOT_BROADCASTED;
-		dbgf_all(DBGT_INFO, "%s, (2) IS_BEST_NEIGH_AND_NOT_BROADCASTED, ogm_seqno=%d, RXB=%d, RCB=%d, LCB=%d, last_decided_sqn=%d, my_rcnt_fk=%d", on->orig_str, ogm->ogm_seqno, RXB, RCB, LCB, on->last_decided_sqn, my_rcnt_fk);
+		dbgf_all(0, DBGT_INFO, "%s, (2) IS_BEST_NEIGH_AND_NOT_BROADCASTED, ogm_seqno=%d, RXB=%d, RCB=%d, LCB=%d, last_decided_sqn=%d, my_rcnt_fk=%d", on->orig_str, ogm->ogm_seqno, RXB, RCB, LCB, on->last_decided_sqn, my_rcnt_fk);
 	}
 
 	if (changed && !LCB)
@@ -381,7 +381,7 @@ static int8_t init_pifnb_node(struct orig_node *orig_node)
 
 	paranoia(-500011, (orig_node->id4him != 0)); //init_pifnb_node(): requested to init already existing pifnb_node
 
-	dbgf_all(DBGT_INFO, " %16s ", orig_node->orig_str);
+	dbgf_all(4, DBGT_INFO, " %16s ", orig_node->orig_str);
 
 	struct pifnb_node *pn = debugMalloc(sizeof(struct pifnb_node), 429);
 	memset(pn, 0, sizeof(struct pifnb_node));
@@ -416,7 +416,7 @@ static int8_t init_pifnb_node(struct orig_node *orig_node)
 	// set id4him in orig object. the loop uses a pointer (pog) which is the same object.
 	orig_node->id4him = id4him;
 
-	dbgf_all(DBGT_INFO, "%16s -> id4him %d", orig_node->orig_str, id4him);
+	dbgf_all(4, DBGT_INFO, "%16s -> id4him %d", orig_node->orig_str, id4him);
 
 	if (!inserted)
 	{
@@ -435,7 +435,7 @@ static int8_t init_pifnb_node(struct orig_node *orig_node)
 //  so ein nachbar, kann naemlich ueber mehrere interfaces erreichba sein.
 static void free_link_node(struct orig_node *orig_node, struct batman_if *bif)
 {
-	dbgf_all(DBGT_INFO, "of orig %s", orig_node->orig_str);
+	dbgf_all(0, DBGT_INFO, "of orig %s", orig_node->orig_str);
 
 	paranoia(-500010, (orig_node->link_node == NULL)); //free_link_node(): requested to free non-existing link_node
 
@@ -447,7 +447,7 @@ static void free_link_node(struct orig_node *orig_node, struct batman_if *bif)
 		{
 			PLIST_ENTRY prev = OLGetPrev(lndev);
 
-			dbgf_all(DBGT_INFO, "purging lndev %16s %10s %s",
+			dbgf_all(0, DBGT_INFO, "purging lndev %16s %10s %s",
 							 orig_node->orig_str, lndev->bif->dev, lndev->bif->if_ip_str);
 
 			OLRemoveEntry(lndev);
@@ -462,7 +462,7 @@ static void free_link_node(struct orig_node *orig_node, struct batman_if *bif)
 	{
 		if (ln->orig_node == orig_node && OLIsListEmpty(&ln->lndev_list))
 		{
-			dbgf_all(DBGT_INFO, "purging link_node %16s ", orig_node->orig_str);
+			dbgf_all(0, DBGT_INFO, "purging link_node %16s ", orig_node->orig_str);
 
 			OLRemoveEntry(ln);
 
@@ -494,7 +494,7 @@ static void init_link_node(struct orig_node *orig_node)
 {
 	struct link_node *ln;
 
-	dbgf_all(DBGT_INFO, "%s", orig_node->orig_str);
+	dbgf_all(0, DBGT_INFO, "%s", orig_node->orig_str);
 
 	ln = orig_node->link_node = debugMalloc(sizeof(struct link_node), 428);
 	memset(ln, 0, sizeof(struct link_node));
@@ -524,7 +524,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 		if ((uint16_t)(ogm_seqno + my_path_lounge - orig_node->last_valid_sqn) >
 				MAX_SEQNO - orig_node->pws)
 		{
-			dbg_mute(25, DBGL_CHANGES, DBGT_WARN,
+			dbg_mute(6, 25, DBGL_CHANGES, DBGT_WARN,
 							 "drop OGM %-15s  via %4s NB %-15s (%s) with old SQN %5i  "
 							 "(prev %5i  lounge-margin %2i  pws %3d  lvld %llu) !",
 							 orig_node->orig_str,
@@ -554,7 +554,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 				// but we have received an ogm in less than timeout sec
 				batman_time < (orig_node->last_valid_time + (1000 * dad_to)))
 		{
-			dbg_mute(26, DBGL_SYS, DBGT_WARN,
+			dbg_mute(0, 26, DBGL_SYS, DBGT_WARN,
 							 "DAD-alert! %s  via NB %s (%s); SQN %i out-of-range;  lounge-margin %i "
 							 "(last valid SQN %i  at %llu)  dad_to %d  wavg %d  Reinit in %d s",
 							 orig_node->orig_str, ipStr(neigh),ndev?ndev:"NULL", ogm_seqno, my_path_lounge,
@@ -599,7 +599,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 				&& orig_node->orig != primary_addr  	// and not my primary IP
 		)
 		{
-			dbg_mute(26, DBGL_SYS, DBGT_WARN,
+			dbg_mute(6, 26, DBGL_SYS, DBGT_WARN,
 							 "DAD-alert! %s  via NB %s (%s), OGM SQN %i out-of-range: lounge-margin %i, "
                "batman_time %llu,"
 							 "(last valid SQN %i  at %llu, SQNdiff:%ld)  dad_to %d  wavg %d",
@@ -657,13 +657,13 @@ static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff
 	{
 		struct ext_packet *pip = mb->rcv_ext_array[EXT_TYPE_64B_PIP];
 
-		dbgf_all(DBGT_INFO, "orig %s  neigh %s", mb->orig_str, mb->neigh_str);
+		dbgf_all(3, DBGT_INFO, "orig %s  neigh %s", mb->orig_str, mb->neigh_str);
 
 		if (orig_node->primary_orig_node)
 		{
 			if (orig_node->primary_orig_node->orig != pip->EXT_PIP_FIELD_ADDR)
 			{
-				dbg_mute(45, DBGL_SYS, DBGT_WARN,
+				dbg_mute(6, 45, DBGL_SYS, DBGT_WARN,
 								 "neighbor %s changed his primary interface from %s to %s !",
 								 orig_node->orig_str,
 								 orig_node->primary_orig_node->orig_str,
@@ -698,7 +698,7 @@ static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff
 		{
 			if (orig_node->primary_orig_node != orig_node)
 			{
-				dbg_mute(30, DBGL_SYS, DBGT_WARN,
+				dbg_mute(6, 30, DBGL_SYS, DBGT_WARN,
 								 "neighbor %s changed primary interface from %s to %s !",
 								 orig_node->orig_str,
 								 orig_node->primary_orig_node->orig_str,
@@ -736,7 +736,7 @@ static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff
 static void update_rtq_link(struct orig_node *orig_node_neigh, uint16_t oCtx, struct msg_buff *mb,
 														struct batman_if *iif, struct bat_packet_ogm *ogm, struct link_node_dev *lndev)
 {
-	dbgf_all(DBGT_INFO,
+	dbgf_all(3, DBGT_INFO,
 					 "received own OGM via NB, lastTxIfSeqno: %d, currRxSeqno: %d  oCtx: 0x%X "
 					 "link_node %s primary_orig %s",
 					 (iif->if_seqno - OUT_SEQNO_OFFSET), ogm->ogm_seqno, oCtx,
@@ -751,7 +751,7 @@ static void update_rtq_link(struct orig_node *orig_node_neigh, uint16_t oCtx, st
 	// in receiving OGMs. in firmware I add all tbb interfaces. so this should not happen.
 	if ((iif->if_seqno - OUT_SEQNO_OFFSET) < ogm->ogm_seqno)
 	{
-		dbgf_all(DBGT_ERR,
+		dbgf_all(3, DBGT_ERR,
 						 "###  if %s, lastTxIfSeqno: %d, currRxSeqno: %d - correct interface seqno",
 						 iif->dev, (iif->if_seqno - OUT_SEQNO_OFFSET), ogm->ogm_seqno);
 		iif->if_seqno = ogm->ogm_seqno + OUT_SEQNO_OFFSET;
@@ -759,7 +759,7 @@ static void update_rtq_link(struct orig_node *orig_node_neigh, uint16_t oCtx, st
 
 	if (((SQ_TYPE)((iif->if_seqno - OUT_SEQNO_OFFSET) - ogm->ogm_seqno)) > local_rtq_lounge)
 	{
-		dbg_mute(51, DBGL_CHANGES, DBGT_WARN,
+		dbg_mute(6, 51, DBGL_CHANGES, DBGT_WARN,
 						 "late reception of own OGM via NB %s  lastTxIfSqn %d  rcvdSqn %d  margin %d ! "
 						 "Try configureing a greater --%s value .",
 						 mb->neigh_str, (iif->if_seqno - OUT_SEQNO_OFFSET),
@@ -778,14 +778,14 @@ static void update_rtq_link(struct orig_node *orig_node_neigh, uint16_t oCtx, st
 		if (orig_node_neigh->primary_orig_node->id4me != ogm->prev_hop_id)
 		{
 			if (orig_node_neigh->primary_orig_node->id4me != 0)
-				dbg_mute(53, DBGL_CHANGES, DBGT_WARN,
+				dbg_mute(0, 53, DBGL_CHANGES, DBGT_WARN,
 								 "received changed prev_hop_id from neighbor %s !!!",
 								 mb->neigh_str);
 
 			orig_node_neigh->primary_orig_node->id4me = ogm->prev_hop_id;
 		}
 
-		dbgf_all(DBGT_INFO, "indicating bidirectional link");
+		dbgf_all(0, DBGT_INFO, "indicating bidirectional link");
 	}
 }
 
@@ -802,7 +802,7 @@ static void update_rq_link(struct orig_node *orig_node, SQ_TYPE sqn, struct batm
 			init_link_node(orig_node);
 	}
 
-	dbgf_all(DBGT_INFO, "OG %s  SQN %d  IF %s  ctx %x  ln %s  cloned %s  direct %s",
+	dbgf_all(0, DBGT_INFO, "OG %s  SQN %d  IF %s  ctx %x  ln %s  cloned %s  direct %s",
 					 orig_node->orig_str, sqn, iif->dev, oCtx,
 					 orig_node->link_node ? "YES" : "NO",
 					 (oCtx & HAS_CLONED_FLAG) ? "YES" : "NO",
@@ -817,12 +817,12 @@ static void update_rq_link(struct orig_node *orig_node, SQ_TYPE sqn, struct batm
 
 	struct link_node_dev *this_lndev = NULL;
 
-	dbgf_all(DBGT_INFO, "[%10s %3s %3s %3s]", "dev", "RTQ", "RQ", "TQ");
+	dbgf_all(0, DBGT_INFO, "[%10s %3s %3s %3s]", "dev", "RTQ", "RQ", "TQ");
 
 	OLForEach(lndev, struct link_node_dev, orig_node->link_node->lndev_list)
 	{
 
-		dbgf_all(DBGT_INFO, "[%10s %3i %3i %3i] before", lndev->bif->dev,
+		dbgf_all(0, DBGT_INFO, "[%10s %3i %3i %3i] before", lndev->bif->dev,
 						 (((lndev->rtq_sqr.wa_val)) / PROBE_TO100),
 						 (((lndev->rq_sqr.wa_val)) / PROBE_TO100),
 						 (((tq_rate(orig_node, lndev->bif, PROBE_RANGE))) / PROBE_TO100));
@@ -926,7 +926,7 @@ struct orig_node *find_or_create_orig_node_in_avl(uint32_t addr)
 	orig_node->neigh_avl.key_size = sizeof(struct neigh_node_key);
 
 	addr_to_str(addr, orig_node->orig_str);
-	dbgf_all(DBGT_INFO, "creating new originator: %s", orig_node->orig_str);
+	dbgf_all(0, DBGT_INFO, "creating new originator: %s", orig_node->orig_str);
 
 	orig_node->orig = addr;
 	orig_node->last_aware = batman_time;
@@ -962,7 +962,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 	static char neigh_str[ADDR_STR_LEN];
   int purge_old = 0;
 
-	dbgf_all(DBGT_INFO, "%llu %s", (unsigned long long)curr_time, bif ? bif->dev : "???");
+	dbgf_all(0, DBGT_INFO, "%llu %s", (unsigned long long)curr_time, bif ? bif->dev : "???");
 
 	//checkIntegrity();
 
@@ -973,7 +973,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 	{
 		orig_ip = orig_node->orig;
 
-		dbgf_all(DBGT_INFO, "%llu %s %s", (unsigned long long)curr_time, bif ? bif->dev : "???", orig_node->orig_str);
+		dbgf_all(0, DBGT_INFO, "%llu %s %s", (unsigned long long)curr_time, bif ? bif->dev : "???", orig_node->orig_str);
 
 		purge_old = (orig_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time ? 1 : 0;
 
@@ -1017,7 +1017,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
       // der aktuelle node ist ein direkter nachbar zum uns und hat damit
 			// eine Liste von hinterfaces (meine), uber die dieser node erreichbar ist.
 			// ebenso wird dieser node in der globalen link_list und globale avl baum
-			// für direkte nachbarn gehalten und muessen ebenso geloescht werden.
+			// fï¿½r direkte nachbarn gehalten und muessen ebenso geloescht werden.
 
 			if (orig_node->link_node)
 				free_link_node(orig_node, bif);
@@ -1162,7 +1162,7 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 				 }
 #endif
 					addr_to_str(neigh_node->key.addr, neigh_str);
-					dbgf_all(DBGT_INFO,
+					dbgf_all(0, DBGT_INFO,
 									 "Neighbour timeout: originator %s, neighbour: %s, last_aware %u",
 									 orig_node->orig_str, neigh_str, neigh_node->last_aware);
 
@@ -1258,9 +1258,14 @@ void process_ogm(struct msg_buff *mb)
 	// This means that the ttl==1 which is not decremented before sending.
 	// re-brodcasted ogms gets its ttl-- before sending. this can be seen if another node rebroadcasts
 	// an ogm. ttl is then zero and the ogm will be ignored.
+  //
+	// ABER. ogm->orig ist ja die IP des knotens und neigh die ip vom gesendeten interface.
+	// wenn also 10.200.4.100 in der ogm->orig sendet, aber das vom neigh=10.201.4.100 , wird hier
+	// der knoten nicht aktzeptiert. das sieht man dann am log "drop OGM: rcvd via unknnown neighbor (not direct)"
+	// es muss also erstmal eine ogm mit 10.201.4.100 kommen, damit dann die 10.200.4.100 akzeptiert wird.
 	oCtx |= (ogm->orig == neigh) ? IS_DIRECT_NEIGH : 0;
 
-	dbgf_all(DBGT_INFO, "OG %s  via IF %s %s  NB %s  "
+	dbgf_all(2, DBGT_INFO, "OG %s  via IF %s %s  NB %s  "
 											"V %d SQN %d TTL %d DirectF %d UniF %d  CloneF %d, directNB %d, asocial %d(%d)",
 					 ipStr(ogm->orig), iif->dev, iif->if_ip_str, mb->neigh_str,
 					 COMPAT_VERSION, ogm->ogm_seqno, ogm->ogm_ttl,
@@ -1269,7 +1274,7 @@ void process_ogm(struct msg_buff *mb)
 
 	if (ogm->ogm_pws < MIN_PWS || ogm->ogm_pws > MAX_PWS)
 	{
-		dbg_mute(30, DBGL_SYS, DBGT_WARN, "drop OGM: %s unsopported path window size %d !",
+		dbg_mute(4, 30, DBGL_SYS, DBGT_WARN, "drop OGM: %s unsopported path window size %d !",
 						 ipStr(ogm->orig), ogm->ogm_pws);
 		goto process_ogm_end;
 	}
@@ -1281,13 +1286,13 @@ void process_ogm(struct msg_buff *mb)
 
 		if (neigh == bif->if_addr)
 		{
-			dbgf_all(DBGT_INFO, "drop OGM: rcvd my own broadcast via: %s", mb->neigh_str);
+			dbgf_all(2, DBGT_INFO, "drop OGM: rcvd my own broadcast via: %s", mb->neigh_str);
 			goto process_ogm_end;
 		}
 
 		if (neigh == bif->if_broad)
 		{
-			dbg_mute(30, DBGL_SYS, DBGT_WARN, "drop OGM: %s ignoring all packets with broadcast source IP",
+			dbg_mute(4, 30, DBGL_SYS, DBGT_WARN, "drop OGM: %s ignoring all packets with broadcast source IP",
 							 mb->neigh_str);
 			goto process_ogm_end;
 		}
@@ -1305,7 +1310,7 @@ void process_ogm(struct msg_buff *mb)
 	// Falls das nicht so ist, ist das packet nicht fuer mich.
 	if (oCtx & HAS_UNIDIRECT_FLAG && !(oCtx & IS_MY_ORIG))
 	{
-		dbgf_all(DBGT_INFO, "drop OGM: unidirectional flag and not my OGM");
+		dbgf_all(2, DBGT_INFO, "drop OGM: unidirectional flag and not my OGM");
 		goto process_ogm_end;
 	}
 
@@ -1315,13 +1320,13 @@ void process_ogm(struct msg_buff *mb)
 
 	if (!(oCtx & IS_DIRECT_NEIGH) && !(orig_node_neigh->last_valid_time))
 	{
-		dbgf_all(DBGT_INFO, "drop OGM: rcvd via unknown neighbor!");
+		dbgf_all(2, DBGT_INFO, "drop OGM: rcvd via unknown neighbor!");
 		goto process_ogm_end;
 	}
 
 	if ((oCtx & HAS_CLONED_FLAG) && !orig_node_neigh->primary_orig_node)
 	{
-		dbgf_all(DBGT_INFO, "drop OGM: first contact with neighbor MUST be without cloned flag!");
+		dbgf_all(2, DBGT_INFO, "drop OGM: first contact with neighbor MUST be without cloned flag!");
 		goto process_ogm_end;
 	}
 
@@ -1340,7 +1345,7 @@ void process_ogm(struct msg_buff *mb)
 	// was ich erwarten wuerde.
 	if (ogm->ogm_ttl == 0)
 	{
-		dbgf_all(DBGT_INFO, "drop OGM: TTL of zero!");
+		dbgf_all(2, DBGT_INFO, "drop OGM: TTL of zero!");
 		goto process_ogm_end;
 	}
 
@@ -1350,7 +1355,7 @@ void process_ogm(struct msg_buff *mb)
 	// drop packet if sender is not a direct NB and if we have no route towards the rebroadcasting NB
 	if (!(oCtx & IS_DIRECT_NEIGH) && !(orig_node_neigh->router))
 	{
-		dbgf_all(DBGT_INFO, "drop OGM: %s via unknown (%s) (non-direct) neighbor!", ipStr(ogm->orig), mb->neigh_str);
+		dbgf_all(2, DBGT_INFO, "drop OGM: %s via unknown (%s) (non-direct) neighbor!", ipStr(ogm->orig), mb->neigh_str);
 		goto process_ogm_end;
 	}
 
@@ -1358,7 +1363,7 @@ void process_ogm(struct msg_buff *mb)
 	{
 		if (!orig_node_neigh->primary_orig_node || !orig_node_neigh->primary_orig_node->id4me)
 		{
-			dbgf_all(DBGT_INFO, "drop OGM: %s via NB %s %s (primary_orig_node 0x%p, id4me=%d, str=%s)!!!!",
+			dbgf_all(2, DBGT_INFO, "drop OGM: %s via NB %s %s (primary_orig_node 0x%p, id4me=%d, str=%s)!!!!",
 							 ipStr(ogm->orig), mb->neigh_str, "with unknown primaryOG", orig_node_neigh->primary_orig_node,
 							 orig_node_neigh->primary_orig_node ? orig_node_neigh->primary_orig_node->id4me : 123456, orig_node_neigh->primary_orig_node->orig_str);
 			goto process_ogm_end;
@@ -1368,7 +1373,7 @@ void process_ogm(struct msg_buff *mb)
 				orig_node_neigh->primary_orig_node &&
 				orig_node_neigh->primary_orig_node->id4me == ogm->prev_hop_id)
 		{
-			dbgf_all(DBGT_INFO, "drop OGM: %s via NB %s %s !!!!",
+			dbgf_all(2, DBGT_INFO, "drop OGM: %s via NB %s %s !!!!",
 							 ipStr(ogm->orig), mb->neigh_str, " via two-hop loop ");
 			goto process_ogm_end;
 		}
@@ -1383,7 +1388,7 @@ void process_ogm(struct msg_buff *mb)
 
 	if (validate_orig_seqno(orig_node, neigh, ndev, ogm->ogm_seqno) == FAILURE)
 	{
-		dbgf_all(DBGT_WARN, "drop OGM: %15s, via NB %15s, SQN %i\n",
+		dbgf_all(2, DBGT_WARN, "drop OGM: %15s, via NB %15s, SQN %i\n",
 						 ipStr(ogm->orig), mb->neigh_str, ogm->ogm_seqno);
 		goto process_ogm_end;
 	}
@@ -1397,7 +1402,7 @@ void process_ogm(struct msg_buff *mb)
 
 	if (validate_considered_order(orig_node, ogm->ogm_seqno, ogm->ogm_ttl, neigh, iif) == FAILURE)
 	{
-		dbgf_all(DBGT_INFO, "drop OGM: already considered this OGM and SEQNO %d, ttl %d via this link neighbor!", ogm->ogm_seqno, ogm->ogm_ttl);
+		dbgf_all(2, DBGT_INFO, "drop OGM: already considered this OGM and SEQNO %d, ttl %d via this link neighbor!", ogm->ogm_seqno, ogm->ogm_ttl);
 		goto process_ogm_end;
 	}
 
@@ -1459,7 +1464,7 @@ void process_ogm(struct msg_buff *mb)
 
 	if (!new_router || new_router != orig_node->router)
 	{
-		dbgf_all(DBGT_INFO, //as long as incoming link is not bidirectional,...
+		dbgf_all(2, DBGT_INFO, //as long as incoming link is not bidirectional,...
 						 "new_rt %s for %s is zero or differs from installed rt %s  "
 						 "(old_rt %s  rcvd vi %s %s",
 						 ipStr(new_router ? new_router->key.addr : 0),
@@ -1470,7 +1475,7 @@ void process_ogm(struct msg_buff *mb)
 
 	process_tun_ogm(mb, oCtx, old_router);
 
-	dbgf_all(DBGT_INFO,
+	dbgf_all(2, DBGT_INFO,
 					 "done OGM accepted %s  acceptable %s  bidirectLink %s  new %s  BNTOG %s  asocial %s(%d)  tq %d  "
 					 "hop_penalty %d  asym_w %d  acceptSQN %d  rcvdSQN %d  rand100 %d",
 					 (oCtx & IS_ACCEPTED ? "Y" : "N"),
@@ -1701,7 +1706,7 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 
 	char *colon_ptr;
 
-	dbgf_all(DBGT_INFO, "cmd: %s opt: %s  instance %s",
+	dbgf_all(0, DBGT_INFO, "cmd: %s opt: %s  instance %s",
 					 opt_cmd2str[cmd], opt->long_name, patch ? patch->p_val : "");
 
 	if (cmd == OPT_CHECK || cmd == OPT_APPLY)
@@ -1782,7 +1787,7 @@ static int32_t opt_dev(uint8_t cmd, uint8_t _save, struct opt_type *opt, struct 
 			if ((colon_ptr = strchr(bif->dev_phy, ':')) != NULL)
 				*colon_ptr = '\0';
 
-			dbgf_all(DBGT_INFO, "assign dev %s physical name %s", bif->dev, bif->dev_phy);
+			dbgf_all(0, DBGT_INFO, "assign dev %s physical name %s", bif->dev, bif->dev_phy);
 
 			bif->if_seqno_schedule = batman_time;
 
