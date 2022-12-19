@@ -6,22 +6,19 @@
 #  - ln -s ~/mycache/workdir
 
 m3tags:init:
-  only:
-    - /^R_/
-    - /^TESTING/
-    - /^T_/
 
   stage: init       # special state, run before all other stages
 
+  # when using rules, I can not use 'only' nor 'except'
   rules:
     - if: $CI_COMMIT_TAG =~ /^T_/
       when: manual
     - if: $CI_COMMIT_TAG =~ /^TESTING/
       when: manual
-    - if: $CI_COMMIT_TAG =~ /^R_/
+    - if: $CI_COMMIT_REF_NAME =~ /^R_/
       variables:
         - FF_BUILD_TAG: "Release-Branch-Head"
-        - FF_UPLOAD_DIR: "/tmp/error"
+        - FF_UPLOAD_DIR: "/dev/null"
 
   # ensure that this stage failes when no env variables are set
   allow_failure: false
