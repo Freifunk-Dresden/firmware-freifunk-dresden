@@ -9,6 +9,14 @@ m3tags:init:
 
   stage: init       # special state, run before all other stages
 
+
+  # global variables can not be overwritten by rules. this includes variables
+  # defined by gitlab-ci configuration in GUI
+  # Solution: I create local variables and initialise those with global values
+  variables:
+   _FF_BUILD_TAG: ${FF_BUILD_TAG}
+   _FF_UPLOAD_DIR: ${_FF_UPLOAD_DIR}
+
   # when using rules, I can not use 'only' nor 'except'
   rules:
     - if: $CI_COMMIT_TAG =~ /^T_/
@@ -17,9 +25,8 @@ m3tags:init:
       when: manual
     - if: $CI_COMMIT_REF_NAME =~ /^R_/
       variables:
-        FF_BUILD_TAG: "Release-Branch-Head"
-        FF_UPLOAD_DIR: "/dev/null"
-        TTT: "test"
+        tmp_FF_BUILD_TAG: "Release-Branch-Head"
+        tmp_FF_UPLOAD_DIR: "/dev/null"
 
   # ensure that this stage failes when no env variables are set
   allow_failure: false
@@ -30,7 +37,8 @@ m3tags:init:
 
     - echo "CI_COMMIT_TAG = [$CI_COMMIT_TAG]"
     - echo "CI_COMMIT_REF_NAME = [$CI_COMMIT_REF_NAME]"
-    - echo "TTT = [$TTT]"
+    - echo "tmp_FF_BUILD_TAG = [$tmp_FF_BUILD_TAG]"
+    - echo "tmp_FF_UPLOAD_DIR = [$tmp_FF_UPLOAD_DIR]"
 
     # create link to local storage to avoid downloading every time and to have
     # a place to "backup" packages. Also keep prevous cross-compilers and avoid
@@ -47,15 +55,18 @@ m3tags:init:
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
+    - echo "tmp_FF_BUILD_TAG = [${tmp_FF_BUILD_TAG}]"
+    - echo "tmp_FF_UPLOAD_DIR = [${tmp_FF_UPLOAD_DIR}]"
+
 
     # check variables
     - |
-      if [ -z "${FF_BUILD_TAG}" ]; then
-        echo "FF_BUILD_TAG not defined! Aborting."
+      if [ -z "${tmp_FF_BUILD_TAG}" ]; then
+        echo "tmp_FF_BUILD_TAG not defined! Aborting."
         exit 1
       fi
-      if [ -z "${FF_UPLOAD_DIR}" -o "${FF_UPLOAD_DIR}" = "nightly" ]; then
-        echo "FF_UPLOAD_DIR not defined or invalid! Aborting."
+      if [ -z "${tmp_FF_UPLOAD_DIR}" -o "${tmp_FF_UPLOAD_DIR}" = "nightly" ]; then
+        echo "tmp_FF_UPLOAD_DIR not defined or invalid! Aborting."
         exit 1
       fi
 
@@ -67,8 +78,8 @@ m3tags:init:
 
     # create artifact to transfer variable gitlab.environment to jobs else
     # each job gets its value from default gitlab values
-    - echo "export FF_BUILD_TAG=\"${FF_BUILD_TAG}\"" >> gitlab.environment
-    - echo "export FF_UPLOAD_DIR=\"${FF_UPLOAD_DIR}\"" >> gitlab.environment
+    - echo "export FF_BUILD_TAG=\"${tmp_FF_BUILD_TAG}\"" >> gitlab.environment
+    - echo "export FF_UPLOAD_DIR=\"${tmp_FF_UPLOAD_DIR}\"" >> gitlab.environment
   tags:
     - m3runner
 
