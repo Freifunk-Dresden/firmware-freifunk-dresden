@@ -1,10 +1,10 @@
-# define globally used variables, so they can be overwritten
-# in rules
-variables:
-  FF_UPLOAD_DIR: ""
-  FF_BUILD_TAG: ""
-  FF_GITLAB_REMOVE_WORKDIR: 0
-  FF_GITLAB_REMOVE_DL: 0
+# define globally used variables with defaults. these are
+# overwritten by gitlab ci configuration of a project
+#variables:
+#  FF_UPLOAD_DIR: ""
+#  FF_BUILD_TAG: ""
+#  FF_GITLAB_REMOVE_WORKDIR: 0
+#  FF_GITLAB_REMOVE_DL: 0
 
 
 stages:
