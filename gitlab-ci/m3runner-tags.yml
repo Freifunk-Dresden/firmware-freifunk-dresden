@@ -26,15 +26,6 @@ m3tags:init:
     paths:
       - gitlab.environment
   script:
-    - |
-      if [ -z "${FF_BUILD_TAG}" ]; then
-        echo "FF_BUILD_TAG not defined! Aborting."
-        exit 1
-      fi
-      if [ -z "${FF_UPLOAD_DIR}" -o "${FF_UPLOAD_DIR}" = "nightly" ]; then
-        echo "FF_UPLOAD_DIR not defined! Aborting."
-        exit 1
-      fi
 
   # create link to local storage to avoid downloading every time and to have
   # a place to "backup" packages. Also keep prevous cross-compilers and avoid
@@ -51,6 +42,17 @@ m3tags:init:
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
+
+  # check variables
+    - |
+      if [ -z "${FF_BUILD_TAG}" ]; then
+        echo "FF_BUILD_TAG not defined! Aborting."
+        exit 1
+      fi
+      if [ -z "${FF_UPLOAD_DIR}" -o "${FF_UPLOAD_DIR}" = "nightly" ]; then
+        echo "FF_UPLOAD_DIR not defined! Aborting."
+        exit 1
+      fi
 
   # dont delete dl, it is not so important to have different old version for
   # one packges, but it will reduce download overhead from external servers
