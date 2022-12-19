@@ -28,9 +28,9 @@ m3tags:init:
         local_FF_BUILD_TAG: "Release-Branch-Head"
         local_FF_UPLOAD_DIR: "/dev/null"
 
-    # job is also created when creating merge-requests, because "when" default value
-    # to avoid any other branch, events or condition I set when to never
-    when: never
+  # job is also created when creating merge-requests, because "when" default value
+  # to avoid any other branch, events or condition I set when to never
+  when: never
 
   # ensure that this stage failes when no env variables are set
   allow_failure: false
