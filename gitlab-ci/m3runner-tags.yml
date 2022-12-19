@@ -19,6 +19,7 @@ m3tags:init:
       variables:
         FF_BUILD_TAG: "Release-Branch-Head"
         FF_UPLOAD_DIR: "/dev/null"
+      when: never
 
   # ensure that this stage failes when no env variables are set
   allow_failure: false
