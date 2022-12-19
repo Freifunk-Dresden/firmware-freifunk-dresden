@@ -25,7 +25,7 @@ m3tags:init:
       when: manual
     - if: $CI_COMMIT_REF_NAME =~ /^R_/
       variables:
-        #local_FF_BUILD_TAG: "Release-Branch-Head"
+        xlocal_FF_BUILD_TAG: "Release-Branch-Head"
         local_FF_UPLOAD_DIR: "/dev/null"
 
   # ensure that this stage failes when no env variables are set
