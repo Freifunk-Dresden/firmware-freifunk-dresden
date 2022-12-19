@@ -15,7 +15,7 @@ m3tags:init:
   # Solution: I create local variables and initialise those with global values
   variables:
    local_FF_BUILD_TAG: ${FF_BUILD_TAG}
-   local_FF_UPLOAD_DIR: ${_FF_UPLOAD_DIR}
+   local_FF_UPLOAD_DIR: ${FF_UPLOAD_DIR}
 
   # when using rules, I can not use 'only' nor 'except'
   rules:
