@@ -27,6 +27,7 @@ m3tags:init:
       variables:
         local_FF_BUILD_TAG: "Release-Branch-Head"
         local_FF_UPLOAD_DIR: "/dev/null"
+      when: on_success
 
     # job is also created when creating merge-requests, because "when" default value
     # to avoid any other branch, events or condition I set when to never.
