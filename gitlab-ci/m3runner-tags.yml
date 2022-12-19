@@ -19,10 +19,16 @@ m3tags:init:
 
   # when using rules, I can not use 'only' nor 'except'
   rules:
+    # when I have a merge request for a tag or release branch, I dont' want another build
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+
     - if: $CI_COMMIT_TAG =~ /^T_/
       when: manual
+
     - if: $CI_COMMIT_TAG =~ /^TESTING/
       when: manual
+
     - if: $CI_COMMIT_REF_NAME =~ /^R_/
       variables:
         local_FF_BUILD_TAG: "Release-Branch-Head"
