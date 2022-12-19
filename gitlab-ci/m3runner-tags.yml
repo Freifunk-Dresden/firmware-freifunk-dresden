@@ -27,26 +27,26 @@ m3tags:init:
       - gitlab.environment
   script:
 
-  - echo "CI_COMMIT_TAG = [$CI_COMMIT_TAG]"
-  - echo "CI_COMMIT_REF_NAME = [$CI_COMMIT_REF_NAME]"
+    - echo "CI_COMMIT_TAG = [$CI_COMMIT_TAG]"
+    - echo "CI_COMMIT_REF_NAME = [$CI_COMMIT_REF_NAME]"
 
-  # create link to local storage to avoid downloading every time and to have
-  # a place to "backup" packages. Also keep prevous cross-compilers and avoid
-  # rebuilding every time.
-  # symlink creation is neede for every job, because gilab will checkout the sources
-  # in new empty directory.
+    # create link to local storage to avoid downloading every time and to have
+    # a place to "backup" packages. Also keep prevous cross-compilers and avoid
+    # rebuilding every time.
+    # symlink creation is neede for every job, because gilab will checkout the sources
+    # in new empty directory.
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
 
-  # ensure that we have no old data. This is important when
-  # generating download.json. Else all old openwrt images would be
-  # included and mixed
+    # ensure that we have no old data. This is important when
+    # generating download.json. Else all old openwrt images would be
+    # included and mixed
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
 
-  # check variables
+    # check variables
     - |
       if [ -z "${FF_BUILD_TAG}" ]; then
         echo "FF_BUILD_TAG not defined! Aborting."
@@ -57,14 +57,14 @@ m3tags:init:
         exit 1
       fi
 
-  # dont delete dl, it is not so important to have different old version for
-  # one packges, but it will reduce download overhead from external servers
-  # every night. so just only delete workdirs to always have a clean build
+    # dont delete dl, it is not so important to have different old version for
+    # one packges, but it will reduce download overhead from external servers
+    # every night. so just only delete workdirs to always have a clean build
     - test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl/*
     - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
 
-  # create artifact to transfer variable gitlab.environment to jobs else
-  # each job gets its value from default gitlab values
+    # create artifact to transfer variable gitlab.environment to jobs else
+    # each job gets its value from default gitlab values
     - echo "export FF_BUILD_TAG=\"${FF_BUILD_TAG}\"" >> gitlab.environment
     - echo "export FF_UPLOAD_DIR=\"${FF_UPLOAD_DIR}\"" >> gitlab.environment
   tags:
