@@ -483,12 +483,13 @@ static void debug_output(uint8_t indent, uint32_t check_len, uint32_t expire, st
 	uint8_t mute_dbgl_sys = DBG_HIST_NEW;
 	uint8_t mute_dbgl_changes = DBG_HIST_NEW;
 
-	char format[16] = ""; //max 16: "%s%256s%s%s%s\n"
-	snprintf(format,sizeof(format),"%%s%%%ds%%s%%s%%s\n", indent);
+	char format[32] = ""; //max 16: "%s%256s%s%s%s\n"
+	char *space = "---------";
+	snprintf(format,sizeof(format),"%%s%%.%ds%%s%%s%%s\n", indent);
 
 	if (cn && cn->fd != STDOUT_FILENO)
 	{
-		dbg_printf(cn, format, dbgt2str[dbgt],"->", f ? f : "", f ? "(): " : "", s);
+		dbg_printf(cn, format, dbgt2str[dbgt], space, f ? f : "", f ? "(): " : "", s);
 	}
 
 	if (!debug_system_active)
@@ -496,11 +497,11 @@ static void debug_output(uint8_t indent, uint32_t check_len, uint32_t expire, st
 		if (dbgl == DBGL_SYS || debug_level == DBGL_ALL || debug_level == dbgl)
 		{
 			//printf("[%d %8llu] %s%s%s%s\n", My_pid, (unsigned long long)batman_time, dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
-			printf(format, dbgt2str[dbgt],"", f ? f : "->", f ? "(): " : "", s);
+			printf(format, dbgt2str[dbgt], space, f ? f : "", f ? "(): " : "", s);
 		}
 		if (dbgl == DBGL_SYS)
 		{
-			syslog(mapSyslogPrio(dbgt), format, dbgt2str[dbgt],"->", f ? f : "", f ? "(): " : "", s);
+			syslog(mapSyslogPrio(dbgt), format, dbgt2str[dbgt], space, f ? f : "", f ? "(): " : "", s);
 		}
 
 		return;
@@ -579,7 +580,8 @@ static void debug_output(uint8_t indent, uint32_t check_len, uint32_t expire, st
 			if (level == DBGL_ALL)
 				dbg_printf(dn->cn, "[%d %8llu %5u] ", My_pid, (unsigned long long)batman_time, dbgl_all_msg_num);
 
-			dbg_printf(dn->cn, "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
+		  snprintf(format,sizeof(format),"%%s%%.%ds %%s%%s%%s\n", indent);
+			dbg_printf(dn->cn, format, dbgt2str[dbgt], space, f ? f : "", f ? "(): " : "", s);
 
 			if ((level == DBGL_SYS && mute_dbgl_sys == DBG_HIST_MUTING) ||
 					(level == DBGL_CHANGES && mute_dbgl_changes == DBG_HIST_MUTING))
