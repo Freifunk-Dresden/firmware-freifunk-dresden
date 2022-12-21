@@ -201,7 +201,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 	uint32_t max_othr_longtm_val = 0;
 	uint32_t max_othr_recent_val = 0;
 
-	dbgf_all(0, DBGT_INFO, "%s", on->orig_str);
+	dbgf_all(3, DBGT_INFO, "%s", on->orig_str);
 
 	/* only used for debugging purposes */
 	if (!on->first_valid_sec)
@@ -286,7 +286,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 		on->last_decided_sqn = ogm->ogm_seqno;
 		*oCtx |= IS_BEST_NEIGH_AND_NOT_BROADCASTED;
 		changed = YES;
-		dbgf_all(0, DBGT_INFO, "%s, (1) IS_BEST_NEIGH_AND_NOT_BROADCASTED, ogm_seqno=%d, RXB=%d, RCB=%d, LCB=%d, last_decided_sqn=%d, my_rcnt_fk=%d", on->orig_str, ogm->ogm_seqno, RXB, RCB, LCB, on->last_decided_sqn, my_rcnt_fk);
+		dbgf_all(3, DBGT_INFO, "%s, (1) IS_BEST_NEIGH_AND_NOT_BROADCASTED, ogm_seqno=%d, RXB=%d, RCB=%d, LCB=%d, last_decided_sqn=%d, my_rcnt_fk=%d", on->orig_str, ogm->ogm_seqno, RXB, RCB, LCB, on->last_decided_sqn, my_rcnt_fk);
 		//wenn ogm ueber gleiche route (ip) kommt.
 	}
 	else if ((curr_rt == incm_rt) &&
@@ -305,7 +305,7 @@ static struct neigh_node *update_orig(struct orig_node *on, uint16_t *oCtx, stru
 	{
 		on->last_decided_sqn = ogm->ogm_seqno;
 		*oCtx |= IS_BEST_NEIGH_AND_NOT_BROADCASTED;
-		dbgf_all(0, DBGT_INFO, "%s, (2) IS_BEST_NEIGH_AND_NOT_BROADCASTED, ogm_seqno=%d, RXB=%d, RCB=%d, LCB=%d, last_decided_sqn=%d, my_rcnt_fk=%d", on->orig_str, ogm->ogm_seqno, RXB, RCB, LCB, on->last_decided_sqn, my_rcnt_fk);
+		dbgf_all(3, DBGT_INFO, "%s, (2) IS_BEST_NEIGH_AND_NOT_BROADCASTED, ogm_seqno=%d, RXB=%d, RCB=%d, LCB=%d, last_decided_sqn=%d, my_rcnt_fk=%d", on->orig_str, ogm->ogm_seqno, RXB, RCB, LCB, on->last_decided_sqn, my_rcnt_fk);
 	}
 
 	if (changed && !LCB)

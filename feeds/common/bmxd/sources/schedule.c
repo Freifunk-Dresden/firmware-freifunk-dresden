@@ -600,12 +600,12 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 		{
 			if (oCtx & IS_ASOCIAL)
 			{
-				dbgf_all(0, DBGT_INFO, "re-brc (accepted) neighb OGM with direct link and unidirect flag");
+				dbgf_all(3, DBGT_INFO, "re-brc (accepted) neighb OGM with direct link and unidirect flag");
 				with_unidirectional_flag = 1;
 			}
 			else
 			{ // mark direct link on incoming interface
-				dbgf_all(0, DBGT_INFO, "rebroadcast neighbour (accepted) packet with direct link flag");
+				dbgf_all(3, DBGT_INFO, "rebroadcast neighbour (accepted) packet with direct link flag");
 			}
 
 			/* if an unidirectional direct neighbour sends us a packet or
@@ -614,19 +614,19 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 		}
 		else if (!(oCtx & HAS_CLONED_FLAG))
 		{
-			dbgf_all(0, DBGT_INFO, "re-brc (answer back) neighb OGM with direct link and unidirect flag");
+			dbgf_all(3, DBGT_INFO, "re-brc (answer back) neighb OGM with direct link and unidirect flag");
 			with_unidirectional_flag = 1;
 		}
 		else
 		{
-			dbgf_all(0, DBGT_INFO, "drop OGM: no reason to re-brc!");
+			dbgf_all(3, DBGT_INFO, "drop OGM: no reason to re-brc!");
 			prof_stop(PROF_schedule_rcvd_ogm);
 			return;
 		}
 	}
 	else if (oCtx & IS_ASOCIAL)
 	{
-		dbgf_all(0, DBGT_INFO, "drop OGM, asocial devices re-brc almost nothing :-(");
+		dbgf_all(3, DBGT_INFO, "drop OGM, asocial devices re-brc almost nothing :-(");
 		prof_stop(PROF_schedule_rcvd_ogm);
 		return;
 
@@ -634,18 +634,18 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	}
 	else if ((oCtx & IS_ACCEPTED) && (oCtx & IS_BEST_NEIGH_AND_NOT_BROADCASTED))
 	{
-		dbgf_all(0, DBGT_INFO, "re-brc accepted OGM");
+		dbgf_all(3, DBGT_INFO, "re-brc accepted OGM");
 	}
 	else
 	{
-		dbgf_all(0, DBGT_INFO, "drop multihop OGM, not accepted or not via best link !");
+		dbgf_all(3, DBGT_INFO, "drop multihop OGM, not accepted or not via best link !");
 		prof_stop(PROF_schedule_rcvd_ogm);
 		return;
 	}
 
 	if (!(((mb->ogm)->ogm_ttl == 1 && directlink) || (mb->ogm)->ogm_ttl > 1))
 	{
-		dbgf_all(0, DBGT_INFO, "ttl exceeded");
+		dbgf_all(3, DBGT_INFO, "ttl exceeded");
 		prof_stop(PROF_schedule_rcvd_ogm);
 		return;
 	}
@@ -709,7 +709,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	sn->ogm->ogm_seqno = htons(sn->ogm->ogm_seqno);
 
 	// we send the ogm back as answer with direct link, unidirect, to tell neighbour that we are direct connected
-	dbgf_all(0, DBGT_INFO, "prepare send re-brc OGM TTL %d DirectF %d UniF %d ", sn->ogm->ogm_ttl, directlink, with_unidirectional_flag );
+	dbgf_all(3, DBGT_INFO, "prepare send re-brc OGM TTL %d DirectF %d UniF %d ", sn->ogm->ogm_ttl, directlink, with_unidirectional_flag );
 
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
