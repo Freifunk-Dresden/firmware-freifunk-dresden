@@ -1242,7 +1242,7 @@ void process_ogm(struct msg_buff *mb)
 	struct link_node_dev *lndev = NULL;
 
 	struct batman_if *iif = mb->iif;
-	uint32_t neigh = mb->neigh;
+	uint32_t neigh = mb->neigh; //IP
 	struct bat_packet_ogm *ogm = mb->ogm;
 
 	uint16_t oCtx = 0;
@@ -1297,13 +1297,13 @@ void process_ogm(struct msg_buff *mb)
 			goto process_ogm_end;
 		}
 		//der absender (erfinder der ogm) hat die gleiche ip wie eines meiner interfaces. also
-		//ist das meine ogm
+		//ist das meine ogm. kann eine 10.201.x.y sein (vom non-primary iface aber vom primary ))
 		if (ogm->orig == bif->if_addr)
 		{
 			oCtx |= IS_MY_ORIG;
 			break;
 		}
-	}
+	} //OLForEach(bif, struct batman_if, if_list)
 
 	// ein neighbour antwortet mir mit unidirect flag und direct flag wenn er feststellt,
 	// dass meine ogm-ip auch von einem interface mit gleicher IP ageschickt wurde.

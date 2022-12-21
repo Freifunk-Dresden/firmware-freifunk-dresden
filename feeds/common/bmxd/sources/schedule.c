@@ -356,6 +356,7 @@ static void aggregate_outstanding_ogms(void *unused)
 		if ( send_node->send_time > batman_time )
 			break; // for now we are done,
 
+// sende when daten vorhandenn und die udp size erreicht wurde
 		if (aggregated_size > (int32_t)sizeof(struct bat_header) &&
 				aggregated_size + send_node->ogm_buff_len > pref_udpd_size)
 		{
@@ -527,14 +528,20 @@ static void aggregate_outstanding_ogms(void *unused)
 			dbg_if_out = 0;
 		}
 
-		// trigger next seqno now where the first one of the current seqno has been send
+		// trigger next seqno now where the first one of the current seqno has been send.
+		// die liste mit den "send_node(s)" enthält alle ogm (die die empfangen wurden von anderen
+		// knoten über verschiedene interaces und die eigenen (interfaces ogm)).
+		// Das "if" hier, triggert ein neues schedule, wenn die eigene ogm eines meiner interfaces
+		// gesendet.
 		if (send_node->own_if && send_node->iteration == 1)
 		{
 			send_node->if_outgoing->if_seqno++;
 			send_node->if_outgoing->send_own = 1;
 		}
 
-		// remove all the finished packets from send_list
+		// remove all the finished packets from send_list.
+		// normalerweise nach jedem ogm, aber wenn welche geclont werden sollen,
+		// dann erst wenn diese auch versendet wurden.
 		if (send_node_done)
 		{
 			LIST_ENTRY *prev = OLGetPrev(send_node);
@@ -542,7 +549,7 @@ static void aggregate_outstanding_ogms(void *unused)
 			debugFree(send_node, 1502);
 			send_node = (struct send_node *)prev;
 		}
-	}
+	} //OLForEach(send_node, struct send_node, send_list)
 
 	if (aggregated_size > (int32_t)sizeof(struct bat_header))
 	{
@@ -570,7 +577,7 @@ static void aggregate_outstanding_ogms(void *unused)
 				bif->if_next_pwrsave_hardbeat = batman_time + ((uint32_t)(ogi_pwrsave));
 			}
 
-			bif->send_own = 0;
+			bif->send_own = 0; //interface ogm wurde "scheduled" (der "send_list" hinzugefuegt als ersten eintrag)
 		}
 
 		// this timestamp may become invalid after U32 wrap-around
@@ -1359,6 +1366,7 @@ void schedule_own_ogm(struct batman_if *bif)
 
 	dbgf_all(0, DBGT_INFO, "prepare send own OGM");
 
+  //insert packet time-sorted
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
