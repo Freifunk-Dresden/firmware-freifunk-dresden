@@ -783,7 +783,7 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 					}
 					else
 					{
-						dbg_mute(2, 75, DBGL_SYS, DBGT_ERR,
+						dbg_mute(1, 75, DBGL_SYS, DBGT_ERR,
 										 "Drop packet! Rcvd incompatible extension message order: "
 										 "via NB %s  OG? %s  size? %i, ext_type %d",
 										 mb->neigh_str, ipStr(mb->ogm->orig),
@@ -819,7 +819,7 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 				udp_len = udp_len - ((((struct bat_packet_common *)pos)->bat_size) << 2);
 				pos = pos + ((((struct bat_packet_common *)pos)->bat_size) << 2);
 
-				dbg_mute(2, 60, DBGL_SYS, DBGT_ERR,
+				dbg_mute(1, 60, DBGL_SYS, DBGT_ERR,
 								 "Drop packet! Rcvd corrupted packet size via NB %s: "
 								 "processed bytes: %d , indicated bytes %d, flags. %X, remaining bytes %d",
 								 mb->neigh_str,
@@ -838,7 +838,7 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 		}
 		else
 		{
-			dbg_mute(2, 47, DBGL_CHANGES, DBGT_WARN,
+			dbg_mute(1, 47, DBGL_CHANGES, DBGT_WARN,
 								"Drop single unkown bat_type via NB %s, bat_type %X, size %i,  "
 								"OG? %s, remaining len %d. Maybe you need an update",
 								mb->neigh_str,

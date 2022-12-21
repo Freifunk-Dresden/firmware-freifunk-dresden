@@ -524,7 +524,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 		if ((uint16_t)(ogm_seqno + my_path_lounge - orig_node->last_valid_sqn) >
 				MAX_SEQNO - orig_node->pws)
 		{
-			dbg_mute(6, 25, DBGL_CHANGES, DBGT_WARN,
+			dbg_mute(3, 25, DBGL_CHANGES, DBGT_WARN,
 							 "drop OGM %-15s  via %4s NB %-15s (%s) with old SQN %5i  "
 							 "(prev %5i  lounge-margin %2i  pws %3d  lvld %llu) !",
 							 orig_node->orig_str,
@@ -599,7 +599,7 @@ static int8_t validate_orig_seqno(struct orig_node *orig_node, uint32_t neigh, c
 				&& orig_node->orig != primary_addr  	// and not my primary IP
 		)
 		{
-			dbg_mute(6, 26, DBGL_SYS, DBGT_WARN,
+			dbg_mute(3, 26, DBGL_SYS, DBGT_WARN,
 							 "DAD-alert! %s  via NB %s (%s), OGM SQN %i out-of-range: lounge-margin %i, "
                "batman_time %llu,"
 							 "(last valid SQN %i  at %llu, SQNdiff:%ld)  dad_to %d  wavg %d",
@@ -663,7 +663,7 @@ static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff
 		{
 			if (orig_node->primary_orig_node->orig != pip->EXT_PIP_FIELD_ADDR)
 			{
-				dbg_mute(6, 45, DBGL_SYS, DBGT_WARN,
+				dbg_mute(3, 45, DBGL_SYS, DBGT_WARN,
 								 "neighbor %s changed his primary interface from %s to %s !",
 								 orig_node->orig_str,
 								 orig_node->primary_orig_node->orig_str,
@@ -698,7 +698,7 @@ static int8_t validate_primary_orig(struct orig_node *orig_node, struct msg_buff
 		{
 			if (orig_node->primary_orig_node != orig_node)
 			{
-				dbg_mute(6, 30, DBGL_SYS, DBGT_WARN,
+				dbg_mute(3, 30, DBGL_SYS, DBGT_WARN,
 								 "neighbor %s changed primary interface from %s to %s !",
 								 orig_node->orig_str,
 								 orig_node->primary_orig_node->orig_str,
@@ -759,7 +759,7 @@ static void update_rtq_link(struct orig_node *orig_node_neigh, uint16_t oCtx, st
 
 	if (((SQ_TYPE)((iif->if_seqno - OUT_SEQNO_OFFSET) - ogm->ogm_seqno)) > local_rtq_lounge)
 	{
-		dbg_mute(6, 51, DBGL_CHANGES, DBGT_WARN,
+		dbg_mute(3, 51, DBGL_CHANGES, DBGT_WARN,
 						 "late reception of own OGM via NB %s  lastTxIfSqn %d  rcvdSqn %d  margin %d ! "
 						 "Try configureing a greater --%s value .",
 						 mb->neigh_str, (iif->if_seqno - OUT_SEQNO_OFFSET),
@@ -1274,7 +1274,7 @@ void process_ogm(struct msg_buff *mb)
 
 	if (ogm->ogm_pws < MIN_PWS || ogm->ogm_pws > MAX_PWS)
 	{
-		dbg_mute(4, 30, DBGL_SYS, DBGT_WARN, "drop OGM: %s unsopported path window size %d !",
+		dbg_mute(2, 30, DBGL_SYS, DBGT_WARN, "drop OGM: %s unsopported path window size %d !",
 						 ipStr(ogm->orig), ogm->ogm_pws);
 		goto process_ogm_end;
 	}
@@ -1292,7 +1292,7 @@ void process_ogm(struct msg_buff *mb)
 
 		if (neigh == bif->if_broad)
 		{
-			dbg_mute(4, 30, DBGL_SYS, DBGT_WARN, "drop OGM: %s ignoring all packets with broadcast source IP",
+			dbg_mute(2, 30, DBGL_SYS, DBGT_WARN, "drop OGM: %s ignoring all packets with broadcast source IP",
 							 mb->neigh_str);
 			goto process_ogm_end;
 		}
