@@ -1263,9 +1263,9 @@ void process_ogm(struct msg_buff *mb)
 	// wenn also 10.200.4.100 in der ogm->orig sendet, aber das vom neigh=10.201.4.100 , wird hier
 	// der knoten nicht aktzeptiert. das sieht man dann am log "drop OGM: rcvd via unknnown neighbor (not direct)"
 	// es muss also erstmal eine ogm mit 10.201.4.100 kommen, damit dann die 10.200.4.100 akzeptiert wird.
-	oCtx |= (ogm->orig == neigh) ? IS_DIRECT_NEIGH : 0;
+	 oCtx |= (ogm->orig == neigh) ? IS_DIRECT_NEIGH : 0;
 
-	dbgf_all(2, DBGT_INFO, "OG %s  via IF %s %s  NB %s  "
+	dbgf_all(2, DBGT_INFO, "OG %s (via IF %s %s) NB %s  "
 											"V %d SQN %d TTL %d DirectF %d UniF %d  CloneF %d, directNB %d, asocial %d(%d)",
 					 ipStr(ogm->orig), iif->dev, iif->if_ip_str, mb->neigh_str,
 					 COMPAT_VERSION, ogm->ogm_seqno, ogm->ogm_ttl,
