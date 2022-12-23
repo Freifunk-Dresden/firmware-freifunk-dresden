@@ -1585,7 +1585,7 @@ static int32_t opt_show_origs(uint8_t cmd, uint8_t _save, struct opt_type *opt, 
 								 SOURCE_VERSION,
 								 (strncmp(REVISION_VERSION, "0", 1) != 0 ? REVISION_VERSION : ""),
 								 ipStr(primary_addr),
-								 local_lws, my_pws, my_ogi,
+								 local_lws, my_pws, my_originator_interval,
 								 get_human_uptime(0, 1),
 								 s_curr_avg_cpu_load / 10, s_curr_avg_cpu_load % 10);
 		}

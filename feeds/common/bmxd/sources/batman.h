@@ -284,7 +284,7 @@ struct bat_packet_ogm
 #define EXT_TYPE_64B_PIP 2
 
 /*Stephan:
-Die extensions werden am ende einer OGM angehängt. bmxd prueft ob diese
+Die extensions werden am ende einer OGM angehï¿½ngt. bmxd prueft ob diese
 behalten werden wenn eine OGM empfangen wird (also weiter gesendet
 (EXT_ATTR_KEEP) oder rausgeschmissen wird).
 Dazu gibt es das globale array ext_attribute[]
@@ -416,7 +416,9 @@ struct send_node /* structure for send_list maintaining packets to be (re-)broad
 	batman_time_t send_time;
 	int16_t send_bucket;
 	uint8_t iteration;
-	uint8_t own_if;
+	uint8_t its_my_own_ogm; // SE: wenn 1, dann wurde das send_node objekt fuer meine eigenen ogms (die ich
+	                        // hier lokal erzeuge) scheduled. wenn 0, dann kommt die ogm (die hier referenziert wird)
+													// von anderen knoten und soll "rebroadcasted" werden
 	int32_t ogm_buff_len;
 	struct batman_if *if_outgoing;
 	struct bat_packet_ogm *ogm;

@@ -35,7 +35,7 @@
 #include "plugin.h"
 #include "schedule.h"
 
-int32_t my_ogi; /* orginator message interval in miliseconds */
+int32_t my_originator_interval; /* orginator message interval in miliseconds */
 int32_t ogi_pwrsave;
 
 static int32_t pref_udpd_size = DEF_UDPD_SIZE;
@@ -354,7 +354,9 @@ static void aggregate_outstanding_ogms(void *unused)
 	OLForEach(send_node, struct send_node, send_list)
 	{
 		if ( send_node->send_time > batman_time )
-			break; // for now we are done,
+			break; // for now we are done. die liste enthaelt alle ogm und ist time-sorted. alle scheduled
+			       // ogm, folgen, kommen beim näcchsten aufruf dieser funktion (nach aggr_interval) dran.
+
 
 // sende when daten vorhandenn und die udp size erreicht wurde
 		if (aggregated_size > (int32_t)sizeof(struct bat_header) &&
@@ -370,14 +372,14 @@ static void aggregate_outstanding_ogms(void *unused)
 		uint8_t send_node_done = YES;
 
 		if ((aggregated_size + send_node->ogm_buff_len > MAX_UDPD_SIZE) ||
-				(aggregated_size + send_node->ogm_buff_len > pref_udpd_size && send_node->own_if))
+				(aggregated_size + send_node->ogm_buff_len > pref_udpd_size && send_node->its_my_own_ogm))
 		{
 			if (aggregated_size <= (int32_t)sizeof(struct bat_header))
 			{
 				dbg_mute(0, 30, DBGL_SYS, DBGT_ERR,
 								 "Drop OGM, single packet (own=%d) to large to fit legal packet size"
 								 "scheduled %llu, agg_size %d, next_len %d, pref_udpd_size %d  !!",
-								 send_node->own_if, (unsigned long long)send_node->send_time,
+								 send_node->its_my_own_ogm, (unsigned long long)send_node->send_time,
 								 aggregated_size, send_node->ogm_buff_len, pref_udpd_size);
 			}
 		}
@@ -396,7 +398,7 @@ static void aggregate_outstanding_ogms(void *unused)
 			cloned = (send_node->ogm->flags & CLONED_FLAG) > 0;
 
 			ttl = send_node->ogm->ogm_ttl;
-			if_singlehomed = ((send_node->own_if && send_node->if_outgoing->if_singlehomed) ? 1 : 0);
+			if_singlehomed = ((send_node->its_my_own_ogm && send_node->if_outgoing->if_singlehomed) ? 1 : 0);
 
 			//can't forward packet with IDF: outgoing iface not specified
 			paranoia(-500015, (directlink && !send_node->if_outgoing));
@@ -479,10 +481,10 @@ static void aggregate_outstanding_ogms(void *unused)
 
 					if (
 							// power-save mode enabled:
-							ogi_pwrsave > my_ogi
+							ogi_pwrsave > my_originator_interval
 							&&  batman_time > ( bif->if_last_link_activity + COMMON_OBSERVATION_WINDOW)
 							&&	( // not yet time for a neighbor-discovery hardbeat?:
-									send_node->own_if == 0 ||
+									send_node->its_my_own_ogm == 0 ||
 									send_node->if_outgoing != bif ||
 									batman_time <= bif->if_next_pwrsave_hardbeat)
 						 )
@@ -533,7 +535,7 @@ static void aggregate_outstanding_ogms(void *unused)
 		// knoten über verschiedene interaces und die eigenen (interfaces ogm)).
 		// Das "if" hier, triggert ein neues schedule, wenn die eigene ogm eines meiner interfaces
 		// gesendet.
-		if (send_node->own_if && send_node->iteration == 1)
+		if (send_node->its_my_own_ogm && send_node->iteration == 1)
 		{
 			send_node->if_outgoing->if_seqno++;
 			send_node->if_outgoing->send_own = 1;
@@ -553,9 +555,10 @@ static void aggregate_outstanding_ogms(void *unused)
 
 	if (aggregated_size > (int32_t)sizeof(struct bat_header))
 	{
-		send_aggregated_ogms();
+		send_aggregated_ogms(); // runs through each interface, gets aggregation data (ogms)
+		                        // builds udp paket with interface specific ogms
 
-		dbgf_all(0, DBGT_INFO, "max aggregated size %d", aggregated_size);
+		dbgf_all(0, DBGT_INFO, "last aggregated size %d", aggregated_size);
 	}
 
 	OLForEach(bif, struct batman_if, if_list)
@@ -697,7 +700,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	sn->ogm->bat_size = (sn->ogm_buff_len) >> 2;
 
 	sn->send_time = batman_time;
-	sn->own_if = 0;
+	sn->its_my_own_ogm = 0;
 
 	sn->if_outgoing = mb->iif;
 
@@ -718,6 +721,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	// we send the ogm back as answer with direct link, unidirect, to tell neighbour that we are direct connected
 	dbgf_all(3, DBGT_INFO, "prepare send re-brc OGM TTL %d DirectF %d UniF %d ", sn->ogm->ogm_ttl, directlink, with_unidirectional_flag );
 
+	// insert ogm time-sorted
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
@@ -1295,19 +1299,19 @@ void schedule_own_ogm(struct batman_if *bif)
 	sn->ogm->orig = bif->if_addr;
 	//sn->ogm->ogm_path_lounge = Signal_lounge;
 
-	sn->send_time = bif->if_seqno_schedule + my_ogi;
+	sn->send_time = bif->if_seqno_schedule + my_originator_interval;
 
 	if (   sn->send_time < batman_time
-			|| sn->send_time > (batman_time + my_ogi)
+			|| sn->send_time > (batman_time + my_originator_interval)
 		 )
 	{
 		dbg_mute(0, 50, DBGL_SYS, DBGT_WARN,
 						 "strange own OGM schedule, rescheduling IF %10s SQN %d from %llu to %llu. "
 						 "Maybe we just woke up from power-save mode, --%s too small, --%s to big or too much --%s",
-						 bif->dev, bif->if_seqno, (unsigned long long)sn->send_time, (unsigned long long)batman_time + my_ogi,
+						 bif->dev, bif->if_seqno, (unsigned long long)sn->send_time, (unsigned long long)batman_time + my_originator_interval,
 						 ARG_OGI, ARG_AGGR_IVAL, ARG_WL_CLONES);
 
-		sn->send_time = batman_time + my_ogi; // - (my_ogi/(2*aggr_p_ogi));
+		sn->send_time = batman_time + my_originator_interval; // - (my_originator_interval/(2*aggr_p_ogi));
 	}
 
 	bif->if_seqno_schedule = sn->send_time;
@@ -1315,7 +1319,7 @@ void schedule_own_ogm(struct batman_if *bif)
 	dbgf_all(0, DBGT_INFO, "for %s seqno %u at %llu", bif->dev, bif->if_seqno, (unsigned long long)sn->send_time);
 
 	sn->if_outgoing = bif;
-	sn->own_if = 1;
+	sn->its_my_own_ogm = 1;
 
 	uint32_t ogm_len = sizeof(struct bat_packet_ogm);
 
@@ -1348,7 +1352,7 @@ void schedule_own_ogm(struct batman_if *bif)
 		/* all non-primary interfaces send primary-interface extension message */
 	}
 	else if (primary_if)
-	{
+	{ // set a reference to primary ip address and seqno (for ogm that are created for non-primary ifaces)
 		my_pip_extension_packet.EXT_PIP_FIELD_ADDR = primary_addr;
 		my_pip_extension_packet.EXT_PIP_FIELD_PIPSEQNO = htons(primary_if->if_seqno);
 
@@ -1366,7 +1370,7 @@ void schedule_own_ogm(struct batman_if *bif)
 
 	dbgf_all(0, DBGT_INFO, "prepare send own OGM");
 
-  //insert packet time-sorted
+	//insert packet time-sorted
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
@@ -1406,7 +1410,7 @@ static struct opt_type schedule_options[] =
 				{ODI, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				 0, "\nScheduling options:"},
 
-				{ODI, 5, 0, ARG_OGI, 'o', A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &my_ogi, MIN_OGI, MAX_OGI, DEF_OGI, 0,
+				{ODI, 5, 0, ARG_OGI, 'o', A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &my_originator_interval, MIN_OGI, MAX_OGI, DEF_OGI, 0,
 				 ARG_VALUE_FORM, "set interval in ms with which new originator message (OGM) are send"},
 
 				{ODI, 5, 0, ARG_OGI_PWRSAVE, 0, A_PS1, A_ADM, A_DYI, A_CFA, A_ANY, &ogi_pwrsave, MIN_OGI, MAX_OGI, MIN_OGI, 0,
