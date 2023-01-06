@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="19"
+SCRIPT_VERSION="20"
 
 
 # gitlab variables
@@ -380,7 +380,7 @@ numberOfTargets()
 search_target()
 {
 	target=$1
-	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{print FILENAME}' openwrt-configs/*/*
+	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{line=gsub(/^CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t,"$0}' openwrt-configs/*/*
 }
 
 print_devices_for_target()
