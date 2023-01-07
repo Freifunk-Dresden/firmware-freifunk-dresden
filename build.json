@@ -124,6 +124,7 @@
   {
     "name":"x86.64.offloader",
     "config":"config.x86.64.offloader",
+    "openwrt_variant"  : "offloader",
     "packages":["qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
   },
   {
