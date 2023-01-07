@@ -38,7 +38,6 @@ LOCAL_OUTPUT_DIR="output"				# location to copy images/packages to, after each t
 CONFIG_DIR=openwrt-configs
 CONFIG_DEFAULT_FILE="default.config"
 OPENWRT_PATCHES_DIR=openwrt-patches
-OPENWRT_PATCHES_TARGET_DIR=openwrt-patches-target
 DDMESH_STATUS_DIR=".ddmesh"	# used to store build infos like openwrt_patches_target states
 DDMESH_PATCH_STATUS_DIR="$DDMESH_STATUS_DIR/patches-applied"
 compile_status_filename="compile-status.json"
@@ -477,7 +476,7 @@ usage: $(basename $0) [options] <command> | <target> [flags] [-- < make params .
    watch                   - same as 'list' but updates display
    devices <target>        - displays all selected routers for a target
    search <string>         - search specific router (target)
-   feed-revisions          - returns the git HEAD revision hash for current date (now).
+   feed-revisions          - displays the openwrt default feed revisions.
                              The revisions then could be set in build.json
    target                  - target to build
            that are defined by build.json. use 'list' for supported targets.
@@ -683,25 +682,7 @@ case "$1" in
 					;;
 
 		feed-revisions)
-					REPOS=""
-					REPOS="${REPOS} https://git.openwrt.org/feed/packages.git"
-					# REPOS="${REPOS} https://git.openwrt.org/project/luci.git"
-					REPOS="${REPOS} https://git.openwrt.org/feed/routing.git"
-					REPOS="${REPOS} https://git.openwrt.org/feed/telephony.git"
-
-					_date=$(date +"%b %d %Y")
-					p=$(pwd)
-					for r in ${REPOS}
-					do
-						name=${r##*/}
-						d=/tmp/ffbuild_$name
-						rm -rf $d
-						git clone $r $d 2>/dev/null
-						cd $d
-						echo "[$name] "
-						git log -1 --oneline --until="$_date"
-						cd $p
-					done
+					echo "!!! go to openwrt build directory and look at 'feeds.conf.default'"
 					exit 0
 					;;
 
@@ -1221,45 +1202,8 @@ EOM
 	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh_own)"$C_NONE
 	./scripts/feeds install -a -p ddmesh_own
 
-	#try to apply target patches
-	mkdir -p $DDMESH_PATCH_STATUS_DIR
-	echo -e $C_CYAN"apply target patches"$C_NONE
-	idx=0
-	while true
-	do
-		# check if all patches was processed
-		test -z "$_target_patches" && break
-
-		# use OPT to prevent jq from adding ""
-		entry="$(echo $_target_patches | jq $OPT .[$idx])"
-		test "$entry" = "null" && break
-		test -z "$entry"  && break
-
-		idx=$(( idx + 1 ))
-
-		# check patch
-		if [ -f $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry ]; then
-			printf "[$idx] $C_GREEN$entry$C_NONE"
-
-			# if patch is not applied yet
-			if [ ! -f $DDMESH_PATCH_STATUS_DIR/$entry ]; then
-		                if patch -t --directory=$RUN_DIR/$buildroot -p0 < $RUN_DIR/$OPENWRT_PATCHES_TARGET_DIR/$_selector_patches/$entry >/dev/null; then
-					printf " -> $C_GREEN%s$C_NONE\n" "ok"
-					touch $DDMESH_PATCH_STATUS_DIR/$entry
-				else
-					printf " -> "$C_RED"failed"$C_NONE"\n"
-					clean_up_exit 1
-				fi
-			else
-					printf " -> already applied\n"
-			fi
-		else
-			echo -e $C_RED"Warning: patch [$_selector_patches/$entry] not found!"$C_NONE
-		fi
-	done
-
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
-				# create a new config
+                  # create a new config
 
 	DEFAULT_CONFIG="${RUN_DIR}/${CONFIG_DIR}/${_selector_config}/${CONFIG_DEFAULT_FILE}"
 	if [ ! -f "${RUN_DIR}/${config_file}" ]; then
