@@ -211,7 +211,7 @@ static void activate_debug_system(void)
 
 		debug_system_active = YES;
 
-		dbgf_all(DBGT_INFO, "activated level %d", debug_level);
+		dbgf_all(0, DBGT_INFO, "activated level %d", debug_level);
 
 		dbg(DBGL_CHANGES, DBGT_INFO, "BMX %s%s (compatibility version %d): %s",
 				SOURCE_VERSION,
@@ -247,7 +247,7 @@ void close_ctrl_node(uint8_t cmd, struct ctrl_node *ctrl_node)
 				remove_dbgl_node(cn);
 
 				//leaving this after remove_dbgl_node() prevents debugging via broken -d4 pipe
-				dbgf_all(DBGT_INFO, "closed ctrl node fd %d with cmd %d", cn->fd, cmd);
+				dbgf_all(0, DBGT_INFO, "closed ctrl node fd %d with cmd %d", cn->fd, cmd);
 
 				if (cmd == CTRL_CLOSE_SUCCESS)
 					UNUSED_RETVAL(write(cn->fd, CONNECTION_END_STR, strlen(CONNECTION_END_STR)));
@@ -274,7 +274,7 @@ void close_ctrl_node(uint8_t cmd, struct ctrl_node *ctrl_node)
 			{
 				remove_dbgl_node(cn);
 				//leaving this after remove_dbgl_node() prevents debugging via broken -d4 pipe
-				dbgf_all(DBGT_INFO, "closed ctrl node fd %d", cn->fd);
+				dbgf_all(0, DBGT_INFO, "closed ctrl node fd %d", cn->fd);
 
 				close(cn->fd);
 				cn->fd = 0;
@@ -311,7 +311,7 @@ void accept_ctrl_node(void)
 
 	change_selects();
 
-	dbgf_all(DBGT_INFO, "got unix control connection");
+	dbgf_all(0, DBGT_INFO, "got unix control connection");
 }
 
 void handle_ctrl_node(struct ctrl_node *cn)
@@ -331,7 +331,7 @@ void handle_ctrl_node(struct ctrl_node *cn)
 
 	if (input > 0 && input < MAX_UNIX_MSG_SIZE)
 	{
-		dbgf_all(DBGT_INFO, "rcvd ctrl stream via fd %d, %d bytes, auth %d: %s",
+		dbgf_all(0, DBGT_INFO, "rcvd ctrl stream via fd %d, %d bytes, auth %d: %s",
 						 cn->fd, input, cn->authorized, buff);
 
 		if ((apply_stream_opts(buff, NULL, OPT_CHECK, NO /*no cfg by default*/, cn) == FAILURE) ||
@@ -471,7 +471,7 @@ void dbg_printf(struct ctrl_node *cn, char *last, ...)
 	}
 }
 
-static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char const *f, char *s)
+static void debug_output(uint8_t indent, uint32_t check_len, uint32_t expire, struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char const *f, char *s)
 {
 	static uint16_t dbgl_all_msg_num = 0;
 	static char *dbgt2str[] = {"", "INFO  ", "WARN  ", "ERROR "};
@@ -483,16 +483,26 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 	uint8_t mute_dbgl_sys = DBG_HIST_NEW;
 	uint8_t mute_dbgl_changes = DBG_HIST_NEW;
 
+	char format[32] = ""; //max 16: "%s%256s%s%s%s\n"
+	char *space = "---------";
+	snprintf(format,sizeof(format),"%%s%%.%ds%%s%%s%%s\n", indent);
+
 	if (cn && cn->fd != STDOUT_FILENO)
-		dbg_printf(cn, "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
+	{
+		dbg_printf(cn, format, dbgt2str[dbgt], space, f ? f : "", f ? "(): " : "", s);
+	}
 
 	if (!debug_system_active)
 	{
 		if (dbgl == DBGL_SYS || debug_level == DBGL_ALL || debug_level == dbgl)
-			printf("[%d %8llu] %s%s%s%s\n", My_pid, (unsigned long long)batman_time, dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
-
+		{
+			//printf("[%d %8llu] %s%s%s%s\n", My_pid, (unsigned long long)batman_time, dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
+			printf(format, dbgt2str[dbgt], space, f ? f : "", f ? "(): " : "", s);
+		}
 		if (dbgl == DBGL_SYS)
-			syslog(mapSyslogPrio(dbgt), "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
+		{
+			syslog(mapSyslogPrio(dbgt), format, dbgt2str[dbgt], space, f ? f : "", f ? "(): " : "", s);
+		}
 
 		return;
 	}
@@ -570,7 +580,8 @@ static void debug_output(uint32_t check_len, uint32_t expire, struct ctrl_node *
 			if (level == DBGL_ALL)
 				dbg_printf(dn->cn, "[%d %8llu %5u] ", My_pid, (unsigned long long)batman_time, dbgl_all_msg_num);
 
-			dbg_printf(dn->cn, "%s%s%s%s\n", dbgt2str[dbgt], f ? f : "", f ? "(): " : "", s);
+		  snprintf(format,sizeof(format),"%%s%%.%ds %%s%%s%%s\n", indent);
+			dbg_printf(dn->cn, format, dbgt2str[dbgt], space, f ? f : "", f ? "(): " : "", s);
 
 			if ((level == DBGL_SYS && mute_dbgl_sys == DBG_HIST_MUTING) ||
 					(level == DBGL_CHANGES && mute_dbgl_changes == DBG_HIST_MUTING))
@@ -590,7 +601,7 @@ void dbg(int8_t dbgl, int8_t dbgt, char *last, ...)
 	va_start(ap, last);
 	vsnprintf(dbg_string_out, MAX_DBG_STR_SIZE, last, ap);
 	va_end(ap);
-	debug_output(0, 0, 0, dbgl, dbgt, 0, dbg_string_out);
+	debug_output(0, 0, 0, 0, dbgl, dbgt, 0, dbg_string_out);
 }
 
 void _dbgf(int8_t dbgl, int8_t dbgt, char const *f, char *last, ...)
@@ -599,7 +610,7 @@ void _dbgf(int8_t dbgl, int8_t dbgt, char const *f, char *last, ...)
 	va_start(ap, last);
 	vsnprintf(dbg_string_out, MAX_DBG_STR_SIZE, last, ap);
 	va_end(ap);
-	debug_output(0, 0, 0, dbgl, dbgt, f, dbg_string_out);
+	debug_output(0, 0, 0, 0, dbgl, dbgt, f, dbg_string_out);
 }
 
 void dbg_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char *last, ...)
@@ -608,7 +619,7 @@ void dbg_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char *last, ...)
 	va_start(ap, last);
 	vsnprintf(dbg_string_out, MAX_DBG_STR_SIZE, last, ap);
 	va_end(ap);
-	debug_output(0, 0, cn, dbgl, dbgt, 0, dbg_string_out);
+	debug_output(0, 0, 0, cn, dbgl, dbgt, 0, dbg_string_out);
 }
 
 void _dbgf_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char const *f, char *last, ...)
@@ -617,26 +628,26 @@ void _dbgf_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char const *f, cha
 	va_start(ap, last);
 	vsnprintf(dbg_string_out, MAX_DBG_STR_SIZE, last, ap);
 	va_end(ap);
-	debug_output(0, 0, cn, dbgl, dbgt, f, dbg_string_out);
+	debug_output(0, 0, 0, cn, dbgl, dbgt, f, dbg_string_out);
 }
 
-void dbg_mute(uint32_t check_len, int8_t dbgl, int8_t dbgt, char *last, ...)
+void dbg_mute(uint8_t indent, uint32_t check_len, int8_t dbgl, int8_t dbgt, char *last, ...)
 {
 	va_list ap;
 	va_start(ap, last);
 	vsnprintf(dbg_string_out, MAX_DBG_STR_SIZE, last, ap);
 	va_end(ap);
-	debug_output(check_len, dbg_mute_to, 0, dbgl, dbgt, 0, dbg_string_out);
+	debug_output(indent, check_len, dbg_mute_to, 0, dbgl, dbgt, 0, dbg_string_out);
 }
 
 #ifndef NODEBUGALL
-void _dbgf_all(int8_t dbgt, char const *f, char *last, ...)
+void _dbgf_all(uint8_t indent, int8_t dbgt, char const *f, char *last, ...)
 {
 	va_list ap;
 	va_start(ap, last);
 	vsnprintf(dbg_string_out, MAX_DBG_STR_SIZE, last, ap);
 	va_end(ap);
-	debug_output(0, 0, 0, DBGL_ALL, dbgt, f, dbg_string_out);
+	debug_output(indent, 0, 0, 0, DBGL_ALL, dbgt, f, dbg_string_out);
 }
 
 uint8_t __dbgf_all(void)
@@ -984,7 +995,7 @@ static void show_opts_help(struct ctrl_node *cn)
 
 void register_option(struct opt_type *opt)
 {
-	dbgf_all(DBGT_INFO, "%s", (opt && opt->long_name) ? opt->long_name : "");
+	dbgf_all(0, DBGT_INFO, "%s", (opt && opt->long_name) ? opt->long_name : "");
 
 	// these are the valid combinations:
 	if (!(
@@ -1140,7 +1151,7 @@ struct opt_type *get_option(struct opt_type *parent_opt, uint8_t short_opt, char
 	else
 		list = &parent_opt->d.childs_type_list;
 
-	dbgf_all(DBGT_INFO, "searching %s", s);
+	dbgf_all(0, DBGT_INFO, "searching %s", s);
 
 	//list is a pointer, but macro needs the object self
 	OLForEach(tmp_opt, struct opt_type, *list)
@@ -1170,7 +1181,7 @@ struct opt_type *get_option(struct opt_type *parent_opt, uint8_t short_opt, char
 
 	if (opt && opt->long_name)
 	{
-		dbgf_all(DBGT_INFO,
+		dbgf_all(0, DBGT_INFO,
 						 "Success! short_opt %d, opt: %s %c, type %d, dyn %d, ival %d, imin %d, imax %d, idef %d",
 						 short_opt, opt->long_name ? opt->long_name : "-", opt->short_name ? opt->short_name : '-',
 						 opt->opt_t, opt->dyn_t,
@@ -1181,7 +1192,7 @@ struct opt_type *get_option(struct opt_type *parent_opt, uint8_t short_opt, char
 
 get_option_failure:
 
-	dbgf_all(DBGT_WARN, "Failed! called with parent %s, opt %c %s, len %d",
+	dbgf_all(0, DBGT_WARN, "Failed! called with parent %s, opt %c %s, len %d",
 					 parent_opt ? "YES" : "NO", (short_opt ? s[0] : '-'), (!short_opt ? s : "-"), len);
 
 	return NULL;
@@ -1416,7 +1427,7 @@ int32_t check_apply_parent_option(uint8_t del, uint8_t cmd, uint8_t _save, struc
 
 	del_opt_parent(&Patch_opt, p);
 
-	dbgf_all(DBGT_INFO, "del:%d, %s, save:%d, %s %s returns: %d",
+	dbgf_all(0, DBGT_INFO, "del:%d, %s, save:%d, %s %s returns: %d",
 					 del, opt_cmd2str[cmd], _save, opt->long_name, in, ret);
 
 	return ret;
@@ -1424,7 +1435,7 @@ int32_t check_apply_parent_option(uint8_t del, uint8_t cmd, uint8_t _save, struc
 
 static int32_t call_opt_patch(uint8_t ad, struct opt_type *opt, struct opt_parent *patch, char *strm, struct ctrl_node *cn)
 {
-	dbgf_all(DBGT_INFO, "ad:%d opt:%s val:%s strm:%s",
+	dbgf_all(0, DBGT_INFO, "ad:%d opt:%s val:%s strm:%s",
 					 ad, opt->long_name, patch->p_val, strm);
 
 	if (opt->opt_t == A_PS0)
@@ -1504,7 +1515,7 @@ static int32_t cleanup_patch(struct opt_type *opt, struct opt_parent *patch, str
 	uint8_t del = patch->p_diff;
 	char *val = patch->p_val;
 
-	dbgf_all(DBGT_INFO, "del %d  opt %s  val %s", del, opt->long_name, val);
+	dbgf_all(0, DBGT_INFO, "del %d  opt %s  val %s", del, opt->long_name, val);
 
 	if (opt->cfg_t == A_ARG)
 		return SUCCESS;
@@ -1530,7 +1541,7 @@ static int32_t cleanup_patch(struct opt_type *opt, struct opt_parent *patch, str
 
 			p_track = NULL;
 
-			dbgf_all(DBGT_INFO, "p_val:%s", patch->p_val);
+			dbgf_all(0, DBGT_INFO, "p_val:%s", patch->p_val);
 
 			if ((p_track = get_opt_parent_val(opt, val)))
 				c_track = get_opt_child(c->c_opt, p_track);
@@ -1564,7 +1575,7 @@ static int32_t _opt_connect(uint8_t cmd, struct opt_type *opt, struct ctrl_node 
 	char tmp_path[MAX_PATH_SIZE + 20] = "";
 	char unix_buff[MAX_UNIX_MSG_SIZE + 1] = "";
 
-	dbgf_all(DBGT_INFO, "cmd %s, opt_name %s, stream %s",
+	dbgf_all(0, DBGT_INFO, "cmd %s, opt_name %s, stream %s",
 					 opt_cmd2str[cmd], opt->long_name, curr_strm_pos);
 
 	if (cmd == OPT_CHECK || cmd == OPT_APPLY)
@@ -1595,7 +1606,7 @@ static int32_t _opt_connect(uint8_t cmd, struct opt_type *opt, struct ctrl_node 
 
 		do
 		{
-			dbgf_all(DBGT_INFO, "called with %s", curr_strm_pos);
+			dbgf_all(0, DBGT_INFO, "called with %s", curr_strm_pos);
 
 			if (strlen(curr_strm_pos) > strlen(ARG_CONNECT) &&
 					!strncmp(curr_strm_pos, ARG_CONNECT, strlen(ARG_CONNECT)) &&
@@ -1740,7 +1751,7 @@ static int32_t opt_connect(uint8_t cmd, uint8_t _save, struct opt_type *opt, str
 
 		if (connect(unix_sock, (struct sockaddr *)&unix_addr, sizeof(struct sockaddr_un)) < 0)
 		{
-			dbgf_all(DBGT_INFO, "found unbound %s, going to unlink and reuse!", tmp_path);
+			dbgf_all(0, DBGT_INFO, "found unbound %s, going to unlink and reuse!", tmp_path);
 
 			close(unix_sock);
 			unlink(tmp_path);
@@ -1780,7 +1791,7 @@ static int32_t call_opt_apply(uint8_t cmd, uint8_t save, struct opt_type *opt, s
 	//cleanup_patch will change the patch, so we'll work with a duplicate and destroy it afterwards
 	struct opt_parent *patch = dup_opt_parent(&Patch_opt, _patch);
 
-	dbgf_all(DBGT_INFO, "%s save=%d %s p_diff=%d p_val:%s p_ref:%s strm:%s",
+	dbgf_all(0, DBGT_INFO, "%s save=%d %s p_diff=%d p_val:%s p_ref:%s strm:%s",
 					 opt_cmd2str[cmd], save, opt->long_name, patch->p_diff, patch->p_val, patch->p_ref, in);
 
 	if (cleanup_patch(opt, patch, cn) == FAILURE)
@@ -1841,7 +1852,7 @@ static int32_t call_opt_apply(uint8_t cmd, uint8_t save, struct opt_type *opt, s
 
 		if (opt->auth_t == A_ADM)
 		{
-			dbgf_all(DBGT_INFO, "--%-22s  %-30s  (%s order %d)",
+			dbgf_all(0, DBGT_INFO, "--%-22s  %-30s  (%s order %d)",
 							 opt->long_name, patch->p_val, opt_cmd2str[cmd], opt->order);
 		}
 	}
@@ -1897,7 +1908,7 @@ static int32_t track_opt_parent(uint8_t cmd, uint8_t save, struct opt_type *p_op
 
 	p_track = p_track ? p_track : p_reftr;
 
-	dbgf_all(DBGT_INFO, "%s %s save=%d patch_diff:%d patch_val:%s patch_ref:%s track_val:%s track_ref:%s",
+	dbgf_all(0, DBGT_INFO, "%s %s save=%d patch_diff:%d patch_val:%s patch_ref:%s track_val:%s track_ref:%s",
 					 opt_cmd2str[cmd], p_opt->long_name, save, p_patch->p_diff,
 					 p_patch->p_val, p_patch->p_ref, p_track ? p_track->p_val : "-", p_track ? p_track->p_ref : "-");
 
@@ -1992,7 +2003,7 @@ static int32_t track_opt_parent(uint8_t cmd, uint8_t save, struct opt_type *p_op
 								 ((c_patch->c_ref && c_track->c_ref && wordsEqual(c_patch->c_ref, c_track->c_ref)) ||
 									(!c_patch->c_ref && !c_track->c_ref)))
 				{
-					dbgf_all(DBGT_INFO, "--%s %s /%s %s already configured",
+					dbgf_all(0, DBGT_INFO, "--%s %s /%s %s already configured",
 									 p_opt->long_name, p_patch->p_val, c_patch->c_opt->long_name, c_patch->c_val);
 				}
 				else if (c_patch->c_val)
@@ -2029,7 +2040,7 @@ static int32_t track_opt_parent(uint8_t cmd, uint8_t save, struct opt_type *p_op
 
 int32_t call_option(uint8_t ad, uint8_t cmd, uint8_t save, struct opt_type *opt, struct opt_parent *patch, char *in, struct ctrl_node *cn)
 {
-	dbgf_all(DBGT_INFO, "%s (cmd %s  del %d  save %d  parent_name %s order %d) p_val: %s in: %s",
+	dbgf_all(0, DBGT_INFO, "%s (cmd %s  del %d  save %d  parent_name %s order %d) p_val: %s in: %s",
 					 opt->long_name, opt_cmd2str[cmd], ad, save, opt->parent_name, opt->order, patch ? patch->p_val : "-", in);
 
 	if (!opt) // might be NULL when referring to disabled plugin functionality
@@ -2137,7 +2148,7 @@ call_option_failure:
 int respect_opt_order(uint8_t test, int8_t last, int8_t next, struct opt_type *on, uint8_t load, uint8_t cmd, struct ctrl_node *cn)
 {
 
-	dbgf_all(DBGT_INFO, "%s, cmd: %s, last %d, next %d, opt %s  load %d",
+	dbgf_all(0, DBGT_INFO, "%s, cmd: %s, last %d, next %d, opt %s  load %d",
 					 opt_cmd2str[test], opt_cmd2str[cmd], last, next, on ? on->long_name : "???", load);
 
 	paranoia(-500002, (test != OPT_CHECK && test != OPT_APPLY));
@@ -2167,7 +2178,7 @@ int respect_opt_order(uint8_t test, int8_t last, int8_t next, struct opt_type *o
 		{
 			if (load_config_cb && load_config_cb(test, opt, cn) == FAILURE)
 			{
-				dbgf_all(DBGT_ERR, "load_config_cb() %s failed",
+				dbgf_all(0, DBGT_ERR, "load_config_cb() %s failed",
 								 opt->long_name);
 
 				return FAILURE;
@@ -2227,7 +2238,7 @@ int8_t apply_stream_opts(char *s, char *fallback_opt, uint8_t cmd, uint8_t load_
 
 	while (s && strlen(s) >= 1)
 	{
-		dbgf_all(DBGT_INFO, "cmd: %-10s, state: 0x%X opt: %s, wordlen: %d rest: %s",
+		dbgf_all(0, DBGT_INFO, "cmd: %-10s, state: 0x%X opt: %s, wordlen: %d rest: %s",
 						 opt_cmd2str[cmd], state, opt ? opt->long_name : "null", wordlen(s), s);
 
 		if (Testing)
@@ -2487,7 +2498,7 @@ int8_t apply_stream_opts(char *s, char *fallback_opt, uint8_t cmd, uint8_t load_
 	if (state != LONG_OPT_ARG && state != NEW_OPT && state != NEXT_OPT)
 		goto apply_args_error;
 
-	dbgf_all(DBGT_INFO, "all opts and args succesfully called with %s", opt_cmd2str[cmd]);
+	dbgf_all(0, DBGT_INFO, "all opts and args succesfully called with %s", opt_cmd2str[cmd]);
 
 	if ((order = respect_opt_order(cmd, order, 99, NULL, Load_config, OPT_SET_POST, cn)) < 0)
 		goto apply_args_error;
@@ -2594,7 +2605,7 @@ int8_t str2netw(char *args, uint32_t *ip, char delimiter, struct ctrl_node *cn, 
 
 	if ((inet_pton(AF_INET, switch_arg, &tmp_ip_holder)) < 1 || !tmp_ip_holder.s_addr)
 	{
-		dbgf_all(DBGT_WARN, "invalid argument: %s: %s", args, strerror(errno));
+		dbgf_all(0, DBGT_WARN, "invalid argument: %s: %s", args, strerror(errno));
 		return FAILURE;
 	}
 

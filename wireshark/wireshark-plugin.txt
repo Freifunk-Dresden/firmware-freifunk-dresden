@@ -1,0 +1,10 @@
+
+Das plugin muss nach
+
+/home/stephan/.local/lib/wireshark/plugins/bmx.lua
+
+kopiert werden, damit es wireshark kennt.
+
+filter beginnen mit: "bmx."
+
+

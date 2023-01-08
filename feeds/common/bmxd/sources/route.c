@@ -171,7 +171,7 @@ static int open_netlink_socket(void)
 
 static int rt_macro_to_table(int rt_macro)
 {
-	dbgf_all(DBGT_INFO, "rt_macro %d", rt_macro);
+	dbgf_all(0, DBGT_INFO, "rt_macro %d", rt_macro);
 
 	if (rt_macro == RT_TABLE_HOSTS)
 		return Rt_table + RT_TABLE_HOSTS_OFFS;
@@ -300,7 +300,7 @@ static void add_del_rule(uint32_t network, int16_t mask, int16_t rt_table_macro,
 	req.rtm.rtm_family = AF_INET;
 	req.rtm.rtm_table = rt_table;
 
-	dbgf_all(DBGT_INFO, "%s ip rule pref %d iif %s %d %s/%d  lookup table %d",
+	dbgf_all(0, DBGT_INFO, "%s ip rule pref %d iif %s %d %s/%d  lookup table %d",
 					 (del ? "del" : "add"), prio, iif, rta_type, str1, mask, rt_table);
 
 	if (del)
@@ -405,7 +405,7 @@ static void add_del_rule(uint32_t network, int16_t mask, int16_t rt_table_macro,
 
 static void flush_tracked_rules(int8_t track_type)
 {
-	dbgf_all(DBGT_INFO, "%s", trackt2str(track_type));
+	dbgf_all(0, DBGT_INFO, "%s", trackt2str(track_type));
 
 	struct rules_node *p_rn = NULL;
 
@@ -429,7 +429,7 @@ static void flush_tracked_rules(int8_t track_type)
 
 static void flush_tracked_routes(int8_t track_type)
 {
-	dbgf_all(DBGT_INFO, "%s", trackt2str(track_type));
+	dbgf_all(0, DBGT_INFO, "%s", trackt2str(track_type));
 
 	struct routes_node *p_rn = NULL;
 
@@ -452,7 +452,7 @@ static void flush_tracked_routes(int8_t track_type)
 
 static void flush_routes_rules(int8_t is_rule)
 {
-	dbgf_all(DBGT_INFO, "is_rule %d", is_rule);
+	dbgf_all(0, DBGT_INFO, "is_rule %d", is_rule);
 
 	size_t len;
 	int rtl;
@@ -510,7 +510,7 @@ static void flush_routes_rules(int8_t is_rule)
 		len = recvmsg(flush_sk, &msg, 0);
 		nh = (struct nlmsghdr *)buf;
 
-		dbgf_all(DBGT_INFO, "searching: %s  NLMSG_OK: %d  len: %d",
+		dbgf_all(0, DBGT_INFO, "searching: %s  NLMSG_OK: %d  len: %d",
 						 is_rule ? "rules" : "routes", NLMSG_OK(nh, len), (int)len);
 
 		while (NLMSG_OK(nh, len))
@@ -520,7 +520,7 @@ static void flush_routes_rules(int8_t is_rule)
 
 			if (nh->nlmsg_type == NLMSG_DONE)
 			{
-				dbgf_all(DBGT_INFO, "found NLMSG_DONE");
+				dbgf_all(0, DBGT_INFO, "found NLMSG_DONE");
 				break;
 			}
 
@@ -551,7 +551,7 @@ static void flush_routes_rules(int8_t is_rule)
 
 				while (RTA_OK(rtap, rtl))
 				{
-					dbgf_all(DBGT_INFO, "found rtm_table %d, rta_type %d rta_len %d",
+					dbgf_all(0, DBGT_INFO, "found rtm_table %d, rta_type %d rta_len %d",
 									 rtm->rtm_table, rtap->rta_type, rtap->rta_len);
 
 					switch (rtap->rta_type)
@@ -643,7 +643,7 @@ static void check_proc_sys(char *file, int32_t desired, int32_t *backup)
 	// it is probably better to leave the routing configuration operational as it is!
 	if (!backup && !Pedantic_cleanup && state != desired)
 	{
-		dbg_mute(50, DBGL_SYS, DBGT_INFO,
+		dbg_mute(0, 50, DBGL_SYS, DBGT_INFO,
 						 "NOT restoring %s to NOT mess up other routing protocols. "
 						 "Use --%s=1 to enforce proper cleanup",
 						 file, ARG_PEDANTIC_CLEANUP);
@@ -1023,13 +1023,13 @@ static void if_activate(struct batman_if *bif)
 
 	Mtu_min = MIN(Mtu_min, bif->if_mtu);
 
-	dbgf_all(DBGT_INFO, "searching minimum MTU, so fare: %d, current dev %s, mtu: %d",
+	dbgf_all(0, DBGT_INFO, "searching minimum MTU, so fare: %d, current dev %s, mtu: %d",
 					 Mtu_min, bif->dev, bif->if_mtu);
 
 	if (bif->if_linklayer == VAL_DEV_LL_LO)
 	{
 		if (bif->if_prefix_length != 32 /*||  bif->if_addr != bif->if_broad*/)
-			dbg_mute(30, DBGL_SYS, DBGT_WARN, "netmask of loopback interface is %d but SHOULD BE 32",
+			dbg_mute(0, 30, DBGL_SYS, DBGT_WARN, "netmask of loopback interface is %d but SHOULD BE 32",
 							 bif->if_prefix_length);
 	}
 	else
@@ -1077,7 +1077,7 @@ static void if_activate(struct batman_if *bif)
 		else
 			if_netwbrc_addr.sin_addr.s_addr = bif->if_broad;
 
-		// get netwbrc recv socket
+		// get netwbrc recv socket 10.201.255.255
 		if ((bif->if_netwbrc_sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
 		{
 			dbg(DBGL_CHANGES, DBGT_ERR, "can't create network-broadcast socket: %s", strerror(errno));
@@ -1095,7 +1095,7 @@ static void if_activate(struct batman_if *bif)
 			goto error;
 		}
 
-		// we'll always listen on the full-broadcast address
+		// we'll always listen on the full-broadcast address 255.255.255.255
 
 		struct sockaddr_in if_fullbrc_addr;
 		memset(&if_netwbrc_addr, 0, sizeof(struct sockaddr_in));
@@ -1189,7 +1189,7 @@ static int8_t track_route_and_proceed(uint32_t dest, int16_t mask, uint32_t gw, 
 
 	if (del && !first_found_rn)
 	{
-		dbgf_all(DBGT_WARN, "removing orphan route");
+		dbgf_all(0, DBGT_WARN, "removing orphan route");
 		return NO;
 	}
 	else if (del && first_found_rn)
@@ -1247,7 +1247,7 @@ void add_del_route(uint32_t dest, int16_t mask, uint32_t gw, uint32_t src, int32
 	else
 		my_router = gw;
 
-	dbgf_all(DBGT_INFO, "%s %s to %s/%i via %s (table %i - %s src %s )",
+	dbgf_all(0, DBGT_INFO, "%s %s to %s/%i via %s (table %i - %s src %s )",
 					 del ? "del" : "add",
 					 rt2str(rta_type), ipStr(dest), mask, ipStr(gw), rt_table, dev?dev:"NULL", ipStr(src));
 
@@ -1477,7 +1477,7 @@ void check_kernel_config(struct batman_if *batman_if)
 
 void if_deactivate(struct batman_if *bif)
 {
-	dbg_mute(30, DBGL_SYS, DBGT_WARN, "deactivating IF %-10s %-15s", bif->dev, ipStr(bif->if_addr));
+	dbg_mute(0, 30, DBGL_SYS, DBGT_WARN, "deactivating IF %-10s %-15s", bif->dev, ipStr(bif->if_addr));
 
 	if (bif->if_linklayer != VAL_DEV_LL_LO)
 	{
@@ -1503,13 +1503,13 @@ void if_deactivate(struct batman_if *bif)
 
 	change_selects();
 
-	dbgf_all(DBGT_WARN, "Interface %s deactivated", bif->dev);
+	dbgf_all(0, DBGT_WARN, "Interface %s deactivated", bif->dev);
 
 	if (bif == primary_if && !is_aborted())
 	{
 		purge_orig(0, 0); // primary iface deaktivate
 
-		dbg_mute(30, DBGL_SYS, DBGT_WARN,
+		dbg_mute(0, 30, DBGL_SYS, DBGT_WARN,
 						 "You SHOULD always configure a loopback-alias interface for %s/32 to remain reachable under your primary IP!",
 						 ipStr(bif->if_addr));
 	}
@@ -1523,7 +1523,7 @@ void check_interfaces()
 {
 	uint8_t cb_conf_hooks = NO;
 
-	dbgf_all(DBGT_INFO, " ");
+	dbgf_all(0, DBGT_INFO, " ");
 
 	remove_task(check_interfaces, NULL);
 
@@ -1564,7 +1564,7 @@ void check_interfaces()
 			{
 				Mtu_min = MIN(Mtu_min, bif->if_mtu);
 
-				dbgf_all(DBGT_INFO,
+				dbgf_all(0, DBGT_INFO,
 								 "researching minimum MTU, so fare: %d, current dev %s, mtu: %d",
 								 Mtu_min, bif->dev, bif->if_mtu);
 			}
@@ -1585,7 +1585,7 @@ void check_interfaces()
 
 				if (!wordsEqual(tmp_bif->dev, bif->dev) && tmp_bif->if_active && tmp_bif->if_addr == bif->if_addr)
 				{
-					dbg_mute(40, DBGL_SYS, DBGT_ERR, "IF %-10s IP %-15s already used for IF %s",
+					dbg_mute(0, 40, DBGL_SYS, DBGT_ERR, "IF %-10s IP %-15s already used for IF %s",
 									 bif->dev, bif->if_ip_str, tmp_bif->dev);
 					break;
 				}
@@ -1597,7 +1597,7 @@ void check_interfaces()
 			{
 				if (on_the_fly)
 				{
-					dbg_mute(50, DBGL_SYS, DBGT_INFO,
+					dbg_mute(0, 50, DBGL_SYS, DBGT_INFO,
 									 "detected valid but disabled dev: %s ! Activating now...", bif->dev);
 				}
 				if_activate(bif);

@@ -78,7 +78,7 @@ void update_lounged_metric(uint8_t probe, uint8_t lounge_size, SQ_TYPE sqn_incm,
 			//und decrementiert bei beiden ogm den ttl. das prime-ogm ist im non-prim ogm "verlinkt".
 			//es scheint kein fehler zu sein. Also mache ich hier ein INFO draus.
 			//2021 bestaetigt, dass es so ist
-			dbgf_all(DBGT_INFO /*DBGT_ERR*/,
+			dbgf_all(0, DBGT_INFO /*DBGT_ERR*/,
 							 "update_lounged_metric() probe %d ls %d sqn_in %d sqn_max %d ws %d",
 							 probe, lounge_size, sqn_incm, sqn_max, ws);
 		}

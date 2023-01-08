@@ -97,16 +97,16 @@ struct dbg_histogram
 #ifdef NODEBUGALL
 	#define dbgf_all(...)
 #else
-	#define dbgf_all(dbgt, ...)                   \
+	#define dbgf_all(indent, dbgt, ...)                   \
 		do                                          \
 		{                                           \
 			if (__dbgf_all())                         \
 			{                                         \
-				_dbgf_all(dbgt, __func__, __VA_ARGS__); \
+				_dbgf_all(indent, dbgt, __func__, __VA_ARGS__); \
 			}                                         \
 		} while (0)
 
-	void _dbgf_all(int8_t dbgt, char const *f, char *last, ...);
+	void _dbgf_all(uint8_t indent, int8_t dbgt, char const *f, char *last, ...);
 	uint8_t __dbgf_all(void);
 #endif
 
@@ -117,7 +117,7 @@ void _dbgf_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char const *f, cha
 
 void dbg(int8_t dbgl, int8_t dbgt, char *last, ...);
 void dbg_cn(struct ctrl_node *cn, int8_t dbgl, int8_t dbgt, char *last, ...);
-void dbg_mute(uint32_t check_len, int8_t dbgl, int8_t dbgt, char *last, ...);
+void dbg_mute(uint8_t indent, uint32_t check_len, int8_t dbgl, int8_t dbgt, char *last, ...);
 
 
 
