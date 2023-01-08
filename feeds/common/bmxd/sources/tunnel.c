@@ -216,18 +216,18 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
         debugFree(gw_node, 1103);
         // dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
 
-      //SE: teste ob alle nodes weg sind und rufe nutzer script auf
-      // um dns zurueck zu setzen.
-      // Test: 	router mesht NICHT via wifi, lan,wan,vlan.
-      // 				router ist mit wan internet verbnden und hat fritzbox dns
-      //				router baut dann backone auf und setzt via bmxd dns auf gw
-      //				wenn jetzt backbone neu gestartet wird, fallen alle knoten
-      //				weg (auch gw)
-      if(OLIsListEmpty(&gw_list))
-      {
-        dbg(DBGL_SYS, DBGT_INFO, "no more gateways -> reset dns");
-        call_script("del");
-      }
+				//SE: teste ob alle nodes weg sind und rufe nutzer script auf
+				// um dns zurueck zu setzen.
+				// Test: 	router mesht NICHT via wifi, lan,wan,vlan.
+				// 				router ist mit wan internet verbnden und hat fritzbox dns
+				//				router baut dann backone auf und setzt via bmxd dns auf gw
+				//				wenn jetzt backbone neu gestartet wird, fallen alle knoten
+				//				weg (auch gw)
+				if(OLIsListEmpty(&gw_list))
+				{
+					dbg(DBGL_SYS, DBGT_INFO, "no more gateways -> reset dns");
+					call_script("del");
+				}
 
         return; // ogm has been processed, do not process it as 'new'
       }
@@ -318,7 +318,6 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
 void process_tun_ogm(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_router)
 {
   struct orig_node *on = mb->orig_node;
-  struct ext_packet *gw_ext = on->gw_ext;
 
   /* may be GW announcements changed */
   uint16_t ext_array_len = mb->rcv_ext_len[EXT_TYPE_64B_GW] / sizeof(struct ext_packet);
@@ -326,18 +325,21 @@ void process_tun_ogm(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_
 
   int reselect = 0;
 
-  if (gw_ext && !new_gw_extension)
+  // remove gw info (router is no gw any more)
+  if (on->gw_ext && !new_gw_extension)
   {
     // remove cached gw_msg
     update_gw_list(on, NULL);
   }
-  else if (!gw_ext && new_gw_extension)
+	// router with no gw becomes gw OR a new node (on was newly allocated)
+  else if (!on->gw_ext && new_gw_extension)
   {
     // save new gw_msg
     update_gw_list(on, new_gw_extension);
   }
-  else if (gw_ext && new_gw_extension &&
-           ( memcmp(gw_ext, new_gw_extension, sizeof(struct ext_packet))))
+	// gw router stays gw but changes info
+  else if (on->gw_ext && new_gw_extension &&
+           ( memcmp(on->gw_ext, new_gw_extension, sizeof(struct ext_packet))))
   {
     // update existing gw_msg
     update_gw_list(on, new_gw_extension);
@@ -347,8 +349,8 @@ void process_tun_ogm(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_
   if (curr_gateway &&
       on->router &&
       routing_class == 3 &&
-      gw_ext &&
-      gw_ext->EXT_GW_FIELD_GWFLAGS &&
+      on->gw_ext &&
+      on->gw_ext->EXT_GW_FIELD_GWFLAGS &&
       curr_gateway->orig_node != on 	// if new originator is different from current selected
      )
   {
@@ -362,7 +364,7 @@ void process_tun_ogm(struct msg_buff *mb, uint16_t oCtx, struct neigh_node *old_
     {
       // either process all gateways or only community gw
       if (   ! onlyCommunityGateway
-            || (onlyCommunityGateway && gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY) )
+            || (onlyCommunityGateway && on->gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY) )
       {
         // if the new gw (orig) is preferred gw and not currently selected
         if ( pref_gateway == on->orig && pref_gateway != curr_gateway->orig_node->orig)
