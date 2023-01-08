@@ -196,7 +196,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
       if(gw_ext && !new_gw_extension)
       {
         dbg(DBGL_SYS, DBGT_INFO,
-            "originator %s local: Gateway class %i, community %d, incomming: no info == DELETE",
+            "originator %s curr: Gateway class %i, community %d | incomming: no info == DELETE",
             orig_node->orig_str,
             gw_ext->EXT_GW_FIELD_GWFLAGS,
             gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
@@ -217,7 +217,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
 //        dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
 
 			//SE: teste ob alle nodes weg sind und rufe nutzer script auf
-			// um dns zuruek zu setzen.
+			// um dns zurueck zu setzen.
 			// Test: 	router mesht NICHT via wifi, lan,wan,vlan.
 			// 				router ist mit wan internet verbnden und hat fritzbox dns
 			//				router baut dann backone auf und setzt via bmxd dns auf gw
@@ -238,7 +238,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
       if(!gw_ext && new_gw_extension)
       {
         dbg(DBGL_SYS, DBGT_ERR,
-            "originator %s local: NO tunnel info, incomming: Gateway class %i, community %d == NEW-error",
+            "originator %s curr: NO tunnel info | incomming: Gateway class %i, community %d == NEW-error",
             orig_node->orig_str,
             new_gw_extension[0].EXT_GW_FIELD_GWFLAGS,
             new_gw_extension[0].EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
@@ -249,7 +249,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
       if(gw_ext && new_gw_extension)
       {
         dbg(DBGL_SYS, DBGT_INFO,
-            "originator %s local: Gateway class %i, community %d, incomming: Gateway class %i, community %d == UPDATE",
+            "originator %s curr: Gateway class %i, community %d | incomming: Gateway class %i, community %d == UPDATE",
             orig_node->orig_str,
             gw_ext->EXT_GW_FIELD_GWFLAGS,
             gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY,
