@@ -195,11 +195,11 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
     {
       if(gw_ext && !new_gw_extension)
       {
-        dbg(DBGL_SYS, DBGT_INFO,
-            "originator %s curr: Gateway class %i, community %d | incomming: no info == DELETE",
-            orig_node->orig_str,
-            gw_ext->EXT_GW_FIELD_GWFLAGS,
-            gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
+//        dbg(DBGL_SYS, DBGT_INFO,
+//            "originator %s curr: Gateway class %i, community %d | incomming: no info == DELETE",
+//            orig_node->orig_str,
+//            gw_ext->EXT_GW_FIELD_GWFLAGS,
+//            gw_ext->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY);
 
         // free old tunnel
         debugFree(orig_node->gw_ext, 1123);
@@ -214,20 +214,20 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
         // current node is no gw anymore -> remove from gw_list
         OLRemoveEntry(gw_node);
         debugFree(gw_node, 1103);
-//        dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
+        // dbg(DBGL_SYS, DBGT_INFO, "NO new_gw_extension in current OGM: Gateway %s removed from gateway list", orig_node->orig_str);
 
-			//SE: teste ob alle nodes weg sind und rufe nutzer script auf
-			// um dns zurueck zu setzen.
-			// Test: 	router mesht NICHT via wifi, lan,wan,vlan.
-			// 				router ist mit wan internet verbnden und hat fritzbox dns
-			//				router baut dann backone auf und setzt via bmxd dns auf gw
-			//				wenn jetzt backbone neu gestartet wird, fallen alle knoten
-			//				weg (auch gw)
-			if(OLIsListEmpty(&gw_list))
-			{
-				dbg(DBGL_SYS, DBGT_INFO, "no more gateways -> reset dns");
-				call_script("del");
-			}
+      //SE: teste ob alle nodes weg sind und rufe nutzer script auf
+      // um dns zurueck zu setzen.
+      // Test: 	router mesht NICHT via wifi, lan,wan,vlan.
+      // 				router ist mit wan internet verbnden und hat fritzbox dns
+      //				router baut dann backone auf und setzt via bmxd dns auf gw
+      //				wenn jetzt backbone neu gestartet wird, fallen alle knoten
+      //				weg (auch gw)
+      if(OLIsListEmpty(&gw_list))
+      {
+        dbg(DBGL_SYS, DBGT_INFO, "no more gateways -> reset dns");
+        call_script("del");
+      }
 
         return; // ogm has been processed, do not process it as 'new'
       }
@@ -265,7 +265,7 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
         orig_node->gw_ext = gw_ext;
         memcpy(gw_ext, new_gw_extension, sizeof(struct ext_packet));
 
-//        dbg(DBGL_SYS, DBGT_INFO, "gw info updated");
+        // dbg(DBGL_SYS, DBGT_INFO, "gw info updated");
         return; // ogm has been processed, do not process it as 'new'
       }
     }
@@ -284,15 +284,15 @@ static void update_gw_list(struct orig_node *orig_node, struct ext_packet *new_g
   if (new_gw_extension)
   {
     get_gw_speeds(new_gw_extension->EXT_GW_FIELD_GWFLAGS, &download_speed, &upload_speed);
-    dbg(DBGL_SYS, DBGT_INFO, "found new gateway %s, announced by %s -> community: %i, class: %i - %i%s/%i%s == NEW",
-        ipStr(new_gw_extension->EXT_GW_FIELD_GWADDR),
-        orig_node->orig_str,
-        new_gw_extension->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY,
-        new_gw_extension->EXT_GW_FIELD_GWFLAGS,
-        (download_speed > 2048 ? download_speed / 1024 : download_speed),
-        (download_speed > 2048 ? "MBit" : "KBit"),
-        (upload_speed > 2048 ? upload_speed / 1024 : upload_speed),
-        (upload_speed > 2048 ? "MBit" : "KBit")	);
+//    dbg(DBGL_SYS, DBGT_INFO, "found new gateway %s, announced by %s -> community: %i, class: %i - %i%s/%i%s == NEW",
+//        ipStr(new_gw_extension->EXT_GW_FIELD_GWADDR),
+//        orig_node->orig_str,
+//        new_gw_extension->EXT_GW_FIELD_GWTYPES & COMMUNITY_GATEWAY,
+//        new_gw_extension->EXT_GW_FIELD_GWFLAGS,
+//        (download_speed > 2048 ? download_speed / 1024 : download_speed),
+//        (download_speed > 2048 ? "MBit" : "KBit"),
+//        (upload_speed > 2048 ? upload_speed / 1024 : upload_speed),
+//        (upload_speed > 2048 ? "MBit" : "KBit")	);
 
     // create new gw node object
     gw_node = debugMalloc(sizeof(struct gw_node), 103);
