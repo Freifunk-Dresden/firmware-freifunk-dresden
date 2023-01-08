@@ -85,7 +85,7 @@ m3:ipq40xx:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ipq40xx.generic.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
 

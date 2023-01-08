@@ -174,7 +174,7 @@ m3tags:ipq40xx:
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ipq40xx.generic.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
 
