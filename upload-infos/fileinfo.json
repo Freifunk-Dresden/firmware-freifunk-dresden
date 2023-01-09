@@ -1979,6 +1979,34 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt7621-netgear_wac104-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-netgear_wac104-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-netgear_wac104-squashfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-netgear_wac104-squashfs-rootfs.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-netgear_wac104-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ramips-mt7621-tplink_archer-c6-v3-initramfs-kernel.bin",
       "comment": ""
     },
