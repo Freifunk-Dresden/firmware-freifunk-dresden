@@ -2007,6 +2007,19 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt7621-renkforce_ws-wn530hp3-a-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-renkforce_ws-wn530hp3-a-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ramips-mt7621-tplink_archer-c6-v3-initramfs-kernel.bin",
       "comment": ""
     },
