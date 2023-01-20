@@ -176,21 +176,29 @@ config backbone 'backbone'
 
 config backbone_client
 	option 	host			'vpn7.freifunk-dresden.de'
+	option	type			'fastd'
+	option	disabled		'0'
 	option 	port			'5002'
 	option	public_key 		''
 
 config backbone_client
 	option 	host			'vpn6.freifunk-dresden.de'
+	option	type			'fastd'
+	option	disabled		'0'
 	option 	port			'5002'
 	option	public_key 		''
 
 config backbone_client
 	option 	host			'vpn1.freifunk-dresden.de'
+	option	type			'fastd'
+	option	disabled		'0'
 	option 	port			'5002'
 	option	public_key 		''
 
 config backbone_client
 	option 	host			'vpn14.freifunk-dresden.de'
+	option	type			'fastd'
+	option	disabled		'0'
 	option 	port			'5002'
 	option	public_key 		''
 
@@ -271,6 +279,7 @@ EOM
 # update configuration depending on new ddmesh settings
 config_update() {
 
+	
 	#ONLY uci settings, to ensure not flashing on every boot
 	#function called when node is valid, to setup all settings depending on node
 	#or other updates of system generated configs
@@ -302,21 +311,29 @@ config_update() {
 	#############################################################################
 	for i in $(seq 0 4)
 	do
-		host="$(uci -q get ddmesh.@backbone_client[$i].host)"
-		fastd_pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
-		if [ -n "$host" -a -z "$fastd_pubkey" ]; then
-			uci -q del ddmesh.@backbone_client[$i].password
-			uci -q set ddmesh.@backbone_client[$i].port="5002"
-			#lookup key
-			for k in $(seq 1 30)
-			do
-				kk=$(( $k - 1))
-				h=$(uci -q get credentials.@backbone[$kk].host)
-				if [ "$h" = "$host" ]; then
-					uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
-					break;
+		disabled="$(uci -q get ddmesh.@backbone_client[$i].disabled)"
+		if [ "$disabled" != "1" ]; then
+			type="$(uci -q get ddmesh.@backbone_client[$i].type)"
+			host="$(uci -q get ddmesh.@backbone_client[$i].host)"
+			port="$(uci -q get ddmesh.@backbone_client[$i].port)"
+			pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
+			logger -s -t "$LOGGER_TAG" "update backbone {$type, $host, $port, $pubkey}"
+			case "$type" in
+			 fastd)
+				if [ -n "$host" -a -z "$pubkey" ]; then
+					#lookup key
+					for k in $(seq 1 30)
+					do
+						kk=$(($k - 1))
+						h=$(uci -q get credentials.@backbone[$kk].host)
+						if [ "$h" = "$host" ]; then
+							uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
+							break;
+						fi
+					done
 				fi
-			done
+			 ;;
+			esac
 		fi
 	done
 
@@ -484,18 +501,22 @@ case "$boot_step" in
 		#node valid after boot_step >= 2
 		node=$(uci get ddmesh.system.node)
 		if [ -z "$node" ]; then
-			logger -t $LOGGER_TAG "ERROR: no node number"
+			logger -s -t $LOGGER_TAG "ERROR: no node number"
 		else
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
-			logger -t $LOGGER_TAG "run ddmesh upgrade"
+			logger -s -t $LOGGER_TAG "run ddmesh upgrade"
 			/usr/lib/ddmesh/ddmesh-upgrade.sh
 
+			logger -s -t "$LOGGER_TAG" "update config"
 			config_update
 
 			# regenerate network/wireless config after firmware update or
 			# config update.
+			logger -s -t "$LOGGER_TAG" "update network"
 			/usr/lib/ddmesh/ddmesh-setup-network.sh
+
+			logger -s -t "$LOGGER_TAG" "update wifi"
 			# hotplug event ieee80211 is not reliable before rebooting
 			/usr/lib/ddmesh/ddmesh-setup-wifi.sh
 
