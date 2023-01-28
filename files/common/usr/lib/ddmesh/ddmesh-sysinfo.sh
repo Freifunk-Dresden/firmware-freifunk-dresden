@@ -229,6 +229,7 @@ cat << EOM >> $OUTPUT
 		},
 		"system":{
 			"uptime":"$(cat /proc/uptime)",
+			"uptime_string":"$(uptime)",
 			"uname":"$(uname -a)",
 			"nameserver": [
 $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*\(.*\)#\t\t\t\t"\1",#;p}' | sed '$s#,[ 	]*$##')
