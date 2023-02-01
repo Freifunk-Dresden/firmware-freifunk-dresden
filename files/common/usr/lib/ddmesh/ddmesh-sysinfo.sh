@@ -319,6 +319,7 @@ EOM
 			net=${net#net_}
 
 			case "$net" in
+				# use tbbwg main wireguard interface to cover all ipip tunnels
 				mesh_lan|mesh_wan|mesh_vlan|tbbwg|tbb_fastd|bat|ffgw|vpn|wifi2|wifi_adhoc|wifi_mesh2g|wifi_mesh5g)
 
 					ifname=${entry#*=}
@@ -375,12 +376,15 @@ EOM
 						nettype_lookup[ENVIRON["mesh_wan_ifname"]]="lan";
 						nettype_lookup[ENVIRON["mesh_vlan_ifname"]]="lan";
 						nettype_lookup[ENVIRON["tbb_fastd_ifname"]]="backbone";
+						nettype_lookup[ENVIRON["tbb_wg_ifname"]]="backbone";
 					}
 					{
 						if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
 						{
+							# check for special tbb_wg interface name (has more than one ifname)
+							clean_ifname=gensub(/tbb_wg[0-9]+$/,"tbb_wg+","",$2)
 							printf("\t\t\t\t{\"node\":\"%d\", \"ip\":\"%s\", \"interface\":\"%s\",\"rtq\":\"%d\", \"rq\":\"%d\", \"tq\":\"%d\",\"type\":\"%s\"}, \n",
-								getnode($1),$3,$2,$4,$5,$6, nettype_lookup[$2]);
+							getnode($1),$3,$2,$4,$5,$6, nettype_lookup[clean_ifname]);
 						}
 					}
 ' | sed '$s#,[	 ]*$##' >>$OUTPUT
