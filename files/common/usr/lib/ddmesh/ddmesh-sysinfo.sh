@@ -76,6 +76,17 @@ else
 	roaming=0
 fi
 
+if [ "$wifi_status_radio2g_up" == "1" ]; then
+  wifi_2g_channel="$(iwinfo wifi2ap info | grep 'Channel:' | tr -s ' ' | cut -d' ' -f5 | sed 's#unknown#0#')"
+  [ -z "$wifi_2g_channel" ] && wifi_2g_channel=0
+fi
+
+if [ "$wifi_status_radio5g_up" == "1" ]; then
+  wifi_5g_channel="$(iwinfo wifi5ap info | grep 'Channel:' | tr -s ' ' | cut -d' ' -f5 | sed 's#unknown#0#')"
+  [ -z "$wifi_5g_channel" ] && wifi_5g_channel=0
+fi
+
+
 if [ -n "$(which wg)" ]; then
 	wg_public_key=$(uci get credentials.backbone_secret.wireguard_key | wg pubkey)
 fi
@@ -243,8 +254,8 @@ $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*
 			"bmxd" : "$(cat $BMXD_DB_PATH/status)",
 			"essid":"$(uci get wireless.wifi2_2g.ssid)",
 			"wifi_roaming" : "$roaming",
-			$([ "$wifi_status_radio2g_up" == "1" ] && echo "\"wifi_2g_channel\": $(iwinfo wifi2ap info | grep 'Channel:' | tr -s ' ' | cut -d' ' -f5 | sed 's#unknown#0#'),")
-			$([ "$wifi_status_radio5g_up" == "1" ] && echo "\"wifi_5g_channel\": $(iwinfo wifi5ap info | grep 'Channel:' | tr -s ' ' | cut -d' ' -f5 | sed 's#unknown#0#'),")
+			$([ "$wifi_status_radio2g_up" == "1" ] && echo "\"wifi_2g_channel\": ${wifi_2g_channel},")
+			$([ "$wifi_status_radio5g_up" == "1" ] && echo "\"wifi_5g_channel\": ${wifi_5g_channel},")
 			"node_type":"$node_type",
 			"splash":$splash,
 			"email_notification":$email_notification,
