@@ -157,6 +157,7 @@ function swupdate_callback(data)
 
 	} catch (e) {}
 }
+
 function ajax_swupdate(data)
 {
 	if(lock_swupdate)return;
@@ -179,6 +180,13 @@ function fold(id)
 {
 	obj = document.getElementById(id);
 	obj.style.display = ('block'!=obj.style.display?'block':'none');
+	return false;
+}
+
+function fold(id, hide)
+{
+	obj = document.getElementById(id);
+	obj.style.display = hide ? 'none':'block';
 	return false;
 }
 

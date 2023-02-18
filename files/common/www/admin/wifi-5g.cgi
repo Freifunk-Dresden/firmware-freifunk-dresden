@@ -69,18 +69,27 @@ function checkInput()
 }
 </script>
 
+
 <form onsubmit="return checkInput();" name="form_wifi" action="wifi-5g.cgi" class="form" method="POST">
 <fieldset class="bubble">
 <legend>WiFi-Einstellungen</legend>
 <table>
-
 <tr>
-<th>Router steht Indoor</th>
-<td><input name="form_wifi_indoor" id="id_wifi_indoor" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = 1 ];then echo 'checked="checked"';fi) ></td>
+<th width="100">Disable Wifi 5Ghz:</th>
+<td><input onchange="return fold('wifi5', document.getElementsByName('form_disable_wifi')[0].checked)" name="form_disable_wifi" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.disable_wifi_5g)" = 1 ];then echo 'checked="checked"';fi) ></td>
 </tr>
-<tr><td></td>
+</table>
+
+<div id="wifi5">
+<table>
+<tr><td colspan="2"><hr size=1></td></tr>
+<tr>
+<th>Router steht im Haus (Indoor):</th>
+<td><input name="form_wifi_indoor" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = 1 ];then echo 'checked="checked"';fi) ></td>
+</tr>
+<tr><th></th>
 <td>
-<font color="red">Einstellung darf nur gesetzt werden, wenn Router drinnen steht!</font><br/>
+<font color="red">Einstellung darf nur gesetzt werden, wenn Router innerhalb eines Gebäudes steht!</font><br/>
 Outdoor: automatische Kanalwahl aus Bereich f&uuml;r Outdoor; nur Access-Point<br/>
 Indoor: fester Kanal; AccessPoint und Mesh 802.11s
 </td>
@@ -127,11 +136,16 @@ $(iwinfo $wifi_status_radio5g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 <input name="form_wifi3_network" type="radio" value="lan" $checked_lan>LAN
 <input name="form_wifi3_network" type="radio" value="wan" $checked_wan>WAN
 </td></tr>
+</table>
+</div>
+
+<table>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
 <td colspan="2"><input name="form_wifi_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_wifi_abort" title="Abbrechen und &Auml;nderungen verwerfen." type="submit" value="Abbrechen"></td>
 </tr>
 </table>
+
 </fieldset>
 </form>
 <br>
@@ -170,6 +184,7 @@ cat << EOM
 </fieldset>
 
 <script type="text/javascript">
+fold('wifi5', document.getElementsByName('form_disable_wifi')[0].checked)
 enable_private_wifi();
 setWifi3_key();
 </script>
@@ -179,34 +194,35 @@ EOM
 else #query string
 
 	if [ -n "$form_wifi_submit" ]; then
-		if [ -n "$form_wifi_txpower" ]; then
-			uci set ddmesh.network.wifi_txpower_5g="$form_wifi_txpower"
-			uci set ddmesh.network.wifi_indoor_5g="$form_wifi_indoor"
-			if [ "$form_wifi_channels_lower" -gt "$form_wifi_channels_upper" ]; then
-				uci set ddmesh.network.wifi_channels_5g_outdoor="$form_wifi_channels_upper-$form_wifi_channels_lower"
-			else
-				uci set ddmesh.network.wifi_channels_5g_outdoor="$form_wifi_channels_lower-$form_wifi_channels_upper"
-			fi
 
-			uci set ddmesh.network.wifi3_5g_enabled="$form_wifi3_enabled"
-			# avoid clearing values when disabled
-			if [ "$form_wifi3_enabled" = 1 ]; then
-				uci set ddmesh.network.wifi3_5g_network="$form_wifi3_network"
-				uci set ddmesh.network.wifi3_5g_security="$form_wifi3_security"
-				uci set credentials.wifi_5g.private_ssid="$(uhttpd -d "$form_wifi3_ssid")"
-				uci set credentials.wifi_5g.private_key="$(uhttpd -d "$form_wifi3_key")"
-			fi
+		[ -z "$form_wifi_txpower" ] && form_wifi_txpower="$(uci -q get ddmesh.network.wifi_txpower_5g)"
 
-			uci set ddmesh.boot.boot_step=2
-			uci commit
-			notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
-		else #empty
-			notebox "TX-Power falsch."
-		fi #empty
+		uci set ddmesh.network.disable_wifi_5g="$form_disable_wifi"
+		uci set ddmesh.network.wifi_txpower_5g="$form_wifi_txpower"
+		uci set ddmesh.network.wifi_indoor_5g="$form_wifi_indoor"
+		if [ "$form_wifi_channels_lower" -gt "$form_wifi_channels_upper" ]; then
+			uci set ddmesh.network.wifi_channels_5g_outdoor="$form_wifi_channels_upper-$form_wifi_channels_lower"
+		else
+			uci set ddmesh.network.wifi_channels_5g_outdoor="$form_wifi_channels_lower-$form_wifi_channels_upper"
+		fi
+
+		uci set ddmesh.network.wifi3_5g_enabled="$form_wifi3_enabled"
+		# avoid clearing values when disabled
+		if [ "$form_wifi3_enabled" = 1 ]; then
+			uci set ddmesh.network.wifi3_5g_network="$form_wifi3_network"
+			uci set ddmesh.network.wifi3_5g_security="$form_wifi3_security"
+			uci set credentials.wifi_5g.private_ssid="$(uhttpd -d "$form_wifi3_ssid")"
+			uci set credentials.wifi_5g.private_key="$(uhttpd -d "$form_wifi3_key")"
+		fi
+
+		uci set ddmesh.boot.boot_step=2
+		uci commit
+		notebox "Die ge&auml;nderten Einstellungen wurden &uuml;bernommen. Die Einstellungen sind erst beim n&auml;chsten <A HREF="reset.cgi">Neustart</A> aktiv."
+
 	else #submit
 		notebox "Es wurden keine Einstellungen ge&auml;ndert."
-
 	fi #submit
+
 fi #query string
 
 . /usr/lib/www/page-post.sh ${0%/*}

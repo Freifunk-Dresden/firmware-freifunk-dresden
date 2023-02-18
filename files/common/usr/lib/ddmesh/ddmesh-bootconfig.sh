@@ -99,13 +99,11 @@ config geoloc 'geoloc'
 
 config contact 'contact'
 	option	name ''
-	option  email ''
+	option	email ''
 	option	location ''
 	option	note ''
 
 config network 'network'
-#	list	splash_mac ''
-#0-disable; in minutes;
 	option	client_disconnect_timeout 0
 	option	dhcp_lan_offset 100
 	option	dhcp_lan_limit 0
@@ -114,17 +112,18 @@ config network 'network'
 #	option	essid_ap '' #custom essid
 	option	wifi_country 'DE'
 	option	wifi_channel 13
-	option  wifi_txpower 18
+	option	wifi_txpower 18
+	option	disable_wifi_5g 0
 	option	wifi_channel_5g 44
-	option  wifi_txpower_5g 18
-	option  wifi_indoor_5g 0
-	option  wifi_channels_5g_outdoor '100-140'
+	option	wifi_txpower_5g 18
+	option	wifi_indoor_5g 0
+	option	wifi_channels_5g_outdoor '100-140'
 	option	wifi_ch_5g_outdoor_min 100
 	option	wifi_ch_5g_outdoor_max 140
 	option	wifi_slow_rates 0
 	option	wifi2_dhcplease '5m'
 	option	wifi2_isolate '1'
-	option  wifi2_roaming_enabled '1'
+	option	wifi2_roaming_enabled '1'
 	option	mesh_mode 'mesh' #adhoc,mesh,adhoc+mesh
 	option	lan_local_internet '0'
 	option	internal_dns1 '10.200.0.4'
@@ -145,17 +144,17 @@ config network 'network'
 	option	wwan_apn 'internet'
 	option	wwan_pincode ''
 	option	wwan_syslog 0
-	option  fallback_dns ''
-	option lan_ipaddr '192.168.222.1'
-	option lan_netmask '255.255.255.0'
-	option lan_gateway ''
-	option lan_dns ''
-	option lan_proto 'static'
-	option wan_proto 'dhcp'
-	#option wan_ipaddr
-	#option wan_netmask
-	#option wan_gateway
-	#option wan_dns
+	option	fallback_dns ''
+	option	lan_ipaddr '192.168.222.1'
+	option	lan_netmask '255.255.255.0'
+	option	lan_gateway ''
+	option	lan_dns ''
+	option	lan_proto 'static'
+	option	wan_proto 'dhcp'
+	#option	wan_ipaddr
+	#option	wan_netmask
+	#option	wan_gateway
+	#option	wan_dns
 
 config bmxd 'bmxd'
 	option routing_class	3
@@ -279,7 +278,7 @@ EOM
 # update configuration depending on new ddmesh settings
 config_update() {
 
-	
+
 	#ONLY uci settings, to ensure not flashing on every boot
 	#function called when node is valid, to setup all settings depending on node
 	#or other updates of system generated configs
