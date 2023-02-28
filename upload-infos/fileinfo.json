@@ -1601,6 +1601,24 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-e750-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-e750-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-nand-glinet_gl-e750-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-eva.bin",
       "comment": ""
     },
