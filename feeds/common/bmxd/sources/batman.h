@@ -57,7 +57,7 @@
  * Global Variables and definitions
  */
 
-#define SOURCE_VERSION "1.2-freifunk-dresden"
+#define SOURCE_VERSION "1.3-freifunk-dresden"
 
 #define COMPAT_VERSION 10
 
