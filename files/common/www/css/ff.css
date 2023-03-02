@@ -266,6 +266,7 @@ fieldset.bubble td {
 	font-size: 14px;
 	padding-top: 1px;
 	padding-left: 5px;
+	white-space:nowrap;
 }
 .infobarvalue{
 	color: #ffcb05;
