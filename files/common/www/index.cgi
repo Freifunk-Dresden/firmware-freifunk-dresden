@@ -54,7 +54,7 @@ F&uuml;r die Nutzung des Netzes gelten diese <a href="license.cgi?license=1">Nut
 
 <fieldset class="bubble">
 <legend>Standort-Infos</legend>
-<img src="$(/usr/lib/ddmesh/ddmesh-wttr.sh -url)">
+<img alt="" src="$(/usr/lib/ddmesh/ddmesh-wttr.sh -url)">
 </ul>
 </fieldset>
 EOM
