@@ -487,7 +487,7 @@ usage: $(basename $0) [options] <command> | <target> [flags] [-- < make params .
            '*generic'              - builds all that end with generic
 
   flags
-   clean                   - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
+   clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    menuconfig       - displays configuration menu
    rerun            - enables a second compilation with make option 'V=s'
                       If first make failes a second make is tried with this option
