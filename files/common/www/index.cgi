@@ -50,6 +50,14 @@ F&uuml;r die Nutzung des Netzes gelten diese <a href="license.cgi?license=1">Nut
 <li><a href="http://$FFDD/">Freifunk Dresden</a></li>
 </ul>
 </fieldset>
+<br>
+
+<fieldset class="bubble">
+<legend>Standort-Infos</legend>
+<img src="$(/usr/lib/ddmesh/ddmesh-wttr.sh -url)">
+</ul>
+</fieldset>
+EOM
 EOM
 
 . /usr/lib/www/page-post.sh

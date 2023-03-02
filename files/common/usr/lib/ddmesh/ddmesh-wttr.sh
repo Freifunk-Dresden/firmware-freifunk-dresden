@@ -23,10 +23,11 @@ gps_lat=$(printf '%f' ${gps_lat:=0} 2>/dev/null)
 gps_lng=$(printf '%f' ${gps_lng:=0} 2>/dev/null)
 gps_alt=$(printf '%d' ${gps_alt:=0} 2>/dev/null)               
 
+# hide gps address
 case "$1" in
-	png) image=".png" ;;
-	*) echo "$(basename $0) [png]"
+	-url) echo "http://wttr.in/${gps_lat},${gps_lng}.png?nAQF1" ;;
+	-term) wget -q -O - http://wttr.in/${gps_lat},${gps_lng}?nAQF1;;
+	*) echo "$(basename $0) [-url | -term]" ;;
 esac
 
-wget -q -O - http://wttr.in/${gps_lat},${gps_lng}${image}?F1
 
