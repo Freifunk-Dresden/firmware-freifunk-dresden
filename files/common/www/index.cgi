@@ -2,9 +2,9 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
-node=$(uci get ddmesh.system.node)
-tmpmin=$(uci get ddmesh.system.tmp_min_node)
-tmpmax=$(uci get ddmesh.system.tmp_max_node)
+node=$(uci -q get ddmesh.system.node)
+tmpmin=$(uci -q get ddmesh.system.tmp_min_node)
+tmpmax=$(uci -q get ddmesh.system.tmp_max_node)
 if [ $node -ge $tmpmin -a $node -le $tmpmax ]; then
  	#export NOMENU=1
 	export TITLE="Auto-Setup"
