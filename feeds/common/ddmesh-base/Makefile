@@ -113,7 +113,6 @@ endef
 
 define Package/$(PKG_NAME)-usb-storage
   CATEGORY:=ddmesh
-  # keep it as default. if I create a new config for non-wifi targets, it would select wifi
   DEFAULT:=n
   DEPENDS:= $(PKG_NAME)-base \
             +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
@@ -130,6 +129,31 @@ endef
 
 define Package/$(PKG_NAME)-usb-storage/description
         Meta package to enable usb storage support
+endef
+
+##########################################################
+
+define Package/$(PKG_NAME)-usb-console
+  CATEGORY:=ddmesh
+  DEFAULT:=n
+  DEPENDS:= $(PKG_NAME)-base \
+            +kmod-nls-base +kmod-usb-core +kmod-usb2 +kmod-usb2-pci +kmod-usb3 \
+            +kmod-usb-ehci +kmod-usb-ohci +kmod-usb-ohci-pci \
+            +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
+            +kmod-usb-ledtrig-usbport \
+            \
+            +CONFIG_PACKAGE_agetty \
+            +CONFIG_PACKAGE_kmod-usb-serial \
+            +CONFIG_PACKAGE_kmod-usb-serial-option \
+            +CONFIG_PACKAGE_kmod-usb-serial-ch341 \
+            +CONFIG_PACKAGE_kmod-usb-serial-pl2303
+
+
+  TITLE:=Meta package to enable usb serial console
+endef
+
+define Package/$(PKG_NAME)-usb-console/description
+        Meta package to enable usb serial console support
 endef
 
 ##########################################################
@@ -232,5 +256,6 @@ endef
 $(eval $(call BuildPackage,$(PKG_NAME)-base))
 $(eval $(call BuildPackage,$(PKG_NAME)-wifi))
 $(eval $(call BuildPackage,$(PKG_NAME)-usb-storage))
+$(eval $(call BuildPackage,$(PKG_NAME)-usb-console))
 $(eval $(call BuildPackage,$(PKG_NAME)-tethering))
 $(eval $(call BuildPackage,$(PKG_NAME)-extra-modules))
