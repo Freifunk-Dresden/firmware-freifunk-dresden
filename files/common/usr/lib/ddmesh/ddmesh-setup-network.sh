@@ -48,7 +48,7 @@ setup_ethernet()
 			echo "[$NET] dev_config:$dev_config"
 
 			# use name that can not conflict with exisings
-			dev_config_name="dev_br_${NET}"
+			dev_config_name="bridge_${NET}"
 			echo "[$NET] dev_config_name:$dev_config_name"
 
 			# check if we have a device section for lan/wan.
@@ -229,7 +229,7 @@ setup_mesh()
 				echo "vlan:[$NET] br_dev_config=$br_dev_config"
 
 				# create bridge-vlan (similar to device section)
-				vlan_dev_config="vlan_device_${NET}"
+				vlan_dev_config="bridge_vlan_${NET}"
 				echo "vlan: add bridge: $vlan_dev_config"
 
 				uci add network bridge-vlan
@@ -264,7 +264,7 @@ setup_mesh()
 		echo "create mesh bridges device :$device"
 
 		# configure as bridge (dev_name is lowlevel name)
-		dev_config="bridge_device_${NET}"
+		dev_config="bridge_${NET}"
 		uci add network device
 		uci rename network.@device[-1]="${dev_config}"
 		uci set network.${dev_config}.name="${device}"
@@ -328,7 +328,7 @@ setup_wwan()
 # tether
 setup_twan()
 {
-	dev_config="dev_br_twan"
+	dev_config="bridge_twan"
 	uci add network device
 	uci rename network.@device[-1]="${dev_config}"
 
@@ -390,7 +390,7 @@ setup_wifi()
 	uci set network.${NET}.force_link=1
 	#don't store dns for wifi2 to avoid adding it to resolv.conf
 
-	dev_config="device_${NET}"
+	dev_config="bridge_${NET}"
 	uci add network device
 	uci rename network.@device[-1]="${dev_config}"
 

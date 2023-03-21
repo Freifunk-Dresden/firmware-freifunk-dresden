@@ -272,6 +272,15 @@ EOM
 	# dropbear ssh
 	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
 
+	# install ttyUSB getty
+	if [ -c /dev/ttyUSB0 -a -x /usr/sbin/agetty ]; then
+	cat << EOM >> /etc/inittab
+ttyUSB0::respawn:/usr/sbin/agetty -L ttyUSB0 115200
+ttyUSB1::respawn:/usr/sbin/agetty -L ttyUSB1 115200
+ttyUSB2::respawn:/usr/sbin/agetty -L ttyUSB2 115200
+ttyUSB3::respawn:/usr/sbin/agetty -L ttyUSB3 115200
+EOM
+	fi
 } # config_boot_step1
 
 #############################################################################
@@ -489,7 +498,7 @@ case "$boot_step" in
 		uci set ddmesh.boot.boot_step=2
 		uci commit
 		logger -s -t "$LOGGER_TAG" "reboot boot step 1"
-		reboot
+#		reboot
 		#stop boot process
 		exit 1
 		;;
@@ -538,7 +547,7 @@ case "$boot_step" in
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
 
 			sleep 5
-			reboot
+#			reboot
 
 			#stop boot process
 			exit 1
