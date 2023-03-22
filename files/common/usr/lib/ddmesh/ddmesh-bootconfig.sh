@@ -272,15 +272,6 @@ EOM
 	# dropbear ssh
 	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
 
-	# install ttyUSB getty
-	if [ -c /dev/ttyUSB0 -a -x /usr/sbin/agetty ]; then
-	cat << EOM >> /etc/inittab
-ttyUSB0::respawn:/usr/sbin/agetty -L ttyUSB0 115200
-ttyUSB1::respawn:/usr/sbin/agetty -L ttyUSB1 115200
-ttyUSB2::respawn:/usr/sbin/agetty -L ttyUSB2 115200
-ttyUSB3::respawn:/usr/sbin/agetty -L ttyUSB3 115200
-EOM
-	fi
 } # config_boot_step1
 
 #############################################################################
