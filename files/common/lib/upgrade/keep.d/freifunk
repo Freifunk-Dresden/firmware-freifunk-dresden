@@ -4,7 +4,6 @@
 /etc/dropbear/
 /etc/ethers
 /etc/fstab
-/etc/inittab
 /etc/hosts
 /etc/group
 /etc/passwd

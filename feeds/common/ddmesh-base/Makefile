@@ -142,11 +142,11 @@ define Package/$(PKG_NAME)-usb-console
             +kmod-usb-uhci +kmod-usb-dwc2 +kmod-usb-dwc3 \
             +kmod-usb-ledtrig-usbport \
             \
-            +CONFIG_PACKAGE_agetty \
-            +CONFIG_PACKAGE_kmod-usb-serial \
-            +CONFIG_PACKAGE_kmod-usb-serial-option \
-            +CONFIG_PACKAGE_kmod-usb-serial-ch341 \
-            +CONFIG_PACKAGE_kmod-usb-serial-pl2303
+            +agetty \
+            +kmod-usb-serial \
+            +kmod-usb-serial-option \
+            +kmod-usb-serial-ch341 \
+            +kmod-usb-serial-pl2303
 
 
   TITLE:=Meta package to enable usb serial console
