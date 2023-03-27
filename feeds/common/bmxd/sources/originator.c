@@ -973,9 +973,12 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 	{
 		orig_ip = orig_node->orig;
 
-		dbgf_all(0, DBGT_INFO, "%llu %s %s", (unsigned long long)curr_time, bif ? bif->dev : "???", orig_node->orig_str);
+		purge_old = ((orig_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time) ? 1 : 0;
 
-		purge_old = (orig_node->last_aware + (1000 * ((batman_time_t)purge_to))) < curr_time ? 1 : 0;
+		dbgf_all(0, DBGT_INFO, "cur: %llu last: %llu bif: %s ori: %s purge_to: %llu purge_old: %d",
+		  (unsigned long long)curr_time, (unsigned long long) orig_node->last_aware,
+			bif ? bif->dev : "???", orig_node->orig_str, (1000 * ((batman_time_t)purge_to)),
+			purge_old	);
 
 		// purge_orig(0, NULL)  - flush all ifaces
 		// purge_orig(0, bif)   - flush specific iface
@@ -985,8 +988,8 @@ void purge_orig(batman_time_t curr_time, struct batman_if *bif)
 		{
 			/* purge outdated originators completely */
 
-//dbg(DBGL_SYS, DBGT_INFO, "originator timeout: %s, last_valid %llu, last_aware %llu",
-//							 orig_node->orig_str, (unsigned long long)orig_node->last_valid_time, (unsigned long long)orig_node->last_aware);
+			dbgf_all(1, DBGT_INFO, "originator timeout -> purge %s, last_valid %llu",
+							 orig_node->orig_str, (unsigned long long)orig_node->last_valid_time);
 
 			flush_orig(orig_node, bif);
 
