@@ -157,19 +157,25 @@ case "$ARG1" in
 		;;
 
 	add_if_wifi)
-		$DAEMON_PATH/$DAEMON -c dev=$ARG2 /linklayer 2
-		echo "${ARG2},2" >> $DYN_IFACES_FILE
+		if [ -n "$ARG2" ]; then
+			$DAEMON_PATH/$DAEMON -c dev=$ARG2 /linklayer 2
+			echo "${ARG2},2" >> $DYN_IFACES_FILE
+		fi
 		;;
 
 	add_if_wire)
-		$DAEMON_PATH/$DAEMON -c dev=$ARG2 /linklayer 1
-		echo "${ARG2},1" >> $DYN_IFACES_FILE
+		if [ -n "$ARG2" ]; then
+			$DAEMON_PATH/$DAEMON -c dev=$ARG2 /linklayer 1
+			echo "${ARG2},1" >> $DYN_IFACES_FILE
+		fi
 		;;
 
 	del_if)
-		$DAEMON_PATH/$DAEMON -c dev=-$ARG2
-		# remove interface
-		sed -i "/^${ARG2},/d" $DYN_IFACES_FILE
+		if [ -n "$ARG2" ]; then
+			$DAEMON_PATH/$DAEMON -c dev=-$ARG2
+			# remove interface
+			sed -i "/^${ARG2},/d" $DYN_IFACES_FILE
+		fi
 		;;
 
 	runcheck)

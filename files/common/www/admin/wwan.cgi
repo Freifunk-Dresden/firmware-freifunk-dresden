@@ -13,18 +13,21 @@ if [ -z "$QUERY_STRING" ]; then
 # read lte status
 lte_info_dir="/var/lib/ddmesh"
 lte_info="$lte_info_dir/lte_info"
-eval $(cat $lte_info | jsonfilter -e m_type='@.signal.type' \
-	-e m_rssi='@.signal.rssi' -e m_rsrq='@.signal.rsrq' \
-	-e m_rsrp='@.signal.rsrp' -e m_snr='@.signal.snr' \
-	-e m_conn='@.status' -e m_reg='@.registration')
+if [ -f "$lte_info" ]; then
+	eval $(cat $lte_info | jsonfilter -e m_type='@.signal.type' \
+		-e m_rssi='@.signal.rssi' -e m_rsrq='@.signal.rsrq' \
+		-e m_rsrp='@.signal.rsrp' -e m_snr='@.signal.snr' \
+		-e m_conn='@.status' -e m_reg='@.registration')
 
-
-gif=5
-test $m_rssi -lt -60 && gif=4
-test $m_rssi -lt -65 && gif=3
-test $m_rssi -lt -76 && gif=2
-test $m_rssi -lt -88 && gif=1
-test $m_rssi -lt -95 && gif=0
+	gif=5
+	test $m_rssi -lt -60 && gif=4
+	test $m_rssi -lt -65 && gif=3
+	test $m_rssi -lt -76 && gif=2
+	test $m_rssi -lt -88 && gif=1
+	test $m_rssi -lt -95 && gif=0
+else
+	gif=0
+fi
 
 cat<<EOM
 <fieldset class="bubble">
