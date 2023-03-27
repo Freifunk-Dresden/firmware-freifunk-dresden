@@ -489,7 +489,7 @@ case "$boot_step" in
 		uci set ddmesh.boot.boot_step=2
 		uci commit
 		logger -s -t "$LOGGER_TAG" "reboot boot step 1"
-#		reboot
+		reboot
 		#stop boot process
 		exit 1
 		;;
@@ -538,7 +538,7 @@ case "$boot_step" in
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
 
 			sleep 5
-#			reboot
+			reboot
 
 			#stop boot process
 			exit 1
