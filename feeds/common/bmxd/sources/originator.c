@@ -1466,7 +1466,7 @@ void process_ogm(struct msg_buff *mb)
 	{
 		dbgf_all(2, DBGT_INFO, //as long as incoming link is not bidirectional,...
 						 "new_rt %s for %s is zero or differs from installed rt %s  "
-						 "(old_rt %s  rcvd vi %s %s",
+						 "(old_rt %s  rcvd via %s %s",
 						 ipStr(new_router ? new_router->key.addr : 0),
 						 orig_node->orig_str,
 						 ipStr(orig_node->router ? orig_node->router->key.addr : 0),
