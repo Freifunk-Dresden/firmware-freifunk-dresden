@@ -49,7 +49,7 @@ BEGIN {t=1;}
 	tag2=gensub(/(netifd)/,"<font color=\"purple\">\\1</font>","",tag2);
 	tag2=gensub(/(hostapd|wpa_.*|mac80211)/,"<font color=\"#8f8f0f\">\\1</font>","",tag2);
 
-	line=gensub(/(br-mesh_lan|br-mesh_wan|(br|mesh)[-_](lan|wan|wifi)[0-9a-z]*|mesh[25]g-80211s)/,"<font color=\"#000088\">\\1</font>","",line);
+	line=gensub(/(br-mesh_lan|br-mesh_wan|br-mesh_vlan|(br|mesh)[-_](lan|wan|vlan|wifi)[0-9a-z]*|mesh[25]g-80211s)/,"<font color=\"#000088\">\\1</font>","",line);
 	line=gensub(/(.*hotplug.*)/,"<font color=\"#006655\">\\1</font>","",line);
 	line=gensub(/(.*([Ff][Aa][Ii][Ll][Ee][Dd]|[Ee][Rr][Rr][Oo][Rr]).*)/,"<font color=\"red\">\\1</font>","",line);
 	line=gensub(/(.*Wait for WIFI up.*|.*WIFI is up.*)/,"<div style=\"background-color:#ffaaff;\">\\1</div>","",line);
