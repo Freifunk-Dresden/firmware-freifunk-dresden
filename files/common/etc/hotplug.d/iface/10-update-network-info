@@ -3,13 +3,16 @@
 # GNU General Public License Version 3
 
 # ddmesh-utils-network-info.sh uses cached data. update cache when interfaces
-# become up (and have got IP)
+# become up (and have got IP via dhcp)
+# Don't update for other interfaces, as router may run in deadlock (ubus)
 
 TAG="ddmesh-hotplug-iface"
 TAG2="10-update-network-info"
 
 logger -t "$TAG" "$TAG2: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
 
-[ ifup = "$ACTION" -o ifdown = "$ACTION" ] && {
+if [ ifup = "$ACTION" -o ifdown = "$ACTION" ]; then
+	if [ "$INTERFACE" = "wan" -o "$INTERFACE" = "wwan" ]; then
 		/usr/lib/ddmesh/ddmesh-utils-network-info.sh update
-}
+	fi
+fi
