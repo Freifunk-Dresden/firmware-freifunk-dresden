@@ -41,7 +41,8 @@ int32_t ogi_pwrsave;
 static int32_t pref_udpd_size = DEF_UDPD_SIZE;
 
 //static int32_t aggr_p_ogi;
-static int32_t aggr_interval;
+static int32_t aggr_interval; //time in ms. sollte schnell bleiben, damit die OGM vom nachbarn
+                              //schnell beantwortet werden.
 
 #ifndef NOPARANOIA
 #define DEF_SIM_PARA NO
@@ -199,47 +200,41 @@ static void send_aggregated_ogms(void)
 {
 	prof_start(PROF_send_aggregated_ogms);
 
-	uint8_t iftype;
-
-	/* send all the aggregated packets (which fit into max packet size) */
-
-	/* broadcast via lan interfaces first */
-	for (iftype = VAL_DEV_LL_LAN; iftype <= VAL_DEV_LL_WLAN; iftype++)
+	/* send all the aggregated packets */
+	OLForEach(bif, struct batman_if, if_list)
 	{
-		OLForEach(bif, struct batman_if, if_list)
+		if (bif->if_linklayer != VAL_DEV_LL_LO &&
+				bif->aggregation_len > (int32_t)sizeof(struct bat_header))
 		{
+			struct bat_header *bat_hdr = (struct bat_header *)bif->aggregation_out;
+			bat_hdr->version = COMPAT_VERSION;
+			bat_hdr->networkId_high = gNetworkId >> 8;
+			bat_hdr->networkId_low  = gNetworkId & 0xff;
+			bat_hdr->size = (bif->aggregation_len) / 4;
 
-			dbgf_all(0, DBGT_INFO, "dev: %s, linklayer %d iftype %d len %d min_len %d...",
-							 bif->dev, bif->if_linklayer, iftype, bif->aggregation_len,
-							 (int32_t)sizeof(struct bat_header));
+			dbgf_all(1, DBGT_INFO, "dev: %s, linklayer %d len %d min_len %d...",
+								bif->dev, bif->if_linklayer, bif->aggregation_len,
+								(int32_t)sizeof(struct bat_header));
 
-			if (bif->if_linklayer == iftype &&
-					bif->aggregation_len > (int32_t)sizeof(struct bat_header))
+			// UDPD_SIZE sollte nicht passieren, da das vorher schon getestet wurde.
+			// nur wenn die size kein vielfaches von 4byte ist
+			if (bif->aggregation_len > MAX_UDPD_SIZE || (bif->aggregation_len) % 4 != 0)
 			{
-				struct bat_header *bat_hdr = (struct bat_header *)bif->aggregation_out;
-				bat_hdr->version = COMPAT_VERSION;
-				bat_hdr->networkId_high = gNetworkId >> 8;
-				bat_hdr->networkId_low  = gNetworkId & 0xff;
-				bat_hdr->size = (bif->aggregation_len) / 4;
+				dbgf_all(1, DBGT_ERR, "trying to send strange packet length %d oktets",
+						bif->aggregation_len);
 
-				if (bif->aggregation_len > MAX_UDPD_SIZE || (bif->aggregation_len) % 4 != 0)
-				{
-					dbg(DBGL_SYS, DBGT_ERR, "trying to send strange packet length %d oktets",
-							bif->aggregation_len);
-
-					cleanup_all(-500016);
-				}
-
-				if (send_udp_packet(bif->aggregation_out, bif->aggregation_len,
-														&bif->if_netwbrc_addr, bif->if_unicast_sock) < 0)
-				{
-					dbg_mute(0, 60, DBGL_SYS, DBGT_ERR,
-									 "send_aggregated_ogms() cant send via dev %s %s fd %d",
-									 bif->dev, bif->if_ip_str, bif->if_unicast_sock);
-				}
-
-				bif->aggregation_len = sizeof(struct bat_header);
+				cleanup_all(-500016);
 			}
+
+			if (send_udp_packet(bif->aggregation_out, bif->aggregation_len,
+													&bif->if_netwbrc_addr, bif->if_unicast_sock) < 0)
+			{
+				dbg_mute(1, 60, DBGL_SYS, DBGT_ERR,
+									"send_aggregated_ogms() cant send via dev %s %s fd %d",
+									bif->dev, bif->if_ip_str, bif->if_unicast_sock);
+			}
+
+			bif->aggregation_len = sizeof(struct bat_header);
 		}
 	}
 
@@ -358,11 +353,14 @@ static void aggregate_outstanding_ogms(void *unused)
 			       // ogm, folgen, kommen beim näcchsten aufruf dieser funktion (nach aggr_interval) dran.
 
 
-// sende when daten vorhandenn und die udp size erreicht wurde
-		if (aggregated_size > (int32_t)sizeof(struct bat_header) &&
-				aggregated_size + send_node->ogm_buff_len > pref_udpd_size)
+		// sende when daten vorhanden und die udp size erreicht wurde
+		if (		aggregated_size > (int32_t)sizeof(struct bat_header)
+				&&	(   aggregated_size + send_node->ogm_buff_len > pref_udpd_size
+				 		 || aggregated_size + send_node->ogm_buff_len > MAX_UDPD_SIZE
+						)
+			 )
 		{
-			dbgf_all(0, DBGT_INFO, "max aggregated size %d", aggregated_size);
+			dbgf_all(0, DBGT_INFO, "max aggregated size %d reached -> send", aggregated_size);
 			send_aggregated_ogms();
 			aggregated_size = sizeof(struct bat_header);
 		}
@@ -371,17 +369,27 @@ static void aggregate_outstanding_ogms(void *unused)
 
 		uint8_t send_node_done = YES;
 
+		// wenn jetzt die ogm immer noch nicht reinpasst, obwohl oben alles versendet wurde,
+		// dann ignorieren.
+    // aggregated_size ist entweder == bat_header oder noch klein genug für aktuelle OGM.
+		// alles andere muss raus.
+#if 0
 		if ((aggregated_size + send_node->ogm_buff_len > MAX_UDPD_SIZE) ||
 				(aggregated_size + send_node->ogm_buff_len > pref_udpd_size && send_node->its_my_own_ogm))
+#else
+		if (    aggregated_size + send_node->ogm_buff_len > MAX_UDPD_SIZE
+				 || aggregated_size + send_node->ogm_buff_len > pref_udpd_size )
+#endif
 		{
-			if (aggregated_size <= (int32_t)sizeof(struct bat_header))
-			{
+			//macht keinen sinn. wenn zu gross, dann fehler
+			//if (aggregated_size <= (int32_t)sizeof(struct bat_header))
+			//{
 				dbg_mute(0, 30, DBGL_SYS, DBGT_ERR,
 								 "Drop OGM, single packet (own=%d) to large to fit legal packet size"
 								 "scheduled %llu, agg_size %d, next_len %d, pref_udpd_size %d  !!",
 								 send_node->its_my_own_ogm, (unsigned long long)send_node->send_time,
 								 aggregated_size, send_node->ogm_buff_len, pref_udpd_size);
-			}
+			//}
 		}
 		else
 		{
@@ -541,7 +549,8 @@ static void aggregate_outstanding_ogms(void *unused)
 			send_node->if_outgoing->send_own = 1;
 		}
 
-		// remove all the finished packets from send_list.
+		// current node was aggreated to each interface buffer.
+		// now remove it from send_list.
 		// normalerweise nach jedem ogm, aber wenn welche geclont werden sollen,
 		// dann erst wenn diese auch versendet wurden.
 		if (send_node_done)
@@ -555,10 +564,10 @@ static void aggregate_outstanding_ogms(void *unused)
 
 	if (aggregated_size > (int32_t)sizeof(struct bat_header))
 	{
+		dbgf_all(0, DBGT_INFO, "send last aggregated size %d", aggregated_size);
 		send_aggregated_ogms(); // runs through each interface, gets aggregation data (ogms)
 		                        // builds udp paket with interface specific ogms
-
-		dbgf_all(0, DBGT_INFO, "last aggregated size %d", aggregated_size);
+		aggregated_size = sizeof(struct bat_header);
 	}
 
 	OLForEach(bif, struct batman_if, if_list)
@@ -719,15 +728,21 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	sn->ogm->ogm_seqno = htons(sn->ogm->ogm_seqno);
 
 	// we send the ogm back as answer with direct link, unidirect, to tell neighbour that we are direct connected
-	dbgf_all(3, DBGT_INFO, "prepare send re-brc OGM TTL %d DirectF %d UniF %d ", sn->ogm->ogm_ttl, directlink, with_unidirectional_flag );
+	dbgf_all(3, DBGT_INFO, "prepare send re-brc OGM TTL %d DirectF %d UniF %d schedule at %llu ", sn->ogm->ogm_ttl, directlink, with_unidirectional_flag, sn->send_time );
 
-	// insert ogm time-sorted
+	// insert ogm time-sorted. list has next scheduled at the beginning
+	// and the packages in future at the end.
+	// Packets are sent back as fast as possible (send_time=batman_time).
+	// This is needed to
+	// measure timings and calulate routings in other nodes.
+	// but this means, that the aggregation time must be fast.
+
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
-
 		if ( send_packet_tmp->send_time > sn->send_time )
 		{
+			//insert before list head (send_packet_tmp)
 			OLInsertTailList((PLIST_ENTRY)send_packet_tmp, (PLIST_ENTRY)sn);
 			inserted = 1;
 			break;
@@ -1334,7 +1349,9 @@ void schedule_own_ogm(struct batman_if *bif)
 			if ((what_len = cb_snd_ext_hook(t, (unsigned char *)sn->ogm + ogm_len)) == FAILURE)
 				cleanup_all(-500040 - t);
 
-			if (ogm_len + what_len > (uint32_t)pref_udpd_size)
+			// hier auch auf MAX_UDPD_SIZE testen
+			if (    (ogm_len + what_len) > (uint32_t)pref_udpd_size
+			     || (ogm_len + what_len) > MAX_UDPD_SIZE )
 			{
 				dbg(DBGL_SYS, DBGT_ERR,
 						"%s=%d  exceeded by needed ogm + extension header length (%d+%d) "
@@ -1368,13 +1385,12 @@ void schedule_own_ogm(struct batman_if *bif)
 
 	sn->ogm->ogm_misc = MIN(s_curr_avg_cpu_load, 255);
 
-	dbgf_all(0, DBGT_INFO, "prepare send own OGM");
+	dbgf_all(0, DBGT_INFO, "schedule own OGM at %llu", sn->send_time);
 
-	//insert packet time-sorted
+	//insert packet time-sorted with current batman_time + ogm_interval.
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
-
 		if ( send_packet_tmp->send_time > sn->send_time )
 		{
 			OLInsertTailList((PLIST_ENTRY)send_packet_tmp, (PLIST_ENTRY)sn);
@@ -1382,7 +1398,7 @@ void schedule_own_ogm(struct batman_if *bif)
 			break;
 		}
 	}
-
+  // insert when there are no ogm in list yet
 	if (!inserted)
 	{
 		OLInsertTailList(&send_list, (PLIST_ENTRY)sn);

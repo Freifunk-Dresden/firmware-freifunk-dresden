@@ -25,8 +25,10 @@ extern int32_t my_originator_interval; // my originator interval in ms
 
 #define ARG_OGI_PWRSAVE "ogi_power_save"
 
+//time in ms. sollte schnell bleiben, damit die OGM vom nachbarn
+//schnell beantwortet werden.
 #define MIN_AGGR_IVAL 35
-#define MAX_AGGR_IVAL 4000
+#define MAX_AGGR_IVAL 1000
 #define DEF_AGGR_IVAL 500
 #define ARG_AGGR_IVAL "aggreg_interval"
 

@@ -185,7 +185,7 @@ int8_t send_udp_packet(unsigned char *packet_buff, int32_t packet_buff_len, stru
 {
 	int status = 0;
 
-	dbgf_all(1, DBGT_INFO, "len %d", packet_buff_len);
+	dbgf_all(2, DBGT_INFO, "len %d", packet_buff_len);
 
 	if (send_sock == 0)
 		return 0;
@@ -207,13 +207,13 @@ int8_t send_udp_packet(unsigned char *packet_buff, int32_t packet_buff_len, stru
 	{
 		if (errno == 1)
 		{
-			dbg_mute(1, 60, DBGL_SYS, DBGT_ERR,
+			dbg_mute(2, 60, DBGL_SYS, DBGT_ERR,
 							 "can't send udp packet: %s. Does your firewall allow outgoing packets on port %i ?",
 							 strerror(errno), ntohs(dst->sin_port));
 		}
 		else
 		{
-			dbg_mute(1, 60, DBGL_SYS, DBGT_ERR, "can't send udp packet via fd %d: %s", send_sock, strerror(errno));
+			dbg_mute(2, 60, DBGL_SYS, DBGT_ERR, "can't send udp packet via fd %d: %s", send_sock, strerror(errno));
 		}
 
 		return -1;
