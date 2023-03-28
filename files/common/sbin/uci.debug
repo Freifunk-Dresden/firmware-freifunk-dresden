@@ -5,19 +5,23 @@
 error=true
 params="$*"
 
-echo "[$0 $*]" > /proc/self/fd/2
+[ -n "$TERM" ] && echo "[$0 $*]" > /proc/self/fd/2
+logger -t "UCI" "$0 $*"
 
 test "$1" = "-q" && shift
 
 if [ "$1" = "set"  -o "$1" = "add_list" -o "$1" = "rename" ]; then
 	L=${2%%=*}
 	R=${2#*=}
-	/sbin/uci.exe $1 $L="$R" || error=false
+	/sbin/uci.exe $1 $L="$R" 2>/dev/null || error=false
 else
 	[ "$1" = "commit" ] && /sbin/uci.exe changes >/proc/self/fd/2
-	/sbin/uci.exe $params || error=false
+	/sbin/uci.exe $params 2>/dev/null || error=false
 fi
 
-$error || printf "\033[1;31mUCI-ERROR:\033[1;34m [$params]\033[0m\n" >/proc/self/fd/2
+if ! $error; then
+ [ -n "$TERM" ] && printf "\033[1;31mUCI-ERROR:\033[1;34m [$params]\033[0m\n" >/proc/self/fd/2
+ logger -t "UCI" "ERROR: $0 $*"
+fi
 # return original status
 $error
