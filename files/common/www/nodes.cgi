@@ -15,7 +15,7 @@ cat<<EOM
 <tr><th>Knoten-Nr.</th><th>IP-Adresse</th><th>Device</th><th>IP-Adresse</th><th>RTQ</th><th>vom Nachbarn (RQ)</th><th>zum Nachbarn (TQ)</th></tr>
 EOM
 
-cat $BMXD_DB_PATH/links | awk -f /usr/lib/www/page-functions.awk -e '
+cat $BMXD_DB_PATH/links 2>/dev/null | awk -f /usr/lib/www/page-functions.awk -e '
  BEGIN {prevNode=0;c=1;count=0;rtq=0;rq=0;tq=0}
  {
 	if(match($0,"^[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
@@ -51,7 +51,7 @@ cat<<EOM
 EOM
 
 export preferred="$(uci -q get ddmesh.bmxd.preferred_gateway | sed -n '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/p' )"
-cat $BMXD_DB_PATH/gateways | awk -f /usr/lib/www/page-functions.awk -e '
+cat $BMXD_DB_PATH/gateways 2>/dev/null | awk -f /usr/lib/www/page-functions.awk -e '
  BEGIN {c=1;count=0;brc=0}
  {
 	if(match($0,"^[=> 	]*[0-9]+[.][0-9]+[.][0-9]+[.][0-9]"))
@@ -115,7 +115,7 @@ cat<<EOM
 <tr><th>Knoten-Nr.</th><th>IP-Adresse</th><th>BRC</th><th>via Routing-Interface</th><th>via Router</th></tr>
 EOM
 
-cat $BMXD_DB_PATH/originators | awk -f /usr/lib/www/page-functions.awk -e '
+cat $BMXD_DB_PATH/originators 2>/dev/null | awk -f /usr/lib/www/page-functions.awk -e '
  BEGIN {c=1;count=0;brc=0}
  {
 

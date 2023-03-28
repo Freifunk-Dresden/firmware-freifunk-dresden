@@ -22,8 +22,8 @@ export model2="$(echo $model2 | sed 's#[ 	]*\(\1\)[ 	]*#\1#')"
 #check if access comes from disabled network and we have access to "Verwalten" enabled
 in_ifname="$(ip ro get $REMOTE_ADDR | sed -n '1,2s#.*dev[ ]\+\([^ ]\+\).*#\1#p')"
 enable_setup=1
-test ! "$(uci get ddmesh.system.wansetup)" = "1" && test "$in_ifname" = "$(uci get network.wan.ifname)" && enable_setup=0
-if [ "$(uci get ddmesh.system.meshsetup)" != "1" ]; then
+test ! "$(uci -q get ddmesh.system.wansetup)" = "1" && test "$in_ifname" = "$(uci -q get network.wan.ifname)" && enable_setup=0
+if [ "$(uci -q get ddmesh.system.meshsetup)" != "1" ]; then
 	test "$in_ifname" = "$wifi_adhoc_ifname" && enable_setup=0
 	test "$in_ifname" = "$wifi_mesh_ifname" && enable_setup=0
 	test "$in_ifname" = "$wifi2_ifname" && enable_setup=0
@@ -115,7 +115,7 @@ else
 	lockimg="/images/red-unlock-icon.png"
 fi
 
-COMMUNITY="Freifunk $(uci get ddmesh.system.community | sed 's#[ ]#\&nbsp;#g' )"
+COMMUNITY="Freifunk $(uci -q get ddmesh.system.community | sed 's#[ ]#\&nbsp;#g' )"
 NETID="$(uci -q get ddmesh.system.mesh_network_id)"
 cat<<EOM
 </TD></TR>
@@ -128,8 +128,8 @@ EOM
 test "$URI_PATH" = "/www/admin" && check_passwd && {
 	echo "<font size="+1" color="red"><span class="blink">!!! BITTE Password setzen !!!</span</font>"
 }
-tmp_name=$(uhttpd -d "$(uci get ddmesh.contact.name)")
-tmp_location=$(uhttpd -d "$(uci get ddmesh.contact.location)")
+tmp_name=$(uhttpd -d "$(uci -q get ddmesh.contact.name)")
+tmp_location=$(uhttpd -d "$(uci -q get ddmesh.contact.location)")
 cat<<EOM
   </td>
   <TD HEIGHT="33" WIDTH="150" valign="bottom"><IMG ALT="" BORDER="0" HEIGHT="33" SRC="/images/ff-logo-1r.gif" WIDTH="150"></TD></tr>

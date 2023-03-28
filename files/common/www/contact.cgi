@@ -27,15 +27,15 @@ cat<<EOF
 <fieldset class="bubble" style="width: 600px">
 <legend>Kontaktdaten</legend>
 <table border="0">
-<tr><th class="bubble">Name:</th><td>$(uhttpd -d "$(uci get ddmesh.contact.name)")</td></tr>
-<tr><th class="bubble">E-Mail:&nbsp;</th><td>$(uhttpd -d "$(uci get ddmesh.contact.email)")</td></tr>
-<tr><th class="bubble">Standort:&nbsp;</th><td>$(uhttpd -d "$(uci get ddmesh.contact.location)")</td></tr>
+<tr><th class="bubble">Name:</th><td>$(uhttpd -d "$(uci -q get ddmesh.contact.name)")</td></tr>
+<tr><th class="bubble">E-Mail:&nbsp;</th><td>$(uhttpd -d "$(uci -q get ddmesh.contact.email)")</td></tr>
+<tr><th class="bubble">Standort:&nbsp;</th><td>$(uhttpd -d "$(uci -q get ddmesh.contact.location)")</td></tr>
 <tr><th class="bubble">GPS-Koordinaten:&nbsp;</th><td>
  <i>Breitengrad:</i> $gps_lat, <i>L&auml;ngengrad:</i> $gps_lng, <i>H&ouml;he:</i> $gps_alt <br/>
   <a target="_blank" href="https://meshviewer.freifunk-dresden.de/$_ddmesh_node" target="_blank">Meshviewer</a>
 , <a target="_blank" href="http://maps.google.de/maps?f=q&hl=de&q=$gps_lat,$gps_lng&ie=UTF8&z=14&iwloc=addr&om=1"><b>Google Maps</b></a>
 </td></tr>
-<tr><th class="bubble">Notiz:&nbsp;</th><td>$(uhttpd -d "$(uci get ddmesh.contact.note)")</td></tr>
+<tr><th class="bubble">Notiz:&nbsp;</th><td>$(uhttpd -d "$(uci -q get ddmesh.contact.note)")</td></tr>
 </table>
 </fieldset>
 <br>

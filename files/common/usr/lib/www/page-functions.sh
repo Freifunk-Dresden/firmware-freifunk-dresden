@@ -93,7 +93,7 @@ URI_PATH=${1:-$DOCUMENT_ROOT}
 export BMXD_DB_PATH=/var/lib/ddmesh/bmxd
 
 #get gateway
-export INET_GW_IP=$(cat $BMXD_DB_PATH/gateways | grep '^[ 	]*[0-9]*[ 	]*=>' | sed 's#^[ 	]*[0-9]*[ 	]*[^0-9]\+\([0-9.]\+\).*#\1#')
+export INET_GW_IP=$(cat $BMXD_DB_PATH/gateways 2>/dev/null | grep '^[ 	]*[0-9]*[ 	]*=>' | sed 's#^[ 	]*[0-9]*[ 	]*[^0-9]\+\([0-9.]\+\).*#\1#')
 export INET_GW="local/none"
 if [ -n "$INET_GW_IP" ]; then
 	INET_GW="$INET_GW_IP&nbsp;($(/usr/lib/ddmesh/ddmesh-ipcalc.sh $INET_GW_IP))"

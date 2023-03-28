@@ -102,4 +102,4 @@ do
 	date +'%s' > $TIMESTAMP
 done
 
-logger -t $TAG "crashed."
+logger -t $TAG "ERROR: crashed."
