@@ -8,12 +8,16 @@ radio2g_phy=""
 radio2g_dev="wifi2ap"	# use interface that is always present
 radio2g_config_index=""
 radio2g_airtime=""
+radio2g_mode_ap=""
+radio2g_mode_mesh=""
 
 radio5g_up=""
 radio5g_phy=""
 radio5g_dev="wifi5ap"	# use interface that is always present
 radio5g_config_index=""
 radio5g_airtime=""
+radio5g_mode_ap=""
+radio5g_mode_mesh=""
 
 # gets wifi dev
 # returns RAW airtime: "$ACT,$BUS,$REC,$TRA"
@@ -70,14 +74,39 @@ if [ "$1" == "store" ]; then
 
 			#echo "[$freq2:$freq5]"
 
+			# get wifi capabilities
+			eval $(iw $phy info | awk '
+				BEGIN{found=0;};
+				/^\tvalid interface combinations:/{found=1;next};
+				/^\t[[:alpha:]]/{found=0};
+				found{
+					mode_ap=0
+					mode_mesh=0
+					split($0,a,"#");
+					for(e in a)
+					{
+						line=a[e];
+						split(line,count,"=")
+						if(match(line,/AP/)){mode_ap=count[2];}
+						if(match(line,/mesh point/)){mode_mesh=count[2];} 
+					}
+					found=0
+				}
+				END{ printf("mode_ap=%d; mode_mesh=%d", mode_ap, mode_mesh);}  
+			') 
+
 			if [ "$freq2" = "2" ]; then
 				radio2g_up=1
 				radio2g_phy=$phy
 				radio2g_config_index=$idx
+				radio2g_mode_ap="$mode_ap"
+				radio2g_mode_mesh="$mode_mesh"
 			elif [ "$freq5" = "5" ]; then
 				radio5g_up=1
 				radio5g_phy=$phy
 				radio5g_config_index=$idx
+				radio5g_mode_ap="$mode_ap"
+				radio5g_mode_mesh="$mode_mesh"
 			fi
 			phy_count=$(( phy_count + 1 ))
 			idx=$(( idx + 1 ))
@@ -94,10 +123,14 @@ if [ "$1" == "store" ]; then
  uci -q set wireless.ddmesh.radio2g_up="$radio2g_up"
  uci -q set wireless.ddmesh.radio2g_phy="$radio2g_phy"
  uci -q set wireless.ddmesh.radio2g_config_index="$radio2g_config_index"
+ uci -q set wireless.ddmesh.radio2g_mode_ap="$radio2g_mode_ap"
+ uci -q set wireless.ddmesh.radio2g_mode_mesh="$radio2g_mode_mesh"
 
  uci -q set wireless.ddmesh.radio5g_up="$radio5g_up"
  uci -q set wireless.ddmesh.radio5g_phy="$radio5g_phy"
  uci -q set wireless.ddmesh.radio5g_config_index="$radio5g_config_index"
+ uci -q set wireless.ddmesh.radio5g_mode_ap="$radio5g_mode_ap"
+ uci -q set wireless.ddmesh.radio5g_mode_mesh="$radio5g_mode_mesh"
  uci -q commit
 fi
 
@@ -106,6 +139,8 @@ echo export $prefix"_radio2g_up"="$_radio2g_up"
 if [ "$_radio2g_up" = "1" ]; then
 	echo export $prefix"_radio2g_phy"="$(uci -q get wireless.ddmesh.radio2g_phy)"
 	echo export $prefix"_radio2g_config_index"="$(uci -q get wireless.ddmesh.radio2g_config_index)"
+	echo export $prefix"_radio2g_mode_ap"="$(uci -q get wireless.ddmesh.radio2g_mode_ap)"
+	echo export $prefix"_radio2g_mode_mesh"="$(uci -q get wireless.ddmesh.radio2g_mode_mesh)"
 	echo export $prefix"_radio2g_airtime"="$(airtime ${radio2g_dev})"
 fi
 
@@ -114,5 +149,7 @@ echo export $prefix"_radio5g_up"="$_radio5g_up"
 if [ "$_radio5g_up" = "1" ]; then
 	echo export $prefix"_radio5g_phy"="$(uci -q get wireless.ddmesh.radio5g_phy)"
 	echo export $prefix"_radio5g_config_index"="$(uci -q get wireless.ddmesh.radio5g_config_index)"
+	echo export $prefix"_radio5g_mode_ap"="$(uci -q get wireless.ddmesh.radio5g_mode_ap)"
+	echo export $prefix"_radio5g_mode_mesh"="$(uci -q get wireless.ddmesh.radio5g_mode_mesh)"
 	echo export $prefix"_radio5g_airtime"="$(airtime ${radio5g_dev})"
 fi
