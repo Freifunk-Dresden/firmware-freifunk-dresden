@@ -91,8 +91,12 @@ function checkInput()
 <td>
 <font color="red">Einstellung darf nur gesetzt werden, wenn Router innerhalb eines Gebäudes steht!</font><br/>
 Outdoor: automatische Kanalwahl aus Bereich f&uuml;r Outdoor; nur Access-Point<br/>
-Indoor: fester Kanal; AccessPoint und Mesh 802.11s
+Indoor: fester Kanal; AccessPoint $([ "$wifi_status_radio5g_mode_mesh" -gt 0 ] && echo "und Mesh 802.11s")
 </td>
+</tr>
+<tr><th></th><td></td></tr>
+<tr><th>Meshing:</th>
+<td>$(if [ "$wifi_status_radio5g_mode_mesh" -gt 0 ]; then echo "m&ouml;glich"; else echo "nicht unterst&uuml;tzt"; fi)</td>
 </tr>
 
 <tr><th>Indoor-Kanal:</th>
@@ -120,8 +124,10 @@ $(iwinfo $wifi_status_radio5g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 <TD class="nowrap">$(uci -q get wireless.wifi2_5g.ssid)</TD>
 </tr>
 
+EOM
+if [ "$wifi_status_radio5g_mode_ap" -gt 1 ]; then
+cat <<EOM
 <tr><td colspan="2"><hr size=1></td></tr>
-
 <tr><th>Aktiviere privates WiFi:</th>
 <td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_5g_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es, ein zusätzliches privates WiFi zu aktivieren.</td></tr>
 <tr><th>SSID:</th>
@@ -136,6 +142,9 @@ $(iwinfo $wifi_status_radio5g_phy txpowerlist | awk '{if(match($1,"*")){sel="sel
 <input name="form_wifi3_network" type="radio" value="lan" $checked_lan>LAN
 <input name="form_wifi3_network" type="radio" value="wan" $checked_wan>WAN
 </td></tr>
+EOM
+fi
+cat <<EOM
 </table>
 </div>
 
