@@ -127,8 +127,10 @@ cat<<EOM
 </tr>
 <tr><th>Reduziere WLAN-Datenrate:</th><td><INPUT NAME="form_wifi_slow_rates" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" = "1" ];then echo ' checked="checked"';fi)> (Nicht empfohlen. Wenn aktiviert, kann Reichweite auf Kosten der &Uuml;bertragungsrate erh&ouml;ht werden. Dies gilt auch f&uuml;r Verbindungen zu anderen Knoten.)</td></tr>
 
+EOM
+if [ "$wifi_status_radio2g_mode_ap" -gt 1 ]; then
+cat <<EOM
 <tr><td colspan="2"><hr size=1></td></tr>
-
 <tr><th>Aktiviere privates WiFi:</th>
 <td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_2g_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es, ein zusätzliches privates WiFi zu aktivieren.</td></tr>
 <tr><th>SSID:</th>
@@ -143,11 +145,19 @@ cat<<EOM
 <input name="form_wifi3_network" type="radio" value="lan" $checked_lan>LAN
 <input name="form_wifi3_network" type="radio" value="wan" $checked_wan>WAN
 </td></tr>
+EOM
+fi
+cat <<EOM
+</table>
+</div>
+
+<table>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
 <td colspan="2"><input name="form_wifi_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_wifi_abort" title="Abbrechen und &Auml;nderungen verwerfen." type="submit" value="Abbrechen"></td>
 </tr>
 </table>
+
 </fieldset>
 </form>
 <br>
