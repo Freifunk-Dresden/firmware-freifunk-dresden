@@ -202,10 +202,10 @@ index 0000000000..edc1c6544c
 +	};
 +};
 diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
-index cbcf67c236..2269833e48 100644
+index bdaeac2cb1..637cfcfc55 100644
 --- a/target/linux/ramips/image/mt7621.mk
 +++ b/target/linux/ramips/image/mt7621.mk
-@@ -478,6 +478,27 @@ define Device/cudy_x6
+@@ -324,6 +324,27 @@ define Device/cudy_x6
  endef
  TARGET_DEVICES += cudy_x6
  
@@ -234,10 +234,10 @@ index cbcf67c236..2269833e48 100644
    $(Device/dsa-migration)
    IMAGE_SIZE := 16000k
 diff --git a/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds b/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds
-index 9e0eaac941..5fafb9b50a 100644
+index 2cb8fdb557..b5b638c3f4 100644
 --- a/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds
 +++ b/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds
-@@ -56,6 +56,13 @@ jcg,y2|\
+@@ -32,6 +32,13 @@ jcg,y2|\
  xzwifi,creativebox-v1)
  	ucidef_set_led_netdev "internet" "internet" "blue:internet" "wan"
  	;;
@@ -252,22 +252,22 @@ index 9e0eaac941..5fafb9b50a 100644
  dlink,dir-2640-a1|\
  dlink,dir-2660-a1)
 diff --git a/target/linux/ramips/mt7621/base-files/etc/board.d/02_network b/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
-index dea433dec4..9a8e385a31 100644
+index a8d8b8eef2..3d87acefb1 100644
 --- a/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
 +++ b/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
-@@ -11,6 +11,7 @@ ramips_setup_interfaces()
+@@ -9,6 +9,7 @@ ramips_setup_interfaces()
+ 
+ 	case $board in
  	ampedwireless,ally-00x19k|\
- 	asus,rp-ac56|\
- 	asus,rp-ac87|\
 +	dlink,dap-x1860-a1|\
  	edimax,re23s|\
- 	mikrotik,ltap-2hnd|\
  	mikrotik,routerboard-m11g|\
+ 	netgear,ex6150|\
 diff --git a/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac b/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
-index 69ecaefd27..161bd942db 100644
+index 627869b8db..35708d7fc7 100644
 --- a/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
 +++ b/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
-@@ -22,6 +22,13 @@ case "$board" in
+@@ -20,6 +20,13 @@ case "$board" in
  		hw_mac_addr="$(mtd_get_mac_binary factory 0x4)"
  		macaddr_add $hw_mac_addr "$PHYNBR" > /sys${DEVPATH}/macaddress
  		;;
@@ -282,13 +282,13 @@ index 69ecaefd27..161bd942db 100644
  		[ "$PHYNBR" = "0" ] && \
  			macaddr_setbit_la "$(mtd_get_mac_binary factory 0xe000)" \
 diff --git a/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh b/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
-index fd856e6b3a..53ff9c016c 100755
+index 407611a6a2..22329f1672 100755
 --- a/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
-@@ -59,6 +59,7 @@ platform_do_upgrade() {
- 	beeline,smartbox-giga|\
- 	beeline,smartbox-turbo|\
- 	belkin,rt1800|\
+@@ -54,6 +54,7 @@ platform_do_upgrade() {
+ 	asus,rt-ac65p|\
+ 	asus,rt-ac85p|\
+ 	beeline,smartbox-flash|\
 +	dlink,dap-x1860-a1|\
  	dlink,dir-1960-a1|\
  	dlink,dir-2640-a1|\
