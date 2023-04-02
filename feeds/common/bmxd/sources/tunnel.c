@@ -923,7 +923,7 @@ void init_tunnel(void)
 }
 
 
-//SE: create default route to the next hop that also the gateway is using.
+//SE: create default route to the next hop which also is used by selected gateway.
 // if all routers have this default route, the packets that are not found in sub-community are traveling
 // to the gateway. This then is responsible to forward it via (e.g.: BGP) to other sub-community and
 // return it back to origin node (initially sent the request)

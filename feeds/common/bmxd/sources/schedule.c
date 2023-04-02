@@ -336,7 +336,7 @@ static void aggregate_outstanding_ogms(void *unused)
 {
 	prof_start(PROF_send_outstanding_ogms);
 
-	uint8_t directlink, unidirectional, cloned, ttl, if_singlehomed;
+	uint8_t directlink, unidirectional, cloned, ttl, if_hide_interface;
 	int16_t aggregated_size = sizeof(struct bat_header);
 
 	int dbg_if_out = 0;
@@ -367,7 +367,7 @@ static void aggregate_outstanding_ogms(void *unused)
 
 		send_node->iteration++;
 
-		uint8_t send_node_done = YES;
+		uint8_t send_node_done = YES; //default
 
 		// wenn jetzt die ogm immer noch nicht reinpasst, obwohl oben alles versendet wurde,
 		// dann ignorieren.
@@ -406,7 +406,7 @@ static void aggregate_outstanding_ogms(void *unused)
 			cloned = (send_node->ogm->flags & CLONED_FLAG) > 0;
 
 			ttl = send_node->ogm->ogm_ttl;
-			if_singlehomed = ((send_node->its_my_own_ogm && send_node->if_outgoing->if_singlehomed) ? 1 : 0);
+			if_hide_interface = ((send_node->its_my_own_ogm && send_node->if_outgoing->if_hide_interface) ? 1 : 0);
 
 			//can't forward packet with IDF: outgoing iface not specified
 			paranoia(-500015, (directlink && !send_node->if_outgoing));
@@ -437,8 +437,7 @@ static void aggregate_outstanding_ogms(void *unused)
  jedes interface hat einen eingenen aggregations-buffer, in der die ogms gesammelt werden, die ueber die interface
  verschickt werden sollen.
 
- singlehomed bedeutet nur, dass der node nur ein interface hat.
- ist das nicht gesetzt, so werden OGMs an alle interfaces angehängt und dann später versendet.
+ if_hide_interface: wenn für ein iface if_hide_interface==TRUE, dann ist es ein non-primiary interface.
 
  im original wird nur eine "grosse" OGM erzeugt (mit gateway,...) und �beralle alle interfaces mit
  TTL 50 verschickt. "kleine" OGM enthalten nur die ip des interfaces und als einzige erweiterung
@@ -451,6 +450,12 @@ static void aggregate_outstanding_ogms(void *unused)
  bei der metrik berechnung von der primary ogm unterschieden werden.
 
 */
+
+			dbgf_all(0, DBGT_INFO, "copy: %s %s (%s), hide %d, direct %d, uni %d, ttl %d, cloned %d, bucket/clones %d/%d, iter %d", ipStr(send_node->ogm->orig),
+				send_node->if_outgoing->dev, send_node->if_outgoing->if_active ? "active":"disabled",
+				if_hide_interface, directlink, unidirectional, ttl, cloned, send_node->send_bucket,
+				send_node->if_outgoing->if_send_clones, send_node->iteration);
+
 			/* rebroadcast only to allow neighbor to detect bidirectional link */
 			if (send_node->if_outgoing->if_active &&
 					send_node->iteration <= 1 &&
@@ -462,8 +467,9 @@ static void aggregate_outstanding_ogms(void *unused)
 															 " %-12s  (NBD)", send_node->if_outgoing->dev);
 
 				if ((send_node->send_bucket + 100) < send_node->if_outgoing->if_send_clones)
+				{
 					send_node_done = NO;
-
+				}
 				//TODO: send only pure bat_packet_ogm, no extension headers.
 				memcpy(send_node->if_outgoing->aggregation_out +
 									 send_node->if_outgoing->aggregation_len,
@@ -483,8 +489,14 @@ static void aggregate_outstanding_ogms(void *unused)
 					if (!bif->if_active)
 						continue;
 
-					if ((send_node->send_bucket >= bif->if_send_clones) ||
-							(if_singlehomed && send_node->if_outgoing != bif))
+					// bereits "genuegend" clones geschickt
+					if (send_node->send_bucket >= bif->if_send_clones)
+						continue;
+
+					// nicht ueber das interface senden, wenn die ogm fuer ein non-primary interface
+					// gedacht ist. so eine ogm hat eine ttl von 1 und soll nur ueber sein eigenes
+					// interface versendet werden, nicht ueber alle.
+					if (if_hide_interface && send_node->if_outgoing != bif)
 						continue;
 
 					if (
@@ -496,10 +508,14 @@ static void aggregate_outstanding_ogms(void *unused)
 									send_node->if_outgoing != bif ||
 									batman_time <= bif->if_next_pwrsave_hardbeat)
 						 )
-						 { continue; }
+					{
+						continue;
+					}
 
 					if ((send_node->send_bucket + 100) < bif->if_send_clones)
+					{
 						send_node_done = NO;
+					}
 
 					ogm = (struct bat_packet_ogm *)(bif->aggregation_out + bif->aggregation_len);
 
@@ -518,9 +534,9 @@ static void aggregate_outstanding_ogms(void *unused)
 					dbg_if_out += snprintf((dbg_if_str + dbg_if_out),
 																 (MAX_DBG_IF_SIZE - dbg_if_out), " %-12s", bif->dev);
 
-					if (if_singlehomed && send_node->if_outgoing == bif)
+					if (if_hide_interface && send_node->if_outgoing == bif)
 						dbg_if_out += snprintf((dbg_if_str + dbg_if_out),
-																	 (MAX_DBG_IF_SIZE - dbg_if_out), "  (npIF)");
+																	 (MAX_DBG_IF_SIZE - dbg_if_out), "  (hide)");
 				}
 			}
 
@@ -708,7 +724,8 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	sn->ogm->prev_hop_id = neigh_id;
 	sn->ogm->bat_size = (sn->ogm_buff_len) >> 2;
 
-	sn->send_time = batman_time;
+	sn->send_time = 0; //no need to set batman_time
+										 //ogm should be sent immediately
 	sn->its_my_own_ogm = 0;
 
 	sn->if_outgoing = mb->iif;
@@ -736,7 +753,7 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	// This is needed to
 	// measure timings and calulate routings in other nodes.
 	// but this means, that the aggregation time must be fast.
-
+#if 0
 	int inserted = 0;
 	OLForEach(send_packet_tmp, struct send_node, send_list)
 	{
@@ -753,6 +770,13 @@ void schedule_rcvd_ogm(uint16_t oCtx, uint16_t neigh_id, struct msg_buff *mb)
 	{
 		OLInsertTailList(&send_list, (PLIST_ENTRY)sn);
 	}
+#else
+  //SE:insert ogm as first to ensure that will be sent
+	//on next aggregation time schedule.
+	//diese liste ist sonst nach zeit geordnet (z.b. wenn
+	//meine eigene OGM alle ogm_interval geschickt werden)
+	OLInsertHeadList(&send_list, (PLIST_ENTRY)sn);
+#endif
 
 	prof_stop(PROF_schedule_rcvd_ogm);
 }
@@ -857,8 +881,8 @@ static void strip_packet(struct msg_buff *mb, unsigned char *pos, int32_t udp_le
 				return;
 			}
 
-			dbgf_all(1, DBGT_INFO,
-							 "rcvd OGM: flags. %X, remaining bytes %d", (mb->ogm)->flags, udp_len);
+//			dbgf_all(1, DBGT_INFO,
+//							 "rcvd OGM: flags. %X, remaining bytes %d", (mb->ogm)->flags, udp_len);
 
 			process_ogm(mb);
 		}
