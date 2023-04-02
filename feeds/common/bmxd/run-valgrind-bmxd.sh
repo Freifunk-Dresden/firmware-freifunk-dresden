@@ -73,7 +73,7 @@ case "$1" in
 		# wenn dns nicht mehr geht, dann resolver nochmal starten
 		systemctl restart systemd-resolved
 
-		CMD="./sources/bmxd --network 10.200.0.0/16 --netid 0 --gateway_hysteresis 20 --path_hysteresis 3  -r 3 -p 10.200.1.2 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 5000 --purge_timeout 35 -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1"
+		CMD="./sources/bmxd --network 10.200.0.0/16 --netid 0 --gateway_hysteresis 20 --path_hysteresis 3  -r 3 -p 10.200.1.2 --wireless_ogm_clone 100 --udp_data_size 512 --ogm_interval 5000 --purge_timeout 35 -d${BMXD_DEBUG_LEVEL} dev=${PrimeDEV} /linklayer 0 dev=${LinkDEV} /linklayer 1"
 		echo "valgrind: [${VALGRIND_OPT}]"
 		echo "cmd: [${CMD}]"
 		valgrind ${VALGRIND_OPT} ${CMD}

@@ -46,9 +46,8 @@ setup_wireless()
 
  # set HT20 for 2.4Ghz. higher values are not supported by all devices
  # and meshing 802.11s might not work
- uci set wireless.radio2g.htmode="HT20"
 
- # 5 GHz
+  # 5 GHz
  if [ -n "$wifi_status_radio5g_up" ]; then
 	if [ "$(uci -q get ddmesh.network.disable_wifi_5g)" = "1" ]; then
 		uci -q set wireless.radio5g.disabled="1"
@@ -56,10 +55,16 @@ setup_wireless()
 		uci -q delete wireless.radio5g.disabled
 	fi
 	uci set wireless.radio5g.band="5g"
+
 	uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
 	if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
+		# because we indoor ch44 (indoor ch 36,40,44,48) we only can use 40MHz
+		uci set wireless.radio5g.htmode="VHT40"
 		uci set wireless.radio5g.channel="$(uci -q get ddmesh.network.wifi_channel_5g)"
 	else
+		# not all devices support VHT80. If radar on one channel was detected then
+		# broader channel will likly not available
+		uci set wireless.radio5g.htmode="VHT40"
 		uci set wireless.radio5g.channel="auto"
 		uci set wireless.radio5g.channels="$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)"
 	fi

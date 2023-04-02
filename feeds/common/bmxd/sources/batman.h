@@ -496,8 +496,8 @@ struct batman_if
 	int16_t if_send_clones_conf;
 	int16_t if_send_clones;
 
-	int8_t if_singlehomed_conf;
-	int8_t if_singlehomed;
+	int8_t if_hide_interface_conf;
+	int8_t if_hide_interface;
 	int if_mtu;
 };
 

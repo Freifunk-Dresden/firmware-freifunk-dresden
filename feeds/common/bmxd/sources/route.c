@@ -945,12 +945,12 @@ static void if_reconfigure_soft(struct batman_if *bif)
 	if (bif == primary_if)
 	{
 		bif->if_ttl = Ttl;
-		bif->if_singlehomed = NO;
+		bif->if_hide_interface = NO;
 	}
 	else
 	{
 		bif->if_ttl = 1;
-		bif->if_singlehomed = YES;
+		bif->if_hide_interface = YES;
 	}
 
 	if (bif->if_send_clones_conf != -1)
@@ -959,8 +959,8 @@ static void if_reconfigure_soft(struct batman_if *bif)
 	if (bif->if_ttl_conf != -1)
 		bif->if_ttl = bif->if_ttl_conf;
 
-	if (bif->if_singlehomed_conf != -1)
-		bif->if_singlehomed = bif->if_singlehomed_conf;
+	if (bif->if_hide_interface_conf != -1)
+		bif->if_hide_interface = bif->if_hide_interface_conf;
 
 	bif->if_last_link_activity = batman_time;
 	bif->if_next_pwrsave_hardbeat = batman_time;

@@ -205,7 +205,7 @@
     <value type="QString" key="ProjectExplorer.CustomExecutableRunConfiguration.Executable">/home/stephan/freifunk/firmware/feeds/common/bmxd/sources/bmxd</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.CustomExecutableRunConfiguration</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey"></value>
-    <value type="QString" key="RunConfiguration.Arguments">--network 10.200.0.0/16 --netid 0 --throw-rules 0 --prio-rules 0 --gateway_tunnel_network 10.200.0.0/16 --gateway_hysteresis 20 --path_hysteresis 3 --fast_path_hysteresis 3 -r 3 -p 10.200.1.2 --ogm_broadcasts 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 20 -d4 dev=bmx_prime /linklayer 0 dev=bmx0 /linklayer 1</value>
+    <value type="QString" key="RunConfiguration.Arguments">--network 10.200.0.0/16 --netid 0 --throw-rules 0 --prio-rules 0 --gateway_tunnel_network 10.200.0.0/16 --gateway_hysteresis 20 --path_hysteresis 3 --fast_path_hysteresis 3 -r 3 -p 10.200.1.2 --wireless_ogm_clone 100 --udp_data_size 512 --ogm_interval 10000 --purge_timeout 20 -d4 dev=bmx_prime /linklayer 0 dev=bmx0 /linklayer 1</value>
     <value type="bool" key="RunConfiguration.Arguments.multi">true</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
