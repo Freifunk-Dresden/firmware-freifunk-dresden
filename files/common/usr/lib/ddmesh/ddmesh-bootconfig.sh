@@ -215,22 +215,6 @@ config privnet 'privnet'
 #	option	port			''
 #	option	public_key		''
 
-config nodegroup 'nodegroup'
-	option  clients_enabled         1
-	option  server_enabled          0
-	option  fastd_port		'4000'
-	option	server_passwd		''
-	option  default_fastd_port	'4000'
-	option	number_of_clients	5
-
-#config nodegroup_accept
-#	option	name			''
-#	option	password		''
-
-#config nodegroup_client
-#	option	name			''
-#	option	port			''
-#	option	password		''
 EOM
 
 	#almost disable crond logging (only errors)
