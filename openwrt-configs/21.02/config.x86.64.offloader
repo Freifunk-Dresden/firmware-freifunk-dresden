@@ -2490,6 +2490,7 @@ CONFIG_PACKAGE_wireguard-tools=y
 CONFIG_PACKAGE_ddmesh-extra-modules=m
 CONFIG_PACKAGE_tcpdump=y
 CONFIG_PACKAGE_ddmesh-tethering=y
+# CONFIG_PACKAGE_ddmesh-usb-console is not set
 CONFIG_PACKAGE_ddmesh-usb-storage=y
 # CONFIG_PACKAGE_ddmesh-wifi is not set
 # end of ddmesh
