@@ -3033,6 +3033,7 @@ CONFIG_PACKAGE_wireguard-tools=y
 CONFIG_PACKAGE_ddmesh-extra-modules=y
 CONFIG_PACKAGE_tcpdump=y
 CONFIG_PACKAGE_ddmesh-tethering=y
+# CONFIG_PACKAGE_ddmesh-usb-console is not set
 # CONFIG_PACKAGE_ddmesh-usb-storage is not set
 CONFIG_PACKAGE_ddmesh-wifi=y
 # end of ddmesh
@@ -4461,6 +4462,7 @@ CONFIG_PACKAGE_uqmi=y
 #
 # CONFIG_PACKAGE_sockd is not set
 # CONFIG_PACKAGE_socksify is not set
+# CONFIG_PACKAGE_tinyproxy is not set
 CONFIG_PACKAGE_uhttpd=y
 # CONFIG_PACKAGE_uhttpd-mod-lua is not set
 # CONFIG_PACKAGE_uhttpd-mod-ubus is not set
