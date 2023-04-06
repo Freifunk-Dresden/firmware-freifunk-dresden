@@ -1336,6 +1336,7 @@ void process_ogm(struct msg_buff *mb)
 	if (orig_node_neigh->link_node)
 		lndev = get_lndev(orig_node_neigh->link_node, iif, NO /*create*/);
 
+  //meine eigene ogm ist zurueck gekommen, somit kann ich jetzt rtq brechnen (link quality)
 	if (oCtx & IS_MY_ORIG)
 	{
 		update_rtq_link(orig_node_neigh, oCtx, mb, iif, ogm, lndev);
