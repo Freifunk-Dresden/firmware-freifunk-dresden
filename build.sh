@@ -498,7 +498,7 @@ Devel-Notes:
 
  To compile a specific feed change to workdir and call something like:
 
-     make package/feeds/ddmesh_own/fastd/compile -j1 V=s
+     make package/feeds/ddmesh/fastd/compile -j1 V=s
 
 EOM
 }
@@ -1153,13 +1153,19 @@ EOM
 		_feed_src=$(echo $feed | jq $OPT '.src')
 		_feed_rev=$(echo $feed | jq $OPT '.rev')
 
-		# for local feeds set correct absolute filename because when workdir is a symlink, relative
-		# path are note resolved correctly. Also we need to use $_selector_feeds
+		# for local feeds set correct absolute filename because when workdir is a symlink (like on gitlab runners),
+		# relative path are note resolved correctly. Also we need to use $_selector_feeds.
+		# "feeds" : [
+		#   {"type":"src-link", "name":"ddmesh",   "src":"" },
+		#   {"type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc"},
+		#   {"type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3"}
+		# ],
+		# The feed directory for "ddmesh" is directly located below firmware/feeds/<feed-selector>/
 		if [ "$_feed_type" = "src-link" ]; then
 			_feed_src="$RUN_DIR/feeds/$_selector_feeds/$_feed_src"
 			_feed_rev=""	# src-link does not have a rev, because it is already in current git repo
 		else
-			# if we have a feed revision, then add it. "^° is a special character
+			# if we have a feed revision, then add it. "^" is a special character
 			# followed by a "commit" (hash). openwrt then checks out this revision
 			test "$_feed_rev" = "null" && _feed_rev=""
 			test -n "$_feed_rev" && _feed_rev="^$_feed_rev"
@@ -1199,8 +1205,8 @@ EOM
 		./scripts/feeds install $entry
 	done
 
-	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh_own)"$C_NONE
-	./scripts/feeds install -a -p ddmesh_own
+	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh)"$C_NONE
+	./scripts/feeds install -a -p ddmesh
 
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
                   # create a new config
