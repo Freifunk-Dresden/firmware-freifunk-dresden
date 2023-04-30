@@ -27,6 +27,6 @@ gps_alt=$(printf '%d' ${gps_alt:=0} 2>/dev/null)
 # hide gps address
 case "$1" in
 	-url) echo "http://wttr.in/${gps_lat},${gps_lng}.png?nAQF1&background=404040" ;;
-	-term) ip ro get ${CHECK_IP} >/dev/null 2>/dev/null && wget -q -O - http://wttr.in/${gps_lat},${gps_lng}?nAQF0 2>/dev/null;;
+	-term) ip ro get ${CHECK_IP} >/dev/null 2>/dev/null && wget -T 1 -q -O - http://wttr.in/${gps_lat},${gps_lng}?nAQF0 2>/dev/null;;
 	*) echo "$(basename $0) [-url | -term]" ;;
 esac
