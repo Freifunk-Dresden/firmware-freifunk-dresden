@@ -45,9 +45,9 @@
     # generates the feeds/feeds-[selector].conf
     # for short commit value use: git log --abbrev-commit
     "feeds" : [
-      {"type":"src-link",   "name":"ddmesh_own",  "src":"feeds-own" },
-      {"type":"src-git",   "name":"packages",  "src":"https://git.openwrt.org/feed/packages.git",  "rev":"ce0446269"},
-      {"type":"src-git",   "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"bdefc83"}
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git",  "rev":"ce0446269" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"bdefc83" }
     ],
 
     # install addional packages from feeds (see feeds.conf)
@@ -70,9 +70,9 @@
     "selector-patches" : "18.06",    # used to select patches
     "selector-files"   : "18.06",
     "feeds" : [
-      {"type":"src-link", "name":"ddmesh_own", "src":"feeds-own" },
-      {"type":"src-git",  "name":"packages",   "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173"},
-      {"type":"src-git",  "name":"routing",    "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e"}
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
     ],
     "packages" : [
       "libpam","libcap","libopenldap",
@@ -90,9 +90,9 @@
     "selector-patches" : "18.06",    # used to select patches
     "selector-files"   : "18.06",
     "feeds" : [
-      {"type":"src-link", "name":"ddmesh_own", "src":"feeds-own" },
-      {"type":"src-git",  "name":"packages",   "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173"},
-      {"type":"src-git",  "name":"routing",    "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e"}
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
     ],
     "packages" : [
       "libpam","libcap","libopenldap",
@@ -110,9 +110,9 @@
     "selector-patches" : "18.06",    # used to select patches
     "selector-files"   : "18.06",
     "feeds" : [
-      {"type":"src-link", "name":"ddmesh_own", "src":"feeds-own" },
-      {"type":"src-git",  "name":"packages",   "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173"},
-      {"type":"src-git",  "name":"routing",    "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e"}
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
     ],
     "packages" : [
       "libpam","libcap","libopenldap",
@@ -214,9 +214,9 @@
     "selector-patches" : "22.03",            # used to select patches
     "selector-files"   : "22.03",
     "feeds" : [
-      {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
-      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc"},
-      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3"}
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3" }
     ],
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
@@ -233,9 +233,9 @@
     "selector-patches" : "22.03",            # used to select patches
     "selector-files"   : "22.03",
     "feeds" : [
-      {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
-      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc"},
-      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3"}
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3" }
     ],
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
@@ -252,9 +252,9 @@
     "selector-patches" : "22.03",            # used to select patches
     "selector-files"   : "22.03",
     "feeds" : [
-      {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
-      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc"},
-      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3"}
+      { "type":"src-link", "name":"ddmesh",   "src":""},
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3" }
     ],
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
