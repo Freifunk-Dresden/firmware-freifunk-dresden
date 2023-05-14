@@ -119,8 +119,8 @@ config network 'network'
 	option	wifi_indoor_5g 0
 # multiple of 20,40,80 Mhz !!!
 	option	wifi_channels_5g_outdoor '52-144'
-	option	wifi_ch_5g_outdoor_min 100
-	option	wifi_ch_5g_outdoor_max 140
+	option	wifi_ch_5g_outdoor_min 52
+	option	wifi_ch_5g_outdoor_max 144
 	option	wifi_slow_rates 0
 	option	wifi2_dhcplease '5m'
 	option	wifi2_isolate '1'
