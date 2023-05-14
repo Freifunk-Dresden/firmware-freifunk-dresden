@@ -436,7 +436,7 @@ upgrade_8_1_5()
 
 upgrade_8_1_6()
 {
-	true
+	uci -q set ddmesh.network.wifi_channels_5g_outdoor='52-144'
 }
 
 ##################################
