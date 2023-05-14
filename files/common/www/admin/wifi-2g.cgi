@@ -100,8 +100,9 @@ Der Bereich von <b>$_ddmesh_wifi2FixIpStart</b> bis <b>$_ddmesh_wifi2FixIpEnd</b
 
 <tr><th>TX-Power:</th>
 <td><select name="form_wifi_txpower" size="1">
-$(iwinfo $wifi_status_radio2g_phy txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;txt=$0}else{sel="";v=$1;txt=$0}; print "<option "sel" value=\""v"\">"txt"</option>"}')
-</select> (konfiguriert: $(uci -q get ddmesh.network.wifi_txpower) dBm) <b>Aktuell:</b> $(iwinfo $wifi_status_radio2g_phy info | awk '/Tx-Power:/{print $2,$3}')</td>
+$(echo "dummy" | awk -v cfg="$(uci -q get ddmesh.network.wifi_txpower_2g)" '{ for(v=1;v<=20;v++){ if(v==cfg){sel="selected";mark="* "}else{sel="";mark=""}; printf("<option %s value=\"%d\">%s%d dBm (%d mW)</option>\n",sel,v,mark,v,10^(v/10));}}')
+</select> <b>Aktuell:</b> $(iwinfo $wifi_status_radio2g_phy info | awk '/Tx-Power:/{print $2,$3}')
+</td>
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
 
