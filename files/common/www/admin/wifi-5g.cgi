@@ -115,7 +115,8 @@ Indoor: fester Kanal; AccessPoint $([ "$wifi_status_radio5g_mode_mesh" -gt 0 ] &
 <tr><th>TX-Power:</th>
 <td><select name="form_wifi_txpower" size="1">
 $(echo "dummy" | awk -v cfg="$(uci -q get ddmesh.network.wifi_txpower_5g)" '{ for(v=1;v<=23;v++){ if(v==cfg){sel="selected";mark="* "}else{sel="";mark=""}; printf("<option %s value=\"%d\">%s%d dBm (%d mW)</option>\n",sel,v,mark,v,10^(v/10));}}')
-</select> <b>Aktuell:</b> $(iwinfo $wifi_status_radio5g_phy info | awk '/Tx-Power:/{print $2,$3}')</td>
+</select> <b>Aktuell:</b> $(iwinfo $wifi_status_radio5g_phy info | awk '/Tx-Power:/{print $2,$3}')
+</td>
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
 
