@@ -65,8 +65,9 @@ setup_wireless()
 		# not all devices support VHT80. If radar on one channel was detected then
 		# broader channel will likly not available
 		uci set wireless.radio5g.htmode="HT40"
-		uci set wireless.radio5g.channel="auto"
-		uci set wireless.radio5g.channels="$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)"
+		range="$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)"
+		uci set wireless.radio5g.channel="${range%-*}"
+		uci set wireless.radio5g.channels="${range}"
 	fi
 	uci set wireless.radio5g.txpower="$(uci get ddmesh.network.wifi_txpower_5g)"
  fi

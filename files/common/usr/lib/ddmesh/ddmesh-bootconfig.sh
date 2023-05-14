@@ -117,7 +117,8 @@ config network 'network'
 	option	wifi_channel_5g 44
 	option	wifi_txpower_5g 18
 	option	wifi_indoor_5g 0
-	option	wifi_channels_5g_outdoor '100-140'
+# multiple of 20,40,80 Mhz !!!
+	option	wifi_channels_5g_outdoor '52-144'
 	option	wifi_ch_5g_outdoor_min 100
 	option	wifi_ch_5g_outdoor_max 140
 	option	wifi_slow_rates 0
