@@ -58,7 +58,6 @@ F&uuml;r die Nutzung des Netzes gelten diese <a href="license.cgi?license=1">Nut
 </ul>
 </fieldset>
 EOM
-EOM
 
 . /usr/lib/www/page-post.sh
 
