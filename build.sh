@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="20"
+SCRIPT_VERSION="21"
 
 
 # gitlab variables
@@ -455,12 +455,17 @@ setup_dynamic_firmware_config()
 
 
 #----------------- process argument ----------------------------------
+usage_short()
+{
+	echo "Version: $SCRIPT_VERSION"
+	echo "usage: $(basename $0) [options] <command | target-pattern > [clean | menuconfig | rerun]   [-- < make params ... > ]"
+}
 usage()
 {
 	# create a simple menu
+	usage_short
 	cat <<EOM
-Version: $SCRIPT_VERSION
-usage: $(basename $0) [options] <command> | <target> [flags] [-- < make params ... > ]
+
  options:
    -h    docker host, if not specified environment variable 'FF_DOCKER_HOST' or 'DOCKER_HOST' is used.
          FF_DOCKER_HOST is used in favour to DOCKER_HOST. -h still has highest preference
@@ -478,7 +483,8 @@ usage: $(basename $0) [options] <command> | <target> [flags] [-- < make params .
    search <string>         - search specific router (target)
    feed-revisions          - displays the openwrt default feed revisions.
                              The revisions then could be set in build.json
-   target                  - target to build
+
+   target-pattern          - target to build
            that are defined by build.json. use 'list' for supported targets.
            'all'                   - builds all targets
            'failed'                - builds only previously failed or not built targets
@@ -740,6 +746,7 @@ esac
 # check of we have a targetRegex
 if [ -z "$targetRegex" ]; then
 	echo "Error: no target specified"
+	usage_short
 	exit 1
 fi
 
