@@ -657,8 +657,8 @@ case "$1" in
 						do
 							view=$(listTargets)
 							clear
-							date
 							echo -e "$view"
+							date
 						done
 						exit 0
 						;;
