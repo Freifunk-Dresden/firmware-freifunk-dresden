@@ -60,23 +60,19 @@ SRC_C= objlist.c batman.c originator.c schedule.c plugin.c allocate.c avl.c prof
 SRC_H= objlist.h batman.h originator.h schedule.h plugin.h allocate.h avl.h profile.h control.h metrics.h tunnel.h os.h
 OBJS=  $(SRC_C:.c=.o)
 
-BINARY_NAME=	bmxd
+BINARY_NAME=bmxd
 
 all:
 	$(MAKE) $(BINARY_NAME)
 
 $(BINARY_NAME):	$(OBJS) Makefile
-	$(CC)  $(OBJS) -o $@  $(LDFLAGS)
+	$(CC)  $(OBJS) -o $(BINARY_NAME)  $(LDFLAGS)
 
 %.o:	%.c %.h Makefile $(SRC_H)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o:	%.c Makefile $(SRC_H)
 	$(CC) $(CFLAGS) -c $< -o $@
-
-
-strip:	all
-	strip $(BINARY_NAME)
 
 clean:
 	rm -f $(BINARY_NAME) *.o

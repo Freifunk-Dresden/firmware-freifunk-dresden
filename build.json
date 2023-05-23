@@ -243,8 +243,8 @@
     ]
   },
   {
-    "name":"ath79.nand.22",
-    "config":"config.ath79.nand.22",
+    "name":"ath79.nand.gl-e750",
+    "config":"config.ath79.nand.gl-e750",
     "openwrt_rev":"677e3c18fe4ce65afd0f0dc3bdacedf3854fb2e6", #22.03.0-rc4
 
     "selector-config"  : "22.03",            # used to select config
