@@ -1280,9 +1280,6 @@ EOM
 
 	make clean
 
-	echo -e $C_CYAN"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
-	cp .config $RUN_DIR/$config_file
-
 	# run make command
 	echo -e $C_CYAN"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
 	time -p make -j$(nproc) $BUILD_PARAMS

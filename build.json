@@ -245,8 +245,8 @@
     ]
   },
   {
-    "name":"ath79.nand.22",
-    "config":"config.ath79.nand.22",
+    "name":"ath79.nand.gl-e750",
+    "config":"config.ath79.nand.gl-e750",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
 		"openwrt_variant":"iptables",
 
