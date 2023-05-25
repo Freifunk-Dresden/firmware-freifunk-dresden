@@ -101,7 +101,10 @@ define Package/$(PKG_NAME)-wifi
 	#  means: kmod-owl-loader is selected when symbol CONFIG_PACKAGE_kmod-ath9k is selected somewhere
   DEPENDS:= $(PKG_NAME)-base \
             +iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli \
-						+PACKAGE_kmod-ath9k:kmod-owl-loader
+						+PACKAGE_kmod-ath9k:kmod-owl-loader \
+						+PACKAGE_kmod-ath10k:kmod-owl-loader \
+						+PACKAGE_kmod-ath10k-ct:kmod-owl-loader \
+						+PACKAGE_kmod-ath10k-ct-smallbuffers:kmod-owl-loader
 
 #           +PACKAGE_ath10k-board-qca4019 \
 #						+PACKAGE_ath10k-board-qca9377:kmod-owl-loader \
