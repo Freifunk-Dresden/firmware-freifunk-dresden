@@ -205,9 +205,10 @@
   },
 # ---------- openwrt 22 -----------------------------------------------------------------------
   {
-    "name":"mediatek.mt7622.generic",
-    "config":"config.mediatek.mt7622.generic",
-    "openwrt_rev":"677e3c18fe4ce65afd0f0dc3bdacedf3854fb2e6", #22.03.0-rc4
+    "name":"mediatek.mt7622.generic.22",
+    "config":"config.mediatek.mt7622.generic.iptables",
+    "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
+		"openwrt_variant":"iptables",
 
     "selector-config"  : "22.03",            # used to select config
     "selector-feeds"   : "22.03",            # used to select feeds
@@ -215,18 +216,19 @@
     "selector-files"   : "22.03",
     "feeds" : [
       {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
-      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc"},
-      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3"}
+      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb"},
+      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f"}
     ],
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
     ]
   },
   {
     "name":"ramips.mt7621.generic.22",
-    "config":"config.ramips.mt7621.generic",
-    "openwrt_rev":"677e3c18fe4ce65afd0f0dc3bdacedf3854fb2e6", #22.03.0-rc4
+    "config":"config.ramips.mt7621.generic.iptables",
+    "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
+		"openwrt_variant":"iptables",
 
     "selector-config"  : "22.03",            # used to select config
     "selector-feeds"   : "22.03",            # used to select feeds
@@ -234,12 +236,12 @@
     "selector-files"   : "22.03",
     "feeds" : [
       {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
-      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc"},
-      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3"}
+      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb"},
+      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f"}
     ],
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
     ]
   }
  ]

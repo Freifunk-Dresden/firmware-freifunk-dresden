@@ -96,8 +96,25 @@ define Package/$(PKG_NAME)-wifi
   # the complete package "ddmesh-wifi" will also not be visible.
   # only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
   # This simply just selects wpa-cli without hiding current packet
+	#
+	# +PACKAGE_kmod-ath:kmod-owl-loader
+	#  means: kmod-owl-loader is selected when symbol CONFIG_PACKAGE_kmod-ath9k is selected somewhere
   DEPENDS:= $(PKG_NAME)-base \
-            +iw +iwinfo +wpad-mini +kmod-owl-loader +@PACKAGE_wpa-cli
+            +iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli \
+						+PACKAGE_kmod-ath9k:kmod-owl-loader \
+						+PACKAGE_kmod-ath10k:kmod-owl-loader \
+						+PACKAGE_kmod-ath10k-ct:kmod-owl-loader \
+						+PACKAGE_kmod-ath10k-ct-smallbuffers:kmod-owl-loader
+
+#           +PACKAGE_ath10k-board-qca4019 \
+#						+PACKAGE_ath10k-board-qca9377:kmod-owl-loader \
+#						+PACKAGE_ath10k-board-qca9887:kmod-owl-loader \
+#						+PACKAGE_ath10k-board-qca9888:kmod-owl-loader \
+#						+PACKAGE_ath10k-board-qca988x:kmod-owl-loader \
+#						+PACKAGE_ath10k-board-qca9984:kmod-owl-loader \
+#						+PACKAGE_ath10k-board-qca99x0:kmod-owl-loader \
+#						+PACKAGE_ath10k-board-qca99x0-2g:kmod-owl-loader \
+#						+PACKAGE_ath10k-board-qca99x0-5g:kmod-owl-loader
 
   TITLE:=Selects all addtional wifi tools.
 
