@@ -1,0 +1,11 @@
+--- 863f769b7.iptables/target/linux/ath79/generic/base-files/etc/board.d/02_network.ori	2023-05-27 14:01:42.596395344 +0200
++++ 863f769b7.iptables/target/linux/ath79/generic/base-files/etc/board.d/02_network	2023-05-27 14:02:15.712548615 +0200
+@@ -498,7 +498,7 @@
+ 	ubnt,unifiac-mesh-pro|\
+ 	ubnt,unifiac-pro)
+ 		ucidef_add_switch "switch0" \
+-			"0@eth0" "2:lan:1" "3:lan:2"
++			"0@eth0" "2:wan:1" "3:lan:2"
+ 		;;
+ 	ubnt,unifi-ap-pro)
+ 		ucidef_add_switch "switch0" \
