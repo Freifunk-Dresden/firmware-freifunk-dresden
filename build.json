@@ -176,8 +176,8 @@
     "config":"config.ath79.small"
   },
   {
-    "name":"ath79.small.tether",
-    "config":"config.ath79.small.tether"
+    "name":"ath79.small.tether-nowg",
+    "config":"config.ath79.small.tether-nowg"
   },
   {
     "name":"ath79.generic.gl-mifi",
@@ -204,6 +204,26 @@
     "config":"config.mpc85xx.p1020"
   },
 # ---------- openwrt 22 -----------------------------------------------------------------------
+#  {
+#    "name":"ath79.generic.22",
+#    "config":"config.ath79.generic.iptables",
+#    "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
+#    "openwrt_variant":"iptables",
+#
+#    "selector-config"  : "22.03",            # used to select config
+#    "selector-feeds"   : "22.03",            # used to select feeds
+#    "selector-patches" : "22.03",            # used to select patches
+#    "selector-files"   : "22.03",
+#    "feeds" : [
+#      {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
+#      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb"},
+#      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f"}
+#    ],
+#    # install addional packages from feeds (see feeds.conf)
+#    "packages" : [
+#      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
+#    ]
+#  },
   {
     "name":"mediatek.mt7622.generic.22",
     "config":"config.mediatek.mt7622.generic.iptables",
@@ -218,6 +238,46 @@
       { "type":"src-link", "name":"ddmesh",   "src":"" },
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
+    ],
+    # install addional packages from feeds (see feeds.conf)
+    "packages" : [
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
+    ]
+  },
+  {
+    "name":"mpc85xx.p1010.22",
+    "config":"config.mpc85xx.p1010.iptables",
+    "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
+		"openwrt_variant":"iptables",
+
+    "selector-config"  : "22.03",            # used to select config
+    "selector-feeds"   : "22.03",            # used to select feeds
+    "selector-patches" : "22.03",            # used to select patches
+    "selector-files"   : "22.03",
+    "feeds" : [
+      {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
+      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb"},
+      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f"}
+    ],
+    # install addional packages from feeds (see feeds.conf)
+    "packages" : [
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
+    ]
+  },
+  {
+    "name":"ramips.mt7621.small.22",
+    "config":"config.ramips.mt7621.small.iptables",
+    "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
+		"openwrt_variant":"iptables",
+
+    "selector-config"  : "22.03",            # used to select config
+    "selector-feeds"   : "22.03",            # used to select feeds
+    "selector-patches" : "22.03",            # used to select patches
+    "selector-files"   : "22.03",
+    "feeds" : [
+      {"type":"src-link",     "name":"ddmesh_own",    "src":"feeds-own" },
+      {"type":"src-git",      "name":"packages",      "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb"},
+      {"type":"src-git",      "name":"routing",       "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f"}
     ],
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
@@ -245,8 +305,8 @@
     ]
   },
   {
-    "name":"ath79.nand.gl-e750",
-    "config":"config.ath79.nand.gl-e750",
+    "name":"ramips.mt76x8.generic.22",
+    "config":"config.ramips.mt76x8.generic.iptables",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
 		"openwrt_variant":"iptables",
 
@@ -261,7 +321,7 @@
     ],
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
     ]
   }
  ]

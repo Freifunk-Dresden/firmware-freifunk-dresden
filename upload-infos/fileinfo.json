@@ -1850,6 +1850,24 @@
     },
     {
       "name": "",
+      "filename": "openwrt-mpc85xx-p1010-tplink_tl-wdr4900-v1-fdt.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-mpc85xx-p1010-tplink_tl-wdr4900-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-mpc85xx-p1010-tplink_tl-wdr4900-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1931,6 +1949,24 @@
       "model": "d-team,newifi-d2",
       "model2": "Newifi-D2",
       "filename": "openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-dlink_dap-x1860-a1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-dlink_dap-x1860-a1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-dlink_dap-x1860-a1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -2070,6 +2106,42 @@
       "model": "tplink,archer-c6u-v1",
       "model2": "TP-Link Archer C6U v1",
       "filename": "openwrt-ramips-mt7621-tplink_archer-c6u-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_re650-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_re650-v1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-tplink_re650-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_re650-v2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-tplink_re650-v2-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt7621-tplink_re650-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -2297,6 +2369,19 @@
     {
       "name": "",
       "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4a-100m-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4a-100m-intl-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ramips-mt76x8-xiaomi_mi-router-4a-100m-intl-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
