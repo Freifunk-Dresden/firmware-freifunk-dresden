@@ -368,8 +368,8 @@ CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_archer-c6u-v1=y
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_eap615-wall-v1 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_re350-v1 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_re500-v1 is not set
-# CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_re650-v1 is not set
-# CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_re650-v2 is not set
+CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_re650-v1=y
+CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_re650-v2=y
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_tl-wpa8631p-v3 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_ubnt_edgerouter-x-sfp is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_ubnt_edgerouter-x is not set
@@ -432,6 +432,7 @@ CONFIG_DEFAULT_iwinfo=y
 CONFIG_DEFAULT_kmod-gpio-button-hotplug=y
 CONFIG_DEFAULT_kmod-leds-gpio=y
 CONFIG_DEFAULT_kmod-mt7603=y
+CONFIG_DEFAULT_kmod-mt7615-firmware=y
 CONFIG_DEFAULT_kmod-mt7615e=y
 CONFIG_DEFAULT_kmod-mt7663-firmware-ap=y
 CONFIG_DEFAULT_kmod-mt7915e=y
