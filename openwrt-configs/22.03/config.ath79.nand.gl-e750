@@ -2519,7 +2519,6 @@ CONFIG_FASTD_ENABLE_MAC_UHASH=y
 # end of Configuration
 
 CONFIG_PACKAGE_freifunk-upload=y
-CONFIG_PACKAGE_gl-e750-mcu=y
 CONFIG_PACKAGE_libuecc=y
 CONFIG_PACKAGE_nacl=y
 # end of Packages
