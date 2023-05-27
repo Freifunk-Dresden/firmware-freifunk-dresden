@@ -18,6 +18,7 @@ PKG_CONFIG_DEPENDS += CONFIG_BUSYBOX_DEFAULT_TIMEOUT
 define Package/gl-e750-mcu/Default
 	SECTION:=base
 	CATEGORY:=ddmesh
+	SUBMENU:=Packages
 	TITLE:=GL-iNet mcu interface
 	DEPENDS:=+libjson-c +libpthread +libuci +libblobmsg-json +libiwinfo +libubox +libubus +libuuid
 endef
