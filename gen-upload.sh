@@ -7,7 +7,7 @@
 # copy firwmare,packets and generate download.json
 
 # -------------------------------------------------------------------
-VERSION="6"
+VERSION="7"
 
 #Black        0;30     Dark Gray     1;30
 #Red          0;31     Light Red     1;31
@@ -43,13 +43,13 @@ usage()
 {
 	printf "${0##*/} (all | json <commands>\n"
 	printf "Version ${VERSION}\n"
-	printf "commands:"
-	printf "   all                      - generates all (incl.copying files)\n"
-	printf "   json                     - only updates download.json\n"
-	printf "   compare-json             - only compare fileinfo.json  against last generated version\n"
-	printf "   directory-suffix         - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
-	printf "   pretty <file>            - reads file info json from file and prints sorted (by filename) json on stdout\n"
-	printf "   show-duplicates <file>   - shows filenames that are used more than once"
+	printf "commands:\n"
+	printf "   all                          - generates all (incl.copying files)\n"
+	printf "   json                         - only updates download.json\n"
+	printf "   compare-json                 - only compare fileinfo.json  against last generated version\n"
+	printf "   directory-suffix             - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
+	printf "   pretty <json file>           - reads file info json from file and prints sorted (by filename) json on stdout\n"
+	printf "   show-duplicates <json-file>  - shows filenames that are used more than once"
 	printf "\n"
 	exit 1
 }
@@ -80,7 +80,7 @@ case "$1" in
 
 	"show-duplicates")
 		if [ -z "$2" ]; then
-			printf "missing file\n"
+			printf "missing json file\n"
 			exit 1
 		fi
 		cat "$2" | jq '[ .fileinfo[] | select(.filename | contains("sysupgrade")) ] |  (.  - unique_by(.filename))[] | .filename'
