@@ -15,16 +15,6 @@ sysinfo=/tmp/sysinfo.json
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 eval $(ddmesh-utils-network-info.sh lan lan)
 
-#echo '{ "ssid_5g": "GL-E750-719", "up_5g": "1", "key_5g": "goodlife", "ssid": "GL-E750-719
-#", "up": "1",
-#"key": "goodlife", "work_mode": "Router", "lan_ip": "192.168.82.1",  "vpn_status": "connected", "vpn_type"
-#: "openvpn", "vpn_server": "Gateway: [12345]", "clients": "5", "clock": "'$(date +"%H:%M")'",
-#"mcu_status": "1" , "signa
-#l": "4", "modem_mode": "4G", "carrier": "Freifunk Dresden", "SIM": "0" , "modem_up": "1", ", "msg": "Freifunk Dresden 10
-#.200.123.123 Searching...x" }'
-
-# $(uci -q get ddmesh.system.mesh_network_id)
-
 update()
 {
   eval $(cat ${sysinfo} | jsonfilter \
@@ -39,8 +29,8 @@ update()
   json="${json} \"up\": \"${wifi_status_radio2g_up}\","
   json="${json} \"ssid_5g\": \"$(uci get wireless.wifi2_5g.ssid)\","
   json="${json} \"up_5g\": \"${wifi_status_radio5g_up}\","
-  json="${json} \"key\": \"no-key\","
-  json="${json} \"key_5g\": \"no-key\","
+  json="${json} \"key\": \"[free Wifi]\","
+  json="${json} \"key_5g\": \"[free Wifi]\","
 
   json="${json} \"work_mode\": \"Router\","
   json="${json} \"lan_ip\": \"${lan_ipaddr}\","
@@ -50,12 +40,15 @@ update()
     json="${json} \"vpn_status\": \"connected\","
     json="${json} \"vpn_server\": \"Node: $(/usr/lib/ddmesh/ddmesh-ipcalc.sh $gateway_ip)\","
     #json="${json} \"vpn_type\": \"\","
+
+    json="${json} \"method_nw\": \"modem\","	# removes "No Internet"
   else
     json="${json} \"vpn_status\": \"connecting\","  |
     json="${json} \"vpn_server\": \"local/none\","
+    json="${json} \"method_nw\": \"\","	# "No Internet"
   fi
 
-  json="${json} \"clients\": \"$((clients2g + clients5g))\","
+  json="${json} \"clients\": \"$(( $clients2g + $clients5g ))\","
   json="${json} \"clock\": \"$(date +"%H:%M")\","
 
   # read lte status
@@ -102,9 +95,9 @@ update()
     json="${json} \"SIM\": \"NO_SIM\","
   fi
 
-  json="${json} \"carrier\": \"$(printf '%.16s' "${community}")\","
+  json="${json} \"carrier\": \"$(printf '%.16s' "Freifunk ${community}")\","
 
-  json="${json} \"\": \"\","
+
   json="${json} \"\": \"\","
   json="${json} \"\": \"\","
   json="${json} \"\": \"\","
@@ -118,6 +111,7 @@ update()
   json="${json} }"
   # echo "${json}" > ${TTY} ; cat ${TTY}
   echo "${json}" > ${TTY}
+  echo $json
 }
 
 msg()
