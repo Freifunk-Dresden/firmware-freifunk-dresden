@@ -115,7 +115,7 @@ cat<<EOM
 <TR TITLE="Setzt die Umgebungsvariable TZ zur Korrektur von Zeitangaben.">
 <TH>Zeitzone:</TH>
 <TD colspan="2"><INPUT NAME="form_tz" SIZE="48" TYPE="TEXT" VALUE="$(uci get system.@system[0].timezone)"><br>
- (Berlin: "CET-1CEST,M3.5.0,M10.5.0/3"; <a href="https://github.com/openwrt/luci/blob/master/modules/luci-base/luasrc/sys/zoneinfo/tzdata.lua">Zeitzonen</a>)</TD>
+ (Berlin: "CET-1CEST,M3.5.0,M10.5.0/3"; <a href="https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html">Format</a>,<a href="https://en.m.wikipedia.org/wiki/List_of_tz_database_time_zones">Zeitzonen</a>)</TD>
 </TR>
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
@@ -390,6 +390,8 @@ else
 		uci set ddmesh.system.community="$(uhttpd -d ${form_community})"
 		uci set ddmesh.system.mesh_network_id=${form_mesh_network_id:-0}
 		uci set ddmesh.system.group_id="$(uhttpd -d ${form_group_id:-0})"
+
+		[ -n "${form_tz}" ] && uci set system.@system[0].timezone="$(uhttpd -d ${form_tz})"
 
 		uci set ddmesh.system.wanssh=${form_wanssh:-0}
 		uci set ddmesh.system.wanhttp=${form_wanhttp:-0}

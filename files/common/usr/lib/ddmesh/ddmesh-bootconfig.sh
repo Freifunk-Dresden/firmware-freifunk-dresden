@@ -285,7 +285,9 @@ config_update() {
 
 	#set hostname
 	uci set system.@system[0].hostname="$_ddmesh_hostname"
-	uci set system.@system[0].timezone="CET-1CEST,M3.5.0,M10.5.0/3"
+	if [ -z "$(uci -q get system.@system[0].timezone)" ]; then
+		uci set system.@system[0].timezone="CET-1CEST,M3.5.0,M10.5.0/3"
+	fi
 
 	#syslog
 	uci set system.@system[0].log_prefix="freifunk.$_ddmesh_node"
