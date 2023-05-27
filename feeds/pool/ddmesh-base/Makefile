@@ -96,9 +96,9 @@ define Package/$(PKG_NAME)-wifi
   # the complete package "ddmesh-wifi" will also not be visible.
   # only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
   # This simply just selects wpa-cli without hiding current packet
-	#
-	# +PACKAGE_kmod-ath:kmod-owl-loader
-	#  means: kmod-owl-loader is selected when symbol CONFIG_PACKAGE_kmod-ath9k is selected somewhere
+  #
+  # +PACKAGE_kmod-ath:kmod-owl-loader
+  #  means: kmod-owl-loader is selected when symbol CONFIG_PACKAGE_kmod-ath9k is selected somewhere
   DEPENDS:= $(PKG_NAME)-base \
             +iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli
 
@@ -109,10 +109,10 @@ define Package/$(PKG_NAME)-wifi
 # For a resolution refer to Documentation/kbuild/kconfig-language.rst
 # subsection "Kconfig recursive dependency limitations"
 
-						# +PACKAGE_kmod-ath9k:kmod-owl-loader \
-						# +PACKAGE_kmod-ath10k:kmod-owl-loader \
-						# +PACKAGE_kmod-ath10k-ct:kmod-owl-loader \
-						# +PACKAGE_kmod-ath10k-ct-smallbuffers:kmod-owl-loader
+            # +PACKAGE_kmod-ath9k:kmod-owl-loader \
+            # +PACKAGE_kmod-ath10k:kmod-owl-loader \
+            # +PACKAGE_kmod-ath10k-ct:kmod-owl-loader \
+            # +PACKAGE_kmod-ath10k-ct-smallbuffers:kmod-owl-loader
 
 #           +PACKAGE_ath10k-board-qca4019 \
 #						+PACKAGE_ath10k-board-qca9377:kmod-owl-loader \
@@ -253,15 +253,9 @@ define Package/$(PKG_NAME)-extra-modules/config
     config PACKAGE_tcpdump
       # menu point is displayed when dependencies are selected
       depends on PACKAGE_ddmesh-extra-modules
-			# tristate is a keyword meaning, that this package can be compiled built-in or as module.
-			# the optional string is a prompt that is displayed
+      # tristate is a keyword meaning, that this package can be compiled built-in or as module.
+      # the optional string is a prompt that is displayed
       tristate "tcpdump"
-
-		# the package (my own) is below "packages" menu (see pool/gl-e750_mcu/Makefile)
-    config PACKAGE_gl-e750-mcu
-      # menu point is displayed when dependencies are selected
-      depends on PACKAGE_ddmesh-extra-modules
-      tristate "gl-e750-mcu"
 
 #    config PACKAGE_OVPNCerts
 #      # menu point is displayed when dependencies are selected
