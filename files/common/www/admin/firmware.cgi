@@ -151,7 +151,7 @@ EOM
 					(sleep 10 ; /usr/lib/ddmesh/ddmesh-display.sh factory; sysupgrade -n $FIRMWARE_FILE 2>&1 >/dev/null) &
 				else
 					#update configs after firmware update
-					/usr/lib/ddmesh/ddmesh-display.sh msg "   SysUprade    (keep Config)"
+					/usr/lib/ddmesh/ddmesh-display.sh msg "   SysUprade     (keep Config)"
 					uci set ddmesh.boot.boot_step=2
 					uci set ddmesh.boot.upgrade_running=1
 					uci commit
