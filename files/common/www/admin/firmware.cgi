@@ -146,12 +146,14 @@ EOM
 				sleep 5	# let browser load all content before killing httpd
 
 				if [ "$form_firmware_factory" = "1" ]; then
-				  /usr/lib/ddmesh/ddmesh-display.sh msg "   SysUprade    (Factory Reset)"
+				  /usr/lib/ddmesh/ddmesh-display.sh msg "   SysUprade     (Factory Reset)"
+
 					rm /tmp/freifunk-running # disable cron and hotplug
 					(sleep 10 ; /usr/lib/ddmesh/ddmesh-display.sh factory; sysupgrade -n $FIRMWARE_FILE 2>&1 >/dev/null) &
 				else
 					#update configs after firmware update
-					/usr/lib/ddmesh/ddmesh-display.sh msg "   SysUprade     (keep Config)"
+					/usr/lib/ddmesh/ddmesh-display.sh msg "   SysUprade     (Keep Config)"
+
 					uci set ddmesh.boot.boot_step=2
 					uci set ddmesh.boot.upgrade_running=1
 					uci commit

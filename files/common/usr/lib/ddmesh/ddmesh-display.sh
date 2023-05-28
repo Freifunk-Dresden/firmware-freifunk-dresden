@@ -50,7 +50,11 @@ update()
 		json="${json} \"method_nw\": \"\","	# "No Internet"
 	fi
 
-	json="${json} \"clients\": \"$(( $clients2g + $clients5g ))\","
+	clients="0"
+	if [ -n "$clients2g" -a -n "$clients5g" ]; then
+		clients="$(( $clients2g + $clients5g ))"
+	fi
+	json="${json} \"clients\": \"${clients}\","
 	json="${json} \"clock\": \"$(date +"%H:%M")\","
 
 	# read lte status
@@ -97,11 +101,12 @@ update()
 		json="${json} \"SIM\": \"NO_SIM\","
 	fi
 
-	json="${json} \"carrier\": \"$(printf '%.16s' "Freifunk ${community}")\","
+	json="${json} \"carrier\": \"$(printf '%.16s' "Freifunk ${community}")\""
 
 	#json="${json} \"mcu_status\": \"1\""
 	json="${json} }"
 	echo "${json}" > ${TTY}
+	#echo "${json}"
 
 
 	# custom screen
@@ -110,7 +115,7 @@ update()
 	L1left="${community}"
 	L1right=""
 	L2left="Clients:"
-	L2right="$(( $clients2g + $clients5g ))"
+	L2right="${clients}"
 	L3left="Gateway:"
 	L3right="${gw_node}"
 	m="$(printf "%-10.10s %5.5s%-10.10s %5.5s%-10.10s %5.5s%-10.10s %5.5s" \

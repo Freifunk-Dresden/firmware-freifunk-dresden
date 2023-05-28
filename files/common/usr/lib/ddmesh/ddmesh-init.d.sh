@@ -121,7 +121,8 @@ start() {
 	/etc/init.d/cron start
 
 	/usr/lib/ddmesh/ddmesh-led.sh status done
-	/usr/lib/ddmesh/ddmesh-display.sh update
+	# no update, sysinfo not ready yet
+	/usr/lib/ddmesh/ddmesh-display.sh boot
 
 	# enable hotplug some more events
 	touch /tmp/freifunk-running
