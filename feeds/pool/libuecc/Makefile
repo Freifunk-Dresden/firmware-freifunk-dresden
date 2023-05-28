@@ -19,6 +19,9 @@ PKG_NAME:=libuecc
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://git.universe-factory.net/libuecc
 PKG_REV:=7c9a6f6af088d0764e792cf849e553d7f55ff99e
+#sha256sum (PKG_HASH is used to check if local downloaded files matches. if so, it will be use
+#           instead of downloaded each time. github has a download rate constrictions)
+PKG_HASH:=b069ffebb499afe3353d42ba1baf362d99ad11916b2e14fbf1b43cf9dfe7a83f
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_REV)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz

@@ -11,6 +11,9 @@ PKG_NAME:=fastd
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/NeoRaider/fastd.git
 PKG_REV:=0f47d83eac2047d33efdab6eeaa9f81f17e3ebd1
+#sha256sum (PKG_HASH is used to check if local downloaded files matches. if so, it will be use
+#           instead of downloaded each time. github has a download rate constrictions)
+PKG_HASH:=4a87d608f92c521d3efb1cf5824da0cdb97b27c612c0c2b484eecb11ef868753
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_REV)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz

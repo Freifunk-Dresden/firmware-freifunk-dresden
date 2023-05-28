@@ -15,7 +15,9 @@ PKG_MAINTAINER:=Matthias Schiffer <mschiffer@universe-factory.net>
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=http://hyperelliptic.org/nacl
 PKG_MD5SUM:=7efb5715561c3d10dafd3fa97b4f2d20
-
+#sha256sum (PKG_HASH is used to check if local downloaded files matches. if so, it will be use
+#           instead of downloaded each time. github has a download rate constrictions)
+PKG_HASH:=4f277f89735c8b0b8a6bbd043b3efb3fa1cc68a9a5da6a076507d067fc3b3bf8
 PKG_LICENSE:=PublicDomain
 
 PKG_USE_MIPS16:=0
