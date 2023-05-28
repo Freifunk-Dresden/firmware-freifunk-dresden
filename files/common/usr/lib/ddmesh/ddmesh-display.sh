@@ -97,16 +97,6 @@ update()
 
   json="${json} \"carrier\": \"$(printf '%.16s' "Freifunk ${community}")\","
 
-
-  json="${json} \"\": \"\","
-  json="${json} \"\": \"\","
-  json="${json} \"\": \"\","
-  json="${json} \"\": \"\","
-  json="${json} \"\": \"\","
-  json="${json} \"\": \"\","
-  json="${json} \"\": \"\","
-  json="${json} \"\": \"\","
-
   #json="${json} \"mcu_status\": \"1\""
   json="${json} }"
   # echo "${json}" > ${TTY} ; cat ${TTY}
