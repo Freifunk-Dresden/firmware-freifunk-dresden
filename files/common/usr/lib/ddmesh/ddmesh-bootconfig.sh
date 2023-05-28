@@ -471,6 +471,7 @@ fi
 case "$boot_step" in
 	1) # initial boot step
 		/usr/lib/ddmesh/ddmesh-led.sh status boot1
+		/usr/lib/ddmesh/ddmesh-display.sh msg "boot step 1"
 		logger -s -t "$LOGGER_TAG" "boot step 1"
 		config_boot_step1
 		uci set ddmesh.boot.boot_step=2
@@ -482,6 +483,7 @@ case "$boot_step" in
 		;;
 	2) # update config
 		/usr/lib/ddmesh/ddmesh-led.sh status boot2
+		/usr/lib/ddmesh/ddmesh-display.sh msg "boot step 2"
 		logger -s -t "$LOGGER_TAG" "boot step 2"
 
 		#node valid after boot_step >= 2
@@ -533,6 +535,7 @@ case "$boot_step" in
 		;;
 	3) # temp config
 		/usr/lib/ddmesh/ddmesh-led.sh status boot3
+		/usr/lib/ddmesh/ddmesh-display.sh msg "boot step 3"
 		logger -s -t "$LOGGER_TAG" "boot step 3"
 		node=$(uci get ddmesh.system.node)
 		if [ -z "$node" ]; then

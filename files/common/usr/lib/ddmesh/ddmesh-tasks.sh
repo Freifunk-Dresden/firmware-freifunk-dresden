@@ -89,6 +89,7 @@ do
 	call_task 5 /usr/lib/ddmesh/ddmesh-backbone.sh runcheck
 	call_task 5 /usr/lib/ddmesh/ddmesh-privnet.sh runcheck
 	call_task 1 /usr/lib/ddmesh/ddmesh-sysinfo.sh
+	call_task 1 /usr/lib/ddmesh/ddmesh-display.sh update
 
 	call_task 1 /usr/lib/ddmesh/ddmesh-bmxd.sh runcheck
 	call_task 1 /usr/lib/ddmesh/ddmesh-bmxd.sh update_infos

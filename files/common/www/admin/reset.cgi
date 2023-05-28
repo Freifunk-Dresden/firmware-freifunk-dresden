@@ -74,8 +74,10 @@ EOM
 			</SCRIPT>
 EOM
 			if [ -n "$form_reset_factory" ]; then
+				/usr/lib/ddmesh/ddmesh-display.sh factory
 				/sbin/firstboot -y
 			fi
+				/usr/lib/ddmesh/ddmesh-display.sh reboot
 			sleep 2
 			reboot&
 			;;
