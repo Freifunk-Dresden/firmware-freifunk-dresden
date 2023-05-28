@@ -13,7 +13,7 @@ TTY="/dev/ttyS0"
 sysinfo=/tmp/sysinfo.json
 
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
-eval $(ddmesh-utils-network-info.sh lan lan)
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh lan lan)
 
 update()
 {
