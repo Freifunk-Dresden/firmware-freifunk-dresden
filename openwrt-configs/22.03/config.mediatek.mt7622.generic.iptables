@@ -2523,6 +2523,7 @@ CONFIG_PACKAGE_wireguard-tools=y
 CONFIG_PACKAGE_ddmesh-extra-modules=y
 CONFIG_PACKAGE_tcpdump=y
 CONFIG_PACKAGE_ddmesh-tethering=y
+CONFIG_PACKAGE_ddmesh-usb-console=y
 # CONFIG_PACKAGE_ddmesh-usb-storage is not set
 CONFIG_PACKAGE_ddmesh-wifi=y
 # end of ddmesh
@@ -3350,7 +3351,7 @@ CONFIG_PACKAGE_kmod-usb-roles=y
 CONFIG_PACKAGE_kmod-usb-serial=y
 # CONFIG_PACKAGE_kmod-usb-serial-ark3116 is not set
 # CONFIG_PACKAGE_kmod-usb-serial-belkin is not set
-# CONFIG_PACKAGE_kmod-usb-serial-ch341 is not set
+CONFIG_PACKAGE_kmod-usb-serial-ch341=y
 # CONFIG_PACKAGE_kmod-usb-serial-cp210x is not set
 # CONFIG_PACKAGE_kmod-usb-serial-cypress-m8 is not set
 # CONFIG_PACKAGE_kmod-usb-serial-edgeport is not set
@@ -3363,7 +3364,7 @@ CONFIG_PACKAGE_kmod-usb-serial=y
 # CONFIG_PACKAGE_kmod-usb-serial-mos7840 is not set
 CONFIG_PACKAGE_kmod-usb-serial-option=y
 # CONFIG_PACKAGE_kmod-usb-serial-oti6858 is not set
-# CONFIG_PACKAGE_kmod-usb-serial-pl2303 is not set
+CONFIG_PACKAGE_kmod-usb-serial-pl2303=y
 # CONFIG_PACKAGE_kmod-usb-serial-qualcomm is not set
 # CONFIG_PACKAGE_kmod-usb-serial-sierrawireless is not set
 # CONFIG_PACKAGE_kmod-usb-serial-simple is not set
@@ -3575,7 +3576,55 @@ CONFIG_PACKAGE_libxtables=y
 CONFIG_PACKAGE_libmbedtls=y
 # CONFIG_LIBMBEDTLS_DEBUG_C is not set
 # CONFIG_LIBMBEDTLS_HKDF_C is not set
-# CONFIG_PACKAGE_libopenssl is not set
+CONFIG_PACKAGE_libopenssl=y
+
+#
+# Build Options
+#
+# CONFIG_OPENSSL_OPTIMIZE_SPEED is not set
+CONFIG_OPENSSL_WITH_ASM=y
+CONFIG_OPENSSL_WITH_DEPRECATED=y
+# CONFIG_OPENSSL_NO_DEPRECATED is not set
+CONFIG_OPENSSL_WITH_ERROR_MESSAGES=y
+
+#
+# Protocol Support
+#
+CONFIG_OPENSSL_WITH_TLS13=y
+# CONFIG_OPENSSL_WITH_DTLS is not set
+# CONFIG_OPENSSL_WITH_NPN is not set
+CONFIG_OPENSSL_WITH_SRP=y
+CONFIG_OPENSSL_WITH_CMS=y
+
+#
+# Algorithm Selection
+#
+# CONFIG_OPENSSL_WITH_EC2M is not set
+CONFIG_OPENSSL_WITH_CHACHA_POLY1305=y
+# CONFIG_OPENSSL_PREFER_CHACHA_OVER_GCM is not set
+CONFIG_OPENSSL_WITH_PSK=y
+
+#
+# Less commonly used build options
+#
+# CONFIG_OPENSSL_WITH_ARIA is not set
+# CONFIG_OPENSSL_WITH_CAMELLIA is not set
+# CONFIG_OPENSSL_WITH_IDEA is not set
+# CONFIG_OPENSSL_WITH_SEED is not set
+# CONFIG_OPENSSL_WITH_SM234 is not set
+# CONFIG_OPENSSL_WITH_BLAKE2 is not set
+# CONFIG_OPENSSL_WITH_MDC2 is not set
+# CONFIG_OPENSSL_WITH_WHIRLPOOL is not set
+# CONFIG_OPENSSL_WITH_COMPRESSION is not set
+# CONFIG_OPENSSL_WITH_RFC3779 is not set
+
+#
+# Engine/Hardware Support
+#
+CONFIG_OPENSSL_ENGINE=y
+# CONFIG_OPENSSL_ENGINE_BUILTIN is not set
+# CONFIG_PACKAGE_libopenssl-conf is not set
+# CONFIG_PACKAGE_libopenssl-devcrypto is not set
 # CONFIG_PACKAGE_libwolfssl is not set
 # end of SSL
 
@@ -4004,7 +4053,7 @@ CONFIG_PACKAGE_px5g-mbedtls=y
 #
 # Terminal
 #
-# CONFIG_PACKAGE_agetty is not set
+CONFIG_PACKAGE_agetty=y
 # CONFIG_PACKAGE_script-utils is not set
 # CONFIG_PACKAGE_setterm is not set
 # CONFIG_PACKAGE_wall is not set

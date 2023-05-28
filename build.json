@@ -128,8 +128,8 @@
     "packages":["qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
   },
   {
-    "name":"ramips.mt7620.small",
-    "config":"config.ramips.mt7620.small"
+    "name":"ramips.mt7620.small.usb",
+    "config":"config.ramips.mt7620.small.usb"
   },
   {
     "name":"ramips.mt7620.generic",
