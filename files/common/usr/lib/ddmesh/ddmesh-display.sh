@@ -29,8 +29,8 @@ update()
   json="${json} \"up\": \"${wifi_status_radio2g_up}\","
   json="${json} \"ssid_5g\": \"$(uci get wireless.wifi2_5g.ssid)\","
   json="${json} \"up_5g\": \"${wifi_status_radio5g_up}\","
-  json="${json} \"key\": \"[free Wifi]\","
-  json="${json} \"key_5g\": \"[free Wifi]\","
+  json="${json} \"key\": \"Free Wifi\","
+  json="${json} \"key_5g\": \"Free Wifi\","
 
   json="${json} \"work_mode\": \"Router\","
   json="${json} \"lan_ip\": \"${lan_ipaddr}\","
