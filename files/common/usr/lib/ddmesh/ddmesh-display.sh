@@ -101,7 +101,6 @@ update()
   json="${json} }"
   # echo "${json}" > ${TTY} ; cat ${TTY}
   echo "${json}" > ${TTY}
-  echo $json
 }
 
 msg()
