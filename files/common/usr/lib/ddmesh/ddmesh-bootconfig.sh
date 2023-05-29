@@ -475,10 +475,11 @@ case "$boot_step" in
 		config_boot_step1
 		uci set ddmesh.boot.boot_step=2
 		uci commit
-		sync
 
 		logger -s -t "$LOGGER_TAG" "reboot boot step 1"
 		/usr/lib/ddmesh/ddmesh-display.sh reboot
+
+		sync
 		reboot
 
 		#stop boot process
@@ -515,7 +516,6 @@ case "$boot_step" in
 			uci set ddmesh.boot.nightly_upgrade_running=0
 			uci set ddmesh.boot.upgrade_running=0
 			uci commit
-			sync
 
 			# after uci commit and only when fw was upgraded
 			if [ "$upgrade_running" = "1" ]; then
@@ -527,6 +527,8 @@ case "$boot_step" in
 
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
 			/usr/lib/ddmesh/ddmesh-display.sh reboot
+
+			sync
 			reboot
 
 			#stop boot process
