@@ -12,11 +12,11 @@ boardname=$(board_name) # function in function.sh
 TTY="/dev/ttyS0"
 sysinfo=/tmp/sysinfo.json
 
-eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
-eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh lan lan)
-
 update()
 {
+	eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
+	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh lan lan)
+
 	eval $(cat ${sysinfo} | jsonfilter \
 			-e gateway_ip='@.data.bmxd.gateways.selected' \
 			-e community='@.data.common.community' \

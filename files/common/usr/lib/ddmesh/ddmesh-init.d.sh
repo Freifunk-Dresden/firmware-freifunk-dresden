@@ -122,6 +122,7 @@ start() {
 
 	/usr/lib/ddmesh/ddmesh-led.sh status done
 	# no update, sysinfo not ready yet
+	/usr/lib/ddmesh/ddmesh-display.sh msg "Running"
 	/usr/lib/ddmesh/ddmesh-display.sh boot
 
 	# enable hotplug some more events

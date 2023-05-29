@@ -471,19 +471,21 @@ fi
 case "$boot_step" in
 	1) # initial boot step
 		/usr/lib/ddmesh/ddmesh-led.sh status boot1
-		/usr/lib/ddmesh/ddmesh-display.sh msg "boot step 1"
 		logger -s -t "$LOGGER_TAG" "boot step 1"
 		config_boot_step1
 		uci set ddmesh.boot.boot_step=2
 		uci commit
+		sync
+
 		logger -s -t "$LOGGER_TAG" "reboot boot step 1"
+		/usr/lib/ddmesh/ddmesh-display.sh reboot
 		reboot
+
 		#stop boot process
 		exit 1
 		;;
 	2) # update config
 		/usr/lib/ddmesh/ddmesh-led.sh status boot2
-		/usr/lib/ddmesh/ddmesh-display.sh msg "boot step 2"
 		logger -s -t "$LOGGER_TAG" "boot step 2"
 
 		#node valid after boot_step >= 2
@@ -512,7 +514,6 @@ case "$boot_step" in
 			uci set ddmesh.boot.boot_step=3
 			uci set ddmesh.boot.nightly_upgrade_running=0
 			uci set ddmesh.boot.upgrade_running=0
-
 			uci commit
 			sync
 
@@ -525,8 +526,7 @@ case "$boot_step" in
 			fi
 
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
-
-			sleep 5
+			/usr/lib/ddmesh/ddmesh-display.sh reboot
 			reboot
 
 			#stop boot process
@@ -535,8 +535,8 @@ case "$boot_step" in
 		;;
 	3) # temp config
 		/usr/lib/ddmesh/ddmesh-led.sh status boot3
-		/usr/lib/ddmesh/ddmesh-display.sh msg "boot step 3"
 		logger -s -t "$LOGGER_TAG" "boot step 3"
+
 		node=$(uci get ddmesh.system.node)
 		if [ -z "$node" ]; then
 			logger -t $LOGGER_TAG "ERROR: no node number"

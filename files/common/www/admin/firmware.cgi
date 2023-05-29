@@ -143,23 +143,28 @@ else #form_action
 				</SCRIPT>
 EOM
 
-				sleep 5	# let browser load all content before killing httpd
+				rm /tmp/freifunk-running # disable cron and hotplug
 
 				if [ "$form_firmware_factory" = "1" ]; then
 				  /usr/lib/ddmesh/ddmesh-display.sh msg "   SysUprade     (Factory Reset)"
-
-					rm /tmp/freifunk-running # disable cron and hotplug
-					(sleep 10 ; /usr/lib/ddmesh/ddmesh-display.sh factory; sysupgrade -n $FIRMWARE_FILE 2>&1 >/dev/null) &
+					sleep 5	# let browser load all content before killing httpd
+					(sleep 10; \
+							/usr/lib/ddmesh/ddmesh-display.sh factory; \
+							sysupgrade -n $FIRMWARE_FILE 2>&1 >/dev/null \
+					) &
 				else
 					#update configs after firmware update
 					/usr/lib/ddmesh/ddmesh-display.sh msg "   SysUprade     (Keep Config)"
-
+					sleep 5	# let browser load all content before killing httpd
 					uci set ddmesh.boot.boot_step=2
 					uci set ddmesh.boot.upgrade_running=1
 					uci commit
 					sync
-					rm /tmp/freifunk-running # disable cron and hotplug
-					(sleep 10 ; /usr/lib/ddmesh/ddmesh-display.sh reboot; sysupgrade $FIRMWARE_FILE 2>&1 >/dev/null) &
+
+					(sleep 10; \
+						/usr/lib/ddmesh/ddmesh-display.sh reboot; \
+						sysupgrade $FIRMWARE_FILE 2>&1 >/dev/null \
+					) &
 				fi
 			fi
 			;;
