@@ -100,14 +100,15 @@ update()
 	fi
 
 	json="${json} \"carrier\": \"$(printf '%.16s' "Freifunk ${community}")\""
-
-	#json="${json} \"mcu_status\": \"1\""
+	#json="${json}, \"mcu_status\": \"1\""
 	json="${json} }"
-	echo "${json}" > ${TTY}
-	echo "${json}"
 
-    sleep 1
-	
+	# send
+	echo "${json}"
+	echo "${json}" > ${TTY}
+
+	sleep 1
+
 	# custom screen
 	L0left="Freifunk"
 	L0right="$(uci get ddmesh.system.node)"
