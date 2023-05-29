@@ -106,7 +106,8 @@ update()
 	echo "${json}" > ${TTY}
 	echo "${json}"
 
-
+    sleep 1
+	
 	# custom screen
 	L0left="Freifunk"
 	L0right="$(uci get ddmesh.system.node)"
