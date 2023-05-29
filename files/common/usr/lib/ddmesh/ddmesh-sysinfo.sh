@@ -48,7 +48,7 @@ case "$(uci -q get ddmesh.system.node_type)" in
 	*) node_type="node";;
 esac
 
-if [ $node_type = "mobile" ]; then
+if [ $node_type = "mobile" -a -f "$SYSINFO_MOBILE_GEOLOC" ]; then
 	eval $(cat $SYSINFO_MOBILE_GEOLOC | jsonfilter \
 		-e gps_lat='@.location.lat' \
 		-e gps_lng='@.location.lng' )

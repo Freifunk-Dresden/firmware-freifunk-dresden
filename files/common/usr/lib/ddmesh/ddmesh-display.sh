@@ -40,14 +40,12 @@ update()
 		gw_node="$(/usr/lib/ddmesh/ddmesh-ipcalc.sh $gateway_ip)"
 		json="${json} \"vpn_status\": \"connected\","
 		json="${json} \"vpn_server\": \"Node: ${gw_node}\","
-		#json="${json} \"vpn_type\": \"\","
-
 		json="${json} \"method_nw\": \"modem\","	# removes "No Internet"
 	else
 		gw_node="local/none"
-		json="${json} \"vpn_status\": \"connecting\","  |
+		json="${json} \"vpn_status\": \"off\","
 		json="${json} \"vpn_server\": \"${gw_node}\","
-		json="${json} \"method_nw\": \"\","	# "No Internet"
+		json="${json} \"method_nw\": \" \","	# "No Internet"
 	fi
 
 	clients="0"
@@ -106,7 +104,7 @@ update()
 	#json="${json} \"mcu_status\": \"1\""
 	json="${json} }"
 	echo "${json}" > ${TTY}
-	#echo "${json}"
+	echo "${json}"
 
 
 	# custom screen
