@@ -105,14 +105,16 @@ case "$ARG1" in
 		fi
 
 		#add dyn interfaces (add_if_wifi, add_if_wire)
-		IFS='
-		'
-		for line in $(cat ${DYN_IFACES_FILE})
-		do
-			# split ifname and linklayer
-			_IF="$_IF --dev=${line%,*} /linklayer ${line#*,}"
-		done
-		unset IFS
+		if [ -f "${DYN_IFACES_FILE}" ]; then
+			IFS='
+'
+			for line in $(cat ${DYN_IFACES_FILE})
+			do
+				# split ifname and linklayer
+				_IF="$_IF --dev=${line%,*} /linklayer ${line#*,}"
+			done
+			unset IFS
+		fi
 
 		#default start with no gatway.will be updated by gateway_check.sh
 		# devel info:
