@@ -16,16 +16,15 @@ TAG2="30-bmxd"
 logger -t "$TAG" "$TAG2: net:[$INTERFACE] action:$ACTION type:$DEVTYPE devicename:[$DEVICENAME] devpath:$DEVPATH"
 if [ "$INTERFACE" = "wifi_adhoc" -o "$INTERFACE" = "wifi_mesh2g" -o "$INTERFACE" = "wifi_mesh5g" ]; then
 
-	# INTERFACE contains network name, have to determine interace name
-	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
-	eval ifname=\$${INTERFACE}_ifname
+	# INTERFACE contains network name, have to determine iface name
+	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh "$INTERFACE" )
 
-	if [ "$ACTION" = "ifup" -a -n "$ifname" ]; then
-		logger -t "$TAG" "$TAG2: add [$ifname] to bmxd"
-		/usr/lib/ddmesh/ddmesh-bmxd.sh add_if_wifi $ifname
+	if [ "$ACTION" = "ifup" -a -n "$net_ifname" ]; then
+		logger -t "$TAG" "$TAG2: add [$net_ifname] to bmxd"
+		/usr/lib/ddmesh/ddmesh-bmxd.sh add_if_wifi $net_ifname
 	fi
-	if [ "$ACTION" = "ifdown" -a -n "$ifname" ]; then
-		logger -t "$TAG" "$TAG2: remove [$ifname] from bmxd"
-		/usr/lib/ddmesh/ddmesh-bmxd.sh del_if $ifname
+	if [ "$ACTION" = "ifdown" -a -n "$net_ifname" ]; then
+		logger -t "$TAG" "$TAG2: remove [$net_ifname] from bmxd"
+		/usr/lib/ddmesh/ddmesh-bmxd.sh del_if $net_ifname
 	fi
 fi
