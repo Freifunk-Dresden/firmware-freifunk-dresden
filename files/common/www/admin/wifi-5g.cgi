@@ -76,7 +76,7 @@ function checkInput()
 <table>
 <tr>
 <th width="100">Disable Wifi 5Ghz:</th>
-<td><input onchange="return fold('wifi5', document.getElementsByName('form_disable_wifi')[0].checked)" name="form_disable_wifi" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.disable_wifi_5g)" = 1 ];then echo 'checked="checked"';fi) ></td>
+<td><input onchange="return fold2('wifi5', document.getElementsByName('form_disable_wifi')[0].checked)" name="form_disable_wifi" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.disable_wifi_5g)" = 1 ];then echo 'checked="checked"';fi) ></td>
 </tr>
 </table>
 
@@ -194,7 +194,7 @@ cat << EOM
 </fieldset>
 
 <script type="text/javascript">
-fold('wifi5', document.getElementsByName('form_disable_wifi')[0].checked)
+fold2('wifi5', document.getElementsByName('form_disable_wifi')[0].checked)
 enable_private_wifi();
 setWifi3_key();
 </script>

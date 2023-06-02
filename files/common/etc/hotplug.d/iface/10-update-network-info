@@ -5,7 +5,7 @@
 # ddmesh-utils-network-info.sh uses cached data. update cache when interfaces
 # become up (and have got IP via dhcp)
 # Don't update for other interfaces, as router may run in deadlock (ubus)
-
+exit 0 # geht erst mal nicht: dealocks. evt nicht notwendig
 TAG="ddmesh-hotplug-iface"
 TAG2="10-update-network-info"
 

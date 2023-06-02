@@ -443,6 +443,7 @@ upgrade_8_1_7()
 {
   uci -q set ddmesh.network.wifi_ch_5g_outdoor_min=52
   uci -q set ddmesh.network.wifi_ch_5g_outdoor_max=144
+	uci -q set ddmesh.network.wifi_channel_5g=36
 }
 
 ##################################

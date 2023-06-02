@@ -3,7 +3,8 @@
 # GNU General Public License Version 3
 
 prefix="wifi_status"
-radio2g_up=""
+radio2g_present="0"
+radio2g_up="0"
 radio2g_phy=""
 radio2g_dev="wifi2ap"	# use interface that is always present
 radio2g_config_index=""
@@ -11,7 +12,8 @@ radio2g_airtime=""
 radio2g_mode_ap=""
 radio2g_mode_mesh=""
 
-radio5g_up=""
+radio5g_present="0"
+radio5g_up="0"
 radio5g_phy=""
 radio5g_dev="wifi5ap"	# use interface that is always present
 radio5g_config_index=""
@@ -88,21 +90,23 @@ if [ "$1" == "store" ]; then
 						line=a[e];
 						split(line,count,"=")
 						if(match(line,/AP/)){mode_ap=count[2];}
-						if(match(line,/mesh point/)){mode_mesh=count[2];} 
+						if(match(line,/mesh point/)){mode_mesh=count[2];}
 					}
 					found=0
 				}
-				END{ printf("mode_ap=%d; mode_mesh=%d", mode_ap, mode_mesh);}  
-			') 
+				END{ printf("mode_ap=%d; mode_mesh=%d", mode_ap, mode_mesh);}
+			')
 
 			if [ "$freq2" = "2" ]; then
-				radio2g_up=1
+				radio2g_present=1
+				iwinfo wifi2ap info >/dev/null 2>/dev/null && radio2g_up=1 || radio2g_up=0
 				radio2g_phy=$phy
 				radio2g_config_index=$idx
 				radio2g_mode_ap="$mode_ap"
 				radio2g_mode_mesh="$mode_mesh"
 			elif [ "$freq5" = "5" ]; then
-				radio5g_up=1
+				radio5g_present=1
+				iwinfo wifi5ap info >/dev/null 2>/dev/null && radio5g_up=1 || radio5g_up=0
 				radio5g_phy=$phy
 				radio5g_config_index=$idx
 				radio5g_mode_ap="$mode_ap"
@@ -120,13 +124,15 @@ if [ "$1" == "store" ]; then
  # store in /etc/wireless for faster access (/dev/null to suppress output)
  test -z "$(uci -q get wireless.ddmesh)" && uci -q add wireless ddmesh >/dev/null
  uci -q rename wireless.@ddmesh[-1]='ddmesh'
- uci -q set wireless.ddmesh.radio2g_up="$radio2g_up"
+ uci -q set wireless.ddmesh.radio2g_present="${radio2g_present:=0}"
+ uci -q set wireless.ddmesh.radio2g_up="${radio2g_up:=0}"
  uci -q set wireless.ddmesh.radio2g_phy="$radio2g_phy"
  uci -q set wireless.ddmesh.radio2g_config_index="$radio2g_config_index"
  uci -q set wireless.ddmesh.radio2g_mode_ap="$radio2g_mode_ap"
  uci -q set wireless.ddmesh.radio2g_mode_mesh="$radio2g_mode_mesh"
 
- uci -q set wireless.ddmesh.radio5g_up="$radio5g_up"
+ uci -q set wireless.ddmesh.radio5g_present="${radio5g_present:=0}"
+ uci -q set wireless.ddmesh.radio5g_up="${radio5g_up:=0}"
  uci -q set wireless.ddmesh.radio5g_phy="$radio5g_phy"
  uci -q set wireless.ddmesh.radio5g_config_index="$radio5g_config_index"
  uci -q set wireless.ddmesh.radio5g_mode_ap="$radio5g_mode_ap"
@@ -134,9 +140,10 @@ if [ "$1" == "store" ]; then
  uci -q commit
 fi
 
-_radio2g_up="$(uci -q get wireless.ddmesh.radio2g_up)"
-echo export $prefix"_radio2g_up"="$_radio2g_up"
-if [ "$_radio2g_up" = "1" ]; then
+_radio2g_present="$(uci -q get wireless.ddmesh.radio2g_present)"
+echo export $prefix"_radio2g_present"="$(uci -q get wireless.ddmesh.radio2g_present)"
+echo export $prefix"_radio2g_up"="$(uci -q get wireless.ddmesh.radio2g_up)"
+if [ "$_radio2g_present" = "1" ]; then
 	echo export $prefix"_radio2g_phy"="$(uci -q get wireless.ddmesh.radio2g_phy)"
 	echo export $prefix"_radio2g_config_index"="$(uci -q get wireless.ddmesh.radio2g_config_index)"
 	echo export $prefix"_radio2g_mode_ap"="$(uci -q get wireless.ddmesh.radio2g_mode_ap)"
@@ -144,9 +151,10 @@ if [ "$_radio2g_up" = "1" ]; then
 	echo export $prefix"_radio2g_airtime"="$(airtime ${radio2g_dev})"
 fi
 
-_radio5g_up="$(uci -q get wireless.ddmesh.radio5g_up)"
-echo export $prefix"_radio5g_up"="$_radio5g_up"
-if [ "$_radio5g_up" = "1" ]; then
+_radio5g_present="$(uci -q get wireless.ddmesh.radio5g_present)"
+echo export $prefix"_radio5g_present"="$(uci -q get wireless.ddmesh.radio5g_present)"
+echo export $prefix"_radio5g_up"="$(uci -q get wireless.ddmesh.radio5g_up)"
+if [ "$_radio5g_present" = "1" ]; then
 	echo export $prefix"_radio5g_phy"="$(uci -q get wireless.ddmesh.radio5g_phy)"
 	echo export $prefix"_radio5g_config_index"="$(uci -q get wireless.ddmesh.radio5g_config_index)"
 	echo export $prefix"_radio5g_mode_ap"="$(uci -q get wireless.ddmesh.radio5g_mode_ap)"

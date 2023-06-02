@@ -38,7 +38,7 @@ start() {
 	eval $(cat /etc/openwrt_release)
 
 	#initial setup and node depended setup (crond calles ddmesh-register-node.sh to update node)
-	logger -s -t $LOGGER_TAG "inital boot setting"
+	logger -s -t $LOGGER_TAG "starting freifunk ddmesh-init.d.sh"
 	#check if boot process should be stopped
 	/usr/lib/ddmesh/ddmesh-bootconfig.sh || exit
 
@@ -75,10 +75,6 @@ start() {
 	# setup dnsmasq (BEFORE BMXD)
 	logger -s -t $LOGGER_TAG "dnsmasq"
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh start
-
-	# AFTER dnsmasq (bmxd script will set resolv.conf.final)
-	logger -s -t $LOGGER_TAG "start service bmxd"
-	/usr/lib/ddmesh/ddmesh-bmxd.sh start
 
 	logger -s -t $LOGGER_TAG "start service backbone"
 	/usr/lib/ddmesh/ddmesh-backbone.sh start
@@ -120,13 +116,19 @@ start() {
 	logger -s -t $LOGGER_TAG "start cron"
 	/etc/init.d/cron start
 
-	/usr/lib/ddmesh/ddmesh-led.sh status done
+	# enable hotplug events, and bmxd-gateway.sh calles before starting bmxd
+	# to avoid missing events
+	touch /tmp/freifunk-running
+
+	# AFTER dnsmasq (bmxd script will set resolv.conf.final)
+	# and at latest as possible (causes hotplug events and possible ubus call deadlock)
+	logger -s -t $LOGGER_TAG "start service bmxd"
+	/usr/lib/ddmesh/ddmesh-bmxd.sh start
+
 	# no update, sysinfo not ready yet
 	/usr/lib/ddmesh/ddmesh-display.sh msg "Running"
 	/usr/lib/ddmesh/ddmesh-display.sh boot
-
-	# enable hotplug some more events
-	touch /tmp/freifunk-running
+	/usr/lib/ddmesh/ddmesh-led.sh status done
 
 	logger -s -t $LOGGER_TAG "finished."
 }

@@ -90,21 +90,11 @@ case "$ARG1" in
 		# needed during async boot, state changes then
 		/usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 
-		#add wifi, if hotplug event did occur before starting bmxd
-		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_adhoc)
-		if [ -n "$net_ifname" ]; then
-			_IF="$_IF --dev=$net_ifname /linklayer 2"
-		fi
-		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_mesh2g)
-		if [ -n "$net_ifname" ]; then
-			_IF="$_IF --dev=$net_ifname /linklayer 2"
-		fi
-		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wifi_mesh5g)
-		if [ -n "$net_ifname" ]; then
-			_IF="$_IF --dev=$net_ifname /linklayer 2"
-		fi
+		#add wifi, not using/waiting for wifi
+		_IF="$_IF --dev=mesh2g-80211s /linklayer 2"
+		_IF="$_IF --dev=mesh5g-80211s /linklayer 2"
 
-		#add dyn interfaces (add_if_wifi, add_if_wire)
+		#add dyn backbone interfaces (add_if_wire)
 		if [ -f "${DYN_IFACES_FILE}" ]; then
 			IFS='
 '
@@ -156,13 +146,6 @@ case "$ARG1" in
 	no_gateway)
 		echo $DAEMON -c $ROUTING_CLASS
 		$DAEMON_PATH/$DAEMON -c $ROUTING_CLASS
-		;;
-
-	add_if_wifi)
-		if [ -n "$ARG2" ]; then
-			$DAEMON_PATH/$DAEMON -c dev=$ARG2 /linklayer 2
-			echo "${ARG2},2" >> $DYN_IFACES_FILE
-		fi
 		;;
 
 	add_if_wire)
@@ -249,7 +232,7 @@ case "$ARG1" in
 		;;
 
 	*)
-		echo "Usage: $0 {start|stop|restart|gateway|no_gateway|runcheck|update_infos|add_if_wifi|add_if_wire|del_if|prefered_gateway|netid|only_community_gateway}" >&2
+		echo "Usage: $0 {start|stop|restart|gateway|no_gateway|runcheck|update_infos|add_if_wire|del_if|prefered_gateway|netid|only_community_gateway}" >&2
 		exit 1
 		;;
 esac

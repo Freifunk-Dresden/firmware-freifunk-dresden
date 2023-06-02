@@ -73,12 +73,9 @@ EOM
 				/sbin/firstboot -y
 			fi
 				/usr/lib/ddmesh/ddmesh-display.sh reboot
-				if [ -n "$form_reset_reconfig" ]; then
-					# update config and reboot
-					/usr/lib/ddmesh/ddmesh-bootconfig.sh &
-				else
-					reboot &
-				fi
+				# update config and reboot
+				/usr/lib/ddmesh/ddmesh-bootconfig.sh reboot &
+
 			;;
 		*)
 		;;

@@ -2,6 +2,9 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
+# when reboot/firmware update do not allow reconfigure network/dnsmasq
+test -f /tmp/freifunk-running || exit 0
+
 RESOLV_PATH="/tmp/resolv.conf.d"
 RESOLV_CONF_FINAL="${RESOLV_PATH}/resolv.conf.final"
 RESOLV_CONF_AUTO="${RESOLV_PATH}/resolv.conf.auto"

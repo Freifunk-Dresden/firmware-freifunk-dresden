@@ -47,8 +47,8 @@ setup_wireless()
  # set HT20 for 2.4Ghz. higher values are not supported by all devices
  # and meshing 802.11s might not work
 
-  # 5 GHz
- if [ -n "$wifi_status_radio5g_up" ]; then
+	# 5 GHz
+ if [ "$wifi_status_radio5g_present" = "1" ]; then
 	if [ "$(uci -q get ddmesh.network.disable_wifi_5g)" = "1" ]; then
 		uci -q set wireless.radio5g.disabled="1"
 	else
@@ -58,13 +58,13 @@ setup_wireless()
 
 	uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
 	if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
-		# because we indoor ch44 (indoor ch 36,40,44,48) we only can use 40MHz
-		uci set wireless.radio5g.htmode="HT40"
+		# because we indoor ch36 (indoor 80Mhz: ch 36,40,44,48)
+		uci set wireless.radio5g.htmode="VHT80"
 		uci set wireless.radio5g.channel="$(uci -q get ddmesh.network.wifi_channel_5g)"
 	else
 		# not all devices support VHT80. If radar on one channel was detected then
 		# broader channel will likly not available
-		uci set wireless.radio5g.htmode="HT40"
+		uci set wireless.radio5g.htmode="VHT80"
 		range="$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)"
 		uci set wireless.radio5g.channel="${range%-*}"
 		uci set wireless.radio5g.channels="${range}"
@@ -171,7 +171,7 @@ setup_wireless()
  # - wifi2 - 5G
 
  # add 5GHz
- if [ -n "$wifi_status_radio5g_up" ]; then
+ if [ "$wifi_status_radio5g_present" = "1" ]; then
 	if [ "$wifi_status_radio5g_mode_ap" -gt 0 ]; then
 		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
 		uci rename wireless.@wifi-iface[$iface]='wifi2_5g'
@@ -211,7 +211,7 @@ setup_wireless()
  fi
 
  # - wifi3-2g (private AP)
- if [ -n "$wifi_status_radio2g_up" -a "$wifi_status_radio2g_mode_ap" -gt 1 ]; then
+ if [ "$wifi_status_radio2g_present" = "1" -a "$wifi_status_radio2g_mode_ap" -gt 1 ]; then
 	if [ "$(uci -q get ddmesh.network.wifi3_2g_enabled)" = "1" -a -n "$(uci -q get credentials.wifi_2g.private_ssid)" ] && [ "$(uci -q get ddmesh.network.wifi3_2g_security)" != "1" -o -n "$(uci -q get credentials.wifi_2g.private_key)" ]; then
 		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
 		uci rename wireless.@wifi-iface[$iface]='wifi2priv'
@@ -237,7 +237,7 @@ setup_wireless()
  fi
 
  # - wifi3-5g (private ap)
- if [ -n "$wifi_status_radio5g_up" -a "$wifi_status_radio5g_mode_ap" -gt 1 ]; then
+ if [ "$wifi_status_radio5g_present" = "1" -a "$wifi_status_radio5g_mode_ap" -gt 1 ]; then
 	if [ "$(uci -q get ddmesh.network.wifi3_5g_enabled)" = "1" -a -n "$(uci -q get credentials.wifi_5g.private_ssid)" ] && [ "$(uci -q get ddmesh.network.wifi3_5g_security)" != "1" -o -n "$(uci -q get credentials.wifi_5g.private_key)" ]; then
 		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
 		uci rename wireless.@wifi-iface[$iface]='wifi5priv'

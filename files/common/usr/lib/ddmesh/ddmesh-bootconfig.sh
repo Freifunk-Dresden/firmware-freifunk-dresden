@@ -114,7 +114,7 @@ config network 'network'
 	option	wifi_channel 13
 	option	wifi_txpower 18
 	option	disable_wifi_5g 0
-	option	wifi_channel_5g 44
+	option	wifi_channel_5g 36
 	option	wifi_txpower_5g 18
 	option	wifi_indoor_5g 0
 # multiple of 20,40,80 Mhz !!!
@@ -256,6 +256,7 @@ EOM
 
 	# dropbear ssh
 	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
+	uci commit
 
 } # config_boot_step1
 
@@ -408,7 +409,7 @@ config_update() {
 
 
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh configure
-
+	uci commit
 }
 
 config_temp_configs() {
@@ -467,6 +468,8 @@ if [ "$(uci -q get ddmesh.boot.firstboot)" = "1" ]; then
 	boot_step=3
 	uci -q del ddmesh.boot.firstboot
 fi
+
+cmd="$1"
 
 case "$boot_step" in
 	1) # initial boot step
@@ -536,6 +539,14 @@ case "$boot_step" in
 		fi
 		;;
 	3) # temp config
+
+		# when calling "ddmesh-bootconfig.sh reboot" then a reboot was requested in case boot_step is still 3
+		if [ "$cmd" = "reboot" ]; then
+			logger -s -t "$LOGGER_TAG" "boot step 3 - reboot requested"
+			reboot
+			exit 1
+		fi
+
 		/usr/lib/ddmesh/ddmesh-led.sh status boot3
 		logger -s -t "$LOGGER_TAG" "boot step 3"
 
