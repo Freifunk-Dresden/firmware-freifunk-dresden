@@ -24,6 +24,9 @@ update()
 			-e clients5g='@.data.statistic.client5g["15min"]' \
 				)
 
+    [ -z "$clients2g" ] && clients2g=0
+	[ -z "$clients5g" ] && clients5g=0
+
 	json="{ "
 	json="${json} \"ssid\": \"$(uci get wireless.wifi2_2g.ssid)\","
 	json="${json} \"up\": \"${wifi_status_radio2g_up}\","
