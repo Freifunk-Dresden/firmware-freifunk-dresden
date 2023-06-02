@@ -23,8 +23,8 @@ update()
 			-e clients2g='@.data.statistic.client2g["15min"]' \
 			-e clients5g='@.data.statistic.client5g["15min"]' \
 				)
-
-    [ -z "$clients2g" ] && clients2g=0
+				
+	[ -z "$clients2g" ] && clients2g=0
 	[ -z "$clients5g" ] && clients5g=0
 
 	json="{ "
