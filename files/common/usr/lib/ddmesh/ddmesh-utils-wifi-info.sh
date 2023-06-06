@@ -2,6 +2,12 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
+# temp workaround gl-e750 disable 5ghz: start
+. /lib/functions.sh
+boardname=$(board_name) # function in function.sh
+# temp workaround gl-e750 disable 5ghz: end
+
+
 prefix="wifi_status"
 radio2g_present="0"
 radio2g_up="0"
@@ -120,6 +126,13 @@ if [ "$1" == "store" ]; then
 		[ $phy_count -eq 0 ] && idx=$(( idx + 1 ))
 
 	done
+
+# temp workaround gl-e750 disable 5ghz: start
+if [ "${boardname}" = "glinet,gl-e750" ]; then
+	radio5g_present=0
+	radio5g_up=0
+fi
+# temp workaround gl-e750 disable 5ghz: end
 
  # store in /etc/wireless for faster access (/dev/null to suppress output)
  test -z "$(uci -q get wireless.ddmesh)" && uci -q add wireless ddmesh >/dev/null

@@ -237,28 +237,30 @@ setup_wireless()
  fi
 
  # - wifi3-5g (private ap)
- if [ "$wifi_status_radio5g_present" = "1" -a "$wifi_status_radio5g_mode_ap" -gt 1 ]; then
-	if [ "$(uci -q get ddmesh.network.wifi3_5g_enabled)" = "1" -a -n "$(uci -q get credentials.wifi_5g.private_ssid)" ] && [ "$(uci -q get ddmesh.network.wifi3_5g_security)" != "1" -o -n "$(uci -q get credentials.wifi_5g.private_key)" ]; then
-		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
-		uci rename wireless.@wifi-iface[$iface]='wifi5priv'
-		uci set wireless.@wifi-iface[$iface].device='radio5g'
-		uci set wireless.@wifi-iface[$iface].network="$(uci -q get ddmesh.network.wifi3_5g_network)"
-		uci set wireless.@wifi-iface[$iface].ifname='wifi5prv'
-		uci set wireless.@wifi-iface[$iface].mode='ap'
-		if [ "$(uci -q get ddmesh.network.wifi3_5g_security)" = "1" ]; then
-			uci set wireless.@wifi-iface[$iface].encryption='psk2'
-			uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.wifi_5g.private_key)"
-		else
-			uci set wireless.@wifi-iface[$iface].encryption='none'
-		fi
+ if [ "$wifi_status_radio5g_present" = "1" ]; then
+	if [ "$wifi_status_radio5g_mode_ap" -gt 1 ]; then
+		if [ "$(uci -q get ddmesh.network.wifi3_5g_enabled)" = "1" -a -n "$(uci -q get credentials.wifi_5g.private_ssid)" ] && [ "$(uci -q get ddmesh.network.wifi3_5g_security)" != "1" -o -n "$(uci -q get credentials.wifi_5g.private_key)" ]; then
+			test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
+			uci rename wireless.@wifi-iface[$iface]='wifi5priv'
+			uci set wireless.@wifi-iface[$iface].device='radio5g'
+			uci set wireless.@wifi-iface[$iface].network="$(uci -q get ddmesh.network.wifi3_5g_network)"
+			uci set wireless.@wifi-iface[$iface].ifname='wifi5prv'
+			uci set wireless.@wifi-iface[$iface].mode='ap'
+			if [ "$(uci -q get ddmesh.network.wifi3_5g_security)" = "1" ]; then
+				uci set wireless.@wifi-iface[$iface].encryption='psk2'
+				uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.wifi_5g.private_key)"
+			else
+				uci set wireless.@wifi-iface[$iface].encryption='none'
+			fi
 
-		uci set wireless.@wifi-iface[$iface].isolate='0'
-		ssid="$(uci -q get credentials.wifi_5g.private_ssid)"
-		uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
-		#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
-		#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
-		#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
-		iface=$((iface + 1))
+			uci set wireless.@wifi-iface[$iface].isolate='0'
+			ssid="$(uci -q get credentials.wifi_5g.private_ssid)"
+			uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
+			#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
+			#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
+			#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
+			iface=$((iface + 1))
+		fi
 	fi
  fi
 }
