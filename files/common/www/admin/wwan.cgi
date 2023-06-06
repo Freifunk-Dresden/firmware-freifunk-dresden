@@ -78,7 +78,8 @@ cat<<EOM
 
 <tr><th>APN:</th> <td> <input name="form_wwan_apn" size="30" type="text" value="$wwan_apn"> </td> </tr>
 <tr><th>SIM-Karten Pin:</th> <td> <input name="form_wwan_pincode" size="30" type="text" value="$wwan_pincode"><br />
-<b>Achtung:</b> Pin wird nicht gepr&uuml;ft. Eine falsche PIN kann die SIM-Karte sperren. Dann muss die Karte in einem Mobiltelefon entsperrt werden.
+<b>Achtung:</b> Pin wird nicht gepr&uuml;ft. Eine falsche PIN kann die SIM-Karte sperren. Dann muss die Karte in einem Mobiltelefon entsperrt werden.<br>
+PIN kann vorher im Smartphone deaktiviert werden.
 </td></tr>
 <tr><td COLSPAN="2">&nbsp;</td></tr>
 
