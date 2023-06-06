@@ -11,14 +11,14 @@ boardname=$(board_name) # function in function.sh
 
 TTY="/dev/ttyS0"
 sysinfo=/tmp/sysinfo.json
-BMXD_DB_PATH=/var/lib/ddmesh/bmxd
+BMXD_GWSTAT=/var/state/bmxd.gw
 
 update()
 {
 	eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh lan lan)
 
-	gateway_ip="$(cat $BMXD_DB_PATH/gateways | sed -n 's#^[	 ]*=>[	 ]\+\([0-9.]\+\).*$#\1#p')"
+	gateway_ip="$(cat $BMXD_GWSTAT)"
 	community="$(uci -q get ddmesh.system.community)"
 
 	eval $(cat ${sysinfo} | jsonfilter \
@@ -40,17 +40,26 @@ update()
 	json="${json} \"lan_ip\": \"${lan_ipaddr}\","
 
 	#get gateway
-	if [ -n "$gateway_ip" ]; then
-		gw_node="$(/usr/lib/ddmesh/ddmesh-ipcalc.sh $gateway_ip)"
-		json="${json} \"vpn_status\": \"connected\","
-		json="${json} \"vpn_server\": \"Node: ${gw_node}\","
-		json="${json} \"method_nw\": \"modem\","	# removes "No Internet"
-	else
-		gw_node="none"
-		json="${json} \"vpn_status\": \"off\","
-		json="${json} \"vpn_server\": \"${gw_node}\","
-		json="${json} \"method_nw\": \" \","	# "No Internet"
-	fi
+	case "$gateway_ip" in
+		gateway)
+			gw_node="local"
+			json="${json} \"vpn_status\": \"off\","
+			json="${json} \"vpn_server\": \"${gw_node}\","
+			json="${json} \"method_nw\": \"modem\","	# removes "No Internet"
+			;;
+		'')
+			gw_node="none"
+			json="${json} \"vpn_status\": \"off\","
+			json="${json} \"vpn_server\": \"${gw_node}\","
+			json="${json} \"method_nw\": \" \","	# "No Internet"
+			;;
+		*)
+			gw_node="$(/usr/lib/ddmesh/ddmesh-ipcalc.sh $gateway_ip)"
+			json="${json} \"vpn_status\": \"connected\","
+			json="${json} \"vpn_server\": \"Node: ${gw_node}\","
+			json="${json} \"method_nw\": \"modem\","	# removes "No Internet"
+			;;
+	esac
 
 	clients="0"
 	if [ -n "$clients2g" -a -n "$clients5g" ]; then

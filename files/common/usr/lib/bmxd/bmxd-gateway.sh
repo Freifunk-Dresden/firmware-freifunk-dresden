@@ -69,7 +69,8 @@ case "$ARG" in
 		;;
 
 	del|init)
-		# dont write this state to BMXD_GW_STATUS_FILE !
+		# dont write this state to BMXD_GW_STATUS_FILE, else ffgw tunnel will be recreated
+		# also when not changed
 
 		# check if this router is a gateway
 		gw="$(ip ro li ta public_gateway | grep default)"
