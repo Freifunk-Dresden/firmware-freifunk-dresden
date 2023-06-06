@@ -11,26 +11,27 @@ boardname=$(board_name) # function in function.sh
 
 TTY="/dev/ttyS0"
 sysinfo=/tmp/sysinfo.json
+BMXD_DB_PATH=/var/lib/ddmesh/bmxd
 
 update()
 {
 	eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh lan lan)
 
+	gateway_ip="$(cat $BMXD_DB_PATH/gateways | sed -n 's#^[	 ]*=>[	 ]\+\([0-9.]\+\).*$#\1#p')"
+	community="$(uci -q get ddmesh.system.community)"
+
 	eval $(cat ${sysinfo} | jsonfilter \
-			-e gateway_ip='@.data.bmxd.gateways.selected' \
-			-e community='@.data.common.community' \
 			-e clients2g='@.data.statistic.client2g["15min"]' \
 			-e clients5g='@.data.statistic.client5g["15min"]' \
 				)
-
 	[ -z "$clients2g" ] && clients2g=0
 	[ -z "$clients5g" ] && clients5g=0
 
 	json="{ "
-	json="${json} \"ssid\": \"$(uci get wireless.wifi2_2g.ssid)\","
+	json="${json} \"ssid\": \"$(uci -q get wireless.wifi2_2g.ssid)\","
 	json="${json} \"up\": \"${wifi_status_radio2g_up}\","
-	json="${json} \"ssid_5g\": \"$(uci get wireless.wifi2_5g.ssid)\","
+	json="${json} \"ssid_5g\": \"$(uci -q get wireless.wifi2_5g.ssid)\","
 	json="${json} \"up_5g\": \"${wifi_status_radio5g_up}\","
 	json="${json} \"key\": \"Free Wifi\","
 	json="${json} \"key_5g\": \"Free Wifi\","
@@ -114,7 +115,7 @@ update()
 
 	# custom screen
 	L0left="Freifunk"
-	L0right="$(uci get ddmesh.system.node)"
+	L0right="$(uci -q get ddmesh.system.node)"
 	L1left="${community}"
 	L1right=""
 	L2left="Clients:"
