@@ -23,7 +23,7 @@ update()
 			-e clients2g='@.data.statistic.client2g["15min"]' \
 			-e clients5g='@.data.statistic.client5g["15min"]' \
 				)
-				
+
 	[ -z "$clients2g" ] && clients2g=0
 	[ -z "$clients5g" ] && clients5g=0
 
@@ -45,7 +45,7 @@ update()
 		json="${json} \"vpn_server\": \"Node: ${gw_node}\","
 		json="${json} \"method_nw\": \"modem\","	# removes "No Internet"
 	else
-		gw_node="local/none"
+		gw_node="none"
 		json="${json} \"vpn_status\": \"off\","
 		json="${json} \"vpn_server\": \"${gw_node}\","
 		json="${json} \"method_nw\": \" \","	# "No Internet"
