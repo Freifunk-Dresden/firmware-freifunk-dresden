@@ -88,18 +88,22 @@ do
 	call_task 10 task_wifi_scanfix
 	call_task 5 /usr/lib/ddmesh/ddmesh-backbone.sh runcheck
 	call_task 5 /usr/lib/ddmesh/ddmesh-privnet.sh runcheck
+
+	# update states
 	call_task 1 /usr/lib/ddmesh/ddmesh-sysinfo.sh
+	call_task 1 /usr/lib/ddmesh/ddmesh-display.sh update
+	#call_task	3 /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 
 	call_task 1 /usr/lib/ddmesh/ddmesh-bmxd.sh runcheck
 	call_task 1 /usr/lib/ddmesh/ddmesh-bmxd.sh update_infos
 
 	# update wg connections if peers IP has changed
 	call_task 1 /usr/lib/ddmesh/ddmesh-backbone.sh update
-	call_task 3 /usr/lib/ddmesh/ddmesh-gateway-check.sh
+	call_task 1 /usr/lib/ddmesh/ddmesh-gateway-check.sh
 	call_task 5 /usr/lib/ddmesh/ddmesh-splash.sh autodisconnect
 
 	# watchdog timestamp
 	date +'%s' > $TIMESTAMP
 done
 
-logger -t $TAG "crashed."
+logger -t $TAG "ERROR: crashed."

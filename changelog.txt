@@ -1,10 +1,16 @@
+2022-12-01 [8.1.6] (devel)
+--------------------------------------------------
+usb-serial               - add serial login via usb serial adapter
+                           (usb devices only, must be configured)
+wifi                     - check if meshing for 5GHz is supported
+                         - check if additional private access point is supported
 
 
-2022-12-01 [8.1.5] (release) 
+2022-12-01 [8.1.5] (release)
 --------------------------------------------------
 
 
-2022-12-01 [8.1.4] 
+2022-12-01 [8.1.4]
 --------------------------------------------------
 private vpn              - fix private vpn
 

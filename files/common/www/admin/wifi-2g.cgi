@@ -100,8 +100,9 @@ Der Bereich von <b>$_ddmesh_wifi2FixIpStart</b> bis <b>$_ddmesh_wifi2FixIpEnd</b
 
 <tr><th>TX-Power:</th>
 <td><select name="form_wifi_txpower" size="1">
-$(iwinfo $wifi_status_radio2g_phy txpowerlist | awk '{if(match($1,"*")){sel="selected";v=$2;txt=$0}else{sel="";v=$1;txt=$0}; print "<option "sel" value=\""v"\">"txt"</option>"}')
-</select> (konfiguriert: $(uci -q get ddmesh.network.wifi_txpower) dBm) <b>Aktuell:</b> $(iwinfo $wifi_status_radio2g_phy info | awk '/Tx-Power:/{print $2,$3}')</td>
+$(echo "dummy" | awk -v cfg="$(uci -q get ddmesh.network.wifi_txpower)" '{ for(v=1;v<=20;v++){ if(v==cfg){sel="selected";mark="* "}else{sel="";mark=""}; printf("<option %s value=\"%d\">%s%d dBm (%d mW)</option>\n",sel,v,mark,v,10^(v/10));}}')
+</select> <b>Aktuell:</b> $(iwinfo $wifi_status_radio2g_phy info | awk '/Tx-Power:/{print $2,$3}')
+</td>
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
 
@@ -127,8 +128,10 @@ cat<<EOM
 </tr>
 <tr><th>Reduziere WLAN-Datenrate:</th><td><INPUT NAME="form_wifi_slow_rates" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" = "1" ];then echo ' checked="checked"';fi)> (Nicht empfohlen. Wenn aktiviert, kann Reichweite auf Kosten der &Uuml;bertragungsrate erh&ouml;ht werden. Dies gilt auch f&uuml;r Verbindungen zu anderen Knoten.)</td></tr>
 
+EOM
+if [ "$wifi_status_radio2g_mode_ap" -gt 1 ]; then
+cat <<EOM
 <tr><td colspan="2"><hr size=1></td></tr>
-
 <tr><th>Aktiviere privates WiFi:</th>
 <td><INPUT onchange="enable_private_wifi();" id="id_wifi3_enabled" NAME="form_wifi3_enabled" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi3_2g_enabled)" = "1" ];then echo ' checked="checked"';fi)>Erlaubt es, ein zusätzliches privates WiFi zu aktivieren.</td></tr>
 <tr><th>SSID:</th>
@@ -143,11 +146,19 @@ cat<<EOM
 <input name="form_wifi3_network" type="radio" value="lan" $checked_lan>LAN
 <input name="form_wifi3_network" type="radio" value="wan" $checked_wan>WAN
 </td></tr>
+EOM
+fi
+cat <<EOM
+</table>
+</div>
+
+<table>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
 <td colspan="2"><input name="form_wifi_submit" title="Die Einstellungen &uuml;bernehmen. Diese werden erst nach einem Neustart wirksam." type="submit" value="&Uuml;bernehmen">&nbsp;&nbsp;&nbsp;<input name="form_wifi_abort" title="Abbrechen und &Auml;nderungen verwerfen." type="submit" value="Abbrechen"></td>
 </tr>
 </table>
+
 </fieldset>
 </form>
 <br>

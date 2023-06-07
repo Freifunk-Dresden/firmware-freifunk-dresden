@@ -2,19 +2,19 @@
 License Notes
 ----------------
 
-There are two different part. 
+There are two different part.
 * Part one covers the source code, tools and built enviroment.
 * Part two covers the usage of own created firmware, programs or other tools which are intented to be used or connected
   to Dresden Freifunk Network
 
 The build environment can be used to build own router firmware which should be connected to Freifunk Dresden Network
 (after adding needed technical information to /etc/config/credentials)
-You can freely extent this firmware and use it to connect to Freifunk Dresden Network as long as GPL 3 AND 
+You can freely extent this firmware and use it to connect to Freifunk Dresden Network as long as GPL 3 AND
 the rules (below) are fulfilled.
 
 When building own devices which should be connected to Freifunk Dresden Network (not using firmware sources),
 needed technical information and credentials are provided via website www.freifunk-dresden.de or linked Wikis.
- 
+
 Using or extracting creditials from the router firmware is prohibit !
 Any credentials data/information do not fall under GPL. These data are private to Freifunk Dresden Firmware usage.
 
@@ -22,16 +22,16 @@ Freifunk Dresden Firmware and all tools or build environment is free software, p
 Copyright 2013 Freifunk Dresden
 
 When using network specific information which are needed to access Freifunk Dresden Network, you have to agree and fulfill
-some rules. If you not agree with this, you are not allow to connect to the Freifunk Dresden Network. 
+some rules. If you not agree with this, you are not allow to connect to the Freifunk Dresden Network.
 
 
 Used Licenses
 -----------------
 If not otherwise stated in the source files, the firmware is provided under the terms of the GNU General Public License Version 3. The exact license text can be found gpl3-en.txt .
 
-The OpenWrt distribution (precompiled images etc.) bundles a lot of third party applications and modules which are available under various other Open Source licenses or Public Domain. The sources for those packages can be found on the OpenWrt mirror. Please refer to these source packages to find out which license applies to them. 
+The OpenWrt distribution (precompiled images etc.) bundles a lot of third party applications and modules which are available under various other Open Source licenses or Public Domain. The sources for those packages can be found on the OpenWrt mirror. Please refer to these source packages to find out which license applies to them.
 
-If not otherwise stated in the source files, the OpenWrt build environment is provided under the terms of the GNU General Public License Version 2. The exact GPLv2 license text can be found in the file LICENSE in the source repository at openwrt.org. 
+If not otherwise stated in the source files, the OpenWrt build environment is provided under the terms of the GNU General Public License Version 2. The exact GPLv2 license text can be found in the file LICENSE in the source repository at openwrt.org.
 
 Addtional addes programs and its notes can be found at sources directory.
 
@@ -61,12 +61,9 @@ Hotpsot-Rules
 All hotspot rules are fulfilled by official released firmware
 - must provide Wifi access via access point mode and Ad-hoc mode
 - must use same bssid used as used in official firmware (technical information can be found at website or can be requested)
-- must provide a splash-screen which is displayed to the end user. this splash screen must tell the user to respect
-  law and fair usage. for detailt information, please see website or source tree or check splash on other routers.
-  (Note that this is used and reqired by some courts to protect other Freifunk users)
 - must have valid contact information. at least a valid email address must be supplied.
 - must provide GPS coordinates (used by hotspot list or displayed be routers web page)
-- must fulfill piko agreement: forward any traffic, never modify or redirect traffic 
+- must fulfill piko agreement: forward any traffic, never modify or redirect traffic
 - must fully act as router.
 - must use the registrator (registrator url is provided via website) to get a uniq node number.
 - must use the correct ip address calulation to get a unique IP address and avoid address conflicts.
@@ -84,30 +81,13 @@ But those devices have also some rules that are apply.
   other private range addresses may disturb the complete routing of Freifunk Network.
 
 - must have valid contact information. at least a valid email address must be supplied.
-- must fulfill piko agreement: forward any traffic, never modify or redirect traffic 
+- must fulfill piko agreement: forward any traffic, never modify or redirect traffic
 - must fully act as router.
 - must use the registrator (registrator url is provided via website) to get a uniq node number.
 - must use the correct ip address calulation to get a unique IP address and avoid address conflicts.
 - must use only allowed parameters for routing protocol (bmxd)
 - must provide a webserver access to supply contact information, statistical information (optional),
   routing information, backbone information (optional) to  Freifunk Dresden server.
-  
+
 
 Technical information for routing protocol, firewall, wifi or needed supplied information are provided at website (or wiki)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

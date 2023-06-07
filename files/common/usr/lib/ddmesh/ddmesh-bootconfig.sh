@@ -114,12 +114,13 @@ config network 'network'
 	option	wifi_channel 13
 	option	wifi_txpower 18
 	option	disable_wifi_5g 0
-	option	wifi_channel_5g 44
+	option	wifi_channel_5g 36
 	option	wifi_txpower_5g 18
 	option	wifi_indoor_5g 0
-	option	wifi_channels_5g_outdoor '100-140'
-	option	wifi_ch_5g_outdoor_min 100
-	option	wifi_ch_5g_outdoor_max 140
+# multiple of 20,40,80 Mhz !!!
+	option	wifi_channels_5g_outdoor '52-144'
+	option	wifi_ch_5g_outdoor_min 52
+	option	wifi_ch_5g_outdoor_max 144
 	option	wifi_slow_rates 0
 	option	wifi2_dhcplease '5m'
 	option	wifi2_isolate '1'
@@ -215,22 +216,6 @@ config privnet 'privnet'
 #	option	port			''
 #	option	public_key		''
 
-config nodegroup 'nodegroup'
-	option  clients_enabled         1
-	option  server_enabled          0
-	option  fastd_port		'4000'
-	option	server_passwd		''
-	option  default_fastd_port	'4000'
-	option	number_of_clients	5
-
-#config nodegroup_accept
-#	option	name			''
-#	option	password		''
-
-#config nodegroup_client
-#	option	name			''
-#	option	port			''
-#	option	password		''
 EOM
 
 	#almost disable crond logging (only errors)
@@ -271,6 +256,7 @@ EOM
 
 	# dropbear ssh
 	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
+	uci commit
 
 } # config_boot_step1
 
@@ -423,7 +409,7 @@ config_update() {
 
 
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh configure
-
+	uci commit
 }
 
 config_temp_configs() {
@@ -483,6 +469,8 @@ if [ "$(uci -q get ddmesh.boot.firstboot)" = "1" ]; then
 	uci -q del ddmesh.boot.firstboot
 fi
 
+cmd="$1"
+
 case "$boot_step" in
 	1) # initial boot step
 		/usr/lib/ddmesh/ddmesh-led.sh status boot1
@@ -490,8 +478,13 @@ case "$boot_step" in
 		config_boot_step1
 		uci set ddmesh.boot.boot_step=2
 		uci commit
+
 		logger -s -t "$LOGGER_TAG" "reboot boot step 1"
+		/usr/lib/ddmesh/ddmesh-display.sh reboot
+
+		sync
 		reboot
+
 		#stop boot process
 		exit 1
 		;;
@@ -525,9 +518,7 @@ case "$boot_step" in
 			uci set ddmesh.boot.boot_step=3
 			uci set ddmesh.boot.nightly_upgrade_running=0
 			uci set ddmesh.boot.upgrade_running=0
-
 			uci commit
-			sync
 
 			# after uci commit and only when fw was upgraded
 			if [ "$upgrade_running" = "1" ]; then
@@ -538,8 +529,9 @@ case "$boot_step" in
 			fi
 
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
+			/usr/lib/ddmesh/ddmesh-display.sh reboot
 
-			sleep 5
+			sync
 			reboot
 
 			#stop boot process
@@ -547,8 +539,17 @@ case "$boot_step" in
 		fi
 		;;
 	3) # temp config
+
+		# when calling "ddmesh-bootconfig.sh reboot" then a reboot was requested in case boot_step is still 3
+		if [ "$cmd" = "reboot" ]; then
+			logger -s -t "$LOGGER_TAG" "boot step 3 - reboot requested"
+			reboot
+			exit 1
+		fi
+
 		/usr/lib/ddmesh/ddmesh-led.sh status boot3
 		logger -s -t "$LOGGER_TAG" "boot step 3"
+
 		node=$(uci get ddmesh.system.node)
 		if [ -z "$node" ]; then
 			logger -t $LOGGER_TAG "ERROR: no node number"

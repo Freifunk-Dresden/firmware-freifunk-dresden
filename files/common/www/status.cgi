@@ -34,7 +34,7 @@ cat<<EOM
 <tr class="colortoggle1"><th>Knoten-IP-Adresse:</th><td><a href="https://$_ddmesh_ip/">$_ddmesh_ip</a></td></td></tr>
 <tr class="colortoggle2"><th>Internet-Gateway:</th><td><a href="https://$INET_GW_IP/">$INET_GW</a></td></td></tr>
 EOM
-if [ "$wifi_status_radio2g_up" = "1" -o "$wifi_status_radio5g_up" = "1" ]; then
+if [ "$wifi_status_radio2g_present" = "1" ]; then
 cat<<EOM
 <tr class="colortoggle1"><th>Wifi Client IP Bereich (DHCP)</th><td>${_ddmesh_wifi2dhcpstart} - ${_ddmesh_wifi2dhcpend}</td></tr>
 <tr class="colortoggle2"><th>Wifi Client IP Bereich (fest)</th><td>${_ddmesh_wifi2FixIpStart} - ${_ddmesh_wifi2FixIpEnd}</td></tr>

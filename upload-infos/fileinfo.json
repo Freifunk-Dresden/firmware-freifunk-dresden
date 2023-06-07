@@ -1612,8 +1612,8 @@
     {
       "name": "",
       "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "model": "glinet,gl-e750",
+      "model2": "GL.iNet GL-E750",
       "filename": "openwrt-ath79-nand-glinet_gl-e750-squashfs-sysupgrade.bin",
       "comment": ""
     },

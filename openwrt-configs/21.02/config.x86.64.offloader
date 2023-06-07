@@ -381,7 +381,7 @@ CONFIG_TARGET_INIT_CMD="/sbin/init"
 CONFIG_TARGET_INIT_SUPPRESS_STDERR=y
 # CONFIG_VERSIONOPT is not set
 CONFIG_PER_FEED_REPO=y
-CONFIG_FEED_ddmesh_own=y
+CONFIG_FEED_ddmesh=y
 CONFIG_FEED_packages=y
 CONFIG_FEED_routing=y
 
@@ -2490,6 +2490,7 @@ CONFIG_PACKAGE_wireguard-tools=y
 CONFIG_PACKAGE_ddmesh-extra-modules=m
 CONFIG_PACKAGE_tcpdump=y
 CONFIG_PACKAGE_ddmesh-tethering=y
+CONFIG_PACKAGE_ddmesh-usb-console=y
 CONFIG_PACKAGE_ddmesh-usb-storage=y
 # CONFIG_PACKAGE_ddmesh-wifi is not set
 # end of ddmesh
@@ -3289,7 +3290,7 @@ CONFIG_PACKAGE_kmod-usb-ohci-pci=y
 CONFIG_PACKAGE_kmod-usb-serial=y
 # CONFIG_PACKAGE_kmod-usb-serial-ark3116 is not set
 # CONFIG_PACKAGE_kmod-usb-serial-belkin is not set
-# CONFIG_PACKAGE_kmod-usb-serial-ch341 is not set
+CONFIG_PACKAGE_kmod-usb-serial-ch341=y
 # CONFIG_PACKAGE_kmod-usb-serial-cp210x is not set
 # CONFIG_PACKAGE_kmod-usb-serial-cypress-m8 is not set
 # CONFIG_PACKAGE_kmod-usb-serial-edgeport is not set
@@ -3302,7 +3303,7 @@ CONFIG_PACKAGE_kmod-usb-serial=y
 # CONFIG_PACKAGE_kmod-usb-serial-mos7840 is not set
 CONFIG_PACKAGE_kmod-usb-serial-option=y
 # CONFIG_PACKAGE_kmod-usb-serial-oti6858 is not set
-# CONFIG_PACKAGE_kmod-usb-serial-pl2303 is not set
+CONFIG_PACKAGE_kmod-usb-serial-pl2303=y
 # CONFIG_PACKAGE_kmod-usb-serial-qualcomm is not set
 # CONFIG_PACKAGE_kmod-usb-serial-sierrawireless is not set
 # CONFIG_PACKAGE_kmod-usb-serial-simple is not set
@@ -4194,7 +4195,7 @@ CONFIG_PACKAGE_mkf2fs=y
 #
 # Terminal
 #
-# CONFIG_PACKAGE_agetty is not set
+CONFIG_PACKAGE_agetty=y
 # CONFIG_PACKAGE_script-utils is not set
 # CONFIG_PACKAGE_setterm is not set
 # CONFIG_PACKAGE_wall is not set

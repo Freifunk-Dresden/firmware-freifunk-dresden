@@ -25,13 +25,6 @@ do
 	service="$(uqmi -s -d $wwan_device --get-serving-system)"
 	eval $(echo $service | jsonfilter -e registration='@.registration' -e mcc='@.plmn_mcc' -e mnc='@.plmn_mnc')
 
-	# search current provider
-	#network="$(uqmi -s -d $wwan_device --network-scan)"
-	#provider="$(echo $network | jsonfilter -e '@.network_info[@.status[@="current_serving"]].description')"
-	#"provider": "$provider",
-	#"network": $network,
-	#"service": $service,
-
 cat<<EOM > $lte_info.tmp
 	{
 	"signal": $signal,

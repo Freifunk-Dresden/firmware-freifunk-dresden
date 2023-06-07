@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="20"
+SCRIPT_VERSION="21"
 
 
 # gitlab variables
@@ -455,12 +455,17 @@ setup_dynamic_firmware_config()
 
 
 #----------------- process argument ----------------------------------
+usage_short()
+{
+	echo "Version: $SCRIPT_VERSION"
+	echo "usage: $(basename $0) [options] <command | target-pattern > [clean | menuconfig | rerun]   [-- < make params ... > ]"
+}
 usage()
 {
 	# create a simple menu
+	usage_short
 	cat <<EOM
-Version: $SCRIPT_VERSION
-usage: $(basename $0) [options] <command> | <target> [flags] [-- < make params ... > ]
+
  options:
    -h    docker host, if not specified environment variable 'FF_DOCKER_HOST' or 'DOCKER_HOST' is used.
          FF_DOCKER_HOST is used in favour to DOCKER_HOST. -h still has highest preference
@@ -478,7 +483,8 @@ usage: $(basename $0) [options] <command> | <target> [flags] [-- < make params .
    search <string>         - search specific router (target)
    feed-revisions          - displays the openwrt default feed revisions.
                              The revisions then could be set in build.json
-   target                  - target to build
+
+   target-pattern          - target to build
            that are defined by build.json. use 'list' for supported targets.
            'all'                   - builds all targets
            'failed'                - builds only previously failed or not built targets
@@ -487,7 +493,7 @@ usage: $(basename $0) [options] <command> | <target> [flags] [-- < make params .
            '*generic'              - builds all that end with generic
 
   flags
-   clean                   - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
+   clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    menuconfig       - displays configuration menu
    rerun            - enables a second compilation with make option 'V=s'
                       If first make failes a second make is tried with this option
@@ -498,7 +504,7 @@ Devel-Notes:
 
  To compile a specific feed change to workdir and call something like:
 
-     make package/feeds/ddmesh_own/fastd/compile -j1 V=s
+     make package/feeds/ddmesh/fastd/compile -j1 V=s
 
 EOM
 }
@@ -651,8 +657,8 @@ case "$1" in
 						do
 							view=$(listTargets)
 							clear
-							date
 							echo -e "$view"
+							date
 						done
 						exit 0
 						;;
@@ -740,6 +746,7 @@ esac
 # check of we have a targetRegex
 if [ -z "$targetRegex" ]; then
 	echo "Error: no target specified"
+	usage_short
 	exit 1
 fi
 
@@ -1153,13 +1160,19 @@ EOM
 		_feed_src=$(echo $feed | jq $OPT '.src')
 		_feed_rev=$(echo $feed | jq $OPT '.rev')
 
-		# for local feeds set correct absolute filename because when workdir is a symlink, relative
-		# path are note resolved correctly. Also we need to use $_selector_feeds
+		# for local feeds set correct absolute filename because when workdir is a symlink (like on gitlab runners),
+		# relative path are note resolved correctly. Also we need to use $_selector_feeds.
+		# "feeds" : [
+		#   {"type":"src-link", "name":"ddmesh",   "src":"" },
+		#   {"type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc"},
+		#   {"type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"4b2b6b3"}
+		# ],
+		# The feed directory for "ddmesh" is directly located below firmware/feeds/<feed-selector>/
 		if [ "$_feed_type" = "src-link" ]; then
 			_feed_src="$RUN_DIR/feeds/$_selector_feeds/$_feed_src"
 			_feed_rev=""	# src-link does not have a rev, because it is already in current git repo
 		else
-			# if we have a feed revision, then add it. "^° is a special character
+			# if we have a feed revision, then add it. "^" is a special character
 			# followed by a "commit" (hash). openwrt then checks out this revision
 			test "$_feed_rev" = "null" && _feed_rev=""
 			test -n "$_feed_rev" && _feed_rev="^$_feed_rev"
@@ -1199,8 +1212,8 @@ EOM
 		./scripts/feeds install $entry
 	done
 
-	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh_own)"$C_NONE
-	./scripts/feeds install -a -p ddmesh_own
+	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh)"$C_NONE
+	./scripts/feeds install -a -p ddmesh
 
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
                   # create a new config
@@ -1266,9 +1279,6 @@ EOM
 	fi
 
 	make clean
-
-	echo -e $C_CYAN"copy back configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
-	cp .config $RUN_DIR/$config_file
 
 	# run make command
 	echo -e $C_CYAN"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"

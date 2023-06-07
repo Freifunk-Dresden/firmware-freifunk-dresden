@@ -183,7 +183,7 @@ function fold(id)
 	return false;
 }
 
-function fold(id, hide)
+function fold2(id, hide)
 {
 	obj = document.getElementById(id);
 	obj.style.display = hide ? 'none':'block';

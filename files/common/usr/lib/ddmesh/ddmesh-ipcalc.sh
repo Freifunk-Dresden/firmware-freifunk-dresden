@@ -160,7 +160,7 @@ awk -v arg1="$ARG1" -v arg2="$ARG2" '
 	print "export _ddmesh_max=\""ENVIRON["NODE_MAX"]"\""
 	print "export _ddmesh_node=\""node"\""
 	print "export _ddmesh_domain=\""domain"\""
-	print "export _ddmesh_hostname=\"r"node"\""
+	print "export _ddmesh_hostname=\""node"\""
 	print "export _ddmesh_ip=\""nodeip"\""
 	print "export _ddmesh_nonprimary_ip=\""nonprimary_ip"\""
 	print "export _ddmesh_wireguard_ip=\""wireguard_ip"\""

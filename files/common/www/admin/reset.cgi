@@ -49,13 +49,8 @@ EOM
 					uci commit
 				fi
 
-				if [ "$(uci -q get ddmesh.boot.boot_step)" = "3" ]; then
-					SECONDS=90
-					BARS=1
-				else
-					SECONDS=180
-					BARS=2
-				fi
+				SECONDS=120
+				BARS=1
 
 				echo "Alle Einstellungen bleiben erhalten."
 			fi
@@ -74,10 +69,13 @@ EOM
 			</SCRIPT>
 EOM
 			if [ -n "$form_reset_factory" ]; then
+				/usr/lib/ddmesh/ddmesh-display.sh factory
 				/sbin/firstboot -y
 			fi
-			sleep 2
-			reboot&
+				/usr/lib/ddmesh/ddmesh-display.sh reboot
+				# update config and reboot
+				/usr/lib/ddmesh/ddmesh-bootconfig.sh reboot &
+
 			;;
 		*)
 		;;

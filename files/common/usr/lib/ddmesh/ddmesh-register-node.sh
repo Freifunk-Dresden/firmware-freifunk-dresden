@@ -146,7 +146,9 @@ case "$j_status" in
 			echo "updated (reboot:$rebooting, uci:$uci_commit, overlay:$overlay)."
 			logger -t $LOGGER_TAG "updated (reboot:$rebooting, uci:$uci_commit, overlay:$overlay)."
 			test "$uci_commit" = 1 -a "$overlay" = "1" && echo "overlay updated." && /usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
-			test "$rebooting" = "1" && sleep 5 && echo "rebooting..." && sync && reboot
+
+			# update config and reboot
+			test "$rebooting" = "1" && sleep 5 && echo "rebooting..." && /usr/lib/ddmesh/ddmesh-bootconfig.sh reboot
 
 		;;
 	error) 		logger -s -t $LOGGER_TAG "$j_error"

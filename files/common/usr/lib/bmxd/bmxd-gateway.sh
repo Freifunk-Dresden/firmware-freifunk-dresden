@@ -2,6 +2,9 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
+# when reboot/firmware update do not allow reconfigure network/dnsmasq
+test -f /tmp/freifunk-running || exit 0
+
 RESOLV_PATH="/tmp/resolv.conf.d"
 RESOLV_CONF_FINAL="${RESOLV_PATH}/resolv.conf.final"
 RESOLV_CONF_AUTO="${RESOLV_PATH}/resolv.conf.auto"
@@ -66,7 +69,8 @@ case "$ARG" in
 		;;
 
 	del|init)
-		# dont write this state to BMXD_GW_STATUS_FILE !
+		# dont write this state to BMXD_GW_STATUS_FILE, else ffgw tunnel will be recreated
+		# also when not changed
 
 		# check if this router is a gateway
 		gw="$(ip ro li ta public_gateway | grep default)"

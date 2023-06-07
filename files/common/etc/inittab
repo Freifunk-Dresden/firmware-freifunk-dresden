@@ -1,0 +1,10 @@
+::sysinit:/etc/init.d/rcS S boot
+::shutdown:/etc/init.d/rcS K shutdown
+::askconsole:/usr/libexec/login.sh
+ttyUSB0::respawn:/usr/sbin/agetty.sh -L ttyUSB0 115200
+ttyUSB1::respawn:/usr/sbin/agetty.sh -L ttyUSB1 115200
+ttyUSB2::respawn:/usr/sbin/agetty.sh -L ttyUSB2 115200
+ttyUSB3::respawn:/usr/sbin/agetty.sh -L ttyUSB3 115200
+ttyUSB4::respawn:/usr/sbin/agetty.sh -L ttyUSB4 115200
+ttyUSB5::respawn:/usr/sbin/agetty.sh -L ttyUSB5 115200
+ttyUSB6::respawn:/usr/sbin/agetty.sh -L ttyUSB6 115200
