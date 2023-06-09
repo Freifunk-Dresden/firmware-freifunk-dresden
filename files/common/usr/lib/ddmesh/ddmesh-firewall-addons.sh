@@ -197,8 +197,15 @@ setup_ignored_nodes() {
 	$IPT -w -N input_ignore_nodes_vlan
 	$IPT -w -N input_ignore_nodes_tbb # fastd+wg
 
-	#add tables to deny some nodes to prefer backbone connections
-	[ -n "$wifi_adhoc_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_adhoc_ifname -j input_ignore_nodes_wifia
+	# use uci to get ifname because "ubus call" returnes only when interface is detected which is to late for wifi
+	wifi_mesh2g_ifname="$(uci -q get wireless.wifi_mesh2g.ifname)"
+	wifi_mesh5g_ifname="$(uci -q get wireless.wifi_mesh2g.ifname)"
+	mesh_lan_ifname="$(uci -q get network.mesh_lan.device)"
+	mesh_wan_ifname="$(uci -q get network.mesh_wan.device)"
+	mesh_vlan_ifname="$(uci -q get network.mesh_vlan.device)"
+	tbb_wg_ifname="$(uci -q get network.tbb_wg.device)"
+	tbb_fastd_ifname="$(uci -q get network.tbb_fastd.device)"
+
 	[ -n "$wifi_mesh2g_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_mesh2g_ifname -j input_ignore_nodes_wifi2m
 	[ -n "$wifi_mesh5g_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_mesh5g_ifname -j input_ignore_nodes_wifi5m
 	[ -n "$mesh_lan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
