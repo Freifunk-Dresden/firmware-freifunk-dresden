@@ -583,7 +583,8 @@ CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_tplink_cpe220-v3=""
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_trendnet_tew-823dru is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_aircube-ac is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_aircube-isp is not set
-# CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_airrouter is not set
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_airrouter=y
+CONFIG_TARGET_DEVICE_PACKAGES_ath79_generic_DEVICE_ubnt_airrouter=""
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_bullet-ac is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_bullet-m-ar7240 is not set
 # CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_ubnt_bullet-m-ar7241 is not set

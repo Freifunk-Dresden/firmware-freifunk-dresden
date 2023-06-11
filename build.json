@@ -176,10 +176,6 @@
     "config":"config.ath79.small"
   },
   {
-    "name":"ath79.small.tether-nowg",
-    "config":"config.ath79.small.tether-nowg"
-  },
-  {
     "name":"ath79.generic.gl-mifi",
     "config":"config.ath79.generic.gl-mifi"
   },
