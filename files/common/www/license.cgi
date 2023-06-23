@@ -2,7 +2,6 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
-export ALLOW_PAGE=1
 export NOMENU=1
 export HTTP_ALLOW_GET_REQUEST=1
 export TITLE="Licenses"

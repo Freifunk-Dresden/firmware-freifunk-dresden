@@ -522,7 +522,7 @@ config rule
 	option src 'wifi2'
 	option src_ip '100.64.0.0/10'
 	option proto 'tcp'
-	option dest_port '80:81'
+	option dest_port '80'
 	option target 'ACCEPT'
 
 config rule

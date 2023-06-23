@@ -62,7 +62,6 @@ config system 'system'
 	option  wansetup 1
 	option  meshssh 1
 	option  meshsetup 1
-	option	disable_splash 1
 	option	firmware_autoupdate 1
 	option	fwupdate_always_allow_testing 0
 	option	email_notification 0

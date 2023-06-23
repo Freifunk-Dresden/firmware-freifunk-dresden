@@ -23,12 +23,6 @@ eval $(cat /etc/openwrt_release)
 
 avail_flash_size=$(df -k -h /overlay | sed -n '2,1{s# \+# #g; s#[^ ]\+ [^ ]\+ [^ ]\+ \([^ ]\+\) .*#\1#;p}')
 
-if [ "$(uci -q get ddmesh.system.disable_splash)" = "1" ]; then
-	splash=0
-else
-	splash=1
-fi
-
 if [ "$(uci -q get ddmesh.system.email_notification)" = "1" ]; then
 	email_notification=1
 else
@@ -257,7 +251,6 @@ $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*
 			$([ "$wifi_status_radio2g_present" == "1" ] && echo "\"wifi_2g_channel\": ${wifi_2g_channel},")
 			$([ "$wifi_status_radio5g_present" == "1" ] && echo "\"wifi_5g_channel\": ${wifi_5g_channel},")
 			"node_type":"$node_type",
-			"splash":$splash,
 			"email_notification":$email_notification,
 			"autoupdate":$autoupdate,
 			"available_flash_size":"$avail_flash_size",
