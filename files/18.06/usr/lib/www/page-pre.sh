@@ -2,13 +2,6 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
-#redirect to splash
-if [ "$SERVER_PORT" = "81" -a "$ALLOW_PAGE" != "1" ];then
-        export DOCUMENT_ROOT="/www/splash"
-        "$DOCUMENT_ROOT"/index.cgi
-        exit 0
-fi
-
 . /usr/lib/www/page-functions.sh
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
@@ -53,7 +46,6 @@ cat<<EOF
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	$SPLASH_BASE
 	<title>$_ddmesh_node [$in_ifname] - $TITLE</title>
 	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 	<meta content="no-cache" http-equiv="cache-control">

@@ -60,7 +60,6 @@ start() {
 	/usr/lib/ddmesh/ddmesh-firewall-addons.sh firewall-update
 	/usr/lib/ddmesh/ddmesh-backbone.sh firewall-update
 	/usr/lib/ddmesh/ddmesh-privnet.sh firewall-update
-	/usr/lib/ddmesh/ddmesh-splash.sh firewall-update
 
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit

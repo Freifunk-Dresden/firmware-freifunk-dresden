@@ -18,6 +18,4 @@ cp $F $F.tmp
 tail -500 $F.tmp >$F
 rm -f $F.tmp
 
-test "$1" = "del" && /usr/lib/ddmesh/ddmesh-splash.sh delmac $2
-
 echo [$(date "+%a %d.%m.%Y %T")] cmd=$1 mac=$2 ip=$3 hostname=$4 >> $F

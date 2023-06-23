@@ -100,7 +100,6 @@ do
 	# update wg connections if peers IP has changed
 	call_task 1 /usr/lib/ddmesh/ddmesh-backbone.sh update
 	call_task 1 /usr/lib/ddmesh/ddmesh-gateway-check.sh
-	call_task 5 /usr/lib/ddmesh/ddmesh-splash.sh autodisconnect
 
 	# watchdog timestamp
 	date +'%s' > $TIMESTAMP

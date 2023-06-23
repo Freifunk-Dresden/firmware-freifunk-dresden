@@ -21,45 +21,6 @@ fwprint()
 # export IPT=fwprint
 export IPT=iptables
 
-
-setup_splash() {
-	# prepare splash
-	logger -s -t $TAG "setup_splash"
-
-	WIFIADR=$_ddmesh_wifi2ip
-	eval $(ipcalc.sh $WIFIADR $_ddmesh_wifi2netmask)
-	WIFIPRE=$PREFIX
-
-	# table: nat
-	$IPT -w -t nat -N SPLASH
-	$IPT -w -t nat -N SPLASH_AUTH_USERS
-	$IPT -w -t nat -N SPLASH_PUBLIC_SERVICES
-	$IPT -w -t nat -A SPLASH -j SPLASH_AUTH_USERS
-	$IPT -w -t nat -A SPLASH_AUTH_USERS -j SPLASH_PUBLIC_SERVICES
-
-	$IPT -w -t nat -A SPLASH_AUTH_USERS -p tcp --dport 80 -j DNAT --to $WIFIADR:81
-	#force any manuell configured dns to this local dns
-	$IPT -w -t nat -A SPLASH_AUTH_USERS -p udp --dport 53 -j DNAT --to $WIFIADR:53
-
-	$IPT -w -t nat -A prerouting_wifi2_rule -s $WIFIADR/$WIFIPRE -j SPLASH
-
-	# table: filter
-	$IPT -w -N SPLASH
-	$IPT -w -N SPLASH_AUTH_USERS
-	$IPT -w -N SPLASH_PUBLIC_SERVICES
-
-	$IPT -w -A SPLASH -j SPLASH_AUTH_USERS
-	$IPT -w -A SPLASH_AUTH_USERS -j SPLASH_PUBLIC_SERVICES
-	$IPT -w -A SPLASH_PUBLIC_SERVICES -p icmp -j RETURN
-	$IPT -w -A SPLASH_PUBLIC_SERVICES -p udp -j REJECT --reject-with icmp-port-unreachable
-	$IPT -w -A SPLASH_PUBLIC_SERVICES -p tcp -j REJECT --reject-with tcp-reset
-	$IPT -w -A SPLASH_PUBLIC_SERVICES -j DROP
-
-	#$IPT -w -A forwarding_wifi2_rule -s $WIFIADR/$WIFIPRE -j SPLASH
-	#before iptable rule ctstate ESTABLISHED
-	$IPT -w -A forwarding_rule -i $wifi2_ifname -s $WIFIADR/$WIFIPRE -j SPLASH
-}
-
 setup_custom_rules() {
 # temp firewall rules (fw uci can not add custom chains)
 	logger -s -t $TAG "setup_custom_rules"
@@ -235,7 +196,6 @@ update_ignored_nodes() {
 _init()
 {
 	#init all rules that can not be set by openwrt-firewall
-	test "$(uci get ddmesh.system.disable_splash 2>/dev/null)" != "1" && setup_splash
 	setup_custom_rules
 	setup_ignored_nodes
 	setup_openvpn_rules

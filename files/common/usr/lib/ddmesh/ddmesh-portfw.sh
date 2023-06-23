@@ -4,7 +4,7 @@
 
 . /lib/functions.sh
 
-PROTECTED_PORTS="22 53 68 80 81 443 4305 4306 4307"
+PROTECTED_PORTS="22 53 68 80 443 4305 4306 4307"
 PROTECTED_PORTS="$PROTECTED_PORTS $(uci -q get ddmesh.backbone.fastd_port)"
 PROTECTED_PORTS="$PROTECTED_PORTS $(uci -q get ddmesh.privnet.fastd_port)"
 

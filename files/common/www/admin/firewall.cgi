@@ -123,14 +123,6 @@ cat<<EOM
 	<a href="firewall.cgi?ipt_table=filter&ip_version=ipv4">filter</a>,
 	<a href="firewall.cgi?ipt_table=nat&ip_version=ipv4">nat</a>,
 	<a href="firewall.cgi?ipt_table=mangle&ip_version=ipv4">mangle</a>
-EOM
-if [ "$(uci get ddmesh.system.disable_splash)" != "1" ]; then
-cat<<EOM
-	,<a href="firewall.cgi?ipt_table=filter&ipt_chain=SPLASH&ip_version=ipv4">filter::SPLASH</a>,
-	<a href="firewall.cgi?ipt_table=nat&ipt_chain=SPLASH&ip_version=ipv4">nat::SPLASH</a>
-EOM
-fi
-cat<<EOM
 	<br/>
 	<br/>
 EOM
