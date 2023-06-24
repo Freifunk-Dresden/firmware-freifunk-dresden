@@ -76,7 +76,7 @@ update()
 		eval $(cat $lte_info | jsonfilter -e m_type='@.signal.type' \
 						-e m_rssi='@.signal.rssi' -e m_rsrq='@.signal.rsrq' \
 						-e m_rsrp='@.signal.rsrp' -e m_snr='@.signal.snr' \
-						-e m_conn='@.status' -e m_reg='@.registration')
+						-e m_conn='@.status' -e m_reg='@.service.registration')
 
 
 		case "$m_type" in

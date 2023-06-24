@@ -21,15 +21,17 @@ do
 
 	signal="$(uqmi -s -d $wwan_device --get-signal-info)"
 	status="$(uqmi -s -d $wwan_device --get-data-status)"
-
+	pin_state="$(uqmi -s -d $wwan_device --uim-get-sim-state)"
+	system_info="$(uqmi -d $wwan_device --get-system-info)"
 	service="$(uqmi -s -d $wwan_device --get-serving-system)"
-	eval $(echo $service | jsonfilter -e registration='@.registration' -e mcc='@.plmn_mcc' -e mnc='@.plmn_mnc')
 
 cat<<EOM > $lte_info.tmp
 	{
 	"signal": $signal,
 	"status": $status,
-	"registration":"$registration"
+	"service": $service,
+	"pin_state" : $pin_state,
+	"system_info" : $system_info
 	}
 EOM
 	mv $lte_info.tmp $lte_info

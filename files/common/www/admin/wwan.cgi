@@ -17,7 +17,12 @@ if [ -f "$lte_info" ]; then
 	eval $(cat $lte_info | jsonfilter -e m_type='@.signal.type' \
 		-e m_rssi='@.signal.rssi' -e m_rsrq='@.signal.rsrq' \
 		-e m_rsrp='@.signal.rsrp' -e m_snr='@.signal.snr' \
-		-e m_conn='@.status' -e m_reg='@.registration')
+		-e m_conn='@.status' -e m_reg='@.service.registration' \
+		-e m_pin1_status='@.pin_state.pin1_status' \
+		-e m_pin1_verify_tries='@.pin_state.pin1_verify_tries' \
+		-e m_pin1_unlock_tries='@.pin_state.pin1_unlock_tries' \
+		-e m_roaming='@.system_info.lte.roaming_status'
+	)
 
 	gif=5
 	test $m_rssi -lt -60 && gif=4
@@ -52,7 +57,7 @@ cat<<EOM
 <tr><th>SNR</th><td>$m_snr</td></tr>
 <tr><th>Connection</th><td>$m_conn</td></tr>
 <tr><th>Registration</th><td>$m_reg</td></tr>
-
+<tr><th>Roaming</th><td>$m_roaming</td></tr>
 </table>
 </fieldset>
 
@@ -76,11 +81,14 @@ cat<<EOM
 <legend>Mobile SIM Karte - Einstellungen</legend>
 <table>
 
-<tr><th>APN:</th> <td> <input name="form_wwan_apn" size="30" type="text" value="$wwan_apn"> </td> </tr>
-<tr><th>SIM-Karten Pin:</th> <td> <input name="form_wwan_pincode" size="30" type="text" value="$wwan_pincode"><br />
-<b>Achtung:</b> Pin wird nicht gepr&uuml;ft. Eine falsche PIN kann die SIM-Karte sperren. Dann muss die Karte in einem Mobiltelefon entsperrt werden.<br>
+<tr><th>APN:</th><td><input name="form_wwan_apn" size="30" type="text" value="$wwan_apn"> </td></tr>
+<tr><th>Pin 1:</th> <td> <input name="form_wwan_pincode" size="30" type="text" value="$wwan_pincode"></td></tr>
+<tr><th></th><td><b>Achtung:</b> Pin wird nicht gepr&uuml;ft. Eine falsche PIN kann die SIM-Karte sperren. Dann muss die Karte in einem Mobiltelefon entsperrt werden.<br>
 PIN kann vorher im Smartphone deaktiviert werden.
 </td></tr>
+<tr><td COLSPAN="2">&nbsp;</td></tr>
+<tr><th>Status:</th><td>$m_pin1_status</td></tr>
+<tr><th>Versuche:</th><td>$m_pin1_verify_tries</td></tr>
 <tr><td COLSPAN="2">&nbsp;</td></tr>
 
 <tr> <td COLSPAN="2">
