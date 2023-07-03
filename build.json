@@ -176,10 +176,6 @@
     "config":"config.ath79.small"
   },
   {
-    "name":"ath79.generic.gl-mifi",
-    "config":"config.ath79.generic.gl-mifi"
-  },
-  {
     "name":"ath79.nand",
     "config":"config.ath79.nand"
   },
@@ -200,6 +196,26 @@
     "config":"config.mpc85xx.p1020"
   },
 # ---------- openwrt 22 -----------------------------------------------------------------------
+	{
+		"name":"ath79.generic.gl-mifi",
+		"config":"config.ath79.generic.gl-mifi",
+    "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
+    "openwrt_variant":"iptables",
+
+    "selector-config"  : "22.03",            # used to select config
+    "selector-feeds"   : "22.03",            # used to select feeds
+    "selector-patches" : "22.03",            # used to select patches
+    "selector-files"   : "22.03",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
+    ],
+    # install addional packages from feeds (see feeds.conf)
+    "packages" : [
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma", "haproxy"
+    ]
+	},
   {
     "name":"ath79.nand.gl-e750",
     "config":"config.ath79.nand.gl-e750",
