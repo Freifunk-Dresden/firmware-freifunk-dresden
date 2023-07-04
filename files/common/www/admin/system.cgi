@@ -263,6 +263,18 @@ cat <<EOM
 </TR>
 EOM
 fi
+
+if [ -n "$(which usbmuxd)" ]; then
+cat <<EOM
+<TR>
+<TH>- Aktiviere IOS USB-Tethering</TH>
+<TD><INPUT NAME="enable_ios_tethering" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.enable_ios_tethering)" = "1" ];then echo ' checked="checked"';fi)>
+</td>
+<td>Hinweis: Kann auf einigen Ger&auml;ten zu hoher Systemlast f&uuml;hren<td>
+</TR>
+EOM
+fi
+
 cat <<EOM
 
 <TR><TD COLSPAN="3">&nbsp;</TD></TR>
@@ -418,6 +430,8 @@ else
 			uci set ddmesh.network.mesh_on_wan=${form_wan_meshing:-0}
 #		fi
 		uci set ddmesh.network.force_ether_100mbit=${form_ethernet_speed:-0}
+		uci set ddmesh.network.enable_ios_tethering=${enable_ios_tethering:-0}
+
 		test -n "$form_bmxd_preferred_gateway" && prefgw="$(uhttpd -d ${form_bmxd_preferred_gateway})"
 		uci set ddmesh.bmxd.preferred_gateway="$prefgw"
 		uci set ddmesh.bmxd.only_community_gateways=${form_bmxd_only_community:-0}
