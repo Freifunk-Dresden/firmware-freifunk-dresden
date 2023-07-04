@@ -39,7 +39,7 @@ EOM
 	[ "$syslog" = "1" ] && logger -t "LTE" "$json"
 
 	# read lte status
-	eval $(cat $lte_info | jsonfilter -e m_type='@.signal.type' -e m_rssi='@.signal.rssi' -e m_rsrq='@.signal.rsrq' -e m_rsrp='@.signal.rsrp' -e m_snr='@.signal.snr' -e m_conn='@.status')
+	eval $(cat $lte_info | jsonfilter -e m_type='@.signal.type' -e m_rssi='@.signal.rssi' -e m_rsrq='@.signal.rsrq' -e m_rsrp='@.signal.rsrp' -e m_snr='@.signal.snr' -e m_conn='@.status' -e registration='@.service.registration')
 
 	if [ "$m_conn" = "connected" -a "$registration" = "registered" ]; then
 		case "$m_type" in

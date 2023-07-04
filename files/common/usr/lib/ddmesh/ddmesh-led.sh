@@ -200,7 +200,7 @@ case "$ARG_LED" in
 					led_timer $_led_wwan 300 200
 					;;
 				4g)
-					led_timer $_led_wwan 40 40
+					led_timer $_led_wwan 300 200
 					;;
 			esac
 		fi
