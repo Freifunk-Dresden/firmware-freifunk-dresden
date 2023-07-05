@@ -260,6 +260,19 @@ EOM
 } # config_boot_step1
 
 #############################################################################
+enable_service() {
+	service="/etc/init.d/$1"
+	value="$2"
+
+	if [ -x "$service" ]; then
+		if [ "$value" = "1" ]; then
+			$service enable
+		else
+			$service disable
+		fi
+	fi
+}
+
 # update configuration depending on new ddmesh settings
 config_update() {
 
@@ -406,8 +419,11 @@ config_update() {
 		#	uci set firewall.@rule[-1].family="ipv4"
 	}
 
-
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh configure
+
+	# services
+  enable_service usbmuxd "$(uci -q get ddmesh.network.enable_ios_tethering)"
+
 	uci commit
 }
 
