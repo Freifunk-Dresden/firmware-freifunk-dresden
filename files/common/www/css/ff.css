@@ -415,3 +415,9 @@ fieldset.bubble table.speedtest td {
 .marked-input-bg {
 	background-color: #9ec9bf;
 }
+.ignore-node[value="0"] {
+  background-color: darkseagreen;
+}
+.ignore-node[value="1"] {
+  background-color: indianred;
+}

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ash
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
@@ -70,24 +70,24 @@ print_node() {
 	set $entry
 	unset IFS
 	local node=$1
-	local opt_lan=$2
-	local opt_tbb=$3
-	local opt_wifi_adhoc=$4
-	local opt_wifi_mesh2g=$5
-	local opt_wifi_mesh5g=$6
-	local opt_vlan=$7
+	local opt_lan=$2; opt_lan=${opt_lan:=0}
+	local opt_tbb=$3; opt_tbb=${opt_tbb:=0}
+	local opt_wifi_adhoc=$4; opt_wifi_adhoc=${opt_wifi_adhoc:=0}
+	local opt_wifi_mesh2g=$5; opt_wifi_mesh2g=${opt_wifi_mesh2g:=0}
+	local opt_wifi_mesh5g=$6; opt_wifi_mesh5g=${opt_wifi_mesh5g:=0}
+	local opt_vlan=$7; opt_vlan=${opt_vlan:=0}
 
 	# old format
 	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" -a -z "$opt_vlan" ] && opt_wifi_adhoc='1'
 
 	if [ -n "$1" ]; then
 		echo "<tr class=\"colortoggle$T\" ><td width=\"100\">$node</td>"
-		[ -n "$mesh_vlan_ifname" ] && echo "<td><input disabled name=\"form_opt_vlan\" type=\"checkbox\" value=\"1\" $(if [ "$opt_vlan" = "1" ];then echo 'checked="checked"';fi)></td>"
-		[ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo "<td><input disabled name=\"form_opt_lan\" type=\"checkbox\" value=\"1\" $(if [ "$opt_lan" = "1" ];then echo 'checked="checked"';fi)></td>"
-		[ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo "<td><input disabled name=\"form_opt_tbb\" type=\"checkbox\" value=\"1\" $(if [ "$opt_tbb" = "1" ];then echo 'checked="checked"';fi)></td>"
-		${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo "<td><input disabled name=\"form_opt_wifi_adhoc\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_adhoc" = "1" ];then echo 'checked="checked"';fi)></td>"
-		[ -n "$wifi_mesh2g_ifname" ] && echo "<td><input disabled name=\"form_opt_wifi_mesh2g\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_mesh2g" = "1" ];then echo 'checked="checked"';fi)></td>"
-		[ -n "$wifi_mesh5g_ifname" ] && echo "<td><input disabled name=\"form_opt_wifi_mesh5g\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_mesh5g" = "1" ];then echo 'checked="checked"';fi)></td>"
+		[ -n "$mesh_vlan_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_vlan\"><input disabled name=\"form_opt_vlan\" type=\"checkbox\" value=\"1\" $(if [ "$opt_vlan" = "1" ];then echo 'checked="checked"';fi)></td>"
+		[ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_lan\"><input disabled name=\"form_opt_lan\" type=\"checkbox\" value=\"1\" $(if [ "$opt_lan" = "1" ];then echo 'checked="checked"';fi)></td>"
+		[ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo "<td class=\"ignore-node\"  value=\"$opt_tbb\"><input disabled name=\"form_opt_tbb\" type=\"checkbox\" value=\"1\" $(if [ "$opt_tbb" = "1" ];then echo 'checked="checked"';fi)></td>"
+		${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_wifi-adhoc\"><input disabled name=\"form_opt_wifi_adhoc\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_adhoc" = "1" ];then echo 'checked="checked"';fi)></td>"
+		[ -n "$wifi_mesh2g_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_wifi_mesh2g\"><input disabled name=\"form_opt_wifi_mesh2g\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_mesh2g" = "1" ];then echo 'checked="checked"';fi)></td>"
+		[ -n "$wifi_mesh5g_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_wifi_mesh5g\"><input disabled name=\"form_opt_wifi_mesh5g\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_mesh5g" = "1" ];then echo 'checked="checked"';fi)></td>"
 		echo "<td valign=bottom><FORM name=\"form_node_del_"$C"\" ACTION=\"ignore.cgi\" METHOD=\"POST\">"
 		echo "<input name=\"form_action\" value=\"del\" type=\"hidden\">"
 		echo "<input name=\"form_node\" value=\"$entry\" type=\"hidden\">"
