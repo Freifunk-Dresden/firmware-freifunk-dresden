@@ -27,6 +27,9 @@ setup_ethernet()
 			uci set network.${NET}.stp=1
 			uci set network.${NET}.bridge_empty=1
 
+			# not used by openwrt18 but I need it in ddmesh-firewall-addon.sh
+			uci set network.${NET}.device="br-${NET}"
+
 			# force_link always up. else netifd reconfigures wan/mesh_wan because of hotplug events
 			uci set network.${NET}.force_link=1
 
@@ -111,6 +114,9 @@ setup_mesh()
 		uci set network.${NET}.stp=1
 		uci set network.${NET}.bridge_empty=1
 		uci set network.${NET}.force_link=1
+
+		# not used by openwrt18 but I need it in ddmesh-firewall-addon.sh
+		uci set network.${NET}.device="br-${NET}"
 
 		# add vlan ports
 		if [ "${enable_vlan}" = "1" -a "${NET}" = "mesh_vlan" ]; then
