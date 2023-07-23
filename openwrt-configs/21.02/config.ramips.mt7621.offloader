@@ -283,7 +283,7 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_re500-v1 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_re650-v1 is not set
 CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_ubnt_edgerouter-x=y
-CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_ubnt_edgerouter-x-sfp=y
+# CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_ubnt_edgerouter-x-sfp is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_ubnt_unifi-6-lite is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_ubnt_unifi-nanohd is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_unielec_u7621-01-16m is not set

@@ -101,7 +101,7 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_tplink_vr200 is not set
 # CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_tplink_vr200v is not set
 CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_tplink_tdw8970=y
-CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_tplink_tdw8980=y
+# CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_tplink_tdw8980 is not set
 # CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_zyxel_p-2812hnu-f1 is not set
 # CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_zyxel_p-2812hnu-f3 is not set
 # end of Target Devices
