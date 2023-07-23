@@ -273,7 +273,7 @@
     ]
   },
   {
-    "name":"ramips.mt7621.small.22",
+    "name":"ramips.mt7621.small",
     "config":"config.ramips.mt7621.small.iptables",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
 		"openwrt_variant":"iptables",
@@ -293,7 +293,7 @@
     ]
   },
   {
-    "name":"ramips.mt7621.generic.22",
+    "name":"ramips.mt7621.generic",
     "config":"config.ramips.mt7621.generic.iptables",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
 		"openwrt_variant":"iptables",
