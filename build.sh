@@ -397,10 +397,10 @@ print_devices_for_target()
 
 	for _target in ${targets}
 	do
-		echo "target: [$_target]"
 		selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$_target\") | . \"selector-config\"")
 		test "${selector}" = "null" && selector=${def_selector}
 		config_filename=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$_target\") | .config")
+		echo "target: [$_target] (${selector})"
 		grep "^CONFIG_TARGET_DEVICE.*=y" "openwrt-configs/${selector}/${config_filename}"
 		echo ""
 	done
