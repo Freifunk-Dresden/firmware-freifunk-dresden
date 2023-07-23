@@ -21,6 +21,7 @@ setup_wireless()
  wifi_mesh_key="$(uci -c /rom/etc/config get credentials.network.wifi_mesh_key)"
 
  # --- update and detect 2/5GHz radios
+ # "store" should only be done here when creating wireless config (it writes to flash)
  eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh store)
 
  # name wifi devices

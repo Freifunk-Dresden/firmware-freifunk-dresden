@@ -49,7 +49,7 @@ cat<<EOM
 ajax_register();
 //--></SCRIPT>
 EOM
-if [ "$wifi_status_radio2g_up" = "1" ]; then
+if [ "$wifi_status_radio2g_present" = "1" ]; then
 cat<<EOM
 <br />
 <fieldset class="bubble">

@@ -290,7 +290,7 @@ EOM
 		# cat /proc/net/arp | awk '/'${tmp_ifname}'/{if(match("0x2",$3)){printf("Station %s\n",$4);}}' | parseWifiDump /var/statistic/${tmp_ifname}.stat >> $OUTPUT
 		# echo "," >> $OUTPUT
 
-		if [ "$wifi_status_radio2g_up" = "1" ]; then
+		if [ "$wifi_status_radio2g_present" = "1" ]; then
 			for wifi in 2g 5g
 			do
 				ifname=$(uci -q get wireless.wifi2_${wifi}.ifname)

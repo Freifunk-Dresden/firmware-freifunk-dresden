@@ -30,9 +30,9 @@ update()
 
 	json="{ "
 	json="${json} \"ssid\": \"$(uci -q get wireless.wifi2_2g.ssid)\","
-	json="${json} \"up\": \"${wifi_status_radio2g_up}\","
+	json="${json} \"up\": \"${wifi_status_radio2g_present}\","
 	json="${json} \"ssid_5g\": \"$(uci -q get wireless.wifi2_5g.ssid)\","
-	json="${json} \"up_5g\": \"${wifi_status_radio5g_up}\","
+	json="${json} \"up_5g\": \"${wifi_status_radio5g_present}\","
 	json="${json} \"key\": \"Free Wifi\","
 	json="${json} \"key_5g\": \"Free Wifi\","
 

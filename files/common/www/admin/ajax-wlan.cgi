@@ -13,7 +13,7 @@ SCAN_RESULT=/tmp/wifi_scan
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 
 /usr/sbin/iw dev wifi2ap scan > $SCAN_RESULT
-[ "$wifi_status_radio5g_up" = "1" ] && /usr/sbin/iw dev wifi5ap scan >> $SCAN_RESULT
+[ "$wifi_status_radio5g_present" = "1" ] && /usr/sbin/iw dev wifi5ap scan >> $SCAN_RESULT
 
 # when searching for "^BSS" defaults are set and overwritten later
 json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne'
