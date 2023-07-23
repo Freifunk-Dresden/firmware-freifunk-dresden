@@ -1,109 +1,223 @@
 diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/lantiq/image/tp-link.mk openwrt/target/linux/lantiq/image/tp-link.mk
 --- openwrt.ori/target/linux/lantiq/image/tp-link.mk	2023-05-25 10:32:40.004439343 +0200
-+++ openwrt/target/linux/lantiq/image/tp-link.mk	2023-07-23 16:35:16.321257004 +0200
-@@ -1,8 +1,11 @@
- DEVICE_VARS += TPLINK_FLASHLAYOUT TPLINK_HWID TPLINK_HWREV TPLINK_HWREVADD TPLINK_HVERSION
-
- define Device/dsa-migration
--  DEVICE_COMPAT_VERSION := 1.1
--  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
-+# ddmesh: disabled because we can upgrade from openwrt19 to 21
-+#         The new version breaks sysupgrade for existing devices.
-+#         meaning, that this version for dsa will not be used.
-+#  DEVICE_COMPAT_VERSION := 1.1
-+#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++++ openwrt/target/linux/lantiq/image/tp-link.mk	2023-07-23 19:33:24.314214030 +0200
+@@ -18,7 +18,10 @@
  endef
 
- define Device/lantiqTpLink
+ define Device/tplink_tdw8970
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/lantiqTpLink)
+   DEVICE_MODEL := TD-W8970
+   DEVICE_VARIANT := v1
 diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/lantiq/image/vr9.mk openwrt/target/linux/lantiq/image/vr9.mk
 --- openwrt.ori/target/linux/lantiq/image/vr9.mk	2023-05-25 10:32:40.004439343 +0200
-+++ openwrt/target/linux/lantiq/image/vr9.mk	2023-07-23 16:35:16.321257004 +0200
-@@ -1,8 +1,11 @@
- DEVICE_VARS += NETGEAR_BOARD_ID NETGEAR_HW_ID
-
- define Device/dsa-migration
--  DEVICE_COMPAT_VERSION := 1.1
--  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
-+# ddmesh: disabled because we can upgrade from openwrt19 to 21
-+#         The new version breaks sysupgrade for existing devices.
-+#         meaning, that this version for dsa will not be used.
-+#  DEVICE_COMPAT_VERSION := 1.1
-+#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++++ openwrt/target/linux/lantiq/image/vr9.mk	2023-07-23 18:47:11.001411992 +0200
+@@ -120,7 +120,10 @@
  endef
 
- define Device/alphanetworks_asl56026
+ define Device/avm_fritz3370-rev2-hynix
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/avm_fritz3370)
+   DEVICE_MODEL := FRITZ!Box 3370
+   DEVICE_VARIANT := Rev. 2 (Hynix NAND)
+@@ -128,7 +131,10 @@
+ TARGET_DEVICES += avm_fritz3370-rev2-hynix
+
+ define Device/avm_fritz3370-rev2-micron
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/avm_fritz3370)
+   DEVICE_MODEL := FRITZ!Box 3370
+   DEVICE_VARIANT := Rev. 2 (Micron NAND)
+@@ -148,7 +154,10 @@
+ TARGET_DEVICES += avm_fritz3390
+
+ define Device/avm_fritz7360sl
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/AVM)
+   DEVICE_MODEL := FRITZ!Box 7360 SL
+   IMAGE_SIZE := 15744k
+@@ -158,7 +167,10 @@
+ TARGET_DEVICES += avm_fritz7360sl
+
+ define Device/avm_fritz7360-v2
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/AVM)
+   DEVICE_MODEL := FRITZ!Box 7360
+   DEVICE_VARIANT := v2
+@@ -168,7 +180,10 @@
+ TARGET_DEVICES += avm_fritz7360-v2
+
+ define Device/avm_fritz7362sl
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/AVM)
+   $(Device/NAND)
+   DEVICE_MODEL := FRITZ!Box 7362 SL
+@@ -179,7 +194,10 @@
+ TARGET_DEVICES += avm_fritz7362sl
+
+ define Device/avm_fritz7412
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/AVM)
+   $(Device/NAND)
+   DEVICE_MODEL := FRITZ!Box 7412
+@@ -191,7 +209,10 @@
+ TARGET_DEVICES += avm_fritz7412
+
+ define Device/avm_fritz7430
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/AVM)
+   $(Device/NAND)
+   DEVICE_MODEL := FRITZ!Box 7430
 diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version openwrt/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version
 --- openwrt.ori/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version	2023-05-25 10:31:23.668348832 +0200
-+++ openwrt/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version	2023-07-23 17:23:56.244239677 +0200
-@@ -9,7 +9,7 @@
++++ openwrt/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version	2023-07-23 19:35:06.214669829 +0200
+@@ -8,6 +8,21 @@
+ board_config_update
 
  case "$(board_name)" in
- 	*)
--		ucidef_set_compat_version "1.1"
-+#ddmesh:dsa#		ucidef_set_compat_version "1.1"
- 		;;
- esac
-
-diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/mvebu/image/cortexa9.mk openwrt/target/linux/mvebu/image/cortexa9.mk
---- openwrt.ori/target/linux/mvebu/image/cortexa9.mk	2023-05-25 10:32:40.028439371 +0200
-+++ openwrt/target/linux/mvebu/image/cortexa9.mk	2023-07-23 16:35:16.321257004 +0200
-@@ -4,8 +4,11 @@
- # Copyright (C) 2016 LEDE-project.org
-
- define Device/dsa-migration
--  DEVICE_COMPAT_VERSION := 1.1
--  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
-+# ddmesh: disabled because we can upgrade from openwrt19 to 21
++# ddmesh: disabled because we can upgrade to 22
 +#         The new version breaks sysupgrade for existing devices.
 +#         meaning, that this version for dsa will not be used.
-+#  DEVICE_COMPAT_VERSION := 1.1
-+#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
- endef
-
- define Device/kernel-size-migration
++# only does with dsa migration in:
++#  lantiq/image/vr9.mk.mk
++#  lantiq/image/tp-link.mk
++	avm,fritz3370-rev2-hynix|\
++	avm,fritz3370-rev2-micron|\
++	avm,fritz7360sl|\
++	avm,fritz7360-v2|\
++	avm,fritz7362sl|\
++	avm,fritz7412|\
++	avm,fritz7430|\
++	tplink,tdw8970)
++		;;
+ 	*)
+ 		ucidef_set_compat_version "1.1"
+ 		;;
 diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/ramips/image/mt7621.mk openwrt/target/linux/ramips/image/mt7621.mk
 --- openwrt.ori/target/linux/ramips/image/mt7621.mk	2023-05-25 10:32:40.044439390 +0200
-+++ openwrt/target/linux/ramips/image/mt7621.mk	2023-07-23 16:35:16.321257004 +0200
-@@ -98,8 +98,11 @@
- endef
++++ openwrt/target/linux/ramips/image/mt7621.mk	2023-07-23 19:32:19.577921348 +0200
+@@ -520,7 +520,10 @@
+ TARGET_DEVICES += dual-q_h721
 
- define Device/dsa-migration
--  DEVICE_COMPAT_VERSION := 1.1
--  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
-+# ddmesh: disabled because we can upgrade from openwrt19 to 21
+ define Device/d-team_newifi-d2
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
 +#         The new version breaks sysupgrade for existing devices.
 +#         meaning, that this version for dsa will not be used.
-+#  DEVICE_COMPAT_VERSION := 1.1
-+#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
- endef
++#  $(Device/dsa-migration)
+   $(Device/uimage-lzma-loader)
+   IMAGE_SIZE := 32448k
+   DEVICE_VENDOR := Newifi
+@@ -718,7 +721,10 @@
+ TARGET_DEVICES += gehua_ghl-r-001
 
- define Device/adslr_g7
+ define Device/glinet_gl-mt1300
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   IMAGE_SIZE := 32448k
+   DEVICE_VENDOR := GL.iNet
+   DEVICE_MODEL := GL-MT1300
+@@ -1239,7 +1245,10 @@
+ TARGET_DEVICES += mqmaker_witi
+
+ define Device/mtc_wr1201
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/uimage-lzma-loader)
+   IMAGE_SIZE := 16000k
+   DEVICE_VENDOR := MTC
+@@ -1805,7 +1814,10 @@
+ TARGET_DEVICES += tplink_tl-wpa8631p-v3
+
+ define Device/ubnt_edgerouter_common
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/uimage-lzma-loader)
+   DEVICE_VENDOR := Ubiquiti
+   IMAGE_SIZE := 256768k
+@@ -2052,7 +2064,10 @@
+ TARGET_DEVICES += xiaomi_mi-router-4
+
+ define Device/xiaomi_mi-router-4a-gigabit
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/uimage-lzma-loader)
+   IMAGE_SIZE := 14848k
+   DEVICE_VENDOR := Xiaomi
+@@ -2132,7 +2147,10 @@
+ TARGET_DEVICES += xzwifi_creativebox-v1
+
+ define Device/youhua_wr1200js
+-  $(Device/dsa-migration)
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   IMAGE_SIZE := 16064k
+   DEVICE_VENDOR := YouHua
+   DEVICE_MODEL := WR1200JS
 diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version
 --- openwrt.ori/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-05-25 10:31:23.732348910 +0200
-+++ openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-07-23 17:22:45.223892117 +0200
-@@ -9,7 +9,7 @@
++++ openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-07-23 19:32:24.457943503 +0200
+@@ -8,6 +8,17 @@
+ board_config_update
 
  case "$(board_name)" in
- 	*)
--		ucidef_set_compat_version "1.1"
-+#ddmesh:dsa#		ucidef_set_compat_version "1.1"
- 		;;
- esac
-
-diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/sunxi/image/cortexa7.mk openwrt/target/linux/sunxi/image/cortexa7.mk
---- openwrt.ori/target/linux/sunxi/image/cortexa7.mk	2023-05-25 10:32:40.056439403 +0200
-+++ openwrt/target/linux/sunxi/image/cortexa7.mk	2023-07-23 16:35:16.321257004 +0200
-@@ -67,8 +67,11 @@
-   DEVICE_ALT0_VENDOR := Bananapi
-   DEVICE_ALT0_MODEL := BPi-R1
-   DEVICE_PACKAGES := kmod-ata-sunxi kmod-rtl8192cu wpad-basic-wolfssl
--  DEVICE_COMPAT_VERSION := 1.1
--  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
-+# ddmesh: disabled because we can upgrade from openwrt19 to 21
++# ddmesh: disabled because we can upgrade to 22
 +#         The new version breaks sysupgrade for existing devices.
 +#         meaning, that this version for dsa will not be used.
-+#  DEVICE_COMPAT_VERSION := 1.1
-+#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
-   SOC := sun7i-a20
- endef
- TARGET_DEVICES += lamobo_lamobo-r1
++# only does with dsa migration in mt7621.mk
++	glinet,gl-mt1300|\
++	mtc,wr1201|\
++	d-team,newifi-d2|\
++	xiaomi,mi-router-4a-gigabit|\
++	youhua,wr1200js|\
++	ubnt,edgerouter-x)
++		;;
+ 	*)
+ 		ucidef_set_compat_version "1.1"
+ 		;;
