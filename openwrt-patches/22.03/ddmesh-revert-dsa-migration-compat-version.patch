@@ -1,0 +1,109 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/lantiq/image/tp-link.mk openwrt/target/linux/lantiq/image/tp-link.mk
+--- openwrt.ori/target/linux/lantiq/image/tp-link.mk	2023-05-25 10:32:40.004439343 +0200
++++ openwrt/target/linux/lantiq/image/tp-link.mk	2023-07-23 16:35:16.321257004 +0200
+@@ -1,8 +1,11 @@
+ DEVICE_VARS += TPLINK_FLASHLAYOUT TPLINK_HWID TPLINK_HWREV TPLINK_HWREVADD TPLINK_HVERSION
+
+ define Device/dsa-migration
+-  DEVICE_COMPAT_VERSION := 1.1
+-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++# ddmesh: disabled because we can upgrade from openwrt19 to 21
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  DEVICE_COMPAT_VERSION := 1.1
++#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+ endef
+
+ define Device/lantiqTpLink
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/lantiq/image/vr9.mk openwrt/target/linux/lantiq/image/vr9.mk
+--- openwrt.ori/target/linux/lantiq/image/vr9.mk	2023-05-25 10:32:40.004439343 +0200
++++ openwrt/target/linux/lantiq/image/vr9.mk	2023-07-23 16:35:16.321257004 +0200
+@@ -1,8 +1,11 @@
+ DEVICE_VARS += NETGEAR_BOARD_ID NETGEAR_HW_ID
+
+ define Device/dsa-migration
+-  DEVICE_COMPAT_VERSION := 1.1
+-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++# ddmesh: disabled because we can upgrade from openwrt19 to 21
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  DEVICE_COMPAT_VERSION := 1.1
++#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+ endef
+
+ define Device/alphanetworks_asl56026
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version openwrt/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version
+--- openwrt.ori/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version	2023-05-25 10:31:23.668348832 +0200
++++ openwrt/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version	2023-07-23 17:23:56.244239677 +0200
+@@ -9,7 +9,7 @@
+
+ case "$(board_name)" in
+ 	*)
+-		ucidef_set_compat_version "1.1"
++#ddmesh:dsa#		ucidef_set_compat_version "1.1"
+ 		;;
+ esac
+
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/mvebu/image/cortexa9.mk openwrt/target/linux/mvebu/image/cortexa9.mk
+--- openwrt.ori/target/linux/mvebu/image/cortexa9.mk	2023-05-25 10:32:40.028439371 +0200
++++ openwrt/target/linux/mvebu/image/cortexa9.mk	2023-07-23 16:35:16.321257004 +0200
+@@ -4,8 +4,11 @@
+ # Copyright (C) 2016 LEDE-project.org
+
+ define Device/dsa-migration
+-  DEVICE_COMPAT_VERSION := 1.1
+-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++# ddmesh: disabled because we can upgrade from openwrt19 to 21
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  DEVICE_COMPAT_VERSION := 1.1
++#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+ endef
+
+ define Device/kernel-size-migration
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/ramips/image/mt7621.mk openwrt/target/linux/ramips/image/mt7621.mk
+--- openwrt.ori/target/linux/ramips/image/mt7621.mk	2023-05-25 10:32:40.044439390 +0200
++++ openwrt/target/linux/ramips/image/mt7621.mk	2023-07-23 16:35:16.321257004 +0200
+@@ -98,8 +98,11 @@
+ endef
+
+ define Device/dsa-migration
+-  DEVICE_COMPAT_VERSION := 1.1
+-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++# ddmesh: disabled because we can upgrade from openwrt19 to 21
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  DEVICE_COMPAT_VERSION := 1.1
++#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+ endef
+
+ define Device/adslr_g7
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version
+--- openwrt.ori/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-05-25 10:31:23.732348910 +0200
++++ openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-07-23 17:22:45.223892117 +0200
+@@ -9,7 +9,7 @@
+
+ case "$(board_name)" in
+ 	*)
+-		ucidef_set_compat_version "1.1"
++#ddmesh:dsa#		ucidef_set_compat_version "1.1"
+ 		;;
+ esac
+
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/sunxi/image/cortexa7.mk openwrt/target/linux/sunxi/image/cortexa7.mk
+--- openwrt.ori/target/linux/sunxi/image/cortexa7.mk	2023-05-25 10:32:40.056439403 +0200
++++ openwrt/target/linux/sunxi/image/cortexa7.mk	2023-07-23 16:35:16.321257004 +0200
+@@ -67,8 +67,11 @@
+   DEVICE_ALT0_VENDOR := Bananapi
+   DEVICE_ALT0_MODEL := BPi-R1
+   DEVICE_PACKAGES := kmod-ata-sunxi kmod-rtl8192cu wpad-basic-wolfssl
+-  DEVICE_COMPAT_VERSION := 1.1
+-  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
++# ddmesh: disabled because we can upgrade from openwrt19 to 21
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  DEVICE_COMPAT_VERSION := 1.1
++#  DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+   SOC := sun7i-a20
+ endef
+ TARGET_DEVICES += lamobo_lamobo-r1
