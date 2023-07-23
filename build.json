@@ -136,10 +136,6 @@
     "config":"config.ramips.mt7620.generic"
   },
   {
-    "name":"ramips.mt7621.generic",
-    "config":"config.ramips.mt7621.generic"
-  },
-  {
     "name":"ramips.mt7621.offloader",
     "config":"config.ramips.mt7621.offloader"
   },
