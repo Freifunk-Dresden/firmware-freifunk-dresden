@@ -127,7 +127,7 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/l
  		;;
 diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/ramips/image/mt7621.mk openwrt/target/linux/ramips/image/mt7621.mk
 --- openwrt.ori/target/linux/ramips/image/mt7621.mk	2023-05-25 10:32:40.044439390 +0200
-+++ openwrt/target/linux/ramips/image/mt7621.mk	2023-07-23 19:32:19.577921348 +0200
++++ openwrt/target/linux/ramips/image/mt7621.mk	2023-07-23 21:38:19.967026937 +0200
 @@ -520,7 +520,10 @@
  TARGET_DEVICES += dual-q_h721
 
@@ -164,7 +164,109 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/r
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 16000k
    DEVICE_VENDOR := MTC
-@@ -1805,7 +1814,10 @@
+@@ -1285,7 +1294,6 @@
+ TARGET_DEVICES += netgear_ex6150
+
+ define Device/netgear_sercomm_nand
+-  $(Device/dsa-migration)
+   $(Device/uimage-lzma-loader)
+   BLOCKSIZE := 128k
+   PAGESIZE := 2048
+@@ -1303,6 +1311,10 @@
+ endef
+
+ define Device/netgear_r6220
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := R6220
+   SERCOMM_HWNAME := R6220
+@@ -1317,6 +1329,7 @@
+
+
+ define Device/netgear_r6260
++  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := R6260
+   SERCOMM_HWNAME := R6260
+@@ -1329,6 +1342,7 @@
+ TARGET_DEVICES += netgear_r6260
+
+ define Device/netgear_r6350
++  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := R6350
+   SERCOMM_HWNAME := R6350
+@@ -1341,6 +1355,7 @@
+ TARGET_DEVICES += netgear_r6350
+
+ define Device/netgear_r6700-v2
++  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := R6700
+   DEVICE_VARIANT := v2
+@@ -1360,6 +1375,7 @@
+ TARGET_DEVICES += netgear_r6700-v2
+
+ define Device/netgear_r6800
++  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := R6800
+   SERCOMM_HWNAME := R6950
+@@ -1372,6 +1388,7 @@
+ TARGET_DEVICES += netgear_r6800
+
+ define Device/netgear_r6850
++  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := R6850
+   SERCOMM_HWNAME := R6850
+@@ -1384,6 +1401,7 @@
+ TARGET_DEVICES += netgear_r6850
+
+ define Device/netgear_r6900-v2
++  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := R6900
+   DEVICE_VARIANT := v2
+@@ -1397,6 +1415,7 @@
+ TARGET_DEVICES += netgear_r6900-v2
+
+ define Device/netgear_r7200
++  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := R7200
+   SERCOMM_HWNAME := R6950
+@@ -1409,6 +1428,7 @@
+ TARGET_DEVICES += netgear_r7200
+
+ define Device/netgear_r7450
++  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := R7450
+   SERCOMM_HWNAME := R6950
+@@ -1421,6 +1441,10 @@
+ TARGET_DEVICES += netgear_r7450
+
+ define Device/netgear_wac104
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++#  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := WAC104
+   SERCOMM_HWNAME := WAC104
+@@ -1433,6 +1457,7 @@
+ TARGET_DEVICES += netgear_wac104
+
+ define Device/netgear_wac124
++  $(Device/dsa-migration)
+   $(Device/netgear_sercomm_nand)
+   DEVICE_MODEL := WAC124
+   SERCOMM_HWNAME := WAC124
+@@ -1805,7 +1830,10 @@
  TARGET_DEVICES += tplink_tl-wpa8631p-v3
 
  define Device/ubnt_edgerouter_common
@@ -176,7 +278,7 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/r
    $(Device/uimage-lzma-loader)
    DEVICE_VENDOR := Ubiquiti
    IMAGE_SIZE := 256768k
-@@ -2052,7 +2064,10 @@
+@@ -2052,7 +2080,10 @@
  TARGET_DEVICES += xiaomi_mi-router-4
 
  define Device/xiaomi_mi-router-4a-gigabit
@@ -188,7 +290,7 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/r
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 14848k
    DEVICE_VENDOR := Xiaomi
-@@ -2132,7 +2147,10 @@
+@@ -2132,7 +2163,10 @@
  TARGET_DEVICES += xzwifi_creativebox-v1
 
  define Device/youhua_wr1200js
@@ -202,8 +304,8 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/r
    DEVICE_MODEL := WR1200JS
 diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version
 --- openwrt.ori/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-05-25 10:31:23.732348910 +0200
-+++ openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-07-23 19:32:24.457943503 +0200
-@@ -8,6 +8,17 @@
++++ openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-07-23 21:35:25.286086014 +0200
+@@ -8,6 +8,19 @@
  board_config_update
 
  case "$(board_name)" in
@@ -216,7 +318,9 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/r
 +	d-team,newifi-d2|\
 +	xiaomi,mi-router-4a-gigabit|\
 +	youhua,wr1200js|\
-+	ubnt,edgerouter-x)
++	ubnt,edgerouter-x|\
++	netgear,wac104|\
++	netgear,r6220)
 +		;;
  	*)
  		ucidef_set_compat_version "1.1"
