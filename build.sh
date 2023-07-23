@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="21"
+SCRIPT_VERSION="22"
 
 
 # gitlab variables
@@ -386,17 +386,24 @@ print_devices_for_target()
 {
 	target=$1
 	cleanJson=$(getTargetsJson)
-
-
-	# get selector
 	def_selector=$(echo "$cleanJson" | jq --raw-output '.[] | select(.name == "default") | . "selector-config"')
-	selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | . \"selector-config\"")
-	test "${selector}" = "null" && selector=${def_selector}
 
-	# get config filename
-	config=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | .config")
+	# get all targets
+	if [ -n "$target" ]; then
+		targets=$target
+	else
+		targets=$(listTargetsNames)
+	fi
 
-	grep "^CONFIG_TARGET_DEVICE.*=y" "openwrt-configs/${selector}/${config}"
+	for _target in ${targets}
+	do
+		echo "target: [$_target]"
+		selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$_target\") | . \"selector-config\"")
+		test "${selector}" = "null" && selector=${def_selector}
+		config_filename=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$_target\") | .config")
+		grep "^CONFIG_TARGET_DEVICE.*=y" "openwrt-configs/${selector}/${config_filename}"
+		echo ""
+	done
 }
 
 # this function checks if all firmware files are generated for selected devices for a specific target
@@ -479,7 +486,7 @@ usage()
    list                    - lists all available targets
    lt | list-targets       - lists only target names for usage in IDE
    watch                   - same as 'list' but updates display
-   devices <target>        - displays all selected routers for a target
+   devices [target]        - displays all selected routers for a target
    search <string>         - search specific router (target)
    feed-revisions          - displays the openwrt default feed revisions.
                              The revisions then could be set in build.json
@@ -678,10 +685,10 @@ case "$1" in
 					;;
 
 		devices)
-					if [ -z "$2" ]; then
-						echo "Error: missing target"
-						exit 1
-					fi
+					# if [ -z "$2" ]; then
+					# 	echo "Error: missing target"
+					# 	exit 1
+					# fi
 					print_devices_for_target $2
 				#verify_firmware_present $2 $3 && echo ok || echo fehler
 					exit 0
