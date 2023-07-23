@@ -2022,9 +2022,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "netgear,wac104",
+      "model2": "Netgear WAC104",
       "filename": "openwrt-ramips-mt7621-netgear_wac104-squashfs-sysupgrade.bin",
       "comment": ""
     },

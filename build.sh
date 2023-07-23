@@ -40,7 +40,8 @@ CONFIG_DEFAULT_FILE="default.config"
 OPENWRT_PATCHES_DIR=openwrt-patches
 DDMESH_STATUS_DIR=".ddmesh"	# used to store build infos like openwrt_patches_target states
 DDMESH_PATCH_STATUS_DIR="$DDMESH_STATUS_DIR/patches-applied"
-compile_status_filename="compile-status.json"
+COMPILE_STATUS_DIR=".compile-status"
+COMPILE_STATUS_FILE_SUFFIX="compile-status.json"
 
 # -------------------------------------------------------------------
 
@@ -339,8 +340,8 @@ listTargets()
 	# get status
 	buildroot="$WORK_DIR/${_openwrt_rev:0:9}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
-	compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/compile-status"
-	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
+	_compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
+	compile_status_file="${_compile_status_dir}/${_config_name}-${COMPILE_STATUS_FILE_SUFFIX}"
 
 	compile_status=""
 	compile_data=""
@@ -1078,8 +1079,6 @@ do
 #echo $_feeds
 #echo $_packages
 
-
-
 	# construct config filename
 	config_file="$CONFIG_DIR/$_selector_config/${_config_file}"
 
@@ -1098,8 +1097,9 @@ do
 	buildroot="$WORK_DIR/${_openwrt_rev:0:9}"
 	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
 
-	compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/compile-status"
-	compile_status_file="${compile_status_dir}/${_config_name}-${compile_status_filename}"
+	_compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
+	compile_status_file="${_compile_status_dir}/${_config_name}-${COMPILE_STATUS_FILE_SUFFIX}"
+	mkdir -p ${_compile_status_dir}
 
 	# remove compile status
 	[ "${MAKE_CLEAN}" = "1" ] && rm -f ${compile_status_file}
@@ -1110,19 +1110,20 @@ do
 		if [ -f "${compile_status_file}" ]; then
 			eval $(cat "${compile_status_file}" | jq $OPT '"compile_status=\(.status)"')
 		fi
-		# ignore successfull targetes
+		# ignore successfull targets
 		test "$compile_status" = "0" && {
 			progbar_char_array[$((progress_counter-1))]="${PBC_SKIP}"
 			continue;
 		}
 	fi
+
 	# --- only delete after "failed-check"
 	# between each target build; remove directory. at end images and packets are copied to
 	# target specfic directory.
 	# This is needed to avoid conflicts with packages when I have several configs that all
 	# use same target/subtarget directories.
 	# - reset also compile status ${compile_status_file}
-	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/targets/${_config_name}"
+	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/${_config_name}"
 	rm -f ${compile_status_file}
 	rm -rf ${outdir}
 	rm -rf ${buildroot}/bin
@@ -1343,8 +1344,6 @@ EOM
 	fi
 
 	# write build status which is displayed by "build.sh list"
-	# , \"\":\"\"
-	mkdir -p ${compile_status_dir}
 	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
 	echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${compile_status_file}"
 
