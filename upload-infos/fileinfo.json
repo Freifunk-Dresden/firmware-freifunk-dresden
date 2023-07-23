@@ -1342,24 +1342,6 @@
     },
     {
       "name": "",
-      "filename": "openwrt-ath79-generic-ubnt_airrouter-initramfs-kernel.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "filename": "openwrt-ath79-generic-ubnt_airrouter-squashfs-factory.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
-      "filename": "openwrt-ath79-generic-ubnt_airrouter-squashfs-sysupgrade.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
       "filename": "openwrt-ath79-generic-ubnt_rocket-m-initramfs-kernel.bin",
       "comment": ""
     },
