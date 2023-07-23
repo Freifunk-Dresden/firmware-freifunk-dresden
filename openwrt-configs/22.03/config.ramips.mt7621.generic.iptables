@@ -3797,9 +3797,11 @@ CONFIG_PACKAGE_kmod-mt7663-firmware-ap=y
 # CONFIG_PACKAGE_kmod-mt7663-firmware-sta is not set
 # CONFIG_PACKAGE_kmod-mt7663s is not set
 # CONFIG_PACKAGE_kmod-mt7663u is not set
+CONFIG_PACKAGE_kmod-mt76x02-common=y
 # CONFIG_PACKAGE_kmod-mt76x0e is not set
 # CONFIG_PACKAGE_kmod-mt76x0u is not set
-# CONFIG_PACKAGE_kmod-mt76x2 is not set
+CONFIG_PACKAGE_kmod-mt76x2=y
+CONFIG_PACKAGE_kmod-mt76x2-common=y
 # CONFIG_PACKAGE_kmod-mt76x2u is not set
 CONFIG_PACKAGE_kmod-mt7915e=y
 # CONFIG_PACKAGE_kmod-mt7916-firmware is not set
