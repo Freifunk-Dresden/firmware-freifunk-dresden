@@ -134,7 +134,6 @@ CONFIG_DEFAULT_kmod-ltq-atm-vr9=y
 CONFIG_DEFAULT_kmod-ltq-ptm-vr9=y
 CONFIG_DEFAULT_kmod-ltq-vdsl-vr9=y
 CONFIG_DEFAULT_kmod-ltq-vdsl-vr9-mei=y
-CONFIG_DEFAULT_kmod-owl-loader=y
 CONFIG_DEFAULT_kmod-usb-dwc2=y
 CONFIG_DEFAULT_kmod-usb-ledtrig-usbport=y
 CONFIG_DEFAULT_libc=y
