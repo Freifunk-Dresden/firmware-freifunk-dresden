@@ -1101,7 +1101,7 @@ do
 	compile_status_file="${_compile_status_dir}/${_config_name}-${COMPILE_STATUS_FILE_SUFFIX}"
 	mkdir -p ${_compile_status_dir}
 
-	# remove compile status
+	# remove compile status (before checking for failed only)
 	[ "${MAKE_CLEAN}" = "1" ] && rm -f ${compile_status_file}
 
 	# get compile status, default is error (==1)
@@ -1125,7 +1125,8 @@ do
 	# - reset also compile status ${compile_status_file}
 	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/${_config_name}"
 	rm -f ${compile_status_file}
-	rm -rf ${outdir}
+	# delete no hidden directory (_compile_status_dir)
+	rm -rf ${outdir}/*
 	rm -rf ${buildroot}/bin
 
 	# progress bar: compiling
