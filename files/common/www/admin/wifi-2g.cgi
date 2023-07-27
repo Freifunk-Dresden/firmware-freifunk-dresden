@@ -170,26 +170,20 @@ cat <<EOM
 EOM
 
 iw $wifi_status_radio2g_phy channels | awk '
-				BEGIN{ RS="*";FS="\n" }
-				(NR==1){next}
-				{
-								power=""
-								radar=""
-								width=""
-								dfs_state=""
-								dfs_cac=""
-								for( f=1; f<NF;f++)
-								{
-												split($(f),a,":")
-												if(f==1) ch=$(f)
-												if($(f) ~ /TX power/) power=a[2]
-												if($(f) ~ /Radar/) radar="Radar"
-												if($(f) ~ /Channel widths/) width=a[2]
-												if($(f) ~ /DFS state/) dfs_state=a[2]
-												if($(f) ~ /DFS CAC/) dfs_cac=a[2]
-								}
-								printf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",ch,power,width);
-				}
+	BEGIN{ RS="*";FS="\n" }
+	(NR==1){next}
+	{
+		power=""
+		width=""
+		for( f=1; f<NF;f++)
+		{
+			split($(f),a,":")
+			if(f==1) ch=$(f)
+			if($(f) ~ /TX power/) power=a[2]
+			if($(f) ~ /Channel widths/) width=a[2]
+		}
+		printf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",ch,power,width);
+	}
 '
 
 cat << EOM
