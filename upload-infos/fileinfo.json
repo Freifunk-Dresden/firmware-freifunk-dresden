@@ -2394,6 +2394,11 @@
     },
     {
       "name": "",
+      "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "autoupdate": "0",
       "model": "xunlong,orangepi-r1",
       "model2": "Xunlong Orange Pi R1",
