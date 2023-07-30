@@ -122,26 +122,12 @@
   },
 # ---------- openwrt 21 -----------------------------------------------------------------------
   {
-    "name":"x86.64.offloader",
-    "config":"config.x86.64.offloader",
-    "openwrt_variant"  : "offloader",
-    "packages":["qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix" ]
-  },
-  {
     "name":"ramips.mt7620.small.usb",
     "config":"config.ramips.mt7620.small.usb"
   },
   {
     "name":"ramips.mt7620.generic",
     "config":"config.ramips.mt7620.generic"
-  },
-  {
-    "name":"ramips.mt7621.generic",
-    "config":"config.ramips.mt7621.generic"
-  },
-  {
-    "name":"ramips.mt7621.offloader",
-    "config":"config.ramips.mt7621.offloader"
   },
   {
     "name":"ramips.mt76x8.generic",
@@ -162,10 +148,6 @@
   {
     "name":"lantiq-xway.small",
     "config":"config.lantiq-xway.small"
-  },
-  {  # created for Orange Pi R1
-    "name":"sunxi.cortexa7.offloader",
-    "config":"config.sunxi.cortexa7.offloader"
   },
   {
     "name":"ath79.generic",
@@ -196,144 +178,189 @@
     "config":"config.mpc85xx.p1020"
   },
 # ---------- openwrt 22 -----------------------------------------------------------------------
-	{
-		"name":"ath79.generic.gl-mifi",
-		"config":"config.ath79.generic.gl-mifi",
+  {
+    "name":"ath79.generic.gl-mifi",
+    "config":"config.ath79.generic.gl-mifi",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
-    "openwrt_variant":"iptables",
 
-    "selector-config"  : "22.03",            # used to select config
-    "selector-feeds"   : "22.03",            # used to select feeds
-    "selector-patches" : "22.03",            # used to select patches
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
     "selector-files"   : "22.03",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
     ],
-    # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma", "haproxy"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
     ]
-	},
+  },
   {
     "name":"ath79.nand.gl-e750",
     "config":"config.ath79.nand.gl-e750",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
-    "openwrt_variant":"iptables",
 
-    "selector-config"  : "22.03",            # used to select config
-    "selector-feeds"   : "22.03",            # used to select feeds
-    "selector-patches" : "22.03",            # used to select patches
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
     "selector-files"   : "22.03",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
     ],
-    # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
     ]
   },
   {
     "name":"mediatek.mt7622.generic.22",
-    "config":"config.mediatek.mt7622.generic.iptables",
+    "config":"config.mediatek.mt7622.generic",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
-		"openwrt_variant":"iptables",
 
-    "selector-config"  : "22.03",            # used to select config
-    "selector-feeds"   : "22.03",            # used to select feeds
-    "selector-patches" : "22.03",            # used to select patches
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
     "selector-files"   : "22.03",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
     ],
-    # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
     ]
   },
   {
     "name":"mpc85xx.p1010.22",
-    "config":"config.mpc85xx.p1010.iptables",
+    "config":"config.mpc85xx.p1010",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
-		"openwrt_variant":"iptables",
 
-    "selector-config"  : "22.03",            # used to select config
-    "selector-feeds"   : "22.03",            # used to select feeds
-    "selector-patches" : "22.03",            # used to select patches
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
     "selector-files"   : "22.03",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
     ],
-    # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
     ]
   },
   {
-    "name":"ramips.mt7621.small.22",
-    "config":"config.ramips.mt7621.small.iptables",
+    "name":"ramips.mt7621.small",
+    "config":"config.ramips.mt7621.small",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
-		"openwrt_variant":"iptables",
 
-    "selector-config"  : "22.03",            # used to select config
-    "selector-feeds"   : "22.03",            # used to select feeds
-    "selector-patches" : "22.03",            # used to select patches
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
     "selector-files"   : "22.03",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
     ],
-    # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
     ]
   },
   {
-    "name":"ramips.mt7621.generic.22",
-    "config":"config.ramips.mt7621.generic.iptables",
+    "name":"ramips.mt7621.generic",
+    "config":"config.ramips.mt7621.generic",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
-		"openwrt_variant":"iptables",
 
-    "selector-config"  : "22.03",            # used to select config
-    "selector-feeds"   : "22.03",            # used to select feeds
-    "selector-patches" : "22.03",            # used to select patches
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
     "selector-files"   : "22.03",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
     ],
-    # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
+    ]
+  },
+  {
+    "name":"ramips.mt7621.offloader",
+    "config":"config.ramips.mt7621.offloader",
+    "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
+    "openwrt_variant":"offloader",
+
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
+    "selector-files"   : "22.03",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
+    ],
+    "packages" : [
+      "libpam", "libnetsnmp"
     ]
   },
   {
     "name":"ramips.mt76x8.generic.22",
-    "config":"config.ramips.mt76x8.generic.iptables",
+    "config":"config.ramips.mt76x8.generic",
     "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
-		"openwrt_variant":"iptables",
 
-    "selector-config"  : "22.03",            # used to select config
-    "selector-feeds"   : "22.03",            # used to select feeds
-    "selector-patches" : "22.03",            # used to select patches
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
     "selector-files"   : "22.03",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
     ],
-    # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils","liblzma"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
+    ]
+  },
+  {
+    "name":"x86.64.offloader",
+    "config":"config.x86.64.offloader",
+    "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
+    "openwrt_variant"  : "offloader",
+
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
+    "selector-files"   : "22.03",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
+    ],
+    "packages":[
+      "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
+      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+    ]
+  },
+  {  # created for Orange Pi R1
+    "name":"sunxi.cortexa7.offloader",
+    "config":"config.sunxi.cortexa7.offloader",
+    "openwrt_rev":"863f769b75beb17b1965786f473b700e0ba0f879", # v22.03.5
+    "openwrt_variant"  : "offloader",
+
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
+    "selector-files"   : "22.03",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
+    ],
+    "packages":[
+      "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
+      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
     ]
   }
  ]

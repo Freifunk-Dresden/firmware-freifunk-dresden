@@ -163,30 +163,45 @@ cat <<EOM
 <fieldset class="bubble">
 <legend>Kanal-Info</legend>
 <table>
-<tr><th width="100" >Frequenz</th><th width="50">Sendeleistung</th><th>Modes</th><th>Radar</th><th>DFS Status</th><th>DFS CAC</th></tr>
+<tr><th width="100" >Frequenz</th><th width="50">Sendeleistung</th><th>Modes</th><th width="50">Radar</th><th width="100">Nutzbar seit</th><th width="50">DFS CAC</th></tr>
 EOM
 
 iw $wifi_status_radio5g_phy channels | awk '
-				BEGIN{ RS="*";FS="\n" }
-				(NR==1){next}
-				{
-								power=""
-								radar=""
-								width=""
-								dfs_state=""
-								dfs_cac=""
-								for( f=1; f<NF;f++)
-								{
-												split($(f),a,":")
-												if(f==1) ch=$(f)
-												if($(f) ~ /TX power/) power=a[2]
-												if($(f) ~ /Radar/) radar="Radar"
-												if($(f) ~ /Channel widths/) width=a[2]
-												if($(f) ~ /DFS state/) dfs_state=a[2]
-												if($(f) ~ /DFS CAC/) dfs_cac=a[2]
-								}
-								printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",ch,power,width,radar,dfs_state, dfs_cac);
-				}
+	BEGIN{ RS="*";FS="\n" }
+	(NR==1){next}
+	{
+		power=""
+		radar=""
+		width=""
+		dfs_state=""
+		dfs_cac=""
+		usable=""
+		wait=""
+		for( f=1; f<NF;f++)
+		{
+			split($(f),a,":")
+			if(f==1) ch=$(f)
+			if($(f) ~ /TX power/) power=a[2]
+			if($(f) ~ /Radar/) radar="Radar"
+			if($(f) ~ /Channel widths/) width=a[2]
+			if($(f) ~ /DFS state/) dfs_state=a[2]
+			if($(f) ~ /DFS CAC/) dfs_cac=a[2]
+		}
+		if(length(dfs_state))
+		{
+			split(dfs_state,_t," ")
+			t=_t[3];s=(t%60);m=(t/60)%60;h=(t/3600)%24;d=(t/3600/24)
+			usable=sprintf("%02ud:%02uh:%02um:%02us",d,h,m,s)
+		}
+		if(length(dfs_cac))
+		{
+			split(dfs_cac,_t," ")
+			t=_t[1]/1000;s=(t%60);m=(t/60)
+			wait=sprintf("%02um:%02us",m,s)
+		}
+
+		printf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n", ch, power, width, radar, usable, wait);
+	}
 '
 
 cat << EOM

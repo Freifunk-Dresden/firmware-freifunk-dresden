@@ -301,8 +301,6 @@ gen_download_json_add_data()
 			# check if firmware filename is already in OUTPUT_FILEINFO_JSON_FILENAME.
 			# When targets are moved from one buildroot to another (19.04 -> 18.06) then json may still(already)
 			# contain the filename. do not add it a second time.
-			#
-			#
 
 			# generate download.json and new fileinfo.json
 			if [ $sysupgrade = 1 ]; then
@@ -452,7 +450,7 @@ do
 	# needed since openwrt 22.03
 	export MKHASH=$buildroot/staging_dir/host/bin/mkhash
 
-	_platforms=$buildroot/output/targets
+	_platforms=$buildroot/output
 
 	# check directory
 	test -d ${_platforms} || continue

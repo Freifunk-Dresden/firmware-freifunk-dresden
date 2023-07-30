@@ -90,9 +90,9 @@ if [ "$wifi_status_radio2g_present" = "1" ]; then
 cat<<EOM
 <tr class="colortoggle1"><th>Wifi Client IP Bereich (DHCP)</th><td>${_ddmesh_wifi2dhcpstart} - ${_ddmesh_wifi2dhcpend}</td></tr>
 <tr class="colortoggle2"><th>Wifi Client IP Bereich (fest)</th><td>${_ddmesh_wifi2FixIpStart} - ${_ddmesh_wifi2FixIpEnd}</td></tr>
+<tr class=\"colortoggle1\"><th>Wifi 2G SSID</th><td>$(uci get wireless.wifi2_2g.ssid)</td></tr>
 EOM
-[ "$wifi_status_radio2g_up" = "1" ] && echo "<tr class=\"colortoggle1\"><th>Wifi 2G SSID</th><td>$(uci get wireless.wifi2_2g.ssid)</td></tr>"
-[ "$wifi_status_radio5g_up" = "1" ] && echo "<tr class=\"colortoggle1\"><th>Wifi 5G SSID</th><td>$(uci get wireless.wifi2_5g.ssid)</td></tr>"
+[ "$wifi_status_radio5g_present" = "1" ] && echo "<tr class=\"colortoggle1\"><th>Wifi 5G SSID</th><td>$(uci get wireless.wifi2_5g.ssid)</td></tr>"
 fi
 cat<<EOM
 </table>

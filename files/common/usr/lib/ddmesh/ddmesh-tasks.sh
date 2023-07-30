@@ -53,8 +53,8 @@ call_task()
 task_wifi_scanfix()
 {
 	eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
-	[ "$wifi_status_radio2g_up" == "1" ] && /usr/sbin/iw dev wifi2ap scan >/dev/null
-	[ "$wifi_status_radio5g_up" == "1" ] && /usr/sbin/iw dev wifi5ap scan >/dev/null
+	[ "$wifi_status_radio2g_present" == "1" ] && /usr/sbin/iw dev wifi2ap scan >/dev/null
+	[ "$wifi_status_radio5g_present" == "1" ] && /usr/sbin/iw dev wifi5ap scan >/dev/null
 }
 
 task_routing()

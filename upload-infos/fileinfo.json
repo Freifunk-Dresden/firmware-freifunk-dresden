@@ -1682,8 +1682,8 @@
     {
       "name": "",
       "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "model": "avm,fritz7360-v2",
+      "model2": "AVM FRITZ!Box 7360 V2",
       "filename": "openwrt-lantiq-xrx200-avm_fritz7360-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -1750,19 +1750,6 @@
       "model": "tplink,tdw8970",
       "model2": "TP-LINK TD-W8970",
       "filename": "openwrt-lantiq-xrx200-tplink_tdw8970-squashfs-sysupgrade.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "filename": "openwrt-lantiq-xrx200-tplink_tdw8980-initramfs-kernel.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
-      "filename": "openwrt-lantiq-xrx200-tplink_tdw8980-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -2035,9 +2022,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "netgear,wac104",
+      "model2": "Netgear WAC104",
       "filename": "openwrt-ramips-mt7621-netgear_wac104-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -2129,19 +2116,6 @@
     {
       "name": "",
       "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-initramfs-kernel.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-sfp-initramfs-kernel.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
-      "filename": "openwrt-ramips-mt7621-ubnt_edgerouter-x-sfp-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
