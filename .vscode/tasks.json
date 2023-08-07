@@ -21,8 +21,7 @@
             "label": "upload current file",
             "type": "shell",
             "command": "eval scp ${file} root@${input:targetIp}:/$(echo '${relativeFile}' | sed 's#files/[^/]*/##' )",
-            "problemMatcher": [
-            ],
+            "problemMatcher": [],
             "presentation": {
                 "echo": true,
                 "reveal": "always"
