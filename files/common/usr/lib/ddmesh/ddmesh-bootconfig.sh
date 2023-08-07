@@ -113,7 +113,7 @@ config network 'network'
 	option	wifi_country 'DE'
 	option	wifi_channel 13
 	option	wifi_txpower 18
-	option	disable_wifi_5g 0
+	option	wifi5g_mode 'normal'
 	option	wifi_channel_5g 44
 	option	wifi_txpower_5g 18
 	option	wifi_indoor_5g 0
@@ -156,9 +156,7 @@ config network 'network'
 	#option	wan_netmask
 	#option	wan_gateway
 	#option	wan_dns
-	option wificlient_5g_enabled '0'
 	option wificlient_5g_ssid 'dummy'
-	option wificlient_5g_channel '60'
 	option wificlient_5g_encryption 'psk2-ccmp'
 	option wificlient_5g_key '12345678'
 	option wificlient_5g_macaddr ''

@@ -14,9 +14,9 @@ EOF
 if [ -z "$QUERY_STRING" ]; then
 
 if [ "$(uci -q get ddmesh.network.wifi3_5g_network)" = "wan" ]; then
-	checked_wan='checked="checked"'
+	checked_wan='checked'
 else
-	checked_lan='checked="checked"'
+	checked_lan='checked'
 fi
 
 # workaround to pass key with " and ' to input field
@@ -67,6 +67,25 @@ function checkInput()
 	}
 	return true;
 }
+function fold_mode()
+{
+	if(document.getElementById('radio_wifi5g_mode_disabled').checked)
+	{
+		obj = document.getElementById('div_wifi5g_mode_normal').style.display = 'none';
+		obj = document.getElementById('div_wifi5g_mode_client').style.display = 'none';
+	}
+	if(document.getElementById('radio_wifi5g_mode_normal').checked)
+	{
+		obj = document.getElementById('div_wifi5g_mode_normal').style.display = 'block';
+		obj = document.getElementById('div_wifi5g_mode_client').style.display = 'none';
+	}
+	if(document.getElementById('radio_wifi5g_mode_client').checked)
+	{
+		obj = document.getElementById('div_wifi5g_mode_normal').style.display = 'none';
+		obj = document.getElementById('div_wifi5g_mode_client').style.display = 'block';
+	}
+	return false;
+}
 </script>
 
 
@@ -75,12 +94,39 @@ function checkInput()
 <legend>WiFi-Einstellungen</legend>
 <table>
 <tr>
-<th width="100">Disable Wifi 5Ghz:</th>
-<td><input onchange="return fold2('wifi5', document.getElementsByName('form_disable_wifi')[0].checked)" name="form_disable_wifi" type="checkbox" value="1" $(if [ "$(uci -q get ddmesh.network.disable_wifi_5g)" = 1 ];then echo 'checked="checked"';fi) ></td>
-</tr>
+<td>
+EOM
+mode="$(uci -q get ddmesh.network.wifi5g_mode)"
+for i in "disabled:aus" "normal:normal" "client:WAN"
+do
+	value=${i%:*}
+	text=${i#*:}
+	[ "$value" = "$mode" ] && checked="checked" || checked=""
+	echo "<input onchange=\"fold_mode()\" name=\"form_wifi5g_mode\" type=\"radio\" value=\"${value}\" id=\"radio_wifi5g_mode_${value}\" $checked>${text}"
+done
+cat<<EOM
+</td></tr>
 </table>
 
-<div id="wifi5">
+<div id="div_wifi5g_mode_client">
+<table>
+<tr><td colspan="2"><hr size=1></td></tr>
+<tr><th>SSID:</th>
+<td><input name="form_wificlient_5g_ssid" size="32" type="text" value="$(uci -q get ddmesh.network.wificlient_5g_ssid)"></td>
+</tr>
+<tr><th>Verschl&uuml;sselung:</th>
+<td><input name="form_wificlient_5g_encryption" type="text" value="$(uci -q get ddmesh.network.wificlient_5g_encryption)">(psk2-ccmp)</td>
+</tr>
+<tr><th>Key</th>
+<td><input name="form_wificlient_5g_key" type="text" value="$(uci -q get ddmesh.network.wificlient_5g_key)"></td>
+</tr>
+<tr><th>Mac Addr</th>
+<td><input name="form_wificlient_5g_macaddr" type="text" value="$(uci -q get ddmesh.network.wificlient_5g_macaddr)"></td>
+</tr>
+</table>
+</div>
+
+<div id="div_wifi5g_mode_normal">
 <table>
 <tr><td colspan="2"><hr size=1></td></tr>
 <tr>
@@ -209,7 +255,7 @@ cat << EOM
 </fieldset>
 
 <script type="text/javascript">
-fold2('wifi5', document.getElementsByName('form_disable_wifi')[0].checked)
+fold_mode();
 enable_private_wifi();
 setWifi3_key();
 </script>
@@ -222,7 +268,7 @@ else #query string
 
 		[ -z "$form_wifi_txpower" ] && form_wifi_txpower="$(uci -q get ddmesh.network.wifi_txpower_5g)"
 
-		uci set ddmesh.network.disable_wifi_5g="$form_disable_wifi"
+		uci set ddmesh.network.wifi5g_mode="$form_wifi5g_mode"
 		uci set ddmesh.network.wifi_txpower_5g="$form_wifi_txpower"
 		uci set ddmesh.network.wifi_indoor_5g="$form_wifi_indoor"
 		if [ "$form_wifi_channels_lower" -gt "$form_wifi_channels_upper" ]; then
@@ -239,6 +285,11 @@ else #query string
 			uci set credentials.wifi_5g.private_ssid="$(uhttpd -d "$form_wifi3_ssid")"
 			uci set credentials.wifi_5g.private_key="$(uhttpd -d "$form_wifi3_key")"
 		fi
+
+		uci set ddmesh.network.wificlient_5g_ssid="$form_wificlient_5g_ssid"
+		uci set ddmesh.network.wificlient_5g_encryption="$form_wificlient_5g_encryption"
+		uci set ddmesh.network.wificlient_5g_key="$form_wificlient_5g_key"
+		uci set ddmesh.network.wificlient_5g_macaddr="$form_wificlient_5g_macaddr"
 
 		uci set ddmesh.boot.boot_step=2
 		uci commit

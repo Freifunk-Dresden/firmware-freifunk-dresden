@@ -20,7 +20,11 @@ setup_wireless()
  # update mesh_key from rom
  wifi_mesh_key="$(uci -c /rom/etc/config get credentials.network.wifi_mesh_key)"
 
- wificlient_5g_enabled="$(uci -q get ddmesh.network.wificlient_5g_enabled)"
+ wifi5g_mode="$(uci -q get ddmesh.network.wifi5g_mode)"
+ if [ -z "$wifi5g_mode" ]; then
+	wifi5g_mode="normal"
+	uci -q set ddmesh.network.wifi5g_mode="$wifi5g_mode"
+ fi
 
  # --- update and detect 2/5GHz radios
  # "store" should only be done here when creating wireless config (it writes to flash)
@@ -52,7 +56,7 @@ setup_wireless()
 
 	# 5 GHz
  if [ "$wifi_status_radio5g_present" = "1" ]; then
-	if [ "$(uci -q get ddmesh.network.disable_wifi_5g)" = "1" ]; then
+	if [ "$(uci -q get ddmesh.network.wifi5g_mode)" = "disabled" ]; then
 		uci -q set wireless.radio5g.disabled="1"
 	else
 		uci -q delete wireless.radio5g.disabled
@@ -60,8 +64,7 @@ setup_wireless()
 		uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
 		uci set wireless.radio5g.txpower="$(uci get ddmesh.network.wifi_txpower_5g)"
 
-		if [ "$wificlient_5g_enabled" = "1" ]; then
-			# uci set wireless.radio5g.channel="$(uci -q get ddmesh.network.wificlient_5g_channel)"
+		if [ "$wifi5g_mode" = "client" ]; then
 			uci delete wireless.radio5g.channel
 		else
 			if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
@@ -181,7 +184,7 @@ setup_wireless()
 
  # add 5GHz
  if [ "$wifi_status_radio5g_present" = "1" ]; then
-	if [ "$wificlient_5g_enabled" = "1" ]; then
+	if [ "$wifi5g_mode" = "client" ]; then
 		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
 		uci rename wireless.@wifi-iface[$iface]='cwan'
 		uci set wireless.@wifi-iface[$iface].device='radio5g'
@@ -261,7 +264,7 @@ setup_wireless()
  fi
 
  # - wifi3-5g (private ap)
- if [ "$wificlient_5g_enabled" != "1" -a "$wifi_status_radio5g_present" = "1" ]; then
+ if [ "$wifi5g_mode" = "normal" -a "$wifi_status_radio5g_present" = "1" ]; then
 	if [ "$wifi_status_radio5g_mode_ap" -gt 1 ]; then
 		if [ "$(uci -q get ddmesh.network.wifi3_5g_enabled)" = "1" -a -n "$(uci -q get credentials.wifi_5g.private_ssid)" ] && [ "$(uci -q get ddmesh.network.wifi3_5g_security)" != "1" -o -n "$(uci -q get credentials.wifi_5g.private_key)" ]; then
 			test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
