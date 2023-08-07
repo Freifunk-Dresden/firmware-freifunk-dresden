@@ -20,6 +20,8 @@ setup_wireless()
  # update mesh_key from rom
  wifi_mesh_key="$(uci -c /rom/etc/config get credentials.network.wifi_mesh_key)"
 
+ wificlient_5g_enabled="$(uci -q get ddmesh.network.wificlient_5g_enabled)"
+
  # --- update and detect 2/5GHz radios
  # "store" should only be done here when creating wireless config (it writes to flash)
  eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh store)
@@ -54,30 +56,35 @@ setup_wireless()
 		uci -q set wireless.radio5g.disabled="1"
 	else
 		uci -q delete wireless.radio5g.disabled
-	fi
-	uci set wireless.radio5g.band="5g"
+		uci set wireless.radio5g.band="5g"
+		uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
+		uci set wireless.radio5g.txpower="$(uci get ddmesh.network.wifi_txpower_5g)"
 
-	uci set wireless.radio5g.country="$(uci -q get ddmesh.network.wifi_country)"
-	if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
-		# because we indoor ch36 (indoor 80Mhz: ch 36,40,44,48)
-		uci set wireless.radio5g.htmode="VHT80"
-		uci set wireless.radio5g.channel="$(uci -q get ddmesh.network.wifi_channel_5g)"
-	else
-		# not all devices support VHT80. If radar on one channel was detected then
-		# broader channel will likly not available
-		uci set wireless.radio5g.htmode="VHT80"
-		range="$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)"
-		uci set wireless.radio5g.channel="${range%-*}"
-		uci set wireless.radio5g.channels="${range}"
+		if [ "$wificlient_5g_enabled" = "1" ]; then
+			# uci set wireless.radio5g.channel="$(uci -q get ddmesh.network.wificlient_5g_channel)"
+			uci delete wireless.radio5g.channel
+		else
+			if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
+				# because we indoor ch36 (indoor 80Mhz: ch 36,40,44,48)
+				uci set wireless.radio5g.htmode="VHT80"
+				uci set wireless.radio5g.channel="$(uci -q get ddmesh.network.wifi_channel_5g)"
+			else
+				# not all devices support VHT80. If radar on one channel was detected then
+				# broader channel will likly not available
+				uci set wireless.radio5g.htmode="VHT80"
+				range="$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)"
+				uci set wireless.radio5g.channel="${range%-*}"
+				uci set wireless.radio5g.channels="${range}"
+			fi
+		fi
 	fi
-	uci set wireless.radio5g.txpower="$(uci get ddmesh.network.wifi_txpower_5g)"
  fi
 
  # --- interfaces ---
  # delete all interfaces if any
  while uci -q delete wireless.@wifi-iface[0]; do true; done
 
- # - wifi -
+ # -- wifi mesh --
 
  case "$(uci -q get ddmesh.network.mesh_mode)" in
 	adhoc)
@@ -131,7 +138,7 @@ setup_wireless()
  fi
 
 
- # - wifi2 - 2G
+ # -- wifi2/2G --
  if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" -a "$_ddmesh_wifi2roaming" = "1" ]; then
 	essid2="$(uci -q get ddmesh.system.community)"
 	essid5="$(uci -q get ddmesh.system.community) 5G"
@@ -169,44 +176,59 @@ setup_wireless()
  #uci set wireless.@wifi-iface[$iface].ieee80211w='1'
  iface=$((iface + 1))
 
- # - wifi2 - 5G
+ # -- wifi2/5G --
 
  # add 5GHz
  if [ "$wifi_status_radio5g_present" = "1" ]; then
-	if [ "$wifi_status_radio5g_mode_ap" -gt 0 ]; then
+	if [ "$wificlient_5g_enabled" = "1" ]; then
 		test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
-		uci rename wireless.@wifi-iface[$iface]='wifi2_5g'
+		uci rename wireless.@wifi-iface[$iface]='cwan'
 		uci set wireless.@wifi-iface[$iface].device='radio5g'
-		uci set wireless.@wifi-iface[$iface].network='wifi2'
-		uci set wireless.@wifi-iface[$iface].ifname='wifi5ap'
-		uci set wireless.@wifi-iface[$iface].mode='ap'
-		uci set wireless.@wifi-iface[$iface].encryption='none'
-		isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
-		isolate="${isolate:-1}" #default isolate
-		uci set wireless.@wifi-iface[$iface].isolate="$isolate"
-		ssid="Freifunk ${essid5}"
+		uci set wireless.@wifi-iface[$iface].network='cwan'
+		uci set wireless.@wifi-iface[$iface].ifname='wifi-client5g'
+		uci set wireless.@wifi-iface[$iface].mode='sta'
+		ssid="$(uci -q get ddmesh.network.wificlient_5g_ssid)"
 		uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
-		#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
-		#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
-		#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
+		uci set wireless.@wifi-iface[$iface].encryption="$(uci -q get ddmesh.network.wificlient_5g_encryption)"
+		uci set wireless.@wifi-iface[$iface].key="$(uci -q get ddmesh.network.wificlient_5g_key)"
+		uci set wireless.@wifi-iface[$iface].macaddr="$(uci -q get ddmesh.network.wificlient_5g_macaddr)"
 		iface=$((iface + 1))
-	fi
-
-	# 5ghz mesh only for indoor
-	if [ "$wifi_status_radio5g_mode_mesh" -gt 0 ]; then
-		if [ $wifi_mode_mesh = 1 -a "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
-			test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
-			uci rename wireless.@wifi-iface[$iface]='wifi_mesh5g'
+	else
+		if [ "$wifi_status_radio5g_mode_ap" -gt 0 ]; then
+			test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface
+			uci rename wireless.@wifi-iface[$iface]='wifi2_5g'
 			uci set wireless.@wifi-iface[$iface].device='radio5g'
-			uci set wireless.@wifi-iface[$iface].network='wifi_mesh5g'
-			uci set wireless.@wifi-iface[$iface].ifname='mesh5g-80211s'
-			uci set wireless.@wifi-iface[$iface].mode='mesh'
-			uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
-			uci set wireless.@wifi-iface[$iface].key="$wifi_mesh_key"
-			uci set wireless.@wifi-iface[$iface].encryption='none' # key still used for authentication
-			uci set wireless.@wifi-iface[$iface].mesh_fwding='0'
-			test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
+			uci set wireless.@wifi-iface[$iface].network='wifi2'
+			uci set wireless.@wifi-iface[$iface].ifname='wifi5ap'
+			uci set wireless.@wifi-iface[$iface].mode='ap'
+			uci set wireless.@wifi-iface[$iface].encryption='none'
+			isolate="$(uci -q get ddmesh.network.wifi2_isolate)"
+			isolate="${isolate:-1}" #default isolate
+			uci set wireless.@wifi-iface[$iface].isolate="$isolate"
+			ssid="Freifunk ${essid5}"
+			uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
+			#uci set wireless.@wifi-iface[$iface].wpa_disable_eapol_key_retries='1'
+			#uci set wireless.@wifi-iface[$iface].tdls_prohibit='1'
+			#uci set wireless.@wifi-iface[$iface].ieee80211w='1'
 			iface=$((iface + 1))
+		fi
+
+		# 5ghz mesh only for indoor
+		if [ "$wifi_status_radio5g_mode_mesh" -gt 0 ]; then
+			if [ $wifi_mode_mesh = 1 -a "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
+				test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
+				uci rename wireless.@wifi-iface[$iface]='wifi_mesh5g'
+				uci set wireless.@wifi-iface[$iface].device='radio5g'
+				uci set wireless.@wifi-iface[$iface].network='wifi_mesh5g'
+				uci set wireless.@wifi-iface[$iface].ifname='mesh5g-80211s'
+				uci set wireless.@wifi-iface[$iface].mode='mesh'
+				uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
+				uci set wireless.@wifi-iface[$iface].key="$wifi_mesh_key"
+				uci set wireless.@wifi-iface[$iface].encryption='none' # key still used for authentication
+				uci set wireless.@wifi-iface[$iface].mesh_fwding='0'
+				test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
+				iface=$((iface + 1))
+			fi
 		fi
 	fi
  fi
@@ -238,7 +260,7 @@ setup_wireless()
  fi
 
  # - wifi3-5g (private ap)
- if [ "$wifi_status_radio5g_present" = "1" ]; then
+ if [ "$wificlient_5g_enabled" != "1" -a "$wifi_status_radio5g_present" = "1" ]; then
 	if [ "$wifi_status_radio5g_mode_ap" -gt 1 ]; then
 		if [ "$(uci -q get ddmesh.network.wifi3_5g_enabled)" = "1" -a -n "$(uci -q get credentials.wifi_5g.private_ssid)" ] && [ "$(uci -q get ddmesh.network.wifi3_5g_security)" != "1" -o -n "$(uci -q get credentials.wifi_5g.private_key)" ]; then
 			test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci add wireless wifi-iface

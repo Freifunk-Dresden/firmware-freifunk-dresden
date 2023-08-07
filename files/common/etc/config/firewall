@@ -29,6 +29,7 @@ config zone 'zone_wan'
 	list network 'wan'
 	list network 'wwan_helper'
 	list network 'twan'
+	list network 'cwan'
 
 config zone 'zone_wifi2'
 	option name 'wifi2'

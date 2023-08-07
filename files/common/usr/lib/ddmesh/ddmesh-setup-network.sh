@@ -347,7 +347,15 @@ setup_twan()
 	uci set network.twan.device='br-twan'
 	uci set network.twan.proto='dhcp'
 	uci set network.twan.force_link='1'
-	uci set network.twan.metric='60' # avoids overwriting WAN/LAN default route
+	uci set network.twan.metric='70' # avoids overwriting WAN/LAN default route
+}
+
+setup_cwan()
+{
+	uci add network interface
+	uci rename network.@interface[-1]='cwan'
+	uci set network.cwan.proto='dhcp'
+	uci set network.cwan.metric='60' # avoids overwriting WAN/LAN default route
 }
 
 setup_wifi()
@@ -499,7 +507,7 @@ setup_network()
 #cat /etc/config/network >/tmp/devel-network-initial
 
  # setup_mesh AFTER setup_ethernet (setup_mesh needs lan network)
- for f in setup_ethernet setup_mesh setup_wwan setup_twan setup_wifi setup_backbone setup_bmxd setup_ffgw setup_vpn setup_privnet
+ for f in setup_ethernet setup_mesh setup_wwan setup_cwan setup_twan setup_wifi setup_backbone setup_bmxd setup_ffgw setup_vpn setup_privnet
  do
 	echo "call ${f}()"
 	${f}

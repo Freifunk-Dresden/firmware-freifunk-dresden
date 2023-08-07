@@ -142,6 +142,16 @@ network_is_up lan && {
 }
 printf 'LAN:%s via %s\n' "$default_lan_ifname" "$default_lan_gateway"
 
+network_is_up cwan  && {
+	#get network infos using /lib/functions/network.sh
+	network_get_device default_cwan_ifname cwan
+	default_cwan_gateway=$(ip route | sed -n "/default via [0-9.]\+ dev $default_cwan_ifname/{s#.*via \([0-9.]\+\).*#\1#p}")
+	if [ -n "$default_cwan_gateway" -a -n "$default_cwan_ifname" ]; then
+		cwan_default_route="$default_cwan_gateway:$default_cwan_ifname"
+	fi
+}
+printf 'CWAN:%s via %s\n' "$default_cwan_ifname" "$default_cwan_gateway"
+
 network_is_up twan  && {
 	#get network infos using /lib/functions/network.sh
 	network_get_device default_twan_ifname twan
@@ -169,7 +179,7 @@ IFS=' '
 # start with vpn, because this is prefered gateway, then WAN and lates LAN
 # (there is no forwarding to lan allowed by firewall)
 # wwan+teth after wan/lan: assume wan/lan is faster than wwan/tether (tether is fallback for wired connection)
-for g in $vpn_default_route $wan_default_route $lan_default_route $twan_default_route $wwan_default_route
+for g in $vpn_default_route $wan_default_route $lan_default_route $cwan_default_route $twan_default_route $wwan_default_route
 do
 	printf '===========\n'
 	printf 'try: %s\n' "$g"
@@ -198,10 +208,10 @@ do
 	done
 	if [ "$ok" = "1" ]; then
 		printf 'gateway found: via [%s] dev [%s]\n' "$via" "$dev"
-		printf 'landev: [%s], wandev=[%s], vpndev=[%s], twan=[%s], wwan=[%s]\n' "$default_lan_ifname" "$default_wan_ifname" "$default_vpn_ifname" "$default_twan_ifname" "$default_wwan_ifname"
+		printf 'landev: [%s], wandev=[%s], vpndev=[%s], twan=[%s], wwan=[%s]\n' "$default_lan_ifname" "$default_wan_ifname" "$default_vpn_ifname" "$default_cwan_ifname" "$default_twan_ifname" "$default_wwan_ifname"
 
 		#always add wan/wwan or lan to local gateway
-		if [ "$dev" = "$default_lan_ifname" -o "$dev" = "$default_wan_ifname" -o "$dev" = "$default_twan_ifname" -o "$dev" = "$default_wwan_ifname" ]; then
+		if [ "$dev" = "$default_lan_ifname" -o "$dev" = "$default_wan_ifname" -o "$dev" = "$default_cwan_ifname" -o "$dev" = "$default_twan_ifname" -o "$dev" = "$default_wwan_ifname" ]; then
 			printf 'Set local gateway: dev:%s, ip:%s\n' "$dev" "$via"
 			setup_gateway_table $dev $via local_gateway
 			#if lan/wan is tested, then we have no vpn which is working. so clear public gateway
