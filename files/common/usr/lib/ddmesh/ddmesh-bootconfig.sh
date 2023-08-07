@@ -107,6 +107,7 @@ config network 'network'
 	option	dhcp_lan_offset 100
 	option	dhcp_lan_limit 0
 	option	dhcp_lan_lease '12h'
+# (only 18.06)
 	option	essid_adhoc 'Freifunk-Mesh-Net'
 #	option	essid_ap '' #custom essid
 	option	wifi_country 'DE'

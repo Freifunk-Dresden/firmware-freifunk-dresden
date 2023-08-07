@@ -2,7 +2,7 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
-# update "status" led when wifi (adhoc) is down/up
+# update "status" led when wifi is down/up
 
 test -f /tmp/freifunk-running || exit 0
 

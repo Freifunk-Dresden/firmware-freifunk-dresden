@@ -56,7 +56,7 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 
 	type=""
 
-	# Mesh-Net
+	# Mesh-Net (only 18.06)
 	A="$(uci get ddmesh.network.essid_adhoc)"
 	if [ "$wifi_essid_clean" = "$A" ]; then
 		type="ffadhoc"

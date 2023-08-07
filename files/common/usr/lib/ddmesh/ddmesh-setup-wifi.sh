@@ -106,6 +106,7 @@ setup_wireless()
  esac
 
  iface=0
+ # (only 18.06)
  if [ $wifi_mode_adhoc = 1 ]; then
  	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
 	uci rename wireless.@wifi-iface[$iface]='wifi_adhoc'
