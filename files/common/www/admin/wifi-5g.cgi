@@ -115,7 +115,25 @@ cat<<EOM
 <td><input name="form_wificlient_5g_ssid" size="32" type="text" value="$(uci -q get ddmesh.network.wificlient_5g_ssid)"></td>
 </tr>
 <tr><th>Verschl&uuml;sselung:</th>
-<td><input name="form_wificlient_5g_encryption" type="text" value="$(uci -q get ddmesh.network.wificlient_5g_encryption)">(psk2-ccmp)</td>
+<td><select name="form_wificlient_5g_encryption" size="1">
+EOM
+
+encr="$(uci -q get ddmesh.network.wificlient_5g_encryption)"
+for i in "psk2+ccmp:WPA2 Personal (PSK) CCMP" "psk2+tkip:WPA2 Personal (PSK) TKIP" "psk2+aes:WPA2 Personal (PSK) AES" "psk2+tkip+ccmp:WPA2 Personal (PSK) TKIP,CCMP" "psk2+tkip+aes:WPA2 Personal (PSK) TKIP,AES" "psk+ccmp:WPA Personal (PSK) CCMP" "psk+tkip:WPA Personal (PSK) TKIP" "psk+aes:WPA Personal (PSK) AES" "psk+tkip+ccmp:WPA Personal (PSK) TKIP,CCMP" "psk+tkip+aes:WPA Personal (PSK) TKIP,AES"
+do
+	enc="${i%:*}"
+	text="${i#*:}"
+	if [ "$encr" = "$enc" ]; then
+		sel="selected"
+		mark="*"
+	else
+		sel=""
+		mark=" "
+	fi
+	echo "<option $sel value=\"$enc\">$mark $text</option>"
+done
+cat<<EOM
+</select></td>
 </tr>
 <tr><th>Key</th>
 <td><input name="form_wificlient_5g_key" type="text" value="$(uci -q get ddmesh.network.wificlient_5g_key)"></td>
@@ -286,10 +304,10 @@ else #query string
 			uci set credentials.wifi_5g.private_key="$(uhttpd -d "$form_wifi3_key")"
 		fi
 
-		uci set ddmesh.network.wificlient_5g_ssid="$form_wificlient_5g_ssid"
-		uci set ddmesh.network.wificlient_5g_encryption="$form_wificlient_5g_encryption"
-		uci set ddmesh.network.wificlient_5g_key="$form_wificlient_5g_key"
-		uci set ddmesh.network.wificlient_5g_macaddr="$form_wificlient_5g_macaddr"
+		uci set ddmesh.network.wificlient_5g_ssid="$(uhttpd -d "$form_wificlient_5g_ssid")"
+		uci set ddmesh.network.wificlient_5g_encryption="$(uhttpd -d "$form_wificlient_5g_encryption")"
+		uci set ddmesh.network.wificlient_5g_key="$(uhttpd -d "$form_wificlient_5g_key")"
+		uci set ddmesh.network.wificlient_5g_macaddr="$(uhttpd -d "$form_wificlient_5g_macaddr")"
 
 		uci set ddmesh.boot.boot_step=2
 		uci commit
