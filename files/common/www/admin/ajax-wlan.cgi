@@ -22,9 +22,9 @@ s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
 s#	SSID: \(.*\)#wifi_essid="\1";#p
 s#	MESH ID: \(.*\)#wifi_meshid="\1";#p
-s#	WPA:.*#wifi_open="no";#p
-s#	WPE:.*#wifi_open="no";#p
-s#	RSN:.*#wifi_open="no";#p
+s#	WPA:.*#wifi_open="no";wifi_encr="WPA";#p
+s#	WPE:.*#wifi_open="no";wifi_encr="WPE";#p
+s#	RSN:.*#wifi_open="no";wifi_encr="WPA2";#p
 s#	freq: \(.*\)#wifi_freq="\1";#p
 s#[	 *]\+Group cipher: \(.*\)#wifi_group_cipher="\1";#p
 s#[	 *]\+Authentication suites: \(.*\)#wifi_auth="\1";#p
@@ -80,7 +80,7 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 
 	line="{\"type\": \"$type\", \"ssid\": \"$wifi_essid_clean\", \"channel\": \"$wifi_channel\","
 	line="$line  \"open\": \"$wifi_open\", \"signal\": \"$wifi_signal\","
-	line="$line  \"group_cipher\": \"$wifi_group_cipher\", \"auth\": \"$wifi_auth\","
+	line="$line  \"group_cipher\": \"$wifi_group_cipher\", \"auth\": \"$wifi_auth\", \"encr\": \"$wifi_encr\","
 	line="$line  \"uptime\": \"$wifi_uptime\", \"bssid\": \"$wifi_bssid\"},"
 
 	# output line from subshell
@@ -109,7 +109,7 @@ do
 
 	eval $(echo "$line" | jsonfilter -e wifi_type='@.type' -e wifi_ssid='@.ssid' -e wifi_channel='@.channel' \
 					 -e wifi_open='@.open' -e wifi_signal='@.signal' \
-					 -e wifi_group_cipher='@.group_cipher' -e wifi_auth='@.auth' \
+					 -e wifi_group_cipher='@.group_cipher' -e wifi_auth='@.auth' -e wifi_encr='@.encr' \
 					 -e wifi_uptime='@.uptime' -e wifi_bssid='@.bssid')
 
 	gif=5
@@ -177,7 +177,7 @@ cat<<EOM
 <TD style="$style" width="40">- $wifi_signal</TD>
 <TD style="$style" width="40">$wifi_uptime</TD>
 <TD style="$style" width="40">$wifi_bssid</TD>
-<TD style="$style" width="40">$wifi_auth,$wifi_group_cipher</TD></tr>
+<TD style="$style" width="40">$wifi_encr ($wifi_auth) $wifi_group_cipher</TD></tr>
 EOM
 	if [ $T -eq 1 ]; then
 		T=2
