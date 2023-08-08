@@ -55,11 +55,11 @@ config system 'system'
 	option	tmp_max_node 999
 #	option 	register_key ''
 	option	announce_gateway 0
-	option  wanssh 1
-	option  wanhttp 1
-	option  wanhttps 1
+	option  wanssh 0
+	option  wanhttp 0
+	option  wanhttps 0
 	option  wanicmp 1
-	option  wansetup 1
+	option  wansetup 0
 	option  meshssh 1
 	option  meshsetup 1
 	option	firmware_autoupdate 1
