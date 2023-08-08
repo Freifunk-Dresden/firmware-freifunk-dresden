@@ -8,7 +8,7 @@ RUN apt-get update && apt-get full-upgrade -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
 
 RUN apt-get install -y nodejs git build-essential cmake devscripts debhelper \
-                python2 python3 dh-python libssl-dev libncurses5-dev unzip \
+                python2 python3 dh-python libelf-dev libssl-dev libncurses5-dev unzip \
                 gawk zlib1g-dev subversion gcc-multilib flex gettext curl \
                 wget time rsync jq \
                 libjson-c-dev libjsoncpp-dev \

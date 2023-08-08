@@ -15,7 +15,7 @@ default:
   # image is on hub.docker.com. NOTE: always specify a tag and do not use latest!
   # this is because if a latest image is already on host, this is not updated automatically.
   # Using tags always ensures that the correct build environment is used
-  image: freifunkdresden/openwrt-docker-build:v4
+  image: freifunkdresden/openwrt-docker-build:v5
 
 docker:init:
   except:
