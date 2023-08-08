@@ -194,8 +194,8 @@ setup_wireless()
 		ssid="$(uci -q get ddmesh.network.wificlient_5g_ssid)"
 		uci set wireless.@wifi-iface[$iface].ssid="${ssid:0:32}"
 		uci set wireless.@wifi-iface[$iface].encryption="$(uci -q get ddmesh.network.wificlient_5g_encryption)"
-		uci set wireless.@wifi-iface[$iface].key="$(uci -q get ddmesh.network.wificlient_5g_key)"
-		uci set wireless.@wifi-iface[$iface].macaddr="$(uci -q get ddmesh.network.wificlient_5g_macaddr)"
+		uci set wireless.@wifi-iface[$iface].key="$(uci -q get credentials.wificlient_5g.key)"
+		uci set wireless.@wifi-iface[$iface].macaddr="$(uci -q get credentials.wificlient_5g.macaddr)"
 		iface=$((iface + 1))
 	else
 		if [ "$wifi_status_radio5g_mode_ap" -gt 0 ]; then

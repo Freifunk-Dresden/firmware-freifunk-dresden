@@ -97,7 +97,7 @@ function fold_mode()
 <td>
 EOM
 mode="$(uci -q get ddmesh.network.wifi5g_mode)"
-for i in "disabled:aus" "normal:normal" "client:WAN"
+for i in "disabled:Aus" "normal:Normal" "client:WAN"
 do
 	value=${i%:*}
 	text=${i#*:}
@@ -119,7 +119,7 @@ cat<<EOM
 EOM
 
 encr="$(uci -q get ddmesh.network.wificlient_5g_encryption)"
-for i in "psk2+ccmp:WPA2 Personal (PSK) CCMP" "psk2+tkip:WPA2 Personal (PSK) TKIP" "psk2+aes:WPA2 Personal (PSK) AES" "psk2+tkip+ccmp:WPA2 Personal (PSK) TKIP,CCMP" "psk2+tkip+aes:WPA2 Personal (PSK) TKIP,AES" "psk+ccmp:WPA Personal (PSK) CCMP" "psk+tkip:WPA Personal (PSK) TKIP" "psk+aes:WPA Personal (PSK) AES" "psk+tkip+ccmp:WPA Personal (PSK) TKIP,CCMP" "psk+tkip+aes:WPA Personal (PSK) TKIP,AES"
+for i in "none:Offen" "psk2+ccmp:WPA2 Personal (PSK) CCMP" "psk2+tkip:WPA2 Personal (PSK) TKIP" "psk2+aes:WPA2 Personal (PSK) AES" "psk2+tkip+ccmp:WPA2 Personal (PSK) TKIP,CCMP" "psk2+tkip+aes:WPA2 Personal (PSK) TKIP,AES" "psk+ccmp:WPA Personal (PSK) CCMP" "psk+tkip:WPA Personal (PSK) TKIP" "psk+aes:WPA Personal (PSK) AES" "psk+tkip+ccmp:WPA Personal (PSK) TKIP,CCMP" "psk+tkip+aes:WPA Personal (PSK) TKIP,AES"
 do
 	enc="${i%:*}"
 	text="${i#*:}"
@@ -136,10 +136,10 @@ cat<<EOM
 </select></td>
 </tr>
 <tr><th>Key</th>
-<td><input name="form_wificlient_5g_key" type="text" value="$(uci -q get ddmesh.network.wificlient_5g_key)"></td>
+<td><input name="form_wificlient_5g_key" type="text" value="$(uci -q get credentials.wificlient_5g.key)"> (optional)</td>
 </tr>
-<tr><th>Mac Addr</th>
-<td><input name="form_wificlient_5g_macaddr" type="text" value="$(uci -q get ddmesh.network.wificlient_5g_macaddr)"></td>
+<tr><th>Lokale MAC Addr</th>
+<td><input name="form_wificlient_5g_macaddr" type="text" value="$(uci -q get credentials.wificlient_5g.macaddr)"> (optional)</td>
 </tr>
 </table>
 </div>
@@ -306,8 +306,8 @@ else #query string
 
 		uci set ddmesh.network.wificlient_5g_ssid="$(uhttpd -d "$form_wificlient_5g_ssid")"
 		uci set ddmesh.network.wificlient_5g_encryption="$(uhttpd -d "$form_wificlient_5g_encryption")"
-		uci set ddmesh.network.wificlient_5g_key="$(uhttpd -d "$form_wificlient_5g_key")"
-		uci set ddmesh.network.wificlient_5g_macaddr="$(uhttpd -d "$form_wificlient_5g_macaddr")"
+		uci set credentials.wificlient_5g.key="$(uhttpd -d "$form_wificlient_5g_key")"
+		uci set credentials.wificlient_5g.macaddr="$(uhttpd -d "$form_wificlient_5g_macaddr")"
 
 		uci set ddmesh.boot.boot_step=2
 		uci commit

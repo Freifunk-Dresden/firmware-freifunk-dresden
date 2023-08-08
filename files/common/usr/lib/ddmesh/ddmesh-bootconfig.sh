@@ -158,8 +158,6 @@ config network 'network'
 	#option	wan_dns
 	option wificlient_5g_ssid 'dummy'
 	option wificlient_5g_encryption 'psk2-ccmp'
-	option wificlient_5g_key '12345678'
-	option wificlient_5g_macaddr ''
 
 config bmxd 'bmxd'
 	option routing_class	3
