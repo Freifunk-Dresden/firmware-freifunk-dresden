@@ -7,6 +7,8 @@
 boardname=$(board_name) # function in function.sh
 # temp workaround gl-e750 disable 5ghz: end
 
+mode="$(uci -q get ddmesh.network.wifi5g_mode)"
+[ "$mode" = "normal" ] && ifname5g="wifi5ap" || ifname5g="wifi-client5g"
 
 prefix="wifi_status"
 radio2g_present="0"
@@ -19,7 +21,7 @@ radio2g_mode_mesh=""
 
 radio5g_present="0"
 radio5g_phy=""
-radio5g_dev="wifi5ap"	# use interface that is always present
+radio5g_dev="$ifname5g"	# use interface that is always present
 radio5g_config_index=""
 radio5g_airtime=""
 radio5g_mode_ap=""
