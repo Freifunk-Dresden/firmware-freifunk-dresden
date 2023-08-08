@@ -39,6 +39,7 @@ setup_wireless()
  uci -q delete wireless.radio2g.disabled
  uci set wireless.radio2g.band="2g"
  uci set wireless.radio2g.hwmode="11n"
+ uci set wireless.radio2g.htmode="HT40"
  uci set wireless.radio2g.country="$(uci -q get ddmesh.network.wifi_country)"
  uci set wireless.radio2g.channel="$(uci get ddmesh.network.wifi_channel)"
  uci set wireless.radio2g.txpower="$(uci get ddmesh.network.wifi_txpower)"
@@ -50,9 +51,6 @@ setup_wireless()
 	uci add_list wireless.radio2g.basic_rate='6000 9000 12000 18000 24000 36000 48000 54000'
 	uci add_list wireless.radio2g.supported_rates='6000 9000 12000 18000 24000 36000 48000 54000'
  fi
-
- # set HT20 for 2.4Ghz. higher values are not supported by all devices
- # and meshing 802.11s might not work
 
 	# 5 GHz
  if [ "$wifi_status_radio5g_present" = "1" ]; then
