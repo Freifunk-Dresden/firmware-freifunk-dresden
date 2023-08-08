@@ -13,7 +13,8 @@ LTE                       - add gl-inet GL-E750 with display support
                           - add SIM Pin info
 USB                       - add usb serial console login (getty)
 timezone                  - fix storing user input for timezone
-wifi                      - add 5ghz client mode (WAN: allows using other 5GHz AP as Internet source)
+WiFi                      - add 5ghz client mode (WAN: allows using other 5GHz AP as Internet source)
+                          - WLAN Scan: add infos about encryption
                           - remove owl-loader from devices that do not use it
                           - fix 5GHz outdoor channel range
 gateway check             - reduce check time from 3min -> 1min
