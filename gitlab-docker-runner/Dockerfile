@@ -17,18 +17,16 @@ RUN apt-get install -y nodejs git build-essential cmake devscripts debhelper \
 		vim tmux \
              && apt-get clean
 
-# only used when starting container by our self (not by gitlab)
-# gitlab runner makes ONLY a bind mount to workdir and works as root user
-# /builds will get "root" as owner (when looking in running container)
-# - create user which is used to building firmware
-RUN useradd -m builder
+# gitlab-runner uses /builds and /caches directories per default.
+#
+# chown to a new created user here does not work at all.
+# gitlab starts a new container with a user passed in.
+# I have to do the same to compile openwrt.
+# When specifying an id instead of user name, the user in host does not
+# need to be existent (docker docu)
 
-WORKDIR /builds
-RUN mkdir -p /builds && chown builder:builder /builds
+# create user and specify home directory (use /project) so openwrt build process can use ccache
+# chmod, so all user passed as argument when starting the container can access the directory
+RUN useradd --create-home builder && chmod 777 /home/builder
+WORKDIR /home/builder
 
-# create cache directories; /builds is evt used as container cache and could have
-# conflicts with mycache/dl, Therefore use separate directory
-RUN mkdir -p /cache && chown builder:builder /cache
-RUN mkdir -p /mycache && chown builder:builder /mycache
-
-USER builder
