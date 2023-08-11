@@ -55,11 +55,11 @@ config system 'system'
 	option	tmp_max_node 999
 #	option 	register_key ''
 	option	announce_gateway 0
-	option  wanssh 1
-	option  wanhttp 1
-	option  wanhttps 1
+	option  wanssh 0
+	option  wanhttp 0
+	option  wanhttps 0
 	option  wanicmp 1
-	option  wansetup 1
+	option  wansetup 0
 	option  meshssh 1
 	option  meshsetup 1
 	option	firmware_autoupdate 1
@@ -107,12 +107,13 @@ config network 'network'
 	option	dhcp_lan_offset 100
 	option	dhcp_lan_limit 0
 	option	dhcp_lan_lease '12h'
+# (only 18.06)
 	option	essid_adhoc 'Freifunk-Mesh-Net'
 #	option	essid_ap '' #custom essid
 	option	wifi_country 'DE'
 	option	wifi_channel 13
 	option	wifi_txpower 18
-	option	disable_wifi_5g 0
+	option	wifi5g_mode 'normal'
 	option	wifi_channel_5g 44
 	option	wifi_txpower_5g 18
 	option	wifi_indoor_5g 0
@@ -155,6 +156,8 @@ config network 'network'
 	#option	wan_netmask
 	#option	wan_gateway
 	#option	wan_dns
+	option wificlient_5g_ssid 'dummy'
+	option wificlient_5g_encryption 'psk2-ccmp'
 
 config bmxd 'bmxd'
 	option routing_class	3

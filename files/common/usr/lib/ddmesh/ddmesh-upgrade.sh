@@ -446,6 +446,7 @@ upgrade_8_1_7()
 	uci -q set ddmesh.network.wifi_channel_5g=44
 	uci -q delete ddmesh.system.disable_splash
 	uci -q delete ddmesh.nodegroup
+  uci -q add_list firewall.zone_wan.network='cwan'
 }
 
 ##################################

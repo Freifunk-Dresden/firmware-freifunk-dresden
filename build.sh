@@ -1084,6 +1084,7 @@ do
 
 	# summary
 	echo -e $C_GREY"----------------------------------------"$C_NONE
+	echo -e $C_YELLOW"Running as user$C_NONE   : $C_BLUE$(id | awk '{print $1,$2}')"$C_NONE
 	echo -e $C_YELLOW"Name$C_NONE              : $C_BLUE${_config_name}"$C_NONE
 	echo -e $C_YELLOW"Openwrt Variant$C_NONE   : $C_BLUE$_openwrt_variant"$C_NONE
 	echo -e $C_YELLOW"Config-File$C_NONE       : $C_BLUE$config_file"$C_NONE

@@ -8,7 +8,7 @@ RUN apt-get update && apt-get full-upgrade -y
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
 
 RUN apt-get install -y nodejs git build-essential cmake devscripts debhelper \
-                python2 python3 dh-python libssl-dev libncurses5-dev unzip \
+                python2 python3 dh-python libelf-dev libssl-dev libncurses5-dev unzip \
                 gawk zlib1g-dev subversion gcc-multilib flex gettext curl \
                 wget time rsync jq \
                 libjson-c-dev libjsoncpp-dev \
@@ -17,18 +17,18 @@ RUN apt-get install -y nodejs git build-essential cmake devscripts debhelper \
 		vim tmux \
              && apt-get clean
 
-# only used when starting container by our self (not by gitlab)
-# gitlab runner makes ONLY a bind mount to workdir and works as root user
-# /builds will get "root" as owner (when looking in running container)
-# - create user which is used to building firmware
-RUN useradd -m builder
+# gitlab-runner uses /builds and /caches directories per default.
+#
+# chown to a new created user here does not work at all.
+# gitlab starts a new container with a user (id 1000) .
+# The user here should probably have the same id 1000 (builder). At least it
+# must not be user "root" and also the directory (working, cloned openwrt) should have
+# no "root" in this directory, which will happen, when container runs as root here.
+# So "USER" is needed.
+#
 
-WORKDIR /builds
-RUN mkdir -p /builds && chown builder:builder /builds
-
-# create cache directories; /builds is evt used as container cache and could have
-# conflicts with mycache/dl, Therefore use separate directory
-RUN mkdir -p /cache && chown builder:builder /cache
-RUN mkdir -p /mycache && chown builder:builder /mycache
-
+# chmod, so all user passed as argument when starting the container can access the directory
+RUN useradd --create-home builder && chmod 777 /home/builder
+WORKDIR /home/builder
 USER builder
+

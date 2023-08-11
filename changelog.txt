@@ -1,34 +1,36 @@
 
 2023-06-01 [8.1.7] (devel)
 --------------------------------------------------
-openwrt 22               - move some routers to openwrt 22 (revert iptables patch)
-                         - add some new routers
-gui                      - colorize "Knoten ignorieren"
-                         - add wetter info
-                         - add info whether 5GHz meshing is supported or not
-                         - add configuration switch  to disable 5GHz
-tethering                - add configuration switch to enable iOS tethering
-                           (default: off, to reduce 50% CPU load on some devices)
-LTE                      - add gl-inet GL-E750 with display support
-                         - add SIM Pin info
-USB                      - add usb serial console login (getty)
-timezone                 - fix storing user input for timezone
-wifi                     - remove owl-loader from devices that do not use it
-                         - fix 5GHz outdoor channel range
-gateway check            - reduce check time from 3min -> 1min
-reboot                   - optimize reboot when configuration was changed (no two reboots anymore)
-bmxd                     - v1.4: fix potential crash and improve code for development
-splash                   - remove splash competely
-syslog                   - reduce syslog traces and http error messages
-internal                 - remove old code (nodegroup)
+openwrt 22                - move some routers to openwrt 22 (revert iptables patch)
+                          - add some new routers
+gui                       - colorize "Knoten ignorieren"
+                          - add wetter info
+                          - add info whether 5GHz meshing is supported or not
+                          - add configuration switch  to disable 5GHz
+tethering                 - add configuration switch to enable iOS tethering
+                            (default: off, to reduce 50% CPU load on some devices)
+LTE                       - add gl-inet GL-E750 with display support
+                          - add SIM Pin info
+USB                       - add usb serial console login (getty)
+timezone                  - fix storing user input for timezone
+WiFi                      - add 5ghz client mode (WAN: allows using other 5GHz AP as Internet source)
+                          - WLAN Scan: add infos about encryption
+                          - remove owl-loader from devices that do not use it
+                          - fix 5GHz outdoor channel range
+gateway check             - reduce check time from 3min -> 1min
+reboot                    - optimize reboot when configuration was changed (no two reboots anymore)
+bmxd                      - v1.4: fix potential crash and improve code for development
+splash                    - remove splash competely
+syslog                    - reduce syslog traces and http error messages
+internal                  - remove old code (nodegroup)
 
 
 2022-12-01 [8.1.6] (devel)
 --------------------------------------------------
-usb-serial               - add serial login via usb serial adapter
-                           (usb devices only, must be configured)
-wifi                     - check if meshing for 5GHz is supported
-                         - check if additional private access point is supported
+usb-serial                - add serial login via usb serial adapter
+                            (usb devices only, must be configured)
+wifi                      - check if meshing for 5GHz is supported
+                          - check if additional private access point is supported
 
 
 2022-12-01 [8.1.5] (release)
@@ -37,14 +39,14 @@ wifi                     - check if meshing for 5GHz is supported
 
 2022-12-01 [8.1.4]
 --------------------------------------------------
-private vpn              - fix private vpn
+private vpn               - fix private vpn
 
 
 2022-12-01 [8.1.3] (testing)
 --------------------------------------------------
-backbone                 - update backbone server
-LED                      - adapt LED status for new router
-wifi                     - improve wifi infos in gui
+backbone                  - update backbone server
+LED                       - adapt LED status for new router
+wifi                      - improve wifi infos in gui
 
 
 2022-10-02 [8.1.2] (devel)

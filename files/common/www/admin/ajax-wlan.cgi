@@ -8,12 +8,13 @@ echo 'Content-type: text/plain txt'
 echo ''
 }
 
-WIDTH=150
 SCAN_RESULT=/tmp/wifi_scan
 eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
+mode="$(uci -q get ddmesh.network.wifi5g_mode)"
+[ "$mode" = "normal" ] && ifname5g="wifi5ap" || ifname5g="wifi-client5g"
 
 /usr/sbin/iw dev wifi2ap scan > $SCAN_RESULT
-[ "$wifi_status_radio5g_present" = "1" ] && /usr/sbin/iw dev wifi5ap scan >> $SCAN_RESULT
+[ "$wifi_status_radio5g_present" = "1" ] && /usr/sbin/iw dev ${ifname5g} scan >> $SCAN_RESULT
 
 # when searching for "^BSS" defaults are set and overwritten later
 json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne'
@@ -21,10 +22,12 @@ s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
 s#	SSID: \(.*\)#wifi_essid="\1";#p
 s#	MESH ID: \(.*\)#wifi_meshid="\1";#p
-s#	WPA:.*#wifi_open="no";#p
-s#	WPE:.*#wifi_open="no";#p
-s#	RSN:.*#wifi_open="no";#p
+s#	WPA:.*#wifi_open="no";wifi_encr="WPA";#p
+s#	WPE:.*#wifi_open="no";wifi_encr="WPE";#p
+s#	RSN:.*#wifi_open="no";wifi_encr="WPA2";#p
 s#	freq: \(.*\)#wifi_freq="\1";#p
+s#[	 *]\+Group cipher: \(.*\)#wifi_group_cipher="\1";#p
+s#[	 *]\+Authentication suites: \(.*\)#wifi_auth="\1";#p
 s#	signal: -*\([^. ]*\).*#wifi_signal="\1";#p
 s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 }' | sed ':a;N;$!ba;s#\n##g;s#;wifi_bssid#\nwifi_bssid#g'  | while read line; do
@@ -56,7 +59,7 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 
 	type=""
 
-	# Mesh-Net
+	# Mesh-Net (only 18.06)
 	A="$(uci get ddmesh.network.essid_adhoc)"
 	if [ "$wifi_essid_clean" = "$A" ]; then
 		type="ffadhoc"
@@ -77,6 +80,7 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 
 	line="{\"type\": \"$type\", \"ssid\": \"$wifi_essid_clean\", \"channel\": \"$wifi_channel\","
 	line="$line  \"open\": \"$wifi_open\", \"signal\": \"$wifi_signal\","
+	line="$line  \"group_cipher\": \"$wifi_group_cipher\", \"auth\": \"$wifi_auth\", \"encr\": \"$wifi_encr\","
 	line="$line  \"uptime\": \"$wifi_uptime\", \"bssid\": \"$wifi_bssid\"},"
 
 	# output line from subshell
@@ -87,7 +91,7 @@ done ) ]}"
 
 cat<<EOM
 <table>
- <TR><TH width="$WIDTH">SSID</TH><TH>Kanal</TH><TH>Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH></TR>
+ <TR><TH>SSID</TH><TH>Kanal</TH><TH>Mesh</TH><TH>Offen</TH><TH>Signal</TH><TH>Signal (dBm)</TH><TH>Uptime</TH><TH>BSSID</TH><TH>Verschl&uuml;sslung</TH></TR>
  <pre>
 EOM
 
@@ -105,6 +109,7 @@ do
 
 	eval $(echo "$line" | jsonfilter -e wifi_type='@.type' -e wifi_ssid='@.ssid' -e wifi_channel='@.channel' \
 					 -e wifi_open='@.open' -e wifi_signal='@.signal' \
+					 -e wifi_group_cipher='@.group_cipher' -e wifi_auth='@.auth' -e wifi_encr='@.encr' \
 					 -e wifi_uptime='@.uptime' -e wifi_bssid='@.bssid')
 
 	gif=5
@@ -164,14 +169,15 @@ do
 
 cat<<EOM
 <TR class="$class" >
-<TD style="$style" width="$WIDTH">$wifi_ssid</TD>
+<TD style="$style">$wifi_ssid</TD>
 <TD style="$style" width="20">$wifi_channel</TD>
 <TD style="$style" width="20">$meshimage</TD>
 <TD style="$style" width="20">$openimage</TD>
 <TD style="$style" width="20"><img src="/images/power$gif.png" ALT="P=$gif" TITLE="Signal: $wifi_signal dBm"></TD>
 <TD style="$style" width="40">- $wifi_signal</TD>
 <TD style="$style" width="40">$wifi_uptime</TD>
-<TD style="$style">$wifi_bssid</TD></tr>
+<TD style="$style" width="40">$wifi_bssid</TD>
+<TD style="$style" width="40">$wifi_encr ($wifi_auth) $wifi_group_cipher</TD></tr>
 EOM
 	if [ $T -eq 1 ]; then
 		T=2
