@@ -39,7 +39,7 @@ setup_wireless()
  uci -q delete wireless.radio2g.disabled
  uci set wireless.radio2g.band="2g"
  uci set wireless.radio2g.hwmode="11n"
- uci set wireless.radio2g.htmode="HT40"
+ uci set wireless.radio2g.htmode="HT20"
  uci set wireless.radio2g.country="$(uci -q get ddmesh.network.wifi_country)"
  uci set wireless.radio2g.channel="$(uci get ddmesh.network.wifi_channel)"
  uci set wireless.radio2g.txpower="$(uci get ddmesh.network.wifi_txpower)"
