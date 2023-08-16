@@ -1,0 +1,1206 @@
+diff --git a/include/image-commands.mk b/include/image-commands.mk
+index 402e3d71ed..d0cde66f60 100644
+--- a/include/image-commands.mk
++++ b/include/image-commands.mk
+@@ -243,6 +243,11 @@ define Build/elecom-wrc-gs-factory
+ 	mv $@.new $@
+ endef
+ 
++define Build/dlink-sge-image
++       $(STAGING_DIR_HOST)/bin/dlink-sge-image $(1) $@ $@.enc
++       mv $@.enc $@
++endef
++
+ define Build/elx-header
+ 	$(eval hw_id=$(word 1,$(1)))
+ 	$(eval xor_pattern=$(word 2,$(1)))
+diff --git a/target/linux/ramips/dts/mt7621_dlink_covr-x1860-a1.dts b/target/linux/ramips/dts/mt7621_dlink_covr-x1860-a1.dts
+new file mode 100644
+index 0000000000..c06c5e36ba
+--- /dev/null
++++ b/target/linux/ramips/dts/mt7621_dlink_covr-x1860-a1.dts
+@@ -0,0 +1,186 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++#include "mt7621.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	compatible = "dlink,covr-x1860-a1", "mediatek,mt7621-soc";
++	model = "D-Link COVR-X1860 A1";
++
++	aliases {
++		led-boot = &status_orange;
++		led-failsafe = &status_red;
++		led-running = &status_white;
++		led-upgrade = &status_red;
++	};
++
++	chosen {
++		bootargs = "console=ttyS0,115200";
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		reset {
++			label = "reset";
++			linux,code = <KEY_RESTART>;
++			gpios = <&gpio 15 GPIO_ACTIVE_LOW>;
++		};
++
++		wps {
++			label = "wps";
++			linux,code = <KEY_WPS_BUTTON>;
++			gpios = <&gpio 8 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		status_white: power {
++			label = "white:status";
++			gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
++		};
++
++		status_orange: status_orange {
++			label = "orange:status";
++			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++
++		status_red: status_red {
++			label = "red:status";
++			gpios = <&gpio 14 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	virtual_flash {
++		compatible = "mtd-concat";
++
++		devices = <&fwconcat0 &fwconcat1>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "ubi";
++				reg = <0x0 0x0>;
++			};
++		};
++	};
++};
++
++&nand {
++	status = "okay";
++
++	partitions {
++		compatible = "fixed-partitions";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		partition@0 {
++			label = "bootloader";
++			reg = <0x0 0x80000>;
++			read-only;
++		};
++
++		partition@80000 {
++			label = "config";
++			reg = <0x80000 0x80000>;
++			read-only;
++		};
++
++		factory: partition@100000 {
++			label = "factory";
++			reg = <0x100000 0x80000>;
++			read-only;
++		};
++
++		partition@180000 {
++			label = "config2";
++			reg = <0x180000 0x40000>;
++			read-only;
++		};
++
++		partition@1c0000 {
++			label = "kernel";
++			reg = <0x1c0000 0x800000>;
++		};
++
++		fwconcat0: partition@9c0000 {
++			label = "fwconcat0";
++			reg = <0x9c0000 0x2000000>;
++		};
++
++		partition@29c0000 {
++			label = "kernel2";
++			reg = <0x29c0000 0x800000>;
++			read-only;
++		};
++
++		fwconcat1: partition@31c0000 {
++			label = "fwconcat1";
++			reg = <0x31c0000 0x2a00000>;
++		};
++
++		partition@5bc0000 {
++			label = "private";
++			reg = <0x5bc0000 0x1400000>;
++			read-only;
++		};
++
++		partition@6fc0000 {
++			label = "mydlink";
++			reg = <0x6fc0000 0x600000>;
++			read-only;
++		};
++
++		partition@75c0000 {
++			label = "myconfig";
++			reg = <0x75c0000 0xa00000>;
++			read-only;
++		};
++	};
++};
++
++&pcie {
++	status = "okay";
++};
++
++&pcie1 {
++	wifi@0,0 {
++		compatible = "mediatek,mt76";
++		reg = <0x0000 0 0 0 0>;
++		mediatek,mtd-eeprom = <&factory 0x0>;
++		mediatek,disable-radar-background;
++	};
++};
++
++&gmac1 {
++	status = "okay";
++	phy-handle = <&ethphy4>;
++};
++
++&mdio {
++	ethphy4: ethernet-phy@4 {
++		reg = <4>;
++	};
++};
++
++&switch0 {
++	ports {
++		port@0 {
++			status = "okay";
++			label = "internet";
++		};
++
++		port@2 {
++			status = "okay";
++			label = "ethernet";
++		};
++	};
++};
+diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
+index 9c451c26bf..eb11db8833 100644
+--- a/target/linux/ramips/image/mt7621.mk
++++ b/target/linux/ramips/image/mt7621.mk
+@@ -97,6 +97,15 @@ define Build/zyxel-nwa-fit
+ 	@mv $@.new $@
+ endef
+ 
++define Build/append-dlink-covr-metadata
++       echo -ne '{"supported_devices": "$(1)", "firmware": "' > $@metadata.tmp
++       $(MKHASH) md5 "$@" | head -c32 >> $@metadata.tmp
++       echo '"}' >> $@metadata.tmp
++       fwtool -I $@metadata.tmp $@
++       rm $@metadata.tmp
++endef
++
++
+ define Device/dsa-migration
+   DEVICE_COMPAT_VERSION := 1.1
+   DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+@@ -355,6 +364,32 @@ define Device/cudy_x6
+ endef
+ TARGET_DEVICES += cudy_x6
+ 
++define Device/dlink_covr-x1860-a1
++  $(Device/dsa-migration)
++  BLOCKSIZE := 128k
++  PAGESIZE := 2048
++  KERNEL_SIZE := 8192k
++  IMAGE_SIZE := 40960k
++  DEVICE_VENDOR := D-Link
++  DEVICE_MODEL := COVR-X1860
++  DEVICE_VARIANT := A1
++  DEVICE_PACKAGES := kmod-mt7915-firmware
++  UBINIZE_OPTS := -E 5
++  KERNEL_LOADADDR := 0x82000000
++  KERNEL := kernel-bin | relocate-kernel 0x80001000 | lzma | \
++       fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb | \
++       append-squashfs4-fakeroot
++  IMAGES += factory.bin recovery.bin
++  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
++  IMAGE/recovery.bin := append-kernel | pad-to $$(KERNEL_SIZE) | \
++       append-ubi | check-size
++  IMAGE/factory.bin := $$(IMAGE/recovery.bin) | \
++       append-dlink-covr-metadata $$(DEVICE_MODEL) | \
++       dlink-sge-image $$(DEVICE_MODEL)
++endef
++TARGET_DEVICES += dlink_covr-x1860-a1
++
++
+ define Device/dlink_dap-x1860-a1
+   $(Device/dsa-migration)
+   IMAGE_SIZE := 53248k
+diff --git a/target/linux/ramips/mt7621/base-files/etc/board.d/02_network b/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
+index afd4a3710c..503d628488 100644
+--- a/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
++++ b/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
+@@ -69,6 +69,9 @@ ramips_setup_interfaces()
+ 		uci add_list firewall.@zone[1].network='eth_data'
+ 		uci add_list firewall.@zone[1].network='eth_om'
+ 		;;
++        dlink,covr-x1860-a1)
++                ucidef_set_interfaces_lan_wan "ethernet" "internet"
++                ;;
+ 	gnubee,gb-pc1)
+ 		ucidef_set_interface_lan "ethblack ethblue"
+ 		;;
+@@ -151,6 +154,11 @@ ramips_setup_macs()
+ 		lan_mac=$(mtd_get_mac_ascii factory lanmac)
+ 		wan_mac=$(mtd_get_mac_ascii factory wanmac)
+ 		;;
++        dlink,covr-x1860-a1)
++                label_mac=$(mtd_get_mac_ascii config2 factory_mac)
++                wan_mac=$label_mac
++                lan_mac=$label_mac
++                ;;
+ 	edimax,ra21s|\
+ 	edimax,rg21s)
+ 		lan_mac=$(mtd_get_mac_ascii u-boot-env ethaddr)
+diff --git a/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac b/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+index d8c9512bb7..179e83024c 100644
+--- a/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
++++ b/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+@@ -22,6 +22,13 @@ case "$board" in
+ 		hw_mac_addr="$(mtd_get_mac_binary factory 0x4)"
+ 		macaddr_add $hw_mac_addr "$PHYNBR" > /sys${DEVPATH}/macaddress
+ 		;;
++        dlink,covr-x1860-a1)
++                label_mac=$(mtd_get_mac_ascii config2 factory_mac)
++                [ "$PHYNBR" = "0" ] && \
++                        macaddr_add $label_mac 1 > /sys${DEVPATH}/macaddress
++                [ "$PHYNBR" = "1" ] && \
++                        macaddr_add $label_mac 2 > /sys${DEVPATH}/macaddress
++                ;;
+ 	dlink,dap-x1860-a1)
+ 		hw_mac_addr="$(mtd_get_mac_binary factory 0x4)"
+ 		[ "$PHYNBR" = "0" ] && \
+diff --git a/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh b/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
+index 4a6706e07a..7762357e8f 100755
+--- a/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
+@@ -55,6 +55,7 @@ platform_do_upgrade() {
+ 	asus,rt-ac85p|\
+ 	asus,rt-ax53u|\
+ 	beeline,smartbox-flash|\
++	dlink,covr-x1860-a1|\
+ 	dlink,dap-x1860-a1|\
+ 	dlink,dir-1960-a1|\
+ 	dlink,dir-2640-a1|\
+diff --git a/tools/firmware-utils/patches/002-add-dlink-sge-image.patch b/tools/firmware-utils/patches/002-add-dlink-sge-image.patch
+new file mode 100644
+index 0000000000..82bd498e82
+--- /dev/null
++++ b/tools/firmware-utils/patches/002-add-dlink-sge-image.patch
+@@ -0,0 +1,883 @@
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index c1750d4..d7d4ed2 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -40,6 +40,7 @@ FW_UTIL(buffalo-tftp src/buffalo-lib.c "" "")
++ FW_UTIL(cros-vbutil "" "" "${OPENSSL_CRYPTO_LIBRARIES}")
++ FW_UTIL(dgfirmware "" "" "")
++ FW_UTIL(dgn3500sum "" "" "")
+++FW_UTIL(dlink-sge-image "" "" "${OPENSSL_CRYPTO_LIBRARIES}")
++ FW_UTIL(dns313-header "" "" "")
++ FW_UTIL(edimax_fw_header "" "" "")
++ FW_UTIL(encode_crc "" "" "")
++diff --git a/src/dlink-sge-image.c b/src/dlink-sge-image.c
++new file mode 100644
++index 0000000..9b567f4
++--- /dev/null
+++++ b/src/dlink-sge-image.c
++@@ -0,0 +1,510 @@
+++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+++/*
+++ * Copyright (C) 2023 Sebastian Schaper <openwrt@sebastianschaper.net>
+++ *
+++ * This tool encrypts factory images for certain D-Link Devices
+++ * manufactured by SGE / T&W, e.g. COVR-C1200, COVR-P2500, DIR-882, ...
+++ *
+++ * Usage:
+++ *   ./dlink-sge-image DEVICE_MODEL infile outfile [-d: decrypt]
+++ *
+++ */
+++
+++#include "dlink-sge-image.h"
+++
+++#include <openssl/evp.h>
+++#include <openssl/pem.h>
+++
+++#include <arpa/inet.h>
+++#include <stdio.h>
+++#include <stdlib.h>
+++#include <string.h>
+++
+++#define BUFSIZE		4096
+++
+++#define HEAD_MAGIC		"SHRS"
+++#define HEAD_MAGIC_LEN	4
+++#define SHA512_DIGEST_LENGTH	64
+++#define RSA_KEY_LENGTH_BYTES	512
+++#define AES_BLOCK_SIZE	16
+++#define HEADER_LEN		1756
+++
+++unsigned char aes_iv[AES_BLOCK_SIZE];
+++
+++unsigned char readbuf[BUFSIZE];
+++unsigned char encbuf[BUFSIZE];
+++
+++unsigned int read_bytes;
+++unsigned long read_total;
+++unsigned int i;
+++
+++unsigned char vendor_key[AES_BLOCK_SIZE];
+++BIO *rsa_private_bio;
+++const EVP_CIPHER *aes128;
+++EVP_CIPHER_CTX *aes_ctx;
+++
+++FILE *input_file;
+++FILE *output_file;
+++
+++int pass_cb(char *buf, int size, int rwflag, void *u)
+++{
+++    char *tmp = "12345678";
+++    size_t len = strlen(tmp);
+++
+++    if (len > size)
+++        len = size;
+++    memcpy(buf, tmp, len);
+++    return len;
+++}
+++
+++void image_encrypt(void)
+++{
+++	char buf[HEADER_LEN];
+++	const EVP_MD *sha512;
+++	EVP_MD_CTX *digest_before;
+++	EVP_MD_CTX *digest_post;
+++	EVP_MD_CTX *digest_vendor;
+++	EVP_PKEY *signing_key;
+++	EVP_PKEY_CTX *rsa_ctx;
+++	uint32_t payload_length_before, pad_len, sizebuf;
+++	unsigned char md_before[SHA512_DIGEST_LENGTH];
+++	unsigned char md_post[SHA512_DIGEST_LENGTH];
+++	unsigned char md_vendor[SHA512_DIGEST_LENGTH];
+++	unsigned char sigret[RSA_KEY_LENGTH_BYTES];
+++	size_t siglen;
+++	char footer[] = {0x00, 0x00, 0x00, 0x00, 0x30};
+++
+++	// seek to position 1756 (begin of AES-encrypted data),
+++	// write image headers later
+++	memset(buf, 0, HEADER_LEN);
+++	fwrite(&buf, 1, HEADER_LEN, output_file);
+++	digest_before = EVP_MD_CTX_new();
+++	digest_post = EVP_MD_CTX_new();
+++	digest_vendor = EVP_MD_CTX_new();
+++	sha512 = EVP_sha512();
+++	EVP_DigestInit_ex(digest_before, sha512, NULL);
+++	EVP_DigestInit_ex(digest_post, sha512, NULL);
+++	EVP_DigestInit_ex(digest_vendor, sha512, NULL);
+++
+++	signing_key = PEM_read_bio_PrivateKey(rsa_private_bio, NULL, pass_cb, NULL);
+++	rsa_ctx = EVP_PKEY_CTX_new(signing_key, NULL);
+++
+++	EVP_PKEY_sign_init(rsa_ctx);
+++	EVP_PKEY_CTX_set_signature_md(rsa_ctx, sha512);
+++
+++	memcpy(&aes_iv, &salt, AES_BLOCK_SIZE);
+++	aes_ctx = EVP_CIPHER_CTX_new();
+++	EVP_EncryptInit_ex(aes_ctx, aes128, NULL, &vendor_key[0], aes_iv);
+++	EVP_CIPHER_CTX_set_padding(aes_ctx, 0);
+++	int outlen;
+++
+++	while ((read_bytes = fread(&readbuf, 1, BUFSIZE, input_file)) == BUFSIZE) {
+++		EVP_DigestUpdate(digest_before, &readbuf[0], read_bytes);
+++		read_total += read_bytes;
+++
+++		EVP_EncryptUpdate(aes_ctx, encbuf, &outlen, &readbuf[0], BUFSIZE);
+++		fwrite(&encbuf, 1, BUFSIZE, output_file);
+++
+++		EVP_DigestUpdate(digest_post, &encbuf[0], BUFSIZE);
+++	}
+++
+++	// handle last block of data (read_bytes < BUFSIZE)
+++	EVP_DigestUpdate(digest_before, &readbuf[0], read_bytes);
+++	read_total += read_bytes;
+++
+++	pad_len = AES_BLOCK_SIZE - (read_total % AES_BLOCK_SIZE);
+++	if (pad_len == 0)
+++		pad_len = AES_BLOCK_SIZE;
+++	memset(&readbuf[read_bytes], 0, pad_len);
+++
+++	EVP_EncryptUpdate(aes_ctx, encbuf, &outlen, &readbuf[0], read_bytes + pad_len);
+++	EVP_CIPHER_CTX_free(aes_ctx);
+++	fwrite(&encbuf, 1, read_bytes + pad_len, output_file);
+++
+++	EVP_DigestUpdate(digest_post, &encbuf[0], read_bytes + pad_len);
+++
+++	fclose(input_file);
+++	payload_length_before = read_total;
+++	printf("\npayload_length_before: %li\n", read_total);
+++
+++	// copy digest state, since we need another one with vendor key appended
+++	EVP_MD_CTX_copy_ex(digest_vendor, digest_before);
+++
+++	EVP_DigestFinal_ex(digest_before, &md_before[0], NULL);
+++	EVP_MD_CTX_free(digest_before);
+++
+++	printf("\ndigest_before: ");
+++	for (i = 0; i < SHA512_DIGEST_LENGTH; i++)
+++		printf("%02x", md_before[i]);
+++
+++	EVP_DigestUpdate(digest_vendor, &vendor_key[0], AES_BLOCK_SIZE);
+++	EVP_DigestFinal_ex(digest_vendor, &md_vendor[0], NULL);
+++	EVP_MD_CTX_free(digest_vendor);
+++
+++	printf("\ndigest_vendor: ");
+++	for (i = 0; i < SHA512_DIGEST_LENGTH; i++)
+++		printf("%02x", md_vendor[i]);
+++
+++	EVP_DigestFinal_ex(digest_post, &md_post[0], NULL);
+++	EVP_MD_CTX_free(digest_post);
+++
+++	printf("\ndigest_post: ");
+++	for (i = 0; i < SHA512_DIGEST_LENGTH; i++)
+++		printf("%02x", md_post[i]);
+++
+++	fwrite(&footer, 1, 5, output_file);
+++
+++	// go back to file header and write all the digests and signatures
+++	fseek(output_file, 0, SEEK_SET);
+++
+++	fwrite(HEAD_MAGIC, 1, HEAD_MAGIC_LEN, output_file);
+++
+++	// write payload length before
+++	sizebuf = htonl(payload_length_before);
+++	fwrite((char *) &sizebuf, 1, 4, output_file);
+++
+++	// write payload length post
+++	payload_length_before += pad_len;
+++	sizebuf = htonl(payload_length_before);
+++	fwrite((char *) &sizebuf, 1, 4, output_file);
+++
+++	// write salt and digests
+++	fwrite(salt, 1, AES_BLOCK_SIZE, output_file);
+++	fwrite(&md_vendor[0], 1, SHA512_DIGEST_LENGTH, output_file);
+++	fwrite(&md_before[0], 1, SHA512_DIGEST_LENGTH, output_file);
+++	fwrite(&md_post[0],   1, SHA512_DIGEST_LENGTH, output_file);
+++
+++	// zero-fill rsa_pub field, unused in header
+++	memset(sigret, 0, RSA_KEY_LENGTH_BYTES);
+++	fwrite(&sigret[0], 1, RSA_KEY_LENGTH_BYTES, output_file);
+++
+++	// sign md_before
+++	EVP_PKEY_sign(rsa_ctx, &sigret[0], &siglen, &md_before[0], SHA512_DIGEST_LENGTH);
+++	printf("\nsigned before:\n");
+++	for (i = 0; i < RSA_KEY_LENGTH_BYTES; i++)
+++		printf("%02x", sigret[i]);
+++	fwrite(&sigret[0], 1, RSA_KEY_LENGTH_BYTES, output_file);
+++
+++	// sign md_post
+++	EVP_PKEY_sign(rsa_ctx, &sigret[0], &siglen, &md_post[0], SHA512_DIGEST_LENGTH);
+++	printf("\nsigned post:\n");
+++	for (i = 0; i < RSA_KEY_LENGTH_BYTES; i++)
+++		printf("%02x", sigret[i]);
+++	fwrite(&sigret[0], 1, RSA_KEY_LENGTH_BYTES, output_file);
+++
+++	printf("\n");
+++
+++	fclose(output_file);
+++}
+++
+++void image_decrypt(void)
+++{
+++	char magic[4];
+++	uint32_t payload_length_before, payload_length_post, pad_len;
+++	char salt[AES_BLOCK_SIZE];
+++	char md_vendor[SHA512_DIGEST_LENGTH];
+++	char md_before[SHA512_DIGEST_LENGTH];
+++	char md_post[SHA512_DIGEST_LENGTH];
+++	EVP_PKEY *signing_key;
+++	EVP_PKEY_CTX *rsa_ctx;
+++	unsigned char rsa_sign_before[RSA_KEY_LENGTH_BYTES];
+++	unsigned char rsa_sign_post[RSA_KEY_LENGTH_BYTES];
+++	unsigned char md_post_actual[SHA512_DIGEST_LENGTH];
+++	unsigned char md_before_actual[SHA512_DIGEST_LENGTH];
+++	unsigned char md_vendor_actual[SHA512_DIGEST_LENGTH];
+++	const EVP_MD *sha512;
+++	EVP_MD_CTX *digest_before;
+++	EVP_MD_CTX *digest_post;
+++	EVP_MD_CTX *digest_vendor;
+++
+++	printf("\ndecrypt mode\n");
+++
+++	if (fread(&magic, 1, HEAD_MAGIC_LEN, input_file) == 0)
+++		goto error_read;
+++	if (strncmp(magic, HEAD_MAGIC, HEAD_MAGIC_LEN) != 0) {
+++		fprintf(stderr, "Input File header magic does not match '%s'.\n"
+++			"Maybe this file is not encrypted?\n", HEAD_MAGIC);
+++		goto error;
+++	}
+++
+++	if (fread((char *) &payload_length_before, 1, 4, input_file) == 0)
+++		goto error_read;
+++	if (fread((char *) &payload_length_post, 1, 4, input_file) == 0)
+++		goto error_read;
+++	payload_length_before = ntohl(payload_length_before);
+++	payload_length_post   = ntohl(payload_length_post);
+++
+++	if (fread(salt, 1, AES_BLOCK_SIZE, input_file) == 0)
+++		goto error_read;
+++	if (fread(md_vendor, 1, SHA512_DIGEST_LENGTH, input_file) == 0)
+++		goto error_read;
+++	if (fread(md_before, 1, SHA512_DIGEST_LENGTH, input_file) == 0)
+++		goto error_read;
+++	if (fread(md_post, 1, SHA512_DIGEST_LENGTH, input_file) == 0)
+++		goto error_read;
+++
+++	// skip rsa_pub
+++	if (fread(readbuf, 1, RSA_KEY_LENGTH_BYTES, input_file) == 0)
+++		goto error_read;
+++
+++	if (fread(rsa_sign_before, 1, RSA_KEY_LENGTH_BYTES, input_file) == 0)
+++		goto error_read;
+++	if (fread(rsa_sign_post, 1, RSA_KEY_LENGTH_BYTES, input_file) == 0)
+++		goto error_read;
+++
+++	// file should be at position HEADER_LEN now, start AES decryption
+++	digest_before = EVP_MD_CTX_new();
+++	digest_post = EVP_MD_CTX_new();
+++	digest_vendor = EVP_MD_CTX_new();
+++	sha512 = EVP_sha512();
+++	EVP_DigestInit_ex(digest_before, sha512, NULL);
+++	EVP_DigestInit_ex(digest_post, sha512, NULL);
+++	EVP_DigestInit_ex(digest_vendor, sha512, NULL);
+++
+++	memcpy(&aes_iv, &salt, AES_BLOCK_SIZE);
+++	aes_ctx = EVP_CIPHER_CTX_new();
+++	EVP_DecryptInit_ex(aes_ctx, aes128, NULL, &vendor_key[0], aes_iv);
+++	EVP_CIPHER_CTX_set_padding(aes_ctx, 0);
+++	int outlen;
+++	pad_len = payload_length_post - payload_length_before;
+++
+++	while (read_total < payload_length_post) {
+++		if (read_total + BUFSIZE <= payload_length_post)
+++			read_bytes = fread(&readbuf, 1, BUFSIZE, input_file);
+++		else
+++			read_bytes = fread(&readbuf, 1, payload_length_post - read_total, \
+++				input_file);
+++
+++		read_total += read_bytes;
+++
+++		EVP_DigestUpdate(digest_post, &readbuf[0], read_bytes);
+++
+++		EVP_DecryptUpdate(aes_ctx, encbuf, &outlen, &readbuf[0], read_bytes);
+++
+++		// only update digest_before until payload_length_before,
+++		// do not hash decrypted padding
+++		if (read_total > payload_length_before) {
+++			// only calc hash for data before padding
+++			EVP_DigestUpdate(digest_before, &encbuf[0], read_bytes - pad_len);
+++			fwrite(&encbuf[0], 1, read_bytes - pad_len, output_file);
+++
+++			// copy digest state, since we need another one with vendor key appended
+++			EVP_MD_CTX_copy_ex(digest_vendor, digest_before);
+++
+++			// append vendor_key
+++			EVP_DigestUpdate(digest_vendor, &vendor_key[0], AES_BLOCK_SIZE);
+++		} else {
+++			// calc hash for all of read_bytes
+++			EVP_DigestUpdate(digest_before, &encbuf[0], read_bytes);
+++			fwrite(&encbuf[0], 1, read_bytes, output_file);
+++		}
+++	}
+++
+++	fclose(input_file);
+++	fclose(output_file);
+++	EVP_CIPHER_CTX_free(aes_ctx);
+++
+++	EVP_DigestFinal_ex(digest_post, &md_post_actual[0], NULL);
+++	EVP_MD_CTX_free(digest_post);
+++
+++	printf("\ndigest_post: ");
+++	for (i = 0; i < SHA512_DIGEST_LENGTH; i++)
+++		printf("%02x", md_post_actual[i]);
+++
+++	if (strncmp(md_post, (char *) md_post_actual, SHA512_DIGEST_LENGTH) != 0) {
+++		fprintf(stderr, "SHA512 post does not match file contents.\n");
+++		goto error;
+++	}
+++
+++	EVP_DigestFinal_ex(digest_before, &md_before_actual[0], NULL);
+++	EVP_MD_CTX_free(digest_before);
+++
+++	printf("\ndigest_before: ");
+++	for (i = 0; i < SHA512_DIGEST_LENGTH; i++)
+++		printf("%02x", md_before_actual[i]);
+++
+++	if (strncmp(md_before, (char *) md_before_actual, SHA512_DIGEST_LENGTH) != 0) {
+++		fprintf(stderr, "SHA512 before does not match decrypted payload.\n");
+++		goto error;
+++	}
+++
+++	EVP_DigestFinal_ex(digest_vendor, &md_vendor_actual[0], NULL);
+++	EVP_MD_CTX_free(digest_vendor);
+++
+++	printf("\ndigest_vendor: ");
+++	for (i = 0; i < SHA512_DIGEST_LENGTH; i++)
+++		printf("%02x", md_vendor_actual[i]);
+++
+++	if (strncmp(md_vendor, (char *) md_vendor_actual, SHA512_DIGEST_LENGTH) != 0) {
+++		fprintf(stderr, "SHA512 vendor does not match decrypted payload padded" \
+++			" with vendor key.\n");
+++		goto error;
+++	}
+++
+++	signing_key = PEM_read_bio_PrivateKey(rsa_private_bio, NULL, pass_cb, NULL);
+++	rsa_ctx = EVP_PKEY_CTX_new(signing_key, NULL);
+++	EVP_PKEY_verify_init(rsa_ctx);
+++	EVP_PKEY_CTX_set_signature_md(rsa_ctx, sha512);
+++
+++	if (EVP_PKEY_verify(rsa_ctx, &rsa_sign_before[0], RSA_KEY_LENGTH_BYTES, \
+++		&md_before_actual[0], SHA512_DIGEST_LENGTH)) {
+++		printf("\nsignature before verification success");
+++	} else {
+++		fprintf(stderr, "Signature before verification failed.\nThe decrypted" \
+++			" image file may however be flashable via bootloader recovery.\n");
+++	}
+++
+++	if (EVP_PKEY_verify(rsa_ctx, &rsa_sign_post[0], RSA_KEY_LENGTH_BYTES, \
+++		&md_post_actual[0], SHA512_DIGEST_LENGTH)) {
+++		printf("\nsignature post verification success");
+++	} else {
+++		fprintf(stderr, "Signature post verification failed.\nThe decrypted" \
+++			" image file may however be flashable via bootloader recovery.\n");
+++	}
+++
+++	printf("\n");
+++
+++	return;
+++
+++error_read:
+++	fprintf(stderr, "Error reading header fields from input file.\n");
+++error:
+++	fclose(input_file);
+++	fclose(output_file);
+++	exit(1);
+++}
+++
+++/*
+++  generate legacy vendor key for COVR-C1200, COVR-P2500, DIR-882, DIR-2660, ...
+++  decrypt ciphertext key2 using aes128 with key1 and iv, write result to *vkey
+++*/
+++void generate_vendorkey_legacy(unsigned char *vkey)
+++{
+++	int outlen;
+++	memcpy(&aes_iv, &iv, AES_BLOCK_SIZE);
+++	aes_ctx = EVP_CIPHER_CTX_new();
+++	EVP_DecryptInit_ex(aes_ctx, aes128, NULL, &key1[0], &aes_iv[0]);
+++	EVP_CIPHER_CTX_set_padding(aes_ctx, 0);
+++	EVP_DecryptUpdate(aes_ctx, vkey, &outlen, &key2[0], AES_BLOCK_SIZE);
+++	EVP_CIPHER_CTX_free(aes_ctx);
+++}
+++
+++/*
+++  helper function for generate_vendorkey_dimgkey()
+++  deinterleave input in chunks of 8 bytes according to pattern,
+++  last block shorter than 8 bytes is appended in reverse order
+++*/
+++void deinterleave(unsigned char *enk, size_t len, unsigned char *vkey)
+++{
+++	unsigned char i, pattern = 0;
+++
+++	while (len >= INTERLEAVE_BLOCK_SIZE)
+++	{
+++		for (i = 0; i < INTERLEAVE_BLOCK_SIZE; i++)
+++			*(vkey + i) = *(enk + interleaving_pattern[pattern][i]);
+++
+++		vkey += INTERLEAVE_BLOCK_SIZE;
+++		enk += INTERLEAVE_BLOCK_SIZE;
+++		len -= INTERLEAVE_BLOCK_SIZE;
+++
+++		if (pattern++ >= INTERLEAVE_BLOCK_SIZE)
+++			pattern = 0;
+++	}
+++
+++	for (i = 0; i < len; i++)
+++		*(vkey + i) = *(enk + (len - i - 1));
+++}
+++
+++/*
+++  generate vendor key for COVR-X1860, DIR-X3260, ...
+++  base64 decode enk, pass to deinterleave, result will be in *vkey
+++*/
+++void generate_vendorkey_dimgkey(const unsigned char *enk, size_t len, unsigned char *vkey)
+++{
+++	unsigned char *decode_buf = malloc(3 * (len / 4));
+++	int outlen;
+++	EVP_ENCODE_CTX *base64_ctx = EVP_ENCODE_CTX_new();
+++	EVP_DecodeInit(base64_ctx);
+++	EVP_DecodeUpdate(base64_ctx, decode_buf, &outlen, enk, len);
+++	EVP_DecodeFinal(base64_ctx, decode_buf + outlen, &outlen);
+++	EVP_ENCODE_CTX_free(base64_ctx);
+++
+++	// limit deinterleaving output to first 16 bytes
+++	deinterleave(decode_buf, AES_BLOCK_SIZE, vkey);
+++}
+++
+++int main(int argc, char **argv)
+++{
+++	if (argc < 3 || argc > 5) {
+++		fprintf(stderr, "Usage:\n"
+++			"\tdlink-sge-image DEVICE_MODEL infile outfile [-d: decrypt]\n\n"
+++			"DEVICE_MODEL can be any of:\n"
+++			"\tCOVR-C1200\n"
+++			"\tCOVR-P2500\n"
+++			"\tCOVR-X1860\n"
+++			"\tDIR-853\n"
+++			"\tDIR-867\n"
+++			"\tDIR-878\n"
+++			"\tDIR-882\n"
+++			"\tDIR-1935\n"
+++			"\tDIR-2150\n"
+++			"\tDIR-X3260\n\n"
+++			"Any other value will default to COVR-C1200/P2500/DIR-8xx keys\n"
+++			"which may work to decrypt images for several further devices,\n"
+++			"however there are currently no private keys known that would\n"
+++			"allow for signing images to be used for flashing those devices.\n\n"
+++			);
+++		exit(1);
+++	}
+++
+++	input_file = fopen(argv[2], "rb");
+++	if (input_file == NULL) {
+++		fprintf(stderr, "Input File %s could not be opened.\n", argv[2]);
+++		exit(1);
+++	}
+++
+++	output_file = fopen(argv[3], "wb");
+++	if (input_file == NULL) {
+++		fprintf(stderr, "Output File %s could not be opened.\n", argv[3]);
+++		fclose(input_file);
+++		exit(1);
+++	}
+++
+++	aes128 = EVP_aes_128_cbc();
+++
+++	if (strncmp(argv[1], "COVR-X1860", 10) == 0)
+++	{
+++		generate_vendorkey_dimgkey(enk_covrx1860, sizeof(enk_covrx1860), &vendor_key[0]);
+++		rsa_private_bio = BIO_new_mem_buf(key_covrx1860_pem, -1);
+++	}
+++	else if (strncmp(argv[1], "DIR-X3260", 9) == 0)
+++	{
+++		generate_vendorkey_dimgkey(enk_dirx3260, sizeof(enk_dirx3260), &vendor_key[0]);
+++		rsa_private_bio = BIO_new_mem_buf(key_dirx3260_pem, -1);
+++	}
+++	else if (strncmp(argv[1], "DIR-1260", 8) == 0)
+++	{
+++		generate_vendorkey_legacy(&vendor_key[0]);
+++		rsa_private_bio = BIO_new_mem_buf(key_dir1260_pem, -1);
+++	}
+++	else if (strncmp(argv[1], "DIR-2150", 8) == 0)
+++	{
+++		generate_vendorkey_legacy(&vendor_key[0]);
+++		rsa_private_bio = BIO_new_mem_buf(key_dir2150_pem, -1);
+++	}
+++	else
+++	{
+++		/* COVR-C1200, COVR-P2500, DIR-853, DIR-867, DIR-878, DIR-882, DIR-1935 */
+++		generate_vendorkey_legacy(&vendor_key[0]);
+++		rsa_private_bio = BIO_new_mem_buf(key_legacy_pem, -1);
+++	}
+++
+++	printf("\nvendor_key: ");
+++	for (i = 0; i < AES_BLOCK_SIZE; i++)
+++		printf("%02x", vendor_key[i]);
+++
+++	if (argc == 5 && strncmp(argv[4], "-d", 2) == 0)
+++		image_decrypt();
+++	else
+++		image_encrypt();
+++}
++diff --git a/src/dlink-sge-image.h b/src/dlink-sge-image.h
++new file mode 100644
++index 0000000..8966cc9
++--- /dev/null
+++++ b/src/dlink-sge-image.h
++@@ -0,0 +1,349 @@
+++/* SPDX-License-Identifier: GPL-2.0-only */
+++
+++const unsigned char key1[] =
+++	"\x35\x87\x90\x03\x45\x19\xf8\xc8\x23\x5d\xb6\x49\x28\x39\xa7\x3f";
+++
+++const unsigned char key2[] =
+++	"\xc8\xd3\x2f\x40\x9c\xac\xb3\x47\xc8\xd2\x6f\xdc\xb9\x09\x0b\x3c";
+++
+++const unsigned char iv[] =
+++	"\x98\xc9\xd8\xf0\x13\x3d\x06\x95\xe2\xa7\x09\xc8\xb6\x96\x82\xd4";
+++
+++const unsigned char salt[] =
+++	"\x67\xc6\x69\x73\x51\xff\x4a\xec\x29\xcd\xba\xab\xf2\xfb\xe3\x46";
+++
+++/*
+++  enk.txt as found in GPL tarball:
+++  COVR-X1860_GPL_Release/MTK7621_AX1800_BASE/vendors/COVR-X1860/imgkey/enk.txt
+++*/
+++const unsigned char enk_covrx1860[] =
+++	"NE1oIS1lKzkkIzZkbX49KTMsMWFkJXEybjheJiN6KjIwNjgx";
+++
+++/*
+++  enk.txt as found in GPL tarball:
+++  DIR-X3260_GPL_Release/MTK7621_AX1800_BASE/vendors/DIR-X3260/imgkey/enk.txt
+++*/
+++const unsigned char enk_dirx3260[] =
+++	"NF5yKy10JTl+bSkhNj1kTTIkI3FhIyUsJDU0czMyZmR6Jl4jMzI4KjA2Mg==";
+++
+++#define INTERLEAVE_BLOCK_SIZE	8
+++const unsigned char interleaving_pattern[INTERLEAVE_BLOCK_SIZE][INTERLEAVE_BLOCK_SIZE] = {
+++	{2, 5, 7, 4, 0, 6, 1, 3},
+++	{7, 3, 2, 6, 4, 5, 1, 0},
+++	{5, 1, 6, 7, 3, 0, 4, 2},
+++	{0, 3, 7, 6, 5, 4, 2, 1},
+++	{1, 5, 7, 0, 3, 2, 6, 4},
+++	{3, 6, 2, 5, 4, 7, 1, 0},
+++	{6, 0, 5, 1, 3, 4, 2, 7},
+++	{4, 6, 7, 3, 2, 0, 1, 5}
+++};
+++
+++/*
+++  key.pem as found in GPL tarball, e.g.:
+++  COVRP2500A1_FW101/COVRP2500_GPL_Release/package/tw-prog.priv/imgcrypt/key.pem
+++  encrypted with passphrase: "12345678"
+++*/
+++const unsigned char key_legacy_pem[] = R"(
+++-----BEGIN RSA PRIVATE KEY-----
+++Proc-Type: 4,ENCRYPTED
+++DEK-Info: AES-256-CBC,EAA1FD02CDBC7AA7E62AC821D47823F2
+++
+++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
+++-----END RSA PRIVATE KEY-----
+++)";
+++
+++/*
+++  key.pem as found in GPL tarball:
+++  DIR1260_GPL_Release/vendors/DIR-1260/imgkey/key.pem
+++  encrypted with passphrase: "12345678"
+++*/
+++const unsigned char key_dir1260_pem[] = R"(
+++-----BEGIN RSA PRIVATE KEY-----
+++Proc-Type: 4,ENCRYPTED
+++DEK-Info: AES-256-CBC,FFC890207BA9F13F6CE13F8EF7E69802
+++
+++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
+++-----END RSA PRIVATE KEY-----
+++)";
+++
+++/*
+++  key.pem as found in GPL tarball:
+++  DIR2150_GPL_Release/vendors/DIR-2150/imgkey/key.pem
+++  encrypted with passphrase: "12345678"
+++*/
+++const unsigned char key_dir2150_pem[] = R"(
+++-----BEGIN RSA PRIVATE KEY-----
+++Proc-Type: 4,ENCRYPTED
+++DEK-Info: AES-256-CBC,314D3C7FB69E7DDEAF084A0A7CA39069
+++
+++WJOwksI67gf6vSxxUYkVFe3enSRpmRZaLGjVZZCTKtAseydx0EcIfX1G+SBcxdD7
+++YNakD1qyfJLxGL/9pwEaFdCWcjuiOQiAorpbIdRZMq+N8RI5w9ho0/qVmowW+prE
+++r/5dWlCGR3JidJI03eJRQcMjdTkqOjbnFGwwVq6u3cLl/MdO9cegDQ/qWNAEo7df
+++0Djj09WMVXpDjkqAXjwTWDX3wBRB9HzPEGP07WoTRWqoCfO+qUmjA/Euwtzc/Mcq
+++1AGzT6zjHXAJ8Yr9i9opaXvRgteawvARf7qJ3KctfjoB+OXRQCPj7MvsMnB/sCwN
+++xXDtfWpXvLnrbtnbpUNh+max3cOy9f9eyVkJ1TfDc4qH/t75dp/umNmVbVMXX04d
+++VThbP7WXE/2LP67Bmxwi7B+6QRrWyVzwmuV+UlbyAS7BXnyPgxe8+jXEXZPiN6if
+++SR4f4dquR6ZlGEQ9ZaN0Pfd0ZgNEf09Te5v5ENCPdW521hm2nIa4EFWAynOMo7R8
+++I4hSmbdPh58uq6+Eb+GxzMaXmODOvGMnfrS9Aud4FONftEVbHgtn8frsSeUt/+TA
+++dsRPplYc5IVOij6dnALCiKh8ZP4E91xSTdnqptLpPBBws71+xCSxLbaJg5+1OtRU
+++ILMpq9solGFlzzsR2uBp1UsEPGbGwoprjBHX+lkdUehv4DPXm5onIxYsJujNddRA
+++mJ8znFtltX7p+vLKXymjgDGXawkCSLyu6t71aux/dNewjLLSQOjJN15InDvYo32I
+++w2kXK3p14R/xLHNQK9IpaKK+l/Xa0Rjgb3oqlEJqXAYl3EFwpI02tPhrQedTBybh
+++ufj1gC39apiCYtFSux6z/XsJi6BuGX7A8fZbCUFPbDY2q5gsmy665SzxrK2NcHrP
+++of1wCGDCpOt80gwKFQwVxo3czHlYjDu/UTefgUDmDh6tVYwo5e+UtgRy1wW3+AEo
+++UA2l4adwn5o+ciBlwa6pNI18Y+hjYE/R2puWsDZTt8E/0aj/l84tRt2HQ9SdPi0C
+++HKhkVgp+bhWo1SYZTwBkFX0WX/kb6Dw9mj9eY5fFFxGIZzSlTshfVQJzxe61RtO6
+++VwzsIOnHc4tCGYmUQo3JAo1t/0EfIEt9H7kadqXZl27C1TZP6Xl8tQ9fDxOp97aw
+++saw/B2/DkT+qLvTAPQ5lHUaWMQR+RKPVZSjyqmo7K/xymt2/6KjaRzNfcWulkiv7
+++L8oNUsYMJTLIKRoUJ7olTa2X7PxPW0bcBaZE9/Qax7iMS6HnPLB9pJQ09xUJUdDg
+++B+jkmtyEthYVCiJfm1FFdM3cub23L5g23ijPpAhzSaMy4AVgvX8rIiEa3u7OKFQf
+++RiDOLgp9odYK8lNW5HY4gyB4Z4Sg00VVmVNcpz4j8m/ivS97iyNvDGX6QXPzUcUE
+++gIsjjW+9l+/XGqTSUY+zzNgj8EHjH8l3IjXjNwVx/uFPajsZI7u8nYJ0HEhnTzlI
+++jdtNgmWtElPshelnS660pflplqHHk1BC2XHG10m2Nmq/AwGuDTdF/LC+tmM3uCqE
+++KfPMZa2nOcMs0jonEUEAGfhHlbVv4d4Y3JYip1U4tXobtH1xfgXR5VJt/gX76myz
+++0kahRvOE6D/8nmrpEE+3f/hyQGfGNqCiP/pdVC8st7k7LFmWCO32e81rYSksq6uK
+++2jt7tcIf7PVpK4ynticK/8BT2cws5JB/R/SMfezSC3KpyJBoeOYan+8wX8TOhz7J
+++F/ZG8DdCnpAb45RY3ET5PdWYXQ40k4Wylx47QGDQNJpf7jwc2E0dOTmCGAIG7LPg
+++qcAKdWI/PI4QJKo7eljTQBKV2ppCa78jBkaIJ5JRZuxzG8T1pcToPk38tDkjzStG
+++QftO8ZvsHHEVsv+eUZO7SJTxXzBs2Vh1LwyVsTd5qvfZuZzdf+lZ/EjUOP5zbwjD
+++R+yB0Nuo0SupiLPYfiPtmx4NDZpyAYZFsAUp8lEPKECessc4ckXGJyCpidk2O9U6
+++jYA4eRODrTxjAvuHtXpElDPSgx4tZ1geHHiExK2qSKFnQnQaYXgJYkXuVpqGYSO9
+++UBFlyTWMgul79uQ2Z2Dqf2/qbsNHQmzLBbSYLvm3kIn0ao9+lR+gtPHa4Ib83I9D
+++uBG2SzjA2iAKElZReZo6yNBfOdbAvsxMnGSKaTPZscx60TnSQZdJl0hngubEaFYE
+++TeRnM8gM/nfzspRtRpgIwMpjybs2HG1OAp3NLcFPUOZ6XwTU3Uh0w831LxEiX1k/
+++M5Ho1j9zUxDebNECsP8AIyEIr5CtmlpS8FYQnsn44+YTZ8EfXxfSAkgFg25zvOQT
+++z0C5INH8fY7n8eOK8Wx/fswVtSeMVu75rV7OpT1bM22ZK0JWpL1DTx3NC4AaOFo4
+++dus0tJ+Uw7SScwR0cYezJGKBp/wriWUy2FvxuUgw1wlsH8DapKk/oeV47FoANDbH
+++RujF1SqGmmvIw3urrRqg7dYvJkJkOJ1gLRRVKsa2WS9fOD9zx7TYTrONOHv22Ufj
+++vy/1tbPPG5LO5awSj1kC8e5ULO3FI5diGNnfSqDwXjvVQtnVW6GPpDXC/NTcAJVy
+++MWeVdeg29AZPhLprf7sHonkjYCnq5IOm1P7eVmCz2NwbYTrwUd9sxQGFzMTEBgIr
+++uaiQaJD/caJhM/W/F2q1cs/QfGUpCJZ6HOgH4vNt2UJ1j/Oh+5Cg2qbtnMfKLQXi
+++3jSLbl+J1wo0bLTwSlxhpSkHlaSsMY2qupjjHcafxu5TtnKmSxtQtwsZ4PdiJRJt
+++lnjrMtH0uevhXlNw57dArsA7e6SilSaqMCphfif7lANOMD2EM5HoJhZZ/tbw2A2U
+++LNjBbQbt5sW4tMbpT0/oURIneNuxuaTVeYGmoCa4c7s45MKXDPqN4UsRMzNO8T9y
+++jAorgbJvzUlzTGhiopA7ywrw2dIrfEkBNfMLMfFyuIQDwyskuPc2+nNMnDisj2B5
+++6lESaYdfMyNtllwntKFSpP0rAsF72f8tfWutDooIOz0/qfZkXllccvBAbF9EExM+
+++VG7WwnGPGpMDd+a1lhgA+JejYEttn6Qmb1BUa/o8yhYqNaYgQicJDH418sF/0o2m
+++J7L2fmzOs/91BCnfS8NrIKUHKm7PTjI7rBijRYCUq+aBEv8+4+r3e42CnIlE9TkS
+++-----END RSA PRIVATE KEY-----
+++)";
+++
+++/*
+++  key.pem as found in GPL tarball:
+++  COVR-X1860_GPL_Release/MTK7621_AX1800_BASE/vendors/COVR-X1860/imgkey/key.pem
+++  encrypted with passphrase: "12345678"
+++*/
+++const unsigned char key_covrx1860_pem[] = R"(
+++-----BEGIN RSA PRIVATE KEY-----
+++Proc-Type: 4,ENCRYPTED
+++DEK-Info: AES-256-CBC,34CCF1AEF0C34EAC5FFAE6BCF81ABB8D
+++
+++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
+++-----END RSA PRIVATE KEY-----
+++)";
+++
+++/*
+++  key.pem as found in GPL tarball, e.g.:
+++  DIR-X3260_GPL_Release/MTK7621_AX1800_BASE/vendors/DIR-X3260/imgkey/key.pem
+++  encrypted with passphrase: "12345678"
+++*/
+++const unsigned char key_dirx3260_pem[] = R"(
+++-----BEGIN RSA PRIVATE KEY-----
+++Proc-Type: 4,ENCRYPTED
+++DEK-Info: AES-256-CBC,DDAC1FE060CB240242046BDFEEE17E44
+++
+++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
+++-----END RSA PRIVATE KEY-----
+++)";
