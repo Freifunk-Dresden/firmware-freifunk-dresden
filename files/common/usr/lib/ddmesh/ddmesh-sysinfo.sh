@@ -253,7 +253,7 @@ $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*
 			"wifi_htmode" : {
 EOM
 			comma=0
-			for ifname in mesh2g-80211s mesh5g-80211s wifi2ap wifi5ap
+			for ifname in mesh2g-80211s mesh5g-80211s wifi2ap wifi5ap wifi-client5g
 			do
 				htmode="$(iwinfo ${ifname} info  2>/dev/null | sed -n 's#.*HT Mode: \(.*\)#\1#p')"
 				[ $comma = 1 ] && echo -n "," >> $OUTPUT
@@ -266,7 +266,7 @@ cat << EOM >> $OUTPUT
 			"wifi_bitrate" : {
 EOM
 			comma=0
-			for ifname in mesh2g-80211s mesh5g-80211s wifi2ap wifi5ap
+			for ifname in mesh2g-80211s mesh5g-80211s wifi2ap wifi5ap wifi-client5g
 			do
 				htmode="$(iwinfo ${ifname} info 2>/dev/null | sed -n 's#.*Bit Rate: \(.*\)#\1#p')"
 				[ $comma = 1 ] && echo -n "," >> $OUTPUT
