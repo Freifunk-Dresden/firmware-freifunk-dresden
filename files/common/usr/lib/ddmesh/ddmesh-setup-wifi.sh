@@ -39,7 +39,7 @@ setup_wireless()
  uci -q delete wireless.radio2g.disabled
  uci set wireless.radio2g.band="2g"
  uci set wireless.radio2g.hwmode="11n"
- uci set wireless.radio2g.htmode="HT20"
+ uci set wireless.radio2g.htmode="${wifi_status_radio2g_htmode}20"
  uci set wireless.radio2g.country="$(uci -q get ddmesh.network.wifi_country)"
  uci set wireless.radio2g.channel="$(uci get ddmesh.network.wifi_channel)"
  uci set wireless.radio2g.txpower="$(uci get ddmesh.network.wifi_txpower)"
@@ -67,12 +67,12 @@ setup_wireless()
 		else
 			if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
 				# because we indoor ch36 (indoor 80Mhz: ch 36,40,44,48)
-				uci set wireless.radio5g.htmode="VHT80"
+				uci set wireless.radio5g.htmode="${wifi_status_radio5g_htmode}80"
 				uci set wireless.radio5g.channel="$(uci -q get ddmesh.network.wifi_channel_5g)"
 			else
 				# not all devices support VHT80. If radar on one channel was detected then
 				# broader channel will likly not available
-				uci set wireless.radio5g.htmode="VHT80"
+				uci set wireless.radio5g.htmode="${wifi_status_radio5g_htmode}80"
 				range="$(uci -q get ddmesh.network.wifi_channels_5g_outdoor)"
 				uci set wireless.radio5g.channel="${range%-*}"
 				uci set wireless.radio5g.channels="${range}"
