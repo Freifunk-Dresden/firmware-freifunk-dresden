@@ -11,6 +11,7 @@ tethering                 - add configuration switch to enable iOS tethering
                             (default: off, to reduce 50% CPU load on some devices)
 LTE                       - add gl-inet GL-E750 with display support
                           - add SIM Pin info
+router                    - add device DLink COVR X1860
 USB                       - add usb serial console login (getty)
 timezone                  - fix storing user input for timezone
 WiFi                      - add 5ghz client mode (WAN: allows using other 5GHz AP as Internet source)
@@ -22,7 +23,10 @@ reboot                    - optimize reboot when configuration was changed (no t
 bmxd                      - v1.4: fix potential crash and improve code for development
 splash                    - remove splash competely
 syslog                    - reduce syslog traces and http error messages
+sysinfo                   - add wifi infos (htmode, bitrate)
 internal                  - remove old code (nodegroup)
+                          - add internal config switch to enable/disable STP for WAN/LAN bridge
+
 
 
 2022-12-01 [8.1.6] (devel)
