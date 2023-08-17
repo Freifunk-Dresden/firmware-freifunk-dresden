@@ -1922,6 +1922,29 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt7621-dlink_covr-x1860-a1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-dlink_covr-x1860-a1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-dlink_covr-x1860-a1-squashfs-recovery.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "dlink,covr-x1860-a1",
+      "model2": "D-Link COVR-X1860 A1",
+      "filename": "openwrt-ramips-mt7621-dlink_covr-x1860-a1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ramips-mt7621-dlink_dap-x1860-a1-initramfs-kernel.bin",
       "comment": ""
     },
