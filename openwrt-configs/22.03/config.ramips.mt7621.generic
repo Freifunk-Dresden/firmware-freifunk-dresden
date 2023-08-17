@@ -71,6 +71,7 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ramips_mt7621_DEVICE_cudy_wr1300 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_cudy_wr2100 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_cudy_x6 is not set
+# CONFIG_TARGET_ramips_mt7621_DEVICE_dlink_covr-x1860-a1 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_dlink_dap-x1860-a1 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_dlink_dir-1960-a1 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_dlink_dir-2640-a1 is not set
@@ -437,6 +438,7 @@ CONFIG_DEFAULT_kmod-mt7615-firmware=y
 CONFIG_DEFAULT_kmod-mt7615e=y
 CONFIG_DEFAULT_kmod-mt7663-firmware-ap=y
 CONFIG_DEFAULT_kmod-mt76x2=y
+CONFIG_DEFAULT_kmod-mt7915-firmware=y
 CONFIG_DEFAULT_kmod-mt7915e=y
 CONFIG_DEFAULT_kmod-nft-offload=y
 CONFIG_DEFAULT_kmod-sdhci-mt7620=y
