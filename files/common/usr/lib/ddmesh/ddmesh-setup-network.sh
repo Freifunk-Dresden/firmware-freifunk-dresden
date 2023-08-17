@@ -72,9 +72,11 @@ setup_ethernet()
 
 			echo "[$NET] set type: bridge"
 			# overwrite if device config was already present
+			stp="$(uci -q get ddmesh.network.${NET}_stp)"
+			[ -z "$stp" ] && stp=1
 			uci set network.${dev_config}.name="br-${NET}"
 			uci set network.${dev_config}.type='bridge'
-			uci set network.${dev_config}.stp=1
+			uci set network.${dev_config}.stp=${stp}
 			uci set network.${dev_config}.bridge_empty=1
 
 			# ------- create devices for all physical eth ports -------

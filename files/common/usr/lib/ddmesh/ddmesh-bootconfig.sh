@@ -151,7 +151,9 @@ config network 'network'
 	option	lan_gateway ''
 	option	lan_dns ''
 	option	lan_proto 'static'
+	option	lan_stp 1
 	option	wan_proto 'dhcp'
+	option	wan_stp 1
 	#option	wan_ipaddr
 	#option	wan_netmask
 	#option	wan_gateway

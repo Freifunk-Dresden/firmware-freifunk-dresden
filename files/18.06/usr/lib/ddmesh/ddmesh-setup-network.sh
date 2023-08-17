@@ -23,8 +23,10 @@ setup_ethernet()
 
 			# ------- configure interface (after device sections) ------
 			# overwrite device name (after the previous name was extracted and used for device section (wan))
+			stp="$(uci -q get ddmesh.network.${NET}_stp)"
+			[ -z "$stp" ] && stp=1
 			uci set network.${NET}.type='bridge'
-			uci set network.${NET}.stp=1
+			uci set network.${NET}.stp=${stp}
 			uci set network.${NET}.bridge_empty=1
 
 			# not used by openwrt18 but I need it in ddmesh-firewall-addon.sh
