@@ -250,6 +250,32 @@ $(cat ${RESOLV_FINAL} | sed -n '/nameserver[ 	]\+10\.200/{s#[ 	]*nameserver[ 	]*
 			"wifi_roaming" : "$roaming",
 			$([ "$wifi_status_radio2g_present" == "1" ] && echo "\"wifi_2g_channel\": ${wifi_2g_channel},")
 			$([ "$wifi_status_radio5g_present" == "1" ] && echo "\"wifi_5g_channel\": ${wifi_5g_channel},")
+			"wifi_htmode" : {
+EOM
+			comma=0
+			for ifname in mesh2g-80211s mesh5g-80211s wifi2ap wifi5ap
+			do
+				htmode="$(iwinfo ${ifname} info  2>/dev/null | sed -n 's#.*HT Mode: \(.*\)#\1#p')"
+				[ $comma = 1 ] && echo -n "," >> $OUTPUT
+				comma=1
+				echo "\"${ifname}\":\"${htmode}\"" >> $OUTPUT
+			done
+
+cat << EOM >> $OUTPUT
+			},
+			"wifi_bitrate" : {
+EOM
+			comma=0
+			for ifname in mesh2g-80211s mesh5g-80211s wifi2ap wifi5ap
+			do
+				htmode="$(iwinfo ${ifname} info 2>/dev/null | sed -n 's#.*Bit Rate: \(.*\)#\1#p')"
+				[ $comma = 1 ] && echo -n "," >> $OUTPUT
+				comma=1
+				echo "\"${ifname}\":\"${htmode}\"" >> $OUTPUT
+			done
+
+cat << EOM >> $OUTPUT
+			},
 			"node_type":"$node_type",
 			"email_notification":$email_notification,
 			"autoupdate":$autoupdate,
