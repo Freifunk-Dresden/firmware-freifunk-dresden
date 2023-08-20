@@ -85,6 +85,12 @@ case "$platform" in
 					_led_status="yellow:status"
 					_led_flag_status_done="off"
 					;;
+			"dlink,covr-x1860-a1")
+					_led_wifi2g="white:status"
+					_led_wifi5g=""
+					_led_status="orange:status"
+					_led_flag_status_done="off"
+					;;
 		esac
 		;;
 esac
