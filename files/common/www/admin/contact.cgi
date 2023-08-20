@@ -41,12 +41,12 @@ $(lang text-dsgvo)
 </div>
 <table>
 
-<tr title="Freiwillige Angabe eines Namens">
+<tr title="Kontaktname">
 <th>Name:</th>
 <td colspan="2"><input name="form_contact_name" size="48" style="width: 100%;" type="text" value="$tmp_name"></td>
 </tr>
 
-<tr title="Freiwillige Angabe einer E-Mail-Adresse">
+<tr title="Notwendige Angabe einer E-Mail-Adresse">
 <th>E-Mail:</th>
 <td colspan="2"><input name="form_contact_email" size="48" style="width: 100%;" type="text" value="$tmp_email"></td>
 </tr>
