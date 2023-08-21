@@ -127,10 +127,10 @@ case "$ARG_LED" in
 					led_on $_led_wifi2g
 					;;
 				alive)
-					led_timer $_led_wifi2g 30 1000
+					led_timer $_led_wifi2g 30 2000
 					;;
 				freifunk)
-					led_timer $_led_wifi2g 200 200
+					led_timer $_led_wifi2g 800 800
 					;;
 				gateway)
 					led_timer $_led_wifi2g 60 60
@@ -146,10 +146,10 @@ case "$ARG_LED" in
 					led_on $_led_wifi5g
 					;;
 				alive)
-					led_timer $_led_wifi5g 30 1000
+					led_timer $_led_wifi5g 30 2000
 					;;
 				freifunk)
-					led_timer $_led_wifi5g 200 200
+					led_timer $_led_wifi5g 800 800
 					;;
 				gateway)
 					led_timer $_led_wifi5g 60 60
