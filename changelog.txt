@@ -1,5 +1,5 @@
 
-2023-06-01 [8.1.7] (devel)
+2023-09-02 [8.1.7] (testing)
 --------------------------------------------------
 openwrt 22                - move some routers to openwrt 22 (revert iptables patch)
                           - add some new routers
