@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="22"
+SCRIPT_VERSION="23"
 
 
 # gitlab variables
@@ -349,8 +349,19 @@ listTargets()
 		eval $(cat "${compile_status_file}" | jq $OPT '"compile_data=\"\(.date)\";compile_status=\(.status)"')
 	fi
 
-	cstatus="${C_RED}${BG_RED}-${C_NONE}"
-	test "$compile_status" = "0" && cstatus="${C_GREEN}${BG_GREEN}+${C_NONE}"
+	case "${compile_status}" in
+		"0") cstatus="${C_NONE}${BG_GREEN}+${C_NONE}" ;;
+		"1") cstatus="${C_NONE}${BG_RED}E${C_NONE}" ;;
+		"2") cstatus="${C_NONE}${C_YELLOW}${C_BLINK}*${C_NONE}" ;;
+		*)
+			if [ -n "${compile_status}" ]; then
+				cstatus="${C_LBLUE}${BG_WHITE}${compile_status}${C_NONE}"
+			else
+				cstatus="${C_NONE}${BG_RED}-${C_NONE}"
+			fi
+			;;
+	esac
+
  	printf  $cstatus" %-31s | %-10.10s | %-7.7s | ${list_color[$_selector_config]}%-8.8s${C_NONE} | ${list_color[$_selector_files]}%-7.7s${C_NONE} | ${list_color[$_selector_feeds]}%-7.7s${C_NONE} | ${list_color[$_selector_patches]}%-7.7s${C_NONE} | %s\n" "${_config_name}" "${_openwrt_rev:0:9}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches" "$compile_data"
 
 	targetIdx=$(( targetIdx + 1 ))
@@ -944,6 +955,17 @@ setup_buildroot ()
 
 } # setup_buildroot
 
+# status:
+#  0 - success
+#  1 - error
+#  2 - compiling
+write_compile_status()
+{
+	local config="$1"
+	local status="$2"
+	local file="$3"
+	echo "{\"config\":\"${config}\", \"date\":\"$(date)\", \"status\":\"${status}\"}" > "${file}"
+}
 # ---------- create directories: dl, workdir -----------
 # only create top-level directories if thoses do not not
 # exisist. I do not simply call 'mkdir -p'. This is because
@@ -1125,10 +1147,10 @@ do
 	# use same target/subtarget directories.
 	# - reset also compile status ${compile_status_file}
 	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/${_config_name}"
-	rm -f ${compile_status_file}
-	# delete no hidden directory (_compile_status_dir)
 	rm -rf ${outdir}/*
 	rm -rf ${buildroot}/bin
+
+	write_compile_status "${_config_name}" "2" "${compile_status_file}"
 
 	# progress bar: compiling
 	progbar_char_array[$((progress_counter-1))]="${PBC_RUNNING}"
@@ -1347,7 +1369,7 @@ EOM
 
 	# write build status which is displayed by "build.sh list"
 	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
-	echo "{\"config\":\"${_config_name}\", \"date\":\"$(date)\", \"status\":\"${error}\"}" > "${compile_status_file}"
+	write_compile_status "${_config_name}" "${error}" "${compile_status_file}"
 
 	# success status
 	if [ ${error} == 0 ]; then
