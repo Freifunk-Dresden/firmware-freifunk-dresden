@@ -179,28 +179,28 @@ config backbone 'backbone'
 #	option	comment			''
 
 config backbone_client
-	option 	host			'vpn7.freifunk-dresden.de'
+	option 	host			'vpn9.freifunk-dresden.de'
 	option	type			'fastd'
 	option	disabled		'0'
 	option 	port			'5002'
 	option	public_key 		''
 
 config backbone_client
-	option 	host			'vpn6.freifunk-dresden.de'
+	option 	host			'vpn12.freifunk-dresden.de'
 	option	type			'fastd'
 	option	disabled		'0'
 	option 	port			'5002'
 	option	public_key 		''
 
 config backbone_client
-	option 	host			'vpn1.freifunk-dresden.de'
+	option 	host			'vpn16.freifunk-dresden.de'
 	option	type			'fastd'
 	option	disabled		'0'
 	option 	port			'5002'
 	option	public_key 		''
 
 config backbone_client
-	option 	host			'vpn14.freifunk-dresden.de'
+	option 	host			'vpn20.freifunk-dresden.de'
 	option	type			'fastd'
 	option	disabled		'0'
 	option 	port			'5002'
