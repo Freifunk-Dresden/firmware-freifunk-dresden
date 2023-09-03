@@ -449,6 +449,11 @@ upgrade_8_1_7()
   uci -q add_list firewall.zone_wan.network='cwan'
 }
 
+upgrade_8_1_8()
+{
+	true
+}
+
 ##################################
 
 run_upgrade
