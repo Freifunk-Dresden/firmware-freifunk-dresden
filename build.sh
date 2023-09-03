@@ -964,7 +964,9 @@ write_compile_status()
 	local config="$1"
 	local status="$2"
 	local file="$3"
-	echo "{\"config\":\"${config}\", \"date\":\"$(date)\", \"status\":\"${status}\"}" > "${file}"
+	mkdir -p $(dirname $file)
+	test "$status" = "0" && d="$(date)" | d=""
+	echo "{\"config\":\"${config}\", \"date\":\"$d\", \"status\":\"${status}\"}" > "${file}"
 }
 # ---------- create directories: dl, workdir -----------
 # only create top-level directories if thoses do not not
