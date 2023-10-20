@@ -325,7 +325,7 @@ cat<<EOM
 EOM
 
 # simulate array
-led_comment_wifi="Gateway Status:<ul><li>blink-kurz: kein Gatway gefunden/selektiert</li><li>blink normal: Gateway selektiert</li><li>blink schnell: <font color="red">Router selbst ist ein Gateway !</font></li></ul>"
+led_comment_wifi="Gateway Status:<ul><li>blinkt kurz: kein Gatway gefunden/selektiert</li><li>konstant an: Gateway selektiert</li><li>blink schnell: <font color="red">Router selbst ist ein Gateway !</font></li></ul>"
 led_comment_status="Boot-Status"
 led_comment_wwan="LTE Status"
 
