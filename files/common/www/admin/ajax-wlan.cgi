@@ -82,6 +82,11 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 		type="ffap"
 	fi
 
+	# wpa3
+	if [ "$wifi_auth" = "PSK SAE" ]; then
+		wifi_encr="WPA3"
+	fi
+
 	line="{\"type\": \"$type\", \"ssid\": \"$wifi_essid_clean\", \"channel\": \"$wifi_channel\","
 	line="$line  \"open\": \"$wifi_open\", \"signal\": \"$wifi_signal\","
 	line="$line  \"group_cipher\": \"$wifi_group_cipher\", \"auth\": \"$wifi_auth\", \"encr\": \"$wifi_encr\","

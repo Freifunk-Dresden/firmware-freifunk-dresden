@@ -180,6 +180,13 @@ setup_wireless()
 
  # -- wifi2/5G --
 
+ # create config section for wificlient_5g
+ if [ -z "$(uci -q get credentials.wificlient_5g)" ]; then
+	uci add credentials wificlient_5g
+ 	uci rename credentials.@wificlient_5g[-1]='wificlient_5g'
+ fi
+
+
  # add 5GHz
  if [ "$wifi_status_radio5g_present" = "1" ]; then
 	if [ "$wifi5g_mode" = "client" ]; then
