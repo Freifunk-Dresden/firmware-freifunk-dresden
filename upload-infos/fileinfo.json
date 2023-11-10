@@ -2112,9 +2112,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "tplink,re650-v1",
+      "model2": "TP-Link RE650 v1",
       "filename": "openwrt-ramips-mt7621-tplink_re650-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
@@ -2130,9 +2130,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "tplink,re650-v2",
+      "model2": "TP-Link RE650 v2",
       "filename": "openwrt-ramips-mt7621-tplink_re650-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
