@@ -1,3 +1,6 @@
+2023-11-10 [8.2.0] (release)
+LED                       - wifi status LED (GW/Freifunk Status) is not static (instead of blinking)
+WiFi                      - add support for utf8 (emoji) in wifi scan
 
 2023-09-02 [8.1.7] (testing)
 --------------------------------------------------
