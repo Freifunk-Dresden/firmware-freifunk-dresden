@@ -12,57 +12,62 @@ export FFDD="www.freifunk-dresden.de"
 langbrowser="$(echo $HTTP_ACCEPT_LANGUAGE |sed 'y/[ABCDEFGHIJKLMNOPQRSTUVWXYZ]/[abcdefghijklmnopqrstuvwxyz/')"
 DEFAULT_LANG="de"
 case "$langbrowser" in
-        de*) LANG="de" ;;
-        en*) LANG="en" ;;
-        *) LANG="$DEFAULT_LANG" ;;
+	de*) LANG="de" ;;
+	en*) LANG="en" ;;
+	*) LANG="$DEFAULT_LANG" ;;
 esac
 export LANG
 
 lang ()
 {
- f=/usr/lib/www/lang/$LANG/$1
- if [ -f $f ]; then
-	cat $f
- else
- 	f=/usr/lib/www/lang/$DEFAULT_LANG/$1
+	f=/usr/lib/www/lang/$LANG/$1
 	if [ -f $f ]; then
 		cat $f
 	else
-		echo "[ERROR: missing translation]"
+		f=/usr/lib/www/lang/$DEFAULT_LANG/$1
+		if [ -f $f ]; then
+			cat $f
+		else
+			echo "[ERROR: missing translation]"
+		fi
 	fi
- fi
 }
 
 env()
 {
-echo "<pre>"
-set
-echo "</pre>"
+	echo "<pre>"
+	set
+	echo "</pre>"
 }
 
 #http server - query read/protection
 process_query()
 {
-  if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" -a "$HTTP_ALLOW_GET_REQUEST" != "1" ]; then
-	logger -t "HTTP-Request:" "Deny HTTP Get Request [$REMOTE_HOST:$REQUEST_URI]"
-	QUERY_STRING=""
-	exit 0
-  fi
+	if [ "$REQUEST_METHOD" = "GET" -a -n "$QUERY_STRING" -a "$HTTP_ALLOW_GET_REQUEST" != "1" ]; then
+		logger -t "HTTP-Request:" "Deny HTTP Get Request [$REMOTE_HOST:$REQUEST_URI]"
+		QUERY_STRING=""
+		exit 0
+	fi
 
-  if [ "$REQUEST_METHOD" = "POST" ]; then
-        QUERY_STRING="$(dd bs=1 count=$CONTENT_LENGTH 2>/dev/null)"
-  fi
+	if [ "$REQUEST_METHOD" = "POST" ]; then
+		QUERY_STRING="$(dd bs=1 count=$CONTENT_LENGTH 2>/dev/null)"
+	fi
 
-  #setup query variables
-  if [ -n "$QUERY_STRING" ]; then
-        IFS=\&
-        for i in $QUERY_STRING
-        do
-                left=${i%%=*}; right=${i#*=}
-                left=$(echo $left|sed 's#[^[:alnum:]]#_#g')
-                if [ "$left" != "" ]; then eval export $left=\"$right\";fi
-        done
-        unset IFS;
+	#setup query variables
+	if [ -n "$QUERY_STRING" ]; then
+		IFS=\&
+		for i in $QUERY_STRING
+		do
+			left=${i%%=*}; right=${i#*=}
+
+			# remove shell and masking characters
+			left=$(echo "$left" | sed 's#[^[:alnum:]]#_#g')
+			right=$(echo "$right" | sed 's#[$()`"\*?]##g' | sed "s/['#~]//g")
+
+			# ensure interpreting "right" as text not shell characters
+			if [ "$left" != "" ]; then eval export $left=\'$right\';fi
+		done
+		unset IFS;
   fi
   unset i
   unset left
