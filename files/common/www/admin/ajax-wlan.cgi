@@ -17,7 +17,8 @@ mode="$(uci -q get ddmesh.network.wifi5g_mode)"
 [ "$wifi_status_radio5g_present" = "1" ] && /usr/sbin/iw dev ${ifname5g} scan >> $SCAN_RESULT
 
 # when searching for "^BSS" defaults are set and overwritten later
-json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x00.*##' | sed -ne'
+# convert \x values to %values (emoji)
+json="{ \"stations\": [  $(cat $SCAN_RESULT | sed 's#\\x#%#g' | sed -ne'
 s#^BSS \(..:..:..:..:..:..\).*#wifi_bssid="\1";wifi_mode="managed";wifi_uptime="";wifi_essid="";wifi_meshid="";wifi_signal="0";wifi_open="yes";#p
 s#	TSF:[^(]*(\([^)]*\).*#wifi_uptime="\1";#p
 s#	SSID: \(.*\)#wifi_essid="\1";#p
@@ -69,6 +70,9 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	A="$(uci -q get credentials.network.wifi_mesh_id)"
 	if [ "$wifi_essid_clean" = "$A" ]; then
 		type="ffmesh"
+		wifi_auth=""
+		wifi_encr=""
+		wifi_group_cipher=""
 	fi
 
 	# Freifunk (wifi2) check that community name is in essid
@@ -131,6 +135,7 @@ do
 			wifi_ssid='Freifunk-Adhoc-Net'
 			wifi_bssid='multiple'
 			seen_ffadhoc=1
+			auth=""
 			;;
 		ffmesh)
 			#display only one entry
@@ -148,28 +153,32 @@ do
 			meshimage='<img src="/images/yes16.png">'
 			wifi_ssid='Freifunk-Mesh-Net'
 			wifi_bssid='multiple'
+			auth=""
 			;;
 		ffap)
 			style="$base_style font-weight:bold;"
 			class="selected_ap"
 			meshimage=''
+			auth=""
 			;;
 		*)
 			class=colortoggle$T
 			style="$base_style"
 			meshimage=''
+			auth="$wifi_encr ($wifi_auth) $wifi_group_cipher"
 			;;
 	esac
 
 	if [ "$wifi_open" = "yes" ]; then
 		openimage='<img src="/images/yes16.png">'
+		auth=""
 	else
 		openimage=''
 	fi
 
 cat<<EOM
 <TR class="$class" >
-<TD style="$style">$wifi_ssid</TD>
+<TD style="$style" id="ssid_$idx"><script>document.getElementById("ssid_$idx").innerHTML=decodeURIComponent("$wifi_ssid")</script></TD>
 <TD style="$style" width="20">$wifi_channel</TD>
 <TD style="$style" width="20">$meshimage</TD>
 <TD style="$style" width="20">$openimage</TD>
@@ -177,7 +186,7 @@ cat<<EOM
 <TD style="$style" width="40">- $wifi_signal</TD>
 <TD style="$style" width="40">$wifi_uptime</TD>
 <TD style="$style" width="40">$wifi_bssid</TD>
-<TD style="$style" width="40">$wifi_encr ($wifi_auth) $wifi_group_cipher</TD></tr>
+<TD style="$style" width="40">$auth</TD></tr>
 EOM
 	if [ $T -eq 1 ]; then
 		T=2
