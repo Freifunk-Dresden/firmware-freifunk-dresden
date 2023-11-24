@@ -634,7 +634,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "glinet,gl-ar300m-lite",
       "model2": "GL.iNet GL-AR300M-Lite",
       "filename": "openwrt-ath79-generic-glinet_gl-ar300m-lite-squashfs-sysupgrade.bin",
@@ -830,7 +830,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "tplink,archer-c59-v2",
       "model2": "TP-Link Archer C59 v2",
       "filename": "openwrt-ath79-generic-tplink_archer-c59-v2-squashfs-sysupgrade.bin",
@@ -1549,7 +1549,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "glinet,gl-ar300m-nor",
       "model2": "GL.iNet GL-AR300M (NOR)",
       "filename": "openwrt-ath79-nand-glinet_gl-ar300m-nor-squashfs-sysupgrade.bin",
@@ -1593,7 +1593,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "glinet,gl-e750",
       "model2": "GL.iNet GL-E750",
       "filename": "openwrt-ath79-nand-glinet_gl-e750-squashfs-sysupgrade.bin",
@@ -1606,7 +1606,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "avm,fritzbox-4040",
       "model2": "AVM FRITZ!Box 4040",
       "filename": "openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-sysupgrade.bin",
@@ -1681,7 +1681,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "avm,fritz7360-v2",
       "model2": "AVM FRITZ!Box 7360 V2",
       "filename": "openwrt-lantiq-xrx200-avm_fritz7360-v2-squashfs-sysupgrade.bin",
@@ -1937,7 +1937,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "dlink,covr-x1860-a1",
       "model2": "D-Link COVR-X1860 A1",
       "filename": "openwrt-ramips-mt7621-dlink_covr-x1860-a1-squashfs-sysupgrade.bin",
@@ -2009,7 +2009,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "r6220",
       "model2": "Netgear R6220",
       "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
@@ -2017,7 +2017,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "netgear,r6220",
       "model2": "Netgear R6220",
       "filename": "openwrt-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
@@ -2422,7 +2422,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "xunlong,orangepi-r1",
       "model2": "Xunlong Orange Pi R1",
       "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-squashfs-sdcard.img.gz",
@@ -2440,7 +2440,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "fujitsu-siemens-futro-s550",
       "model2": "FUJITSU SIEMENS FUTRO S550",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
@@ -2448,7 +2448,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "fujitsu-futro-s550-2",
       "model2": "FUJITSU FUTRO S550-2",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
@@ -2456,7 +2456,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "igel-technology-gmbh-h830c",
       "model2": "IGEL Technology GmbH H830C",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
@@ -2464,7 +2464,7 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
+      "autoupdate": "1",
       "model": "qemu-standard-pc-i440fx-piix-1996",
       "model2": "QEMU Standard PC (i440FX + PIIX, 1996)",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
