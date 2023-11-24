@@ -2422,7 +2422,7 @@
     },
     {
       "name": "",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "xunlong,orangepi-r1",
       "model2": "Xunlong Orange Pi R1",
       "filename": "openwrt-sunxi-cortexa7-xunlong_orangepi-r1-squashfs-sdcard.img.gz",
@@ -2440,7 +2440,7 @@
     },
     {
       "name": "",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "fujitsu-siemens-futro-s550",
       "model2": "FUJITSU SIEMENS FUTRO S550",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
@@ -2448,7 +2448,7 @@
     },
     {
       "name": "",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "fujitsu-futro-s550-2",
       "model2": "FUJITSU FUTRO S550-2",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
@@ -2456,7 +2456,7 @@
     },
     {
       "name": "",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "igel-technology-gmbh-h830c",
       "model2": "IGEL Technology GmbH H830C",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
@@ -2464,7 +2464,7 @@
     },
     {
       "name": "",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "qemu-standard-pc-i440fx-piix-1996",
       "model2": "QEMU Standard PC (i440FX + PIIX, 1996)",
       "filename": "openwrt-x86-64-generic-squashfs-combined.img.gz",
