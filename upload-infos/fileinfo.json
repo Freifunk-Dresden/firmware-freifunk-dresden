@@ -117,7 +117,7 @@
     {
       "name": "",
       "autoupdate": "1",
-      "model": "tl-mr3420",
+      "model": "tl-mr3220",
       "model2": "TP-Link TL-WR842N/ND v1",
       "filename": "openwrt-ar71xx-tiny-tl-mr3220-v1-squashfs-sysupgrade.bin",
       "comment": ""
