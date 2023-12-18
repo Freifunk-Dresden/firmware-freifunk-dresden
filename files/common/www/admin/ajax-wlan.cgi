@@ -83,7 +83,7 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	fi
 
 	# wpa3
-	if [ "$wifi_auth" = "PSK SAE" ]; then
+	if [ "$wifi_auth" = "PSK SAE" -o "$wifi_auth" = "SAE" ]; then
 		wifi_encr="WPA3"
 	fi
 

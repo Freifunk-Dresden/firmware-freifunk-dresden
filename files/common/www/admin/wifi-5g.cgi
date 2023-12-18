@@ -119,7 +119,7 @@ cat<<EOM
 EOM
 
 encr="$(uci -q get ddmesh.network.wificlient_5g_encryption)"
-for i in "none:Offen" "psk2+ccmp:WPA2 Personal (PSK) CCMP" "psk2+tkip:WPA2 Personal (PSK) TKIP" "psk2+aes:WPA2 Personal (PSK) AES" "psk2+tkip+ccmp:WPA2 Personal (PSK) TKIP,CCMP" "psk2+tkip+aes:WPA2 Personal (PSK) TKIP,AES" "psk+ccmp:WPA Personal (PSK) CCMP" "psk+tkip:WPA Personal (PSK) TKIP" "psk+aes:WPA Personal (PSK) AES" "psk+tkip+ccmp:WPA Personal (PSK) TKIP,CCMP" "psk+tkip+aes:WPA Personal (PSK) TKIP,AES" "sae:WPA3 Personal (SAE)" "sae-mixed: WPA2/WPA3 Personal (PSK/SAE)"
+for i in "none:Offen" "sae:WPA3 Personal (SAE)" "sae-mixed: WPA2/WPA3 Personal (PSK/SAE)" "psk2+ccmp:WPA2 Personal (PSK) CCMP" "psk2+tkip:WPA2 Personal (PSK) TKIP" "psk2+aes:WPA2 Personal (PSK) AES" "psk2+tkip+ccmp:WPA2 Personal (PSK) TKIP,CCMP" "psk2+tkip+aes:WPA2 Personal (PSK) TKIP,AES" "psk+ccmp:WPA Personal (PSK) CCMP" "psk+tkip:WPA Personal (PSK) TKIP" "psk+aes:WPA Personal (PSK) AES" "psk+tkip+ccmp:WPA Personal (PSK) TKIP,CCMP" "psk+tkip+aes:WPA Personal (PSK) TKIP,AES"
 do
 	enc="${i%:*}"
 	text="${i#*:}"
