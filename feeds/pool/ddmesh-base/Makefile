@@ -51,6 +51,14 @@ define Package/$(PKG_NAME)-base/config
    #depends on PACKAGE_ddmesh-base
 
    # use SYMBOL of package that should be selected
+   config PACKAGE_ddmesh_large_device
+     depends on PACKAGE_ddmesh-base
+     bool "Enable firmware image for large devices"
+     help
+       Target is for large device.  Flash size >=16Mbyte; RAM size >= 64MByte.
+       When selected, wpa_basic_openssl gets selected which also selects libopenssl to support WPA3
+
+   # use SYMBOL of package that should be selected
    config PACKAGE_fastd
      # menu point is displayed when dependencies are selected
      depends on PACKAGE_ddmesh-base
@@ -99,30 +107,11 @@ define Package/$(PKG_NAME)-wifi
   #
   # +PACKAGE_kmod-ath:kmod-owl-loader
   #  means: kmod-owl-loader is selected when symbol CONFIG_PACKAGE_kmod-ath9k is selected somewhere
+
   DEPENDS:= $(PKG_NAME)-base \
-            +iw +iwinfo +wpad-mini +@PACKAGE_wpa-cli
-
-# tmp/.config-package.in:19312:error: recursive dependency detected!
-# tmp/.config-package.in:19312:	symbol PACKAGE_kmod-ath9k is selected by PACKAGE_kmod-owl-loader
-# tmp/.config-package.in:20542:	symbol PACKAGE_kmod-owl-loader is selected by PACKAGE_ddmesh-wifi
-# tmp/.config-package.in:5233:	symbol PACKAGE_ddmesh-wifi depends on PACKAGE_kmod-ath9k
-# For a resolution refer to Documentation/kbuild/kconfig-language.rst
-# subsection "Kconfig recursive dependency limitations"
-
-            # +PACKAGE_kmod-ath9k:kmod-owl-loader \
-            # +PACKAGE_kmod-ath10k:kmod-owl-loader \
-            # +PACKAGE_kmod-ath10k-ct:kmod-owl-loader \
-            # +PACKAGE_kmod-ath10k-ct-smallbuffers:kmod-owl-loader
-
-#           +PACKAGE_ath10k-board-qca4019 \
-#						+PACKAGE_ath10k-board-qca9377:kmod-owl-loader \
-#						+PACKAGE_ath10k-board-qca9887:kmod-owl-loader \
-#						+PACKAGE_ath10k-board-qca9888:kmod-owl-loader \
-#						+PACKAGE_ath10k-board-qca988x:kmod-owl-loader \
-#						+PACKAGE_ath10k-board-qca9984:kmod-owl-loader \
-#						+PACKAGE_ath10k-board-qca99x0:kmod-owl-loader \
-#						+PACKAGE_ath10k-board-qca99x0-2g:kmod-owl-loader \
-#						+PACKAGE_ath10k-board-qca99x0-5g:kmod-owl-loader
+            +iw +iwinfo +@PACKAGE_wpa-cli \
+            +!PACKAGE_ddmesh_large_device:wpad-mini \
+            +PACKAGE_ddmesh_large_device:wpad-basic-openssl
 
   TITLE:=Selects all addtional wifi tools.
 
