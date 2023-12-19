@@ -51,6 +51,14 @@ define Package/$(PKG_NAME)-base/config
    #depends on PACKAGE_ddmesh-base
 
    # use SYMBOL of package that should be selected
+   config PACKAGE_ddmesh_large_device
+     depends on PACKAGE_ddmesh-base
+     bool "Enable firmware image for large devices"
+     help
+       Target is for large device.  Flash size >=16Mbyte; RAM size >= 64MByte.
+       When selected, wpa_basic_openssl gets selected which also selects libopenssl to support WPA3
+
+   # use SYMBOL of package that should be selected
    config PACKAGE_fastd
      # menu point is displayed when dependencies are selected
      depends on PACKAGE_ddmesh-base
@@ -101,7 +109,9 @@ define Package/$(PKG_NAME)-wifi
   #  means: kmod-owl-loader is selected when symbol CONFIG_PACKAGE_kmod-ath9k is selected somewhere
 
   DEPENDS:= $(PKG_NAME)-base \
-            +iw +iwinfo +wpad-basic-openssl +@PACKAGE_wpa-cli
+            +iw +iwinfo +@PACKAGE_wpa-cli \
+            +!PACKAGE_ddmesh_large_device:wpad-mini \
+            +PACKAGE_ddmesh_large_device:wpad-basic-openssl
 
   TITLE:=Selects all addtional wifi tools.
 
