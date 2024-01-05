@@ -209,9 +209,96 @@ function parseWifiDump()
 '
 }
 
+function combined_statistics() {
+
+	stat_cable_mesh_rx=0
+	stat_cable_mesh_tx=0
+	stat_wifi_mesh_rx=0
+	stat_wifi_mesh_tx=0
+	stat_backbone_mesh_rx=0
+	stat_backbone_mesh_tx=0
+	stat_gateway_rx=0
+	stat_gateway_tx=0
+	stat_vpn_rx=0
+	stat_vpn_tx=0
+	stat_ap_rx=0
+	stat_ap_tx=0
+
+
+		for entry in $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh list)
+		do
+			net=${entry%%=*}
+			net=${net#net_}
+			ifname=${entry#*=}
+			ifname=${ifname/+/}
+
+			[ -n "$ifname" ] && ifname="$(basename /sys/class/net/${ifname}*)"
+			ifpath="/sys/class/net/${ifname}"
+
+			if [ -n "${ifname}" -a -d ${ifpath} ]; then
+
+				rx="$(cat ${ifpath}/statistics/rx_bytes)"
+				tx="$(cat ${ifpath}/statistics/tx_bytes)"
+
+				# collect data
+				case "$net" in
+					mesh_lan|mesh_wan|mesh_vlan)
+						stat_cable_mesh_rx=$((stat_cable_mesh_rx + rx))
+						stat_cable_mesh_tx=$((stat_cable_mesh_tx + tx))
+					;;
+
+					wifi_mesh2g|wifi_mesh5g)
+						stat_wifi_mesh_rx=$((stat_wifi_mesh_rx + rx))
+						stat_wifi_mesh_tx=$((stat_wifi_mesh_tx + tx))
+					;;
+
+					# use tbbwg main wireguard interface to cover all ipip tunnels
+					tbbwg|tbb_fastd|ffgw)
+						# fix fastd statistic when no connections is established
+						test ${net} = "tbb_fastd" -a "$rx" = "0" && tx="0"
+						stat_backbone_mesh_rx=$((stat_backbone_mesh_rx + rx))
+						stat_backbone_mesh_tx=$((stat_backbone_mesh_tx + tx))
+					;;
+
+					ffgw)
+						stat_gateway_rx=$((stat_gateway_rx + rx))
+						stat_gateway_tx=$((stat_gateway_tx + tx))
+					;;
+
+					vpn)
+						stat_vpn_rx=$((stat_vpn_rx + rx))
+						stat_vpn_tx=$((stat_vpn_tx + tx))
+					;;
+
+					wifi2)
+						stat_ap_rx=$((stat_ap_rx + rx))
+						stat_ap_tx=$((stat_ap_tx + tx))
+					;;
+				esac
+			fi
+		done
+
+	# output
+	cat << EOM
+			"cable_mesh_rx":"${stat_cable_mesh_rx}",
+			"cable_mesh_tx":"${stat_cable_mesh_tx}",
+			"wifi_mesh_rx":"${stat_wifi_mesh_rx}",
+			"wifi_mesh_tx":"${stat_wifi_mesh_tx}",
+			"backbone_mesh_rx":"${stat_backbone_mesh_rx}",
+			"backbone_mesh_tx":"${stat_backbone_mesh_tx}",
+			"gateway_rx":"${stat_gateway_rx}",
+			"gateway_tx":"${stat_gateway_tx}",
+			"vpn_rx":"${stat_vpn_rx}",
+			"vpn_tx":"${stat_vpn_tx}",
+			"ap_rx":"${stat_ap_rx}",
+			"ap_tx":"${stat_ap_tx}"
+EOM
+}
+
+
 cat << EOM >> $OUTPUT
 {
- "version":"17",
+ "version":"18",
  "timestamp":"$(date +'%s')",
  "data":{
 
@@ -366,12 +453,16 @@ EOM
 
 cat<<EOM >> $OUTPUT
 		},
+		"network": {
+$(combined_statistics)
+		},
 $(cat /proc/meminfo | sed -n '/^MemTotal\|^MemFree\|^Buffers\|^Cached/{s#\(.*\):[ 	]\+\([0-9]\+\)[ 	]*\(.*\)#\t\t\t\"meminfo_\1\" : \"\2\ \3\",#p}')
 			"cpu_load" : "$(cat /proc/loadavg)",
 			"cpu_stat" : "$(cat /proc/stat | sed -n '/^cpu[ 	]\+/{s# \+# #;p}')",
 			"gateway_usage" : [
 $(cat /var/statistic/gateway_usage | sed 's#\([^:]*\):\(.*\)#\t\t\t\t{"\1":"\2"},#' | sed '$s#,[ 	]*$##') ]
 		},
+
 EOM
 
 #bmxd

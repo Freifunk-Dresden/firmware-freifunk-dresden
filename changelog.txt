@@ -1,6 +1,10 @@
+
 2023-11-10 [8.2.1] (devel)
 --------------------------------------------------
 WiFi                      - 5GHz client mode (WAN) wpa3 support added
+sysinfo                   - sysinfo.json gets a new network statistic section
+
+
 
 2023-11-10 [8.2.0] (release)
 --------------------------------------------------
