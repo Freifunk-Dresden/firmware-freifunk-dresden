@@ -221,8 +221,6 @@ function combined_statistics() {
 	stat_backbone_mesh_wg_tx=0
 	stat_backbone_mesh_fastd_rx=0
 	stat_backbone_mesh_fastd_tx=0
-	stat_gateway_rx=0
-	stat_gateway_tx=0
 	stat_vpn_rx=0
 	stat_vpn_tx=0
 	stat_ap_rx=0
@@ -234,15 +232,28 @@ function combined_statistics() {
 			net=${entry%%=*}
 			net=${net#net_}
 			ifname=${entry#*=}
-			ifname=${ifname/+/}
 
-			[ -n "$ifname" ] && ifname="$(basename /sys/class/net/${ifname}*)"
+			# openwrt network/firewall specific:
+			#   wg uses tbbwg+ as interface name for all single interfaces
+			#   as long as we do not support wireguard vpn exit on router
+			#   I have to keep '+' in interface name. (openvpn was removed because of huge resource demands)
+			#   ifname=${ifname/+/}
+
+			[ -n "$ifname" ] && ifname="$(basename /sys/class/net/${ifname})"
+			[ -z "$ifname" ] && continue
 			ifpath="/sys/class/net/${ifname}"
 
-			if [ -n "${ifname}" -a -d ${ifpath} ]; then
+			if [ -d ${ifpath} ]; then
 
 				rx="$(cat ${ifpath}/statistics/rx_bytes)"
 				tx="$(cat ${ifpath}/statistics/tx_bytes)"
+
+				# fix statistic when no connections is established
+				# e.g. fastd
+				if [ "$rx" = "0" -o "$tx" = "0" ]; then
+					rx="0"
+					tx="0"
+				fi
 
 				# collect data
 				case "$net" in
@@ -268,15 +279,8 @@ function combined_statistics() {
 					;;
 
 					tbb_fastd)
-						# fix fastd statistic when no connections is established
-						test "$rx" = "0" && tx="0"
 						stat_backbone_mesh_fastd_rx=$((stat_backbone_mesh_fastd_rx + rx))
 						stat_backbone_mesh_fastd_tx=$((stat_backbone_mesh_fastd_tx + tx))
-					;;
-
-					ffgw)
-						stat_gateway_rx=$((stat_gateway_rx + rx))
-						stat_gateway_tx=$((stat_gateway_tx + tx))
 					;;
 
 					vpn)
@@ -305,8 +309,6 @@ function combined_statistics() {
 			"wifi_mesh_tx":"${stat_wifi_mesh_tx}",
 			"backbone_mesh_rx":"${stat_backbone_mesh_rx}",
 			"backbone_mesh_tx":"${stat_backbone_mesh_tx}",
-			"gateway_rx":"${stat_gateway_rx}",
-			"gateway_tx":"${stat_gateway_tx}",
 			"vpn_rx":"${stat_vpn_rx}",
 			"vpn_tx":"${stat_vpn_tx}",
 			"ap_rx":"${stat_ap_rx}",
