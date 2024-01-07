@@ -253,7 +253,7 @@ function combined_statistics() {
 					;;
 
 					# use tbbwg main wireguard interface to cover all ipip tunnels
-					tbbwg|tbb_fastd|ffgw)
+					tbbwg|tbb_fastd)
 						# fix fastd statistic when no connections is established
 						test ${net} = "tbb_fastd" -a "$rx" = "0" && tx="0"
 						stat_backbone_mesh_rx=$((stat_backbone_mesh_rx + rx))
