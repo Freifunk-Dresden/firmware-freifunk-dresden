@@ -213,10 +213,14 @@ function combined_statistics() {
 
 	stat_cable_mesh_rx=0
 	stat_cable_mesh_tx=0
-	stat_wifi_mesh_rx=0
-	stat_wifi_mesh_tx=0
-	stat_backbone_mesh_rx=0
-	stat_backbone_mesh_tx=0
+	stat_wifi_mesh_2g_rx=0
+	stat_wifi_mesh_2g_tx=0
+	stat_wifi_mesh_5g_rx=0
+	stat_wifi_mesh_5g_tx=0
+	stat_backbone_mesh_wg_rx=0
+	stat_backbone_mesh_wg_tx=0
+	stat_backbone_mesh_fastd_rx=0
+	stat_backbone_mesh_fastd_tx=0
 	stat_gateway_rx=0
 	stat_gateway_tx=0
 	stat_vpn_rx=0
@@ -247,17 +251,27 @@ function combined_statistics() {
 						stat_cable_mesh_tx=$((stat_cable_mesh_tx + tx))
 					;;
 
-					wifi_mesh2g|wifi_mesh5g)
-						stat_wifi_mesh_rx=$((stat_wifi_mesh_rx + rx))
-						stat_wifi_mesh_tx=$((stat_wifi_mesh_tx + tx))
+					wifi_mesh2g)
+						stat_wifi_mesh_2g_rx=$((stat_wifi_mesh_2g_rx + rx))
+						stat_wifi_mesh_2g_tx=$((stat_wifi_mesh_2g_tx + tx))
+					;;
+
+					wifi_mesh5g)
+						stat_wifi_mesh_5g_rx=$((stat_wifi_mesh_5g_rx + rx))
+						stat_wifi_mesh_5g_tx=$((stat_wifi_mesh_5g_tx + tx))
 					;;
 
 					# use tbbwg main wireguard interface to cover all ipip tunnels
-					tbbwg|tbb_fastd)
+					tbbwg)
+						stat_backbone_mesh_wg_rx=$((stat_backbone_mesh_wg_rx + rx))
+						stat_backbone_mesh_wg_tx=$((stat_backbone_mesh_wg_tx + tx))
+					;;
+
+					tbb_fastd)
 						# fix fastd statistic when no connections is established
-						test ${net} = "tbb_fastd" -a "$rx" = "0" && tx="0"
-						stat_backbone_mesh_rx=$((stat_backbone_mesh_rx + rx))
-						stat_backbone_mesh_tx=$((stat_backbone_mesh_tx + tx))
+						test "$rx" = "0" && tx="0"
+						stat_backbone_mesh_fastd_rx=$((stat_backbone_mesh_fastd_rx + rx))
+						stat_backbone_mesh_fastd_tx=$((stat_backbone_mesh_fastd_tx + tx))
 					;;
 
 					ffgw)
@@ -278,6 +292,11 @@ function combined_statistics() {
 			fi
 		done
 
+	stat_wifi_mesh_rx=$((stat_wifi_mesh_2g_rx + stat_wifi_mesh_5g_rx))
+	stat_wifi_mesh_tx=$((stat_wifi_mesh_2g_tx + stat_wifi_mesh_5g_tx))
+	stat_backbone_mesh_rx=$((stat_backbone_mesh_wg_rx + stat_backbone_mesh_fastd_rx))
+	stat_backbone_mesh_tx=$((stat_backbone_mesh_wg_tx + stat_backbone_mesh_fastd_tx))
+
 	# output
 	cat << EOM
 			"cable_mesh_rx":"${stat_cable_mesh_rx}",
@@ -291,7 +310,17 @@ function combined_statistics() {
 			"vpn_rx":"${stat_vpn_rx}",
 			"vpn_tx":"${stat_vpn_tx}",
 			"ap_rx":"${stat_ap_rx}",
-			"ap_tx":"${stat_ap_tx}"
+			"ap_tx":"${stat_ap_tx}",
+			"details": {
+				"wifi_mesh_2g_rx":"${stat_wifi_mesh_2g_rx}",
+				"wifi_mesh_2g_tx":"${stat_wifi_mesh_2g_tx}",
+				"wifi_mesh_5g_rx":"${stat_wifi_mesh_5g_rx}",
+				"wifi_mesh_5g_tx":"${stat_wifi_mesh_5g_tx}",
+				"backbone_mesh_wg_rx":"${stat_backbone_mesh_wg_rx}",
+				"backbone_mesh_wg_tx":"${stat_backbone_mesh_wg_tx}",
+				"backbone_mesh_fastd_rx":"${stat_backbone_mesh_fastd_rx}",
+				"backbone_mesh_fastd_tx":"${stat_backbone_mesh_fastd_tx}"
+			}
 EOM
 }
 
