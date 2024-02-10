@@ -102,8 +102,8 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_8dev_habanero-dvk is not set
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_8dev_jalapeno is not set
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_alfa-network_ap120c-ac is not set
-# CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_aruba_ap-303 is not set
-# CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_aruba_ap-303h is not set
+CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_aruba_ap-303=y
+CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_aruba_ap-303h=y
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_aruba_ap-365 is not set
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_asus_map-ac2200 is not set
 # CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_asus_rt-ac58u is not set
@@ -169,6 +169,7 @@ CONFIG_DEFAULT_fritz-caldata=y
 CONFIG_DEFAULT_fritz-tffs=y
 CONFIG_DEFAULT_fstools=y
 CONFIG_DEFAULT_ip6tables=y
+CONFIG_DEFAULT_ipq-wifi-aruba_ap-303=y
 CONFIG_DEFAULT_iptables=y
 CONFIG_DEFAULT_iwinfo=y
 CONFIG_DEFAULT_kmod-ath10k-ct=y
