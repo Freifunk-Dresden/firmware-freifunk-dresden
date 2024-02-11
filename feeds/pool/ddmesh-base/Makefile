@@ -104,14 +104,12 @@ define Package/$(PKG_NAME)-wifi
   # the complete package "ddmesh-wifi" will also not be visible.
   # only solution is to specify dependency as "SYMBOL" to select (+@PACKAGE_wpa-cli).
   # This simply just selects wpa-cli without hiding current packet
-  #
-  # +PACKAGE_kmod-ath:kmod-owl-loader
-  #  means: kmod-owl-loader is selected when symbol CONFIG_PACKAGE_kmod-ath9k is selected somewhere
 
   DEPENDS:= $(PKG_NAME)-base \
             +iw +iwinfo +@PACKAGE_wpa-cli \
-            +!PACKAGE_ddmesh_large_device:wpad-mini \
-            +PACKAGE_ddmesh_large_device:wpad-basic-openssl
+            +PACKAGE_ddmesh_large_device:wpad-basic-mbedtls
+#            +@!PACKAGE_ddmesh_large_device:wpad-mini \
+
 
   TITLE:=Selects all addtional wifi tools.
 

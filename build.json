@@ -4,9 +4,10 @@
 #
 #########################################################################
 
-# - config/targets with "small" are devices with either or both
-#  - <=  8Mbyte Flash
-#  - <= 32Mbyte RAM
+# - config/targets have all:
+#  - >= 16Mbyte Flash
+#  - >= 64Mbyte RAM
+#- all configs for devices less than those values are "small"
 #
 #  Does devices will have:
 #   - usb
@@ -28,7 +29,7 @@
     "name":"default", # target name
     "config":"",      # config file name
 
-    "openwrt_rev":"42a15ca378e1bc52f125f894d748c31ce3c52903",  # v21.02.3
+    "openwrt_rev":"v23.05.2",
     "openwrt_variant":"",  # creates a separate buildroot. use it for low-mem devices
                           # where no kernel modules (e.g.: usb) must be included.
                           # Note that selecting some packages as module could have
@@ -37,90 +38,27 @@
                           # This value is added to config file name
                           # Example value could be : "lowmem"
 
-    "selector-config":"21.02",    # used to select config
-    "selector-feeds":"21.02",      # used to select feeds
-    "selector-patches":"21.02",    # used to select patches
-    "selector-files":"21.02",
+    "selector-config":"23.05.2",    # used to select config
+    "selector-feeds":"23.05.2",      # used to select feeds
+    "selector-patches":"23.05.2",    # used to select patches
+    "selector-files":"23.05.2",
 
     # generates the feeds/feeds-[selector].conf
     # for short commit value use: git log --abbrev-commit
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"ce0446269" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"bdefc83" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"8e3a1824645" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"83ef3784a90" }
     ],
 
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "iperf3"
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
     ]
   },
 
-# =================== specific targets =======================================================
+# =================== targets =======================================================
 
-
-# ---------- openwrt 18 -----------------------------------------------------------------------
-  {
-    "name":"ar71xx.tiny.lowmem",  # can be any name
-    "config":"config.ar71xx.tiny.lowmem",
-    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
-    "openwrt_variant"  : "lowmem",
-    "selector-config"  : "18.06",    # used to select config
-    "selector-feeds"   : "18.06",    # used to select feeds
-    "selector-patches" : "18.06",    # used to select patches
-    "selector-files"   : "18.06",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
-    ],
-    "packages" : [
-      "libpam","libcap","libopenldap",
-      "libidn2","libssh2","libnetsnmp",
-      "libcap", "jansson", "kmod-cryptodev", "liblzma"
-    ]
-  },
-  {
-    "name":"ar71xx.generic.lowmem",  # can be any name
-    "config":"config.ar71xx.generic.lowmem",
-    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
-    "openwrt_variant"  : "lowmem",
-    "selector-config"  : "18.06",    # used to select config
-    "selector-feeds"   : "18.06",    # used to select feeds
-    "selector-patches" : "18.06",    # used to select patches
-    "selector-files"   : "18.06",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
-    ],
-    "packages" : [
-      "libpam","libcap","libopenldap",
-      "libidn2","libssh2","libnetsnmp",
-      "libcap", "jansson", "kmod-cryptodev", "liblzma"
-    ]
-  },
-  {
-    "name":"ramips.rt305x.tiny.lowmem",  # can be any name
-    "config":"config.ramips.rt305x.tiny.lowmem",
-    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
-    "openwrt_variant"  : "lowmem",
-    "selector-config"  : "18.06",    # used to select config
-    "selector-feeds"   : "18.06",    # used to select feeds
-    "selector-patches" : "18.06",    # used to select patches
-    "selector-files"   : "18.06",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
-    ],
-    "packages" : [
-      "libpam","libcap","libopenldap",
-      "libidn2","libssh2","libnetsnmp",
-      "libcap", "jansson", "kmod-cryptodev", "liblzma"
-    ]
-  },
-# ---------- openwrt 21 -----------------------------------------------------------------------
   {
     "name":"ramips.mt7620.small.usb",
     "config":"config.ramips.mt7620.small.usb"
@@ -150,6 +88,10 @@
     "config":"config.lantiq-xway.small"
   },
   {
+    "name":"ath79.generic",
+    "config":"config.ath79.generic"
+  },
+  {
     "name":"ath79.small",
     "config":"config.ath79.small"
   },
@@ -161,7 +103,7 @@
     "name":"ath79.small.smallbuffers",
     "config":"config.ath79.small.smallbuffers"
   },
-  {  # created for fritzbox 4040
+  {
     "name":"ipq40xx.generic",
     "config":"config.ipq40xx.generic"
   },
@@ -173,209 +115,118 @@
     "name":"mpc85xx.p1020",
     "config":"config.mpc85xx.p1020"
   },
-# ---------- openwrt 22 -----------------------------------------------------------------------
-  {
-    "name":"ath79.generic",
-    "config":"config.ath79.generic",
-    "openwrt_rev":"v22.03.6",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
-    ]
-  },
   {
     "name":"ath79.generic.gl-mifi",
-    "config":"config.ath79.generic.gl-mifi",
-    "openwrt_rev":"v22.03.6",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
-    ]
+    "config":"config.ath79.generic.gl-mifi"
   },
   {
     "name":"ath79.nand.gl-e750",
-    "config":"config.ath79.nand.gl-e750",
-    "openwrt_rev":"v22.03.6",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
-    ]
+    "config":"config.ath79.nand.gl-e750"
   },
   {
     "name":"mediatek.mt7622.generic.22",
-    "config":"config.mediatek.mt7622.generic",
-    "openwrt_rev":"v22.03.6",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
-    ]
+    "config":"config.mediatek.mt7622.generic"
   },
   {
     "name":"mpc85xx.p1010.22",
-    "config":"config.mpc85xx.p1010",
-    "openwrt_rev":"v22.03.6",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
-    ]
+    "config":"config.mpc85xx.p1010"
   },
   {
     "name":"ramips.mt7621.small",
-    "config":"config.ramips.mt7621.small",
-    "openwrt_rev":"v22.03.6",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
-    ]
+    "config":"config.ramips.mt7621.small"
   },
   {
     "name":"ramips.mt7621.generic",
-    "config":"config.ramips.mt7621.generic",
-    "openwrt_rev":"v22.03.6",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
-    ]
+    "config":"config.ramips.mt7621.generic"
   },
   {
     "name":"ramips.mt7621.offloader",
     "config":"config.ramips.mt7621.offloader",
-    "openwrt_rev":"v22.03.6",
-    "openwrt_variant":"offloader",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp"
-    ]
+    "openwrt_variant":"offloader"
   },
   {
     "name":"ramips.mt76x8.generic.22",
-    "config":"config.ramips.mt76x8.generic",
-    "openwrt_rev":"v22.03.6",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
-    ]
+    "config":"config.ramips.mt76x8.generic"
   },
   {
     "name":"x86.64.offloader",
     "config":"config.x86.64.offloader",
-    "openwrt_rev":"v22.03.6",
     "openwrt_variant"  : "offloader",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
       "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
     ]
   },
-  {  # created for Orange Pi R1
+  {
     "name":"sunxi.cortexa7.offloader",
     "config":"config.sunxi.cortexa7.offloader",
-    "openwrt_rev":"v22.03.6",
     "openwrt_variant"  : "offloader",
-
-    "selector-config"  : "22.03",
-    "selector-feeds"   : "22.03",
-    "selector-patches" : "22.03",
-    "selector-files"   : "22.03",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
-    ],
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
       "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
     ]
   }
+
+	# ---------- openwrt 18 -----------------------------------------------------------------------
+	# ,{
+	#    "name":"ar71xx.tiny.lowmem",  # can be any name
+	#    "config":"config.ar71xx.tiny.lowmem",
+	#    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
+	#    "openwrt_variant"  : "lowmem",
+	#    "selector-config"  : "18.06",    # used to select config
+	#    "selector-feeds"   : "18.06",    # used to select feeds
+	#    "selector-patches" : "18.06",    # used to select patches
+	#    "selector-files"   : "18.06",
+	#    "feeds" : [
+	#      { "type":"src-link", "name":"ddmesh",   "src":"" },
+	#      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
+	#      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
+	#    ],
+	#    "packages" : [
+	#      "libpam","libcap","libopenldap",
+	#      "libidn2","libssh2","libnetsnmp",
+	#      "libcap", "jansson", "kmod-cryptodev", "liblzma"
+	#    ]
+	#  },
+	#  {
+	#    "name":"ar71xx.generic.lowmem",  # can be any name
+	#    "config":"config.ar71xx.generic.lowmem",
+	#    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
+	#    "openwrt_variant"  : "lowmem",
+	#    "selector-config"  : "18.06",    # used to select config
+	#    "selector-feeds"   : "18.06",    # used to select feeds
+	#    "selector-patches" : "18.06",    # used to select patches
+	#    "selector-files"   : "18.06",
+	#    "feeds" : [
+	#      { "type":"src-link", "name":"ddmesh",   "src":"" },
+	#      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
+	#      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
+	#    ],
+	#    "packages" : [
+	#      "libpam","libcap","libopenldap",
+	#      "libidn2","libssh2","libnetsnmp",
+	#      "libcap", "jansson", "kmod-cryptodev", "liblzma"
+	#    ]
+	#  },
+	#  {
+	#    "name":"ramips.rt305x.tiny.lowmem",  # can be any name
+	#    "config":"config.ramips.rt305x.tiny.lowmem",
+	#    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
+	#    "openwrt_variant"  : "lowmem",
+	#    "selector-config"  : "18.06",    # used to select config
+	#    "selector-feeds"   : "18.06",    # used to select feeds
+	#    "selector-patches" : "18.06",    # used to select patches
+	#    "selector-files"   : "18.06",
+	#    "feeds" : [
+	#      { "type":"src-link", "name":"ddmesh",   "src":"" },
+	#      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
+	#      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
+	#    ],
+	#    "packages" : [
+	#      "libpam","libcap","libopenldap",
+	#      "libidn2","libssh2","libnetsnmp",
+	#      "libcap", "jansson", "kmod-cryptodev", "liblzma"
+	#    ]
+	#  },
  ]
 }
