@@ -186,7 +186,7 @@ config backbone_client
 	option	public_key 		''
 
 config backbone_client
-	option 	host			'vpn12.freifunk-dresden.de'
+	option 	host			'vpn15.freifunk-dresden.de'
 	option	type			'fastd'
 	option	disabled		'0'
 	option 	port			'5002'
