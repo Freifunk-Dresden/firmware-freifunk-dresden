@@ -1,0 +1,15 @@
+diff --git a/include/image-commands.mk b/include/image-commands.mk
+index dc6ee6e7c1..b300969724 100644
+--- a/include/image-commands.mk
++++ b/include/image-commands.mk
+@@ -216,8 +216,9 @@ endef
+ define Build/check-size
+ 	@imagesize="$$(stat -c%s $@)"; \
+ 	limitsize="$$(($(subst k,* 1024,$(subst m, * 1024k,$(if $(1),$(1),$(IMAGE_SIZE))))))"; \
++	$(call ERROR_MESSAGE,    INFO: Image size: $$imagesize max:$$limitsize - $$(basename $@)); \
+ 	[ $$limitsize -ge $$imagesize ] || { \
+-		$(call ERROR_MESSAGE,    WARNING: Image file $@ is too big: $$imagesize > $$limitsize); \
++		$(call ERROR_MESSAGE,!!! WARNING: Image file $@ is too big: $$imagesize > $$limitsize); \
+ 		rm -f $@; \
+ 	}
+ endef

@@ -17,8 +17,9 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)-base
   CATEGORY:=ddmesh
   DEFAULT:=y
-  DEPENDS:=	+base-files +busybox +dnsmasq +firewall +logd +uci +dropbear \
-    +firewall +iptables +kmod-nf-flow +kmod-ipt-offload \
+  DEPENDS:=	+base-files +busybox +dnsmasq +logd +uci +dropbear \
+    +ca-bundle +procd +urandom-seed +urngd \
+    +firewall4 \
     +ip-tiny \
     +mtd +opkg \
     +uhttpd \
