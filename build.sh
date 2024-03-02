@@ -107,8 +107,10 @@ fi
 # define color lookup table used when displaying targets via "list"
 declare -A list_color
 list_color['18.06']="${BG_CYAN}"
+list_color['21.02']="${BG_YELLOW}"
+list_color['22.03']="${BG_BLUE}"
 list_color['23.05.2']="${BG_PURBLE}"
-#list_color['22.03']="${BG_BLUE}"
+
 #printf "${list_color['18.06']}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 #printf "${list_color[$v]}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 

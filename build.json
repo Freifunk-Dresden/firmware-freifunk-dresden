@@ -88,7 +88,7 @@
     "config":"config.lantiq-xway.small"
   },
   {
-    "name":"ath79.generic",
+    "name":"_ath79.23.generic",
     "config":"config.ath79.generic"
   },
   {
@@ -164,8 +164,8 @@
   }
 	# ---------- openwrt 22 -----------------------------------------------------------------------
   ,{
-    "name":"ath79.medium",
-    "config":"config.ath79.medium",
+    "name":"_ath79.22.generic",
+    "config":"config.ath79.generic.22",
 
     "openwrt_rev":"v22.03.5", # "863f769b75beb17b1965786f473b700e0ba0f879"
     "selector-config"  : "22.03",
@@ -184,8 +184,8 @@
 
   # ---------- openwrt 21 -----------------------------------------------------------------------
   ,{
-    "name":"ath79.small",
-    "config":"config.ath79.small",
+    "name":"_ath79.21.small",
+    "config":"config.ath79.small.21",
 
 		"openwrt_rev":"v21.02.3", # "42a15ca378e1bc52f125f894d748c31ce3c52903"
     "openwrt_variant":"",
