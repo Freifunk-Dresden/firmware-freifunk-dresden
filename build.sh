@@ -257,9 +257,11 @@ show_progress()
 
 getTargetsJson()
 {
-cat $RUN_DIR/$PLATFORMS_JSON | sed -n "
-#delete comments
+cat $RUN_DIR/$PLATFORMS_JSON | sed -n '
+# delete comments (# must not be used anywhere)
 s/#.*//
+# delete lines starting with //
+s#^[ 	]*//.*##
 
 # delete empty lines
 # delete leading and tailing spaces
@@ -267,7 +269,7 @@ s/^[ 	]*//
 s/[ 	]*$//
 /^$/d
 p
-" | jq "[ .targets[] ] | sort_by(.name) "
+' | jq "[ .targets[] ] | sort_by(.name) "
 }
 
 listTargets()
