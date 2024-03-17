@@ -61,92 +61,92 @@
 
   {
     "name":"ramips.mt7620.small.usb",
-    "config":"config.ramips.mt7620.small.usb"
+    "config":"ramips.mt7620.small.usb.23.cfg"
   },
   {
     "name":"ramips.mt7620.generic",
-    "config":"config.ramips.mt7620.generic"
+    "config":"ramips.mt7620.generic.23.cfg"
   },
   {
     "name":"ramips.mt76x8.generic",
-    "config":"config.ramips.mt76x8.generic"
+    "config":"ramips.mt76x8.generic.23.cfg"
   },
   {
     "name":"lantiq-xrx200.generic",
-    "config":"config.lantiq-xrx200.generic"
+    "config":"lantiq-xrx200.generic.23.cfg"
   },
   {
     "name":"lantiq-xrx200.small",
-    "config":"config.lantiq-xrx200.small"
+    "config":"lantiq-xrx200.small.23.cfg"
   },
   {
     "name":"lantiq-xway.generic",
-    "config":"config.lantiq-xway.generic"
+    "config":"lantiq-xway.generic.23.cfg"
   },
   {
     "name":"lantiq-xway.small",
-    "config":"config.lantiq-xway.small"
+    "config":"lantiq-xway.small.23.cfg"
   },
   {
     "name":"_ath79.23.generic",
-    "config":"_config.ath79.generic"
+    "config":"_ath79.generic.23.cfg"
   },
   {
     "name":"ath79.nand",
-    "config":"config.ath79.nand"
+    "config":"ath79.nand.23.cfg"
   },
   {
     "name":"ath79.small.smallbuffers",
-    "config":"config.ath79.small.smallbuffers"
+    "config":"ath79.small.smallbuffers.23.cfg"
   },
   {
     "name":"ipq40xx.generic",
-    "config":"config.ipq40xx.generic"
+    "config":"ipq40xx.generic.23.cfg"
   },
   {
     "name":"ipq40xx.generic.fritz-tffs-nand",
-    "config":"config.ipq40xx.generic.fritz-tffs-nand"
+    "config":"ipq40xx.generic.fritz-tffs-nand.23.cfg"
   },
   {
     "name":"mpc85xx.p1020",
-    "config":"config.mpc85xx.p1020"
+    "config":"mpc85xx.p1020.23.cfg"
   },
   {
     "name":"ath79.generic.gl-mifi",
-    "config":"config.ath79.generic.gl-mifi"
+    "config":"ath79.generic.gl-mifi.23.cfg"
   },
   {
     "name":"ath79.nand.gl-e750",
-    "config":"config.ath79.nand.gl-e750"
+    "config":"ath79.nand.gl-e750.23.cfg"
   },
   {
     "name":"mediatek.mt7622.generic.22",
-    "config":"config.mediatek.mt7622.generic"
+    "config":"mediatek.mt7622.generic.23.cfg"
   },
   {
     "name":"mpc85xx.p1010.22",
-    "config":"config.mpc85xx.p1010"
+    "config":"mpc85xx.p1010.23.cfg"
   },
   {
     "name":"ramips.mt7621.small",
-    "config":"config.ramips.mt7621.small"
+    "config":"ramips.mt7621.small.23.cfg"
   },
   {
     "name":"_testing-ramips.mt7621.generic",
-    "config":"config.ramips.mt7621.generic"
+    "config":"ramips.mt7621.generic.23.cfg"
   },
   {
     "name":"ramips.mt7621.offloader",
-    "config":"config.ramips.mt7621.offloader",
+    "config":"ramips.mt7621.offloader.23.cfg",
     "openwrt_variant":"offloader"
   },
   {
     "name":"ramips.mt76x8.generic.22",
-    "config":"config.ramips.mt76x8.generic"
+    "config":"ramips.mt76x8.generic.23.cfg"
   },
   {
     "name":"x86.64.offloader",
-    "config":"config.x86.64.offloader",
+    "config":"x86.64.offloader.23.cfg",
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
@@ -155,7 +155,7 @@
   },
   {
     "name":"sunxi.cortexa7.offloader",
-    "config":"config.sunxi.cortexa7.offloader",
+    "config":"sunxi.cortexa7.offloader.23.cfg",
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
@@ -165,7 +165,7 @@
 	# ---------- openwrt 22 -----------------------------------------------------------------------
   ,{
     "name":"_ath79.22.generic",
-    "config":"_config.ath79.generic",
+    "config":"_ath79.generic.22.cfg",
 
     "openwrt_rev":"v22.03.5", # "863f769b75beb17b1965786f473b700e0ba0f879"
     "selector-config"  : "22.03",
@@ -183,7 +183,7 @@
   }
   ,{
     "name":"_ath79.22.small",
-    "config":"_config.ath79.small",
+    "config":"_ath79.small.22.cfg",
 
     "openwrt_rev":"v22.03.5", # "863f769b75beb17b1965786f473b700e0ba0f879"
     "selector-config"  : "22.03",
@@ -201,7 +201,7 @@
   }
   ,{ # memory error on openwrt 23.05 so stick to 22.03
     "name":"_ramips.mt7621.generic",
-    "config":"_config.ramips.mt7621.generic",
+    "config":"_ramips.mt7621.generic.22.cfg",
 
     "openwrt_rev":"v22.03.5", # "863f769b75beb17b1965786f473b700e0ba0f879"
     "selector-config"  : "22.03",
@@ -220,8 +220,8 @@
 
   # ---------- openwrt 21 -----------------------------------------------------------------------
   // ,{
-  //   "name":"_ath79.21.small",
-  //   "config":"config.ath79.small.21",
+  //   "name":"ath79.21.small",
+  //   "config":"ath79.small.21.cfg",
 
 	// 	"openwrt_rev":"v21.02.3", # "42a15ca378e1bc52f125f894d748c31ce3c52903"
   //   "openwrt_variant":"",
@@ -242,7 +242,7 @@
 	// # ---------- openwrt 18 -----------------------------------------------------------------------
   // ,{
   //    "name":"ar71xx.tiny.lowmem",  # can be any name
-  //    "config":"config.ar71xx.tiny.lowmem",
+  //    "config":"ar71xx.tiny.lowmem.18.cfg",
   //    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
   //    "openwrt_variant"  : "lowmem",
   //    "selector-config"  : "18.06",    # used to select config
@@ -262,7 +262,7 @@
   //  },
   //  {
   //    "name":"ar71xx.generic.lowmem",  # can be any name
-  //    "config":"config.ar71xx.generic.lowmem",
+  //    "config":"ar71xx.generic.lowmem.18.cfg",
   //    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
   //    "openwrt_variant"  : "lowmem",
   //    "selector-config"  : "18.06",    # used to select config
@@ -282,7 +282,7 @@
   //  },
   //  {
   //    "name":"ramips.rt305x.tiny.lowmem",  # can be any name
-  //    "config":"config.ramips.rt305x.tiny.lowmem",
+  //    "config":"ramips.rt305x.tiny.lowmem.18.cfg",
   //    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
   //    "openwrt_variant"  : "lowmem",
   //    "selector-config"  : "18.06",    # used to select config
