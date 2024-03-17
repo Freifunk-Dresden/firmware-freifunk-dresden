@@ -76,8 +76,8 @@ ifneq ("$(wildcard $(INCLUDE_DIR)/meson.mk)","")
 endif
 
 # openwrt 21 (extra packet)
-ifneq ("$(wildcard $(TOPDIR)/feeds/packages/devel/meson/meson.mk)","")
-  include $(TOPDIR)/feeds/packages/devel/meson/meson.mk
+ifneq ("$(wildcard $(TOPDIR)/fw-feeds/packages/devel/meson/meson.mk)","")
+  include $(TOPDIR)/fw-feeds/packages/devel/meson/meson.mk
 endif
 
 # ddmesh: add:
