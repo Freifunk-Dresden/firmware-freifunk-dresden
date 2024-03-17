@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="23"
+SCRIPT_VERSION="24"
 
 
 # gitlab variables
@@ -35,9 +35,9 @@ DL_DIR=dl
 WORK_DIR=workdir
 FINAL_OUTPUT_DIR="final_output" # used by gen-upload.sh (docker)
 LOCAL_OUTPUT_DIR="output"				# location to copy images/packages to, after each targets
-CONFIG_DIR=openwrt-configs
+CONFIG_DIR=fw-configs
 CONFIG_DEFAULT_FILE="default.config"
-OPENWRT_PATCHES_DIR=openwrt-patches
+OPENWRT_PATCHES_DIR=fw-patches
 DDMESH_STATUS_DIR=".ddmesh"	# used to store build infos like openwrt_patches_target states
 DDMESH_PATCH_STATUS_DIR="$DDMESH_STATUS_DIR/patches-applied"
 COMPILE_STATUS_DIR=".compile-status"
@@ -395,7 +395,7 @@ numberOfTargets()
 search_target()
 {
 	target=$1
-	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{line=gsub(/^CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t,"$0}' openwrt-configs/*/*
+	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{line=gsub(/^CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t,"$0}' fw-configs/*/*
 }
 
 print_devices_for_target()
@@ -417,7 +417,7 @@ print_devices_for_target()
 		test "${selector}" = "null" && selector=${def_selector}
 		config_filename=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$_target\") | .config")
 		echo "target: [$_target] (${selector})"
-		grep "^CONFIG_TARGET_DEVICE.*=y" "openwrt-configs/${selector}/${config_filename}"
+		grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${selector}/${config_filename}"
 		echo ""
 	done
 }
@@ -440,7 +440,7 @@ verify_firmware_present()
 	# extract selected devices from openwrt config file and check
 	# if sysupgrade file is present
 	status=0
-	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/openwrt-configs/${selector}/${config}")
+	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/fw-configs/${selector}/${config}")
 	do
 		# extract firmware device name part
 		dev="${dev/*_DEVICE_/}"
@@ -478,11 +478,25 @@ setup_dynamic_firmware_config()
 
 
 #----------------- process argument ----------------------------------
+bash_completion()
+{
+	#this function must be alled "sourced" to tell bash how to complete
+	# list all values that bash should complete
+
+	ARGS="list lt list-targets watch devices search feed-revisions clean menuconfig rerun"
+
+	# add targets
+	ARGS="${ARGS} $(./build.sh lt)"
+	#echo "[$ARGS]"
+	complete -W "${ARGS}" ./build.sh
+}
+
 usage_short()
 {
 	echo "Version: $SCRIPT_VERSION"
 	echo "usage: $(basename $0) [options] <command | target-pattern > [clean | menuconfig | rerun]   [-- < make params ... > ]"
 }
+
 usage()
 {
 	# create a simple menu
@@ -499,6 +513,15 @@ usage()
    -s    opens a shell to running docker
 
   commands:
+   bash-completion         - adds bash completion. Must be called from same directory
+                             where "build.sh" is located.
+                             Example:
+                               $ cd ~/projects/freifunk/firmware
+                               $ source ./build.sh bash-completion
+
+                             add an alias to your .bash_aliases
+                             $ alias ff='cd ~/projects/freifunk/firmware; source ./build.sh bash-completion'
+
    list                    - lists all available targets
    lt | list-targets       - lists only target names for usage in IDE
    watch                   - same as 'list' but updates display
@@ -614,7 +637,7 @@ if $USE_DOCKER; then
 		# upload and extract (workdir is not included)
 		echo -e "${C_CYAN}copy project to container${C_NONE}"
 		docker cp "/tmp/${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/
-		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "rm -rf files feeds openwrt-configs; tar -xzf ${docker_tar} && rm ${docker_tar}"
+		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "rm -rf fw-files fw-feeds fw-configs; tar -xzf ${docker_tar} && rm ${docker_tar}"
 		rm /tmp/${docker_tar}
 
 		# remove workdir from previous usage of this container (when still available)
@@ -663,13 +686,18 @@ if $USE_DOCKER; then
 	fi
 
 	exit 0
-else
-	echo -e "${C_CYAN}build locally.${C_NONE}"
 fi
 
 #---- process parameters -----------
 targetRegex=""
 case "$1" in
+		bash-completion)
+						bash_completion
+						# this script is called "sourced", so use return instead of exit to avoid
+						# closing current terminal
+						return
+						;;
+
 		list)
 						listTargets;
 						exit 0
@@ -898,15 +926,15 @@ setup_buildroot ()
 	rm -rf $buildroot/files
 	mkdir -p $buildroot/files
 	# --remove-destination forces copy (first remove (e.g. symlinks))
-	cp -a --remove-destination $RUN_DIR/files/common/* $buildroot/files/
+	cp -a --remove-destination $RUN_DIR/fw-files/common/* $buildroot/files/
 	echo " done."
 
 	# -------- specific files -----------
 	# copy specific files over (may overwrite common)
 	echo -n -e "${C_CYAN}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
-	if [ -n "${firmware_files}" -a -d "$RUN_DIR/files/${firmware_files}" ]; then
+	if [ -n "${firmware_files}" -a -d "$RUN_DIR/fw-files/${firmware_files}" ]; then
 		# --remove-destination forces copy (first remove (e.g. symlinks))
-		cp -a --remove-destination $RUN_DIR/files/${firmware_files}/* $buildroot/files/
+		cp -a --remove-destination $RUN_DIR/fw-files/${firmware_files}/* $buildroot/files/
 		echo "done."
 	else
 		echo "no specific files."
@@ -1207,7 +1235,7 @@ EOM
 		# ],
 		# The feed directory for "ddmesh" is directly located below firmware/feeds/<feed-selector>/
 		if [ "$_feed_type" = "src-link" ]; then
-			_feed_src="$RUN_DIR/feeds/$_selector_feeds/$_feed_src"
+			_feed_src="$RUN_DIR/fw-feeds/$_selector_feeds/$_feed_src"
 			_feed_rev=""	# src-link does not have a rev, because it is already in current git repo
 		else
 			# if we have a feed revision, then add it. "^" is a special character

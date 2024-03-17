@@ -96,7 +96,7 @@ esac
 OUTPUT_BASE_DIR="final_output"
 OUTPUT_DOWNLOAD_JSON_FILENAME="download.json"
 OUTPUT_DOWNLOAD_JSON_JS_FILENAME="download.json.js"
-UPLOAD_INFO_DIR="upload-infos"
+UPLOAD_INFO_DIR="ff-upload-infos"
 INPUT_FILEINFO_JSON_FILENAME="fileinfo.json"
 # this file is generated to reflect any updated files. means when new files are added
 OUTPUT_FILEINFO_JSON_FILENAME="fileinfo.json.new-generated"

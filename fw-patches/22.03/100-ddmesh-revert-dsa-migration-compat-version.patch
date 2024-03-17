@@ -100,6 +100,31 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/l
    $(Device/AVM)
    $(Device/NAND)
    DEVICE_MODEL := FRITZ!Box 7430
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version openwrt/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version
+--- openwrt.ori/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version	2023-05-25 10:31:23.668348832 +0200
++++ openwrt/target/linux/lantiq/xrx200/base-files/etc/board.d/05_compat-version	2023-07-23 19:35:06.214669829 +0200
+@@ -8,6 +8,21 @@
+ board_config_update
+
+ case "$(board_name)" in
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++# only does with dsa migration in:
++#  lantiq/image/vr9.mk.mk
++#  lantiq/image/tp-link.mk
++	avm,fritz3370-rev2-hynix|\
++	avm,fritz3370-rev2-micron|\
++	avm,fritz7360sl|\
++	avm,fritz7360-v2|\
++	avm,fritz7362sl|\
++	avm,fritz7412|\
++	avm,fritz7430|\
++	tplink,tdw8970)
++		;;
+ 	*)
+ 		ucidef_set_compat_version "1.1"
+ 		;;
 diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/ramips/image/mt7621.mk openwrt/target/linux/ramips/image/mt7621.mk
 --- openwrt.ori/target/linux/ramips/image/mt7621.mk	2023-05-25 10:32:40.044439390 +0200
 +++ openwrt/target/linux/ramips/image/mt7621.mk	2023-07-23 21:38:19.967026937 +0200
@@ -277,3 +302,26 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/r
    IMAGE_SIZE := 16064k
    DEVICE_VENDOR := YouHua
    DEVICE_MODEL := WR1200JS
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt.ori/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version
+--- openwrt.ori/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-05-25 10:31:23.732348910 +0200
++++ openwrt/target/linux/ramips/mt7621/base-files/etc/board.d/05_compat-version	2023-07-23 21:35:25.286086014 +0200
+@@ -8,6 +8,19 @@
+ board_config_update
+
+ case "$(board_name)" in
++# ddmesh: disabled because we can upgrade to 22
++#         The new version breaks sysupgrade for existing devices.
++#         meaning, that this version for dsa will not be used.
++# only does with dsa migration in mt7621.mk
++	glinet,gl-mt1300|\
++	mtc,wr1201|\
++	d-team,newifi-d2|\
++	xiaomi,mi-router-4a-gigabit|\
++	youhua,wr1200js|\
++	ubnt,edgerouter-x|\
++	netgear,wac104|\
++	netgear,r6220)
++		;;
+ 	*)
+ 		ucidef_set_compat_version "1.1"
+ 		;;

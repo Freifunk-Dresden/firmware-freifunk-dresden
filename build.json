@@ -133,7 +133,7 @@
   },
   {
     "name":"_testing-ramips.mt7621.generic",
-    "config":"ramips.mt7621.generic.23.cfg"
+    "config":"_testing-ramips.mt7621.generic.23.cfg"
   },
   {
     "name":"ramips.mt7621.offloader",
