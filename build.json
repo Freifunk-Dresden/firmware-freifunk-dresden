@@ -84,11 +84,11 @@
 
 # =================== targets =======================================================
 # ---------- openwrt 23 ------------------------------------------------------
-  {
-    "template":"23.05.2",
-    "name":"-testing-ramips.mt7621.generic",
-    "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg"
-  },
+  // {
+  //   "template":"23.05.2",
+  //   "name":"-testing-ramips.mt7621.generic",
+  //   "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg"
+  // },
   {
     "template":"23.05.2",
     "name":"_ath79.23.generic",
@@ -230,86 +230,60 @@
   }
 
   # ---------- openwrt 21 ------------------------------------------------------
-  // ,{
-  //   "name":"ath79.21.small",
-  //   "config":"ath79.small.21.cfg",
-
-  // 	"openwrt_rev":"v21.02.3", # "42a15ca378e1bc52f125f894d748c31ce3c52903"
-  //   "openwrt_variant":"",
-  //   "selector-config":"21.02",
-  //   "selector-feeds":"21.02",
-  //   "selector-patches":"21.02",
-  //   "selector-files":"21.02",
-  //   "feeds" : [
-  //     { "type":"src-link", "name":"ddmesh",   "src":"" },
-  //     { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"ce0446269" },
-  //     { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"bdefc83" }
-  //   ],
-  //   "packages" : [
-  //     "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "iperf3"
-  //   ]
-  // }
+  ,{
+    "type":"template",
+    "name":"21.02.3",
+  	"openwrt_rev":"v21.02.3", # "42a15ca378e1bc52f125f894d748c31ce3c52903"
+    "openwrt_variant":"",
+    "selector-config":"21.02",
+    "selector-feeds":"21.02",
+    "selector-patches":"21.02",
+    "selector-files":"21.02",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"ce0446269" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"bdefc83" }
+    ],
+    "packages" : [
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "iperf3"
+    ]
+  },
 
   // # ---------- openwrt 18 -----------------------------------------------------------------------
-  // ,{
-  //    "name":"ar71xx.tiny.lowmem",  # can be any name
-  //    "config":"ar71xx.tiny.lowmem.18.cfg",
-  //    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
-  //    "openwrt_variant"  : "lowmem",
-  //    "selector-config"  : "18.06",    # used to select config
-  //    "selector-feeds"   : "18.06",    # used to select feeds
-  //    "selector-patches" : "18.06",    # used to select patches
-  //    "selector-files"   : "18.06",
-  //    "feeds" : [
-  //      { "type":"src-link", "name":"ddmesh",   "src":"" },
-  //      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
-  //      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
-  //    ],
-  //    "packages" : [
-  //      "libpam","libcap","libopenldap",
-  //      "libidn2","libssh2","libnetsnmp",
-  //      "libcap", "jansson", "kmod-cryptodev", "liblzma"
-  //    ]
-  //  },
-  //  {
-  //    "name":"ar71xx.generic.lowmem",  # can be any name
-  //    "config":"ar71xx.generic.lowmem.18.cfg",
-  //    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
-  //    "openwrt_variant"  : "lowmem",
-  //    "selector-config"  : "18.06",    # used to select config
-  //    "selector-feeds"   : "18.06",    # used to select feeds
-  //    "selector-patches" : "18.06",    # used to select patches
-  //    "selector-files"   : "18.06",
-  //    "feeds" : [
-  //      { "type":"src-link", "name":"ddmesh",   "src":"" },
-  //      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
-  //      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
-  //    ],
-  //    "packages" : [
-  //      "libpam","libcap","libopenldap",
-  //      "libidn2","libssh2","libnetsnmp",
-  //      "libcap", "jansson", "kmod-cryptodev", "liblzma"
-  //    ]
-  //  },
-  //  {
-  //    "name":"ramips.rt305x.tiny.lowmem",  # can be any name
-  //    "config":"ramips.rt305x.tiny.lowmem.18.cfg",
-  //    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
-  //    "openwrt_variant"  : "lowmem",
-  //    "selector-config"  : "18.06",    # used to select config
-  //    "selector-feeds"   : "18.06",    # used to select feeds
-  //    "selector-patches" : "18.06",    # used to select patches
-  //    "selector-files"   : "18.06",
-  //    "feeds" : [
-  //      { "type":"src-link", "name":"ddmesh",   "src":"" },
-  //      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
-  //      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
-  //    ],
-  //    "packages" : [
-  //      "libpam","libcap","libopenldap",
-  //      "libidn2","libssh2","libnetsnmp",
-  //      "libcap", "jansson", "kmod-cryptodev", "liblzma"
-  //    ]
-  //  }
+  {
+    "type":"template",
+    "name":"18.06",
+    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
+    "openwrt_variant"  : "lowmem",
+    "selector-config"  : "18.06",
+    "selector-feeds"   : "18.06",
+    "selector-patches" : "18.06",
+    "selector-files"   : "18.06",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
+    ],
+    "packages" : [
+      "libpam","libcap","libopenldap",
+      "libidn2","libssh2","libnetsnmp",
+      "libcap", "jansson", "kmod-cryptodev", "liblzma"
+    ]
+  },
+  {
+    "template":"18.06",
+    "name":"ar71xx.tiny.lowmem",
+    "config":"ar71xx.tiny.lowmem.18.cfg"
+  },
+   {
+    "template":"18.06",
+    "name":"ar71xx.generic.lowmem",
+    "config":"ar71xx.generic.lowmem.18.cfg"
+   },
+   {
+    "template":"18.06",
+    "name":"ramips.rt305x.tiny.lowmem",
+    "config":"ramips.rt305x.tiny.lowmem.18.cfg"
+   }
  ]
 }

@@ -29,29 +29,29 @@ m3:init:
   tags:
     - m3runner
 
-m3:ar71xx.tiny.lowmem:
-  only:
-    - master
-  stage: build
-  needs: ["m3:init"]
-  script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
-  tags:
-    - m3runner
+# m3:ar71xx.tiny.lowmem:
+#   only:
+#     - master
+#   stage: build
+#   needs: ["m3:init"]
+#   script:
+#     - ln -s ~/mycache/dl
+#     - ln -s ~/mycache/workdir
+#     - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
+#   tags:
+#     - m3runner
 
-m3:ar71xx.generic.lowmem:
-  only:
-    - master
-  stage: build
-  needs: ["m3:init"]
-  script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
-  tags:
-    - m3runner
+# m3:ar71xx.generic.lowmem:
+#   only:
+#     - master
+#   stage: build
+#   needs: ["m3:init"]
+#   script:
+#     - ln -s ~/mycache/dl
+#     - ln -s ~/mycache/workdir
+#     - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
+#   tags:
+#     - m3runner
 
 m3:x86.64.offloader:
   only:
@@ -73,7 +73,7 @@ m3:ramips:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ramips.mt* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
 
@@ -153,7 +153,8 @@ m3:test:
   only:
     - master
   stage: test
-  needs: ["m3:ar71xx.tiny.lowmem","m3:ar71xx.generic.lowmem","m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx","m3:mediatek"]
+  #needs: ["m3:ar71xx.tiny.lowmem","m3:ar71xx.generic.lowmem","m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx","m3:mediatek"]
+  needs: ["m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx","m3:mediatek"]
   artifacts:
     paths:
       # keep this as artifact, so I can compare it also when building firmware on gitlab
