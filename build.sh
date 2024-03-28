@@ -1116,16 +1116,16 @@ do
   # is template
   [ "$ret" = "2" ] && continue
 
-echo "----"
-echo "_cfg_type=[${_cfg_type}]"
-echo "_cfg_template=[${_cfg_template}]"
-echo "_cfg_name=[${_cfg_name}]"
-echo "_cfg_openwrt_rev=[${_cfg_openwrt_rev}]"
-echo "_cfg_openwrt_variant=[${_cfg_openwrt_variant}]"
-echo "_cfg_selector_config=[${_cfg_selector_config}]"
-echo "_cfg_selector_feeds=[${_cfg_selector_feeds}]"
-echo "_cfg_selector_files=[${_cfg_selector_files}]"
-echo "_cfg_selector_patches=[${_cfg_selector_patches}]"
+# echo "----"
+# echo "_cfg_type=[${_cfg_type}]"
+# echo "_cfg_template=[${_cfg_template}]"
+# echo "_cfg_name=[${_cfg_name}]"
+# echo "_cfg_openwrt_rev=[${_cfg_openwrt_rev}]"
+# echo "_cfg_openwrt_variant=[${_cfg_openwrt_variant}]"
+# echo "_cfg_selector_config=[${_cfg_selector_config}]"
+# echo "_cfg_selector_feeds=[${_cfg_selector_feeds}]"
+# echo "_cfg_selector_files=[${_cfg_selector_files}]"
+# echo "_cfg_selector_patches=[${_cfg_selector_patches}]"
 
   #check if configuration name matches the targetRegex (target parameter)
   # add '\' to each '|' only for sed command
