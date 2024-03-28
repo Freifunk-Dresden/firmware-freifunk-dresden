@@ -29,36 +29,101 @@
     "name":"default", # target name
     "config":"",      # config file name
 
-    "openwrt_rev":"v23.05.2",
-    "openwrt_variant":"",  # creates a separate buildroot. use it for low-mem devices
+    "openwrt_rev":"v22.03.5",
+    "openwrt_variant":"", # creates a separate buildroot. use it for low-mem devices
                           # where no kernel modules (e.g.: usb) must be included.
                           # Note that selecting some packages as module could have
                           # dependencies to kernel modules/libs, that are included
                           # in image also if package is optional (ipk)
                           # This value is added to config file name
-                          # Example value could be : "lowmem"
 
-    "selector-config":"23.05.2",    # used to select config
-    "selector-feeds":"23.05.2",      # used to select feeds
-    "selector-patches":"23.05.2",    # used to select patches
-    "selector-files":"23.05.2",
+    "selector-config" :"22.03",  # used to select config
+    "selector-feeds"  :"22.03",  # used to select feeds
+    "selector-patches":"22.03",  # used to select patches
+    "selector-files"  :"22.03",
 
     # generates the feeds/feeds-[selector].conf
     # for short commit value use: git log --abbrev-commit
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"8e3a1824645" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"83ef3784a90" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
     ],
 
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
       "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
     ]
+
+    // "openwrt_rev":"v23.05.2",
+    // "openwrt_variant":"",  # creates a separate buildroot. use it for low-mem devices
+    //                       # where no kernel modules (e.g.: usb) must be included.
+    //                       # Note that selecting some packages as module could have
+    //                       # dependencies to kernel modules/libs, that are included
+    //                       # in image also if package is optional (ipk)
+    //                       # This value is added to config file name
+    //                       # Example value could be : "lowmem"
+
+    // "selector-config":"23.05.2",    # used to select config
+    // "selector-feeds":"23.05.2",      # used to select feeds
+    // "selector-patches":"23.05.2",    # used to select patches
+    // "selector-files":"23.05.2",
+
+    // # generates the feeds/feeds-[selector].conf
+    // # for short commit value use: git log --abbrev-commit
+    // "feeds" : [
+    //   { "type":"src-link", "name":"ddmesh",   "src":"" },
+    //   { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"8e3a1824645" },
+    //   { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"83ef3784a90" }
+    // ],
+
+    // # install addional packages from feeds (see feeds.conf)
+    // "packages" : [
+    //   "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+    // ]
   },
 
 # =================== targets =======================================================
+# ---------- openwrt 23 --
+  {
+    "name":"-testing-ramips.mt7621.generic",
+    "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg",
 
+    "openwrt_rev":"v23.05.2",
+    "openwrt_variant":"",
+    "selector-config":"23.05.2",
+    "selector-feeds":"23.05.2",
+    "selector-patches":"23.05.2",
+    "selector-files":"23.05.2",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"8e3a1824645" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"83ef3784a90" }
+    ],
+    "packages" : [
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+    ]
+  },
+  {
+    "name":"_ath79.23.generic",
+    "config":"_ath79.generic.23.cfg",
+    "openwrt_rev":"v23.05.2",
+    "openwrt_variant":"",
+    "selector-config":"23.05.2",
+    "selector-feeds":"23.05.2",
+    "selector-patches":"23.05.2",
+    "selector-files":"23.05.2",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"8e3a1824645" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"83ef3784a90" }
+    ],
+    "packages" : [
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+    ]
+  },
+
+  # ---------- openwrt 22 -- is currently default
   {
     "name":"ramips.mt7620.small.usb",
     "config":"ramips.mt7620.small.usb.23.cfg"
@@ -88,10 +153,6 @@
     "config":"lantiq-xway.small.23.cfg"
   },
   {
-    "name":"_ath79.23.generic",
-    "config":"_ath79.generic.23.cfg"
-  },
-  {
     "name":"ath79.nand",
     "config":"ath79.nand.23.cfg"
   },
@@ -112,41 +173,37 @@
     "config":"mpc85xx.p1020.23.cfg"
   },
   {
-    "name":"ath79.generic.gl-mifi",
-    "config":"ath79.generic.gl-mifi.23.cfg"
+    "name":"_ath79.22.generic.gl-mifi",
+    "config":"_ath79.generic.gl-mifi.22.cfg"
   },
   {
-    "name":"ath79.nand.gl-e750",
-    "config":"ath79.nand.gl-e750.23.cfg"
+    "name":"_ath79.22.nand.gl-e750",
+    "config":"_ath79.nand.gl-e750.22.cfg"
   },
   {
-    "name":"mediatek.mt7622.generic.22",
-    "config":"mediatek.mt7622.generic.23.cfg"
+    "name":"_mediatek.22.mt7622.generic",
+    "config":"_mediatek.mt7622.generic.22.cfg"
   },
   {
-    "name":"mpc85xx.p1010.22",
-    "config":"mpc85xx.p1010.23.cfg"
+    "name":"_mpc85xx.22.p1010",
+    "config":"_mpc85xx.p1010.22.cfg"
   },
   {
-    "name":"ramips.mt7621.small",
-    "config":"ramips.mt7621.small.23.cfg"
+    "name":"_ramips.22.mt7621.small",
+    "config":"_ramips.mt7621.small.22.cfg"
   },
   {
-    "name":"_testing-ramips.mt7621.generic",
-    "config":"_testing-ramips.mt7621.generic.23.cfg"
-  },
-  {
-    "name":"ramips.mt7621.offloader",
-    "config":"ramips.mt7621.offloader.23.cfg",
+    "name":"_ramips.22.mt7621.offloader",
+    "config":"_ramips.22.mt7621.offloader.22.cfg",
     "openwrt_variant":"offloader"
   },
   {
-    "name":"ramips.mt76x8.generic.22",
-    "config":"ramips.mt76x8.generic.23.cfg"
+    "name":"_ramips.22.mt76x8.generic",
+    "config":"_ramips.mt76x8.generic.22.cfg"
   },
   {
-    "name":"x86.64.offloader",
-    "config":"x86.64.offloader.23.cfg",
+    "name":"_x86.22.64.offloader",
+    "config":"_x86.64.offloader.22.cfg",
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
@@ -154,15 +211,15 @@
     ]
   },
   {
-    "name":"sunxi.cortexa7.offloader",
-    "config":"sunxi.cortexa7.offloader.23.cfg",
+    "name":"_sunxi.22.cortexa7.offloader",
+    "config":"_sunxi.cortexa7.offloader.22.cfg",
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
       "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
     ]
   }
-	# ---------- openwrt 22 -----------------------------------------------------------------------
+  # ---------- openwrt 22 ---------must stick to 22 --------------------------------------------------------------
   ,{
     "name":"_ath79.22.generic",
     "config":"_ath79.generic.22.cfg",
@@ -180,7 +237,7 @@
     "packages" : [
       "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
     ]
-  }
+   }
   ,{
     "name":"_ath79.22.small",
     "config":"_ath79.small.22.cfg",
@@ -223,7 +280,7 @@
   //   "name":"ath79.21.small",
   //   "config":"ath79.small.21.cfg",
 
-	// 	"openwrt_rev":"v21.02.3", # "42a15ca378e1bc52f125f894d748c31ce3c52903"
+  // 	"openwrt_rev":"v21.02.3", # "42a15ca378e1bc52f125f894d748c31ce3c52903"
   //   "openwrt_variant":"",
   //   "selector-config":"21.02",
   //   "selector-feeds":"21.02",
@@ -239,7 +296,7 @@
   //   ]
   // }
 
-	// # ---------- openwrt 18 -----------------------------------------------------------------------
+  // # ---------- openwrt 18 -----------------------------------------------------------------------
   // ,{
   //    "name":"ar71xx.tiny.lowmem",  # can be any name
   //    "config":"ar71xx.tiny.lowmem.18.cfg",

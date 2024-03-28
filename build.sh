@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="24"
+SCRIPT_VERSION="25"
 
 
 # gitlab variables
@@ -304,11 +304,16 @@ listTargets()
 #echo packages:$_def_packages
 
  fi
+# └ ┌ ┐ ┘ ├ ┤ ┬ ┴ ─ │ ┼
+#  printf -- '----------------------------------+------------+---------+----------+---------+---------+---------+----------------------\n'
+#  printf  "  %-31s | %-10.10s | %-7.7s | %-8.8s | %-7.7s | %-7.7s | %-7.7s | %-20.20s\n" Name Openwrt  Openwrt Openwrt Feeds Files Patches "Build date"
+#  printf  "  %-31s | %-10.10s | %-7.7s | %-8.8s | %-7.7s | %-7.7s | %-7.7s | %-20.20s\n" ""   Revision Variant Selector "" "" "" ""
+#  printf -- '----------------------------------+------------+---------+----------+---------+---------+---------+----------------------\n'
 
- printf -- '----------------------------------+------------+---------+----------+---------+---------+---------+------------------------------\n'
- printf  "  %-31s | %-10.10s | %-7.7s | %-8.8s | %-7.7s | %-7.7s | %-7.7s | Build date\n" Name Openwrt  Openwrt Openwrt Feeds Files Patches
- printf  "  %-31s | %-10.10s | %-7.7s | %-8.8s | %-7.7s | %-7.7s | %-7.7s |\n" ""   Revision Variant Selector "" "" ""
- printf -- '----------------------------------+------------+---------+----------+---------+---------+---------+------------------------------\n'
+ printf -- '┌──────────────────────────────────┬────────────┬─────────┬──────────┬─────────┬─────────┬─────────┬──────────────────────┐\n'
+ printf -- '│ %-32.32s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' Name Openwrt  Openwrt Openwrt Feeds Files Patches "Build date"
+ printf -- '│ %-32.32s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' ""   Revision Variant Selector "" "" "" ""
+ printf -- '├──────────────────────────────────┼────────────┼─────────┼──────────┼─────────┼─────────┼─────────┼──────────────────────┤\n'
 
  # run through all of json
  targetIdx=0
@@ -353,24 +358,36 @@ listTargets()
 		eval $(cat "${compile_status_file}" | jq $OPT '"compile_data=\"\(.date)\";compile_status=\(.status)"')
 	fi
 
+# ✔✘➤
+	# MARK_OK='+'
+	# MARK_FAIL='E'
+	# MARK_BLINK='*'
+	# MARK_NONE=' '
+	MARK_OK='✔'
+	MARK_FAIL='✘'
+	MARK_BLINK='➤'
+	MARK_NONE=' '
+
 	case "${compile_status}" in
-		"0") cstatus="${C_NONE}${BG_GREEN}+${C_NONE}" ;;
-		"1") cstatus="${C_NONE}${BG_RED}E${C_NONE}" ;;
-		"2") cstatus="${C_NONE}${C_YELLOW}${C_BLINK}*${C_NONE}" ;;
+		"0") cstatus="${C_NONE}${C_GREEN}${MARK_OK}${C_NONE}" ;;
+		"1") cstatus="${C_NONE}${C_RED}${MARK_FAIL}${C_NONE}" ;;
+		"2") cstatus="${C_NONE}${C_YELLOW}${C_BLINK}${MARK_BLINK}${C_NONE}" ;;
 		*)
+			# if there is another compile status code
 			if [ -n "${compile_status}" ]; then
 				cstatus="${C_LBLUE}${BG_WHITE}${compile_status}${C_NONE}"
 			else
-				cstatus="${C_NONE}${BG_RED}-${C_NONE}"
+				cstatus="${C_NONE}${C_GRAY}${MARK_NONE}${C_NONE}"
 			fi
 			;;
 	esac
 
- 	printf  $cstatus" %-31s | %-10.10s | %-7.7s | ${list_color[$_selector_config]}%-8.8s${C_NONE} | ${list_color[$_selector_files]}%-7.7s${C_NONE} | ${list_color[$_selector_feeds]}%-7.7s${C_NONE} | ${list_color[$_selector_patches]}%-7.7s${C_NONE} | %s\n" "${_config_name}" "${_openwrt_rev:0:9}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches" "$compile_data"
+ 	printf  "│$cstatus %-31s │ %-10.10s │ %-7.7s │ ${list_color[$_selector_config]}%-8.8s${C_NONE} │ ${list_color[$_selector_files]}%-7.7s${C_NONE} │ ${list_color[$_selector_feeds]}%-7.7s${C_NONE} │ ${list_color[$_selector_patches]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_config_name}" "${_openwrt_rev:0:9}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches" "$compile_data"
 
 	targetIdx=$(( targetIdx + 1 ))
  done
- printf -- '----------------------------------+------------+---------+----------+---------+---------+---------+------------------------------\n'
+# printf -- '----------------------------------+------------+---------+----------+---------+---------+---------+----------------------\n'
+ printf -- '└──────────────────────────────────┴────────────┴─────────┴──────────┴─────────┴─────────┴─────────┴──────────────────────┘\n'
 }
 
 
@@ -709,7 +726,7 @@ case "$1" in
 							view=$(listTargets)
 							clear
 							echo -e "$view"
-							date
+							date +'%H:%M:%S / %d %h %y'
 						done
 						exit 0
 						;;
@@ -976,7 +993,7 @@ setup_buildroot ()
 
 	echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
 	echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
-	echo "builtdate:$(date)" >> $buildroot/files/etc/built_info
+	echo "builtdate:$(date +'%H:%M:%S / %d %h %y')" >> $buildroot/files/etc/built_info
 
 	echo "git_openwrt_rev:     $git_openwrt_rev"
 	echo "git_openwrt_branch:  $git_openwrt_branch"
@@ -997,7 +1014,7 @@ write_compile_status()
 	local status="$2"
 	local file="$3"
 	mkdir -p $(dirname $file)
-	test "$status" = "0" && d="$(date)" | d=""
+	test "$status" = "0" && d="$(date +'%H:%M:%S / %d %h %y' | sed 's#Mär#Mar#')" || d=""
 	echo "{\"config\":\"${config}\", \"date\":\"$d\", \"status\":\"${status}\"}" > "${file}"
 }
 # ---------- create directories: dl, workdir -----------
