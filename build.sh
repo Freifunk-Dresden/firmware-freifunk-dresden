@@ -1229,7 +1229,7 @@ EOM
   feedIdx=0
   while true
   do
-     feed=$(echo "$_cfg_feeds" | jq ".[$feedIdx]")
+     feed=$(echo "${_cfg_feeds}" | jq ".[$feedIdx]")
     feedIdx=$(( feedIdx + 1 ))
     test "$feed" = "null" && break
 
@@ -1247,16 +1247,16 @@ EOM
     # ],
     # The feed directory for "ddmesh" is directly located below firmware/feeds/<feed-selector>/
     if [ "$_feed_type" = "src-link" ]; then
-      _feed_src="$RUN_DIR/fw-feeds/${_cfg_selector_feeds}/${_feed_src}"
+      _feed_src="${RUN_DIR}/fw-feeds/${_cfg_selector_feeds}/${_feed_src}"
       _feed_rev=""	# src-link does not have a rev, because it is already in current git repo
     else
       # if we have a feed revision, then add it. "^" is a special character
       # followed by a "commit" (hash). openwrt then checks out this revision
-      test "$_feed_rev" = "null" && _feed_rev=""
-      test -n "$_feed_rev" && _feed_rev="^$_feed_rev"
+      test "${_feed_rev}" = "null" && _feed_rev=""
+      test -n "${_feed_rev}" && _feed_rev="^${_feed_rev}"
     fi
 
-    printf "%s %s %s\n" $_feed_type $_feed_name $_feed_src$_feed_rev  >>$feedConfFileName
+    printf "%s %s %s\n" "${_feed_type}" "${_feed_name}" "${_feed_src}${_feed_rev}"  >>$feedConfFileName
 
   done
 
