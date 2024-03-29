@@ -293,6 +293,7 @@ echo resolveTemplates
 
 # gets a config entry and resolves the referenced template.
 # it  sets the environment variables
+#
 # returns:
 #   0 - success
 #   1 - function argument error / might be use to detect last entry in a loop
@@ -301,6 +302,7 @@ echo resolveTemplates
 resolveConfigValues()
 {
   targetConfigJson="$1"
+
   OPT="--raw-output" # do not excape values
 
   if [ "$targetConfigJson" = "null" -o -z "$targetConfigJson" ]; then
@@ -308,7 +310,7 @@ resolveConfigValues()
   fi
 
   # create env variables and parse with one call to jq (it is faster than repeatly call it)
-  x='"_cfg_type=\"\(.type)\";_cfg_template=\"\(.template)\";_cfg_name=\"\(.name)\";_cfg_file=\"\(.config)\";_cfg_openwrt_rev=\"\(.openwrt_rev)\";_cfg_openwrt_variant=\"\(.openwrt_variant)\";_cfg_selector_config=\"\(.["selector-config"])\";_cfg_selector_feeds=\"\(.["selector-feeds"])\";_cfg_selector_files=\"\(.["selector-files"])\";_cfg_selector_patches=\"\(.["selector-patches"])\""'
+  x='"_cfg_type=\"\(.type)\"; _cfg_template=\"\(.template)\"; _cfg_name=\"\(.name)\"; _cfg_file=\"\(.config)\"; _cfg_openwrt_rev=\"\(.openwrt_rev)\"; _cfg_openwrt_variant=\"\(.openwrt_variant)\"; _cfg_selector_config=\"\(.["selector-config"])\"; _cfg_selector_feeds=\"\(.["selector-feeds"])\"; _cfg_selector_files=\"\(.["selector-files"])\";_cfg_selector_patches=\"\(.["selector-patches"])\"; _cfg_feeds=\"\(.["feeds"])\"; _cfg_packages=\"\(.["packages"])\""'
   # echo "XXX:$x"
   # echo $targetConfigJson | jq $OPT "$x"
   eval $(echo "$targetConfigJson" | jq $OPT "$x")
@@ -339,19 +341,21 @@ resolveConfigValues()
     tmp_config_selector_files=$(echo $template | jq $OPT '.["selector-files"]')
     tmp_config_selector_feeds=$(echo $template | jq $OPT '.["selector-feeds"]')
     tmp_config_selector_patches=$(echo $template | jq $OPT '.["selector-patches"]')
-    tmp_target_patches=$(echo $template | jq $OPT '.["target-patches"]')
     tmp_config_openwrt_rev=$(echo $template | jq $OPT '.openwrt_rev')
     tmp_config_openwrt_variant=$(echo $template | jq $OPT '.openwrt_variant')
     tmp_feeds=$(echo $template | jq $OPT '.feeds')
     tmp_packages=$(echo $template | jq $OPT '.packages')
 
     # 3. set defaults
-    test "$_cfg_openwrt_rev" = "null"  && _cfg_openwrt_rev="$tmp_config_openwrt_rev"
-    test "$_cfg_openwrt_variant" = "null"  && _cfg_openwrt_variant="$tmp_config_openwrt_variant"
     test "$_cfg_selector_config" = "null" && _cfg_selector_config="$tmp_config_selector_config"
     test "$_cfg_selector_files" = "null" && _cfg_selector_files="$tmp_config_selector_files"
     test "$_cfg_selector_feeds" = "null" && _cfg_selector_feeds="$tmp_config_selector_feeds"
     test "$_cfg_selector_patches" = "null" && _cfg_selector_patches="$tmp_config_selector_patches"
+    test "$_cfg_openwrt_rev" = "null"  && _cfg_openwrt_rev="$tmp_config_openwrt_rev"
+    test "$_cfg_openwrt_variant" = "null"  && _cfg_openwrt_variant="$tmp_config_openwrt_variant"
+    test "$_cfg_feeds" = "null"  && _cfg_feeds="$tmp_feeds"
+    test "$_cfg_packages" = "null"  && _cfg_packages="$tmp_packages"
+
   fi
 
   # 4. check that all mandatory values are set (if no template was given in a config section, all entries
@@ -367,12 +371,15 @@ resolveConfigValues()
 # echo "_cfg_type=[${_cfg_type}]"
 # echo "_cfg_template=[${_cfg_template}]"
 # echo "_cfg_name=[${_cfg_name}]"
+# echo "_cfg_file=[${_cfg_file}]"
 # echo "_cfg_openwrt_rev=[${_cfg_openwrt_rev}]"
 # echo "_cfg_openwrt_variant=[${_cfg_openwrt_variant}]"
 # echo "_cfg_selector_config=[${_cfg_selector_config}]"
 # echo "_cfg_selector_feeds=[${_cfg_selector_feeds}]"
 # echo "_cfg_selector_files=[${_cfg_selector_files}]"
 # echo "_cfg_selector_patches=[${_cfg_selector_patches}]"
+# echo "_cfg_feeds=[${_cfg_feeds}]"
+# echo "_cfg_packages=[${_cfg_packages}]"
 
   return 0
 }
@@ -399,16 +406,6 @@ listTargets()
   [ "$ret" = "1" ] && break
   # is template
   [ "$ret" = "2" ] && continue
-
-# echo "_cfg_type=[${_cfg_type}]"
-# echo "_cfg_template=[${_cfg_template}]"
-# echo "_cfg_name=[${_cfg_name}]"
-# echo "_cfg_openwrt_rev=[${_cfg_openwrt_rev}]"
-# echo "_cfg_openwrt_variant=[${_cfg_openwrt_variant}]"
-# echo "_cfg_selector_config=[${_cfg_selector_config}]"
-# echo "_cfg_selector_feeds=[${_cfg_selector_feeds}]"
-# echo "_cfg_selector_files=[${_cfg_selector_files}]"
-# echo "_cfg_selector_patches=[${_cfg_selector_patches}]"
 
   # get status
   buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
@@ -437,8 +434,8 @@ listTargets()
   esac
 
   printf  "│$cstatus %-31s │ %-10.10s │ %-7.7s │ ${list_color[$_cfg_selector_config]}%-8.8s${C_NONE} │ ${list_color[$_cfg_selector_files]}%-7.7s${C_NONE} │ ${list_color[$_cfg_selector_feeds]}%-7.7s${C_NONE} │ ${list_color[$_cfg_selector_patches]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${_cfg_openwrt_rev:0:9}" "$_cfg_openwrt_variant" "$_cfg_selector_config" "$_cfg_selector_feeds" "$_cfg_selector_files" "$_cfg_selector_patches" "$compile_data"
-
  done
+
  printf -- '└──────────────────────────────────┴────────────┴─────────┴──────────┴─────────┴─────────┴─────────┴──────────────────────┘\n'
 }
 
@@ -467,23 +464,31 @@ search_target()
 print_devices_for_target()
 {
   target=$1
-  def_selector=$(echo "$cleanJson" | jq --raw-output '.[] | select(.name == "default") | . "selector-config"')
 
-  # get all targets
-  if [ -n "$target" ]; then
-    targets=$target
-  else
-    targets=$(listTargetsNames)
-  fi
-
-  for _target in ${targets}
+  targetIdx=0
+  while true
   do
-    selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$_target\") | . \"selector-config\"")
-    test "${selector}" = "null" && selector=${def_selector}
-    config_filename=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$_target\") | .config")
-    echo "target: [$_target] (${selector})"
-    grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${selector}/${config_filename}"
+    entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+    targetIdx=$(( targetIdx + 1 ))	# for next build loop
+
+    resolveConfigValues "${entry}"; ret=$?
+    # last entry
+    [ "$ret" = "1" ] && break
+    # is template
+    [ "$ret" = "2" ] && continue
+
+    # when I have a target name, then only show this.
+    # when I do not have a target passt to "build.sh devices" then show all.
+    if [ -n "$target" -a "$target" != "$_cfg_name" ]; then
+      continue
+    fi
+
+    echo "target: [$_cfg_name] (${_cfg_selector_config})"
+    grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${_cfg_selector_config}/${_cfg_file}"
     echo ""
+
+    # if I had a target, then no need to run through rest
+    test -n "$target" && break
   done
 }
 
@@ -493,37 +498,46 @@ verify_firmware_present()
   target=$1
   firmware_path=$2
 
-  # get selector
-  def_selector=$(echo "$cleanJson" | jq --raw-output '.[] | select(.name == "default") | . "selector-config"')
-  selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | . \"selector-config\"")
-  test "${selector}" = "null" && selector=${def_selector}
-
-  # get config filename
-  config=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | .config")
-
-  # extract selected devices from openwrt config file and check
-  # if sysupgrade file is present
-  status=0
-  for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/fw-configs/${selector}/${config}")
+  targetIdx=0
+  while true
   do
-    # extract firmware device name part
-    dev="${dev/*_DEVICE_/}"
-    dev_str="${dev/=*/}"
+    entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+    targetIdx=$(( targetIdx + 1 ))	# for next build loop
 
-    printf "verify firmware for: ${dev_str}: "
+    resolveConfigValues "${entry}"; ret=$?
+    # last entry
+    [ "$ret" = "1" ] && break
+    # is template
+    [ "$ret" = "2" ] && continue
 
-    p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
-    p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
-
-    if [ -n "$p1" -o -n "$p2" ]; then
-      printf -- "${C_GREEN}ok${C_NONE}\n"
-    else
-      printf -- "${C_RED}failed${C_NONE}\n"
-      status=1
+    if [ "$target" != "$_cfg_name" ]; then
+      contine
     fi
 
+    # extract selected devices from openwrt config file and check
+    # if sysupgrade file is present
+    status=0
+    for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/fw-configs/${_cfg_selector_config}/${_cfg_file}")
+    do
+      # extract firmware device name part
+      dev="${dev/*_DEVICE_/}"
+      dev_str="${dev/=*/}"
+
+      printf "verify firmware for: ${dev_str}: "
+
+      p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
+      p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
+
+      if [ -n "$p1" -o -n "$p2" ]; then
+        printf -- "${C_GREEN}ok${C_NONE}\n"
+      else
+        printf -- "${C_RED}failed${C_NONE}\n"
+        status=1
+      fi
+
+    done
+    return ${status};
   done
-  return ${status};
 }
 
 setup_dynamic_firmware_config()
@@ -901,16 +915,17 @@ echo "### target-regex:[$targetRegex] MENUCONFIG=${MENUCONFIG} CLEAN=${MAKE_CLEA
 #    second 'test'
 # 5. first 'test' second 'test' are logical evaluated with 'and', and determines the input of
 #    'select' function
-echo "$cleanJson" | jq --raw-output ".[]
-      | select(	.name |
-                      ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
-              ) | .name"
-# same as first command; but creates an array from what 'select' filters, which in turn is
-# then counted by function 'length'
-echo "$cleanJson" | jq --raw-output "[ .[]
-      | select(	.name |
-                      ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
-              ) ] | length"
+
+# echo "$cleanJson" | jq --raw-output ".[]
+#       | select(	.name |
+#                       ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+#               ) | .name"
+# # same as first command; but creates an array from what 'select' filters, which in turn is
+# # then counted by function 'length'
+# echo "$cleanJson" | jq --raw-output "[ .[]
+#       | select(	.name |
+#                       ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+#               ) ] | length"
 
 # emtpy line needed, else tput stuff clears some. So this emtpy line is cleared
 echo " "
@@ -1116,17 +1131,6 @@ do
   # is template
   [ "$ret" = "2" ] && continue
 
-# echo "----"
-# echo "_cfg_type=[${_cfg_type}]"
-# echo "_cfg_template=[${_cfg_template}]"
-# echo "_cfg_name=[${_cfg_name}]"
-# echo "_cfg_openwrt_rev=[${_cfg_openwrt_rev}]"
-# echo "_cfg_openwrt_variant=[${_cfg_openwrt_variant}]"
-# echo "_cfg_selector_config=[${_cfg_selector_config}]"
-# echo "_cfg_selector_feeds=[${_cfg_selector_feeds}]"
-# echo "_cfg_selector_files=[${_cfg_selector_files}]"
-# echo "_cfg_selector_patches=[${_cfg_selector_patches}]"
-
   #check if configuration name matches the targetRegex (target parameter)
   # add '\' to each '|' only for sed command
   sedTargetRegex=${targetRegex//|/\\|}
@@ -1144,7 +1148,7 @@ do
   progress_counter=$(( $progress_counter + 1 ))
 
   # construct config filename
-  config_file="$CONFIG_DIR/_cfg_selector_config/${_cfg_file}"
+  config_file="$CONFIG_DIR/${_cfg_selector_config}/${_cfg_file}"
 
   # summary
   echo -e $C_GREY"----------------------------------------"$C_NONE
@@ -1200,7 +1204,7 @@ do
 
 
   openwrt_dl_dir="$DL_DIR"
-  openwrt_patches_dir="$OPENWRT_PATCHES_DIR/_cfg_selector_patches"
+  openwrt_patches_dir="$OPENWRT_PATCHES_DIR/${_cfg_selector_patches}"
 
   # --------- setup build root ------------------
 
@@ -1210,7 +1214,7 @@ do
   echo -e $C_CYAN"generate feed config"$C_NONE
 
   # create feed config from build.json
-  if [ "$_feeds" = "null" ]; then
+  if [ "$_cfg_feeds" = "null" ]; then
      echo -e $C_RED"Error: no feeds specified"$C_NONE
     clean_up_exit 1
   fi
@@ -1225,7 +1229,7 @@ EOM
   feedIdx=0
   while true
   do
-     feed=$(echo "$_feeds" | jq ".[$feedIdx]")
+     feed=$(echo "$_cfg_feeds" | jq ".[$feedIdx]")
     feedIdx=$(( feedIdx + 1 ))
     test "$feed" = "null" && break
 
@@ -1243,7 +1247,7 @@ EOM
     # ],
     # The feed directory for "ddmesh" is directly located below firmware/feeds/<feed-selector>/
     if [ "$_feed_type" = "src-link" ]; then
-      _feed_src="$RUN_DIR/fw-feeds/_cfg_selector_feeds/$_feed_src"
+      _feed_src="$RUN_DIR/fw-feeds/${_cfg_selector_feeds}/${_feed_src}"
       _feed_rev=""	# src-link does not have a rev, because it is already in current git repo
     else
       # if we have a feed revision, then add it. "^" is a special character
@@ -1278,7 +1282,7 @@ EOM
   while true
   do
       # use OPT to prevent jq from adding ""
-    entry="$(echo $_packages | jq $OPT .[$idx])"
+    entry="$(echo $_cfg_packages | jq $OPT .[$idx])"
     test "$entry" = "null" && break
     idx=$(( idx + 1 ))
 
