@@ -20,9 +20,6 @@ case "$TERM" in
 esac
 
 
-#change to directory where build.sh is
-cd $(dirname $0)
-
 # target file
 PLATFORMS_JSON="build.json"
 
@@ -294,8 +291,6 @@ p
 resolveTemplates()
 {
   OPT="--raw-output" # do not excape values
-
-  echo "resolve config templates...."
 
   targetIdx=0
   while true
@@ -814,28 +809,37 @@ if $USE_DOCKER; then
 fi
 
 #---- process parameters -----------
-# get global clean build.json
-cleanJson=$(getTargetsJson)
 
-# uses cleanJson
-resolveTemplates
+preProcessBuildJson()
+{
+  # get global clean build.json
+  cleanJson=$(getTargetsJson)
+
+  # uses cleanJson
+  echo "resolve config templates...."
+  resolveTemplates
+}
 
 
 targetRegex=""
 case "$1" in
     bash-completion)
+            printf "setting up bash_competion... "
             bash_completion
+            printf "done\n"
             # this script is called "sourced", so use return instead of exit to avoid
             # closing current terminal
             return
             ;;
 
     list)
+            preProcessBuildJson
             listTargets;
             exit 0
             ;;
 
     watch)
+            preProcessBuildJson
             while sleep 1
             do
               view=$(listTargets)
@@ -847,6 +851,7 @@ case "$1" in
             ;;
 
     lt|list-targets)
+            preProcessBuildJson
             listTargetsNames
             exit 0
             ;;
@@ -861,6 +866,7 @@ case "$1" in
           ;;
 
     devices)
+          preProcessBuildJson
           # if [ -z "$2" ]; then
           # 	echo "Error: missing target"
           # 	exit 1
@@ -881,6 +887,8 @@ case "$1" in
             ;;
 
     *)
+          preProcessBuildJson
+
           # targets, menuconfig, rerun and make parameters are passed as argument with its parameters
           # check for "menuconfig"
           # check for "rerun"
