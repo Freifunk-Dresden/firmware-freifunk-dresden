@@ -127,6 +127,11 @@ list_color['23.05.2']="${BG_PURBLE}"
 #printf "${list_color['18.06']}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 #printf "${list_color[$v]}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 
+# explicitly create an assotiative array that holds extracted template
+# values for each template
+declare -A configTemplateValues
+
+
 #save current directory when copying config file
 RUN_DIR=$(pwd)
 
@@ -288,7 +293,42 @@ p
 # It creates an array of template variables associated with the template names
 resolveTemplates()
 {
-echo resolveTemplates
+  OPT="--raw-output" # do not excape values
+
+  echo "resolve config templates...."
+
+  targetIdx=0
+  while true
+  do
+    entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+    targetIdx=$(( targetIdx + 1 ))
+
+    if [ "$entry" = "null" ]; then
+      break
+    fi
+
+    # extract feeds and packages separately to keep quotes
+    x='"_cfg_type=\"\(.type)\"; _cfg_template=\"\(.template)\"; _cfg_name=\"\(.name)\"; _cfg_file=\"\(.config)\"; _cfg_openwrt_rev=\"\(.openwrt_rev)\"; _cfg_openwrt_variant=\"\(.openwrt_variant)\"; _cfg_selector_config=\"\(.["selector-config"])\"; _cfg_selector_feeds=\"\(.["selector-feeds"])\"; _cfg_selector_files=\"\(.["selector-files"])\";_cfg_selector_patches=\"\(.["selector-patches"])\""'
+    eval $(echo "$entry" | jq $OPT "$x")
+
+    # is template
+    if [ "$_cfg_type" = "template" ]; then
+    #echo "XXX:$x"
+    #echo $entry | jq  "$x"
+
+      configTemplateValues["${_cfg_name}_config_selector_config"]="${_cfg_selector_config}"
+      configTemplateValues["${_cfg_name}_config_selector_files"]="${_cfg_selector_files}"
+      configTemplateValues["${_cfg_name}_config_selector_feeds"]="${_cfg_selector_feeds}"
+      configTemplateValues["${_cfg_name}_config_selector_patches"]="${_cfg_selector_patches}"
+      configTemplateValues["${_cfg_name}_config_openwrt_rev"]="${_cfg_openwrt_rev}"
+      configTemplateValues["${_cfg_name}_config_openwrt_variant"]="${_cfg_openwrt_variant}"
+      # feeds and packages are still json and I have to "jq" those manually to keep quotes
+      configTemplateValues["${_cfg_name}_config_feeds"]="$(echo "$entry" | jq $OPT '.feeds')"
+      configTemplateValues["${_cfg_name}_config_packages"]="$(echo "$entry" | jq $OPT '.packages')"
+    fi
+  done
+  #echo "${configTemplateValues["23.05.2_config_feeds"]}"
+  #echo "${configTemplateValues["23.05.2_config_packages"]}"
 }
 
 # gets a config entry and resolves the referenced template.
@@ -335,27 +375,34 @@ resolveConfigValues()
   # 2. extract template if specified and set defaults if config has not explictly set values
   if [ "${_cfg_template}" != "null" ]; then
 
-    template=$(echo "$cleanJson" | jq ".[]|select(.name == \"$_cfg_template\") | select(.type == \"template\" ) ")
+    # template=$(echo "$cleanJson" | jq ".[]|select(.name == \"$_cfg_template\") | select(.type == \"template\" ) ")
+    # tmp_config_selector_config=$(echo $template | jq $OPT '.["selector-config"]')
+    # tmp_config_selector_files=$(echo $template | jq $OPT '.["selector-files"]')
+    # tmp_config_selector_feeds=$(echo $template | jq $OPT '.["selector-feeds"]')
+    # tmp_config_selector_patches=$(echo $template | jq $OPT '.["selector-patches"]')
+    # tmp_config_openwrt_rev=$(echo $template | jq $OPT '.openwrt_rev')
+    # tmp_config_openwrt_variant=$(echo $template | jq $OPT '.openwrt_variant')
+    # tmp_feeds=$(echo $template | jq $OPT '.feeds')
+    # tmp_packages=$(echo $template | jq $OPT '.packages')
 
-    tmp_config_selector_config=$(echo $template | jq $OPT '.["selector-config"]')
-    tmp_config_selector_files=$(echo $template | jq $OPT '.["selector-files"]')
-    tmp_config_selector_feeds=$(echo $template | jq $OPT '.["selector-feeds"]')
-    tmp_config_selector_patches=$(echo $template | jq $OPT '.["selector-patches"]')
-    tmp_config_openwrt_rev=$(echo $template | jq $OPT '.openwrt_rev')
-    tmp_config_openwrt_variant=$(echo $template | jq $OPT '.openwrt_variant')
-    tmp_feeds=$(echo $template | jq $OPT '.feeds')
-    tmp_packages=$(echo $template | jq $OPT '.packages')
+    # # 3. set defaults
+    # test "$_cfg_selector_config" = "null" && _cfg_selector_config="$tmp_config_selector_config"
+    # test "$_cfg_selector_files" = "null" && _cfg_selector_files="$tmp_config_selector_files"
+    # test "$_cfg_selector_feeds" = "null" && _cfg_selector_feeds="$tmp_config_selector_feeds"
+    # test "$_cfg_selector_patches" = "null" && _cfg_selector_patches="$tmp_config_selector_patches"
+    # test "$_cfg_openwrt_rev" = "null"  && _cfg_openwrt_rev="$tmp_config_openwrt_rev"
+    # test "$_cfg_openwrt_variant" = "null"  && _cfg_openwrt_variant="$tmp_config_openwrt_variant"
+    # test "$_cfg_feeds" = "null"  && _cfg_feeds="$tmp_feeds"
+    # test "$_cfg_packages" = "null"  && _cfg_packages="$tmp_packages"
 
-    # 3. set defaults
-    test "$_cfg_selector_config" = "null" && _cfg_selector_config="$tmp_config_selector_config"
-    test "$_cfg_selector_files" = "null" && _cfg_selector_files="$tmp_config_selector_files"
-    test "$_cfg_selector_feeds" = "null" && _cfg_selector_feeds="$tmp_config_selector_feeds"
-    test "$_cfg_selector_patches" = "null" && _cfg_selector_patches="$tmp_config_selector_patches"
-    test "$_cfg_openwrt_rev" = "null"  && _cfg_openwrt_rev="$tmp_config_openwrt_rev"
-    test "$_cfg_openwrt_variant" = "null"  && _cfg_openwrt_variant="$tmp_config_openwrt_variant"
-    test "$_cfg_feeds" = "null"  && _cfg_feeds="$tmp_feeds"
-    test "$_cfg_packages" = "null"  && _cfg_packages="$tmp_packages"
-
+    test "$_cfg_selector_config" = "null" && _cfg_selector_config="${configTemplateValues["${_cfg_template}_config_selector_config"]}"
+    test "$_cfg_selector_files" = "null" && _cfg_selector_files="${configTemplateValues["${_cfg_template}_config_selector_files"]}"
+    test "$_cfg_selector_feeds" = "null" && _cfg_selector_feeds="${configTemplateValues["${_cfg_template}_config_selector_feeds"]}"
+    test "$_cfg_selector_patches" = "null" && _cfg_selector_patches="${configTemplateValues["${_cfg_template}_config_selector_patches"]}"
+    test "$_cfg_openwrt_rev" = "null"  && _cfg_openwrt_rev="${configTemplateValues["${_cfg_template}_config_openwrt_rev"]}"
+    test "$_cfg_openwrt_variant" = "null"  && _cfg_openwrt_variant="${configTemplateValues["${_cfg_template}_config_openwrt_variant"]}"
+    test "$_cfg_feeds" = "null"  && _cfg_feeds="${configTemplateValues["${_cfg_template}_config_feeds"]}"
+    test "$_cfg_packages" = "null"  && _cfg_packages="${configTemplateValues["${_cfg_template}_config_packages"]}"
   fi
 
   # 4. check that all mandatory values are set (if no template was given in a config section, all entries
@@ -511,7 +558,7 @@ verify_firmware_present()
     [ "$ret" = "2" ] && continue
 
     if [ "$target" != "$_cfg_name" ]; then
-      contine
+      continue
     fi
 
     # extract selected devices from openwrt config file and check
@@ -768,8 +815,11 @@ fi
 
 #---- process parameters -----------
 # get global clean build.json
-resolveTemplates
 cleanJson=$(getTargetsJson)
+
+# uses cleanJson
+resolveTemplates
+
 
 targetRegex=""
 case "$1" in
