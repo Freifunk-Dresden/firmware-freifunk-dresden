@@ -9,10 +9,14 @@ Backbone Server           - switch to wireguard servers on initial setup
 password                  - fix setting password when using special characters
 
 
-2024-03-31 [8.2.2] (testing)
+2023-11-10 [8.2.1] (devel)
 --------------------------------------------------
 WiFi                      - 5GHz client mode (WAN) wpa3 support added
 sysinfo                   - sysinfo.json gets a new network statistic section
+build-env                 - build.sh/build.json reworked to support config templates, bash_completion,
+                            target list (command 'list')
+openwrt22                 - move all openwrt 21 firmware images to openwrt 22
+
 dsa-migration             - prepare for updates where openwrt changes the minor compatibility version
                             (e.g. dsa-migration)
 openvpn                   - remove obsolete openvpn

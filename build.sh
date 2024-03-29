@@ -824,7 +824,7 @@ preProcessBuildJson()
 targetRegex=""
 case "$1" in
     bash-completion)
-            printf "setting up bash_competion... "
+            printf "setting up bash_completion... "
             bash_completion
             printf "done\n"
             # this script is called "sourced", so use return instead of exit to avoid
