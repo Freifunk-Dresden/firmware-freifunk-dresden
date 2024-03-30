@@ -194,11 +194,6 @@
   },
   {
     "template":"22.03.5",
-    "name":"ramips.mt76x8.generic",
-    "config":"ramips.mt76x8.generic.22.cfg"
-  },
-  {
-    "template":"22.03.5",
     "name":"x86.64.offloader",
     "config":"x86.64.offloader.22.cfg",
     "openwrt_variant"  : "offloader",
