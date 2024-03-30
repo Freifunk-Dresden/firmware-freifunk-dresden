@@ -85,7 +85,6 @@ BG_BLUE='\033[44m'
 BG_PURBLE='\033[45m'
 BG_CYAN='\033[46m'
 BG_WHITE='\033[47m'
-BG_GRAY='\033[48m'
 
 # MARK_OK='+'
 # MARK_FAIL='E'
@@ -116,8 +115,8 @@ fi
 
 # define color lookup table used when displaying targets via "list"
 declare -A list_color
-list_color['18.06']="${BG_CYAN}"
-list_color['21.02']="${BG_YELLOW}"
+list_color['18.06']="${BG_BLACK}"
+list_color['21.02']="${BG_BLACK}"
 list_color['22.03']="${BG_BLUE}"
 list_color['23.05.2']="${BG_PURBLE}"
 
