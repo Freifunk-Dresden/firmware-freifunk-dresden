@@ -94,15 +94,12 @@ callback_add_ignored_nodes() {
 	local node=$1
 	local opt_lan=$2
 	local opt_tbb=$3
-	local opt_wifi_adhoc=$4
 	local opt_wifi_mesh2g=$5
 	local opt_wifi_mesh5g=$6
 	local opt_vlan=$7
 
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
-
-	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" -a -z "$opt_vlan" ] && opt_wifi_adhoc='1'
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
@@ -112,9 +109,6 @@ callback_add_ignored_nodes() {
 	fi
 	if [ "$opt_tbb" = "1" ]; then
 		$IPT -w -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
-	fi
-	if [ "$opt_wifi_adhoc" = "1" ]; then
-		$IPT -w -A input_ignore_nodes_wifia -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
 	fi
 	if [ "$opt_wifi_mesh2g" = "1" ]; then
 		$IPT -w -A input_ignore_nodes_wifi2m -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
@@ -132,7 +126,6 @@ callback_add_ignored_nodes() {
 setup_ignored_nodes() {
 	logger -s -t $TAG "setup_ignored_nodes"
 
-	$IPT -w -N input_ignore_nodes_wifia
 	$IPT -w -N input_ignore_nodes_wifi2m
 	$IPT -w -N input_ignore_nodes_wifi5m
 	$IPT -w -N input_ignore_nodes_lan
@@ -163,7 +156,6 @@ setup_ignored_nodes() {
 }
 
 update_ignored_nodes() {
-	$IPT -w -F input_ignore_nodes_wifia
 	$IPT -w -F input_ignore_nodes_wifi2m
 	$IPT -w -F input_ignore_nodes_wifi5m
 	$IPT -w -F input_ignore_nodes_lan

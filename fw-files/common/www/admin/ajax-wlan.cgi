@@ -48,7 +48,7 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 		wifi_mode="mesh"
 	fi
 
-	#check if this is my own adhoc signal
+	#check if this is my own signal
 	test $wifi_signal -eq 0 && continue
 
 	# calulate channel
@@ -59,12 +59,6 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	fi
 
 	type=""
-
-	# Mesh-Net (only 18.06)
-	A="$(uci get ddmesh.network.essid_adhoc)"
-	if [ "$wifi_essid_clean" = "$A" ]; then
-		type="ffadhoc"
-	fi
 
 	# check for 80211s
 	A="$(uci -q get credentials.network.wifi_mesh_id)"
@@ -130,18 +124,6 @@ do
 
 
 	case "$wifi_type" in
-		ffadhoc)
-			#display only one entry
-			test "$seen_ffadhoc" = 1 && continue
-
-			style="$base_style font-weight:bold;"
-			class="selected_adhoc"
-			meshimage='<img src="/images/yes16.png">'
-			wifi_ssid='Freifunk-Adhoc-Net'
-			wifi_bssid='multiple'
-			seen_ffadhoc=1
-			auth=""
-			;;
 		ffmesh)
 			#display only one entry
 			ch="$(uci -q get wireless.radio2g.channel)"

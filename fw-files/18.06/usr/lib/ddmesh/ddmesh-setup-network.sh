@@ -168,12 +168,6 @@ setup_wifi()
 	# Interfaces for "wifi" and "wifi2" are created by wireless subsystem and
 	# assigned to this networks
 	#############################################################################
-	uci add network interface
-	uci rename network.@interface[-1]='wifi_adhoc'
-	uci set network.wifi_adhoc.ipaddr="$_ddmesh_nonprimary_ip"
-	uci set network.wifi_adhoc.netmask="$_ddmesh_netmask"
-	uci set network.wifi_adhoc.broadcast="$_ddmesh_broadcast"
-	uci set network.wifi_adhoc.proto='static'
 
 	uci add network interface
 	uci rename network.@interface[-1]='wifi_mesh2g'

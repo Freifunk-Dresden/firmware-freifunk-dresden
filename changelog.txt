@@ -12,6 +12,8 @@ password                  - fix setting password when using special characters
 2023-11-10 [8.2.1] (devel)
 --------------------------------------------------
 WiFi                      - 5GHz client mode (WAN) wpa3 support added
+                          - remove disabled adhoc mode
+GUI                       - wifi: disable custom essid input fields when roaming is active
 sysinfo                   - sysinfo.json gets a new network statistic section
 build-env                 - build.sh/build.json reworked to support config templates, bash_completion,
                             target list (command 'list')

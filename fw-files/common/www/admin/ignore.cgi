@@ -7,9 +7,6 @@
 export TITLE="Verwaltung &gt; Konfiguration: Knoten ignorieren"
 . /usr/lib/www/page-pre.sh ${0%/*}
 
-adhoc=true
-[ "$(uci -q get ddmesh.network.mesh_mode)" = "mesh" ] && adhoc=false
-
 cat<<EOM
 <script type="text/javascript">
 
@@ -23,7 +20,6 @@ EOM
 [ -n "$mesh_vlan_ifname" ] && echo '|| document.form_node_new.form_opt_vlan.checked'
 [ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo '|| document.form_node_new.form_opt_lan.checked'
 [ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo '|| document.form_node_new.form_opt_tbb.checked'
-${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo '|| document.form_node_new.form_opt_wifi_adhoc.checked'
 [ -n "$wifi_mesh2g_ifname" ] && echo '|| document.form_node_new.form_opt_wifi_mesh2g.checked'
 [ -n "$wifi_mesh5g_ifname" ] && echo '|| document.form_node_new.form_opt_wifi_mesh5g.checked'
 cat<<EOM
@@ -57,7 +53,6 @@ EOM
 [ -n "$mesh_vlan_ifname" ] && echo "<th>VLAN</th>"
 [ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo "<th>LAN/WAN</th>"
 [ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo "<th>Backbone</th>"
-${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo "<th>Wifi-Adhoc</th>"
 [ -n "$wifi_mesh2g_ifname" ] && echo "<th>Wifi-802.11s 2.4GHz</th>"
 [ -n "$wifi_mesh5g_ifname" ] && echo "<th>Wifi-802.11s 5GHz</th>"
 echo "<th></th></tr>"
@@ -72,20 +67,15 @@ print_node() {
 	local node=$1
 	local opt_lan=$2; opt_lan=${opt_lan:=0}
 	local opt_tbb=$3; opt_tbb=${opt_tbb:=0}
-	local opt_wifi_adhoc=$4; opt_wifi_adhoc=${opt_wifi_adhoc:=0}
 	local opt_wifi_mesh2g=$5; opt_wifi_mesh2g=${opt_wifi_mesh2g:=0}
 	local opt_wifi_mesh5g=$6; opt_wifi_mesh5g=${opt_wifi_mesh5g:=0}
 	local opt_vlan=$7; opt_vlan=${opt_vlan:=0}
-
-	# old format
-	[ -z "$opt_lan" -a -z "$opt_tbb" -a -z "$opt_wifi_adhoc" -a -z "$opt_wifi_mesh2g" -a -z "$opt_wifi_mesh5g" -a -z "$opt_vlan" ] && opt_wifi_adhoc='1'
 
 	if [ -n "$1" ]; then
 		echo "<tr class=\"colortoggle$T\" ><td width=\"100\">$node</td>"
 		[ -n "$mesh_vlan_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_vlan\"><input disabled name=\"form_opt_vlan\" type=\"checkbox\" value=\"1\" $(if [ "$opt_vlan" = "1" ];then echo 'checked="checked"';fi)></td>"
 		[ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_lan\"><input disabled name=\"form_opt_lan\" type=\"checkbox\" value=\"1\" $(if [ "$opt_lan" = "1" ];then echo 'checked="checked"';fi)></td>"
 		[ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo "<td class=\"ignore-node\"  value=\"$opt_tbb\"><input disabled name=\"form_opt_tbb\" type=\"checkbox\" value=\"1\" $(if [ "$opt_tbb" = "1" ];then echo 'checked="checked"';fi)></td>"
-		${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_wifi-adhoc\"><input disabled name=\"form_opt_wifi_adhoc\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_adhoc" = "1" ];then echo 'checked="checked"';fi)></td>"
 		[ -n "$wifi_mesh2g_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_wifi_mesh2g\"><input disabled name=\"form_opt_wifi_mesh2g\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_mesh2g" = "1" ];then echo 'checked="checked"';fi)></td>"
 		[ -n "$wifi_mesh5g_ifname" ] && echo "<td class=\"ignore-node\" value=\"$opt_wifi_mesh5g\"><input disabled name=\"form_opt_wifi_mesh5g\" type=\"checkbox\" value=\"1\" $(if [ "$opt_wifi_mesh5g" = "1" ];then echo 'checked="checked"';fi)></td>"
 		echo "<td valign=bottom><FORM name=\"form_node_del_"$C"\" ACTION=\"ignore.cgi\" METHOD=\"POST\">"
@@ -118,7 +108,6 @@ EOM
 	[ -n "$mesh_vlan_ifname" ] && echo "<th>VLAN</th>"
 	[ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo "<th>LAN/WAN</th>"
 	[ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo "<th>Backbone</th>"
-	${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo "<th>Wifi-Adhoc</th>"
 	[ -n "$wifi_mesh2g_ifname" ] && echo "<th>Wifi-802.11s 2.4GHz</th>"
 	[ -n "$wifi_mesh5g_ifname" ] && echo "<th>Wifi-802.11s 5GHz</th>"
 	echo "<th></th></tr>"
@@ -128,7 +117,6 @@ EOM
 	[ -n "$mesh_vlan_ifname" ] && echo '<td><input name="form_opt_vlan" type="checkbox" value="1" ></td>'
 	[ -n "$mesh_lan_ifname" -o -n "$mesh_wan_ifname" ] && echo '<td><input name="form_opt_lan" type="checkbox" value="1" ></td>'
 	[ -n "$tbb_fastd_ifname" -o -n "$tbb_wg_ifname" ] && echo '<td><input name="form_opt_tbb" type="checkbox" value="1" ></td>'
-	${adhoc} && [ -n "$wifi_adhoc_ifname" ] && echo '<td><input name="form_opt_wifi_adhoc" type="checkbox" value="1" ></td>'
 	[ -n "$wifi_mesh2g_ifname" ] && echo '<td><input name="form_opt_wifi_mesh2g" type="checkbox" value="1" ></td>'
 	[ -n "$wifi_mesh5g_ifname" ] && echo '<td><input name="form_opt_wifi_mesh5g" type="checkbox" value="1" ></td>'
 cat<<EOM
@@ -156,7 +144,7 @@ if [ -n "$QUERY_STRING" ]; then
 				fi
 
 				node=$(uhttpd -d $form_node)
-				entry="$node:$form_opt_lan:$form_opt_tbb:$form_opt_wifi_adhoc:$form_opt_wifi_mesh2g:$form_opt_wifi_mesh5g:$form_opt_vlan"
+				entry="$node:$form_opt_lan:$form_opt_tbb:0:$form_opt_wifi_mesh2g:$form_opt_wifi_mesh5g:$form_opt_vlan"
 				uci add_list ddmesh.ignore_nodes.node="$entry"
 				uci commit
 				notebox "Knoten <b>$node</b> wurde zur Konfiguration hinzugef&uuml;gt. Bitte Konfiguration aktualisieren!"

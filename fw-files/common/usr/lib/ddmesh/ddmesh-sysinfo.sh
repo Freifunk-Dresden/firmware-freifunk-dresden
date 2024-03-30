@@ -457,7 +457,7 @@ EOM
 
 			case "$net" in
 				# use tbbwg main wireguard interface to cover all ipip tunnels
-				mesh_lan|mesh_wan|mesh_vlan|tbbwg|tbb_fastd|ffgw|vpn|wifi2|wifi_adhoc|wifi_mesh2g|wifi_mesh5g)
+				mesh_lan|mesh_wan|mesh_vlan|tbbwg|tbb_fastd|ffgw|vpn|wifi2|wifi_mesh2g|wifi_mesh5g)
 
 					ifname=${entry#*=}
 					ifname=${ifname/+/}
@@ -510,7 +510,6 @@ EOM
 					}
 					BEGIN {
 						# map iface to net type (set by ddmesh-utils-network-info.sh)
-						nettype_lookup[ENVIRON["wifi_adhoc_ifname"]]="wifi_adhoc";
 						nettype_lookup[ENVIRON["wifi_mesh2g_ifname"]]="wifi_mesh";
 						nettype_lookup[ENVIRON["wifi_mesh5g_ifname"]]="wifi_mesh";
 						nettype_lookup[ENVIRON["mesh_lan_ifname"]]="lan";

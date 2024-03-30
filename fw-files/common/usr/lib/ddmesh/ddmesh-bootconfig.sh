@@ -113,8 +113,6 @@ config network 'network'
 	option	dhcp_lan_offset 100
 	option	dhcp_lan_limit 0
 	option	dhcp_lan_lease '12h'
-# (only 18.06)
-	option	essid_adhoc 'Freifunk-Mesh-Net'
 #	option	essid_ap '' #custom essid
 	option	wifi_country 'DE'
 	option	wifi_channel 13
@@ -131,7 +129,6 @@ config network 'network'
 	option	wifi2_dhcplease '5m'
 	option	wifi2_isolate '1'
 	option	wifi2_roaming_enabled '1'
-	option	mesh_mode 'mesh' #adhoc,mesh,adhoc+mesh
 	option	lan_local_internet '0'
 	option	internal_dns1 '10.200.0.4'
 	option	internal_dns2 '10.200.0.16'

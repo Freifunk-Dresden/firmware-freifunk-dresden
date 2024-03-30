@@ -294,7 +294,7 @@ upgrade_8_2_3()
 	true
 }
 
-_8_2_4_callback_upgrade_backbone ()
+_8_2_4_callback_upgrade_backbone()
 {
 	local config="$1"
 
@@ -337,6 +337,14 @@ upgrade_8_2_4()
 
 }
 
+upgrade_8_3_0()
+{
+	uci -q delete ddmesh.network.mesh_mode
+	uci -q delete credentials.wifi_2g.bssid
+}
+
+
 ##################################
 
 run_upgrade
+

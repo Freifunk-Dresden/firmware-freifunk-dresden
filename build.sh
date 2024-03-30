@@ -609,8 +609,8 @@ bash_completion()
   ARGS="list lt list-targets watch devices search feed-revisions clean menuconfig rerun"
 
   # add targets
-  ARGS="${ARGS} $(./build.sh lt)"
-  #echo "[$ARGS]"
+  ARGS="${ARGS} $(listTargetsNames)"
+  # echo "[$ARGS]"
   complete -W "${ARGS}" ./build.sh
 }
 
@@ -815,12 +815,16 @@ fi
 
 preProcessBuildJson()
 {
+  ignoreTemplates=$1
+
   # get global clean build.json
   cleanJson=$(getTargetsJson)
 
-  # uses cleanJson
-  echo "resolve config templates...."
-  resolveTemplates
+  if [ -z "$ignoreTemplates" ]; then
+    # uses cleanJson
+    echo "resolve config templates...."
+    resolveTemplates
+  fi
 }
 
 
@@ -828,6 +832,7 @@ targetRegex=""
 case "$1" in
     bash-completion)
             printf "setting up bash_completion... "
+            preProcessBuildJson true
             bash_completion
             printf "done\n"
             # this script is called "sourced", so use return instead of exit to avoid
@@ -854,7 +859,7 @@ case "$1" in
             ;;
 
     lt|list-targets)
-            preProcessBuildJson
+            preProcessBuildJson true
             listTargetsNames
             exit 0
             ;;
