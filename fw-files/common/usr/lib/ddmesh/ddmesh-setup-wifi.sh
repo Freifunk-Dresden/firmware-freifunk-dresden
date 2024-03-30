@@ -185,7 +185,7 @@ setup_wireless()
 
 		# 5ghz mesh only for indoor
 		if [ "$wifi_status_radio5g_mode_mesh" -gt 0 ]; then
-			if [ $wifi_mode_mesh = 1 -a "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
+			if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
 				test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
 				uci rename wireless.@wifi-iface[$iface]='wifi_mesh5g'
 				uci set wireless.@wifi-iface[$iface].device='radio5g'
