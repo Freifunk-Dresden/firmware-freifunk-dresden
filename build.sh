@@ -322,8 +322,8 @@ resolveTemplates()
       configTemplateValues["${_cfg_name}_config_packages"]="$(echo "$entry" | jq $OPT '.packages')"
     fi
   done
-  #echo "${configTemplateValues["23.05.2_config_feeds"]}"
-  #echo "${configTemplateValues["23.05.2_config_packages"]}"
+  #echo "${_cfg_name["${_cfg_template}_config_feeds"]}"
+  #echo "${_cfg_name["${_cfg_template}_config_packages"]}"
 }
 
 # gets a config entry and resolves the referenced template.
@@ -345,10 +345,12 @@ resolveConfigValues()
   fi
 
   # create env variables and parse with one call to jq (it is faster than repeatly call it)
-  x='"_cfg_type=\"\(.type)\"; _cfg_template=\"\(.template)\"; _cfg_name=\"\(.name)\"; _cfg_file=\"\(.config)\"; _cfg_openwrt_rev=\"\(.openwrt_rev)\"; _cfg_openwrt_variant=\"\(.openwrt_variant)\"; _cfg_selector_config=\"\(.["selector-config"])\"; _cfg_selector_feeds=\"\(.["selector-feeds"])\"; _cfg_selector_files=\"\(.["selector-files"])\";_cfg_selector_patches=\"\(.["selector-patches"])\"; _cfg_feeds=\"\(.["feeds"])\"; _cfg_packages=\"\(.["packages"])\""'
-  # echo "XXX:$x"
-  # echo $targetConfigJson | jq $OPT "$x"
+  x='"_cfg_type=\"\(.type)\"; _cfg_template=\"\(.template)\"; _cfg_name=\"\(.name)\"; _cfg_file=\"\(.config)\"; _cfg_openwrt_rev=\"\(.openwrt_rev)\"; _cfg_openwrt_variant=\"\(.openwrt_variant)\"; _cfg_selector_config=\"\(.["selector-config"])\"; _cfg_selector_feeds=\"\(.["selector-feeds"])\"; _cfg_selector_files=\"\(.["selector-files"])\";_cfg_selector_patches=\"\(.["selector-patches"])\""'
   eval $(echo "$targetConfigJson" | jq $OPT "$x")
+
+  # feeds and packages are still json and I have to "jq" those manually to keep quotes
+  _cfg_feeds="$(echo "$targetConfigJson" | jq $OPT '.feeds')"
+  _cfg_packages="$(echo "$targetConfigJson" | jq $OPT '.packages')"
 
   # echo " "
   # echo "name:[$_cfg_name]"
@@ -399,6 +401,8 @@ resolveConfigValues()
     test "$_cfg_feeds" = "null"  && _cfg_feeds="${configTemplateValues["${_cfg_template}_config_feeds"]}"
     test "$_cfg_packages" = "null"  && _cfg_packages="${configTemplateValues["${_cfg_template}_config_packages"]}"
   fi
+  # echo "feeds:$_cfg_feeds"
+  # echo "pkg:$_cfg_packages"
 
   # 4. check that all mandatory values are set (if no template was given in a config section, all entries
   #    must be specified)
@@ -451,7 +455,7 @@ listTargets()
 
   # get status
   buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
-  test -n "$_cfg_openwrt_variant" && buildroot="$buildroot._cfg_openwrt_variant"
+  test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
   _compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
   compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
 
@@ -475,7 +479,7 @@ listTargets()
       ;;
   esac
 
-  printf  "│$cstatus %-31s │ %-10.10s │ %-7.7s │ ${list_color[$_cfg_selector_config]}%-8.8s${C_NONE} │ ${list_color[$_cfg_selector_files]}%-7.7s${C_NONE} │ ${list_color[$_cfg_selector_feeds]}%-7.7s${C_NONE} │ ${list_color[$_cfg_selector_patches]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${_cfg_openwrt_rev:0:9}" "$_cfg_openwrt_variant" "$_cfg_selector_config" "$_cfg_selector_feeds" "$_cfg_selector_files" "$_cfg_selector_patches" "$compile_data"
+  printf  "│$cstatus %-31s │ %-10.10s │ %-7.7s │ ${list_color[${_cfg_selector_config}]}%-8.8s${C_NONE} │ ${list_color[${_cfg_selector_files}]}%-7.7s${C_NONE} │ ${list_color[${_cfg_selector_feeds}]}%-7.7s${C_NONE} │ ${list_color[${_cfg_selector_patches}]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
  done
 
  printf -- '└──────────────────────────────────┴────────────┴─────────┴──────────┴─────────┴─────────┴─────────┴──────────────────────┘\n'
@@ -881,11 +885,6 @@ case "$1" in
           exit 0
           ;;
 
-    failed)
-            ARG_CompiledFailedOnly=1
-            targetRegex=".*"
-            ;;
-
     *)
           preProcessBuildJson
 
@@ -918,6 +917,10 @@ case "$1" in
                       ;;
               all)
                       ARG_TARET_ALL=1
+                      targetRegex=".*"
+                      ;;
+              failed)
+                      ARG_CompiledFailedOnly=1
                       targetRegex=".*"
                       ;;
 
@@ -1212,8 +1215,8 @@ do
   echo -e $C_GREY"----------------------------------------"$C_NONE
   echo -e $C_YELLOW"Running as user$C_NONE   : $C_BLUE$(id | awk '{print $1,$2}')"$C_NONE
   echo -e $C_YELLOW"Name$C_NONE              : $C_BLUE${_cfg_name}"$C_NONE
-  echo -e $C_YELLOW"Openwrt Variant$C_NONE   : $C_BLUE_cfg_openwrt_variant"$C_NONE
-  echo -e $C_YELLOW"Config-File$C_NONE       : $C_BLUE$config_file"$C_NONE
+  echo -e $C_YELLOW"Openwrt Variant$C_NONE   : $C_BLUE${_cfg_openwrt_variant}"$C_NONE
+  echo -e $C_YELLOW"Config-File$C_NONE       : $C_BLUE${config_file}"$C_NONE
   echo -e $C_GREY"----------------------------------------"$C_NONE
 
   # construct build directory name
@@ -1222,7 +1225,7 @@ do
   # make for ipq40xx.generic (fritzbox 4040) will fail
   # (see git log --abbrev-commit)
   buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
-  test -n "$_cfg_openwrt_variant" && buildroot="$buildroot._cfg_openwrt_variant"
+  test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
 
   _compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
   compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
@@ -1287,7 +1290,7 @@ EOM
   feedIdx=0
   while true
   do
-     feed=$(echo "${_cfg_feeds}" | jq ".[$feedIdx]")
+    feed=$(echo "${_cfg_feeds}" | jq ".[$feedIdx]")
     feedIdx=$(( feedIdx + 1 ))
     test "$feed" = "null" && break
 
@@ -1318,8 +1321,6 @@ EOM
 
   done
 
-
-
   echo "------------------------------"
   echo "change to buildroot [$buildroot]"
   cd $buildroot
@@ -1334,18 +1335,19 @@ EOM
   echo -e $C_CYAN"update feeds"$C_NONE
   ./scripts/feeds update -a
 
-  echo -e $C_CYAN"install missing packages from feeds"$C_NONE
+  echo -e $C_CYAN"install packages"$C_NONE
+  echo "$_cfg_packages" | jq
   # install additional packages (can be selected via "menuconfig")
   idx=0
   while true
   do
       # use OPT to prevent jq from adding ""
-    entry="$(echo $_cfg_packages | jq $OPT .[$idx])"
+    entry="$(echo ${_cfg_packages} | jq $OPT .[$idx])"
     test "$entry" = "null" && break
     idx=$(( idx + 1 ))
 
-    echo -e "[$idx] $C_GREEN$entry$C_NONE"
-    ./scripts/feeds install $entry
+    echo -e "[$idx] package: [$C_GREEN${entry}$C_NONE]"
+    ./scripts/feeds install ${entry}
   done
 
   echo -e $C_CYAN"install all packages from own local feed directory (ddmesh)"$C_NONE
