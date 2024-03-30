@@ -95,6 +95,11 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ath79-generic-dlink_dir-825-b1-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "autoupdate": "1",
       "model": "dlink,dir-825-b1",
       "model2": "D-Link DIR825B1",
@@ -842,32 +847,6 @@
     },
     {
       "name": "",
-      "filename": "openwrt-ath79-generic-ubnt_rocket-m-initramfs-kernel.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-factory.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "autoupdate": "1",
-      "model": "rocket-m",
-      "model2": "Ubiquiti Rocket M",
-      "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-sysupgrade.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "autoupdate": "1",
-      "model": "rocket-m",
-      "model2": "Ubiquiti Rocket M2",
-      "filename": "openwrt-ath79-generic-ubnt_rocket-m-squashfs-sysupgrade.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-initramfs-kernel.bin",
       "comment": ""
     },
@@ -1354,11 +1333,6 @@
     {
       "name": "",
       "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-initramfs-kernel.bin",
-      "comment": ""
-    },
-    {
-      "name": "",
-      "filename": "openwrt-mpc85xx-p1020-aerohive_hiveap-330-squashfs-fdt.bin",
       "comment": ""
     },
     {
