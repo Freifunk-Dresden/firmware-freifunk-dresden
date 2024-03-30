@@ -91,111 +91,116 @@
   // },
   {
     "template":"23.05.2",
-    "name":"_ath79.23.generic",
-    "config":"_ath79.generic.23.cfg"
+    "name":"ath79.generic",
+    "config":"ath79.generic.23.cfg"
   },
 
   # ---------- openwrt 22 ------------------------------------------------------
   {
     "template":"22.03.5",
     "name":"ramips.mt7620.small.usb",
-    "config":"ramips.mt7620.small.usb.21.cfg"
+    "config":"ramips.mt7620.small.usb.22.cfg"
   },
   {
     "template":"22.03.5",
     "name":"ramips.mt7620.generic",
-    "config":"ramips.mt7620.generic.21.cfg"
+    "config":"ramips.mt7620.generic.22.cfg"
   },
   {
     "template":"22.03.5",
     "name":"ramips.mt76x8.generic",
-    "config":"ramips.mt76x8.generic.21.cfg"
+    "config":"ramips.mt76x8.generic.22.cfg"
+  },
+  {
+    "template":"22.03.5",
+    "name":"ramips.mt76x8.small",
+    "config":"ramips.mt76x8.small.22.cfg"
   },
   {
     "template":"22.03.5",
     "name":"lantiq-xrx200.generic",
-    "config":"lantiq-xrx200.generic.21.cfg"
+    "config":"lantiq-xrx200.generic.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"lantiq-xrx200.small",
-    "config":"lantiq-xrx200.small.21.cfg"
+    "name":"lantiq-xrx200.22.small",
+    "config":"lantiq-xrx200.small.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"lantiq-xway.generic",
-    "config":"lantiq-xway.generic.21.cfg"
+    "name":"lantiq-xway.22.generic",
+    "config":"lantiq-xway.generic.22.cfg"
   },
   {
     "template":"22.03.5",
     "name":"lantiq-xway.small",
-    "config":"lantiq-xway.small.21.cfg"
+    "config":"lantiq-xway.small.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"_ath79.22.nand",
-    "config":"_ath79.nand.22.cfg"
+    "name":"ath79.nand",
+    "config":"ath79.nand.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"_ath79.22.small.smallbuffers",
-    "config":"_ath79.small.smallbuffers.22.cfg"
+    "name":"ath79.small.smallbuffers",
+    "config":"ath79.small.smallbuffers.22.cfg"
   },
   {
     "template":"22.03.5",
     "name":"ipq40xx.generic",
-    "config":"ipq40xx.generic.21.cfg"
+    "config":"ipq40xx.generic.22.cfg"
   },
   {
     "template":"22.03.5",
     "name":"ipq40xx.generic.fritz-tffs-nand",
-    "config":"ipq40xx.generic.fritz-tffs-nand.21.cfg"
+    "config":"ipq40xx.generic.fritz-tffs-nand.22.cfg"
   },
   {
     "template":"22.03.5",
     "name":"mpc85xx.p1020",
-    "config":"mpc85xx.p1020.21.cfg"
+    "config":"mpc85xx.p1020.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"_ath79.22.generic.gl-mifi",
-    "config":"_ath79.generic.gl-mifi.22.cfg"
+    "name":"ath79.generic.gl-mifi",
+    "config":"ath79.generic.gl-mifi.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"_ath79.22.nand.gl-e750",
-    "config":"_ath79.nand.gl-e750.22.cfg"
+    "name":"ath79.nand.gl-e750",
+    "config":"ath79.nand.gl-e750.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"_mediatek.22.mt7622.generic",
-    "config":"_mediatek.mt7622.generic.22.cfg"
+    "name":"mediatek.mt7622.generic",
+    "config":"mediatek.mt7622.generic.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"_mpc85xx.22.p1010",
-    "config":"_mpc85xx.p1010.22.cfg"
+    "name":"mpc85xx.p1010",
+    "config":"mpc85xx.p1010.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"_ramips.22.mt7621.small",
-    "config":"_ramips.mt7621.small.22.cfg"
+    "name":"ramips.mt7621.small",
+    "config":"ramips.mt7621.small.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"_ramips.22.mt7621.offloader",
-    "config":"_ramips.22.mt7621.offloader.22.cfg",
+    "name":"ramips.mt7621.offloader",
+    "config":"ramips.mt7621.offloader.22.cfg",
     "openwrt_variant":"offloader"
   },
   {
     "template":"22.03.5",
-    "name":"_ramips.22.mt76x8.generic",
-    "config":"_ramips.mt76x8.generic.22.cfg"
+    "name":"ramips.mt76x8.generic",
+    "config":"ramips.mt76x8.generic.22.cfg"
   },
   {
     "template":"22.03.5",
-    "name":"_x86.22.64.offloader",
-    "config":"_x86.64.offloader.22.cfg",
+    "name":"x86.64.offloader",
+    "config":"x86.64.offloader.22.cfg",
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
@@ -204,8 +209,8 @@
   },
   {
     "template":"22.03.5",
-    "name":"_sunxi.22.cortexa7.offloader",
-    "config":"_sunxi.cortexa7.offloader.22.cfg",
+    "name":"sunxi.cortexa7.offloader",
+    "config":"sunxi.cortexa7.offloader.22.cfg",
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
@@ -215,39 +220,39 @@
   # ---------- openwrt 22 ---------must stick to 22 ----------------------------
   {
     "template":"22.03.5",
-    "name":"_ath79.22.generic",
-    "config":"_ath79.generic.22.cfg"
+    "name":"ath79.generic",
+    "config":"ath79.generic.22.cfg"
    },
    {
     "template":"22.03.5",
-    "name":"_ath79.22.small",
-    "config":"_ath79.small.22.cfg"
-  }
-  ,{ # memory error on openwrt 23.05 so stick to 22.03
+    "name":"ath79.small",
+    "config":"ath79.small.22.cfg"
+  },
+  { # memory error on openwrt 23.05 so stick to 22.03
     "template":"22.03.5",
-    "name":"_ramips.mt7621.generic",
-    "config":"_ramips.mt7621.generic.22.cfg"
-  }
+    "name":"ramips.mt7621.generic",
+    "config":"ramips.mt7621.generic.22.cfg"
+  },
 
   # ---------- openwrt 21 ------------------------------------------------------
-  ,{
-    "type":"template",
-    "name":"21.02.3",
-  	"openwrt_rev":"v21.02.3", # "42a15ca378e1bc52f125f894d748c31ce3c52903"
-    "openwrt_variant":"",
-    "selector-config":"21.02",
-    "selector-feeds":"21.02",
-    "selector-patches":"21.02",
-    "selector-files":"21.02",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"ce0446269" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"bdefc83" }
-    ],
-    "packages" : [
-      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "iperf3"
-    ]
-  },
+  // {
+  //   "type":"template",
+  //   "name":"21.02.3",
+  // 	"openwrt_rev":"v21.02.3", # "42a15ca378e1bc52f125f894d748c31ce3c52903"
+  //   "openwrt_variant":"",
+  //   "selector-config":"21.02",
+  //   "selector-feeds":"21.02",
+  //   "selector-patches":"21.02",
+  //   "selector-files":"21.02",
+  //   "feeds" : [
+  //     { "type":"src-link", "name":"ddmesh",   "src":"" },
+  //     { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"ce0446269" },
+  //     { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"bdefc83" }
+  //   ],
+  //   "packages" : [
+  //     "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "iperf3"
+  //   ]
+  // },
 
   // # ---------- openwrt 18 -----------------------------------------------------------------------
   {
