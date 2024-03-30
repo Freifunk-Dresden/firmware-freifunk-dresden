@@ -503,7 +503,7 @@ numberOfTargets()
 search_target()
 {
   target=$1
-  awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{line=gsub(/^CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t,"$0}' fw-configs/*/*
+  awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'.*=y/{line=gsub(/^CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t,"$0}' fw-configs/*/*
 }
 
 print_devices_for_target()
