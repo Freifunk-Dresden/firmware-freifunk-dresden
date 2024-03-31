@@ -228,6 +228,9 @@ clean_up_exit()
 show_progress()
 {
   if [ "$_TERM" = "1" ]; then
+    target="$1"
+    shift
+
     # dont overwrite last value, when no parameter was given (window resize signal)
     [ -n "$1" ] && _count=$1
     shift
@@ -238,9 +241,10 @@ show_progress()
     [ -z "$_count" ] && return
     [ -z "$_max" -o "$_max" -eq 0 ] && return
 
+    # get current number of lines from (terminal size)
     row=$(tput lines)
 
-    # empty second line
+    # empty second line of terminal (top)
     tput cup 1 0
     tput el
 
@@ -250,8 +254,12 @@ show_progress()
                                                             # but as one argument with "" to allow
                                                             # special characters like *
 
-    # print empty line above
+    # print current target
     tput cup $(( $row - 2)) 0
+    echo -e "building: $C_BLUE${target}$C_NONE"
+
+    # print empty line above
+    tput cup $(( $row - 3)) 0
     tput el
 
     # define scroll region before setting cursor. else it would overwrite progress bar
@@ -1204,7 +1212,7 @@ do
 
   # only enable progressbar for tty
   if [ "$_TERM" = "1" ]; then
-    show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
+    show_progress ${_cfg_name} $progress_counter $progress_max "${progbar_char_array[@]}"
     echo ""
   fi
   # increment counter (needed also when no progressbar is displayed, because the
@@ -1265,7 +1273,7 @@ do
 
   # progress bar: compiling
   progbar_char_array[$((progress_counter-1))]="${PBC_RUNNING}"
-  show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
+  show_progress ${_cfg_name} $progress_counter $progress_max "${progbar_char_array[@]}"
 
 
   openwrt_dl_dir="$DL_DIR"
@@ -1490,7 +1498,7 @@ EOM
 
 done
 
-show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
+show_progress ${_cfg_name} $progress_counter $progress_max "${progbar_char_array[@]}"
 sleep 1
 
 echo -e $C_CYAN".......... complete build finished (exitcode ${global_error})........................"$C_NONE
