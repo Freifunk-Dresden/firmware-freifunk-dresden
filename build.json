@@ -91,7 +91,7 @@
   // },
   {
     "template":"23.05.2",
-    "name":"ath79.generic",
+    "name":"ath79.23.generic",
     "config":"ath79.generic.23.cfg"
   },
 
@@ -215,7 +215,7 @@
   # ---------- openwrt 22 ---------must stick to 22 ----------------------------
   {
     "template":"22.03.5",
-    "name":"ath79.generic",
+    "name":"ath79.22.generic",
     "config":"ath79.generic.22.cfg"
    },
    {
