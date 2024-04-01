@@ -150,7 +150,7 @@ EOM
 					sleep 5	# let browser load all content before killing httpd
 					(sleep 10; \
 							/usr/lib/ddmesh/ddmesh-display.sh factory; \
-							sysupgrade -n $FIRMWARE_FILE 2>&1 >/dev/null \
+							sysupgrade --ignore-minor-compat-version -n $FIRMWARE_FILE 2>&1 >/dev/null \
 					) &
 				else
 					#update configs after firmware update
@@ -163,7 +163,7 @@ EOM
 
 					(sleep 10; \
 						/usr/lib/ddmesh/ddmesh-display.sh reboot; \
-						sysupgrade $FIRMWARE_FILE 2>&1 >/dev/null \
+						sysupgrade --ignore-minor-compat-version $FIRMWARE_FILE 2>&1 >/dev/null \
 					) &
 				fi
 			fi
@@ -210,7 +210,7 @@ EOM
 			if [ "$do_update" = "1" ]; then
 
 				#check firmware
-				if m="$(sysupgrade --test $FIRMWARE_FILE 2>&1 )" ;then
+				if m="$(sysupgrade --ignore-minor-compat-version --test $FIRMWARE_FILE 2>&1 )" ;then
 					cat<<EOM
 					<fieldset class="bubble">
 					<legend>Firmware-Update</legend>

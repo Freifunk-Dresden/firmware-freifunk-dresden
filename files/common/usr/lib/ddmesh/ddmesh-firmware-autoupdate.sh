@@ -100,7 +100,7 @@ case "$1" in
 		logger -s -t "$TAG" "md5sum is correct: $file_md5sum"
 
 		#check firmware
-		if m=$(sysupgrade -T $FIRMWARE_FILE) ;then
+		if m=$(sysupgrade --ignore-minor-compat-version -T $FIRMWARE_FILE ) ;then
 			#update configs after firmware update
 			uci set ddmesh.boot.boot_step=2
 			# used for update history
@@ -110,7 +110,7 @@ case "$1" in
 			uci commit
 			sync
 			logger -s -t "$TAG" "sysupgrade started..."
-			sysupgrade $FIRMWARE_FILE 2>&1 >/dev/null &
+			sysupgrade --ignore-minor-compat-version $FIRMWARE_FILE 2>&1 >/dev/null &
 			exit 0
 		else # firmware check
 			rm -f $FIRMWARE_FILE
