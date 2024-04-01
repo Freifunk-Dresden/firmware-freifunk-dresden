@@ -84,11 +84,11 @@
 
 # =================== targets =======================================================
 # ---------- openwrt 23 ------------------------------------------------------
-  // {
-  //   "template":"23.05.2",
-  //   "name":"-testing-ramips.mt7621.generic",
-  //   "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg"
-  // },
+  {
+    "template":"23.05.2",
+    "name":"-testing-ramips.mt7621.generic",
+    "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg"
+  },
   {
     "template":"23.05.2",
     "name":"ath79.23.generic",
