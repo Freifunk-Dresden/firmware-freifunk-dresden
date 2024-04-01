@@ -1,0 +1,21 @@
+diff --git a/package/base-files/files/sbin/sysupgrade b/package/base-files/files/sbin/sysupgrade
+index b75bd097f3..6db1dbdfc1 100755
+--- a/package/base-files/files/sbin/sysupgrade
++++ b/package/base-files/files/sbin/sysupgrade
+@@ -35,6 +35,7 @@ while [ -n "$1" ]; do
+ 		-F|--force) export FORCE=1;;
+ 		-T|--test) export TEST=1;;
+ 		-h|--help) export HELP=1; break;;
++		--ignore-minor-compat-version) export IGNORE_MINOR_COMPAT=1;;
+ 		-*)
+ 			echo "Invalid option: $1"
+ 			exit 1
+@@ -64,6 +65,8 @@ upgrade-option:
+ 	             Verify image and config .tar.gz but do not actually flash.
+ 	-F | --force
+ 	             Flash image even if image checks fail, this is dangerous!
++	--ignore-minor-compat-version
++		     Flash image even if the minor compat version is incompatible.
+ 	-q           less verbose
+ 	-v           more verbose
+ 	-h | --help  display this help
