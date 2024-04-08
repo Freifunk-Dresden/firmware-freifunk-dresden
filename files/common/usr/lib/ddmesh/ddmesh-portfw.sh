@@ -35,45 +35,39 @@ setup_forwarding()
 	# forward incomming packets to from anywhere to node ip
 	for table in prerouting_mesh_rule prerouting_lan_rule prerouting_wifi2_rule
 	do
-		$IPT -w -t nat -D $table -d $_ddmesh_ip -j PORT_FORWARDING 2>/dev/null
-		$IPT -w -t nat -A $table -d $_ddmesh_ip -j PORT_FORWARDING -m comment --comment 'ddmesh:portfw'
+		for cmd in D A
+		do
+			$IPT -w -t nat -$cmd $table -d $_ddmesh_ip -j PORT_FORWARDING -m comment --comment 'ddmesh:portfw' 2>/dev/null
+		done
 	done
 
 	# forward incomming packets from lan to lan ip
 	# interface might not be ready yet (wait for other hotplug updates)
 	if [ "$lan_up" = "1" -a -n "$lan_ipaddr" ]; then
-		$IPT -w -t nat -D prerouting_lan_rule -s $lan_network/$lan_mask -d $lan_ipaddr -j PORT_FORWARDING 2>/dev/null
-		$IPT -w -t nat -A prerouting_lan_rule -s $lan_network/$lan_mask -d $lan_ipaddr -j PORT_FORWARDING -m comment --comment 'ddmesh:portfw'
+		for cmd in D A
+		do
+				$IPT -w -t nat -$cmd prerouting_lan_rule -s $lan_network/$lan_mask -d $lan_ipaddr -j PORT_FORWARDING -m comment --comment 'ddmesh:portfw' 2>/dev/null
+		done
 	fi
 
 	# forward incomming packets from wan to wan ip
 	# interface might not be ready yet (wait for other hotplug updates)
 	if [ "$wan_up" = "1" -a -n "$wan_ipaddr" ]; then
-		$IPT -w -t nat -D prerouting_wan_rule -s $wan_network/$wan_mask -d $wan_ipaddr -j PORT_FORWARDING 2>/dev/null
-		$IPT -w -t nat -A prerouting_wan_rule -s $wan_network/$wan_mask -d $wan_ipaddr -j PORT_FORWARDING -m comment --comment 'ddmesh:portfw'
+		for cmd in D A
+		do
+			$IPT -w -t nat -$cmd prerouting_wan_rule -s $wan_network/$wan_mask -d $wan_ipaddr -j PORT_FORWARDING -m comment --comment 'ddmesh:portfw' 2>/dev/null
+		done
 	fi
 
-	# # prepare "filter" table
-	# $IPT -w -N PORT_FORWARDING_RULES 2>/dev/null
+	# allow port forwarding when request comes from lan,mesh,wifi2
+	# no need to check for dest ip and interface, as user adds its with intention
+	for cmd in D A
+	do
+		$IPT -w -$cmd forwarding_wifi2_rule -m conntrack --ctstate DNAT -j ACCEPT -m comment --comment 'ddmesh:portfw' 2>/dev/null
+		$IPT -w -$cmd forwarding_lan_rule -m conntrack --ctstate DNAT -j ACCEPT -m comment --comment 'ddmesh:portfw' 2>/dev/null
+		$IPT -w -$cmd forwarding_mesh_rule -m conntrack --ctstate DNAT -j ACCEPT -m comment --comment 'ddmesh:portfw' 2>/dev/null
+	done
 
-	# #flush when script is re-started (wan dhcp, delayed)
-	# $IPT -w -F PORT_FORWARDING_RULES
-
-	# allow forwarding
-	if [ "$wifi2_up" = "1" -a -n "$wifi2_network" -a -n "$wifi2_mask" ]; then
-		$IPT -w -D forwarding_wifi2_rule -o $wifi2_ifname -d $wifi2_network/$wifi2_mask -m conntrack --ctstate DNAT -j ACCEPT 2>/dev/null
-		$IPT -w -A forwarding_wifi2_rule -o $wifi2_ifname -d $wifi2_network/$wifi2_mask -m conntrack --ctstate DNAT -j ACCEPT -m comment --comment 'ddmesh:portfw'
-	fi
-
-	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
-		$IPT -w -D forwarding_lan_rule -o $lan_ifname -d $lan_network/$lan_mask -m conntrack --ctstate DNAT -j ACCEPT 2>/dev/null
-		$IPT -w -A forwarding_lan_rule -o $lan_ifname -d $lan_network/$lan_mask -m conntrack --ctstate DNAT -j ACCEPT -m comment --comment 'ddmesh:portfw'
-	fi
-
-	if [ "$wan_up" = 1 -a -n "$wan_network" -a -n "$wan_mask" ]; then
-		$IPT -w -D forwarding_wan_rule -o $wan_ifname -d $wan_network/$wan_mask -m conntrack --ctstate DNAT -j ACCEPT 2>/dev/null
-		$IPT -w -A forwarding_wan_rule -o $wan_ifname -d $wan_network/$wan_mask -m conntrack --ctstate DNAT -j ACCEPT -m comment --comment 'ddmesh:portfw'
-	fi
 }
 
 setup_rules() {
@@ -96,24 +90,20 @@ setup_rules() {
 	if [ -n "$vsrc_dport" -a -n "$vdest_ip" -a -n "$vdest_port" ]; then
 		if [ "$vproto" = "tcp" -o "$vproto" = "tcpudp" ]; then
 			$IPT -w -t nat -A PORT_FORWARDING_RULES -p tcp --dport $vsrc_dport -j DNAT --to-destination $vdest_ip:$vdest_port -m comment --comment 'ddmesh:portfw'
-	#		$IPT -w -A PORT_FORWARDING_RULES -p tcp -d $vdest_ip --dport $vdest_port -j ACCEPT -m comment --comment 'ddmesh:portfw'
 		fi
 
 		if [ "$vproto" = "udp" -o "$vproto" = "tcpudp" ]; then
 			$IPT -w -t nat -A PORT_FORWARDING_RULES -p udp --dport $vsrc_dport -j DNAT --to-destination $vdest_ip:$vdest_port -m comment --comment 'ddmesh:portfw'
-	#		$IPT -w -A PORT_FORWARDING_RULES -p udp -d $vdest_ip --dport $vdest_port -j ACCEPT -m comment --comment 'ddmesh:portfw'
 		fi
 	fi
 }
 
 
-if [ "$1" = "init" -o "$1" = "load" ]; then
-	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
-	eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
-fi
-
 case "$1" in
 	load)
+		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+		eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
+
 		setup_forwarding
 
 		for p in $PROTECTED_PORTS
@@ -128,5 +118,5 @@ case "$1" in
 
 	ports)  echo $PROTECTED_PORTS ;;
 
-	*) echo "usage: $1 init|load|ports" ;;
+	*) echo "usage: $1  load | ports" ;;
 esac

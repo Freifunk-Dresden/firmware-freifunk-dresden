@@ -256,10 +256,11 @@ callback_firewall()
 
 	if [ -n "$host" -a -n "$port" ]; then
 		#dont use hostnames, can not be resolved
-		iptables -w -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
-		iptables -w -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
-		iptables -w -A output_backbone_accept -p udp --dport $port -j ACCEPT -m comment --comment 'ddmesh:backbone'
-		iptables -w -A output_backbone_reject -p udp --dport $port -j reject -m comment --comment 'ddmesh:backbone'
+		for cmd in D A
+		do
+			iptables -w -$cmd output_backbone_accept -p udp --dport $port -j ACCEPT -m comment --comment 'ddmesh:backbone' 2>/dev/null
+			iptables -w -A output_backbone_reject -p udp --dport $port -j reject -m comment --comment 'ddmesh:backbone' 2>/dev/null
+		done
 	fi
 }
 

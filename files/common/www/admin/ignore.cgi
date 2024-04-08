@@ -176,7 +176,7 @@ if [ -n "$QUERY_STRING" ]; then
 				;;
 
 		  firewall_update)
-				/usr/lib/ddmesh/ddmesh-firewall-addons.sh update_ignore
+				/usr/lib/ddmesh/ddmesh-firewall-addons.sh update-ignore
 				notebox "Firewall wurde aktualisiert"
 				;;
 		esac

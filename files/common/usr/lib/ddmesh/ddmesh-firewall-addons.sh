@@ -2,7 +2,10 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
-[ -z "$1" ] && exit 1
+if [ -z "$1" ]; then
+	echo "usage $(basename $0) init-update | firewall-update | update-ignore"
+	exit 1
+fi
 
 . /lib/functions.sh
 
@@ -193,8 +196,10 @@ _update()
 	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
 		for n in wan mesh wifi2 ffgw vpn
 		do
-			$IPT -w -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
-			$IPT -w -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject -m comment --comment 'ddmesh'
+			for cmd in D A
+			do
+				$IPT -w -$cmd "input_"$n"_deny" -d $lan_network/$lan_mask -j reject -m comment --comment 'ddmesh' 2>/dev/null
+			done
 		done
 
 		# remove/add SNAT rule when iface becomes available
@@ -208,8 +213,10 @@ _update()
 	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
 		for n in lan mesh wifi2 ffgw vpn
 		do
- 			$IPT -w -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
-			$IPT -w -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject  -m comment --comment 'ddmesh'
+			for cmd in D A
+			do
+				$IPT -w -$cmd "input_"$n"_deny" -d $wan_network/$wan_mask -j reject  -m comment --comment 'ddmesh' 2>/dev/null
+			done
 		done
 	fi
 
@@ -236,10 +243,11 @@ case "$1" in
 		_update
 		;;
 
-	update_ignore) update_ignored_nodes
+	update-ignore)
+		update_ignored_nodes
 		;;
 	*)
-	 	echo "invalid param"
+		echo "invalid arg"
 		;;
 
 esac
