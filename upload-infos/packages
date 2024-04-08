@@ -1,9 +1,5 @@
 tcpdump
 libpcap
-#OVPNCerts
-#openvpn-mbedtls
-#liblzo
-#feinstaubsensor
 
 #----------------- usb tethering android ------------------
 # manuell installed and dependencies determined
@@ -12,7 +8,7 @@ libpcap
 #libc
 #libpthread
 #librt
-#libusb-1.0-0 
+#libusb-1.0-0
 #libevdev
 #libudev-zero
 #libimobiledevice
@@ -34,28 +30,25 @@ libpcap
 #kmod-usb3
 #kmod-usb-ehci
 #kmod-usb-ohci
-#kmod-usb-ohci-pci 
+#kmod-usb-ohci-pci
 #kmod-usb-uhci
 #kmod-usb-dwc2
 #kmod-usb-dwc3
 #kmod-usb-ledtrig-usbport
 #kmod-usb-net
 #kmod-usb-net-cdc-ether
-#kmod-usb-net-rndis 
+#kmod-usb-net-rndis
 #kmod-usb-net-ipheth
-#kmod-usb-wdm 
+#kmod-usb-wdm
 #kmod-usb-net-qmi-wwan
-#kmod-usb-net-cdc-mbim 
+#kmod-usb-net-cdc-mbim
 #kmod-usb-serial-option
 #kmod-usb-serial
-#kmod-usb-serial-wwan 
+#kmod-usb-serial-wwan
 #kmod-usb-storage
 #kmod-fs-vfat
-#block-mount 
+#block-mount
 #usb-modeswitch
-#uqmi 
-#umbim 
+#uqmi
+#umbim
 #kmod-phy-ath79-usb
-
-
-

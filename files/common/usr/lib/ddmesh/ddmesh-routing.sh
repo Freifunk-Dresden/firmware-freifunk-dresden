@@ -20,7 +20,7 @@ ip rule add to $_ddmesh_wireguard_network/$_ddmesh_netpre lookup main prio 330
 # byepass wifi2
 ip rule $1 to $_ddmesh_wifi2net table main priority 350
 
-# public dns is filled by openvpn up.sh
+# public dns is filled by wireguard vpn (internet tunnel)
 ip rule $1 lookup public_dns priority 360
 
 # route local and lan traffic through own internet gateway
@@ -29,10 +29,11 @@ ip rule $1 iif $(uci get network.loopback.device) table local_gateway priority 4
 test "$(uci -q get ddmesh.network.lan_local_internet)" = "1" && ip rule $1 iif br-lan table local_gateway priority 401
 ip rule $1 table public_gateway priority 410
 
-# avoid fastd going through mesh/bat (in case WAN dhcp did not get ip)
+# avoid fastd going through mesh/ffgw (in case WAN dhcp did not get ip)
 # see fastd.conf
 ip rule add fwmark 0x5002 table unreachable prio 460
 
+# nodes
 ip rule $1 to $_ddmesh_fullnet table bat_route priority 500
 
 #at this point only let inet ips go further. let all other network ips (10er) be unreachable
@@ -44,11 +45,10 @@ ip rule $1 to 10.0.0.0/8 table unreachable priority 503
 ip rule $1 to 192.168.0.0/16 table unreachable priority 504
 ip rule $1 to 172.16.0.0/12 table unreachable priority 505
 
-# bmxd-gateway.sh setups ipip tunnel -> disable bat_default
+# bmxd-gateway.sh setups ipip tunnel
 ip rule $1 table ff_gateway priority 506
-# ip rule $1 table bat_default priority 507
 
-# put fallback after bat_default. If lan was configured and mesh-on-lan is active
+# put fallback after ff_gateway. If lan was configured and mesh-on-lan is active
 # local_gateway would be empty and any local internet communication (registration)
 # will be routed to dead ip
 ip rule $1 iif $(uci get network.loopback.device) table fallback_gateway priority 508

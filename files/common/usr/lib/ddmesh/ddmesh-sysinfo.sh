@@ -236,7 +236,7 @@ function combined_statistics() {
 			# openwrt network/firewall specific:
 			#   wg uses tbbwg+ as interface name for all single interfaces
 			#   as long as we do not support wireguard vpn exit on router
-			#   I have to keep '+' in interface name. (openvpn was removed because of huge resource demands)
+			#   I have to keep '+' in interface name.
 			#   ifname=${ifname/+/}
 
 			[ -n "$ifname" ] && ifname="$(basename /sys/class/net/${ifname})"
@@ -457,7 +457,7 @@ EOM
 
 			case "$net" in
 				# use tbbwg main wireguard interface to cover all ipip tunnels
-				mesh_lan|mesh_wan|mesh_vlan|tbbwg|tbb_fastd|bat|ffgw|vpn|wifi2|wifi_adhoc|wifi_mesh2g|wifi_mesh5g)
+				mesh_lan|mesh_wan|mesh_vlan|tbbwg|tbb_fastd|ffgw|vpn|wifi2|wifi_adhoc|wifi_mesh2g|wifi_mesh5g)
 
 					ifname=${entry#*=}
 					ifname=${ifname/+/}
