@@ -81,13 +81,6 @@ start() {
 	logger -s -t $LOGGER_TAG "start service privnet"
 	/usr/lib/ddmesh/ddmesh-privnet.sh start
 
-	logger -s -t $LOGGER_TAG "start service openvpn"
-	# only touch any file when openvpn is used. else overlay md5sum will change
-	if [ -f "/etc/openvpn/openvpn.conf" ]; then
-		test -f /etc/config/openvpn.ffdd && mv /etc/config/openvpn.ffdd /etc/config/openvpn
-		test -x /etc/init.d/openvpn && /etc/init.d/openvpn start
-	fi
-
 	if [ -x /usr/bin/iperf3 ]; then
 		logger -s -t $LOGGER_TAG "start service iperf3"
 		iperf3 -s -D

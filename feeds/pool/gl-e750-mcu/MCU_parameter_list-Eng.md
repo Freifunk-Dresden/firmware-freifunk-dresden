@@ -34,7 +34,7 @@
 
 | Parameter name |  Type  | Necessity | Default | Description            | Possible value                   |
 | :----------: | :-----: | :----------------: | ----------------- | ----------------- | ----------------- |
-|vpn_type|string|yes|" "|VPN protocol|openvpn,wireguard|
+|vpn_type|string|yes|" "|VPN protocol|wireguard|
 |vpn_status|string|yes|" "|VPN connection status|connected，connecting，off|
 |vpn_server|string|yes|" "|VPN configuration name|A string of up to 128 characters|
 

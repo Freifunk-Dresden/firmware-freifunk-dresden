@@ -258,8 +258,8 @@ callback_firewall()
 		#dont use hostnames, can not be resolved
 		iptables -w -D output_backbone_accept -p udp --dport $port -j ACCEPT 2>/dev/null
 		iptables -w -D output_backbone_reject -p udp --dport $port -j reject 2>/dev/null
-		iptables -w -A output_backbone_accept -p udp --dport $port -j ACCEPT
-		iptables -w -A output_backbone_reject -p udp --dport $port -j reject
+		iptables -w -A output_backbone_accept -p udp --dport $port -j ACCEPT -m comment --comment 'ddmesh:backbone'
+		iptables -w -A output_backbone_reject -p udp --dport $port -j reject -m comment --comment 'ddmesh:backbone'
 	fi
 }
 
@@ -267,10 +267,10 @@ setup_firewall()
 {
 	iptables -w -F input_backbone_accept
 	iptables -w -F input_backbone_reject
-	iptables -w -A input_backbone_accept -p udp --dport $backbone_local_fastd_port -j ACCEPT
-	iptables -w -A input_backbone_reject -p udp --dport $backbone_local_fastd_port -j reject
-	iptables -w -A input_backbone_accept -p udp --dport $backbone_local_wg_port -j ACCEPT
-	iptables -w -A input_backbone_reject -p udp --dport $backbone_local_wg_port -j reject
+	iptables -w -A input_backbone_accept -p udp --dport $backbone_local_fastd_port -j ACCEPT -m comment --comment 'ddmesh:backbone:fastd'
+	iptables -w -A input_backbone_reject -p udp --dport $backbone_local_fastd_port -j reject -m comment --comment 'ddmesh:backbone:fastd'
+	iptables -w -A input_backbone_accept -p udp --dport $backbone_local_wg_port -j ACCEPT -m comment --comment 'ddmesh:backbone:wg'
+	iptables -w -A input_backbone_reject -p udp --dport $backbone_local_wg_port -j reject -m comment --comment 'ddmesh:backbone:wg'
 	iptables -w -F output_backbone_accept
 	iptables -w -F output_backbone_reject
 	config_load ddmesh

@@ -220,17 +220,6 @@ setup_backbone()
 	uci set network.tbb_fastd.force_link='1'
 }
 
-# physical if created by bmxd
-setup_bmxd()
-{
-	#bmxd bat zone
-	uci add network interface
-	uci rename network.@interface[-1]='bat'
-	uci set network.bat.ifname='bat+'
-	uci set network.bat.proto='static'
-	uci set network.bat.force_link='1'
-}
-
 setup_ffgw()
 {
 	# protocol handler ipip needs valid peeraddr
@@ -246,10 +235,10 @@ setup_ffgw()
 	uci set network.ffgw.force_link='1'
 }
 
-# physical if created by openvpn
+# physical if created by vpn
 setup_vpn()
 {
-	#openvpn zone
+	#vpn zone
 	uci add network interface
 	uci rename network.@interface[-1]='vpn'
 	uci set network.vpn.ifname='vpn+'
@@ -274,7 +263,7 @@ setup_network()
  /bin/config_generate
 
  # setup_mesh AFTER setup_ethernet (setup_mesh needs lan network)
- for f in setup_ethernet setup_mesh setup_wwan setup_wifi setup_backbone setup_bmxd setup_ffgw setup_vpn setup_privnet
+ for f in setup_ethernet setup_mesh setup_wwan setup_wifi setup_backbone setup_ffgw setup_privnet setup_vpn
  do
 	echo "call ${f}()"
 	${f}
