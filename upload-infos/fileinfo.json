@@ -1601,6 +1601,22 @@
     },
     {
       "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ipq40xx-generic-aruba_ap-303-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ipq40xx-generic-aruba_ap-303h-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ipq40xx-generic-avm_fritzbox-4040-squashfs-eva.bin",
       "comment": ""
     },
