@@ -187,7 +187,7 @@ m3:upload:
       # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys.
       # On download server there is a user "deploy-firmware" who owns the download directories.
       if [ -n "${FF_UPLOAD_DIR}" ]; then
-        rsync -avz --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/
+        rsync -av --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/
       fi
       rm -rf final_output
 
