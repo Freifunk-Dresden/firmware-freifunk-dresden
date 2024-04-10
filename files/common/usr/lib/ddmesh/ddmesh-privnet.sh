@@ -115,8 +115,8 @@ setup_firewall()
 {
 	iptables -w -F input_privnet_accept
 	iptables -w -F input_privnet_reject
-	iptables -w -A input_privnet_accept -p udp --dport $privnet_server_port -j ACCEPT
-	iptables -w -A input_privnet_reject -p udp --dport $privnet_server_port -j reject
+	iptables -w -A input_privnet_accept -p udp --dport $privnet_server_port -j ACCEPT -m comment --comment 'ddmesh:privnet'
+	iptables -w -A input_privnet_reject -p udp --dport $privnet_server_port -j reject -m comment --comment 'ddmesh:privnet'
 }
 
 case "$1" in

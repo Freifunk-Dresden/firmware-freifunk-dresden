@@ -466,7 +466,7 @@ upgrade_8_2_1()
 
 upgrade_8_2_2()
 {
-	true
+	cp /rom/etc/config/firewall /etc/config/firewall
 }
 
 ##################################

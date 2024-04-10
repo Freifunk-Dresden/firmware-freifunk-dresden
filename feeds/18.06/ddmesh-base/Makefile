@@ -140,24 +140,6 @@ define Package/$(PKG_NAME)-extra-modules/config
       depends on PACKAGE_ddmesh-extra-modules
       tristate "tcpdump"
 
-#    config PACKAGE_OVPNCerts
-#      # menu point is displayed when dependencies are selected
-#      depends on PACKAGE_ddmesh-extra-modules
-#      tristate "OVPNCerts"
-#      help
-#        Create openvpn tunnel used by router as public gateway.
-
-#    config PACKAGE_feinstaubsensor
-#      # menu point is displayed when dependencies are selected
-#      depends on PACKAGE_ddmesh-extra-modules
-#      tristate "Feinstaubensor (Stuttgard Project)"
-#      help
-#        This module simply includes a menu to display
-#        Feinstaubsensor graphics.
-#        Image link must be modified to display graphic for
-#        your own sensor.
-#        See http://luftdaten.info/
-
   # endmenu
 
 endef

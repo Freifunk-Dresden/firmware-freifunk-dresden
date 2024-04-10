@@ -106,7 +106,7 @@ case "$ARG1" in
 			unset IFS
 		fi
 
-		#default start with no gatway.will be updated by gateway_check.sh
+		#default start with no gatway. will be updated by gateway_check.sh
 		# devel info:
 		# --fast_path_hysteresis has not changed frequency of root setting in bat_route
 		# --path_hysteresis should be less than 5, else dead routes are hold to long

@@ -2,12 +2,17 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
-[ -z "$1" ] && exit 1
+if [ -z "$1" ]; then
+	echo "usage $(basename $0) init-update | firewall-update | update-ignore"
+	exit 1
+fi
 
 . /lib/functions.sh
 
 #firewall rules that can not be created
 eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+
+/usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
 TAG="ddmesh-firewall-addons"
@@ -34,36 +39,36 @@ setup_custom_rules() {
 	#tbb traffic is controlled by zone rules tbb+
 	$IPT -w -N input_backbone_accept
 	$IPT -w -N input_backbone_reject
-	$IPT -w -A input_wan_rule -j input_backbone_accept
-	$IPT -w -A input_lan_rule -j input_backbone_accept
-	$IPT -w -A input_mesh_rule -j input_backbone_reject
-	$IPT -w -A input_bat_rule -j input_backbone_reject
-	$IPT -w -A input_wifi2_rule -j input_backbone_reject
+	$IPT -w -A input_wan_rule -j input_backbone_accept -m comment --comment 'ddmesh:backbone'
+	$IPT -w -A input_lan_rule -j input_backbone_accept -m comment --comment 'ddmesh:backbone'
+	$IPT -w -A input_mesh_rule -j input_backbone_reject -m comment --comment 'ddmesh:backbone'
+	$IPT -w -A input_ffgw_rule -j input_backbone_reject -m comment --comment 'ddmesh:backbone'
+	$IPT -w -A input_wifi2_rule -j input_backbone_reject -m comment --comment 'ddmesh:backbone'
 
 	$IPT -w -N output_backbone_accept
 	$IPT -w -N output_backbone_reject
-	$IPT -w -A output_wan_rule -j output_backbone_accept
-	$IPT -w -A output_lan_rule -j output_backbone_accept
-	$IPT -w -A output_mesh_rule -j output_backbone_reject
-	$IPT -w -A output_bat_rule -j output_backbone_reject
-	$IPT -w -A output_wifi2_rule -j output_backbone_reject
+	$IPT -w -A output_wan_rule -j output_backbone_accept -m comment --comment 'ddmesh:backbone'
+	$IPT -w -A output_lan_rule -j output_backbone_accept -m comment --comment 'ddmesh:backbone'
+	$IPT -w -A output_mesh_rule -j output_backbone_reject -m comment --comment 'ddmesh:backbone'
+	$IPT -w -A output_ffgw_rule -j output_backbone_reject -m comment --comment 'ddmesh:backbone'
+	$IPT -w -A output_wifi2_rule -j output_backbone_reject -m comment --comment 'ddmesh:backbone'
 
 	#input rules for privnet packets( to restrict tunnel pakets only via allowed interfaces )
 	#private data traffic is controlled by zone rules lan (br-lan)
 	$IPT -w -N input_privnet_accept
 	$IPT -w -N input_privnet_reject
-	$IPT -w -A input_wan_rule -j input_privnet_reject
-	$IPT -w -A input_lan_rule -j input_privnet_reject
-	$IPT -w -A input_mesh_rule -j input_privnet_accept
-	$IPT -w -A input_bat_rule -j input_privnet_reject
-	$IPT -w -A input_wifi2_rule -j input_privnet_reject
+	$IPT -w -A input_wan_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
+	$IPT -w -A input_lan_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
+	$IPT -w -A input_mesh_rule -j input_privnet_accept -m comment --comment 'ddmesh:privnet'
+	$IPT -w -A input_ffgw_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
+	$IPT -w -A input_wifi2_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
 
 	#add tables that are later filled with IPs that should be blocked.
 	# loop through zones
-	for i in mesh wifi2 bat lan wan vpn
+	for i in mesh wifi2 ffgw lan wan vpn
 	do
 	        $IPT -w -N input_"$i"_deny
-	        $IPT -w -I input_"$i"_rule -j input_"$i"_deny
+	        $IPT -w -I input_"$i"_rule -j input_"$i"_deny -m comment --comment 'ddmesh'
 	done
 
 	# allow dhcp because "subnet" definition. client has no ip yet.
@@ -73,35 +78,12 @@ setup_custom_rules() {
 	# $IPT -w -A output_rule -o $lan_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-lan-response'
 
 	#snat mesh from 10.201.xxx to 10.200.xxxx
-	$IPT -w -t nat -A postrouting_mesh_rule -p udp --dport 4305:4307 -j ACCEPT
-	$IPT -w -t nat -A postrouting_mesh_rule -p tcp --dport 4305:4307 -j ACCEPT
+	$IPT -w -t nat -A postrouting_mesh_rule -p udp --dport 4305 -j ACCEPT -m comment --comment 'ddmesh:bmxd'
+	$IPT -w -t nat -A postrouting_mesh_rule -p tcp --dport 4305 -j ACCEPT -m comment --comment 'ddmesh:bmxd'
 	# don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
-	$IPT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -p icmp -j ACCEPT
-	$IPT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_linknet -j SNAT --to-source $_ddmesh_ip
-	$IPT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_wifi2net -j SNAT --to-source $_ddmesh_ip
-}
-
-setup_openvpn_rules() {
-	logger -s -t $TAG "setup_openvpn_rules"
-	CONF=/etc/openvpn/openvpn.conf
-	$IPT -w -N output_openvpn_reject
-	$IPT -w -A output_mesh_rule -j output_openvpn_reject
-	$IPT -w -A output_bat_rule -j output_openvpn_reject
-	$IPT -w -A output_wifi2_rule -j output_openvpn_reject
-	$IPT -w -A output_vpn_rule -j output_openvpn_reject
-
-	IFS='
-'
-	if [ -f "$CONF" ]; then
-		for opt in $(cat $CONF | awk '/remote/{print $4","$3}')
-		do
-			proto=${opt%,*}
-			port=${opt#*,}
-			$IPT -w -A output_openvpn_reject -p $proto --dport $port -j reject
-		done
-	fi
-	unset IFS
-
+	$IPT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -p icmp -j ACCEPT -m comment --comment 'ddmesh:ping'
+	$IPT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_linknet -j SNAT --to-source $_ddmesh_ip -m comment --comment 'ddmesh:snat'
+	$IPT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_wifi2net -j SNAT --to-source $_ddmesh_ip -m comment --comment 'ddmesh:snat'
 }
 
 callback_add_ignored_nodes() {
@@ -125,23 +107,23 @@ callback_add_ignored_nodes() {
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 	if [ "$opt_lan" = "1" ]; then
-		$IPT -w -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP
-		$IPT -w -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
+		$IPT -w -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
 	fi
 	if [ "$opt_tbb" = "1" ]; then
-		$IPT -w -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
 	fi
 	if [ "$opt_wifi_adhoc" = "1" ]; then
-		$IPT -w -A input_ignore_nodes_wifia -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_wifia -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
 	fi
 	if [ "$opt_wifi_mesh2g" = "1" ]; then
-		$IPT -w -A input_ignore_nodes_wifi2m -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_wifi2m -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
 	fi
 	if [ "$opt_wifi_mesh5g" = "1" ]; then
-		$IPT -w -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
 	fi
 	if [ "$opt_vlan" = "1" ]; then
-		$IPT -w -A input_ignore_nodes_vlan -s $_ddmesh_nonprimary_ip -j DROP
+		$IPT -w -A input_ignore_nodes_vlan -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
 	fi
 
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
@@ -167,13 +149,13 @@ setup_ignored_nodes() {
 	tbb_wg_ifname="$(uci -q get network.tbb_wg.device)"
 	tbb_fastd_ifname="$(uci -q get network.tbb_fastd.device)"
 
-	[ -n "$wifi_mesh2g_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_mesh2g_ifname -j input_ignore_nodes_wifi2m
-	[ -n "$wifi_mesh5g_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_mesh5g_ifname -j input_ignore_nodes_wifi5m
-	[ -n "$mesh_lan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan
-	[ -n "$mesh_wan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan
-	[ -n "$mesh_vlan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_vlan_ifname -j input_ignore_nodes_vlan
-	[ -n "$tbb_fastd_ifname" ] && $IPT -w -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb
-	[ -n "$tbb_wg_ifname" ] && $IPT -w -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb
+	[ -n "$wifi_mesh2g_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_mesh2g_ifname -j input_ignore_nodes_wifi2m -m comment --comment 'ddmesh:ignore-nodes'
+	[ -n "$wifi_mesh5g_ifname" ] && $IPT -w -I input_mesh_rule -i $wifi_mesh5g_ifname -j input_ignore_nodes_wifi5m -m comment --comment 'ddmesh:ignore-nodes'
+	[ -n "$mesh_lan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_lan_ifname -j input_ignore_nodes_lan -m comment --comment 'ddmesh:ignore-nodes'
+	[ -n "$mesh_wan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_wan_ifname -j input_ignore_nodes_wan -m comment --comment 'ddmesh:ignore-nodes'
+	[ -n "$mesh_vlan_ifname" ] && $IPT -w -I input_mesh_rule -i $mesh_vlan_ifname -j input_ignore_nodes_vlan -m comment --comment 'ddmesh:ignore-nodes'
+	[ -n "$tbb_fastd_ifname" ] && $IPT -w -I input_mesh_rule -i $tbb_fastd_ifname -j input_ignore_nodes_tbb -m comment --comment 'ddmesh:ignore-nodes'
+	[ -n "$tbb_wg_ifname" ] && $IPT -w -I input_mesh_rule -i $tbb_wg_ifname -j input_ignore_nodes_tbb -m comment --comment 'ddmesh:ignore-nodes'
 
 
 	config_load ddmesh
@@ -198,7 +180,6 @@ _init()
 	#init all rules that can not be set by openwrt-firewall
 	setup_custom_rules
 	setup_ignored_nodes
-	setup_openvpn_rules
 }
 
 _update()
@@ -209,41 +190,33 @@ _update()
 	$IPT -w -F input_lan_deny
 	$IPT -w -F input_mesh_deny
 	$IPT -w -F input_wifi2_deny
-	$IPT -w -F input_bat_deny
+	$IPT -w -F input_ffgw_deny
 	$IPT -w -F input_vpn_deny
 
 	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
-		for n in wan mesh wifi2 bat vpn
+		for n in wan mesh wifi2 ffgw vpn
 		do
-			$IPT -w -D "input_"$n"_deny" -d $lan_network/$lan_mask -j reject 2>/dev/null
-			$IPT -w -A "input_"$n"_deny" -d $lan_network/$lan_mask -j reject
+			for cmd in D A
+			do
+				$IPT -w -$cmd "input_"$n"_deny" -d $lan_network/$lan_mask -j reject -m comment --comment 'ddmesh' 2>/dev/null
+			done
 		done
 
 		# remove/add SNAT rule when iface becomes available
 		for cmd in D A
 		do
-			$IPT -w -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'portfw-lan' 2>/dev/null
-			$IPT -w -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'lan-to-mesh' 2>/dev/null
+			$IPT -w -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'ddmesh:snat:lan' 2>/dev/null
+			$IPT -w -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'ddmesh:snat:mesh' 2>/dev/null
 		done
-
-		#add rules if gateway is on lan
-		if [ -n "$lan_gateway" ]; then
-			# remove/add SNAT rule when iface becomes available
-			for cmd in D A
-			do
-				$IPT -w -$cmd forwarding_lan_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
-				$IPT -w -$cmd forwarding_wifi2_rule -o $lan_ifname ! -d $lan_ipaddr/$lan_mask -j ACCEPT 2>/dev/null
-				$IPT -w -t nat -$cmd postrouting_lan_rule ! -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'lan-gateway' 2>/dev/null
-			done
-		fi
-
 	fi
 
 	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
-		for n in lan mesh wifi2 bat vpn
+		for n in lan mesh wifi2 ffgw vpn
 		do
- 			$IPT -w -D "input_"$n"_deny" -d $wan_network/$wan_mask -j reject 2>/dev/null
-			$IPT -w -A "input_"$n"_deny" -d $wan_network/$wan_mask -j reject
+			for cmd in D A
+			do
+				$IPT -w -$cmd "input_"$n"_deny" -d $wan_network/$wan_mask -j reject  -m comment --comment 'ddmesh' 2>/dev/null
+			done
 		done
 	fi
 
@@ -251,7 +224,7 @@ _update()
 		# remove/add SNAT rule when iface becomes available
 		for cmd in D A
 		do
-			$IPT -w -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'portfw-wifi2' 2>/dev/null
+			$IPT -w -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'ddmesh:snat:wifi2' 2>/dev/null
 		done
 	fi
 
@@ -270,10 +243,11 @@ case "$1" in
 		_update
 		;;
 
-	update_ignore) update_ignored_nodes
+	update-ignore)
+		update_ignored_nodes
 		;;
 	*)
-	 	echo "invalid param"
+		echo "invalid arg"
 		;;
 
 esac

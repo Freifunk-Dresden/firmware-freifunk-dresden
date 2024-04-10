@@ -6,8 +6,6 @@
 
 DEBUG='true'
 LOGGER_TAG='GW_CHECK'
-OVPN='/etc/init.d/openvpn'
-
 
 . /lib/functions/network.sh
 
@@ -76,23 +74,6 @@ setup_gateway_table ()
 	ip route add default via $via dev $dev table $gateway_table
 }
 
-start_openvpn()
-{
-	local_gateway_present="$(ip ro li ta local_gateway)"
-
-	#only start openvpn when we have
-	if [ -n "$local_gateway_present" -a -x $OVPN -a -f /etc/openvpn/openvpn.conf ]; then
-		#logger -s -t "$LOGGER_TAG" "restart openvpn"
-		$OVPN restart 2>/dev/null
-	fi
-}
-
-stop_openvpn()
-{
-	 test -x $OVPN && $OVPN stop 2>/dev/null
-}
-
-
 #kill running instance
 mypid="$$"
 pname="${0##*/}"
@@ -105,7 +86,6 @@ done
 
 setup_fallback_gateway 	# for safety reasons always store updated gw
 
-#dont use vpn server (or any openvpn server), it could interrupt connection
 # cloudflare, google, quad9, freifunk-dresden.de
 ping_hosts='1.1.1.1 8.8.8.8 9.9.9.9 89.163.140.199'
 $DEBUG && printf 'hosts:[%s]\n' "$ping_hosts"
@@ -222,10 +202,6 @@ do
 
 				ip route flush table public_gateway 2>/dev/null
 				/usr/lib/ddmesh/ddmesh-bmxd.sh no_gateway
-
-				# when comming here, no vpn is present -> restart
-				stop_openvpn
-				start_openvpn
 			fi
 		fi
 
@@ -251,9 +227,6 @@ do
 		# but wan is dead, then default route via lan must not be deleted
 		ip route del default via $via dev $dev table local_gateway
 		ip route del default via $via dev $dev table public_gateway
-
-		#stop openvpn to avoid outgoing openvpn connection via bat0
-		stop_openvpn
 	fi
 
 done
@@ -267,15 +240,6 @@ if [ "$ok" != "1" ]; then
 	ip route flush table local_gateway 2>/dev/null
 	ip route flush table public_gateway 2>/dev/null
 	/usr/lib/ddmesh/ddmesh-bmxd.sh no_gateway
-
-	stop_openvpn
-
-	# try to restart openvpn, in case connection is dead, but active ($ok was 1)
-	# also if no vpn was active ($ok was 0)
-	#but only if no "no-ovpn-restart" was passed
-	if [ -z "$1" ]; then
-		start_openvpn
-	fi
 fi
 
 exit 0

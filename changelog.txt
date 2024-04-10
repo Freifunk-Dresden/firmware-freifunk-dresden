@@ -5,6 +5,8 @@ WiFi                      - 5GHz client mode (WAN) wpa3 support added
 sysinfo                   - sysinfo.json gets a new network statistic section
 dsa-migration             - prepare for updates where openwrt changes the minor compatibility version
                             (e.g. dsa-migration)
+openvpn                   - remove obsolete openvpn
+firewall                  - increase security and internal improvments
 
 
 2023-11-10 [8.2.0] (release)
