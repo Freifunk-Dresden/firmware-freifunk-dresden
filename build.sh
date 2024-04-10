@@ -1106,9 +1106,9 @@ setup_buildroot ()
   echo "done."
 
   echo "----- generate built_info ----"
-  git_config_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
-  git_openwrt_branch=$(cd $buildroot && git name-rev --name-only $git_config_openwrt_rev | sed 's#.*/##')
-  echo "git_config_openwrt_rev:$git_config_openwrt_rev" >> $buildroot/files/etc/built_info
+  git_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
+  git_openwrt_branch=$(cd $buildroot && git name-rev --name-only $git_openwrt_rev | sed 's#.*/##')
+  echo "git_openwrt_rev:$git_openwrt_rev" >> $buildroot/files/etc/built_info
   echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
 
   # when running from gitlab only specific revision is cloned. there are no branch infos.
@@ -1133,7 +1133,7 @@ setup_buildroot ()
   echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
   echo "builtdate:$(date +'%H:%M:%S / %d %h %y')" >> $buildroot/files/etc/built_info
 
-  echo "git_config_openwrt_rev:     $git_config_openwrt_rev"
+  echo "git_openwrt_rev:     $git_openwrt_rev"
   echo "git_openwrt_branch:  $git_openwrt_branch"
   echo "git_ddmesh_rev:      $git_ddmesh_rev"
   echo "git_ddmesh_branch:   $git_ddmesh_branch"
