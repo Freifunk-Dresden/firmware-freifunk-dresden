@@ -100,6 +100,7 @@ UPLOAD_INFO_DIR="fw-upload-infos"
 INPUT_FILEINFO_JSON_FILENAME="fileinfo.json"
 # this file is generated to reflect any updated files. means when new files are added
 OUTPUT_FILEINFO_JSON_FILENAME="fileinfo.json.new-generated"
+GENERATED_FIRMWARE_OUTPUT_DIR="_output"
 
 #get apsolute path before changing to it.
 firmwareroot="$PWD"
@@ -450,7 +451,7 @@ do
 	# needed since openwrt 22.03
 	export MKHASH=$buildroot/staging_dir/host/bin/mkhash
 
-	_platforms=$buildroot/output
+	_platforms=${buildroot}/${GENERATED_FIRMWARE_OUTPUT_DIR}
 
 	# check directory
 	test -d ${_platforms} || continue

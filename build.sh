@@ -30,8 +30,8 @@ DOCKER_CONTAINER_NAME="ffbuild"
 
 DL_DIR=dl
 WORK_DIR=workdir
-FINAL_OUTPUT_DIR="final_output" # used by gen-upload.sh (docker)
-LOCAL_OUTPUT_DIR="output"				# location to copy images/packages to, after each targets
+FINAL_OUTPUT_DIR="final_output"	# used by gen-upload.sh (docker)
+LOCAL_OUTPUT_DIR="_output"			# location to copy images/packages to, after each targets
 CONFIG_DIR=fw-configs
 CONFIG_DEFAULT_FILE="default.config"
 OPENWRT_PATCHES_DIR=fw-patches
