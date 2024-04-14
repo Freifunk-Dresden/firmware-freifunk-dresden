@@ -290,11 +290,11 @@ config rule 'forward_wan_any_catch'
 	option target 'REJECT'
 
 # ---- mesh to mesh ----
+# allow src_ip also from internet (answers)
 config rule 'forward_mesh_to_mesh'
 	option name 'forward_mesh_to_mesh'
 	option proto 'all'
 	option src 'mesh'
-	option src_ip '10.200.0.0/16'
 	option dest 'mesh'
 	option dest_ip '10.200.0.0/16'
 	option target 'ACCEPT'
