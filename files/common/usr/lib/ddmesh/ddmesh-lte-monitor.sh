@@ -12,6 +12,13 @@ mkdir -p $lte_info_dir
 wwan_device="$(uci -q get network.wwan.device)"
 syslog="$(uci -q get ddmesh.network.wwan_syslog)"
 
+# check if hw is present
+if ! uqmi -s -d $wwan_device --get-capabilities 2>&1 >/dev/null; then
+	logger -s -t "lte-modem" "no LTE modem present -> exit monitor"
+	exit 1
+fi
+logger -s -t "lte-modem" "LTE modem present -> start monitoring"
+
 dhcp_refresh_count=0
 while true;
 do

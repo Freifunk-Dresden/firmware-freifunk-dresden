@@ -3660,6 +3660,9 @@ CONFIG_PACKAGE_libpcap=y
 # CONFIG_PACKAGE_libpci is not set
 # CONFIG_PACKAGE_libpcre is not set
 # CONFIG_PACKAGE_libpcre16 is not set
+# CONFIG_PACKAGE_libpcre2 is not set
+# CONFIG_PACKAGE_libpcre2-16 is not set
+# CONFIG_PACKAGE_libpcre2-32 is not set
 # CONFIG_PACKAGE_libpcre32 is not set
 # CONFIG_PACKAGE_libpcrecpp is not set
 # CONFIG_PACKAGE_libpopt is not set
@@ -3863,12 +3866,6 @@ CONFIG_PACKAGE_uhttpd=y
 # CONFIG_PACKAGE_uhttpd-mod-ubus is not set
 # CONFIG_PACKAGE_uhttpd-mod-ucode is not set
 # end of Web Servers/Proxies
-
-#
-# Wireless
-#
-# CONFIG_PACKAGE_wavemon is not set
-# end of Wireless
 
 #
 # WirelessAPD

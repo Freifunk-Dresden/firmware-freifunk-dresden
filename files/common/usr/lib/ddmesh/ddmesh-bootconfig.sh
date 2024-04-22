@@ -28,6 +28,9 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
 config_boot_step1() {
 
+# when comming from different openwrt firmware ensure correct firewall
+cp /rom/etc/config/firewall /etc/config/firewall
+
 cat <<EOM >/etc/config/overlay
 config overlay 'data'
 	option	md5sum '0'

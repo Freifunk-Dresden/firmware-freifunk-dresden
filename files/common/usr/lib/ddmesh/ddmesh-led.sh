@@ -66,6 +66,12 @@ case "$platform" in
 					_led_wifi2g="green:status"
 					_led_wifi5g=""
 					;;
+			"sophos,ap100")
+				_led_wifi2g="green:status"
+				_led_wifi5g=""
+				_led_status="red:status"
+				_led_flag_status_done="off"
+			;;
 		esac
 		;;
 
