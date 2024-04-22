@@ -12,10 +12,15 @@ cat<<EOM
 			</table>
 		</td>
 		<td width="5">&nbsp;</td>
-		<td class="navi" valign="top" height="100%" width="150"><img alt="" border="0" height="62" src="/images/ff-logo-3.gif" width="150"></td>
+		<td class="rightbar" valign="top" height="100%" width="150"><img class="block" alt="" border="0" height="62" src="/images/ff-logo-3.gif" width="150"></td>
 	</tr>
 	<tr><td colspan="5" height="5"></td></tr>
-	<tr><td class="navibar" colspan="5" height="18" width="100%"><span class="infobar"><a href="/license.cgi?license=0">License/Copyright</a>, Internet&nbsp;IPv4&nbsp;via:&nbsp;<span class="infobarvalue">$INET_GW</span>, Verbunden&nbsp;via:&nbsp;<span class="infobarvalue">$in_ifname</span></span></td></tr>
+	<tr><td colspan="5" height="5">
+		<table class="bottombar" width="100%" CELLPADDING="0" CELLSPACING="0">
+		<tr><td><a href="/license.cgi?license=0">License/Copyright</a>, Internet&nbsp;IPv4&nbsp;via:&nbsp;<span class="infobarvalue">$INET_GW</span>, Verbunden&nbsp;via:&nbsp;<span class="infobarvalue">$in_ifname</span></td></tr>
+		</table>
+	</td></tr>
+
 </table>
 </body>
 </html>

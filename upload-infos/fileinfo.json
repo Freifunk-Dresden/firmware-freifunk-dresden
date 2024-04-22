@@ -776,6 +776,19 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ath79-generic-sophos_ap100-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "sophos,ap100",
+      "model2": "Sophos AP100",
+      "filename": "openwrt-ath79-generic-sophos_ap100-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-initramfs-kernel.bin",
       "comment": ""
     },

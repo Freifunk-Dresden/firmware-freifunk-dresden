@@ -70,7 +70,8 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_ramips_mt7621_DEVICE_bolt_arion is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_cudy_wr1300 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_cudy_wr2100 is not set
-# CONFIG_TARGET_ramips_mt7621_DEVICE_cudy_x6 is not set
+# CONFIG_TARGET_ramips_mt7621_DEVICE_cudy_x6-v1 is not set
+# CONFIG_TARGET_ramips_mt7621_DEVICE_cudy_x6-v2 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_dlink_covr-x1860-a1 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_dlink_dap-x1860-a1 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_dlink_dir-1960-a1 is not set
@@ -255,7 +256,8 @@ CONFIG_TARGET_MULTI_PROFILE=y
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_xzwifi_creativebox-v1 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_cudy_wr1300 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_cudy_wr2100 is not set
-# CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_cudy_x6 is not set
+# CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_cudy_x6-v1 is not set
+# CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_cudy_x6-v2 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_dlink_covr-x1860-a1 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_dlink_dap-x1860-a1 is not set
 # CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_dlink_dir-1960-a1 is not set
@@ -3954,6 +3956,9 @@ CONFIG_PACKAGE_libnl-tiny=y
 # CONFIG_PACKAGE_libpci is not set
 # CONFIG_PACKAGE_libpcre is not set
 # CONFIG_PACKAGE_libpcre16 is not set
+# CONFIG_PACKAGE_libpcre2 is not set
+# CONFIG_PACKAGE_libpcre2-16 is not set
+# CONFIG_PACKAGE_libpcre2-32 is not set
 # CONFIG_PACKAGE_libpcre32 is not set
 # CONFIG_PACKAGE_libpcrecpp is not set
 # CONFIG_PACKAGE_libpopt is not set
@@ -4152,12 +4157,6 @@ CONFIG_PACKAGE_uhttpd=y
 # CONFIG_PACKAGE_uhttpd-mod-ubus is not set
 # CONFIG_PACKAGE_uhttpd-mod-ucode is not set
 # end of Web Servers/Proxies
-
-#
-# Wireless
-#
-# CONFIG_PACKAGE_wavemon is not set
-# end of Wireless
 
 #
 # WirelessAPD
