@@ -210,7 +210,7 @@ gen_download_json_add_data()
   printf "    "
 
 	# get info for each filename
-	# eval is needed because file_filter must be avaluated
+	# eval is needed because file_filter must be evaluated
 	for path in $(eval ls -1 $output_path/$subpath/$file_filter 2>/dev/null )
 	do
 		file=$(basename $path)
@@ -229,8 +229,8 @@ gen_download_json_add_data()
 		#	select() checks a condition and returns the input data (current array entry)
 		#	if condition is true
 		# Die eckigen klammern erzeugt ein array, in welches alle gefundenen objekte mit gleichem FILENAMEN gesammelt werden.
-		# Fuer die meisten filenamen ist das array 1 gross. aber fuer files die fuer verschiedene router
-		# verwendet werden, koennen mehrere eintraege sein.
+		# Fuer die meisten filenamen ist das array 1 gross (firmware file nur von einem router genutzt).
+		# aber fuer files die fuer verschiedene router verwendet werden, koennen mehrere eintraege enthalten sein.
 		if [ -f "$info_dir/$INPUT_FILEINFO_JSON_FILENAME" ]; then
 			info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename == \"$file\") ]")
 		else
@@ -242,7 +242,7 @@ gen_download_json_add_data()
 		OPT="--raw-output"
 
 		# run through each array (siehe kommentar zuvor)
-		# on file can be used for more than one device/model.
+		# one file can be used for more than one device/model.
 		# At least run this loop once to store new file names if info_array was empty
 		idx=0
 		while true
@@ -251,8 +251,8 @@ gen_download_json_add_data()
 			if [ "$info_array" != "[]" ]; then
 				info=$(echo "$info_array" | jq ".[$idx]")
 #printf "idx:%d info:$info\n" $idx
-				#info_array holds one entry for each device that is using same firmware image
-				#Normally it contains only one entry. if last info was found, break.
+
+				# no more entries
 				test "$info" = "null" && break;
 
 				autoupdate="$(echo $info | jq $OPT '.autoupdate')"
@@ -299,7 +299,7 @@ gen_download_json_add_data()
 			isFirstFile=false
 
 			# check if firmware filename is already in OUTPUT_FILEINFO_JSON_FILENAME.
-			# When targets are moved from one buildroot to another (19.04 -> 18.06) then json may still(already)
+			# When targets are moved from one buildroot to another (e.g.: upgrade openwrt) then json may still(already)
 			# contain the filename. do not add it a second time.
 
 			# generate download.json and new fileinfo.json
