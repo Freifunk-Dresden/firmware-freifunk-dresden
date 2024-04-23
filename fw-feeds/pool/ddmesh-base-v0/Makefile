@@ -246,23 +246,13 @@ define Package/$(PKG_NAME)-extra-modules/config
       # the optional string is a prompt that is displayed
       tristate "tcpdump"
 
-#    config PACKAGE_OVPNCerts
-#      # menu point is displayed when dependencies are selected
-#      depends on PACKAGE_ddmesh-extra-modules
-#      tristate "OVPNCerts"
-#      help
-#        Create openvpn tunnel used by router as public gateway.
-
-#    config PACKAGE_feinstaubsensor
-#      # menu point is displayed when dependencies are selected
-#      depends on PACKAGE_ddmesh-extra-modules
-#      tristate "Feinstaubensor (Stuttgard Project)"
-#      help
-#        This module simply includes a menu to display
-#        Feinstaubsensor graphics.
-#        Image link must be modified to display graphic for
-#        your own sensor.
-#        See http://luftdaten.info/
+    # use SYMBOL of package that should be selected
+    config PACKAGE_htop
+      # menu point is displayed when dependencies are selected
+      depends on PACKAGE_ddmesh-extra-modules
+      # tristate is a keyword meaning, that this package can be compiled built-in or as module.
+      # the optional string is a prompt that is displayed
+      tristate "htop"
 
   # endmenu
 
