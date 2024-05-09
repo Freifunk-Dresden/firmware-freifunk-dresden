@@ -32,8 +32,8 @@ echo ""
 #check if we are in "Verwalten"
 test "$URI_PATH" = "/www/admin" && test "$enable_setup" = "0" && {
 cat<<EOM
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!doctype html>
+<html lang="de">
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 </head>
@@ -43,8 +43,8 @@ exit
 }
 
 cat<<EOF
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!doctype html>
+<html lang="de">
 <head>
 	<title>$_ddmesh_node [$in_ifname] - $TITLE</title>
 	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
@@ -53,7 +53,7 @@ cat<<EOF
 	<meta name="viewport" content="width=device-width" />
 	<meta name="author" content="Stephan Enderlein">
 	<meta name="robots" content="noindex">
-	<link href="/css/ff.css?random=${RANDOM}" rel="StyleSheet" TYPE="text/css">
+	<link href="/css/ff.css" rel="StyleSheet" TYPE="text/css">
 	<link rel="shortcut icon" href="/images/favicon.ico">
 	<script type="text/javascript" src="/js/jquery.js"></script>
 	<script type="text/javascript" src="/js/help.js"></script>
@@ -61,7 +61,7 @@ cat<<EOF
 EOF
 
 test "$URI_PATH" = "/www/admin" && {
-	echo '<script type="text/javascript" src="/admin/js/admin.js?random=${RANDOM}"></script>'
+	echo '<script type="text/javascript" src="/admin/js/admin.js"></script>'
 }
 
 cat<<EOF
@@ -114,8 +114,8 @@ cat<<EOM
 <TR><TD COLSPAN="5">
  <TABLE WIDTH="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
   <TR>
-  <TD width="40" HEIGHT="33" ><img src="$lockimg"></TD>
-  <TD HEIGHT="33" style="vertical-align: middle;"><font size="5"><b>$COMMUNITY</b>&nbsp;$_ddmesh_node</font><font size="4">&nbsp;&nbsp;(Network ID: $NETID)</font>
+  <TD width="40"><img src="$lockimg"></TD>
+  <TD style="vertical-align: middle;"><font size="5"><b>$COMMUNITY</b>&nbsp;$_ddmesh_node</font><font size="4">&nbsp;&nbsp;(Network ID: $NETID)</font>
 EOM
 test "$URI_PATH" = "/www/admin" && check_passwd && {
 	echo "<font size="+1" color="red"><span class="blink">!!! BITTE Password setzen !!!</span</font>"
@@ -124,18 +124,18 @@ tmp_name=$(uhttpd -d "$(uci -q get ddmesh.contact.name)")
 tmp_location=$(uhttpd -d "$(uci -q get ddmesh.contact.location)")
 cat<<EOM
   </td>
-  <TD HEIGHT="33" WIDTH="150" valign="bottom"><IMG ALT="" BORDER="0" HEIGHT="33" SRC="/images/ff-logo-1r.gif" WIDTH="150"></TD></tr>
+  <TD WIDTH="150" valign="bottom"><IMG class="block" style="vertical-align: bottom" ALT="" BORDER="0" SRC="/images/ff-logo-1r.gif" WIDTH="150"></TD></tr>
  </TABLE></TD></TR>
  <tr><td COLSPAN="5">
-  <table class="navibar" width="100%" CELLPADDING="0" CELLSPACING="0">
+  <table class="topbar" width="100%" CELLPADDING="0" CELLSPACING="0">
   <tr>
-  <TD COLSPAN="4" HEIGHT="19" class="infobar" >Model: <span class="infobarvalue">${model2}</span>, Version: <span class="infobarvalue">$(cat /etc/version)</span>, Name: <span class="infobarvalue">${tmp_name}</span>, Standort: <span class="infobarvalue">${tmp_location}</span></TD>
-  <TD HEIGHT="19" WIDTH="150"><IMG ALT="" BORDER="0" HEIGHT="19" SRC="/images/ff-logo-2.gif" WIDTH="150"></TD></TR>
+  <TD COLSPAN="4" class="infobar" >Model: <span class="infobarvalue">${model2}</span>, Version: <span class="infobarvalue">$(cat /etc/version)</span>, Name: <span class="infobarvalue">${tmp_name}</span>, Standort: <span class="infobarvalue">${tmp_location}</span></TD>
+  <TD WIDTH="150" class="infobar" ><IMG class="block" border="0" SRC="/images/ff-logo-2.gif" WIDTH="150"></TD></TR>
   </table></td></tr>
  <TR><TD class="ie_color" HEIGHT="100%" VALIGN="top">
      <table  BORDER="0" CELLPADDING="0" CELLSPACING="0" HEIGHT="100%" style="table-layout: inherit">
        <tr><TD class="ie_white" HEIGHT="5"  VALIGN="top" ></td></tr>
-       <tr><TD class="navi"  VALIGN="top" >
+       <tr><TD class="leftmenu"  VALIGN="top" >
            <table VALIGN="top" border="0">
 EOM
 
