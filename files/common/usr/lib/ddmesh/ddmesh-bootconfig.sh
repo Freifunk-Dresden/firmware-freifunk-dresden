@@ -26,6 +26,8 @@ LOGGER_TAG="ddmesh-boot"
 /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
+MAX_BACKBONE_CLIENTS=6
+
 config_boot_step1() {
 
 # when comming from different openwrt firmware ensure correct firewall
@@ -176,7 +178,7 @@ config backbone 'backbone'
 	option  fastd_port	'5002'
 	option  default_fastd_port	'5002'
 	option  default_wg_port	'5003'
-	option	number_of_clients	6
+	option	number_of_clients	${MAX_BACKBONE_CLIENTS}
 
 #config backbone_accept
 #	option	key			''
@@ -188,6 +190,7 @@ config backbone_client
 	option	disabled		'0'
 	option 	port				''
 	option	public_key	''
+	option	node				''
 
 config backbone_client
 	option 	host				'vpn12.freifunk-dresden.de'
@@ -195,6 +198,7 @@ config backbone_client
 	option	disabled		'0'
 	option 	port				''
 	option	public_key	''
+	option	node				''
 
 config backbone_client
 	option 	host				'vpn15.freifunk-dresden.de'
@@ -202,6 +206,7 @@ config backbone_client
 	option	disabled		'0'
 	option 	port				''
 	option	public_key	''
+	option	node				''
 
 config backbone_client
 	option 	host				'vpn18.freifunk-dresden.de'
@@ -209,6 +214,7 @@ config backbone_client
 	option	disabled		'0'
 	option 	port				''
 	option	public_key 	''
+	option	node				''
 
 config backbone_client
 	option 	host				'vpn1le.freifunk-leipzig.de'
@@ -216,6 +222,7 @@ config backbone_client
 	option	disabled		'0'
 	option 	port				''
 	option	public_key 	''
+	option	node				''
 
 config backbone_client
 	option 	host				'vpn3le.freifunk-leipzig.de'
@@ -223,6 +230,7 @@ config backbone_client
 	option	disabled		'0'
 	option 	port				''
 	option	public_key 	''
+	option	node				''
 
 config privnet 'privnet'
 	option  fastd_port		'4000'
@@ -331,7 +339,7 @@ config_update() {
 	#############################################################################
 	# setup backbone clients
 	#############################################################################
-	for i in $(seq 0 4)
+	for i in $(seq 0 ${MAX_BACKBONE_CLIENTS})
 	do
 		disabled="$(uci -q get ddmesh.@backbone_client[$i].disabled)"
 		if [ "$disabled" != "1" ]; then
@@ -348,11 +356,14 @@ config_update() {
 				do
 					kk=$(($k - 1))
 					h=$(uci -q get credentials.@backbone[$kk].host)
+					[ -z "$h" ] && break
+
 					if [ "$h" = "$host" ]; then
 						case "$type" in
 							wireguard)
 								uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].wg_pubkey)"
 								uci set ddmesh.@backbone_client[$i].port="$(uci get credentials.@backbone[$kk].wg_port)"
+								uci set ddmesh.@backbone_client[$i].node="$(uci get credentials.@backbone[$kk].node)"
 								;;
 						esac
 						break;

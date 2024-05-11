@@ -472,6 +472,7 @@ upgrade_8_2_2()
 upgrade_8_2_3()
 {
 	uci add_list ddmesh.communities.community='1022%Geringswalde'
+	uci -q set ddmesh.backbone.number_of_clients=6
 }
 
 ##################################
