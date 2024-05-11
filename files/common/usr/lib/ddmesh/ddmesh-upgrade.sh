@@ -471,7 +471,7 @@ upgrade_8_2_2()
 
 upgrade_8_2_3()
 {
-	true
+	uci add_list ddmesh.communities.community='1022%Geringswalde'
 }
 
 ##################################
