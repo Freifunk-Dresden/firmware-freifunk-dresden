@@ -361,9 +361,9 @@ config_update() {
 					if [ "$h" = "$host" ]; then
 						case "$type" in
 							wireguard)
-								uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].wg_pubkey)"
-								uci set ddmesh.@backbone_client[$i].port="$(uci get credentials.@backbone[$kk].wg_port)"
-								uci set ddmesh.@backbone_client[$i].node="$(uci get credentials.@backbone[$kk].node)"
+								uci set ddmesh.@backbone_client[$i].public_key="$(uci -q get credentials.@backbone[$kk].wg_pubkey)"
+								uci set ddmesh.@backbone_client[$i].port="$(uci -q get credentials.@backbone[$kk].wg_port)"
+								uci set ddmesh.@backbone_client[$i].node="$(uci -q get credentials.@backbone[$kk].node)"
 								;;
 						esac
 						break;

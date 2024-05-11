@@ -5,6 +5,8 @@
 # script is called during boot process before config_update.
 # It updates changes in persistent files (e.g.: /etc/config/network, firewall)
 
+. /lib/functions.sh
+
 previous_version=$(uci get ddmesh.boot.upgrade_version 2>/dev/null)
 current_version=$(cat /etc/version)
 upgrade_running=$(uci -q get ddmesh.boot.upgrade_running)
@@ -469,10 +471,47 @@ upgrade_8_2_2()
 	cp /rom/etc/config/firewall /etc/config/firewall
 }
 
+callback_upgrade_backbone ()
+{
+	local config="$1"
+
+	local host  #hostname or ip
+	local type
+	local disabled
+
+	config_get host "$config" host
+	config_get type "$config" type
+	config_get disabled "$config" disabled
+
+	# echo "process: disabled:$disabled, cfgtype:$type, host:$host "
+	if [ "$disabled" != "1" -a "$type" != "wireguard" -a -n "$host" ]; then
+
+		for k in $(seq 1 30)
+		do
+			kk=$(($k - 1))
+			h=$(uci -q get credentials.@backbone[$kk].host)
+			[ -z "$h" ] && break
+
+			if [ "$h" = "$host" ]; then
+				uci -q set ddmesh.$config.public_key="$(uci -q get credentials.@backbone[$kk].wg_pubkey)"
+				uci -q set ddmesh.$config.port="$(uci -q get credentials.@backbone[$kk].wg_port)"
+				uci -q set ddmesh.$config.node="$(uci -q get credentials.@backbone[$kk].node)"
+				uci -q set ddmesh.$config.type="wireguard"
+				break;
+			fi
+		done
+	fi
+}
+
 upgrade_8_2_3()
 {
 	uci add_list ddmesh.communities.community='1022%Geringswalde'
 	uci -q set ddmesh.backbone.number_of_clients=6
+	if [ -x "/usr/bin/wg" ]; then
+		config_load ddmesh
+		config_foreach callback_upgrade_backbone backbone_client
+	fi
+
 }
 
 ##################################

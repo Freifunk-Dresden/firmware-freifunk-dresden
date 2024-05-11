@@ -3,8 +3,10 @@
 community                 - add "Freifunk Geringswalde"
 router                    - add router ZyXEL NWA55AXE
 Backbone Server           - switch to wireguard servers on initial setup
+                          - upgrade fastd backbone config to wireguard
                           - add servers for Leipzig
                           - set new default servers
+
 
 2024-03-31 [8.2.2] (testing)
 --------------------------------------------------
@@ -247,7 +249,7 @@ wifi-gui                  - add option to select 5ghz channel. it also controls 
 
 2020-11-25 6.1.4 (master)
 --------------------------------------------------
-gui:backcbone             - fix and add backbone configuration
+gui:backbone              - fix and add backbone configuration
 openwrt                   - update openwrt and packages to new versions with
                             (security fixes)
 backbone-fastd            - udpate to v19
