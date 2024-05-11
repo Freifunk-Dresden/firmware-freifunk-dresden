@@ -173,42 +173,56 @@ config bmxd 'bmxd'
 
 
 config backbone 'backbone'
-	option  fastd_port		'5002'
+	option  fastd_port	'5002'
 	option  default_fastd_port	'5002'
 	option  default_wg_port	'5003'
-	option	number_of_clients	5
+	option	number_of_clients	6
 
 #config backbone_accept
 #	option	key			''
-#	option	comment			''
+#	option	comment	''
 
 config backbone_client
-	option 	host			'vpn9.freifunk-dresden.de'
-	option	type			'fastd'
+	option 	host				'vpn9.freifunk-dresden.de'
+	option	type				'wireguard'
 	option	disabled		'0'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	port				''
+	option	public_key	''
 
 config backbone_client
-	option 	host			'vpn15.freifunk-dresden.de'
-	option	type			'fastd'
+	option 	host				'vpn12.freifunk-dresden.de'
+	option	type				'wireguard'
 	option	disabled		'0'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	port				''
+	option	public_key	''
 
 config backbone_client
-	option 	host			'vpn16.freifunk-dresden.de'
-	option	type			'fastd'
+	option 	host				'vpn15.freifunk-dresden.de'
+	option	type				'wireguard'
 	option	disabled		'0'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	port				''
+	option	public_key	''
 
 config backbone_client
-	option 	host			'vpn20.freifunk-dresden.de'
-	option	type			'fastd'
+	option 	host				'vpn18.freifunk-dresden.de'
+	option	type				'wireguard'
 	option	disabled		'0'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	port				''
+	option	public_key 	''
+
+config backbone_client
+	option 	host				'vpn1le.freifunk-leipzig.de'
+	option	type				'wireguard'
+	option	disabled		'0'
+	option 	port				''
+	option	public_key 	''
+
+config backbone_client
+	option 	host				'vpn3le.freifunk-leipzig.de'
+	option	type				'wireguard'
+	option	disabled		'0'
+	option 	port				''
+	option	public_key 	''
 
 config privnet 'privnet'
 	option  fastd_port		'4000'
@@ -326,23 +340,26 @@ config_update() {
 			port="$(uci -q get ddmesh.@backbone_client[$i].port)"
 			pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
 			logger -s -t "$LOGGER_TAG" "update backbone {$type, $host, $port, $pubkey}"
-			case "$type" in
-			 fastd)
-				if [ -n "$host" -a -z "$pubkey" ]; then
-					#lookup key
-					for k in $(seq 1 30)
-					do
-						kk=$(($k - 1))
-						h=$(uci -q get credentials.@backbone[$kk].host)
-						if [ "$h" = "$host" ]; then
-							uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
-							break;
-						fi
-					done
-				fi
-			 ;;
-			esac
-		fi
+
+			# when no public key, then this is initial setup. read key from credentials (offline)
+			if [ -n "$host" -a -z "$pubkey" ]; then
+				#lookup key
+				for k in $(seq 1 30)
+				do
+					kk=$(($k - 1))
+					h=$(uci -q get credentials.@backbone[$kk].host)
+					if [ "$h" = "$host" ]; then
+						case "$type" in
+							wireguard)
+								uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].wg_pubkey)"
+								uci set ddmesh.@backbone_client[$i].port="$(uci get credentials.@backbone[$kk].wg_port)"
+								;;
+						esac
+						break;
+					fi # host
+				done # loop keys
+			fi # empty key
+		fi # disabled
 	done
 
 

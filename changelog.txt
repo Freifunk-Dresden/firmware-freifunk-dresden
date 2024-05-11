@@ -2,6 +2,9 @@
 --------------------------------------------------
 community                 - add "Freifunk Geringswalde"
 router                    - add router ZyXEL NWA55AXE
+Backbone Server           - switch to wireguard servers on initial setup
+                          - add servers for Leipzig
+                          - set new default servers
 
 2024-03-31 [8.2.2] (testing)
 --------------------------------------------------
