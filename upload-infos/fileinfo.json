@@ -2237,6 +2237,29 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ramips-mt7621-zyxel_nwa55axe-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-zyxel_nwa55axe-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-zyxel_nwa55axe-squashfs-ramboot-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "zyxel,nwa55axe",
+      "model2": "ZyXEL NWA55AXE",
+      "filename": "openwrt-ramips-mt7621-zyxel_nwa55axe-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "filename": "openwrt-ramips-mt76x8-glinet_gl-mt300n-v2-initramfs-kernel.bin",
       "comment": ""
     },
