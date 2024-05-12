@@ -558,8 +558,6 @@ else
 
 	esac
 	if [ $RESTART -eq 1 ]; then
-		# refresh before connection is killed
-		/usr/lib/ddmesh/ddmesh-backbone-regwg.sh refresh >/dev/null 2>&1
 		/usr/lib/ddmesh/ddmesh-backbone.sh restart >/dev/null 2>&1
 	fi
 	html_msg $MSG

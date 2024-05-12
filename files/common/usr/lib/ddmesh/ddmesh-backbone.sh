@@ -365,6 +365,10 @@ case "$1" in
 				config_load ddmesh
 				config_foreach callback_incoming_wireguard backbone_accept $local_wg_ip "$local_wg_ip_nonprimary/$local_wg_ip_netpre"
 			fi
+
+			# register all configured backbone server (this is done also by crontab, but after upgrading and without
+			# having user to "click" on button in gui, this would take to long)
+			/usr/lib/ddmesh/ddmesh-backbone-regwg.sh refresh >/dev/null 2>&1
 		fi
 
 		# try to resolve host names and setup wg tunnel
@@ -379,7 +383,7 @@ case "$1" in
 
 		# try to resolv and update wg config. wg does not interrupt connection
 		# when there is no change
-
+		#
 		# check for working dns to avoid delays created by wg-tool trying to resolve
 		nslookup "freifunk-dresden.de" >/dev/null && {
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
