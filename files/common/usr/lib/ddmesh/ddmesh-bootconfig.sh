@@ -380,10 +380,16 @@ config_update() {
 	# But this ip is not reachable and would prevent any internet connection (local or for freifunk)
 	if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ]; then
 		uci -q delete ddmesh.network.lan_gateway
+		uci -q delete ddmesh.network.lan_dns
 	fi
 
 	if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ]; then
+		# if mesh on wan, we need to disable udhcpc to avoid flooding syslog
+		uci -q set ddmesh.network.wan_proto='static'
 		uci -q delete ddmesh.network.wan_gateway
+		uci -q delete ddmesh.network.wan_dns
+		uci -q delete ddmesh.network.wan_ipaddr
+		uci -q delete ddmesh.network.wan_netmask
 	fi
 
 	#############################################################################
