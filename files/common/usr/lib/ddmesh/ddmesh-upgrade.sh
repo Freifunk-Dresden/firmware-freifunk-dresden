@@ -81,188 +81,6 @@ run_upgrade()
 ### uci commit is called after booting via ddmesh.boot_step=2
 # a function for current version is needed for this algorithm
 
-upgrade_5_0_5()
-{
- true
-}
-
-upgrade_6_0_6()
-{
- uci add_list ddmesh.system.communities="Freifunk Freital"
- uci set ddmesh.network.wifi_country="DE"
- uci set ddmesh.network.wifi_channel_5Ghz="44"
- uci set ddmesh.network.wifi_txpower_5Ghz="18"
-}
-
-upgrade_6_0_7()
-{
- uci -q delete system.ntp.server
- uci -q add_list system.ntp.server=0.de.pool.ntp.org
- uci -q add_list system.ntp.server=1.de.pool.ntp.org
- uci -q add_list system.ntp.server=2.de.pool.ntp.org
- uci -q add_list system.ntp.server=3.de.pool.ntp.org
- uci -q set ddmesh.network.essid_adhoc='Freifunk-Mesh-Net'
-}
-
-upgrade_6_0_8()
-{
- true
-}
-
-upgrade_6_0_9()
-{
- true
-}
-
-upgrade_6_0_10()
-{
- cp /rom/etc/iproute2/rt_tables /etc/iproute2/rt_tables
- rm /etc/config/wireless # delete symlink
-}
-
-upgrade_6_0_11()
-{
- true
-}
-
-upgrade_6_0_12()
-{
- true
-}
-
-upgrade_6_0_13()
-{
- cp /rom/etc/iproute2/rt_tables /etc/iproute2/rt_tables
- rm /etc/config/wireless # delete symlink
- uci rename ddmesh.network.internal_dns='internal_dns1'
- uci set ddmesh.network.internal_dns1='10.200.0.4'
- uci set ddmesh.network.internal_dns2='10.200.0.16'
- uci set ddmesh.network.speed_enabled='0'
-}
-
-upgrade_6_0_14()
-{
- true
-}
-
-upgrade_6_0_15()
-{
- uci add_list ddmesh.system.communities='Freifunk Tharandt'
- uci rename ddmesh.network.wifi_channel_5Ghz=wifi_channel_5g
- uci rename ddmesh.network.wifi_txpower_5Ghz=wifi_txpower_5g
- uci add ddmesh geoloc
- uci rename ddmesh.@geoloc[-1]='geoloc'
- uci add_list ddmesh.geoloc.ignore_macs=''
- uci delete credentials.url.opkg
- uci set ddmesh.system.mesh_sleep='1'
-}
-
-upgrade_6_1_1()
-{
- uci rename credentials.backbone_secret.key='fastd_key'
- uci add_list firewall.zone_mesh.network='tbb_wg'
-}
-
-upgrade_6_1_2()
-{
- uci -q rename ddmesh.network.wifi3_network='wifi3_2g_network'
- uci -q rename ddmesh.network.wifi3_enabled='wifi3_2g_enabled'
- uci -q rename ddmesh.network.wifi3_security='wifi3_2g_security'
- uci rename credentials.wifi='wifi_2g'
- uci add credentials wifi
- uci rename credentials.@wifi[-1]='wifi_5g'
- uci set credentials.wifi_5g.private_ssid='private5g'
- uci set ddmesh.network.wifi3_5g_network='0'
- uci set ddmesh.network.wifi3_5g_enabled='0'
- uci set ddmesh.network.wifi3_5g_security='0'
-}
-
-upgrade_6_1_3()
-{
- true
-}
-
-upgrade_6_1_4()
-{
- uci -q rename ddmesh.backbone.default_server_port='default_fastd_port'
- uci -q rename ddmesh.backbone.server_port='fastd_port'
- uci -q rename ddmesh.privnet.default_server_port='default_fastd_port'
- uci -q rename ddmesh.privnet.server_port='fastd_port'
- uci set ddmesh.backbone.default_wg_port='5003'
- uci set ddmesh.backbone.wg_port='5003'
- uci set system.@system[0].cronloglevel=9
- uci add ddmesh log
- uci rename ddmesh.@log[-1]='log'
- uci -q set ddmesh.log.tasks=0
-}
-
-
-upgrade_6_1_5()
-{
- true
-}
-
-upgrade_6_3_1()
-{
- true
-}
-
-
-upgrade_6_4_2()
-{
- uci set ddmesh.network.wifi_channel_5g=44
- uci set ddmesh.network.wifi_indoor_5g=0
- uci set ddmesh.network.wifi_channels_5g_outdoor='100-140'
- uci set ddmesh.network.wifi_ch_5g_outdoor_min=100
- uci set ddmesh.network.wifi_ch_5g_outdoor_max=140
- uci set ddmesh.network.mesh_mode='adhoc+mesh'
- if [ -n "$(uci -q get network.wifi)" ]; then
-  uci -q rename network.wifi='wifi_adhoc'
- fi
- if [ -z "$(uci -q get credentials.network)" ]; then
-  uci add credentials network
-  uci rename credentials.@network[-1]='network'
-  uci set credentials.network.wifi_mesh_id='mesh-64:64:6d:65:73:68'
- fi
- uci del network.wifi_mesh
-}
-
-upgrade_6_4_3()
-{
- cp /rom/etc/config/firewall /etc/config/firewall
- cp /rom/etc/firewall.user /etc/firewall.user
-}
-
-upgrade_6_4_4()
-{
- cp /rom/etc/config/firewall /etc/config/firewall
- uci rename network.wifi2_mesh='wifi_mesh2g'
- uci rename network.wifi5_mesh='wifi_mesh5g'
-}
-
-upgrade_6_4_5()
-{
- uci set credentials.url.firmware_download_release="$(uci -c /rom/etc/config get credentials.url.firmware_download_release)"
- uci set credentials.url.firmware_download_testing="$(uci -c /rom/etc/config get credentials.url.firmware_download_testing)"
- uci set credentials.registration.register_service_url="$(uci -c /rom/etc/config get credentials.registration.register_service_url)"
- uci set ddmesh.system.mesh_sleep='1'
-}
-
-upgrade_6_4_6()
-{
- true
-}
-
-upgrade_7_0_1()
-{
- uci set ddmesh.system.firmware_autoupdate=1
-}
-
-upgrade_7_0_2()
-{
- cp /rom/etc/config/firewall /etc/config/firewall
-}
-
 upgrade_7_0_3()
 {
  true
@@ -471,7 +289,12 @@ upgrade_8_2_2()
 	cp /rom/etc/config/firewall /etc/config/firewall
 }
 
-callback_upgrade_backbone ()
+upgrade_8_2_3()
+{
+	true
+}
+
+_8_2_4_callback_upgrade_backbone ()
 {
 	local config="$1"
 
@@ -503,13 +326,13 @@ callback_upgrade_backbone ()
 	fi
 }
 
-upgrade_8_2_3()
+upgrade_8_2_4()
 {
 	uci add_list ddmesh.communities.community='1022%Geringswalde'
 	uci -q set ddmesh.backbone.number_of_clients=6
 	if [ -x "/usr/bin/wg" ]; then
 		config_load ddmesh
-		config_foreach callback_upgrade_backbone backbone_client
+		config_foreach _8_2_4_callback_upgrade_backbone backbone_client
 	fi
 
 }
