@@ -33,6 +33,7 @@ setup_fallback_gateway()
 '
 	for gw in $(ip route | grep default)
 	do
+		# eval needed because gw contains several parameters
 		eval ip route add $gw table $gateway_table
 
 		# extract via and dev

@@ -136,7 +136,6 @@ config network 'network'
 	option	internal_dns1 '10.200.0.4'
 	option	internal_dns2 '10.200.0.16'
 	option	force_ether_100mbit 0
-
 	option	mesh_mtu 1200
 	option	mesh_on_lan 0
 	option	mesh_on_wan 0
@@ -373,7 +372,19 @@ config_update() {
 		fi # disabled
 	done
 
+	#############################################################################
+	# prepare mesh-on-lan/wan
+	#############################################################################
+	# if user has configured lan/wan gw but changes it to mesh-on-lan/wan,
+	# default gateway would be set in fallback_gateway routing table.
+	# But this ip is not reachable and would prevent any internet connection (local or for freifunk)
+	if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ]; then
+		uci -q delete ddmesh.network.lan_gateway
+	fi
 
+	if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ]; then
+		uci -q delete ddmesh.network.wan_gateway
+	fi
 
 	#############################################################################
 	# setup firewall
