@@ -484,18 +484,18 @@ callback_upgrade_backbone ()
 	config_get disabled "$config" disabled
 
 	# echo "process: disabled:$disabled, cfgtype:$type, host:$host "
-	if [ "$disabled" != "1" -a "$type" != "wireguard" -a -n "$host" ]; then
+	if [ "$type" != "wireguard" -a -n "$host" ]; then
 
 		for k in $(seq 1 30)
 		do
 			kk=$(($k - 1))
-			h=$(uci -q get credentials.@backbone[$kk].host)
+			h=$(uci -q -c /rom/etc/config get credentials.@backbone[$kk].host)
 			[ -z "$h" ] && break
 
 			if [ "$h" = "$host" ]; then
-				uci -q set ddmesh.$config.public_key="$(uci -q get credentials.@backbone[$kk].wg_pubkey)"
-				uci -q set ddmesh.$config.port="$(uci -q get credentials.@backbone[$kk].wg_port)"
-				uci -q set ddmesh.$config.node="$(uci -q get credentials.@backbone[$kk].node)"
+				uci -q set ddmesh.$config.public_key="$(uci -q -c /rom/etc/config get credentials.@backbone[$kk].wg_pubkey)"
+				uci -q set ddmesh.$config.port="$(uci -q -c /rom/etc/config get credentials.@backbone[$kk].wg_port)"
+				uci -q set ddmesh.$config.node="$(uci -q -c /rom/etc/config get credentials.@backbone[$kk].node)"
 				uci -q set ddmesh.$config.type="wireguard"
 				break;
 			fi

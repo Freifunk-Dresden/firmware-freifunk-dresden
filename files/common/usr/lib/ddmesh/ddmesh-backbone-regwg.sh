@@ -79,7 +79,7 @@ callback_outgoing_wireguard()
 	#echo "wg process out: disabled:$disabled, cfgtype:$type, host:$host, port:$port, key:$key, target node:$node"
 	if [ "$vdisabled" != "1" -a "$vtype" == "wireguard" -a -n "${vhost}" ]; then
 		eval $(backbone_register "${vhost}" | jsonfilter -e 'j_status=@.status')
-		logger -t "${LOGGER_TAG}" "wireguard registration: status:[$j_status], host: ${vhost}"
+		logger -s -t "${LOGGER_TAG}" "wireguard registration: status:[$j_status], host: ${vhost}"
 	fi
 }
 
