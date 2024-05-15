@@ -25,8 +25,12 @@ ip rule $1 lookup public_dns priority 360
 
 # route local and lan traffic through own internet gateway
 # route public traffic via second table (KEEP ORDER!)
+# local_gateway: filled by gwcheck
+# fallback_gateway: all gw are included hier with different metrics (copy from main routing table)
 ip rule $1 iif $(uci get network.loopback.device) table local_gateway priority 400
-test "$(uci -q get ddmesh.network.lan_local_internet)" = "1" && ip rule $1 iif br-lan table local_gateway priority 401
+ip rule $1 iif $(uci get network.loopback.device) table fallback_gateway priority 401
+test "$(uci -q get ddmesh.network.lan_local_internet)" = "1" && ip rule $1 iif br-lan table local_gateway priority 402
+
 ip rule $1 table public_gateway priority 410
 
 # avoid fastd going through mesh/ffgw (in case WAN dhcp did not get ip)
@@ -46,12 +50,8 @@ ip rule $1 to 192.168.0.0/16 table unreachable priority 504
 ip rule $1 to 172.16.0.0/12 table unreachable priority 505
 
 # bmxd-gateway.sh setups ipip tunnel
-ip rule $1 table ff_gateway priority 506
+ip rule $1 table ff_gateway priority 510
 
-# put fallback after ff_gateway. If lan was configured and mesh-on-lan is active
-# local_gateway would be empty and any local internet communication (registration)
-# will be routed to dead ip
-ip rule $1 iif $(uci get network.loopback.device) table fallback_gateway priority 508
 
 #stop any routing here, to avoid using default gatways in default routing table
 #those gateways are checked and added to gateway table if valid

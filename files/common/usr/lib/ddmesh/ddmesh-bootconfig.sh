@@ -26,6 +26,8 @@ LOGGER_TAG="ddmesh-boot"
 /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
+MAX_BACKBONE_CLIENTS=6
+
 config_boot_step1() {
 
 # when comming from different openwrt firmware ensure correct firewall
@@ -134,7 +136,6 @@ config network 'network'
 	option	internal_dns1 '10.200.0.4'
 	option	internal_dns2 '10.200.0.16'
 	option	force_ether_100mbit 0
-
 	option	mesh_mtu 1200
 	option	mesh_on_lan 0
 	option	mesh_on_wan 0
@@ -173,42 +174,62 @@ config bmxd 'bmxd'
 
 
 config backbone 'backbone'
-	option  fastd_port		'5002'
+	option  fastd_port	'5002'
 	option  default_fastd_port	'5002'
 	option  default_wg_port	'5003'
-	option	number_of_clients	5
+	option	number_of_clients	${MAX_BACKBONE_CLIENTS}
 
 #config backbone_accept
 #	option	key			''
-#	option	comment			''
+#	option	comment	''
 
 config backbone_client
-	option 	host			'vpn9.freifunk-dresden.de'
-	option	type			'fastd'
+	option 	host				'vpn9.freifunk-dresden.de'
+	option	type				'wireguard'
 	option	disabled		'0'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	port				''
+	option	public_key	''
+	option	node				''
 
 config backbone_client
-	option 	host			'vpn15.freifunk-dresden.de'
-	option	type			'fastd'
+	option 	host				'vpn12.freifunk-dresden.de'
+	option	type				'wireguard'
 	option	disabled		'0'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	port				''
+	option	public_key	''
+	option	node				''
 
 config backbone_client
-	option 	host			'vpn16.freifunk-dresden.de'
-	option	type			'fastd'
+	option 	host				'vpn15.freifunk-dresden.de'
+	option	type				'wireguard'
 	option	disabled		'0'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	port				''
+	option	public_key	''
+	option	node				''
 
 config backbone_client
-	option 	host			'vpn20.freifunk-dresden.de'
-	option	type			'fastd'
+	option 	host				'vpn18.freifunk-dresden.de'
+	option	type				'wireguard'
 	option	disabled		'0'
-	option 	port			'5002'
-	option	public_key 		''
+	option 	port				''
+	option	public_key 	''
+	option	node				''
+
+config backbone_client
+	option 	host				'vpn1le.freifunk-leipzig.de'
+	option	type				'wireguard'
+	option	disabled		'0'
+	option 	port				''
+	option	public_key 	''
+	option	node				''
+
+config backbone_client
+	option 	host				'vpn3le.freifunk-leipzig.de'
+	option	type				'wireguard'
+	option	disabled		'0'
+	option 	port				''
+	option	public_key 	''
+	option	node				''
 
 config privnet 'privnet'
 	option  fastd_port		'4000'
@@ -317,7 +338,7 @@ config_update() {
 	#############################################################################
 	# setup backbone clients
 	#############################################################################
-	for i in $(seq 0 4)
+	for i in $(seq 0 ${MAX_BACKBONE_CLIENTS})
 	do
 		disabled="$(uci -q get ddmesh.@backbone_client[$i].disabled)"
 		if [ "$disabled" != "1" ]; then
@@ -326,26 +347,50 @@ config_update() {
 			port="$(uci -q get ddmesh.@backbone_client[$i].port)"
 			pubkey="$(uci -q get ddmesh.@backbone_client[$i].public_key)"
 			logger -s -t "$LOGGER_TAG" "update backbone {$type, $host, $port, $pubkey}"
-			case "$type" in
-			 fastd)
-				if [ -n "$host" -a -z "$pubkey" ]; then
-					#lookup key
-					for k in $(seq 1 30)
-					do
-						kk=$(($k - 1))
-						h=$(uci -q get credentials.@backbone[$kk].host)
-						if [ "$h" = "$host" ]; then
-							uci set ddmesh.@backbone_client[$i].public_key="$(uci get credentials.@backbone[$kk].key)"
-							break;
-						fi
-					done
-				fi
-			 ;;
-			esac
-		fi
+
+			# when no public key, then this is initial setup. read key from credentials (offline)
+			if [ -n "$host" -a -z "$pubkey" ]; then
+				#lookup key
+				for k in $(seq 1 30)
+				do
+					kk=$(($k - 1))
+					h=$(uci -q get credentials.@backbone[$kk].host)
+					[ -z "$h" ] && break
+
+					if [ "$h" = "$host" ]; then
+						case "$type" in
+							wireguard)
+								uci set ddmesh.@backbone_client[$i].public_key="$(uci -q get credentials.@backbone[$kk].wg_pubkey)"
+								uci set ddmesh.@backbone_client[$i].port="$(uci -q get credentials.@backbone[$kk].wg_port)"
+								uci set ddmesh.@backbone_client[$i].node="$(uci -q get credentials.@backbone[$kk].node)"
+								;;
+						esac
+						break;
+					fi # host
+				done # loop keys
+			fi # empty key
+		fi # disabled
 	done
 
+	#############################################################################
+	# prepare mesh-on-lan/wan
+	#############################################################################
+	# if user has configured lan/wan gw but changes it to mesh-on-lan/wan,
+	# default gateway would be set in fallback_gateway routing table.
+	# But this ip is not reachable and would prevent any internet connection (local or for freifunk)
+	if [ "$(uci -q get ddmesh.network.mesh_on_lan)" = "1" ]; then
+		uci -q delete ddmesh.network.lan_gateway
+		uci -q delete ddmesh.network.lan_dns
+	fi
 
+	if [ "$(uci -q get ddmesh.network.mesh_on_wan)" = "1" ]; then
+		# if mesh on wan, we need to disable udhcpc to avoid flooding syslog
+		uci -q set ddmesh.network.wan_proto='static'
+		uci -q delete ddmesh.network.wan_gateway
+		uci -q delete ddmesh.network.wan_dns
+		uci -q delete ddmesh.network.wan_ipaddr
+		uci -q delete ddmesh.network.wan_netmask
+	fi
 
 	#############################################################################
 	# setup firewall

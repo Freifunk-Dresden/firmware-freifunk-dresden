@@ -6,6 +6,7 @@ final_output/
 
 # ignore generated
 upload-infos/fileinfo.json.*
+workdir*
 
 *.o
 docs/_build/

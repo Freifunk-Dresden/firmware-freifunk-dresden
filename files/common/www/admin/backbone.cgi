@@ -557,7 +557,9 @@ else
 			;;
 
 	esac
-	test $RESTART -eq 1 && /usr/lib/ddmesh/ddmesh-backbone.sh restart >/dev/null 2>&1
+	if [ $RESTART -eq 1 ]; then
+		/usr/lib/ddmesh/ddmesh-backbone.sh restart >/dev/null 2>&1
+	fi
 	html_msg $MSG
 	echo "<br>"
 	content
