@@ -32,12 +32,12 @@
     "type":"template",  # specifes that this object is a template for other targets or not.
                         # values: "template" | "target"
                         # default for "type" is "target"
-    "name":"22.03.5",   # template or target name
+    "name":"22.03.6",   # template or target name
 
     "template":"",      # name of the default template configuration
     "config":"",        # config file name
 
-    "openwrt_rev":"v22.03.5",
+    "openwrt_rev":"v22.03.6",
     "openwrt_variant":"", # creates a separate buildroot. use it for low-mem devices
                           # where no kernel modules (e.g.: usb) must be included.
                           # Note that selecting some packages as module could have
@@ -54,13 +54,13 @@
     # for short commit value use: git log --abbrev-commit
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d057936acb" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1cc7676b9f" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
     ],
 
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop"
     ]
   },
   {
@@ -78,7 +78,7 @@
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"83ef3784a90" }
     ],
     "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop"
     ]
   },
 
@@ -97,103 +97,103 @@
 
   # ---------- openwrt 22 ------------------------------------------------------
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ramips.mt7620.small.usb",
     "config":"ramips.mt7620.small.usb.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ramips.mt7620.generic",
     "config":"ramips.mt7620.generic.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ramips.mt76x8.generic",
     "config":"ramips.mt76x8.generic.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ramips.mt76x8.small",
     "config":"ramips.mt76x8.small.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"lantiq-xrx200.generic",
     "config":"lantiq-xrx200.generic.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"lantiq-xrx200.22.small",
     "config":"lantiq-xrx200.small.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"lantiq-xway.22.generic",
     "config":"lantiq-xway.generic.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"lantiq-xway.small",
     "config":"lantiq-xway.small.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ath79.nand",
     "config":"ath79.nand.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ath79.small.smallbuffers",
     "config":"ath79.small.smallbuffers.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ipq40xx.generic",
     "config":"ipq40xx.generic.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ipq40xx.generic.fritz-tffs-nand",
     "config":"ipq40xx.generic.fritz-tffs-nand.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"mpc85xx.p1020",
     "config":"mpc85xx.p1020.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ath79.generic.gl-mifi",
     "config":"ath79.generic.gl-mifi.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ath79.nand.gl-e750",
     "config":"ath79.nand.gl-e750.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"mediatek.mt7622.generic",
     "config":"mediatek.mt7622.generic.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"mpc85xx.p1010",
     "config":"mpc85xx.p1010.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ramips.mt7621.small",
     "config":"ramips.mt7621.small.22.cfg"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ramips.mt7621.offloader",
     "config":"ramips.mt7621.offloader.22.cfg",
     "openwrt_variant":"offloader"
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"x86.64.offloader",
     "config":"x86.64.offloader.22.cfg",
     "openwrt_variant"  : "offloader",
@@ -203,7 +203,7 @@
     ]
   },
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"sunxi.cortexa7.offloader",
     "config":"sunxi.cortexa7.offloader.22.cfg",
     "openwrt_variant"  : "offloader",
@@ -214,17 +214,17 @@
   },
   # ---------- openwrt 22 ---------must stick to 22 ----------------------------
   {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ath79.22.generic",
     "config":"ath79.generic.22.cfg"
    },
    {
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ath79.small",
     "config":"ath79.small.22.cfg"
   },
   { # memory error on openwrt 23.05 so stick to 22.03
-    "template":"22.03.5",
+    "template":"22.03.6",
     "name":"ramips.mt7621.generic",
     "config":"ramips.mt7621.generic.22.cfg"
   },
