@@ -7,7 +7,7 @@
 # copy firwmare,packets and generate download.json
 
 # -------------------------------------------------------------------
-VERSION="7"
+VERSION="8"
 
 #Black        0;30     Dark Gray     1;30
 #Red          0;31     Light Red     1;31
@@ -49,7 +49,7 @@ usage()
 	printf "   compare-json                 - only compare fileinfo.json  against last generated version\n"
 	printf "   directory-suffix             - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
 	printf "   pretty <json file>           - reads file info json from file and prints sorted (by filename) json on stdout\n"
-	printf "   show-duplicates <json-file>  - shows filenames that are used more than once"
+	printf "   show-multiple-used-files <json-file>  - shows filenames that are used more than once"
 	printf "\n"
 	exit 1
 }
@@ -78,7 +78,7 @@ case "$1" in
 		exit 0
 		;;
 
-	"show-duplicates")
+	"show-multiple-used-files")
 		if [ -z "$2" ]; then
 			printf "missing json file\n"
 			exit 1
@@ -195,20 +195,22 @@ gen_download_json_start()
 
 # isFirstFile must be global, else calling this function for different
 # platforms won't insert "," after each record
-isFirstFile=true
+isFirstFileDL=1
+isFirstFileInfo=1
 gen_download_json_add_data()
 {
-  output_path=$1 	# output path "firmware/4.2.15"
-  subpath=$2 		# relativ path to firmware "7239bcd/ar71xx/generic"
-  file_filter=$3 	# file filter "*.{bin,trx,img,dlf,gz}"
+  output_path="$1" 	# output path "firmware/4.2.15"
+  subpath="$2" 		# relativ path to firmware "7239bcd/ar71xx/generic"
+  file_filter="$3" 	# file filter "*.{bin,trx,img,dlf,gz}"
+  source_path="$4"	# source file location
 
   error=0
 
 	printf "    ${C_YELLOW}adding firmware to download.json${C_NONE} - file filter: $file_filter\n"
 
 	# progress info
-	printf "    ${C_LBLUE}# model info complete${C_NONE} | ${C_ORANGE}+ partly model info missing${C_NONE} | ${C_LRED}- NO model info${C_NONE}\n"
-  printf "    "
+	printf "    ${C_LBLUE}# model info complete${C_NONE} | ${C_ORANGE}+ partly model info missing${C_NONE} | ${C_LRED}- NO model info${C_NONE} | ${C_LPURPLE}. disabled${C_NONE}\n"
+	printf "    "
 
 	# get info for each filename
 	# eval is needed because file_filter must be evaluated
@@ -217,6 +219,7 @@ gen_download_json_add_data()
 		file=$(basename $path)
 #printf "$file\n"
 		# defaults
+		disabled="0"
 		name=""
 		autoupdate="0"
 		model=""
@@ -225,7 +228,8 @@ gen_download_json_add_data()
 		filename=""
 		comment=""
 
-		# search file info
+		# search file info. Key is the filename
+		#
 		# jq: first selects the array with all entries and every entry is pass to select().
 		#	select() checks a condition and returns the input data (current array entry)
 		#	if condition is true
@@ -259,13 +263,16 @@ gen_download_json_add_data()
 				autoupdate="$(echo $info | jq $OPT '.autoupdate')"
 				[ "$autoupdate" = "null" ] && autoupdate="0"		# default disable auto update
 
+				# router is disabled, no error for missing files/or when router is present
+				disabled="$(echo $info | jq $OPT '.disabled')"; [ "$disabled" = "null" ] && disabled="0"
+
 				model="$(echo $info | jq $OPT '.model')"; [ "$model" = "null" ] && model=""
 				model2="$(echo $info | jq $OPT '.model2')"; [ "$model2" = "null" ] && model2=""
 				filename="$(echo $info | jq $OPT '.filename')"
 				comment="$(echo $info | jq $OPT '.comment')"; [ "$comment" = "null" ] && comment=""
 				name="$(echo $info | jq $OPT '.name')"; [ "$name" = "null" ] && name=""
 			fi
-#printf "##$name:$autoupdate:$model:$model2:$filename::$comment\n"
+#printf "##$name:$autoupdate:$model:$model2:$filename:$comment\n"
 
 			# determine "sysupgrade" files
 			if [   	-z "${file/openwrt-*-sysupgrade.bin*/}" \
@@ -279,25 +286,34 @@ gen_download_json_add_data()
 
 			# progress bar only for files where I add model/model2 information
 			if [ $sysupgrade = 1 ]; then
-				if [ -n "$model" -a -n "$model2" ]; then
-					printf "${C_LBLUE}#${C_NONE}"
+				if [ "$disabled" = "1" ]; then
+						printf "${C_LPURPLE}.${C_NONE}"
 				else
-					if [ -n "$model" -o -n "$model2" ]; then
-						printf "${C_ORANGE}+${C_NONE}"
+					if [ -n "$model" -a -n "$model2" ]; then
+						printf "${C_LBLUE}#${C_NONE}"
 					else
-						printf "${C_LRED}-${C_NONE}"
+						if [ -n "$model" -o -n "$model2" ]; then
+							printf "${C_ORANGE}+${C_NONE}"
+						else
+							printf "${C_LRED}-${C_NONE}"
+						fi
 					fi
 				fi
 			fi
 
 			md5sum=$(md5sum $path | cut -d' ' -f1)
 
+
 			# append comma
-			$isFirstFile || {
-				printf ",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+			if [ "$isFirstFileDL" = "0" ]; then
+				if [ "$disabled" = "0" ]; then
+					printf ",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+				fi
+		 	fi	
+			if [ "$isFirstFileInfo" = "0" ]; then
 				printf ",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-			}
-			isFirstFile=false
+		 	fi	
+
 
 			# check if firmware filename is already in OUTPUT_FILEINFO_JSON_FILENAME.
 			# When targets are moved from one buildroot to another (e.g.: upgrade openwrt) then json may still(already)
@@ -312,27 +328,38 @@ gen_download_json_add_data()
 				result=$(grep "$search" $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME)
 
 				if [ -n "$result" ]; then
-					printf "\n${C_LRED}Warning: duplicate found: ${C_NONE}[$search] at ${C_YELLOW}$subpath${C_NONE}\n"
+					printf "\n${C_LRED}Warning: Sysupgrade duplicate found: ${C_NONE}[$search] at ${C_YELLOW}$subpath${C_NONE}\n"
+					printf "$result"
 					error=1
 				fi
 
-				printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+				if [ "$disabled" = "0" ]; then
+					printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+				fi
 
-				# generate new input info file
-				printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+				# generate new input info file (and remember source of firmware file, for error checking during gen_upload.sh)
+				printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\", \"source_path\":\"${source_path}\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 			else
 				# Factory Images do not have model-infos.
 				search="$file"
 				result=$(grep "$search" $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME)
 				if [ -n "$result" ]; then
-					printf "\n${C_LRED}Warning: duplicate found: ${C_NONE}[$search] at ${C_YELLOW}$subpath${C_NONE}\n"
+					printf "\n${C_LRED}Warning: Factory duplicate found: ${C_NONE}[$search] at ${C_YELLOW}$subpath${C_NONE}\n"
+					printf "$result"
 					error=1
 				fi
 
-				printf "{ \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+				if [ "$disabled" = "0" ]; then
+					printf "{ \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+				fi
+
 				# generate new input info file
-				printf "{ \"name\":\"$name\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+				printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"filename\":\"$file\", \"comment\":\"$comment\", \"source_path\":\"${source_path}\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 			fi
+
+			# enable commas
+			[ "$disabled" = "0" ] && isFirstFileDL=0
+			isFirstFileInfo=0
 
 			idx=$(( idx + 1 ))
 
@@ -473,7 +500,7 @@ do
 
 		filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
 		$ENABLE_COPY && {
-			printf "  copy ${_platforms}/${platform}/$filefilter $tmpTargetDir\n"
+			printf "  copy ${_platforms}/${platform}/images/$filefilter $tmpTargetDir\n"
 			# use "eval" to resolv filefilter wildcards
 			eval cp -a ${_platforms}/${platform}/images/$filefilter $tmpTargetDir 2>/dev/null
 
@@ -514,7 +541,8 @@ do
 		gzip -f Packages
 		cd $p
 
-		gen_download_json_add_data "$target_dir" "firmware/${platform}" $filefilter
+		# last parameter only is used to track previously added firmware when checking for duplicates
+		gen_download_json_add_data "$target_dir" "firmware/${platform}" "$filefilter" "$_buildroot/${GENERATED_FIRMWARE_OUTPUT_DIR}/${platform}/images/"
 
 	done	# for platform
   printf -- "\n=========================================================\n\n"
