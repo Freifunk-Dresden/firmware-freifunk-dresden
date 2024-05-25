@@ -1,4 +1,4 @@
-2024-05-11 [8.2.3] (testing)
+2024-05-11 [8.2.4] (testing)
 --------------------------------------------------
 community                 - add "Freifunk Geringswalde"
 router                    - add router ZyXEL NWA55AXE
@@ -6,6 +6,7 @@ Backbone Server           - switch to wireguard servers on initial setup
                           - upgrade fastd backbone config to wireguard
                           - add servers for Leipzig
                           - set new default servers
+GUI:password              - give infos about password requirements (length, forbidden characters)
 
 
 2024-03-31 [8.2.2] (testing)

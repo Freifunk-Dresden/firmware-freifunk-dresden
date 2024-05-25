@@ -15,19 +15,22 @@ EOF
 if [ -z "$QUERY_STRING" ]; then
 
 	cat<<EOM
-<form action="password.cgi" method="POST">
+<form onsubmit="return checkPasswordCharacters(document.getElementById('password1').value, document.getElementById('password2').value);" action="password.cgi" method="POST">
 <fieldset class="bubble">
 <legend>Kennwort</legend>
 <table>
 
 <tr title="Eingabe eines neuen Kennwortes mit bis zu 32 Buchstaben, Ziffern oder Sonderzeichen.">
-<th>Neues Kennwort:</th><td><input name="form_pw" size="32" type="PASSWORD"></td>
+<th>Neues Kennwort:</th><td><input id="password1" name="form_pw" size="32" type="PASSWORD"></td>
 </tr>
 
 <tr title="Wiederholte Eingabe des neuen Kennwortes.">
-<th>Kennwort wiederholen:</th><td><input name="form_confirm_pw" size="32" type="PASSWORD"></td>
+<th>Kennwort wiederholen:</th><td><input id="password2" name="form_confirm_pw" size="32" type="PASSWORD"></td>
 </tr>
-
+<tr><td></td><td>Folgende Zeichen sind <b>nicht</b> erlaubt: <span style="color: blue;">
+&num; ~ &dollar; &lpar; &rpar; &grave; &apos; &quot; &ast; &quest; &bsol;</span><br>
+Passwortl&auml;nge mu&szlig; mindestens 8 Zeichen lang sein.
+</td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 
 <tr>
