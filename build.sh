@@ -259,6 +259,7 @@ show_progress()
 
     # print current target
     tput cup $(( $row - 2)) 0
+		tput el
     echo -e "building: $C_BLUE${target}$C_NONE"
 
     # print empty line above
