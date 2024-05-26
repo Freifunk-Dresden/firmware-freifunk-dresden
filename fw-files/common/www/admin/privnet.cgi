@@ -148,7 +148,13 @@ content()
 
 	COUNT=$(uci show ddmesh | grep '=privnet_\(client\|accept\)' | wc -l)
 
-	cat<<EOM
+cat<<EOM
+Das private Netzwerk erlaubt es, die LAN-Ports eines Routers mit den LAN Ports eines entfernten Routers zu verbinden und somit sein privates
+Netz mit einem entfernten privaten Netz zu koppeln. Die Verbindung
+wird durch einen verschl&uuml;sselten Tunnel aufgebaut. Es lassen sich <b>$NUMBER_OF_CLIENTS Verbindungen</b> von oder zu einem Router
+aufbauen.
+<br><br>
+
 <fieldset class="bubble">
 <legend>VPN-Einstellungen</legend>
 <form name="privnet_form_server" action="privnet.cgi" method="POST">
@@ -256,14 +262,6 @@ EOM
 
 
 if [ -z "$QUERY_STRING" ]; then
-
-	cat<<EOM
-Das private Netzwerk erlaubt es, die LAN-Ports eines Routers mit den LAN Ports eines entfernten Routers zu verbinden und somit sein privates
-Netz mit einem entfernten privaten Netz zu koppeln. Die Verbindung
-wird durch einen verschl&uuml;sselten Tunnel aufgebaut. Es lassen sich <b>$NUMBER_OF_CLIENTS Verbindungen</b> von oder zu einem Router
-aufbauen.
-<br><br>
-EOM
 	content
 else
 	MSG=0
