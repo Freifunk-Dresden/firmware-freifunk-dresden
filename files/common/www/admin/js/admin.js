@@ -214,32 +214,25 @@ function checkWifiKey(key)
  return true;
 }
 
-/* formular QUERY_STRING is cleaned from following chars:
-    #    ~  $ (   )  `  '  "  *  ?  \
-    35 126 36 40 41 96 39 34 42 63 92
-*/
-function checkPasswordCharacters(pw1,pw2)
+
+function checkPasswordCharacters()
 {
-  const k = [35, 126, 36, 40, 41, 96, 39, 34, 42, 63, 92];
-  for(var i=0; i<pw1.length; i++)
-  {
-   let charCode = pw1.charCodeAt(i);
-   if(k.includes(charCode))
-   {
-     alert("Passwort enthält nicht erlaubte Zeichen: " + pw1[i]);
-     return false;
-   }
-  }
+  let pw1 = document.getElementById('password1').value;
+  let pw2 = document.getElementById('password2').value;
+
   if(pw1 !== pw2)
   {
     alert("Passwörter stimmen nicht überein");
     return false;
   }
-  if(pw1.length < 8)
+  if(pw1.length < 8 || pw1.length > 60)
   {
-    alert("Passwort zu kurz. Minimum 8 Zeichen");
+    alert("Passwort zu kurz oder zu lang. Minimum 8 Zeichen, Maxium 60 Zeichen");
     return false;
   }
+  /*write base64*/
+  document.getElementById('password1').value = Base64.encode(pw1);
+  document.getElementById('password2').value = Base64.encode(pw2);
   return true;
 
 }

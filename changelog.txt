@@ -6,7 +6,7 @@ Backbone Server           - switch to wireguard servers on initial setup
                           - upgrade fastd backbone config to wireguard
                           - add servers for Leipzig
                           - set new default servers
-GUI:password              - give infos about password requirements (length, forbidden characters)
+password                  - fix setting password when using special characters
 
 
 2024-03-31 [8.2.2] (testing)

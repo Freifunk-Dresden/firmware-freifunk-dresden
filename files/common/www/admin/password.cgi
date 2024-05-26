@@ -15,22 +15,19 @@ EOF
 if [ -z "$QUERY_STRING" ]; then
 
 	cat<<EOM
-<form onsubmit="return checkPasswordCharacters(document.getElementById('password1').value, document.getElementById('password2').value);" action="password.cgi" method="POST">
+<form onsubmit="return checkPasswordCharacters();" action="password.cgi" method="POST">
 <fieldset class="bubble">
 <legend>Kennwort</legend>
 <table>
 
-<tr title="Eingabe eines neuen Kennwortes mit bis zu 32 Buchstaben, Ziffern oder Sonderzeichen.">
+<tr>
 <th>Neues Kennwort:</th><td><input id="password1" name="form_pw" size="32" type="PASSWORD"></td>
 </tr>
 
 <tr title="Wiederholte Eingabe des neuen Kennwortes.">
 <th>Kennwort wiederholen:</th><td><input id="password2" name="form_confirm_pw" size="32" type="PASSWORD"></td>
 </tr>
-<tr><td></td><td>Folgende Zeichen sind <b>nicht</b> erlaubt: <span style="color: blue;">
-&num; ~ &dollar; &lpar; &rpar; &grave; &apos; &quot; &ast; &quest; &bsol;</span><br>
-Passwortl&auml;nge mu&szlig; mindestens 8 Zeichen lang sein.
-</td></tr>
+<tr><td></td><td>Passwortl&auml;nge mu&szlig; mindestens <b>8</b> und maximal <b>60</b> Zeichen lang sein.</td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 
 <tr>
@@ -52,9 +49,12 @@ else
 	if [ -n "$form_submit" ]; then
 		if [ -n "$form_pw" ]; then
 			if [ "$form_pw" = "$form_confirm_pw" ]; then
-				p=$(uhttpd -d "$form_pw")
+				p="$(uhttpd -d "$form_pw")"
+				p="$(echo "${p}" | base64 -d)"
+
 				# delete blocking files
 				rm -f '/etc/passwd+' '/etc/shadow+'
+
 				echo "root:$p" | chpasswd --md5 >/dev/null
 				uhttpd_restart=1
 				notebox 'Das Kennwort wurde ge&auml;ndert.'

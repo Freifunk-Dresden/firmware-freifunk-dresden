@@ -62,6 +62,7 @@ EOF
 
 test "$URI_PATH" = "/www/admin" && {
 	echo '<script type="text/javascript" src="/admin/js/admin.js"></script>'
+	echo '<script type="text/javascript" src="/admin/js/base64.js"></script>'
 }
 
 cat<<EOF
