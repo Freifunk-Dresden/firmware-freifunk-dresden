@@ -96,11 +96,13 @@ MARK_BLINK='➤'
 MARK_NONE=' '
 MARK_SKIP='-'
 MARK_IGNORE='i'
+MARK_DISABLED='/'
 
 if true; then
   PBC_RUNNING="${C_YELLOW}${C_BLINK}${MARK_BLINK}${C_NONE}"
   PBC_ERROR="${C_LRED}${MARK_FAIL}${C_NONE}"
   PBC_IGNORE="${C_RED}${MARK_IGNORE}${C_NONE}"
+  PBC_DISABLED="${C_RED}${MARK_DISABLED}${C_NONE}"
   PBC_SUCCESS="${C_GREEN}${MARK_OK}${C_NONE}"
   PBC_SKIP="${C_GREEN}${MARK_SKIP}${C_NONE}"
   PBC_SPACE="${MARK_NONE}"
@@ -108,6 +110,7 @@ else
   PBC_RUNNING="${MARK_BLINK}"
   PBC_ERROR="${MARK_FAIL}"
   PBC_IGNORE="${MARK_IGNORE}"
+  PBC_DISABLED="${MARK_DISABLED}"
   PBC_SUCCESS="${MARK_OK}"
   PBC_SKIP="${MARK_SKIP}"
   PBC_SPACE="${MARK_NONE}"
@@ -310,13 +313,24 @@ resolveTemplates()
     fi
 
     # extract feeds and packages separately to keep quotes
-    x='"_cfg_type=\"\(.type)\"; _cfg_template=\"\(.template)\"; _cfg_name=\"\(.name)\"; _cfg_file=\"\(.config)\"; _cfg_openwrt_rev=\"\(.openwrt_rev)\"; _cfg_openwrt_variant=\"\(.openwrt_variant)\"; _cfg_selector_config=\"\(.["selector-config"])\"; _cfg_selector_feeds=\"\(.["selector-feeds"])\"; _cfg_selector_files=\"\(.["selector-files"])\";_cfg_selector_patches=\"\(.["selector-patches"])\""'
+    x='"_cfg_type=\"\(.type)\";
+        _cfg_template=\"\(.template)\";
+        _cfg_name=\"\(.name)\";
+        _cfg_file=\"\(.config)\";
+        _cfg_disabled=\"\(.disabled)\";
+        _cfg_openwrt_rev=\"\(.openwrt_rev)\";
+        _cfg_openwrt_variant=\"\(.openwrt_variant)\";
+        _cfg_selector_config=\"\(.["selector-config"])\";
+        _cfg_selector_feeds=\"\(.["selector-feeds"])\";
+        _cfg_selector_files=\"\(.["selector-files"])\";
+        _cfg_selector_patches=\"\(.["selector-patches"])\""'
     eval $(echo "$entry" | jq $OPT "$x")
 
     # is template
     if [ "$_cfg_type" = "template" ]; then
     #echo "XXX:$x"
     #echo $entry | jq  "$x"
+      configTemplateValues["${_cfg_name}_config_disabled"]="${_cfg_disabled}"
 
       configTemplateValues["${_cfg_name}_config_selector_config"]="${_cfg_selector_config}"
       configTemplateValues["${_cfg_name}_config_selector_files"]="${_cfg_selector_files}"
@@ -324,6 +338,7 @@ resolveTemplates()
       configTemplateValues["${_cfg_name}_config_selector_patches"]="${_cfg_selector_patches}"
       configTemplateValues["${_cfg_name}_config_openwrt_rev"]="${_cfg_openwrt_rev}"
       configTemplateValues["${_cfg_name}_config_openwrt_variant"]="${_cfg_openwrt_variant}"
+
       # feeds and packages are still json and I have to "jq" those manually to keep quotes
       configTemplateValues["${_cfg_name}_config_feeds"]="$(echo "$entry" | jq $OPT '.feeds')"
       configTemplateValues["${_cfg_name}_config_packages"]="$(echo "$entry" | jq $OPT '.packages')"
@@ -352,7 +367,18 @@ resolveConfigValues()
   fi
 
   # create env variables and parse with one call to jq (it is faster than repeatly call it)
-  x='"_cfg_type=\"\(.type)\"; _cfg_template=\"\(.template)\"; _cfg_name=\"\(.name)\"; _cfg_file=\"\(.config)\"; _cfg_openwrt_rev=\"\(.openwrt_rev)\"; _cfg_openwrt_variant=\"\(.openwrt_variant)\"; _cfg_selector_config=\"\(.["selector-config"])\"; _cfg_selector_feeds=\"\(.["selector-feeds"])\"; _cfg_selector_files=\"\(.["selector-files"])\";_cfg_selector_patches=\"\(.["selector-patches"])\""'
+  x='"_cfg_type=\"\(.type)\";
+      _cfg_template=\"\(.template)\";
+      _cfg_name=\"\(.name)\";
+      _cfg_file=\"\(.config)\";
+      _cfg_disabled=\"\(.disabled)\";
+      _cfg_openwrt_rev=\"\(.openwrt_rev)\";
+      _cfg_openwrt_variant=\"\(.openwrt_variant)\";
+      _cfg_selector_config=\"\(.["selector-config"])\";
+      _cfg_selector_feeds=\"\(.["selector-feeds"])\";
+      _cfg_selector_files=\"\(.["selector-files"])\";
+      _cfg_selector_patches=\"\(.["selector-patches"])\"
+    "'
   eval $(echo "$targetConfigJson" | jq $OPT "$x")
 
   # feeds and packages are still json and I have to "jq" those manually to keep quotes
@@ -364,6 +390,7 @@ resolveConfigValues()
   # echo "type:[$_cfg_type]"
   # echo "template_name:[$_cfg_template]"
   # echo "file:[$_cfg_file]"
+  # echo "disabled:[$_cfg_disabled]"
 
   # check that config and templates have a name
   if [ -z "${_cfg_name}" ]; then
@@ -379,25 +406,7 @@ resolveConfigValues()
   # 2. extract template if specified and set defaults if config has not explictly set values
   if [ "${_cfg_template}" != "null" ]; then
 
-    # template=$(echo "$cleanJson" | jq ".[]|select(.name == \"$_cfg_template\") | select(.type == \"template\" ) ")
-    # tmp_config_selector_config=$(echo $template | jq $OPT '.["selector-config"]')
-    # tmp_config_selector_files=$(echo $template | jq $OPT '.["selector-files"]')
-    # tmp_config_selector_feeds=$(echo $template | jq $OPT '.["selector-feeds"]')
-    # tmp_config_selector_patches=$(echo $template | jq $OPT '.["selector-patches"]')
-    # tmp_config_openwrt_rev=$(echo $template | jq $OPT '.openwrt_rev')
-    # tmp_config_openwrt_variant=$(echo $template | jq $OPT '.openwrt_variant')
-    # tmp_feeds=$(echo $template | jq $OPT '.feeds')
-    # tmp_packages=$(echo $template | jq $OPT '.packages')
-
-    # # 3. set defaults
-    # test "$_cfg_selector_config" = "null" && _cfg_selector_config="$tmp_config_selector_config"
-    # test "$_cfg_selector_files" = "null" && _cfg_selector_files="$tmp_config_selector_files"
-    # test "$_cfg_selector_feeds" = "null" && _cfg_selector_feeds="$tmp_config_selector_feeds"
-    # test "$_cfg_selector_patches" = "null" && _cfg_selector_patches="$tmp_config_selector_patches"
-    # test "$_cfg_openwrt_rev" = "null"  && _cfg_openwrt_rev="$tmp_config_openwrt_rev"
-    # test "$_cfg_openwrt_variant" = "null"  && _cfg_openwrt_variant="$tmp_config_openwrt_variant"
-    # test "$_cfg_feeds" = "null"  && _cfg_feeds="$tmp_feeds"
-    # test "$_cfg_packages" = "null"  && _cfg_packages="$tmp_packages"
+    test "$_cfg_disabled" = "null" && _cfg_disabled="${configTemplateValues["${_cfg_template}_config_disabled"]}"
 
     test "$_cfg_selector_config" = "null" && _cfg_selector_config="${configTemplateValues["${_cfg_template}_config_selector_config"]}"
     test "$_cfg_selector_files" = "null" && _cfg_selector_files="${configTemplateValues["${_cfg_template}_config_selector_files"]}"
@@ -408,10 +417,8 @@ resolveConfigValues()
     test "$_cfg_feeds" = "null"  && _cfg_feeds="${configTemplateValues["${_cfg_template}_config_feeds"]}"
     test "$_cfg_packages" = "null"  && _cfg_packages="${configTemplateValues["${_cfg_template}_config_packages"]}"
   fi
-  # echo "feeds:$_cfg_feeds"
-  # echo "pkg:$_cfg_packages"
 
-  # 4. check that all mandatory values are set (if no template was given in a config section, all entries
+  # 3. check that all mandatory values are set (if no template was given in a config section, all entries
   #    must be specified)
   if [ "$_cfg_openwrt_rev" = "null" \
         -o "$_cfg_selector_config" = "null" -o "$_cfg_selector_files" = "null" \
@@ -425,6 +432,7 @@ resolveConfigValues()
 # echo "_cfg_template=[${_cfg_template}]"
 # echo "_cfg_name=[${_cfg_name}]"
 # echo "_cfg_file=[${_cfg_file}]"
+# echo "_cfg_disabled=[${_cfg_disabled}]"
 # echo "_cfg_openwrt_rev=[${_cfg_openwrt_rev}]"
 # echo "_cfg_openwrt_variant=[${_cfg_openwrt_variant}]"
 # echo "_cfg_selector_config=[${_cfg_selector_config}]"
@@ -473,18 +481,23 @@ listTargets()
   fi
 
   case "${compile_status}" in
-    "0") cstatus="${C_NONE}${C_GREEN}${MARK_OK}${C_NONE}" ;;
-    "1") cstatus="${C_NONE}${C_RED}${MARK_FAIL}${C_NONE}" ;;
-    "2") cstatus="${C_NONE}${C_YELLOW}${C_BLINK}${MARK_BLINK}${C_NONE}" ;;
+    "0") cstatus="${PBC_SUCCESS}" ;;
+    "1") cstatus="${PBC_ERROR}" ;;
+    "2") cstatus="${PBC_RUNNING}" ;;
     *)
       # if there is another compile status code
       if [ -n "${compile_status}" ]; then
         cstatus="${C_LBLUE}${BG_WHITE}${compile_status}${C_NONE}"
       else
-        cstatus="${C_NONE}${C_GRAY}${MARK_NONE}${C_NONE}"
+        cstatus="${PBC_SPACE}"
       fi
       ;;
   esac
+
+  # overwrite if disabled
+  if [ "${_cfg_disabled}" == "true" ]; then
+    cstatus="${PBC_DISABLED}"
+  fi
 
   printf  "│$cstatus %-31s │ %-10.10s │ %-7.7s │ ${list_color[${_cfg_selector_config}]}%-8.8s${C_NONE} │ ${list_color[${_cfg_selector_files}]}%-7.7s${C_NONE} │ ${list_color[${_cfg_selector_feeds}]}%-7.7s${C_NONE} │ ${list_color[${_cfg_selector_patches}]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
  done
@@ -1230,6 +1243,12 @@ do
   echo -e $C_YELLOW"Openwrt Variant$C_NONE   : $C_BLUE${_cfg_openwrt_variant}"$C_NONE
   echo -e $C_YELLOW"Config-File$C_NONE       : $C_BLUE${config_file}"$C_NONE
   echo -e $C_GREY"----------------------------------------"$C_NONE
+
+  # ingore disabled targets
+  if [ "${_cfg_disabled}" == "true" ]; then
+    progbar_char_array[$((progress_counter-1))]="${PBC_DISABLED}"
+    continue
+  fi
 
   # construct build directory name
 

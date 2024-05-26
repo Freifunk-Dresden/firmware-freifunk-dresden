@@ -29,20 +29,21 @@
     # if 'type' is not present or value is set to 'target', then
     # the object is a target configuration. It must have set
     # 'template' json value to select the default or it should specify the complete configuration.
-    "type":"template",  # specifes that this object is a template for other targets or not.
-                        # values: "template" | "target"
-                        # default for "type" is "target"
-    "name":"22.03.6",   # template or target name
+    "type":"template",        # specifes that this object is a template for other targets or not.
+                              # values: "template | target"
+                              # default for "type" is "target"
+    "name":"22.03.6",         # template or target name
 
-    "template":"",      # name of the default template configuration
-    "config":"",        # config file name
-
+    "template":"",            # name of the default template configuration
+    "config":"",              # config file name
+    "disabled": false,        # if type is "template" then all targets are disabled, unless one target overwrites it
+                              # values: "true | false"
     "openwrt_rev":"v22.03.6",
-    "openwrt_variant":"", # creates a separate buildroot. use it for low-mem devices
-                          # where no kernel modules (e.g.: usb) must be included.
-                          # Note that selecting some packages as module could have
-                          # dependencies to kernel modules/libs, that are included
-                          # in image also if package is optional (ipk)
+    "openwrt_variant":"",     # creates a separate buildroot. use it for low-mem devices
+                              # where no kernel modules (e.g.: usb) must be included.
+                              # Note that selecting some packages as module could have
+                              # dependencies to kernel modules/libs, that are included
+                              # in image also if package is optional (ipk)
                           # This value is added to config file name
 
     "selector-config" :"22.03",  # used to select config
@@ -87,7 +88,8 @@
   {
     "template":"23.05.2",
     "name":"-testing-ramips.mt7621.generic",
-    "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg"
+    "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg",
+    "disabled": true
   },
   {
     "template":"23.05.2",
@@ -253,6 +255,7 @@
   {
     "type":"template",
     "name":"18.06",
+    //"disabled": true,
     "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
     "openwrt_variant"  : "lowmem",
     "selector-config"  : "18.06",
