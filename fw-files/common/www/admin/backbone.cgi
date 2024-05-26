@@ -287,7 +287,13 @@ content()
 	backbone_local_wg_port=$(uci -q get ddmesh.backbone.wg_port)
 	backbone_local_wg_port=${backbone_local_wg_port:-$DEFAULT_WG_PORT}
 
-	cat<<EOM
+cat<<EOM
+Das Backbone kann verwendet werden, um Verbindungen zu anderen Netzwerk-Wolken des Freifunknetzes aufzubauen.<br />Notwendig wird dies,
+wenn man keine WLAN-Verbindung herstellen kann, aber Stadtbereiche miteinander verbinden m&ouml;chte.<br>
+Dabei l&auml;uft der Router als Server und Client. Die Verbindung wird &uuml;ber das Internet oder LAN aufgebaut.<br>
+Der Router beschr&auml;nkt dabei die Anzahl der ausgehenden und eingehenden Verbindungen auf maximal <b>$NUMBER_OF_CLIENTS</b>, um den Router nicht zu &uuml;berlasten.
+<br/><br/>
+
 <fieldset class="bubble">
 <legend>Backbone-Einstellungen</legend>
 <form name="backbone_form_local" action="backbone.cgi" method="POST">
@@ -467,14 +473,6 @@ EOM
 
 
 if [ -z "$QUERY_STRING" ]; then
-
-cat<<EOM
-Das Backbone kann verwendet werden, um Verbindungen zu anderen Netzwerk-Wolken des Freifunknetzes aufzubauen.<br />Notwendig wird dies,
-wenn man keine WLAN-Verbindung herstellen kann, aber Stadtbereiche miteinander verbinden m&ouml;chte.<br>
-Dabei l&auml;uft der Router als Server und Client. Die Verbindung wird &uuml;ber das Internet oder LAN aufgebaut.<br>
-Der Router beschr&auml;nkt dabei die Anzahl der ausgehenden und eingehenden Verbindungen auf maximal <b>$NUMBER_OF_CLIENTS</b>, um den Router nicht zu &uuml;berlasten.
-<br><br>
-EOM
 	content
 else
 	MSG=0
