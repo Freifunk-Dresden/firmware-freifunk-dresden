@@ -9,7 +9,7 @@ Backbone Server           - switch to wireguard servers on initial setup
 password                  - fix setting password when using special characters
 
 
-2023-11-10 [8.2.1] (devel)
+2024-03-31 [8.2.2] (testing)
 --------------------------------------------------
 WiFi                      - 5GHz client mode (WAN) wpa3 support added
                           - remove disabled adhoc mode
