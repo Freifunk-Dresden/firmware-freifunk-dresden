@@ -329,7 +329,7 @@ _8_2_4_callback_upgrade_backbone ()
 upgrade_8_2_4()
 {
 	uci add_list ddmesh.communities.community='1022%Geringswalde'
-	uci -q set ddmesh.backbone.number_of_clients=6
+	test "$(uci -q get ddmesh.backbone.number_of_clients)" = "5" && uci -q set ddmesh.backbone.number_of_clients=6
 	if [ -x "/usr/bin/wg" ]; then
 		config_load ddmesh
 		config_foreach _8_2_4_callback_upgrade_backbone backbone_client
