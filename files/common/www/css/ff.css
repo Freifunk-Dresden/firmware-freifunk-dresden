@@ -281,6 +281,10 @@ table.topbar td {
 	margin: 0px;
 }
 
+.infobar {
+	white-space: nowrap;
+}
+
 .infobarvalue {
 	color: #ffcb05;
 	font-family: Arial, Helvetica, sans-serif;
