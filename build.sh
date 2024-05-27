@@ -102,7 +102,7 @@ if true; then
   PBC_RUNNING="${C_YELLOW}${C_BLINK}${MARK_BLINK}${C_NONE}"
   PBC_ERROR="${C_LRED}${MARK_FAIL}${C_NONE}"
   PBC_IGNORE="${C_RED}${MARK_IGNORE}${C_NONE}"
-  PBC_DISABLED="${C_RED}${MARK_DISABLED}${C_NONE}"
+  PBC_DISABLED="${C_LPURPLE}${MARK_DISABLED}${C_NONE}"
   PBC_SUCCESS="${C_GREEN}${MARK_OK}${C_NONE}"
   PBC_SKIP="${C_GREEN}${MARK_SKIP}${C_NONE}"
   PBC_SPACE="${MARK_NONE}"
@@ -259,7 +259,7 @@ show_progress()
 
     # print current target
     tput cup $(( $row - 2)) 0
-		tput el
+    tput el
     echo -e "building: $C_BLUE${target}$C_NONE"
 
     # print empty line above
@@ -628,7 +628,7 @@ bash_completion()
   #this function must be alled "sourced" to tell bash how to complete
   # list all values that bash should complete
 
-  ARGS="list lt list-targets watch devices search feed-revisions clean menuconfig rerun"
+  ARGS="list lt list-targets watch devices search feed-revisions clean menuconfig defconfig rerun"
 
   # add targets
   ARGS="${ARGS} $(listTargetsNames)"
@@ -639,7 +639,7 @@ bash_completion()
 usage_short()
 {
   echo "Version: $SCRIPT_VERSION"
-  echo "usage: $(basename $0) [options] <command | target-pattern > [clean | menuconfig | rerun]   [-- < make params ... > ]"
+  echo "usage: $(basename $0) [options] <command | target-pattern > [clean | menuconfig | defconfig | rerun]   [-- < make params ... > ]"
 }
 
 usage()
@@ -686,6 +686,7 @@ usage()
   flags
    clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    menuconfig       - displays configuration menu
+   defconfig        - only updates configs (dependencies)
    rerun            - enables a second compilation with make option 'V=s'
                       If first make failes a second make is tried with this option
    -- make params   - all paramerters that follows are passed to make command
@@ -928,9 +929,12 @@ case "$1" in
                       MAKE_CLEAN=1
                       endLoop=1
                     ;;
-
               menuconfig)
                       MENUCONFIG=1
+                      endLoop=1
+                      ;;
+              defconfig)
+                      DEFCONFIG=1
                       endLoop=1
                       ;;
               rerun)
@@ -990,7 +994,7 @@ targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#$|^#g')
 
 targetRegex="^$targetRegex\$"
 
-echo "### target-regex:[$targetRegex] MENUCONFIG=${MENUCONFIG} CLEAN=${MAKE_CLEAN} REBUILD_ON_FAILURE=${REBUILD_ON_FAILURE} BUILD_PARAMS=[${BUILD_PARAMS}]"
+echo "### target-regex:[$targetRegex] MENUCONFIG=${MENUCONFIG} DEFCONFIG=${DEFCONFIG} CLEAN=${MAKE_CLEAN} REBUILD_ON_FAILURE=${REBUILD_ON_FAILURE} BUILD_PARAMS=[${BUILD_PARAMS}]"
 
 # prinzip:
 # 1. separate each object from array and pipe it to 'select'
@@ -1448,73 +1452,74 @@ EOM
     clean_up_exit 0
   fi
 
-  make clean
+  if [ ! "$DEFCONFIG" = "1" ]; then
+    # run make command
+    make clean
+    echo -e $C_CYAN"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
+    time -p make -j$(nproc) $BUILD_PARAMS
+    error=$?
+    echo "make ret: $error"
 
-  # run make command
-  echo -e $C_CYAN"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
-  time -p make -j$(nproc) $BUILD_PARAMS
-  error=$?
-  echo "make ret: $error"
+    # continue with next target in build.targets
+    if [ $error -ne 0 ]; then
+      global_error=1
+      progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
 
-  # continue with next target in build.targets
-  if [ $error -ne 0 ]; then
-    global_error=1
-    progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
+      echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_cfg_name}" $C_NONE
 
-    echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_cfg_name}" $C_NONE
-
-    if [ "$REBUILD_ON_FAILURE" = "1" ]; then
-      echo -e $C_CYAN".......... rerun build with V=s ........................"$C_NONE
-      time -p make $BUILD_PARAMS V=s -j1
-      error=$?
-      if [ $error -ne 0 ]; then
-        echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
-        clean_up_exit 1
+      if [ "$REBUILD_ON_FAILURE" = "1" ]; then
+        echo -e $C_CYAN".......... rerun build with V=s ........................"$C_NONE
+        time -p make $BUILD_PARAMS V=s -j1
+        error=$?
+        if [ $error -ne 0 ]; then
+          echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
+          clean_up_exit 1
+        fi
       fi
+      # ignore error and continue with next target
+      echo -e "${C_RED}Error: ignore build error${C_NONE} target and ${C_YELLOW}continue${C_NONE} with next"
+      continue
     fi
-    # ignore error and continue with next target
-    echo -e "${C_RED}Error: ignore build error${C_NONE} target and ${C_YELLOW}continue${C_NONE} with next"
-    continue
-  fi
 
-  # check if we have file
-  target_dir="${RUN_DIR}/${buildroot}/bin/targets"
-  if [ ! -d "${target_dir}" ]; then
-    echo -e "${C_RED}Error: build error - generated directory not found${C_NONE}"
-    echo "     ${target_dir}"
-    clean_up_exit 1
-  fi
+    # check if we have file
+    target_dir="${RUN_DIR}/${buildroot}/bin/targets"
+    if [ ! -d "${target_dir}" ]; then
+      echo -e "${C_RED}Error: build error - generated directory not found${C_NONE}"
+      echo "     ${target_dir}"
+      clean_up_exit 1
+    fi
 
-  # copy files to our own output directory
-  mkdir -p ${outdir}/packages ${outdir}/images
+    # copy files to our own output directory
+    mkdir -p ${outdir}/packages ${outdir}/images
 
-  echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
-  mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
+    echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
+    mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
 
-  echo -e "${C_CYAN}copy images${C_NONE}"
-  mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
+    echo -e "${C_CYAN}copy images${C_NONE}"
+    mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
 
-  echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
+    echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
 
-  # verify presens of all images
-  echo -e "${C_CYAN}verify images${C_NONE} for ${_cfg_name}"
-  if ! verify_firmware_present "${_cfg_name}" "${outdir}/images"; then
-    echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
-    error=1
-    global_error=1
-    # clean_up_exit 1
-  fi
+    # verify presens of all images
+    echo -e "${C_CYAN}verify images${C_NONE} for ${_cfg_name}"
+    if ! verify_firmware_present "${_cfg_name}" "${outdir}/images"; then
+      echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
+      error=1
+      global_error=1
+      # clean_up_exit 1
+    fi
 
-  # write build status which is displayed by "build.sh list"
-  echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
-  write_compile_status "${_cfg_name}" "${error}" "${compile_status_file}"
+    # write build status which is displayed by "build.sh list"
+    echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
+    write_compile_status "${_cfg_name}" "${error}" "${compile_status_file}"
 
-  # success status
-  if [ ${error} == 0 ]; then
-    progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
-  else
-    progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
-  fi
+    # success status
+    if [ ${error} == 0 ]; then
+      progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
+    else
+      progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
+    fi
+  fi # if [ ! "$DEFCONFIG" = "1" ]
 
 done
 
