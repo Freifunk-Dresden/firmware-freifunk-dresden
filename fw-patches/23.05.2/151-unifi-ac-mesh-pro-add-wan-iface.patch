@@ -1,5 +1,5 @@
---- 863f769b7.iptables/target/linux/ath79/generic/base-files/etc/board.d/02_network.ori	2023-05-27 14:01:42.596395344 +0200
-+++ 863f769b7.iptables/target/linux/ath79/generic/base-files/etc/board.d/02_network	2023-05-27 14:02:15.712548615 +0200
+--- a/target/linux/ath79/generic/base-files/etc/board.d/02_network.ori	2023-05-27 14:01:42.596395344 +0200
++++ b/target/linux/ath79/generic/base-files/etc/board.d/02_network	2023-05-27 14:02:15.712548615 +0200
 @@ -545,7 +545,7 @@
  	ubnt,unifiac-mesh-pro|\
  	ubnt,unifiac-pro)
