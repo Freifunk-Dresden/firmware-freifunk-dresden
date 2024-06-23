@@ -87,9 +87,9 @@
 # ---------- openwrt 23 ------------------------------------------------------
   {
     "template":"23.05.2",
-    "name":"-testing-ramips.mt7621.generic",
+    "name":".testing-ramips.mt7621.generic",
     "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg",
-    "disabled": true
+    "disabled": false
   },
   {
     "template":"23.05.2",
@@ -255,7 +255,7 @@
   {
     "type":"template",
     "name":"18.06",
-    //"disabled": true,
+    "disabled": true,
     "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
     "openwrt_variant"  : "lowmem",
     "selector-config"  : "18.06",
