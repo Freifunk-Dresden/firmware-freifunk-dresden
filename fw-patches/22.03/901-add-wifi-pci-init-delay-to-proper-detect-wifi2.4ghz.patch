@@ -1,6 +1,6 @@
 diff -Naur --suppress-blank-empty --strip-trailing-cr a/target/linux/ramips/patches-6.1/901-staging-mt7621-pci-delay-for-properly-detect.patch b/target/linux/ramips/patches-6.1/901-staging-mt7621-pci-delay-for-properly-detect.patch
---- a/target/linux/ramips/patches-5.10/901-staging-mt7621-pci-delay-for-properly-detect.patch	1970-01-01 01:00:00.000000000 +0100
-+++ b/target/linux/ramips/patches-5.10/901-staging-mt7621-pci-delay-for-properly-detect.patch	2024-04-24 00:04:14.631311532 +0200
+--- a/target/linux/ramips/patches-5.10/901-add-wifi-pci-init-delay-to-proper-detect-wifi2.4ghz.patch	1970-01-01 01:00:00.000000000 +0100
++++ b/target/linux/ramips/patches-5.10/901-add-wifi-pci-init-delay-to-proper-detect-wifi2.4ghz.patch	2024-04-24 00:04:14.631311532 +0200
 @@ -0,0 +1,23 @@
 +--- a/drivers/staging/mt7621-pci/pci-mt7621.c
 ++++ b/drivers/staging/mt7621-pci/pci-mt7621.c
