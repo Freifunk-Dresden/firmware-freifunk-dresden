@@ -136,7 +136,158 @@ RUN_DIR=$(pwd)
 
 global_error=0
 
-############# progress bar ##########################
+###--------------------------------- functions -----------------------------------------------------
+
+
+
+setup_buildroot ()
+{
+ buildroot=$1
+ openwrt_rev=$2
+ openwrt_dl_dir=$3
+ openwrt_patches_dir=$4
+ firmware_files=$5
+
+ openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
+
+ git_url="https://git.openwrt.org/openwrt/openwrt.git"
+
+  # check if directory exists. I'm not just checking
+  # the build root itself, because gitlab left a working directory
+  # only with freifunk files, but without all other openwrt files
+  if [ ! -d "$buildroot/toolchain" ]
+  then
+    echo "directory [$buildroot/toolchain] not present -> re-create '$buildroot'"
+    # ensure we have a clean workdir, after gitlab runner had removed
+    # openwrt.org files (e.g. toolchain)
+    rm -rf "$buildroot"
+
+    # re-create buildroot
+    mkdir -p "$buildroot"
+    if [ ! -d "$buildroot" ]; then
+      echo "Error: '$buildroot' could not be created. exit."
+      clean_up_exit 1
+    fi
+
+    #check if we have already downloaded the openwrt revision
+    if [ -f $openwrt_dl_tgz ]
+    then
+      #extract into buildroot dir
+      echo "using already downloaded $openwrt_dl_tgz"
+      cd $buildroot
+      tar xzf $RUN_DIR/$openwrt_dl_tgz
+    else
+      #clone from openwrt
+      echo "cloning openwrt"
+      git clone $git_url $buildroot
+      echo "switch to specific revision"
+      cd $buildroot
+      git checkout $openwrt_rev >/dev/null
+      echo "create openwrt tgz"
+      tar czf $RUN_DIR/$openwrt_dl_tgz .
+    fi
+    cd $RUN_DIR
+
+    #apply openwrt patches
+    if [ -d $openwrt_patches_dir ]; then
+      for i in $openwrt_patches_dir/*.patch
+      do
+        echo -e "${C_CYAN}apply openwrt patch:${C_NONE} $i to buildroot:$buildroot"
+        # --no-backup-if-mismatch avoids creating backup files for files
+        # with different names or if not exist (new files)
+        patch --no-backup-if-mismatch --directory=$buildroot -p1 < $i
+      done
+    fi
+  else
+    echo -e "${C_CYAN}Buildroot [$buildroot]${C_NONE} already present"
+  fi
+
+  echo -n -e $C_CYAN"create dl directory/links"$C_NONE": "
+  rm -f $buildroot/dl
+  ln -s ../../$openwrt_dl_dir $buildroot/dl
+  echo "done."
+
+  # -------- common files -----------
+  # copy common files first
+  echo -n -e "${C_CYAN}copy rootfs (common)${C_NONE}: "
+  rm -rf $buildroot/files
+  mkdir -p $buildroot/files
+  # --remove-destination forces copy (first remove (e.g. symlinks))
+  cp -a --remove-destination $RUN_DIR/fw-files/common/* $buildroot/files/
+  echo " done."
+
+  # -------- specific files -----------
+  # copy specific files over (may overwrite common)
+  echo -n -e "${C_CYAN}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
+  if [ -n "${firmware_files}" -a -d "$RUN_DIR/fw-files/${firmware_files}" ]; then
+    # --remove-destination forces copy (first remove (e.g. symlinks))
+    cp -a --remove-destination $RUN_DIR/fw-files/${firmware_files}/* $buildroot/files/
+    echo "done."
+  else
+    echo "no specific files."
+  fi
+
+  echo -n -e $C_CYAN"create rootfs/etc/built_info file: "$C_NONE
+  mkdir -p $buildroot/files/etc
+  > $buildroot/files/etc/built_info
+  echo "done."
+
+  # more dynamic changes
+  echo -n -e $C_CYAN"setup dynamic firmware config: "$C_NONE
+  setup_dynamic_firmware_config "$buildroot/files"
+  echo "done."
+
+  echo "----- generate built_info ----"
+  git_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
+  git_openwrt_branch=$(cd $buildroot && git name-rev --name-only $git_openwrt_rev | sed 's#.*/##')
+  echo "git_openwrt_rev:$git_openwrt_rev" >> $buildroot/files/etc/built_info
+  echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
+
+  # when running from gitlab only specific revision is cloned. there are no branch infos.
+  # So I check if FF_BUILD_TAG is set and then use this. If not defined I use
+  # the one I can determine.
+  git_ddmesh_rev="$(git log -1 --format=%H)"
+  if [ -n "$FF_BUILD_TAG" ]; then
+    git_ddmesh_branch="$FF_BUILD_TAG"
+  else
+    git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
+
+    if [ "$git_ddmesh_branch" = "undefined" ]; then
+      git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
+      echo ""
+      echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"$C_NONE
+      echo ""
+      sleep 5
+    fi
+  fi
+
+  echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
+  echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
+  echo "builtdate:$(date +'%H:%M:%S / %d %h %y')" >> $buildroot/files/etc/built_info
+
+  echo "git_openwrt_rev:     $git_openwrt_rev"
+  echo "git_openwrt_branch:  $git_openwrt_branch"
+  echo "git_ddmesh_rev:      $git_ddmesh_rev"
+  echo "git_ddmesh_branch:   $git_ddmesh_branch"
+  echo ""
+
+
+} # setup_buildroot
+
+# status:
+#  0 - success
+#  1 - error
+#  2 - compiling
+write_compile_status()
+{
+  local config="$1"
+  local status="$2"
+  local file="$3"
+  mkdir -p $(dirname $file)
+  test "$status" = "0" && d="$(date +'%H:%M:%S / %d %h %y' | sed 's#Mär#Mar#')" || d=""
+  echo "{\"config\":\"${config}\", \"date\":\"$d\", \"status\":\"${status}\"}" > "${file}"
+}
+
 
 progressbar()
 {
@@ -620,9 +771,20 @@ setup_dynamic_firmware_config()
   sed -i "/wifi_mesh_key/s#ffkey-placeholder#${FF_MESH_KEY}#" $FILES/etc/config/credentials
 }
 
+preProcessBuildJson()
+{
+  ignoreTemplates=$1
 
+  # get global clean build.json
+  cleanJson=$(getTargetsJson)
 
-#----------------- process argument ----------------------------------
+  if [ -z "$ignoreTemplates" ]; then
+    # uses cleanJson
+    echo "resolve config templates...."
+    resolveTemplates
+  fi
+}
+
 bash_completion()
 {
   #this function must be alled "sourced" to tell bash how to complete
@@ -700,6 +862,11 @@ Devel-Notes:
 
 EOM
 }
+
+
+
+###----------------------------------start----------------------------------------------------------
+
 
 # overwrite DOCKER_HOST variable if FF_DOCKER_HOST is present. this value can still be overwritten by -h option
 test -n "${FF_DOCKER_HOST}" && export DOCKER_HOST="${FF_DOCKER_HOST}"
@@ -835,20 +1002,6 @@ if $USE_DOCKER; then
 fi
 
 #---- process parameters -----------
-
-preProcessBuildJson()
-{
-  ignoreTemplates=$1
-
-  # get global clean build.json
-  cleanJson=$(getTargetsJson)
-
-  if [ -z "$ignoreTemplates" ]; then
-    # uses cleanJson
-    echo "resolve config templates...."
-    resolveTemplates
-  fi
-}
 
 
 targetRegex=""
@@ -1026,153 +1179,6 @@ if [ "$_TERM" = "1" ]; then
   trap show_progress WINCH
 fi
 
-setup_buildroot ()
-{
- buildroot=$1
- openwrt_rev=$2
- openwrt_dl_dir=$3
- openwrt_patches_dir=$4
- firmware_files=$5
-
- openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
-
- git_url="https://git.openwrt.org/openwrt/openwrt.git"
-
-  # check if directory exists. I'm not just checking
-  # the build root itself, because gitlab left a working directory
-  # only with freifunk files, but without all other openwrt files
-  if [ ! -d "$buildroot/toolchain" ]
-  then
-    echo "directory [$buildroot/toolchain] not present -> re-create '$buildroot'"
-    # ensure we have a clean workdir, after gitlab runner had removed
-    # openwrt.org files (e.g. toolchain)
-    rm -rf "$buildroot"
-
-    # re-create buildroot
-    mkdir -p "$buildroot"
-    if [ ! -d "$buildroot" ]; then
-      echo "Error: '$buildroot' could not be created. exit."
-      clean_up_exit 1
-    fi
-
-    #check if we have already downloaded the openwrt revision
-    if [ -f $openwrt_dl_tgz ]
-    then
-      #extract into buildroot dir
-      echo "using already downloaded $openwrt_dl_tgz"
-      cd $buildroot
-      tar xzf $RUN_DIR/$openwrt_dl_tgz
-    else
-      #clone from openwrt
-      echo "cloning openwrt"
-      git clone $git_url $buildroot
-      echo "switch to specific revision"
-      cd $buildroot
-      git checkout $openwrt_rev >/dev/null
-      echo "create openwrt tgz"
-      tar czf $RUN_DIR/$openwrt_dl_tgz .
-    fi
-    cd $RUN_DIR
-
-    #apply openwrt patches
-    if [ -d $openwrt_patches_dir ]; then
-      for i in $openwrt_patches_dir/*.patch
-      do
-        echo -e "${C_CYAN}apply openwrt patch:${C_NONE} $i to buildroot:$buildroot"
-        # --no-backup-if-mismatch avoids creating backup files for files
-        # with different names or if not exist (new files)
-        patch --no-backup-if-mismatch --directory=$buildroot -p1 < $i
-      done
-    fi
-  else
-    echo -e "${C_CYAN}Buildroot [$buildroot]${C_NONE} already present"
-  fi
-
-  echo -n -e $C_CYAN"create dl directory/links"$C_NONE": "
-  rm -f $buildroot/dl
-  ln -s ../../$openwrt_dl_dir $buildroot/dl
-  echo "done."
-
-  # -------- common files -----------
-  # copy common files first
-  echo -n -e "${C_CYAN}copy rootfs (common)${C_NONE}: "
-  rm -rf $buildroot/files
-  mkdir -p $buildroot/files
-  # --remove-destination forces copy (first remove (e.g. symlinks))
-  cp -a --remove-destination $RUN_DIR/fw-files/common/* $buildroot/files/
-  echo " done."
-
-  # -------- specific files -----------
-  # copy specific files over (may overwrite common)
-  echo -n -e "${C_CYAN}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
-  if [ -n "${firmware_files}" -a -d "$RUN_DIR/fw-files/${firmware_files}" ]; then
-    # --remove-destination forces copy (first remove (e.g. symlinks))
-    cp -a --remove-destination $RUN_DIR/fw-files/${firmware_files}/* $buildroot/files/
-    echo "done."
-  else
-    echo "no specific files."
-  fi
-
-  echo -n -e $C_CYAN"create rootfs/etc/built_info file: "$C_NONE
-  mkdir -p $buildroot/files/etc
-  > $buildroot/files/etc/built_info
-  echo "done."
-
-  # more dynamic changes
-  echo -n -e $C_CYAN"setup dynamic firmware config: "$C_NONE
-  setup_dynamic_firmware_config "$buildroot/files"
-  echo "done."
-
-  echo "----- generate built_info ----"
-  git_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
-  git_openwrt_branch=$(cd $buildroot && git name-rev --name-only $git_openwrt_rev | sed 's#.*/##')
-  echo "git_openwrt_rev:$git_openwrt_rev" >> $buildroot/files/etc/built_info
-  echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
-
-  # when running from gitlab only specific revision is cloned. there are no branch infos.
-  # So I check if FF_BUILD_TAG is set and then use this. If not defined I use
-  # the one I can determine.
-  git_ddmesh_rev="$(git log -1 --format=%H)"
-  if [ -n "$FF_BUILD_TAG" ]; then
-    git_ddmesh_branch="$FF_BUILD_TAG"
-  else
-    git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
-
-    if [ "$git_ddmesh_branch" = "undefined" ]; then
-      git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
-      echo ""
-      echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"$C_NONE
-      echo ""
-      sleep 5
-    fi
-  fi
-
-  echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
-  echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
-  echo "builtdate:$(date +'%H:%M:%S / %d %h %y')" >> $buildroot/files/etc/built_info
-
-  echo "git_openwrt_rev:     $git_openwrt_rev"
-  echo "git_openwrt_branch:  $git_openwrt_branch"
-  echo "git_ddmesh_rev:      $git_ddmesh_rev"
-  echo "git_ddmesh_branch:   $git_ddmesh_branch"
-  echo ""
-
-
-} # setup_buildroot
-
-# status:
-#  0 - success
-#  1 - error
-#  2 - compiling
-write_compile_status()
-{
-  local config="$1"
-  local status="$2"
-  local file="$3"
-  mkdir -p $(dirname $file)
-  test "$status" = "0" && d="$(date +'%H:%M:%S / %d %h %y' | sed 's#Mär#Mar#')" || d=""
-  echo "{\"config\":\"${config}\", \"date\":\"$d\", \"status\":\"${status}\"}" > "${file}"
-}
 # ---------- create directories: dl, workdir -----------
 # only create top-level directories if thoses do not not
 # exisist. I do not simply call 'mkdir -p'. This is because
