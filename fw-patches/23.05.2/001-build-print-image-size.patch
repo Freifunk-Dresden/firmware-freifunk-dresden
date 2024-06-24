@@ -1,15 +1,34 @@
-diff --git a/include/image-commands.mk b/include/image-commands.mk
-index dc6ee6e7c1..b300969724 100644
 --- a/include/image-commands.mk
 +++ b/include/image-commands.mk
 @@ -216,8 +216,9 @@ endef
  define Build/check-size
- 	@imagesize="$$(stat -c%s $@)"; \
- 	limitsize="$$(($(subst k,* 1024,$(subst m, * 1024k,$(if $(1),$(1),$(IMAGE_SIZE))))))"; \
-+	$(call ERROR_MESSAGE,    INFO: Image size: $$imagesize max:$$limitsize - $$(basename $@)); \
- 	[ $$limitsize -ge $$imagesize ] || { \
--		$(call ERROR_MESSAGE,    WARNING: Image file $@ is too big: $$imagesize > $$limitsize); \
-+		$(call ERROR_MESSAGE,!!! WARNING: Image file $@ is too big: $$imagesize > $$limitsize); \
- 		rm -f $@; \
- 	}
+        @imagesize="$$(stat -c%s $@)"; \
+        limitsize="$$(($(subst k,* 1024,$(subst m, * 1024k,$(if $(1),$(1),$(IMAGE_SIZE))))))"; \
++       $(call INFO_MESSAGE,    INFO: Image size: $$imagesize max:$$limitsize - $$(basename $@)); \
+        [ $$limitsize -ge $$imagesize ] || { \
+-               $(call ERROR_MESSAGE,    WARNING: Image file $@ is too big: $$imagesize > $$limitsize); \
++               $(call ERROR_MESSAGE,!!! WARNING: Image file $@ is too big: $$imagesize > $$limitsize); \
+                rm -f $@; \
+        }
  endef
+--- a/include/verbose.mk
++++ b/include/verbose.mk
+@@ -26,6 +26,7 @@ ifeq ($(IS_TTY),1)
+     _Y:=\\033[33m
+     _R:=\\033[31m
+     _N:=\\033[m
++    _B:=\\033[34m
+   endif
+ endif
+
+@@ -33,6 +34,10 @@ define ERROR_MESSAGE
+   printf "$(_R)%s$(_N)\n" "$(1)" >&8
+ endef
+
++define INFO_MESSAGE
++  printf "$(_B)%s$(_N)\n" "$(1)" >&8
++endef
++
+ ifeq ($(findstring s,$(OPENWRT_VERBOSE)),)
+   define MESSAGE
+        printf "$(_Y)%s$(_N)\n" "$(1)" >&8
