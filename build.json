@@ -66,13 +66,13 @@
   },
   {
     "type":"template",
-    "name":"23.05.2",
-    "openwrt_rev":"v23.05.2",
+    "name":"23.05.3",
+    "openwrt_rev":"v23.05.3",
     "openwrt_variant":"",
-    "selector-config":"23.05.2",
-    "selector-feeds":"23.05.2",
-    "selector-patches":"23.05.2",
-    "selector-files":"23.05.2",
+    "selector-config":"23.05.3",
+    "selector-feeds":"23.05.3",
+    "selector-patches":"23.05.3",
+    "selector-files":"23.05.3",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"8e3a1824645" },
@@ -86,13 +86,13 @@
 # =================== targets =======================================================
 # ---------- openwrt 23 ------------------------------------------------------
   {
-    "template":"23.05.2",
-    "name":".testing-ramips.mt7621.generic",
+    "template":"23.05.3",
+    "name":"_testing-ramips.mt7621.generic",
     "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg",
     "disabled": false
   },
   {
-    "template":"23.05.2",
+    "template":"23.05.3",
     "name":"ath79.23.generic",
     "config":"ath79.generic.23.cfg"
   },

@@ -682,7 +682,7 @@
       "name": "",
       "filename": "openwrt-ath79-generic-aruba_ap-105-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -692,14 +692,14 @@
       "model2": "Aruba AP-105",
       "filename": "openwrt-ath79-generic-aruba_ap-105-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-avm_fritz4020-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -709,7 +709,7 @@
       "model2": "AVM FRITZ!Box 4020",
       "filename": "openwrt-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -719,14 +719,14 @@
       "model2": "AVM FRITZ!Box 4020",
       "filename": "openwrt-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
       "comment": "alte Kennung",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-avm_fritz450e-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -736,7 +736,7 @@
       "model2": "AVM FRITZ!WLAN Repeater 450E",
       "filename": "openwrt-ath79-generic-avm_fritz450e-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -818,7 +818,7 @@
       "name": "",
       "filename": "openwrt-ath79-generic-glinet_gl-ar150-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -828,14 +828,14 @@
       "model2": "GL.iNet GL-AR150",
       "filename": "openwrt-ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-glinet_gl-ar300m-lite-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -845,14 +845,14 @@
       "model2": "GL.iNet GL-AR300M-Lite",
       "filename": "openwrt-ath79-generic-glinet_gl-ar300m-lite-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-glinet_gl-ar300m16-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -862,14 +862,14 @@
       "model2": "GL.iNet GL-AR300M16",
       "filename": "openwrt-ath79-generic-glinet_gl-ar300m16-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-glinet_gl-ar750-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -879,7 +879,7 @@
       "model2": "GL.iNet GL-AR750",
       "filename": "openwrt-ath79-generic-glinet_gl-ar750-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -903,7 +903,7 @@
       "name": "",
       "filename": "openwrt-ath79-generic-joyit_jt-or750i-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -913,7 +913,7 @@
       "model2": "Joy-IT JT-OR750i",
       "filename": "openwrt-ath79-generic-joyit_jt-or750i-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -951,14 +951,14 @@
       "name": "",
       "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-squashfs-factory.img",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -968,21 +968,21 @@
       "model2": "Netgear WNDR3700 v2",
       "filename": "openwrt-ath79-generic-netgear_wndr3700-v2-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-netgear_wnr2200-16m-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-netgear_wnr2200-16m-squashfs-factory.img",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -992,7 +992,7 @@
       "model2": "",
       "filename": "openwrt-ath79-generic-netgear_wnr2200-16m-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1030,14 +1030,14 @@
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1047,7 +1047,7 @@
       "model2": "TP-Link Archer C5 v1",
       "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
       "comment": "alte Kennung",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1057,21 +1057,21 @@
       "model2": "TP-Link Archer C5 v1",
       "filename": "openwrt-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c59-v1-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c59-v1-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1081,21 +1081,21 @@
       "model2": "TP-Link Archer C59 v1",
       "filename": "openwrt-ath79-generic-tplink_archer-c59-v1-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c59-v2-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c59-v2-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1105,7 +1105,7 @@
       "model2": "TP-Link Archer C59 v2",
       "filename": "openwrt-ath79-generic-tplink_archer-c59-v2-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1184,28 +1184,28 @@
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-factory-eu.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-factory-us.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1215,7 +1215,7 @@
       "model2": "TP-Link Archer C7 v2",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1225,21 +1225,21 @@
       "model2": "TP-Link Archer C7 v2",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
       "comment": "alte Kennung",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1249,7 +1249,7 @@
       "model2": "TP-LINK Archer C7 v4",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1259,21 +1259,21 @@
       "model2": "TP-LINK Archer C7 v4",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v4-squashfs-sysupgrade.bin",
       "comment": "alte Kennung",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1283,7 +1283,7 @@
       "model2": "TP-Link Archer C7 v5",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1293,7 +1293,7 @@
       "model2": "TP-LINK Archer C7 v5",
       "filename": "openwrt-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
       "comment": "alte Kennung",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1470,14 +1470,14 @@
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1487,7 +1487,7 @@
       "model2": "TP-Link EAP225-Outdoor v1",
       "filename": "openwrt-ath79-generic-tplink_eap225-outdoor-v1-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1566,14 +1566,14 @@
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_tl-wr1043n-v5-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1583,21 +1583,21 @@
       "model2": "TP-Link TL-WR1043N v5",
       "filename": "openwrt-ath79-generic-tplink_tl-wr1043n-v5-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v4-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1607,21 +1607,21 @@
       "model2": "TP-Link TL-WR1043ND v4",
       "filename": "openwrt-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1631,21 +1631,21 @@
       "model2": "Ubiquiti UniFiAP Outdoor+",
       "filename": "openwrt-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifi-ap-pro-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifi-ap-pro-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1655,7 +1655,7 @@
       "model2": "",
       "filename": "openwrt-ath79-generic-ubnt_unifi-ap-pro-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1696,7 +1696,7 @@
       "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1706,21 +1706,21 @@
       "model2": "Ubiquiti UniFi-AC-LITE",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-lite-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-pro-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1730,7 +1730,7 @@
       "model2": "",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-pro-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1740,14 +1740,14 @@
       "model2": "Ubiquiti UniFi AC Mesh",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-mesh-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-pro-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1757,21 +1757,21 @@
       "model2": "Ubiquiti UniFi AC Pro",
       "filename": "openwrt-ath79-generic-ubnt_unifiac-pro-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-wd_mynet-n750-initramfs-kernel.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
       "name": "",
       "filename": "openwrt-ath79-generic-wd_mynet-n750-squashfs-factory.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",
@@ -1781,7 +1781,7 @@
       "model2": "Western Digital My Net N750",
       "filename": "openwrt-ath79-generic-wd_mynet-n750-squashfs-sysupgrade.bin",
       "comment": "",
-      "source_path": "v23.05.2/_output/ath79.23.generic/images/"
+      "source_path": "v23.05.3/_output/ath79.23.generic/images/"
     },
     {
       "disabled": "0",

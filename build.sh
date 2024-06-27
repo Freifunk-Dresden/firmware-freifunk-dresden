@@ -121,7 +121,7 @@ declare -A list_color
 list_color['18.06']="${BG_BLACK}"
 list_color['21.02']="${BG_BLACK}"
 list_color['22.03']="${BG_BLUE}"
-list_color['23.05.2']="${BG_PURBLE}"
+list_color['23.05.3']="${BG_PURBLE}"
 
 #printf "${list_color['18.06']}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
 #printf "${list_color[$v]}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
@@ -207,12 +207,21 @@ setup_buildroot ()
   ln -s ../../$openwrt_dl_dir $buildroot/dl
   echo "done."
 
+  # ---------------------------------
+  # 1. copy 'common' files that are independent of openwrt version
+  # 2. copy all version specific files. this will overwrite existing files the came from 'common'
+  # 3. delete files that should be remove.
+  #    Note: files that should be deleted, should end with '~'. for instance, when
+  #    '/www/admin/iptables.cgi' from common is should not present in specific version,
+  #    then create an empty file '/www/admin/iptables.cgi~'
+  #    this file will then be removed from specific version
+  #
   # -------- common files -----------
   # copy common files first
   echo -n -e "${C_CYAN}copy rootfs (common)${C_NONE}: "
   rm -rf $buildroot/files
   mkdir -p $buildroot/files
-  # --remove-destination forces copy (first remove (e.g. symlinks))
+  # --remove-destination forces copy (first remove existing file (e.g. symlinks))
   cp -a --remove-destination $RUN_DIR/fw-files/common/* $buildroot/files/
   echo " done."
 
@@ -220,8 +229,12 @@ setup_buildroot ()
   # copy specific files over (may overwrite common)
   echo -n -e "${C_CYAN}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
   if [ -n "${firmware_files}" -a -d "$RUN_DIR/fw-files/${firmware_files}" ]; then
-    # --remove-destination forces copy (first remove (e.g. symlinks))
+    # --remove-destination forces copy (first remove existing file (e.g. symlinks))
     cp -a --remove-destination $RUN_DIR/fw-files/${firmware_files}/* $buildroot/files/
+    echo "done."
+
+    echo -n -e "${C_CYAN}removing unwanted files/directories ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
+    find $buildroot/files/ -name '*~' -exec sh -c 'f="{}"; rm -rf "$f" "${f%*~}"' \; 2>/dev/null
     echo "done."
   else
     echo "no specific files."
