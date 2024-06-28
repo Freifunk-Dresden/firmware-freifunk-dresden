@@ -253,6 +253,14 @@ define Package/$(PKG_NAME)-extra-modules/config
       # the optional string is a prompt that is displayed
       tristate "htop"
 
+    # use SYMBOL of package that should be selected
+    config PACKAGE_tmux
+      # menu point is displayed when dependencies are selected
+      depends on PACKAGE_ddmesh-extra-modules
+      # tristate is a keyword meaning, that this package can be compiled built-in or as module.
+      # the optional string is a prompt that is displayed
+      tristate "tmux"
+
   # endmenu
 
 endef

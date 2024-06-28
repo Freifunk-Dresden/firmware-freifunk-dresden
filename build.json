@@ -61,7 +61,7 @@
 
     # install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop"
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
     ]
   },
   {
@@ -79,7 +79,7 @@
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"83ef3784a90" }
     ],
     "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop"
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
     ]
   },
 
