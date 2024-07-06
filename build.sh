@@ -1423,14 +1423,16 @@ EOM
 
       # remove any old config from build root
       rm -f .config
+
       # default config contains important configs that must exist before creating
       # a new config via menuconfig. this default config overwrites also some
       # important configs after running menuconfig.
       # SEE: CONFIG_VERSION_FILENAMES is not set
-      # -- per device rootfs MUST BE SET BEFORE selecting it in menuconfig
-      #    else this option is not applied, as all packages are already added via '*'
-      #    instead of 'M'. See comment on this option in menuconfig menu
+
+      # copy initial default config before firsttime "menuoconfig". this is needed 
+      # to get CONFIG_TARGET_PER_DEVICE_ROOTFS working. see help page in menuconfig
       cp ${DEFAULT_CONFIG} .config
+
     else
       # no config and no menuconfig -> continue with next target; do not create config yet.
       # it only should be down by menuconfig
