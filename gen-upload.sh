@@ -202,7 +202,7 @@ gen_download_json_add_data()
   output_path="$1" 	# output path "firmware/4.2.15"
   subpath="$2" 		# relativ path to firmware "7239bcd/ar71xx/generic"
   file_filter="$3" 	# file filter "*.{bin,trx,img,dlf,gz}"
-  source_path="$4"	# source file location
+  source_path="$4"	# source file location //not used any more
 
   error=0
 
@@ -217,6 +217,11 @@ gen_download_json_add_data()
   for path in $(eval ls -1 $output_path/$subpath/$file_filter 2>/dev/null )
   do
     file=$(basename $path)
+		# only contains the "device-part"
+		#   freifunk-dresden-22.03.6-ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin
+		# becomes:  ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin
+		# This is used to filter filename entries and as sort-key
+		file_device_part_name="$(echo "$file" | sed 's#^freifunk-dresden-\([0-9.]\+-\)*\(snapshot-\)*##')"
 #printf "$file\n"
     # defaults
     disabled="0"
@@ -237,11 +242,19 @@ gen_download_json_add_data()
     # aber fuer files die fuer verschiedene router verwendet werden, koennen mehrere eintraege enthalten sein.
     if [ -f "$info_dir/$INPUT_FILEINFO_JSON_FILENAME" ]; then
       # info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename == \"$file\") ]")
+
+      # first try to find exact match.
       info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename == \"$file\") ]")
+
+      # if nothing was found, then it is likly that the openwrt version has changed.
+      # so try only "device part" of name
+      if [ "$info_array" = "[]" ]; then
+       info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename | test(\"$file_device_part_name\") ) ]")
+      fi
     else
       info_array="[]"
     fi
-#printf "$file=info_array:$info_array\n"
+# echo "$file=info_array:$info_array\n"
 
 
     OPT="--raw-output"
@@ -277,9 +290,9 @@ gen_download_json_add_data()
 #printf "##$name:$autoupdate:$model:$model2:$filename:$comment\n"
 
       # determine "sysupgrade" files
-      if [   	-z "${file/openwrt-*-sysupgrade.bin*/}" \
-           -o	-z "${file/openwrt-*-combined.img.gz*/}" \
-           -o	-z "${file/openwrt-*-sdcard.img.gz*/}" ]
+      if [   	-z "${file/*-*-sysupgrade.bin*/}" \
+           -o	-z "${file/*-*-combined.img.gz*/}" \
+           -o	-z "${file/*-*-sdcard.img.gz*/}" ]
       then
         sysupgrade=1
       else
@@ -324,7 +337,7 @@ gen_download_json_add_data()
         fi
 
         # generate new input info file (and remember source of firmware file, for error checking during gen_upload.sh)
-        printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\", \"source_path\":\"${source_path}\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+        printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"sortkey\":\"${file_device_part_name}\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
       else
 
         if [ "$disabled" = "0" ]; then
@@ -332,7 +345,7 @@ gen_download_json_add_data()
         fi
 
         # generate new input info file
-        printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"filename\":\"$file\", \"comment\":\"$comment\", \"source_path\":\"${source_path}\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+        printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"sortkey\":\"${file_device_part_name}\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
       fi
 
       # enable commas
@@ -484,7 +497,7 @@ do
 
       # remove not-wanted files, because those are not used and added for different openwrt versions
       # This would cause duplicate warning in gen-upload.sh
-      rm -f $tmpTargetDir/openwrt*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
+      rm -f $tmpTargetDir/freifunk-dresden*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
     }
 
     #create md5sums file used when automatically or manually downloading via firmware.cgi
@@ -546,7 +559,7 @@ EOM
 # now, all files are copied for uploading and new fileinfo.json is generated
 # - check for duplicate firmware files but ignore versions in filename
 printf "${C_YELLOW}checking for firmware duplicates...${C_NONE}\n"
-find $target_dir/firmware/ | sed -n 's#\(\(.*\)/openwrt-\([0-9.-]\+\)*\(.*\)$\)#\4 \1#p' \
+find $target_dir/firmware/ | sed -n 's#\(\(.*\)/freifunk-dresden-\([0-9.-]\+\)*\(snapshot-\)*\(.*\)$\)#\5 \1#p' \
       | sort -k1 \
       | awk '
        BEGIN { ret = 0;}
@@ -563,8 +576,22 @@ find $target_dir/firmware/ | sed -n 's#\(\(.*\)/openwrt-\([0-9.-]\+\)*\(.*\)$\)#
        }
        END {exit ret;}' || exit 1
 
+printf "${C_YELLOW}checking for firmware duplicates done.${C_NONE}\n"
 
-#------ now compare fileinfo.json and generated file.------
+#------ now sort fileinfo.json and generated file. to see diffs better with diff tools (meld).------
+cat ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} | jq '. |
+            { comment: (.comment)}
+          + { json_version: (.json_version)}
+          + { fileinfo: (.fileinfo | sort_by(.sortkey, .filename)) }' > ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME}.sorted
+mv ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME}.sorted ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME}
+
+cat ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} | jq '. |
+            { comment: (.comment)}
+          + { json_version: (.json_version)}
+          + { fileinfo: (.fileinfo | sort_by(.sortkey, .filename)) }' > ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.sorted
+mv ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.sorted ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}
+
+#------ now compare fileinfo.json and generated file (sorting is not needed).------
 # check for missing firmware files (not generated)
 error=0
 if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current.fileinfo - $generated.fileinfo | if length > 0 then . else empty end'; then
