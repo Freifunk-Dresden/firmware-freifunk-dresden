@@ -35,7 +35,7 @@ start() {
 	# - testen mit niedrigere grenze, in hoffnung, der speicher ist nur kurzfristig belegt
 	# - testen ohne aktivierung des reboots (openwrt defautls)
 	sysctl  -wq vm.panic_on_oom=1
-	sysctl  -wq vm.min_free_kbytes=2048
+	# sysctl  -wq vm.min_free_kbytes=2048
 
 	# disable cron job to avoid 'run-checks' starting services
 	/etc/init.d/cron stop
