@@ -30,12 +30,7 @@ wait_for_wifi()
 start() {
 
 	# enable OOM killer reboot
-	# openwrt23 hat urploetzlich einen extrem anstieg von 40mb auf 80mb, was den oom killer
-	# ausloest.
-	# - testen mit niedrigere grenze, in hoffnung, der speicher ist nur kurzfristig belegt
-	# - testen ohne aktivierung des reboots (openwrt defautls)
 	sysctl  -wq vm.panic_on_oom=1
-	# sysctl  -wq vm.min_free_kbytes=2048
 
 	# disable cron job to avoid 'run-checks' starting services
 	/etc/init.d/cron stop

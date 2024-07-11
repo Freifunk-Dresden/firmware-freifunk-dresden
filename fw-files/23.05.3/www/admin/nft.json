@@ -2,6 +2,8 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
+# /admin/nft.json: just to download firewall rules if needed
+
 echo 'Content-Type: application/json;charset=UTF-8'
 echo ''
 

@@ -157,7 +157,7 @@ EOM
 					/usr/lib/ddmesh/ddmesh-display.sh msg "   SysUprade     (Keep Config)"
 					sleep 5	# let browser load all content before killing httpd
 					uci set ddmesh.boot.boot_step=2
-					uci set ddmesh.boot.upgrade_running=1
+					uci set ddmesh.boot.reset_overlay=1
 					uci commit
 					sync
 
