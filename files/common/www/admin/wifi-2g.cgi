@@ -27,9 +27,15 @@ echo "<div style=\"visibility: hidden;\" id=\"wifi3_key\">$wifi3_key</div>"
 cat<<EOM
 <div id="status"></div>
 <script type="text/javascript">
+function enable_custom_roaming(s) {
+	var c=document.getElementsByName('form_wifi2_roaming')[0].checked;
+	document.getElementsByName('form_wifi_custom_essid')[0].disabled= c;
+	document.getElementsByName('form_wifi_ap_ssid')[0].disabled= c;
+}
 function enable_custom_essid(s) {
+	var r=document.getElementsByName('form_wifi2_roaming')[0].checked;
 	var c=document.getElementsByName('form_wifi_custom_essid')[0].checked;
-	document.getElementsByName('form_wifi_ap_ssid')[0].disabled= !c;
+	document.getElementsByName('form_wifi_ap_ssid')[0].disabled= !c || r;
 }
 function enable_private_wifi(s) {
 	var c=document.getElementsByName('form_wifi3_enabled')[0].checked;
@@ -87,6 +93,7 @@ function checkInput()
 <tr><th>Freifunk-DHCP Roaming:</th>
 <td><input name="form_wifi2_roaming" TYPE="CHECKBOX"
 $(if [ "$_ddmesh_wifi2roaming" != "1" ];then echo ' disabled';fi)
+onchange="enable_custom_roaming();"
 VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" ];then echo ' checked="checked"';fi)> Aktiviert Roaming wenn m&ouml;glich (Knotennummer < 32767).</td></tr>
 
 <tr><th>Freifunk-DHCP Bereich:</th>
@@ -106,26 +113,14 @@ $(echo "dummy" | awk -v cfg="$(uci -q get ddmesh.network.wifi_txpower)" '{ for(v
 </tr>
 <tr><td></td><td><font color="red">Falsche oder zu hohe Werte k&ouml;nnen den Router zerst&ouml;ren!</font></td></tr>
 
-EOM
-if [ "$(uci -q get ddmesh.network.mesh_mode)" != "mesh" ]; then
-cat<<EOM
-<tr><th>Ad-hoc-SSID:</th>
-<td><input name="form_wifi_adhoc_ssid" size="32" type="text" value="$(uci -q get wireless.wifi_adhoc.ssid)" disabled></td>
-</tr>
-
-<tr><th>BSSID:</th>
-<td><input name="form_wifi_bssid" size="32" type="text" value="$(uci -q get credentials.wifi_2g.bssid)" disabled></td>
-</tr>
-EOM
-fi
-cat<<EOM
-
 <tr><th></th><td></td></tr>
 <tr><th>Access-Point-SSID:</th>
 <TD class="nowrap"><INPUT NAME="form_wifi_ap_ssid_prefix" SIZE="16" TYPE="TEXT" VALUE="Freifunk $(uci -q get ddmesh.system.community)" disabled>
 <INPUT onchange="enable_custom_essid();" NAME="form_wifi_custom_essid" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.custom_essid)" = "1" ];then echo ' checked="checked"';fi)>
-<INPUT NAME="form_wifi_ap_ssid" SIZE="23" maxlength="15" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.essid_ap)"> aktuell: $(uci -q get wireless.wifi2_2g.ssid)</TD>
+<INPUT NAME="form_wifi_ap_ssid" SIZE="23" maxlength="15" TYPE="TEXT" VALUE="$(uci -q get ddmesh.network.essid_ap)">
+aktuell: $(uci -q get wireless.wifi2_2g.ssid)</TD>
 </tr>
+<tr><td></td><td><font color="red">Nutzer-SSID ist nur m&ouml;glich, wenn Roaming deaktivert ist.</font></td></tr>
 <tr><th>Reduziere WLAN-Datenrate:</th><td><INPUT NAME="form_wifi_slow_rates" TYPE="CHECKBOX" VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" = "1" ];then echo ' checked="checked"';fi)> (Nicht empfohlen. Wenn aktiviert, kann Reichweite auf Kosten der &Uuml;bertragungsrate erh&ouml;ht werden. Dies gilt auch f&uuml;r Verbindungen zu anderen Knoten.)</td></tr>
 
 EOM
@@ -191,6 +186,7 @@ cat << EOM
 </fieldset>
 
 <script type="text/javascript">
+enable_custom_roaming();
 enable_custom_essid();
 enable_private_wifi();
 setWifi3_key();

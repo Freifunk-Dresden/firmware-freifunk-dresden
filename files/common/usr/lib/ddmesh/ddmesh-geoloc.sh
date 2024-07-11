@@ -14,8 +14,7 @@ GEO_CURR=/var/geoloc-current
 touch $GEO_CURR $GEO_LAST
 
 # remove my own macs from scan
-bssid="$(uci get credentials.wifi_2g.bssid 2>/dev/null)"
-own_macs=$(iwinfo | awk '/Access Point/{printf("%s ", gensub(/.*Access Point: /,"",$0))} END{printf("'$bssid'")}')
+own_macs=$(iwinfo | awk '/Access Point/{printf("%s ", gensub(/.*Access Point: /,"",$0))}')
 # echo "one_macs:[$own_macs]"
 # remove stored macs
 user_macs=''

@@ -49,8 +49,8 @@ config communities 'communities'
 	list	community '1004%Dresden SW'
 	list	community '1020%Pirna'
 	list	community '1021%OL'
-	list	community '2000%Leipzig'
 	list	community '1022%Geringswalde'
+	list	community '2000%Leipzig'
 
 config system 'system'
 	option	mesh_network_id '0'
@@ -83,7 +83,7 @@ config boot 'boot'
 	option boot_step 0
 	option upgrade_version $(cat /etc/version)
 	option nightly_upgrade_running 0
-	option upgrade_running 0
+	option reset_overlay 0
 
 # on,off,status
 config led 'led'
@@ -113,8 +113,6 @@ config network 'network'
 	option	dhcp_lan_offset 100
 	option	dhcp_lan_limit 0
 	option	dhcp_lan_lease '12h'
-# (only 18.06)
-	option	essid_adhoc 'Freifunk-Mesh-Net'
 #	option	essid_ap '' #custom essid
 	option	wifi_country 'DE'
 	option	wifi_channel 13
@@ -131,7 +129,6 @@ config network 'network'
 	option	wifi2_dhcplease '5m'
 	option	wifi2_isolate '1'
 	option	wifi2_roaming_enabled '1'
-	option	mesh_mode 'mesh' #adhoc,mesh,adhoc+mesh
 	option	lan_local_internet '0'
 	option	internal_dns1 '10.200.0.4'
 	option	internal_dns2 '10.200.0.16'
@@ -285,7 +282,6 @@ EOM
 
 	# dropbear ssh
 	uci -q set dropbear.@dropbear[0].SSHKeepAlive=30
-	uci commit
 
 } # config_boot_step1
 
@@ -305,7 +301,6 @@ enable_service() {
 
 # update configuration depending on new ddmesh settings
 config_update() {
-
 
 	#ONLY uci settings, to ensure not flashing on every boot
 	#function called when node is valid, to setup all settings depending on node
@@ -475,10 +470,17 @@ config_update() {
 
 	/usr/lib/ddmesh/ddmesh-dnsmasq.sh configure
 
+	# regenerate network/wireless config after firmware update or
+	# config update.
+	logger -s -t "$LOGGER_TAG" "update network"
+	/usr/lib/ddmesh/ddmesh-setup-network.sh
+
+	logger -s -t "$LOGGER_TAG" "update wifi"
+	# hotplug event ieee80211 is not reliable before rebooting
+	/usr/lib/ddmesh/ddmesh-setup-wifi.sh
+
 	# services
   enable_service usbmuxd "$(uci -q get ddmesh.network.enable_ios_tethering)"
-
-	uci commit
 }
 
 config_temp_configs() {
@@ -543,8 +545,10 @@ cmd="$1"
 case "$boot_step" in
 	1) # initial boot step
 		/usr/lib/ddmesh/ddmesh-led.sh status boot1
-		logger -s -t "$LOGGER_TAG" "boot step 1"
+		logger -s -t "$LOGGER_TAG" "process boot step 1"
+
 		config_boot_step1
+
 		uci set ddmesh.boot.boot_step=2
 		uci commit
 
@@ -557,9 +561,10 @@ case "$boot_step" in
 		#stop boot process
 		exit 1
 		;;
+
 	2) # update config
 		/usr/lib/ddmesh/ddmesh-led.sh status boot2
-		logger -s -t "$LOGGER_TAG" "boot step 2"
+		logger -s -t "$LOGGER_TAG" "process boot step 2"
 
 		#node valid after boot_step >= 2
 		node=$(uci get ddmesh.system.node)
@@ -571,42 +576,24 @@ case "$boot_step" in
 			logger -s -t $LOGGER_TAG "run ddmesh upgrade"
 			/usr/lib/ddmesh/ddmesh-upgrade.sh
 
-			logger -s -t "$LOGGER_TAG" "update config"
+			logger -s -t "$LOGGER_TAG" "update configs"
 			config_update
 
-			# regenerate network/wireless config after firmware update or
-			# config update.
-			logger -s -t "$LOGGER_TAG" "update network"
-			/usr/lib/ddmesh/ddmesh-setup-network.sh
-
-			logger -s -t "$LOGGER_TAG" "update wifi"
-			# hotplug event ieee80211 is not reliable before rebooting
-			/usr/lib/ddmesh/ddmesh-setup-wifi.sh
-
-			upgrade_running=$(uci -q get ddmesh.boot.upgrade_running)
 			uci set ddmesh.boot.boot_step=3
 			uci set ddmesh.boot.nightly_upgrade_running=0
-			uci set ddmesh.boot.upgrade_running=0
 			uci commit
-
-			# after uci commit and only when fw was upgraded
-			if [ "$upgrade_running" = "1" ]; then
-				logger -t $LOGGER_TAG "firmware upgrade finished"
-				# to find changes in directories easier
-				find /overlay/upper -exec touch {} \;
-				/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
-			fi
 
 			logger -s -t "$LOGGER_TAG" "reboot boot step 2"
 			/usr/lib/ddmesh/ddmesh-display.sh reboot
-
-			sync
-			reboot
-
-			#stop boot process
-			exit 1
 		fi
+
+		sync
+		reboot
+
+		#stop boot process
+		exit 1
 		;;
+
 	3) # temp config
 
 		# when calling "ddmesh-bootconfig.sh reboot" then a reboot was requested in case boot_step is still 3
@@ -617,13 +604,21 @@ case "$boot_step" in
 		fi
 
 		/usr/lib/ddmesh/ddmesh-led.sh status boot3
-		logger -s -t "$LOGGER_TAG" "boot step 3"
+		logger -s -t "$LOGGER_TAG" "process boot step 3"
 
 		node=$(uci get ddmesh.system.node)
 		if [ -z "$node" ]; then
 			logger -t $LOGGER_TAG "ERROR: no node number"
 		else
 			eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
+
+			if [ "$(uci -q get ddmesh.boot.reset_overlay)" = "1" ]; then
+				uci set ddmesh.boot.reset_overlay=0
+				uci commit
+				# to find changes in directories easier set same timestamp to all
+				find /overlay/upper -exec touch {} \;
+				/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh write
+			fi
 
 			config_temp_configs
 			# cron job is started from ddmesh-init.sh after bmxd
@@ -632,5 +627,6 @@ case "$boot_step" in
 			/usr/lib/ddmesh/ddmesh-setup-network.sh setup_mesh_on_wire &
 		fi
 esac
+
 #continue boot-process
 exit 0

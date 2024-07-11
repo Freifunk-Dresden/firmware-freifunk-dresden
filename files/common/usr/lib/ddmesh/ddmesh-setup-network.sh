@@ -361,12 +361,6 @@ setup_wifi()
 	# Interfaces for "wifi" and "wifi2" are created by wireless subsystem and
 	# assigned to this networks
 	#############################################################################
-	uci add network interface
-	uci rename network.@interface[-1]='wifi_adhoc'
-	uci set network.wifi_adhoc.ipaddr="$_ddmesh_nonprimary_ip"
-	uci set network.wifi_adhoc.netmask="$_ddmesh_netmask"
-	uci set network.wifi_adhoc.broadcast="$_ddmesh_broadcast"
-	uci set network.wifi_adhoc.proto='static'
 
 	uci add network interface
 	uci rename network.@interface[-1]='wifi_mesh2g'
@@ -500,6 +494,8 @@ setup_network()
  done
 }
 
+# -----------  network helper, called dynamically --------------
+
 # called from ddmesh-bootconfig.sh (boot step 3)
 setup_mesh_on_wire()
 {
@@ -541,32 +537,59 @@ setup_mesh_on_wire()
 }
 
 # called from  bmxd-gateway.sh
+# arg1: "gateway"|<IP>
 setup_ffgw_tunnel()
 {
- gatewayIP="$1"
+	arg="$1"
 
 	ifname="$(uci -q get network.ffgw.device)"
 	ifname="${ifname/+/}"
 
-	setup_ffwg_if()
-	{
-		ip addr add ${_ddmesh_ip}/32 dev "${ifname}"
+	# can have: "any", ip or "" (replace "any" with "gateway")
+	remote="$(ip tunnel show ffgw | sed  's#.* remote \(\([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\)\|\(any\)\).*$#\1#')"
+	test "${remote}" = "any" && remote="gateway"
+
+	# do nothing if no change
+	test "${remote}" = "${arg}" && return
+
+	# when router becomes gateway, "remote" must be removed to alow any remote ip
+	# ipip tunnel normally needes both sides to have the same ip pair. But I don't
+	# no it when this router is acting as gateway.
+	# Note: if tunnel setup was created with "remote any" then it is not possible
+	#       to 'change' the remote to an IP.  Same occures in other way around.
+
+	# check if we need to delete tunnel first (at this point: remote and gateway are always different)
+	if [ "${remote}" = "gateway" -o "${arg}" = "gateway" ]; then
+		logger -t "${LOGGER_TAG}" "delete ffgw tunnel"
+		ip link set "${ifname}" down 2>/dev/null
+		ip tunnel del "${ifname}" 2>/dev/null
+		remote=""
+
+		# give hotplug/netifd time (raise condition memleak)
+		# sleep 3
+	fi
+
+	#  (re)create
+	if [ -z "${remote}" ]; then
+		if [ "${arg}" = "gateway" ]; then
+			logger -t "${LOGGER_TAG}" "create ffgw tunnel (remote any)"
+			ip tunnel add "${ifname}" mode ipip local $_ddmesh_ip remote any
+		else
+			logger -t "${LOGGER_TAG}" "create ffgw tunnel (remote ${arg})"
+			ip tunnel add "${ifname}" mode ipip local $_ddmesh_ip remote ${arg}
+		fi
+
 		# wg mtu - 20 = 1280
 		ip link set "${ifname}" mtu 1280
 		ip link set "${ifname}" up
+		ip addr add ${_ddmesh_ip}/32 dev "${ifname}"
 		ip route add default dev "${ifname}" table ff_gateway src ${_ddmesh_ip} 2>/dev/null
-	}
-
-	if [ "${gatewayIP}" = "gateway" ]; then
-		ip tunnel del "${ifname}" 2>/dev/null
-		ip tunnel add "${ifname}" mode ipip local $_ddmesh_ip
-		setup_ffwg_if
 	else
-		ip tunnel del "${ifname}" 2>/dev/null
-		ip tunnel add "${ifname}" mode ipip local $_ddmesh_ip remote ${gatewayIP}
-		setup_ffwg_if
+		logger -t "${LOGGER_TAG}" "change ffgw tunnel remote ip (${remote} -> ${arg})"
+		# change old ip to new ip
+		ip tunnel change "${ifname}" mode ipip local $_ddmesh_ip remote ${arg}
+		ip route add default dev "${ifname}" table ff_gateway src ${_ddmesh_ip} 2>/dev/null
 	fi
-
 }
 
 

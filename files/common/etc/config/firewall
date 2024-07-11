@@ -74,7 +74,6 @@ config zone 'zone_mesh'
 	list network 'mesh_vlan'
 	list network 'tbb_fastd'
 	list network 'tbb_wg'
-	list network 'wifi_adhoc'
 	list network 'wifi_mesh2g'
 	list network 'wifi_mesh5g'
 

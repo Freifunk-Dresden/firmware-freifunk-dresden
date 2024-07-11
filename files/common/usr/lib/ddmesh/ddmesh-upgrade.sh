@@ -9,12 +9,10 @@
 
 previous_version=$(uci get ddmesh.boot.upgrade_version 2>/dev/null)
 current_version=$(cat /etc/version)
-upgrade_running=$(uci -q get ddmesh.boot.upgrade_running)
 nightly_upgrade_running=$(uci -q get ddmesh.boot.nightly_upgrade_running)
 
 echo "previous_version=$previous_version"
 echo "current_version=$current_version"
-echo "upgrade_running=$upgrade_running"
 echo "nightly_upgrade_running=$nightly_upgrade_running"
 
 # if no previous version then set initial version; needed for correct behavior
@@ -294,7 +292,7 @@ upgrade_8_2_3()
 	true
 }
 
-_8_2_4_callback_upgrade_backbone ()
+_8_2_4_callback_upgrade_backbone()
 {
 	local config="$1"
 
@@ -334,7 +332,11 @@ upgrade_8_2_4()
 		config_load ddmesh
 		config_foreach _8_2_4_callback_upgrade_backbone backbone_client
 	fi
+}
 
+upgrade_8_2_5()
+{
+	uci -q rename ddmesh.boot.upgrade_running=reset_overlay
 }
 
 ##################################

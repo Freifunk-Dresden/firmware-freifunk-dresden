@@ -85,60 +85,21 @@ setup_wireless()
  # delete all interfaces if any
  while uci -q delete wireless.@wifi-iface[0]; do true; done
 
- # -- wifi mesh --
-
- case "$(uci -q get ddmesh.network.mesh_mode)" in
-	adhoc)
-		wifi_mode_mesh=0
-		wifi_mode_adhoc=1
-	;;
-	mesh)
-		wifi_mode_mesh=1
-		wifi_mode_adhoc=0
-	;;
-	adhoc+mesh)
-		wifi_mode_mesh=1
-		wifi_mode_adhoc=1
-	;;
-	*)
-		wifi_mode_mesh=1
-		wifi_mode_adhoc=1
-	;;
- esac
-
  iface=0
- # (only 18.06)
- if [ $wifi_mode_adhoc = 1 ]; then
- 	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
-	uci rename wireless.@wifi-iface[$iface]='wifi_adhoc'
- 	uci set wireless.@wifi-iface[$iface].device='radio2g'
-	uci set wireless.@wifi-iface[$iface].network='wifi_adhoc'
-	uci set wireless.@wifi-iface[$iface].mode='adhoc'
-	uci set wireless.@wifi-iface[$iface].ifname='mesh-adhoc'
- 	uci set wireless.@wifi-iface[$iface].bssid="$(uci -q get credentials.wifi_2g.bssid)"
- 	uci set wireless.@wifi-iface[$iface].encryption='none'
- 	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
- 	essid="$(uci -q get ddmesh.network.essid_adhoc)"
- 	essid="${essid:-Freifunk-Mesh-Net}"
- 	uci set wireless.@wifi-iface[$iface].ssid="${essid:0:32}"
- 	iface=$((iface + 1))
- fi
 
- if [ $wifi_mode_mesh = 1 ]; then
- 	test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
-	uci rename wireless.@wifi-iface[$iface]='wifi_mesh2g'
- 	uci set wireless.@wifi-iface[$iface].device='radio2g'
-	uci set wireless.@wifi-iface[$iface].network='wifi_mesh2g'
-	uci set wireless.@wifi-iface[$iface].ifname='mesh2g-80211s'
-	uci set wireless.@wifi-iface[$iface].mode='mesh'
- 	uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
- 	uci set wireless.@wifi-iface[$iface].key="$wifi_mesh_key"
- 	uci set wireless.@wifi-iface[$iface].encryption='none' # key still used for authentication
- 	uci set wireless.@wifi-iface[$iface].mesh_fwding='0'
- 	test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
- 	iface=$((iface + 1))
- fi
-
+ # -- wifi mesh --
+ test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
+ uci rename wireless.@wifi-iface[$iface]='wifi_mesh2g'
+ uci set wireless.@wifi-iface[$iface].device='radio2g'
+ uci set wireless.@wifi-iface[$iface].network='wifi_mesh2g'
+ uci set wireless.@wifi-iface[$iface].ifname='mesh2g-80211s'
+ uci set wireless.@wifi-iface[$iface].mode='mesh'
+ uci set wireless.@wifi-iface[$iface].mesh_id="$(uci -q get credentials.network.wifi_mesh_id)"
+ uci set wireless.@wifi-iface[$iface].key="$wifi_mesh_key"
+ uci set wireless.@wifi-iface[$iface].encryption='none' # key still used for authentication
+ uci set wireless.@wifi-iface[$iface].mesh_fwding='0'
+ test "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" && uci set wireless.@wifi-iface[$iface].mcast_rate='6000'
+ iface=$((iface + 1))
 
  # -- wifi2/2G --
  if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" -a "$_ddmesh_wifi2roaming" = "1" ]; then
@@ -224,7 +185,7 @@ setup_wireless()
 
 		# 5ghz mesh only for indoor
 		if [ "$wifi_status_radio5g_mode_mesh" -gt 0 ]; then
-			if [ $wifi_mode_mesh = 1 -a "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
+			if [ "$(uci -q get ddmesh.network.wifi_indoor_5g)" = "1" ]; then
 				test -z "$(uci -q get wireless.@wifi-iface[$iface])" && uci -q add wireless wifi-iface
 				uci rename wireless.@wifi-iface[$iface]='wifi_mesh5g'
 				uci set wireless.@wifi-iface[$iface].device='radio5g'

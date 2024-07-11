@@ -43,6 +43,7 @@ call_task()
  test $(expr $MINUTE_COUNTER % $interval) -eq 0 && {
 	[ "$(uci -q get ddmesh.log.tasks)" = "1" ] && logger -t "$TAG" "CALL interval:$interval [$args]"
 	$args 2>/dev/null >/dev/null
+	[ "$(uci -q get ddmesh.log.tasks)" = "1" ] && logger -t "$TAG" "RETURN interval:$interval [$args]"
  }
 }
 

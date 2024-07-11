@@ -1,3 +1,12 @@
+
+2024-07-11 [8.2.5] (testing)
+--------------------------------------------------
+community                 - sort communities
+gui                       - fix missing text in backbone/private vpn after reloading page
+                          - fix page error on public contact page
+                          - fix password check and add info text
+wifi                      - remove obsolete adhoc mode
+
 2024-05-11 [8.2.4] (testing)
 --------------------------------------------------
 community                 - add "Freifunk Geringswalde"
@@ -264,7 +273,7 @@ wifi                      - add private wifi (5GHz)
 2019-12-08 6.0.15 (Release)
 --------------------------------------------------
 autoupdate                - control autoupdate by registrator server
-gui-system                - remove obsolet type 'server'
+gui-system                - remove obsolete type 'server'
                           - make community "Tharandt" available
 wifi                      - add 2.4/5GHz radio detection
                           - add 5GHz gui
