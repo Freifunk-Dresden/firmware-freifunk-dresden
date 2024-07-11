@@ -8,20 +8,25 @@ export TITLE="Infos &gt; Kontakt"
 SYSINFO_MOBILE_GEOLOC=/var/geoloc-mobile.json
 
 if [ "$(uci -q get ddmesh.system.node_type)" = "mobile" ]; then
-        eval $(cat $SYSINFO_MOBILE_GEOLOC | jsonfilter \
-                -e gps_lat='@.location.lat' \
-                -e gps_lng='@.location.lng' )
-        gps_alt=0
+	if [ -f "$SYSINFO_MOBILE_GEOLOC" ]; then
+		eval $(cat $SYSINFO_MOBILE_GEOLOC 2>/dev/null | jsonfilter \
+			-e gps_lat='@.location.lat' \
+			-e gps_lng='@.location.lng' )
+	else
+		gps_lat=0
+		gps_lng=0
+	fi
+	gps_alt=0
 else
-        gps_lat=$(uci -q get ddmesh.gps.latitude)
-        gps_lng=$(uci -q get ddmesh.gps.longitude)
-        gps_alt=$(uci -q get ddmesh.gps.altitude)
+	gps_lat=$(uci -q get ddmesh.gps.latitude)
+	gps_lng=$(uci -q get ddmesh.gps.longitude)
+	gps_alt=$(uci -q get ddmesh.gps.altitude)
 fi
 gps_lat=$(printf '%f' ${gps_lat:=0} 2>/dev/null)
 gps_lng=$(printf '%f' ${gps_lng:=0} 2>/dev/null)
 gps_alt=$(printf '%d' ${gps_alt:=0} 2>/dev/null)
 
-cat<<EOF
+cat<<EOM
 <h2>$TITLE</h2>
 <br>
 <fieldset class="bubble" style="width: 600px">
@@ -57,10 +62,6 @@ L.marker([$gps_lat, $gps_lng]).addTo(map).bindPopup('$COMMUNITY [$_ddmesh_node]'
 </script>
 </fieldset>
 
-EOF
-
-
-
-EOF
+EOM
 
 . /usr/lib/www/page-post.sh
