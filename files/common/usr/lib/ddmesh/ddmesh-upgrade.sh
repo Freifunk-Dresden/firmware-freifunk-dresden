@@ -38,6 +38,8 @@ run_upgrade()
  local ignore=1
  local v=0
 
+ uci add_list ddmesh.boot.upgraded="#$previous_version to ${current_version}${MESSAGE}"
+
  for v in $upgrade_version_list
  do
    echo -n $v
@@ -64,7 +66,7 @@ run_upgrade()
 
    #save current state in case of later errors
    uci set ddmesh.boot.upgrade_version="${v}"
-   uci add_list ddmesh.boot.upgraded="$previous_version to ${v}${MESSAGE}"
+   uci add_list ddmesh.boot.upgraded="$previous_version to ${v}"
 
    #stop if we have reached "current version" (ignore other upgrades)
    test "$v" = "$current_version" && echo "last valid upgrade finished" && uci commit && break;

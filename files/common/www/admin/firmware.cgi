@@ -102,7 +102,12 @@ ajax_swupdate();
 	<table>
 EOM
 print_upgrade_hist() {
-	echo "<tr><td>$1</td></tr>"
+	ver="$1"
+	if [ "${ver:0:1}" = "#" ]; then
+		echo "<tr><th>${ver#*#}</th></tr>"
+	else
+		echo "<tr><td>$ver</td></tr>"
+	fi
 }
 config_load ddmesh
 config_list_foreach boot upgraded print_upgrade_hist
