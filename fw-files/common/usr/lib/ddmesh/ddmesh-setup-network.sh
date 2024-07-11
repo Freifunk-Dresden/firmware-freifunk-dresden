@@ -588,6 +588,7 @@ setup_ffgw_tunnel()
 		logger -t "${LOGGER_TAG}" "change ffgw tunnel remote ip (${remote} -> ${arg})"
 		# change old ip to new ip
 		ip tunnel change "${ifname}" mode ipip local $_ddmesh_ip remote ${arg}
+		ip route add default dev "${ifname}" table ff_gateway src ${_ddmesh_ip} 2>/dev/null
 	fi
 }
 
