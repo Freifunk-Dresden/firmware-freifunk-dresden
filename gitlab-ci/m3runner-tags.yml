@@ -90,6 +90,8 @@ m3tags:init:
     # each job gets its value from default gitlab values
     - echo "export FF_BUILD_TAG=\"${local_FF_BUILD_TAG}\"" >> gitlab.environment
     - echo "export FF_UPLOAD_DIR=\"${local_FF_UPLOAD_DIR}\"" >> gitlab.environment
+    - ./build.sh list
+
   tags:
     - m3runner
 
