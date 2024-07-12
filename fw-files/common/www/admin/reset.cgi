@@ -49,9 +49,9 @@ EOM
 					uci commit
 				fi
 
-				if [ "$(uci -q set ddmesh.boot.boot_step)" = 2 ]; then
+				if [ "$(uci -q get ddmesh.boot.boot_step)" = "2" ]; then
 					SECONDS=190
-					BARS=3
+					BARS=2
 				else
 					SECONDS=120
 					BARS=1
