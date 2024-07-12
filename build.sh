@@ -218,12 +218,20 @@ setup_buildroot ()
   #
   # -------- common files -----------
   # copy common files first
-  echo -n -e "${C_CYAN}copy rootfs (common)${C_NONE}: "
-  rm -rf $buildroot/files
+    rm -rf $buildroot/files
   mkdir -p $buildroot/files
-  # --remove-destination forces copy (first remove existing file (e.g. symlinks))
-  cp -a --remove-destination $RUN_DIR/fw-files/common/* $buildroot/files/
-  echo " done."
+
+	# check for common symlink
+	common_dir="$RUN_DIR/fw-files/${firmware_files}.common"
+	if [ -L "${common_dir}" ]; then
+	  echo -n -e "${C_CYAN}copy rootfs (${common_dir})${C_NONE}: "
+		# remove-destination forces copy (first remove existing file (e.g. symlinks))
+		cp -a --remove-destination ${common_dir}/* $buildroot/files/
+		echo " done."
+	else
+	  echo -e "${C_CYAN}No rootfs to copy: (${common_dir})${C_NONE}"
+	fi
+
 
   # -------- specific files -----------
   # copy specific files over (may overwrite common)
@@ -247,7 +255,7 @@ setup_buildroot ()
 
   # more dynamic changes
   echo -n -e $C_CYAN"setup dynamic firmware config: "$C_NONE
-  setup_dynamic_firmware_config "$buildroot/files"
+  setup_dynamic_firmware_config "$buildroot/files" || { echo "ERROR"; exit 1;}
   echo "done."
 
   echo "----- generate built_info ----"
@@ -774,14 +782,19 @@ verify_firmware_present()
 setup_dynamic_firmware_config()
 {
   FILES="$1"
+	credentials="$FILES/etc/config/credentials"
+
+  test -f "$credentials" || return 1
 
   # modify registration credentials from envronment variable passed in by gitlabs
   # FF_REGISTERKEY_PREFIX is set in gitlab UI of freifunk-dresden-firmware: settings->CI/CD->Environment
-  sed -i "/register_service_url/s#registerkey='#registerkey=${FF_REGISTERKEY_PREFIX//_/:}'#" $FILES/etc/config/credentials
+  sed -i "/register_service_url/s#registerkey='#registerkey=${FF_REGISTERKEY_PREFIX//_/:}'#" $credentials
 
   # modify key
   [ -z "${FF_MESH_KEY}" ] && FF_MESH_KEY='custom-firmware-key'
-  sed -i "/wifi_mesh_key/s#ffkey-placeholder#${FF_MESH_KEY}#" $FILES/etc/config/credentials
+  sed -i "/wifi_mesh_key/s#ffkey-placeholder#${FF_MESH_KEY}#" $credentials
+
+	return 0
 }
 
 preProcessBuildJson()
@@ -1429,7 +1442,7 @@ EOM
       # important configs after running menuconfig.
       # SEE: CONFIG_VERSION_FILENAMES is not set
 
-      # copy initial default config before firsttime "menuoconfig". this is needed 
+      # copy initial default config before firsttime "menuoconfig". this is needed
       # to get CONFIG_TARGET_PER_DEVICE_ROOTFS working. see help page in menuconfig
       cp ${DEFAULT_CONFIG} .config
 

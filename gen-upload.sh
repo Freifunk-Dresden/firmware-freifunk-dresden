@@ -6,6 +6,43 @@
 #
 # copy firwmare,packets and generate download.json
 
+cat <<EOM
+ gen_uploade.sh - abgeschaltet
+ -----------------------------
+
+- build.sh baut nun für unterschiedliche openwrt versionen und fügt die version in den filenamen ein.
+- für jede dieser openwrt versionen/varianten kann (bzw ist) ein eigene versions nummer festgelegt im fw-files/*/etc/version.
+- das erlaubt es, bestimmte router, wo keine höhere openwrt version möglich ist, festzunageln.
+- das setzt voraus, dass files aus dem "common" verzeichnis in das verzeichiss für diese version kopiert wird.
+
+- ich muss aber noch was erfinden im build.sh, wo ich sagen kann, dass daten aus dem common nicht kopiert werden.
+  in build.sh.
+	Direkt unter fw-files/18.06.common      könnte ein symlink aus "version".common auf das common zeigen,
+	welches verwendet wird. exisitert dieses datei nicht, so gibt es kein common zu kopieren.
+
+- bei einem build lauf über alle targets entstehen somit im workdir (wie bisher) eigene buildroot verzeichnisse.
+  Nur das diese jetzt unterschiedliche files für z.b. openwrt 18.06, 22.03, 23... haben (inkl der freifunk firmware version
+	in /etc/version).
+Problem:
+- gen_update.sh müsste jetzt diese einzelnen versionen extrahieren, was aber für ein uploade als ein "set" (bisher
+  als eine version z.B. 8.2.4) in einem verzeichniss für den upload und das verlinken auf dem server verwendet wurde.
+- gedanke: ich müsste entweder die version in was anderes ändern: zb. Milestone. Der nutzer kann aber dann die version
+  nicht mehr im normalen download verzeichniss erkennen.
+- gedanke: ich müsste hier im gen_upload.sh explizit eine version angeben und nicht mehr erkennen lassen.
+          damit würde der upload nur die dateien hochladen und zusammen stellen in den download.json, die
+					neu sind. alte versionen könnten weiterhin mit einem rutsch gebaut werden, müssten separat hoch geladen
+					werden, was aber mehr kontrolle bringt, was hoch geladen wird.
+- gedanke: gitlab: das wäre dann dort auch notwendig, beim upload gezielt eine version anzugeben.
+           beim bauprozess im gitlab.yml muss auf die version getestet werden, dass nutzer diese ein gibt,
+					 und dass beim generieren des uploads mit gen_upload.sh die version verfügbar ist (-> error code)
+					 Das kann direkt im gen_upload.sh geprüft werden, da er die version ja suchen muss in den verschiedenen
+					 buildroots.
+
+
+
+EOM
+exit 1
+
 # -------------------------------------------------------------------
 VERSION="9"
 
