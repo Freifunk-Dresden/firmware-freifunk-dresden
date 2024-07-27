@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# only when device is present (do not create normal overlay file)
+[ -c "/dev/$2" ] || exit 0
+
 start=true
 
 # first try to open ttyS1. only start getty, if writing
