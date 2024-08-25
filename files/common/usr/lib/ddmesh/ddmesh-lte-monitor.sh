@@ -31,6 +31,19 @@ do
 	pin_state="$(uqmi -s -d $wwan_device --uim-get-sim-state)"
 	system_info="$(uqmi -d $wwan_device --get-system-info)"
 	service="$(uqmi -s -d $wwan_device --get-serving-system)"
+	phyinfo="$(uqmi -s -d $wwan_device --get-lte-cphy-ca-info)"
+
+	eval $(echo "$system_info" | jsonfilter -e m_mcc='@.lte.mcc' -e m_mnc='@.lte.mnc')
+	# https://mcc-mnc.net/
+	ocode="$m_mcc:$m_mnc"
+	case "${ocode}" in
+		"262:01"|"262:06"|"262:78") operator="Telekom Deutschland GmbH" ;;
+		"262:02"|"262:04"|"262:09") operator="Vodafone D2 GmbH" ;;
+		"262:03"|"262:05"|"262:07"|"262:08"|"262:11"|"262:17"|"262:77") operator="Telefonica Germany GmbH" ;;
+		"262:23") operator="Drillisch Online AG" ;;
+		*) operator="$ocode" ;;
+	esac
+
 
 cat<<EOM > $lte_info.tmp
 	{
@@ -38,7 +51,9 @@ cat<<EOM > $lte_info.tmp
 	"status": $status,
 	"service": $service,
 	"pin_state" : $pin_state,
-	"system_info" : $system_info
+	"system_info" : $system_info,
+	"phy_info" : $phyinfo,
+	"other" : { "operator":"$operator" }
 	}
 EOM
 	mv $lte_info.tmp $lte_info
@@ -46,7 +61,15 @@ EOM
 	[ "$syslog" = "1" ] && logger -t "LTE" "$json"
 
 	# read lte status
-	eval $(cat $lte_info | jsonfilter -e m_type='@.signal.type' -e m_rssi='@.signal.rssi' -e m_rsrq='@.signal.rsrq' -e m_rsrp='@.signal.rsrp' -e m_snr='@.signal.snr' -e m_conn='@.status' -e registration='@.service.registration')
+	eval $(cat $lte_info | jsonfilter -e m_type='@.signal.type' \
+		-e m_rssi='@.signal.rssi' \
+		-e m_rsrq='@.signal.rsrq' \
+		-e m_rsrp='@.signal.rsrp' \
+		-e m_snr='@.signal.snr' \
+		-e m_conn='@.status' \
+		-e m_mcc='@.system_info.lte.mcc' \
+		-e m_mnc='@.system_info.lte.mnc' \
+		-e registration='@.service.registration')
 
 	if [ "$m_conn" = "connected" -a "$registration" = "registered" ]; then
 		case "$m_type" in
