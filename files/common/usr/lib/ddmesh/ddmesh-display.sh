@@ -76,7 +76,8 @@ update()
 		eval $(cat $lte_info | jsonfilter -e m_type='@.signal.type' \
 						-e m_rssi='@.signal.rssi' -e m_rsrq='@.signal.rsrq' \
 						-e m_rsrp='@.signal.rsrp' -e m_snr='@.signal.snr' \
-						-e m_conn='@.status' -e m_reg='@.service.registration')
+						-e m_conn='@.status' -e m_reg='@.service.registration' \
+						-e m_operator='@.other.operator')
 
 
 		case "$m_type" in
@@ -112,7 +113,7 @@ update()
 		json="${json} \"SIM\": \"NO_SIM\","
 	fi
 
-	json="${json} \"carrier\": \"$(printf '%.16s' "Freifunk ${community}")\""
+	json="${json} \"carrier\": \"$(printf '%.16s' "$m_operator")\""
 	#json="${json}, \"mcu_status\": \"1\""
 	json="${json} }"
 

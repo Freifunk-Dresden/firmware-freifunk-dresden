@@ -21,7 +21,16 @@ if [ -f "$lte_info" ]; then
 		-e m_pin1_status='@.pin_state.pin1_status' \
 		-e m_pin1_verify_tries='@.pin_state.pin1_verify_tries' \
 		-e m_pin1_unlock_tries='@.pin_state.pin1_unlock_tries' \
-		-e m_roaming='@.system_info.lte.roaming_status'
+		-e m_roaming='@.system_info.lte.roaming_status' \
+		-e m_mcc='@.system_info.lte.mcc' \
+		-e m_mnc='@.system_info.lte.mnc' \
+		-e m_operator='@.other.operator' \
+		-e m_phy_p_cellid='@.phy_info.primary.cell_id' \
+		-e m_phy_p_ch='@.phy_info.primary.channel' \
+		-e m_phy_p_band='@.phy_info.primary.band' \
+		-e m_phy_p_freq='@.phy_info.primary.frequency' \
+		-e m_phy_p_duplex='@.phy_info.primary.duplex' \
+		-e m_phy_p_bandwidth='@.phy_info.primary.bandwidth'
 	)
 
 	gif=5
@@ -58,6 +67,14 @@ cat<<EOM
 <tr><th>Connection</th><td>$m_conn</td></tr>
 <tr><th>Registration</th><td>$m_reg</td></tr>
 <tr><th>Roaming</th><td>$m_roaming</td></tr>
+<tr><th>Operator</th><td><b>$m_operator</b></td></tr>
+<tr><th>MCC/MNC</th><td>$m_mcc/$m_mnc</td></tr>
+<tr><th>Cell ID:</th><td>$m_phy_p_cellid</td></tr>
+<tr><th>Channel:</th><td>$m_phy_p_ch</td></tr>
+<tr><th>Band:</th><td>$m_phy_p_band</td></tr>
+<tr><th>Frequenz:</th><td>$m_phy_p_freq Mhz</td></tr>
+<tr><th>Duplex:</th><td>$m_phy_p_duplex</td></tr>
+<tr><th>Bandbreite:</th><td>$m_phy_p_bandwidth</td></tr>
 </table>
 </fieldset>
 
