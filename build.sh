@@ -816,7 +816,7 @@ bash_completion()
   #this function must be alled "sourced" to tell bash how to complete
   # list all values that bash should complete
 
-  ARGS="list lt list-targets watch devices search feed-revisions clean menuconfig defconfig rerun"
+  ARGS="list lt list-targets watch devices search feed-revisions clean menuconfig defconfig rerun all failed"
 
   # add targets
   ARGS="${ARGS} $(listTargetsNames)"
