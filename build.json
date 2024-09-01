@@ -89,7 +89,7 @@
     "template":"23.05.3",
     "name":"_testing-ramips.mt7621.generic",
     "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg",
-    "disabled": true 
+    "disabled": false 
   },
   {
     "template":"23.05.3",
