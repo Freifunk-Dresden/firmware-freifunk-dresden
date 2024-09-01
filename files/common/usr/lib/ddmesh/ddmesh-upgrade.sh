@@ -339,6 +339,7 @@ upgrade_8_2_4()
 upgrade_8_2_5()
 {
 	uci -q rename ddmesh.boot.upgrade_running=reset_overlay
+	cp /rom/etc/config/uhttpd /etc/config/uhttpd
 }
 
 ##################################
