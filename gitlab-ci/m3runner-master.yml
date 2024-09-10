@@ -10,19 +10,27 @@ m3:init:
     - master
   stage: init       # special state, run before all other stages
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-  # ensure that we have no old data. This is important when
-  # generating download.json. Else all old openwrt images would be
-  # included and mixed
+    # - create local cache storage in /home/gitlab-user (created when installing runner)
+    # - link from workdir to local storage to avoid downloading packages every time and to have
+    #   a place to "backup" those packages.
+    # THis also keeps built toolchains to optimize compile time.
+    # Workdir contains artifacts that will be uploaded in last stage.
+    # Symlink creation is needed for every job, because gitlab will checkout the sources
+    # in new empty directory.
+    - mkdir -p ~/mycache/dl && ln -s ~/mycache/dl
+    - mkdir -p ~/mycache/workdir && ln -s ~/mycache/workdir
+
+    # ensure that we have no old data. This is important when
+    # generating download.json. Else all old openwrt images would be
+    # included and mixed
 
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
 
-  # dont delete dl, it is not so important to have different old version for
-  # one packges, but it will reduce download overhead from external servers
-  # every night. so just only delete workdirs to always have a clean build
+    # dont delete dl, it is not so important to have different old version for
+    # one packges, but it will reduce download overhead from external servers
+    # every night. so just only delete workdirs to always have a clean build
     - test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl/*
     - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
     - ./build.sh list
