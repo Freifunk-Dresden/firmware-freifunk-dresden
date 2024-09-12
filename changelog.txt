@@ -1,6 +1,7 @@
 
 2024-07-11 [8.2.5] (testing)
 --------------------------------------------------
+openwrt                   - upgrade openwrt22 to 22.03.7
 community                 - sort communities
 gui                       - fix missing text in backbone/private vpn after reloading page
                           - fix page error on public contact page
