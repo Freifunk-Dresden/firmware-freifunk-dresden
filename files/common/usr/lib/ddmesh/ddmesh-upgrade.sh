@@ -342,6 +342,11 @@ upgrade_8_2_5()
 	cp /rom/etc/config/uhttpd /etc/config/uhttpd
 }
 
+upgrade_8_2_6()
+{
+	true
+}
+
 ##################################
 
 run_upgrade
