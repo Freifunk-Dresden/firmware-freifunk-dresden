@@ -1,11 +1,15 @@
 
-2024-07-11 [8.2.5] (testing)
+2024-09-24 [8.2.5] (testing)
 --------------------------------------------------
+openwrt                   - upgrade openwrt22 to 22.03.7
 community                 - sort communities
 gui                       - fix missing text in backbone/private vpn after reloading page
                           - fix page error on public contact page
                           - fix password check and add info text
+                          - configure httpd to only accept one connection.
+                            This workarounds the issue when css is not loaded.
 wifi                      - remove obsolete adhoc mode
+router                    - re-enable 5ghz for GL.inet E750
 
 
 2024-05-11 [8.2.4] (testing)

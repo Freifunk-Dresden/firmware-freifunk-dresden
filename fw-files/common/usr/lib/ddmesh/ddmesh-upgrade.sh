@@ -342,13 +342,17 @@ upgrade_8_2_5()
 	cp /rom/etc/config/uhttpd /etc/config/uhttpd
 }
 
+upgrade_8_2_6()
+{
+	true
+}
+
 upgrade_8_3_0()
 {
 	cp /rom/etc/config/firewall /etc/config/firewall
 	uci -q delete ddmesh.network.mesh_mode
 	uci -q delete credentials.wifi_2g.bssid
 }
-
 
 ##################################
 

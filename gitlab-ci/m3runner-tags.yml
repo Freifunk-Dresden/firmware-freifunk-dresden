@@ -50,13 +50,15 @@ m3tags:init:
     - echo "CI_COMMIT_TAG = [$CI_COMMIT_TAG]"
     - echo "CI_COMMIT_REF_NAME = [$CI_COMMIT_REF_NAME]"
 
-    # create link to local storage to avoid downloading every time and to have
-    # a place to "backup" packages. Also keep prevous cross-compilers and avoid
-    # rebuilding every time.
-    # symlink creation is neede for every job, because gilab will checkout the sources
+    # - create local cache storage in /home/gitlab-user (created when installing runner)
+    # - link from workdir to local storage to avoid downloading packages every time and to have
+    #   a place to "backup" those packages.
+    # THis also keeps built toolchains to optimize compile time.
+    # Workdir contains artifacts that will be uploaded in last stage.
+    # Symlink creation is needed for every job, because gitlab will checkout the sources
     # in new empty directory.
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - mkdir -p ~/mycache/dl && ln -s ~/mycache/dl
+    - mkdir -p ~/mycache/workdir && ln -s ~/mycache/workdir
 
     # ensure that we have no old data. This is important when
     # generating download.json. Else all old openwrt images would be
