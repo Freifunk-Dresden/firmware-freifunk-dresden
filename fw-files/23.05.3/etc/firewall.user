@@ -1,0 +1,13 @@
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
+# called by fw4 after start, restart and reload
+
+test -f /tmp/freifunk-running || exit 0
+
+# muss hier prüfen, ob fw4 reload von openwrt aufgerufen wird, da bei fw3
+# dieses script nicht aufgerufen wurde bei 'reload'
+
+/usr/lib/ddmesh/ddmesh-firewall-addons.sh init-update
+/usr/lib/ddmesh/ddmesh-backbone.sh firewall-update
+/usr/lib/ddmesh/ddmesh-privnet.sh firewall-update

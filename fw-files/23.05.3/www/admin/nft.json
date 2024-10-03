@@ -7,4 +7,4 @@
 echo 'Content-Type: application/json;charset=UTF-8'
 echo ''
 
-nft -j list ruleset
+nft --json list ruleset
