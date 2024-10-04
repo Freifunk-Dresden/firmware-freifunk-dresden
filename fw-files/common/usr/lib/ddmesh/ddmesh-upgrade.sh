@@ -354,6 +354,11 @@ upgrade_8_3_0()
 	uci -q delete credentials.wifi_2g.bssid
 }
 
+upgrade_9_0_0()
+{
+	true
+}
+
 ##################################
 
 run_upgrade
