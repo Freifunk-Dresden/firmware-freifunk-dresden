@@ -107,7 +107,7 @@ EOF
 }
 
 cat<<EOM
-	<b>nft:</b>	<a href="nft.cgi">full ruleset</a>
+	<b>nft:</b>	<a href="nft.json">json dump</a>
 	<br/>
 	<br/>
 EOM

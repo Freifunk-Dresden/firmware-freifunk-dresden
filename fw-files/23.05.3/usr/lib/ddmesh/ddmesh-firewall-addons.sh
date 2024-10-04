@@ -15,29 +15,28 @@ eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
-TAG="ddmesh-firewall-addons"
+TAG="ddmesh-firewall-addons.sh"
 
 fwprint()
 {
- logger -s -t "addon" "nft $*"
+ logger -s -t "$TAG" "nft $*"
  nft $*
 }
 
-# export NFT=fwprint
-export NFT=nft
-export TABLE_NAME="backbone"
-export BLACK_HOLE_TABLE_NAME_IP6="black_hole"
-export BLACK_HOLE_CHAIN_NAME_IP6="black_hole"
+export NFT=fwprint
+#export NFT=nft
+
+export CHAIN_NAME="ddmesh_ignore_nodes"
 
 setup_ipv6_rules()
 {
 	logger -s -t $TAG "setup_ipv6_rules"
-	$NFT add table ip6 $BLACK_HOLE_TABLE_NAME_IP6
 
 	# block any ipv6
-	for hook in input forward output
+	for chain in input forward output
 	do
-		$NFT add chain ip6 $BLACK_HOLE_TABLE_NAME_IP6 $BLACK_HOLE_CHAIN_NAME_IP6 "{type filter hook $HOOK priority filter; counter; policy drop; comment \"ipv6 black hole\"; }"
+		# insert chains in standard chains (input,output,forward)
+		$NFT insert rule inet fw4 "$chain" position 0 meta l4proto ipv6 counter drop comment '"block ipv6"'
 	done
 }
 
@@ -45,43 +44,24 @@ setup_custom_rules() {
 # temp firewall rules (fw uci can not add custom chains)
 	logger -s -t $TAG "setup_custom_rules"
 
-	# create our own table (separate ipv4/6)
-	$NFT add table ip $TABLE_NAME
 
 
 #---------
 	# remove "ctstate RELATED,ESTABLISHED" rule from OUTPUT, as this accepts packets (e.g. wireguard)
 	# where firewall is not ready yet, but a packet gets out because rules not yet fully setup.
 	# backbone/vpn can setup connections through freifunk network.
-	$NFT -w -D OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT -m comment --comment '!fw3'
+#	$NFT -w -D OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT -m comment --comment '!fw3'
 
-	#input rules for backbone packets ( to restrict tunnel pakets only via allowed interfaces )
-	#tbb traffic is controlled by zone rules tbb+
-	$NFT -w -N input_backbone_accept
-	$NFT -w -N input_backbone_reject
-	$NFT -w -A input_wan_rule -j input_backbone_accept -m comment --comment 'ddmesh:backbone'
-	$NFT -w -A input_lan_rule -j input_backbone_accept -m comment --comment 'ddmesh:backbone'
-	$NFT -w -A input_mesh_rule -j input_backbone_reject -m comment --comment 'ddmesh:backbone'
-	$NFT -w -A input_ffgw_rule -j input_backbone_reject -m comment --comment 'ddmesh:backbone'
-	$NFT -w -A input_wifi2_rule -j input_backbone_reject -m comment --comment 'ddmesh:backbone'
-
-	$NFT -w -N output_backbone_accept
-	$NFT -w -N output_backbone_reject
-	$NFT -w -A output_wan_rule -j output_backbone_accept -m comment --comment 'ddmesh:backbone'
-	$NFT -w -A output_lan_rule -j output_backbone_accept -m comment --comment 'ddmesh:backbone'
-	$NFT -w -A output_mesh_rule -j output_backbone_reject -m comment --comment 'ddmesh:backbone'
-	$NFT -w -A output_ffgw_rule -j output_backbone_reject -m comment --comment 'ddmesh:backbone'
-	$NFT -w -A output_wifi2_rule -j output_backbone_reject -m comment --comment 'ddmesh:backbone'
 
 	#input rules for privnet packets( to restrict tunnel pakets only via allowed interfaces )
 	#private data traffic is controlled by zone rules lan (br-lan)
-	$NFT -w -N input_privnet_accept
-	$NFT -w -N input_privnet_reject
-	$NFT -w -A input_wan_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
-	$NFT -w -A input_lan_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
-	$NFT -w -A input_mesh_rule -j input_privnet_accept -m comment --comment 'ddmesh:privnet'
-	$NFT -w -A input_ffgw_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
-	$NFT -w -A input_wifi2_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
+#	$NFT -w -N input_privnet_accept
+#	$NFT -w -N input_privnet_reject
+#	$NFT -w -A input_wan_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
+#	$NFT -w -A input_lan_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
+#	$NFT -w -A input_mesh_rule -j input_privnet_accept -m comment --comment 'ddmesh:privnet'
+#	$NFT -w -A input_ffgw_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
+#	$NFT -w -A input_wifi2_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
 
 	#add tables that are later filled with IPs that should be blocked.
 	# loop through zones

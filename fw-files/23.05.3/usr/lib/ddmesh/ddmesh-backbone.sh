@@ -28,6 +28,18 @@ MTU=$(uci -q get ddmesh.network.mesh_mtu)
 
 NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
 
+
+TAG="ddmesh-backbone.sh"
+
+fwprint()
+{
+ logger -s -t "$TAG" "nft $*"
+ nft $*
+}
+
+export NFT=fwprint
+#export NFT=nft
+
 gen_fastd_key()
 {
 	test -z "$(uci -q get credentials.backbone_secret)" && {
@@ -244,6 +256,29 @@ callback_incoming_wireguard ()
 	fi
 }
 
+setup_firewall()
+{
+	logger -s -t $TAG "setup_firewall"
+
+	# create chains (with counter, but do not register with standard hooks because I do not want any traffic incoming)
+	$NFT add chain inet fw4 "ddmesh_input_backbone_accept" "{counter;}"
+	$NFT add chain inet fw4 "ddmesh_output_backbone_accept" "{counter;}"
+	$NFT add chain inet fw4 "ddmesh_input_backbone_reject" "{counter;}"
+	$NFT add chain inet fw4 "ddmesh_output_backbone_reject" "{counter;}"
+
+	# insert my chains into openwrt chains
+  $NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_input_backbone_accept
+	$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_input_backbone_accept
+	$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_input_backbone_reject
+	$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_input_backbone_reject
+	$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_input_backbone_reject
+
+  $NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_output_backbone_accept
+	$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_output_backbone_accept
+	$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_output_backbone_reject
+	$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_output_backbone_reject
+	$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_output_backbone_reject
+}
 
 callback_firewall()
 {
@@ -256,24 +291,24 @@ callback_firewall()
 
 	if [ -n "$host" -a -n "$port" ]; then
 		#dont use hostnames, can not be resolved
-		for cmd in D A
-		do
-			iptables -w -$cmd output_backbone_accept -p udp --dport $port -j ACCEPT -m comment --comment 'ddmesh:backbone' 2>/dev/null
-			iptables -w -A output_backbone_reject -p udp --dport $port -j reject -m comment --comment 'ddmesh:backbone' 2>/dev/null
-		done
+		$NFT add rule inet fw4 ddmesh_output_backbone_accept udp dport $port counter accept comment '"ddmesh:backbone:accept"'
+		$NFT add rule inet fw4 ddmesh_output_backbone_reject udp dport $port counter goto handle_reject comment '"ddmesh:backbone:reject"'
 	fi
 }
 
-setup_firewall()
+update_firewall()
 {
-	iptables -w -F input_backbone_accept
-	iptables -w -F input_backbone_reject
-	iptables -w -A input_backbone_accept -p udp --dport $backbone_local_fastd_port -j ACCEPT -m comment --comment 'ddmesh:backbone:fastd'
-	iptables -w -A input_backbone_reject -p udp --dport $backbone_local_fastd_port -j reject -m comment --comment 'ddmesh:backbone:fastd'
-	iptables -w -A input_backbone_accept -p udp --dport $backbone_local_wg_port -j ACCEPT -m comment --comment 'ddmesh:backbone:wg'
-	iptables -w -A input_backbone_reject -p udp --dport $backbone_local_wg_port -j reject -m comment --comment 'ddmesh:backbone:wg'
-	iptables -w -F output_backbone_accept
-	iptables -w -F output_backbone_reject
+	logger -s -t $TAG "update_firewall"
+
+	$NFT flush chain inet fw4 ddmesh_input_backbone_accept
+	$NFT flush chain inet fw4 ddmesh_input_backbone_reject
+	$NFT add rule inet fw4 ddmesh_input_backbone_accept udp dport $backbone_local_fastd_port counter accept comment '"ddmesh:backbone:fastd"'
+	$NFT add rule inet fw4 ddmesh_input_backbone_reject udp dport $backbone_local_fastd_port counter goto handle_reject comment '"ddmesh:backbone:fastd"'
+	$NFT add rule inet fw4 ddmesh_input_backbone_accept udp dport $backbone_local_wg_port counter accept comment '"ddmesh:backbone:wg"'
+	$NFT add rule inet fw4 ddmesh_input_backbone_reject udp dport $backbone_local_wg_port counter goto handle_reject comment '"ddmesh:backbone:wg"'
+
+	$NFT flush chain inet fw4 ddmesh_output_backbone_accept
+	$NFT flush chain inet fw4 ddmesh_output_backbone_reject
 	config_load ddmesh
 	config_foreach callback_firewall backbone_client
 }
@@ -281,10 +316,13 @@ setup_firewall()
 case "$1" in
 
 	firewall-update)
-		setup_firewall
+		update_firewall
 		;;
 
 	start)
+		setup_firewall
+		update_firewall
+
 		# FastD Backbone
 		if [ -n "$FASTD_BIN" ]; then
 			echo "Starting fastd backbone ..."
