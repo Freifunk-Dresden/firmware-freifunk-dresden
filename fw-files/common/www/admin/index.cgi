@@ -100,21 +100,6 @@ cat<<EOM
 <br>
 
 <fieldset class="bubble">
-<legend>System-Version</legend>
-<table>
-<tr class="colortoggle1"><th>Freifunk-Version (Dresden)</th><td>$(cat /etc/version)</td></tr>
-<tr class="colortoggle2"><th>Git-Firmware-Revision</th><td>$git_ddmesh_rev</td></tr>
-<tr class="colortoggle1"><th>Git-Firmware-Branch/Tag</th><td>$html_git_ddmesh_branch</td></tr>
-<tr class="colortoggle2"><th>Git-Openwrt-Revision</th><td>$git_openwrt_rev</td></tr>
-<tr class="colortoggle1"><th>Git-Openwrt-Branch/Tag</th><td>$git_openwrt_branch</td></tr>
-
-<tr class="colortoggle2"><th>Build-Datum</th><td>$(sed -n '/builtdate/s#[^:]*:##p' /etc/built_info)</td></tr>
-$(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#')
-</table>
-</fieldset>
-
-<br>
-<fieldset class="bubble">
 <legend>System Info</legend>
 <table>
 <tr class="colortoggle2"><th>Ger&auml;telaufzeit:</th><td colspan="6">$(uptime)</td></tr>
@@ -124,6 +109,20 @@ $(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1
 <tr class="colortoggle2"><th>SSH-Fingerprint (MD5)</th><td colspan="6">$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | sed -n '/Fingerprint/s#Fingerprint: md5 ##p')</td></tr>
 <tr class="colortoggle1"><th></th><th>Total</th> <th>Used</th> <th>Free</th> <th>Shared</th> <th>Buffered</th> <th>Cached</th></tr>
 $(free | sed -n '2,${s#[ 	]*\(.*\):[ 	]*\([0-9]\+\)[ 	]*\([0-9]\+\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)[ 	]*\([0-9]*\)#<tr class="colortoggle2"><th>\1</th><td>\2</td><td>\3</td><td>\4</td><td>\5</td><td>\6</td><td>\7</td></tr>#g;p}' )
+</table>
+</fieldset>
+
+<br>
+<fieldset class="bubble">
+<legend>System-Version</legend>
+<table>
+<tr class="colortoggle1"><th>Freifunk-Version (Dresden)</th><td>$(cat /etc/version)</td></tr>
+<tr class="colortoggle2"><th>Git-Firmware-Revision</th><td>$git_ddmesh_rev</td></tr>
+<tr class="colortoggle1"><th>Git-Firmware-Branch/Tag</th><td>$html_git_ddmesh_branch</td></tr>
+<tr class="colortoggle2"><th>Git-Openwrt-Revision</th><td>$git_openwrt_rev</td></tr>
+<tr class="colortoggle1"><th>Git-Openwrt-Branch/Tag</th><td>$git_openwrt_branch</td></tr>
+<tr class="colortoggle2"><th>Build-Datum</th><td>$(sed -n '/builtdate/s#[^:]*:##p' /etc/built_info)</td></tr>
+$(cat /etc/openwrt_release | sed 's#\(.*\)="*\([^"]*\)"*#<tr class="colortoggle1"><th>\1</th><td>\2</td></tr>#')
 </table>
 </fieldset>
 
