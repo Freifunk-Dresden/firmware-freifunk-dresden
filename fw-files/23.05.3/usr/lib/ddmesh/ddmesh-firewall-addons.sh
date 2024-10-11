@@ -10,8 +10,8 @@ fi
 . /lib/functions.sh
 
 #firewall rules that can not be created
-eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
+eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
 
@@ -46,10 +46,9 @@ setup_ipv6_rules()
 	fi
 }
 
-setup_custom_rules() {
-# temp firewall rules (fw uci can not add custom chains)
-	logger -s -t $TAG "setup_custom_rules"
-
+# these rules prevent access router via ip addresses from different interfaces
+setup_blocked_iface_ip()
+{
 	#add tables that are later filled with IPs that should be blocked.
 	# loop through zones
 	for i in mesh wifi2 ffgw lan wan vpn
@@ -58,12 +57,56 @@ setup_custom_rules() {
 	        $NFT -w -I input_"$i"_rule -j input_"$i"_deny -m comment --comment 'ddmesh'
 	done
 
-	# allow dhcp because "subnet" definition. client has no ip yet.
-	# $NFT -w -A input_rule -i $wifi2_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-wifi2-request'
-	# $NFT -w -A output_rule -o $wifi2_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-wifi2-response'
-	# $NFT -w -A input_rule -i $lan_ifname -p udp --dport 67 -j ACCEPT -m comment --comment 'dhcp-lan-request'
-	# $NFT -w -A output_rule -o $lan_ifname -p udp --dport 68 -j ACCEPT -m comment --comment 'dhcp-lan-response'
+	# ips are not valid if iface went down -> clear tables
+	# use reject instead of DROP, else it is possible to scan for ip timeout
+	$NFT -w -F input_wan_deny
+	$NFT -w -F input_lan_deny
+	$NFT -w -F input_mesh_deny
+	$NFT -w -F input_wifi2_deny
+	$NFT -w -F input_ffgw_deny
+	$NFT -w -F input_vpn_deny
 
+	# -- lan --
+	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
+		for n in wan mesh wifi2 ffgw vpn
+		do
+			for cmd in D A
+			do
+				$NFT -w -$cmd "input_"$n"_deny" -d $lan_network/$lan_mask -j reject -m comment --comment 'ddmesh' 2>/dev/null
+			done
+		done
+
+		# remove/add SNAT rule when iface becomes available
+		for cmd in D A
+		do
+			$NFT -w -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'ddmesh:snat:lan' 2>/dev/null
+			$NFT -w -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'ddmesh:snat:mesh' 2>/dev/null
+		done
+	fi
+
+	# -- wan --
+	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
+		for n in lan mesh wifi2 ffgw vpn
+		do
+			for cmd in D A
+			do
+				$NFT -w -$cmd "input_"$n"_deny" -d $wan_network/$wan_mask -j reject  -m comment --comment 'ddmesh' 2>/dev/null
+			done
+		done
+	fi
+
+	# -- wifi2 --
+	if [ "$wifi2_up" = "1" -a -n "$wifi2_ipaddr" -a -n "$wifi2_mask" ]; then
+		# remove/add SNAT rule when iface becomes available
+		for cmd in D A
+		do
+			$NFT -w -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'ddmesh:snat:wifi2' 2>/dev/null
+		done
+	fi
+}
+
+setup_nat_rules()
+{
 	#snat mesh from 10.201.xxx to 10.200.xxxx
 	$NFT -w -t nat -A postrouting_mesh_rule -p udp --dport 4305 -j ACCEPT -m comment --comment 'ddmesh:bmxd'
 	$NFT -w -t nat -A postrouting_mesh_rule -p tcp --dport 4305 -j ACCEPT -m comment --comment 'ddmesh:bmxd'
@@ -73,7 +116,8 @@ setup_custom_rules() {
 	$NFT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_wifi2net -j SNAT --to-source $_ddmesh_ip -m comment --comment 'ddmesh:snat'
 }
 
-callback_add_ignored_nodes() {
+callback_add_ignored_nodes()
+{
 	local entry="$1"
 	IFS=':'
 	set $entry
@@ -154,60 +198,16 @@ update_ignored_nodes() {
 	config_list_foreach ignore_nodes node callback_add_ignored_nodes
 }
 
-_update()
-{
-	# ips are not valid if iface went down -> clear tables
-	# use reject instead of DROP, else it is possible to scan for ip timeout
-	$NFT -w -F input_wan_deny
-	$NFT -w -F input_lan_deny
-	$NFT -w -F input_mesh_deny
-	$NFT -w -F input_wifi2_deny
-	$NFT -w -F input_ffgw_deny
-	$NFT -w -F input_vpn_deny
-
-	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
-		for n in wan mesh wifi2 ffgw vpn
-		do
-			for cmd in D A
-			do
-				$NFT -w -$cmd "input_"$n"_deny" -d $lan_network/$lan_mask -j reject -m comment --comment 'ddmesh' 2>/dev/null
-			done
-		done
-
-		# remove/add SNAT rule when iface becomes available
-		for cmd in D A
-		do
-			$NFT -w -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'ddmesh:snat:lan' 2>/dev/null
-			$NFT -w -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'ddmesh:snat:mesh' 2>/dev/null
-		done
-	fi
-
-	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
-		for n in lan mesh wifi2 ffgw vpn
-		do
-			for cmd in D A
-			do
-				$NFT -w -$cmd "input_"$n"_deny" -d $wan_network/$wan_mask -j reject  -m comment --comment 'ddmesh' 2>/dev/null
-			done
-		done
-	fi
-
-	if [ "$wifi2_up" = "1" -a -n "$wifi2_ipaddr" -a -n "$wifi2_mask" ]; then
-		# remove/add SNAT rule when iface becomes available
-		for cmd in D A
-		do
-			$NFT -w -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'ddmesh:snat:wifi2' 2>/dev/null
-		done
-	fi
-}
 
 logger -s -t $TAG "called with $1"
 case "$1" in
 	restart_firewall)
 		setup_ipv6_rules
-#		setup_custom_rules
+#		setup_blocked_iface_ip
+#		setup_nat_rules
+
 #		setup_ignored_nodes
-#		_update
+
 		;;
 
 	update-ignore)
