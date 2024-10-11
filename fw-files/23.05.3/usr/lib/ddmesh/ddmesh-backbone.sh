@@ -36,7 +36,6 @@ fwprint()
  logger -s -t "$TAG" "nft $*"
  nft $*
 }
-
 export NFT=fwprint
 #export NFT=nft
 
@@ -260,27 +259,31 @@ setup_firewall()
 {
 	logger -s -t $TAG "setup_firewall"
 
-	# create chains (with counter, but do not register with standard hooks because I do not want any traffic incoming)
-	$NFT add chain inet fw4 "ddmesh_input_backbone_accept" "{counter;}"
-	$NFT add chain inet fw4 "ddmesh_output_backbone_accept" "{counter;}"
-	$NFT add chain inet fw4 "ddmesh_input_backbone_reject" "{counter;}"
-	$NFT add chain inet fw4 "ddmesh_output_backbone_reject" "{counter;}"
+	# check if setup was already done
+	present="$(nft --json list ruleset | jsonfilter -e '@.nftables[@.rule.chain="ddmesh_input_backbone_accept"].rule.chain')"
+	if [ -z "$present" ]; then
+		# create chains (with counter, but do not register with standard hooks because I do not want any traffic incoming)
+		$NFT add chain inet fw4 "ddmesh_input_backbone_accept" "{counter;}"
+		$NFT add chain inet fw4 "ddmesh_output_backbone_accept" "{counter;}"
+		$NFT add chain inet fw4 "ddmesh_input_backbone_reject" "{counter;}"
+		$NFT add chain inet fw4 "ddmesh_output_backbone_reject" "{counter;}"
 
-	# insert my chains into openwrt chains
-  $NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_input_backbone_accept
-	$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_input_backbone_accept
-	$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_input_backbone_reject
-	$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_input_backbone_reject
-	$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_input_backbone_reject
+		# insert my chains into openwrt chains
+		$NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_input_backbone_accept
+		$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_input_backbone_accept
+		$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_input_backbone_reject
+		$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_input_backbone_reject
+		$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_input_backbone_reject
 
-  $NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_output_backbone_accept
-	$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_output_backbone_accept
-	$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_output_backbone_reject
-	$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_output_backbone_reject
-	$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_output_backbone_reject
+		$NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_output_backbone_accept
+		$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_output_backbone_accept
+		$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_output_backbone_reject
+		$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_output_backbone_reject
+		$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_output_backbone_reject
+	fi
 }
 
-callback_firewall()
+callback_firewall_outgoing()
 {
 	local config="$1"
 	local host  #hostname or ip
@@ -291,8 +294,8 @@ callback_firewall()
 
 	if [ -n "$host" -a -n "$port" ]; then
 		#dont use hostnames, can not be resolved
-		$NFT add rule inet fw4 ddmesh_output_backbone_accept udp dport $port counter accept comment '"ddmesh:backbone:accept"'
-		$NFT add rule inet fw4 ddmesh_output_backbone_reject udp dport $port counter goto handle_reject comment '"ddmesh:backbone:reject"'
+		$NFT add rule inet fw4 ddmesh_output_backbone_accept udp dport ${port} counter accept comment '"ddmesh:backbone:accept"'
+		$NFT add rule inet fw4 ddmesh_output_backbone_reject udp dport ${port} counter goto handle_reject comment '"ddmesh:backbone:reject"'
 	fi
 }
 
@@ -300,17 +303,21 @@ update_firewall()
 {
 	logger -s -t $TAG "update_firewall"
 
+	# clear all rules
 	$NFT flush chain inet fw4 ddmesh_input_backbone_accept
 	$NFT flush chain inet fw4 ddmesh_input_backbone_reject
-	$NFT add rule inet fw4 ddmesh_input_backbone_accept udp dport $backbone_local_fastd_port counter accept comment '"ddmesh:backbone:fastd"'
-	$NFT add rule inet fw4 ddmesh_input_backbone_reject udp dport $backbone_local_fastd_port counter goto handle_reject comment '"ddmesh:backbone:fastd"'
-	$NFT add rule inet fw4 ddmesh_input_backbone_accept udp dport $backbone_local_wg_port counter accept comment '"ddmesh:backbone:wg"'
-	$NFT add rule inet fw4 ddmesh_input_backbone_reject udp dport $backbone_local_wg_port counter goto handle_reject comment '"ddmesh:backbone:wg"'
-
 	$NFT flush chain inet fw4 ddmesh_output_backbone_accept
 	$NFT flush chain inet fw4 ddmesh_output_backbone_reject
+
+	# re-add input rules
+	$NFT add rule inet fw4 ddmesh_input_backbone_accept udp dport ${backbone_local_fastd_port} counter accept comment '"ddmesh:backbone:fastd"'
+	$NFT add rule inet fw4 ddmesh_input_backbone_reject udp dport ${backbone_local_fastd_port} counter goto handle_reject comment '"ddmesh:backbone:fastd"'
+	$NFT add rule inet fw4 ddmesh_input_backbone_accept udp dport ${backbone_local_wg_port} counter accept comment '"ddmesh:backbone:wg"'
+	$NFT add rule inet fw4 ddmesh_input_backbone_reject udp dport ${backbone_local_wg_port} counter goto handle_reject comment '"ddmesh:backbone:wg"'
+
+	# re-add output rules
 	config_load ddmesh
-	config_foreach callback_firewall backbone_client
+	config_foreach callback_firewall_outgoing backbone_client
 }
 
 case "$1" in

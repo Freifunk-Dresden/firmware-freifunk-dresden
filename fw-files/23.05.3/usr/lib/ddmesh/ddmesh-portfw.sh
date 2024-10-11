@@ -10,12 +10,11 @@ PROTECTED_PORTS="$PROTECTED_PORTS $(uci -q get ddmesh.privnet.fastd_port)"
 
 fwprint()
 {
-	echo iptables $*
-	iptables $*
+ logger -s -t "$TAG" "nft $*"
+ nft $*
 }
-
-# export IPT=fwprint
-export IPT=iptables
+export NFT=fwprint
+#export NFT=nft
 
 setup_forwarding()
 {
