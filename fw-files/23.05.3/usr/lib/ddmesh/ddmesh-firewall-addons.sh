@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 if [ -z "$1" ]; then
-	echo "usage $(basename $0) init-update | firewall-update | update-ignore"
+	echo "usage $(basename $0) restart_firewall | update-ignore"
 	exit 1
 fi
 
@@ -32,36 +32,23 @@ setup_ipv6_rules()
 {
 	logger -s -t $TAG "setup_ipv6_rules"
 
-	# block any ipv6
-	for chain in input forward output
-	do
-		# insert chains in standard chains (input,output,forward)
-		$NFT insert rule inet fw4 "$chain" position 0 meta l4proto ipv6 counter drop comment '"block ipv6"'
-	done
+  MARKER="ddmesh-block-ipv6"
+
+	# check if setup was already done (only check one rule to speed-up)
+	present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.chain=\"input\" && @.rule.comment=\"${MARKER}\"].rule.chain")"
+	if [ -z "$present" ]; then
+		# block any ipv6
+		for chain in input forward output
+		do
+			# insert chains in standard chains (input,output,forward)
+			$NFT insert rule inet fw4 "$chain" position 0 meta l4proto ipv6 counter drop comment "\"${MARKER}\""
+		done
+	fi
 }
 
 setup_custom_rules() {
 # temp firewall rules (fw uci can not add custom chains)
 	logger -s -t $TAG "setup_custom_rules"
-
-
-
-#---------
-	# remove "ctstate RELATED,ESTABLISHED" rule from OUTPUT, as this accepts packets (e.g. wireguard)
-	# where firewall is not ready yet, but a packet gets out because rules not yet fully setup.
-	# backbone/vpn can setup connections through freifunk network.
-#	$NFT -w -D OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT -m comment --comment '!fw3'
-
-
-	#input rules for privnet packets( to restrict tunnel pakets only via allowed interfaces )
-	#private data traffic is controlled by zone rules lan (br-lan)
-#	$NFT -w -N input_privnet_accept
-#	$NFT -w -N input_privnet_reject
-#	$NFT -w -A input_wan_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
-#	$NFT -w -A input_lan_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
-#	$NFT -w -A input_mesh_rule -j input_privnet_accept -m comment --comment 'ddmesh:privnet'
-#	$NFT -w -A input_ffgw_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
-#	$NFT -w -A input_wifi2_rule -j input_privnet_reject -m comment --comment 'ddmesh:privnet'
 
 	#add tables that are later filled with IPs that should be blocked.
 	# loop through zones
@@ -167,15 +154,6 @@ update_ignored_nodes() {
 	config_list_foreach ignore_nodes node callback_add_ignored_nodes
 }
 
-_init()
-{
-	#init all rules that can not be set by openwrt-firewall
-	setup_ipv6_rules
-	#setup_custom_rules
-	#
-	setup_ignored_nodes
-}
-
 _update()
 {
 	# ips are not valid if iface went down -> clear tables
@@ -221,25 +199,21 @@ _update()
 			$NFT -w -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'ddmesh:snat:wifi2' 2>/dev/null
 		done
 	fi
-
-	#update port forwarding on hotplug.d/iface (wan rules)
-	/usr/lib/ddmesh/ddmesh-portfw.sh load
 }
 
 logger -s -t $TAG "called with $1"
 case "$1" in
-	init-update)
-		_init
-		_update
-		;;
-
-	firewall-update)
-		_update
+	restart_firewall)
+		setup_ipv6_rules
+#		setup_custom_rules
+#		setup_ignored_nodes
+#		_update
 		;;
 
 	update-ignore)
 		update_ignored_nodes
 		;;
+
 	*)
 		echo "invalid arg"
 		;;

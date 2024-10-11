@@ -322,7 +322,8 @@ update_firewall()
 
 case "$1" in
 
-	firewall-update)
+	restart_firewall)
+		setup_firewall
 		update_firewall
 		;;
 
@@ -506,5 +507,5 @@ case "$1" in
 		;;
 
 	*)
-		echo "usage: $0 start|stop|restart|gen_secret_key|get_public_key|runcheck"
+		echo "usage: $0 start|stop|restart|gen_secret_key|get_public_key|runcheck|restart_firewall"
 esac
