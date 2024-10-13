@@ -90,34 +90,43 @@ setup_nat_rules()
 
 	# /etc/config/firewall defines zones with and without 'masq'. only when 'masq=1' then
 	# a chain with srcnat_xxxx is created and inserted into chain 'srcnat'
-	# -> use 'srcnat' directly
+	# Zones mesh,lan,wifi2  do not use masquerade rules (masq=0), but I have configured masq=1
+	# for those zones to get the missing chains: srcnat_lan, srcnat_mesh, srcnat_wifi2
+	# This means I can safely flush those chains and add my SNAT rules.
+	# Means also, I can call this function (setup_nat_rules) anytime
+
+	# flush chains
+	$NFT flush chain inet fw4 srcnat_lan
+	$NFT flush chain inet fw4 srcnat_mesh
+	$NFT flush chain inet fw4 srcnat_wifi2
 
 
-**** hier muss ich noch auf alle interfaces testen, da ich keine vorgefilterte srcnat_xxx habe.
-- evt doch masq=1 setzen damit fw4 mir das übernimmt. sonst muss ich alle interfaces definieren.
-- wenn ich dann ein flush mache auf so eine chain (die ja jetzt eh nicht da ist), wuerde auch
-- die masquerade rule rausfliegen, die ich nicht will.
-
-	#snat mesh from 10.201.xxx to 10.200.xxxx
+	# never change bmxd IPs
 	MARKER="ddmesh-nat-bmxd"
-	$NFT add rule inet4 fw4 srcnat udp dport 4305 counter accept comment "\"${MARKER}-snat\""
+	$NFT add rule inet fw4 srcnat_mesh udp dport 4305 counter accept comment "\"${MARKER}-accept\""
 
-	# don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
-	MARKER="ddmesh-snat"
-	$NFT add rule inet4 fw4 srcnat ip protocol icmp saddr ${_ddmesh_fullnet} counter accept comment "\"${MARKER}-icmp\""
-	$NFT add rule inet4 fw4 srcnat ip saddr ${_ddmesh_linknet} counter snat to ${_ddmesh_ip} comment "\"${MARKER}-bmxd\""
-	$NFT add rule inet4 fw4 srcnat ip saddr ${_ddmesh_wifi2net} counter snat to ${_ddmesh_ip} comment "\"${MARKER}-wifi2\""
+	# don't snat icmp to debug tbb links with ping
+	MARKER="ddmesh-nat_icmp"
+	$NFT add rule inet fw4 srcnat_mesh ip protocol icmp ip saddr ${_ddmesh_fullnet} counter accept comment "\"${MARKER}-accept\""
+
+	# snat mesh from 10.201.xxx to 10.200.xxxx
+	MARKER="ddmesh-nat"
+	$NFT add rule inet fw4 srcnat_mesh ip saddr ${_ddmesh_linknet} counter snat to ${_ddmesh_ip} comment "\"${MARKER}-mesh\""
+
+	# allow access to freifunk ip from wifi2 device
+	$NFT add rule inet fw4 srcnat_mesh ip saddr ${_ddmesh_wifi2net} counter snat to ${_ddmesh_ip} comment "\"${MARKER}-wifi2-to-mesh\""
 
 	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
-		# snat; only allow correct ip as source ip
-		$NFT add rule inet4 fw4 srcnat ip daddr "${lan_network}/${lan_mask}" counter snat to ${lan_ipaddr} comment "\"${MARKER}-lan\""
-		# user want's to access any ff router from a lan device
-		$NFT add rule inet4 fw4 srcnat ip saddr "${lan_network}/${lan_mask}" counter snat to ${_ddmesh_ip} comment "\"${MARKER}-mesh\""
+		# allow access to freifunk ip from wifi2 device
+		$NFT add rule inet fw4 srcnat_mesh ip saddr "${lan_network}/${lan_mask}" counter snat to ${_ddmesh_ip} comment "\"${MARKER}-lan-to-mesh\""
+
+		# allow portforwarding to lan zone
+		$NFT add rule inet fw4 srcnat_lan ip daddr "${lan_network}/${lan_mask}" counter snat to ${lan_ipaddr} comment "\"${MARKER}-portforward-lan\""
 	fi
 
 	if [ "$wifi2_up" = "1" -a -n "$wifi2_ipaddr" -a -n "$wifi2_mask" ]; then
-		# snat; only allow correct ip as source ip
-		$NFT add rule inet4 fw4 nat srcnat ip daddr "${wifi2_ipaddr}/${wifi2_mask}" counter snat to ${wifi2_ipaddr} comment "\"${MARKER}-wifi2-snat\""
+		# allow portforwarding to wifi2 zone
+		$NFT add rule inet fw4 srcnat_wifi2 ip daddr "${wifi2_ipaddr}/${wifi2_mask}" counter snat to ${wifi2_ipaddr} comment "\"${MARKER}-portforward-wifi2\""
 	fi
 
 }
