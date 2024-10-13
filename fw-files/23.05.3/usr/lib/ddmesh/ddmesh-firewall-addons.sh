@@ -31,7 +31,6 @@ export CHAIN_NAME="ddmesh_ignore_nodes"
 setup_ipv6_rules()
 {
 	logger -s -t $TAG "setup_ipv6_rules"
-
   MARKER="ddmesh-block-ipv6"
 
 	# check if setup was already done (only check one rule to speed-up)
@@ -46,74 +45,81 @@ setup_ipv6_rules()
 	fi
 }
 
-# these rules prevent access router via ip addresses from different interfaces
+# these rules prevent access router via ip addresses from different interfaces.
+# function flushs chain and re-adds rules. it is save to call this anytime
 setup_blocked_iface_ip()
 {
+	logger -s -t $TAG "setup_blocked_iface_ip"
+	MARKER="ddmesh-block-iface-ip"
+
 	#add tables that are later filled with IPs that should be blocked.
 	# loop through zones
 	for i in mesh wifi2 ffgw lan wan vpn
 	do
-	        $NFT -w -N input_"$i"_deny
-	        $NFT -w -I input_"$i"_rule -j input_"$i"_deny -m comment --comment 'ddmesh'
+		chain="ddmesh_input_${i}_deny"
+		# create chains (with counter, but do not register with standard hooks because chain is added
+		# to specific openwrt chain
+		$NFT create chain inet fw4 ${chain} '{counter;}' 2>/dev/null
+		$NFT flush chain inet fw4 ${chain}
+		# insert my chain into openwrt chain
+		$NFT insert rule inet fw4 input_${i} position 0 counter jump ${chain} comment "\"${MARKER}-${i}-goto\""
 	done
-
-	# ips are not valid if iface went down -> clear tables
-	# use reject instead of DROP, else it is possible to scan for ip timeout
-	$NFT -w -F input_wan_deny
-	$NFT -w -F input_lan_deny
-	$NFT -w -F input_mesh_deny
-	$NFT -w -F input_wifi2_deny
-	$NFT -w -F input_ffgw_deny
-	$NFT -w -F input_vpn_deny
 
 	# -- lan --
 	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
-		for n in wan mesh wifi2 ffgw vpn
+		for i in mesh wifi2 ffgw wan vpn
 		do
-			for cmd in D A
-			do
-				$NFT -w -$cmd "input_"$n"_deny" -d $lan_network/$lan_mask -j reject -m comment --comment 'ddmesh' 2>/dev/null
-			done
-		done
-
-		# remove/add SNAT rule when iface becomes available
-		for cmd in D A
-		do
-			$NFT -w -t nat -$cmd postrouting_lan_rule -d $lan_ipaddr/$lan_mask -j SNAT --to-source $lan_ipaddr -m comment --comment 'ddmesh:snat:lan' 2>/dev/null
-			$NFT -w -t nat -$cmd postrouting_mesh_rule -s $lan_network/$lan_mask -j SNAT --to-source $_ddmesh_ip -m comment --comment 'ddmesh:snat:mesh' 2>/dev/null
+			chain="ddmesh_input_${i}_deny"
+			$NFT add rule inet fw4 ${chain} ip daddr "${lan_network}/${lan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}\""
 		done
 	fi
 
 	# -- wan --
 	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
-		for n in lan mesh wifi2 ffgw vpn
+		for i in mesh wifi2 ffgw lan vpn
 		do
-			for cmd in D A
-			do
-				$NFT -w -$cmd "input_"$n"_deny" -d $wan_network/$wan_mask -j reject  -m comment --comment 'ddmesh' 2>/dev/null
-			done
-		done
-	fi
-
-	# -- wifi2 --
-	if [ "$wifi2_up" = "1" -a -n "$wifi2_ipaddr" -a -n "$wifi2_mask" ]; then
-		# remove/add SNAT rule when iface becomes available
-		for cmd in D A
-		do
-			$NFT -w -t nat -$cmd postrouting_wifi2_rule -d $wifi2_ipaddr/$wifi2_mask -j SNAT --to-source $wifi2_ipaddr -m comment --comment 'ddmesh:snat:wifi2' 2>/dev/null
+			chain="ddmesh_input_${i}_deny"
+			$NFT add rule inet fw4 ${chain} ip daddr "${wan_network}/${wan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}\""
 		done
 	fi
 }
 
 setup_nat_rules()
 {
+	logger -s -t $TAG "setup_nat_rules"
+
+	# /etc/config/firewall defines zones with and without 'masq'. only when 'masq=1' then
+	# a chain with srcnat_xxxx is created and inserted into chain 'srcnat'
+	# -> use 'srcnat' directly
+
+
+**** hier muss ich noch auf alle interfaces testen, da ich keine vorgefilterte srcnat_xxx habe.
+- evt doch masq=1 setzen damit fw4 mir das übernimmt. sonst muss ich alle interfaces definieren.
+- wenn ich dann ein flush mache auf so eine chain (die ja jetzt eh nicht da ist), wuerde auch
+- die masquerade rule rausfliegen, die ich nicht will.
+
 	#snat mesh from 10.201.xxx to 10.200.xxxx
-	$NFT -w -t nat -A postrouting_mesh_rule -p udp --dport 4305 -j ACCEPT -m comment --comment 'ddmesh:bmxd'
-	$NFT -w -t nat -A postrouting_mesh_rule -p tcp --dport 4305 -j ACCEPT -m comment --comment 'ddmesh:bmxd'
+	MARKER="ddmesh-nat-bmxd"
+	$NFT add rule inet4 fw4 srcnat udp dport 4305 counter accept comment "\"${MARKER}-snat\""
+
 	# don't snat icmp to debug tbb links with ping (MUST come after other rules bufgix:#57)
-	$NFT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_fullnet -p icmp -j ACCEPT -m comment --comment 'ddmesh:ping'
-	$NFT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_linknet -j SNAT --to-source $_ddmesh_ip -m comment --comment 'ddmesh:snat'
-	$NFT -w -t nat -A postrouting_mesh_rule -s $_ddmesh_wifi2net -j SNAT --to-source $_ddmesh_ip -m comment --comment 'ddmesh:snat'
+	MARKER="ddmesh-snat"
+	$NFT add rule inet4 fw4 srcnat ip protocol icmp saddr ${_ddmesh_fullnet} counter accept comment "\"${MARKER}-icmp\""
+	$NFT add rule inet4 fw4 srcnat ip saddr ${_ddmesh_linknet} counter snat to ${_ddmesh_ip} comment "\"${MARKER}-bmxd\""
+	$NFT add rule inet4 fw4 srcnat ip saddr ${_ddmesh_wifi2net} counter snat to ${_ddmesh_ip} comment "\"${MARKER}-wifi2\""
+
+	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
+		# snat; only allow correct ip as source ip
+		$NFT add rule inet4 fw4 srcnat ip daddr "${lan_network}/${lan_mask}" counter snat to ${lan_ipaddr} comment "\"${MARKER}-lan\""
+		# user want's to access any ff router from a lan device
+		$NFT add rule inet4 fw4 srcnat ip saddr "${lan_network}/${lan_mask}" counter snat to ${_ddmesh_ip} comment "\"${MARKER}-mesh\""
+	fi
+
+	if [ "$wifi2_up" = "1" -a -n "$wifi2_ipaddr" -a -n "$wifi2_mask" ]; then
+		# snat; only allow correct ip as source ip
+		$NFT add rule inet4 fw4 nat srcnat ip daddr "${wifi2_ipaddr}/${wifi2_mask}" counter snat to ${wifi2_ipaddr} comment "\"${MARKER}-wifi2-snat\""
+	fi
+
 }
 
 callback_add_ignored_nodes()
@@ -187,6 +193,8 @@ setup_ignored_nodes() {
 }
 
 update_ignored_nodes() {
+	logger -s -t $TAG "update_ignored_nodes"
+
 	$NFT -w -F input_ignore_nodes_wifi2m
 	$NFT -w -F input_ignore_nodes_wifi5m
 	$NFT -w -F input_ignore_nodes_lan
@@ -199,19 +207,18 @@ update_ignored_nodes() {
 }
 
 
-logger -s -t $TAG "called with $1"
 case "$1" in
 	restart_firewall)
 		setup_ipv6_rules
-#		setup_blocked_iface_ip
-#		setup_nat_rules
+		setup_blocked_iface_ip
+		setup_nat_rules
 
 #		setup_ignored_nodes
 
 		;;
 
 	update-ignore)
-		update_ignored_nodes
+#		update_ignored_nodes
 		;;
 
 	*)

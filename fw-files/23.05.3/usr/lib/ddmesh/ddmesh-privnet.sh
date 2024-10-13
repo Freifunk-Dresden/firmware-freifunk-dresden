@@ -126,26 +126,31 @@ setup_firewall()
 	logger -s -t $TAG "setup_firewall"
 
 	# check if setup was already done
-	present="$(nft --json list ruleset | jsonfilter -e '@.nftables[@.rule.chain="ddmesh_input_privnet_accept"].rule.chain')"
+	present="$(nft --json list ruleset | jsonfilter -e '@.nftables[@.chain.name="ddmesh_privnet_input_accept"].chain.name')"
 	if [ -z "$present" ]; then
-		# create chains (with counter, but do not register with standard hooks because I do not want any traffic incoming)
-		$NFT add chain inet fw4 "ddmesh_input_privnet_accept" "{counter;}"
-		$NFT add chain inet fw4 "ddmesh_output_privnet_accept" "{counter;}"
-		$NFT add chain inet fw4 "ddmesh_input_privnet_reject" "{counter;}"
-		$NFT add chain inet fw4 "ddmesh_output_privnet_reject" "{counter;}"
+	  logger -s -t $TAG "setup_firewall:init"
+
+		# create chains (with counter, but do not register with standard hooks because chain is added
+		# to specific openwrt chain
+		$NFT add chain inet fw4 "ddmesh_privnet_input_accept" "{counter;}"
+		$NFT add chain inet fw4 "ddmesh_privnet_output_accept" "{counter;}"
+		$NFT add chain inet fw4 "ddmesh_privnet_input_reject" "{counter;}"
+		$NFT add chain inet fw4 "ddmesh_privnet_output_reject" "{counter;}"
 
 		# insert my chains into openwrt chains
-		$NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_input_privnet_reject
-		$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_input_privnet_reject
-		$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_input_privnet_accept
-		$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_input_privnet_reject
-		$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_input_privnet_reject
+		MARKER="ddmesh-privnet-in"
+		$NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-wan-goto\""
+		$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-lan-goto\""
+		$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_privnet_input_accept comment "\"${MARKER}-mesh-goto\""
+		$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-ffgw-goto\""
+		$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-wifi2-goto\""
 
-		$NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_output_privnet_reject
-		$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_output_privnet_reject
-		$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_output_privnet_accept
-		$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_output_privnet_reject
-		$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_output_privnet_reject
+		MARKER="ddmesh-privnet-out"
+		$NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-wan-goto\""
+		$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-lan-goto\""
+		$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_privnet_output_accept comment "\"${MARKER}-mesh-goto\""
+		$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-ffgw-goto\""
+		$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-wifi2-goto\""
 	fi
 }
 
@@ -159,11 +164,12 @@ callback_firewall_outgoing()
 	config_get node "$config" node
 	config_get port "$config" port
 	config_get key "$config" public_key
-#echo "fw[$node:$port:$key]"
+	#echo "fw[$node:$port:$key]"
 	if [ -n "$node" -a -n "$port" -a -n "$key" -a -n "$key" ]; then
+		MARKER="ddmesh-privnet-out"
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
-		$NFT add rule inet fw4 ddmesh_output_privnet_accept ip daddr ${_ddmesh_ip} udp dport ${port} counter accept comment '"ddmesh:privnet:accept"'
-		$NFT add rule inet fw4 ddmesh_output_privnet_reject ip daddr ${_ddmesh_ip} udp dport ${port} counter goto handle_reject comment '"ddmesh:privnet:reject"'
+		$NFT add rule inet fw4 ddmesh_privnet_output_accept ip daddr ${_ddmesh_ip} udp dport ${port} counter accept comment "\"${MARKER}-accept\""
+		$NFT add rule inet fw4 ddmesh_privnet_output_reject ip daddr ${_ddmesh_ip} udp dport ${port} counter goto handle_reject comment "\"${MARKER}-reject\""
 	fi
 }
 
@@ -172,14 +178,15 @@ update_firewall()
 	logger -s -t $TAG "update_firewall"
 
 	# clear all rules
-	$NFT flush chain inet fw4 ddmesh_input_privnet_accept
-	$NFT flush chain inet fw4 ddmesh_input_privnet_reject
-	$NFT flush chain inet fw4 ddmesh_output_privnet_accept
-	$NFT flush chain inet fw4 ddmesh_output_privnet_reject
+	$NFT flush chain inet fw4 ddmesh_privnet_input_accept
+	$NFT flush chain inet fw4 ddmesh_privnet_input_reject
+	$NFT flush chain inet fw4 ddmesh_privnet_output_accept
+	$NFT flush chain inet fw4 ddmesh_privnet_output_reject
 
 	# re-add input rules
-	$NFT add rule inet fw4 ddmesh_input_privnet_accept udp dport ${privnet_server_port} counter accept comment '"ddmesh:privnet:accept"'
-	$NFT add rule inet fw4 ddmesh_input_privnet_reject udp dport ${privnet_server_port} counter goto handle_reject comment '"ddmesh:privnet:reject"'
+	MARKER="ddmesh-privnet-in"
+	$NFT add rule inet fw4 ddmesh_privnet_input_accept udp dport ${privnet_server_port} counter accept comment "\"${MARKER}-accept\""
+	$NFT add rule inet fw4 ddmesh_privnet_input_reject udp dport ${privnet_server_port} counter goto handle_reject comment "\"${MARKER}-reject\""
 
 	# re-add output rules
 	config_load ddmesh

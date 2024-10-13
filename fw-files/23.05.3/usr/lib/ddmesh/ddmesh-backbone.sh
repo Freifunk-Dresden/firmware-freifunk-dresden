@@ -27,8 +27,6 @@ backbone_local_wg_port=${backbone_local_wg_port:-$DEFAULT_WG_PORT}
 MTU=$(uci -q get ddmesh.network.mesh_mtu)
 
 NUMBER_OF_CLIENTS="$(uci get ddmesh.backbone.number_of_clients)"
-
-
 TAG="ddmesh-backbone.sh"
 
 fwprint()
@@ -260,26 +258,31 @@ setup_firewall()
 	logger -s -t $TAG "setup_firewall"
 
 	# check if setup was already done
-	present="$(nft --json list ruleset | jsonfilter -e '@.nftables[@.rule.chain="ddmesh_input_backbone_accept"].rule.chain')"
+	present="$(nft --json list ruleset | jsonfilter -e '@.nftables[@.chain.name="ddmesh_backbone_input_accept"].chain.name')"
 	if [ -z "$present" ]; then
-		# create chains (with counter, but do not register with standard hooks because I do not want any traffic incoming)
-		$NFT add chain inet fw4 "ddmesh_input_backbone_accept" "{counter;}"
-		$NFT add chain inet fw4 "ddmesh_output_backbone_accept" "{counter;}"
-		$NFT add chain inet fw4 "ddmesh_input_backbone_reject" "{counter;}"
-		$NFT add chain inet fw4 "ddmesh_output_backbone_reject" "{counter;}"
+		logger -s -t $TAG "setup_firewall:init"
+
+		# create chains (with counter, but do not register with standard hooks because chain is added
+		# to specific openwrt chain
+		$NFT add chain inet fw4 "ddmesh_backbone_input_accept" "{counter;}"
+		$NFT add chain inet fw4 "ddmesh_backbone_output_accept" "{counter;}"
+		$NFT add chain inet fw4 "ddmesh_backbone_input_reject" "{counter;}"
+		$NFT add chain inet fw4 "ddmesh_backbone_output_reject" "{counter;}"
 
 		# insert my chains into openwrt chains
-		$NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_input_backbone_accept
-		$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_input_backbone_accept
-		$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_input_backbone_reject
-		$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_input_backbone_reject
-		$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_input_backbone_reject
+		MARKER="ddmesh-backbone-in"
+		$NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_backbone_input_accept comment "\"${MARKER}-wan-goto\""
+		$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_backbone_input_accept comment "\"${MARKER}-lan-goto\""
+		$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-mesh-goto\""
+		$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-ffgw-goto\""
+		$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-wifi2-goto\""
 
-		$NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_output_backbone_accept
-		$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_output_backbone_accept
-		$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_output_backbone_reject
-		$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_output_backbone_reject
-		$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_output_backbone_reject
+		MARKER="ddmesh-backbone-out"
+		$NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_backbone_output_accept comment "\"${MARKER}-wan-goto\""
+		$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_backbone_output_accept comment "\"${MARKER}-lan-goto\""
+		$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-mesh-goto\""
+		$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-ffgw-goto\""
+		$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-wifi2-goto\""
 	fi
 }
 
@@ -294,8 +297,9 @@ callback_firewall_outgoing()
 
 	if [ -n "$host" -a -n "$port" ]; then
 		#dont use hostnames, can not be resolved
-		$NFT add rule inet fw4 ddmesh_output_backbone_accept udp dport ${port} counter accept comment '"ddmesh:backbone:accept"'
-		$NFT add rule inet fw4 ddmesh_output_backbone_reject udp dport ${port} counter goto handle_reject comment '"ddmesh:backbone:reject"'
+		MARKER="ddmesh-backbone-out"
+		$NFT add rule inet fw4 ddmesh_backbone_output_accept udp dport ${port} counter accept comment "\"${MARKER}-accept\""
+		$NFT add rule inet fw4 ddmesh_backbone_output_reject udp dport ${port} counter goto handle_reject comment "\"${MARKER}-reject\""
 	fi
 }
 
@@ -304,16 +308,17 @@ update_firewall()
 	logger -s -t $TAG "update_firewall"
 
 	# clear all rules
-	$NFT flush chain inet fw4 ddmesh_input_backbone_accept
-	$NFT flush chain inet fw4 ddmesh_input_backbone_reject
-	$NFT flush chain inet fw4 ddmesh_output_backbone_accept
-	$NFT flush chain inet fw4 ddmesh_output_backbone_reject
+	$NFT flush chain inet fw4 ddmesh_backbone_input_accept
+	$NFT flush chain inet fw4 ddmesh_backbone_input_reject
+	$NFT flush chain inet fw4 ddmesh_backbone_output_accept
+	$NFT flush chain inet fw4 ddmesh_backbone_output_reject
 
 	# re-add input rules
-	$NFT add rule inet fw4 ddmesh_input_backbone_accept udp dport ${backbone_local_fastd_port} counter accept comment '"ddmesh:backbone:fastd"'
-	$NFT add rule inet fw4 ddmesh_input_backbone_reject udp dport ${backbone_local_fastd_port} counter goto handle_reject comment '"ddmesh:backbone:fastd"'
-	$NFT add rule inet fw4 ddmesh_input_backbone_accept udp dport ${backbone_local_wg_port} counter accept comment '"ddmesh:backbone:wg"'
-	$NFT add rule inet fw4 ddmesh_input_backbone_reject udp dport ${backbone_local_wg_port} counter goto handle_reject comment '"ddmesh:backbone:wg"'
+	MARKER="ddmesh-backbone-in"
+	$NFT add rule inet fw4 ddmesh_backbone_input_accept udp dport ${backbone_local_fastd_port} counter accept comment "\"${MARKER}-fastd-accept\""
+	$NFT add rule inet fw4 ddmesh_backbone_input_reject udp dport ${backbone_local_fastd_port} counter goto handle_reject comment "\"${MARKER}-fastd-reject\""
+	$NFT add rule inet fw4 ddmesh_backbone_input_accept udp dport ${backbone_local_wg_port} counter accept comment "\"${MARKER}-wg-accept\""
+	$NFT add rule inet fw4 ddmesh_backbone_input_reject udp dport ${backbone_local_wg_port} counter goto handle_reject comment "\"${MARKER}-wg-reject\""
 
 	# re-add output rules
 	config_load ddmesh
