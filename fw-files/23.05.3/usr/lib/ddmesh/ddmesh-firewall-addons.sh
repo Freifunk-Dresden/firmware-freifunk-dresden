@@ -61,8 +61,15 @@ setup_blocked_iface_ip()
 		# to specific openwrt chain
 		$NFT create chain inet fw4 ${chain} '{counter;}' 2>/dev/null
 		$NFT flush chain inet fw4 ${chain}
-		# insert my chain into openwrt chain
-		$NFT insert rule inet fw4 input_${i} position 0 counter jump ${chain} comment "\"${MARKER}-${i}-goto\""
+
+		handle="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.comment=\"${MARKER}-${i}-goto\"].rule.handle")"
+		if [ -z "$present" ]; then
+			# delete old rule
+			$NFT delete rule inet fw4 input_${i} handle ${handle}
+
+			# insert my chain into openwrt chain
+			$NFT insert rule inet fw4 input_${i} position 0 counter jump ${chain} comment "\"${MARKER}-${i}-goto\""
+		fi
 	done
 
 	# -- lan --
