@@ -271,18 +271,18 @@ setup_firewall()
 
 		# insert my chains into openwrt chains
 		MARKER="ddmesh-backbone-in"
-		$NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_backbone_input_accept comment "\"${MARKER}-wan-goto\""
-		$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_backbone_input_accept comment "\"${MARKER}-lan-goto\""
-		$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-mesh-goto\""
-		$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-ffgw-goto\""
-		$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-wifi2-goto\""
+		$NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_backbone_input_accept comment "\"${MARKER}-wan-jump\""
+		$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_backbone_input_accept comment "\"${MARKER}-lan-jump\""
+		$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-mesh-jump\""
+		$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-ffgw-jump\""
+		$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-wifi2-jump\""
 
 		MARKER="ddmesh-backbone-out"
-		$NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_backbone_output_accept comment "\"${MARKER}-wan-goto\""
-		$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_backbone_output_accept comment "\"${MARKER}-lan-goto\""
-		$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-mesh-goto\""
-		$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-ffgw-goto\""
-		$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-wifi2-goto\""
+		$NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_backbone_output_accept comment "\"${MARKER}-wan-jump\""
+		$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_backbone_output_accept comment "\"${MARKER}-lan-jump\""
+		$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-mesh-jump\""
+		$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-ffgw-jump\""
+		$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-wifi2-jump\""
 	fi
 }
 

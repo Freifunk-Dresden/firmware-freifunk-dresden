@@ -8,3 +8,6 @@ echo 'Content-Type: application/json;charset=UTF-8'
 echo ''
 
 nft --json list ruleset
+
+# nft -j list chain inet fw4 reject_to_lan
+# nft -j list chains

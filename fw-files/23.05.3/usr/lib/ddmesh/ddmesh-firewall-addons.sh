@@ -64,9 +64,9 @@ setup_blocked_iface_ip()
 		$NFT flush chain inet fw4 ${chain}
 
 		# insert my chains into openwrt chains
-		present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.comment=\"${MARKER}-${i}-goto\"].rule.handle")"
+		present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.comment=\"${MARKER}-${i}-jump\"].rule.handle")"
 		if [ -z "$present" ]; then
-			$NFT insert rule inet fw4 input_${i} position 0 counter jump ${chain} comment "\"${MARKER}-${i}-goto\""
+			$NFT insert rule inet fw4 input_${i} position 0 counter jump ${chain} comment "\"${MARKER}-${i}-jump\""
 		fi
 	done
 
@@ -75,7 +75,7 @@ setup_blocked_iface_ip()
 		for i in mesh wifi2 ffgw wan vpn
 		do
 			chain="ddmesh_input_${i}_deny"
-			$NFT add rule inet fw4 ${chain} ip daddr "${lan_network}/${lan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}\""
+			$NFT add rule inet fw4 ${chain} ip daddr "${lan_network}/${lan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}-reject\""
 		done
 	fi
 
@@ -84,7 +84,7 @@ setup_blocked_iface_ip()
 		for i in mesh wifi2 ffgw lan vpn
 		do
 			chain="ddmesh_input_${i}_deny"
-			$NFT add rule inet fw4 ${chain} ip daddr "${wan_network}/${wan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}\""
+			$NFT add rule inet fw4 ${chain} ip daddr "${wan_network}/${wan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}-reject\""
 		done
 	fi
 }
@@ -152,26 +152,32 @@ callback_add_ignored_nodes()
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
 
+	MARKER="ddmesh-ignore-nodes"
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
-
 	if [ "$opt_lan" = "1" ]; then
-		$NFT -w -A input_ignore_nodes_lan -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
-		$NFT -w -A input_ignore_nodes_wan -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
+		for i in mesh_lan mesh_wan
+		do
+			$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+		done
 	fi
 	if [ "$opt_tbb" = "1" ]; then
-		$NFT -w -A input_ignore_nodes_tbb -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
+		for i in tbb_wg tbb_fastd
+		do
+			$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+		done
 	fi
 	if [ "$opt_wifi_mesh2g" = "1" ]; then
-		$NFT -w -A input_ignore_nodes_wifi2m -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
+		i="wifi_mesh2g"
+		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 	fi
 	if [ "$opt_wifi_mesh5g" = "1" ]; then
-		$NFT -w -A input_ignore_nodes_wifi5m -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
+		i="wifi_mesh5g"
+		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 	fi
 	if [ "$opt_vlan" = "1" ]; then
-		$NFT -w -A input_ignore_nodes_vlan -s $_ddmesh_nonprimary_ip -j DROP -m comment --comment 'ddmesh:ignore-nodes'
+		i="mesh_vlan"
+		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 	fi
-
-	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 }
 
 setup_ignored_nodes() {
@@ -184,7 +190,7 @@ setup_ignored_nodes() {
 		$NFT flush chain inet fw4 ${chain}
 
 		# insert my chains into openwrt chains
-		MARKER="ddmesh-ignore-nodes-${i}-goto"
+		MARKER="ddmesh-ignore-nodes-${i}-jump"
 		present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.comment=\"${MARKER}\"].rule.handle")"
 		if [ -z "$present" ]; then
 			iface="$(eval echo "\$net_${i}")"
@@ -195,24 +201,11 @@ setup_ignored_nodes() {
 		fi
   done
 
-#	config_load ddmesh
-#	config_list_foreach ignore_nodes node callback_add_ignored_nodes
-}
-
-update_ignored_nodes() {
-	logger -s -t $TAG "update_ignored_nodes"
-
-	$NFT -w -F input_ignore_nodes_wifi2m
-	$NFT -w -F input_ignore_nodes_wifi5m
-	$NFT -w -F input_ignore_nodes_lan
-	$NFT -w -F input_ignore_nodes_wan
-	$NFT -w -F input_ignore_nodes_vlan
-	$NFT -w -F input_ignore_nodes_tbb
-
 	config_load ddmesh
 	config_list_foreach ignore_nodes node callback_add_ignored_nodes
+  # reset back (was temporarily changed)
+	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 }
-
 
 case "$1" in
 	restart_firewall)
@@ -224,7 +217,7 @@ case "$1" in
 		;;
 
 	update-ignore)
-#		update_ignored_nodes
+		setup_ignored_nodes
 		;;
 
 	*)
