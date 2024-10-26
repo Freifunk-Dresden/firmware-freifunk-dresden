@@ -1526,6 +1526,9 @@ EOM
     # copy files to our own output directory
     mkdir -p ${outdir}/packages ${outdir}/images
 
+    echo -e "${C_CYAN}copy version file${C_NONE}"
+    mv ${RUN_DIR}/${buildroot}/files/etc/version ${outdir}// 2>/dev/null
+
     echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
     mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
 
