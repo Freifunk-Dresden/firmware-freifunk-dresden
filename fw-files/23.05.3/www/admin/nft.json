@@ -9,5 +9,5 @@ echo ''
 
 nft --json list ruleset
 
-# nft -j list chain inet fw4 reject_to_lan
+#nft -j list chain inet fw4 input
 # nft -j list chains
