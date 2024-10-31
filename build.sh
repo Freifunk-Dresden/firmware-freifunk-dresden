@@ -1534,7 +1534,7 @@ EOM
     mkdir -p ${outdir}/packages ${outdir}/images
 
     echo -e "${C_CYAN}copy version file${C_NONE}"
-    mv ${RUN_DIR}/${buildroot}/files/etc/version ${outdir}// 2>/dev/null
+    mv ${RUN_DIR}/${buildroot}/files/etc/version "${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/" 2>/dev/null
 
     echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
     mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null

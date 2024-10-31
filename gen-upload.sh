@@ -44,12 +44,12 @@ usage()
 	printf "${0##*/} (all | json <commands>\n"
 	printf "Version ${VERSION}\n"
 	printf "commands:\n"
-	printf "   all                          - generates all (incl.copying files)\n"
-	printf "   json                         - only updates download.json\n"
-	printf "   compare-json                 - only compare fileinfo.json  against last generated version\n"
-	printf "   directory-suffix             - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
-	printf "   pretty <json file>           - reads file info json from file and prints sorted (by filename) json on stdout\n"
-	printf "   show-multiple-used-files <json-file>  - shows filenames that are used more than once"
+	printf "   all                                                       - generates all (incl.copying files)\n"
+	printf "   json                                                      - only updates download.json\n"
+	printf "   compare-json                                              - only compare fileinfo.json  against last generated version\n"
+	printf "   directory-suffix                                          - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
+	printf "   pretty                   <download.json | fileinfo.json>  - reads file info json from file and prints sorted (by filename) json on stdout\n"
+	printf "   show-multiple-used-files <download.json | fileinfo.json>  - shows filenames that are used more than once\n"
 	printf "\n"
 	exit 1
 }
@@ -166,7 +166,7 @@ gen_download_json_start()
 	> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 
 	printf "{\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-	printf " \"json_version\":\"1\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf " \"json_version\":\"2\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
   printf " \"firmware_version\":\"$fw_version\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"firmware_date\":\"$fw_date\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"firmware_branch\":\"$fw_branch\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
@@ -177,7 +177,7 @@ gen_download_json_start()
 	> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 	printf "{\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 	printf " \"comment\":\"input file to generate final download.json via gen-upload.sh\",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-	printf " \"json_version\":\"1\",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+	printf " \"json_version\":\"2\",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 	printf " \"fileinfo\": [\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 }
 
@@ -197,7 +197,7 @@ isFirstFileInfo=1
 gen_download_json_add_data()
 {
 	output_path="$1" 	# output path "final_output/"
-	subpath="$2" 		# relativ path to firmware "firmware/8.3.0/firmware/ar71xx/generic"
+	subpath="$2" 		# relativ path to firmware "firmware/8.3.0/platform/ar71xx/generic"
 	file_filter="$3" 	# file filter "*.{bin,trx,img,dlf,gz}"
 	fw_version="$4" # freifunk firmware version
 
@@ -368,7 +368,7 @@ gen_download_json_add_data()
 
 gen_download_json_end()
 {
-	 output_path=$1	# output path "firmware/4.2.15"
+	 output_path=$1
 
 	#printf "close download.json\n"
 	printf " ]\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
@@ -470,7 +470,7 @@ do
 		printf "ERROR: firmware version not detected (invalid path)\n"
 		exit 1
 	fi
-	printf "${C_LPURPLE}detected firmware version:${C_NONE} $fw_version\n"
+	printf "  ${C_LPURPLE}detected firmware version:${C_NONE} $fw_version\n"
 
 	target_dir=$output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version
 	mkdir -p $target_dir
@@ -484,18 +484,17 @@ do
 #		gen_download_json_add_single_link "[$platform]" "$platform" $output_dir
 #	done
 
-	for platform in $(ls $_platforms)
+	for platform in $(ls --hide 'version' $_platforms)
 	do
 
-		printf -- "  ---------------------------------------------------------\n"
-		printf "  ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
+		printf -- "  >>>>>>>> ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
 
-		tmpTargetDir="${target_dir}/firmware/$platform"
+		tmpTargetDir="${target_dir}/platform/$platform"
 		mkdir -p ${tmpTargetDir}
 
 		filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
 		$ENABLE_COPY && {
-			printf "  copy ${_platforms}/${platform}/images/$filefilter $tmpTargetDir\n"
+			printf "    ${C_YELLOW}copy:${C_NONE} ${platform}/images/$filefilter\n"
 			# use "eval" to resolv filefilter wildcards
 			eval cp -a ${_platforms}/${platform}/images/$filefilter $tmpTargetDir 2>/dev/null
 
@@ -520,7 +519,7 @@ do
 		do
 
 			filename=$(find ${_platforms}/${platform}/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
-			printf "      ${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE} [${filename}]\n"
+			printf "      ${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}\n"
 
 			test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
 			$ENABLE_COPY && {
@@ -537,7 +536,7 @@ do
 		cd $p
 
 		# last parameter only is used to track previously added firmware when checking for duplicates
-		gen_download_json_add_data "$output_dir" "${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/firmware/${platform}" "$filefilter" ${fw_version}
+		gen_download_json_add_data "$output_dir" "${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/platform/${platform}" "$filefilter" ${fw_version}
 		#"$_buildroot/${GENERATED_FIRMWARE_OUTPUT_DIR}/${platform}/images/"
 
 	done	# for platform
