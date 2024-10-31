@@ -28,6 +28,13 @@ m3:init:
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
 
+    # if not set -> error
+    # note: I have set default FF_UPLOAD_DIR in gitlab (variables) to 'nightly'
+    if [ -z "${FF_UPLOAD_DIR}" ]; then
+      echo "FF_UPLOAD_DIR not defined! Aborting."
+      exit 1
+    fi
+
     # dont delete dl, it is not so important to have different old version for
     # one packges, but it will reduce download overhead from external servers
     # every night. so just only delete workdirs to always have a clean build
