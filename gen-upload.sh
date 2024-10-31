@@ -6,45 +6,8 @@
 #
 # copy firwmare,packets and generate download.json
 
-cat <<EOM
- gen_uploade.sh - abgeschaltet
- -----------------------------
-
-- build.sh baut nun für unterschiedliche openwrt versionen und fügt die version in den filenamen ein.
-- für jede dieser openwrt versionen/varianten kann (bzw ist) ein eigene versions nummer festgelegt im fw-files/*/etc/version.
-- das erlaubt es, bestimmte router, wo keine höhere openwrt version möglich ist, festzunageln.
-- das setzt voraus, dass files aus dem "common" verzeichnis in das verzeichiss für diese version kopiert wird.
-
-- ich muss aber noch was erfinden im build.sh, wo ich sagen kann, dass daten aus dem common nicht kopiert werden.
-  in build.sh.
-	Direkt unter fw-files/18.06.common      könnte ein symlink aus "version".common auf das common zeigen,
-	welches verwendet wird. exisitert dieses datei nicht, so gibt es kein common zu kopieren.
-
-- bei einem build lauf über alle targets entstehen somit im workdir (wie bisher) eigene buildroot verzeichnisse.
-  Nur das diese jetzt unterschiedliche files für z.b. openwrt 18.06, 22.03, 23... haben (inkl der freifunk firmware version
-	in /etc/version).
-Problem:
-- gen_update.sh müsste jetzt diese einzelnen versionen extrahieren, was aber für ein uploade als ein "set" (bisher
-  als eine version z.B. 8.2.4) in einem verzeichniss für den upload und das verlinken auf dem server verwendet wurde.
-- gedanke: ich müsste entweder die version in was anderes ändern: zb. Milestone. Der nutzer kann aber dann die version
-  nicht mehr im normalen download verzeichniss erkennen.
-- gedanke: ich müsste hier im gen_upload.sh explizit eine version angeben und nicht mehr erkennen lassen.
-          damit würde der upload nur die dateien hochladen und zusammen stellen in den download.json, die
-					neu sind. alte versionen könnten weiterhin mit einem rutsch gebaut werden, müssten separat hoch geladen
-					werden, was aber mehr kontrolle bringt, was hoch geladen wird.
-- gedanke: gitlab: das wäre dann dort auch notwendig, beim upload gezielt eine version anzugeben.
-           beim bauprozess im gitlab.yml muss auf die version getestet werden, dass nutzer diese ein gibt,
-					 und dass beim generieren des uploads mit gen_upload.sh die version verfügbar ist (-> error code)
-					 Das kann direkt im gen_upload.sh geprüft werden, da er die version ja suchen muss in den verschiedenen
-					 buildroots.
-
-
-
-EOM
-exit 1
-
 # -------------------------------------------------------------------
-VERSION="9"
+VERSION="10"
 
 #Black        0;30     Dark Gray     1;30
 #Red          0;31     Light Red     1;31
@@ -78,59 +41,60 @@ C_LGREY='\033[1;37m'
 #parameter check
 usage()
 {
-  printf "${0##*/} (all | json <commands>\n"
-  printf "Version ${VERSION}\n"
-  printf "commands:\n"
-  printf "   all                          - generates all (incl.copying files)\n"
-  printf "   json                         - only updates download.json\n"
-  printf "   compare-json                 - only compare fileinfo.json  against last generated version\n"
-  printf "   directory-suffix             - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
-  printf "   pretty <json file>           - reads file info json from file and prints sorted (by filename) json on stdout\n"
-  printf "   show-multiple-used-files <json-file>  - shows filenames that are used more than once"
-  printf "\n"
-  exit 1
+	printf "${0##*/} (all | json <commands>\n"
+	printf "Version ${VERSION}\n"
+	printf "commands:\n"
+	printf "   all                          - generates all (incl.copying files)\n"
+	printf "   json                         - only updates download.json\n"
+	printf "   compare-json                 - only compare fileinfo.json  against last generated version\n"
+	printf "   directory-suffix             - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
+	printf "   pretty <json file>           - reads file info json from file and prints sorted (by filename) json on stdout\n"
+	printf "   show-multiple-used-files <json-file>  - shows filenames that are used more than once"
+	printf "\n"
+	exit 1
 }
 
 # DEVEL: can be set to false to when only debugging index-generation and generation of download.json stuff
 case "$1" in
-  "all") 	ENABLE_COPY=true
-    ENABLE_GENERATE=true
-    ;;
+	"all") 	ENABLE_COPY=true
+		ENABLE_GENERATE=true
+		;;
 
-  "json") ENABLE_COPY=false
-    ENABLE_GENERATE=true
-    ;;
+	"json") ENABLE_COPY=false
+		ENABLE_GENERATE=true
+		;;
 
-  "compare-json")
-    ENABLE_COPY=false
-    ENABLE_GENERATE=false
-    ;;
+	"compare-json")
+		ENABLE_COPY=false
+		ENABLE_GENERATE=false
+		;;
 
-  "pretty")
-    if [ -z "$2" ]; then
-      printf "missing file\n"
-      exit 1
-    fi
-    cat "$2" | jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename) }'
-    exit 0
-    ;;
+	"pretty")
+		if [ -z "$2" ]; then
+			printf "missing file\n"
+			exit 1
+		fi
+		cat "$2" | jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename) }'
+		exit 0
+		;;
 
-  "show-multiple-used-files")
-    if [ -z "$2" ]; then
-      printf "missing json file\n"
-      exit 1
-    fi
-    cat "$2" | jq '[ .fileinfo[] | select(.filename | contains("sysupgrade")) ] |  (.  - unique_by(.filename))[] | .filename'
-    exit 0
-    ;;
+	"show-multiple-used-files")
+		if [ -z "$2" ]; then
+			printf "missing json file\n"
+			exit 1
+		fi
+		cat "$2" | jq '[ .fileinfo[] | select(.filename | contains("sysupgrade")) ] |  (.  - unique_by(.filename))[] | .filename'
+		exit 0
+		;;
 
-  *) 	printf "invalid parameter\n"
-    usage
-    exit 1
-    ;;
+	*) 	printf "invalid parameter\n"
+		usage
+		exit 1
+		;;
 esac
 
 OUTPUT_BASE_DIR="final_output"
+OUTPUT_FIRMWARE_SUB_DIR="firmware"
 OUTPUT_DOWNLOAD_JSON_FILENAME="download.json"
 OUTPUT_DOWNLOAD_JSON_JS_FILENAME="download.json.js"
 UPLOAD_INFO_DIR="fw-upload-infos"
@@ -138,6 +102,7 @@ INPUT_FILEINFO_JSON_FILENAME="fileinfo.json"
 # this file is generated to reflect any updated files. means when new files are added
 OUTPUT_FILEINFO_JSON_FILENAME="fileinfo.json.new-generated"
 GENERATED_FIRMWARE_OUTPUT_DIR="_output"
+GENERATED_FIRMWARE_VERSION_FILE="version"
 
 #get apsolute path before changing to it.
 firmwareroot="$PWD"
@@ -146,8 +111,6 @@ directory_suffix=$2
 # save PATH (needed to add build root binaries for different openwrt versions)
 SAVED_SYSTEM_PATH=$PATH
 
-# extract version files to extract directory components
-fwversion="$(cat $firmwareroot/fw-files/common/etc/version)"
 fwdate="$(date)"
 
 # when running from gitlab only specific revision is cloned. there are no branch infos.
@@ -155,26 +118,19 @@ fwdate="$(date)"
 # the one I can determine.
 git_ddmesh_rev="$(git log -1 --format=%H)"
 if [ -n "$FF_BUILD_TAG" ]; then
-  git_ddmesh_branch="$FF_BUILD_TAG"
+	git_ddmesh_branch="$FF_BUILD_TAG"
 else
-  git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
+	git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
 
-  if [ "$git_ddmesh_branch" = "undefined" ]; then
-    git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
-  fi
+	if [ "$git_ddmesh_branch" = "undefined" ]; then
+		git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
+	fi
 fi
 printf "${C_LPURPLE}git_ddmesh_branch:${C_NONE} $git_ddmesh_branch\n"
 printf "${C_LPURPLE}git_ddmesh_rev:${C_NONE} $git_ddmesh_rev\n"
 fw_branch="$git_ddmesh_branch"
 fw_rev="$git_ddmesh_rev"
 
-
-if [ -z "$fwversion" ]; then
-  printf "ERROR: firmware version not detected (invalid path)\n"
-  exit 1
-fi
-
-printf "${C_LPURPLE}detected firmware version:${C_NONE} $fwversion\n"
 
 #get path of this script (upload dir) and change to it
 cd $PWD/${0%/*}
@@ -183,11 +139,11 @@ info_dir="$PWD/$UPLOAD_INFO_DIR"
 
 # check if a different directory is used to create files in
 if [ -n "$directory_suffix" ]; then
-  output_dir=$output_dir."$directory_suffix"
-  printf "use output dir: $output_dir\n"
+	output_dir=$output_dir."$directory_suffix"
+	printf "use output dir: $output_dir\n"
 fi
 
-target_dir=$output_dir/$fwversion
+mkdir -p ${output_dir}
 
 #################################################################################################
 # functions
@@ -195,30 +151,34 @@ target_dir=$output_dir/$fwversion
 
 gen_download_json_start()
 {
-  output_path="$1" # output path "firmware/4.2.15"
-  fw_version="$2" # firmware version
-  fw_date="$3" # build date
-  fw_branch="$4" # ddmesh repository branch or tag
-  fw_rev="$5" # ddmesh git hash
+	output_path="$1" # output path "firmware/4.2.15"
+	fw_date="$2" # build date
+	fw_branch="$3" # ddmesh repository branch or tag
+	fw_rev="$4" # ddmesh git hash
 
-  printf "${C_YELLOW}create download.json${C_NONE}\n"
+# diese version wird von der alten firmware geprueft, um ein autoupdate oder ein
+# update via button zu erlauben.
+# neue versionen prüfen auf die firmware version innerhalb ihren eintrages.
+	fw_version="9.0.0"
 
-  > $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf "${C_YELLOW}create download.json${C_NONE} [$output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME]\n"
 
-  printf "{\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-  printf " \"json_version\":\"1\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+
+	printf "{\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf " \"json_version\":\"1\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
   printf " \"firmware_version\":\"$fw_version\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-  printf " \"firmware_date\":\"$fw_date\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-  printf " \"firmware_branch\":\"$fw_branch\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-  printf " \"firmware_rev\":\"$fw_rev\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-  printf " \"fileinfo\": [\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf " \"firmware_date\":\"$fw_date\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf " \"firmware_branch\":\"$fw_branch\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf " \"firmware_rev\":\"$fw_rev\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf " \"fileinfo\": [\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 
-  # generate new input file
-  > $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-  printf "{\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-  printf " \"comment\":\"input file to generate final download.json via gen-upload.sh\",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-  printf " \"json_version\":\"1\",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-  printf " \"fileinfo\": [\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+	# generate new input file
+	> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+	printf "{\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+	printf " \"comment\":\"input file to generate final download.json via gen-upload.sh\",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+	printf " \"json_version\":\"1\",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+	printf " \"fileinfo\": [\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 }
 
 # used to add a single entry
@@ -236,187 +196,187 @@ isFirstFileDL=1
 isFirstFileInfo=1
 gen_download_json_add_data()
 {
-  output_path="$1" 	# output path "firmware/4.2.15"
-  subpath="$2" 		# relativ path to firmware "7239bcd/ar71xx/generic"
-  file_filter="$3" 	# file filter "*.{bin,trx,img,dlf,gz}"
-  source_path="$4"	# source file location //not used any more
+	output_path="$1" 	# output path "final_output/"
+	subpath="$2" 		# relativ path to firmware "firmware/8.3.0/firmware/ar71xx/generic"
+	file_filter="$3" 	# file filter "*.{bin,trx,img,dlf,gz}"
+	fw_version="$4" # freifunk firmware version
 
-  error=0
+	error=0
 
-  printf "    ${C_YELLOW}adding firmware to download.json${C_NONE} - file filter: $file_filter\n"
+	printf "    ${C_YELLOW}adding firmware to download.json${C_NONE} - file filter: $file_filter\n"
 
-  # progress info
-  printf "    ${C_LBLUE}# model info complete${C_NONE} | ${C_ORANGE}+ partly model info missing${C_NONE} | ${C_LRED}- NO model info${C_NONE} | ${C_LPURPLE}. disabled${C_NONE}\n"
-  printf "    "
+	# progress info
+	printf "    ${C_LBLUE}# model info complete${C_NONE} | ${C_ORANGE}+ partly model info missing${C_NONE} | ${C_LRED}- NO model info${C_NONE} | ${C_LPURPLE}. disabled${C_NONE}\n"
+	printf "    "
 
-  # get info for each filename
-  # eval is needed because file_filter must be evaluated
-  for path in $(eval ls -1 $output_path/$subpath/$file_filter 2>/dev/null )
-  do
-    file=$(basename $path)
+	# get info for each filename
+	# eval is needed because file_filter must be evaluated
+	for path in $(eval ls -1 $output_path/$subpath/$file_filter 2>/dev/null )
+	do
+		file=$(basename $path)
 		# only contains the "device-part"
 		#   freifunk-dresden-22.03.6-ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin
 		# becomes:  ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin
 		# This is used to filter filename entries and as sort-key
 		file_device_part_name="$(echo "$file" | sed 's#^freifunk-dresden-\([0-9.]\+-\)*\(snapshot-\)*##')"
 #printf "$file\n"
-    # defaults
-    disabled="0"
-    name=""
-    autoupdate="0"
-    model=""
-    model2=""
-    md5sum=""
-    filename=""
-    comment=""
+		# defaults
+		disabled="0"
+		name=""
+		autoupdate="0"
+		model=""
+		model2=""
+		md5sum=""
+		filename=""
+		comment=""
 
-    # search file info. Key is the filename
-    # jq: first selects the array with all entries and every entry is pass to select().
-    #	select() checks a condition and returns the input data (current array entry)
-    #	if condition is true
-    # Die eckigen klammern erzeugt ein array, in welches alle gefundenen objekte mit gleichem FILENAMEN gesammelt werden.
-    # Fuer die meisten filenamen ist das array 1 gross (firmware file nur von einem router genutzt).
-    # aber fuer files die fuer verschiedene router verwendet werden, koennen mehrere eintraege enthalten sein.
-    if [ -f "$info_dir/$INPUT_FILEINFO_JSON_FILENAME" ]; then
-      # info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename == \"$file\") ]")
+		# search file info. Key is the filename
+		# jq: first selects the array with all entries and every entry is pass to select().
+		#	select() checks a condition and returns the input data (current array entry)
+		#	if condition is true
+		# Die eckigen klammern erzeugt ein array, in welches alle gefundenen objekte mit gleichem FILENAMEN gesammelt werden.
+		# Fuer die meisten filenamen ist das array 1 gross (firmware file nur von einem router genutzt).
+		# aber fuer files die fuer verschiedene router verwendet werden, koennen mehrere eintraege enthalten sein.
+		if [ -f "$info_dir/$INPUT_FILEINFO_JSON_FILENAME" ]; then
+			# info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename == \"$file\") ]")
 
-      # first try to find exact match.
-      info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename == \"$file\") ]")
+			# first try to find exact match.
+			info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename == \"$file\") ]")
 
-      # if nothing was found, then it is likly that the openwrt version has changed.
-      # so try only "device part" of name
-      if [ "$info_array" = "[]" ]; then
-       info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename | test(\"$file_device_part_name\") ) ]")
-      fi
-    else
-      info_array="[]"
-    fi
+			# if nothing was found, then it is likly that the openwrt version has changed.
+			# so try only "device part" of name
+			if [ "$info_array" = "[]" ]; then
+			 info_array=$(cat $info_dir/$INPUT_FILEINFO_JSON_FILENAME | jq "[ .fileinfo[] | select(.filename | test(\"$file_device_part_name\") ) ]")
+			fi
+		else
+			info_array="[]"
+		fi
 # echo "$file=info_array:$info_array\n"
 
 
-    OPT="--raw-output"
+		OPT="--raw-output"
 
-    # run through each array (siehe kommentar zuvor)
-    # one file can be used for more than one device/model.
-    # -> this means that we must loop through all fileinfo.json entries to find all entries that are using
-    #    current filename.
-    # At least run this loop once to store new file names if info_array was empty.
-    idx=0
-    while true
-    do
-      # try reading infos
-      if [ "$info_array" != "[]" ]; then
-        info=$(echo "$info_array" | jq ".[$idx]")
+		# run through each array (siehe kommentar zuvor)
+		# one file can be used for more than one device/model.
+		# -> this means that we must loop through all fileinfo.json entries to find all entries that are using
+		#    current filename.
+		# At least run this loop once to store new file names if info_array was empty.
+		idx=0
+		while true
+		do
+			# try reading infos
+			if [ "$info_array" != "[]" ]; then
+				info=$(echo "$info_array" | jq ".[$idx]")
 #printf "idx:%d info:$info\n" $idx
 
-        # no more entries
-        test "$info" = "null" && break;
+				# no more entries
+				test "$info" = "null" && break;
 
-        autoupdate="$(echo $info | jq $OPT '.autoupdate')"
-        [ "$autoupdate" = "null" ] && autoupdate="0"		# default disable auto update
+				autoupdate="$(echo $info | jq $OPT '.autoupdate')"
+				[ "$autoupdate" = "null" ] && autoupdate="0"		# default disable auto update
 
-        # router is disabled, no error for missing files/or when router is present
-        disabled="$(echo $info | jq $OPT '.disabled')"; [ "$disabled" = "null" ] && disabled="0"
+				# router is disabled, no error for missing files/or when router is present
+				disabled="$(echo $info | jq $OPT '.disabled')"; [ "$disabled" = "null" ] && disabled="0"
 
-        model="$(echo $info | jq $OPT '.model')"; [ "$model" = "null" ] && model=""
-        model2="$(echo $info | jq $OPT '.model2')"; [ "$model2" = "null" ] && model2=""
-        filename="$(echo $info | jq $OPT '.filename')"
-        comment="$(echo $info | jq $OPT '.comment')"; [ "$comment" = "null" ] && comment=""
-        name="$(echo $info | jq $OPT '.name')"; [ "$name" = "null" ] && name=""
-      fi
+				model="$(echo $info | jq $OPT '.model')"; [ "$model" = "null" ] && model=""
+				model2="$(echo $info | jq $OPT '.model2')"; [ "$model2" = "null" ] && model2=""
+				filename="$(echo $info | jq $OPT '.filename')"
+				comment="$(echo $info | jq $OPT '.comment')"; [ "$comment" = "null" ] && comment=""
+				name="$(echo $info | jq $OPT '.name')"; [ "$name" = "null" ] && name=""
+			fi
 #printf "##$name:$autoupdate:$model:$model2:$filename:$comment\n"
 
-      # determine "sysupgrade" files
-      if [   	-z "${file/*-*-sysupgrade.bin*/}" \
-           -o	-z "${file/*-*-combined.img.gz*/}" \
-           -o	-z "${file/*-*-sdcard.img.gz*/}" ]
-      then
-        sysupgrade=1
-      else
-        sysupgrade=0
-      fi
+			# determine "sysupgrade" files
+			if [   	-z "${file/*-*-sysupgrade.bin*/}" \
+					 -o	-z "${file/*-*-combined.img.gz*/}" \
+					 -o	-z "${file/*-*-sdcard.img.gz*/}" ]
+			then
+				sysupgrade=1
+			else
+				sysupgrade=0
+			fi
 
-      # progress bar only for files where I add model/model2 information
-      if [ $sysupgrade = 1 ]; then
-        if [ "$disabled" = "1" ]; then
-            printf "${C_LPURPLE}.${C_NONE}"
-        else
-          if [ -n "$model" -a -n "$model2" ]; then
-            printf "${C_LBLUE}#${C_NONE}"
-          else
-            if [ -n "$model" -o -n "$model2" ]; then
-              printf "${C_ORANGE}+${C_NONE}"
-            else
-              printf "${C_LRED}-${C_NONE}"
-            fi
-          fi
-        fi
-      fi
+			# progress bar only for files where I add model/model2 information
+			if [ $sysupgrade = 1 ]; then
+				if [ "$disabled" = "1" ]; then
+						printf "${C_LPURPLE}.${C_NONE}"
+				else
+					if [ -n "$model" -a -n "$model2" ]; then
+						printf "${C_LBLUE}#${C_NONE}"
+					else
+						if [ -n "$model" -o -n "$model2" ]; then
+							printf "${C_ORANGE}+${C_NONE}"
+						else
+							printf "${C_LRED}-${C_NONE}"
+						fi
+					fi
+				fi
+			fi
 
-      md5sum=$(md5sum $path | cut -d' ' -f1)
+			md5sum=$(md5sum $path | cut -d' ' -f1)
 
 
-      # append comma
-      if [ "$isFirstFileDL" = "0" ]; then
-        if [ "$disabled" = "0" ]; then
-          printf ",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-        fi
-       fi
-      if [ "$isFirstFileInfo" = "0" ]; then
-        printf ",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-       fi
+			# append comma
+			if [ "$isFirstFileDL" = "0" ]; then
+				if [ "$disabled" = "0" ]; then
+					printf ",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+				fi
+			 fi
+			if [ "$isFirstFileInfo" = "0" ]; then
+				printf ",\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+			 fi
 
-      # generate download.json and new fileinfo.json
-      if [ $sysupgrade = 1 ]; then
+			# generate download.json and new fileinfo.json
+			if [ $sysupgrade = 1 ]; then
 
-        if [ "$disabled" = "0" ]; then
-          printf "{ \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-        fi
+				if [ "$disabled" = "0" ]; then
+					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+				fi
 
-        # generate new input info file (and remember source of firmware file, for error checking during gen_upload.sh)
-        printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"sortkey\":\"${file_device_part_name}\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-      else
+				# generate new input info file (and remember source of firmware file, for error checking during gen_upload.sh)
+				printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"sortkey\":\"${file_device_part_name}\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+			else
 
-        if [ "$disabled" = "0" ]; then
-          printf "{ \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-        fi
+				if [ "$disabled" = "0" ]; then
+					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+				fi
 
-        # generate new input info file
-        printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"sortkey\":\"${file_device_part_name}\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-      fi
+				# generate new input info file
+				printf "{ \"disabled\":\"$disabled\", \"name\":\"$name\", \"sortkey\":\"${file_device_part_name}\", \"filename\":\"$file\", \"comment\":\"$comment\"}" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+			fi
 
-      # enable commas
-      [ "$disabled" = "0" ] && isFirstFileDL=0
-      isFirstFileInfo=0
+			# enable commas
+			[ "$disabled" = "0" ] && isFirstFileDL=0
+			isFirstFileInfo=0
 
-      idx=$(( idx + 1 ))
+			idx=$(( idx + 1 ))
 
-      # check if we have processed all infos. break loop if no more infos for same file or if file was new.
-      # continue with next file
-      if [ "$info_array" = "[]" ]; then
-        break;
-      fi
-    done
-  done
+			# check if we have processed all infos. break loop if no more infos for same file or if file was new.
+			# continue with next file
+			if [ "$info_array" = "[]" ]; then
+				break;
+			fi
+		done
+	done
 
-  if [ $error -eq 1 ]; then
-    printf "${C_LRED}Error: there were some duplicates.${C_NONE}\n"
-    exit 1
-  fi
-  printf "\n"
+	if [ $error -eq 1 ]; then
+		printf "${C_LRED}Error: there were some duplicates.${C_NONE}\n"
+		exit 1
+	fi
+	printf "\n"
 }
 
 gen_download_json_end()
 {
-   output_path=$1	# output path "firmware/4.2.15"
+	 output_path=$1	# output path "firmware/4.2.15"
 
-  #printf "close download.json\n"
-  printf " ]\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
-  printf "}\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	#printf "close download.json\n"
+	printf " ]\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+	printf "}\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 
-  # close new input info file
-  printf " ]\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
-  printf "}\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+	# close new input info file
+	printf " ]\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
+	printf "}\n" >> $info_dir/$OUTPUT_FILEINFO_JSON_FILENAME
 }
 
 
@@ -431,35 +391,28 @@ gen_download_json_end()
 # main script start
 #################################################################################################
 
-#################################################################################################
-# prepare output dir
-#################################################################################################
-mkdir -p $output_dir
 $ENABLE_COPY && {
-  printf " delete old directory: $target_dir\n"
-  rm -rf $target_dir
+	printf " delete old data: $output_dir\n"
+	rm -rf $output_dir/*
 }
 
-mkdir -p $target_dir
-mkdir -p $target_dir/downloaded_packages
-#mkdir -p $target_dir/sources
-printf "$fwversion\n" >$target_dir/version
 
 #################################################################################################
 # start json
 #################################################################################################
 $ENABLE_GENERATE && {
 
-gen_download_json_start "$target_dir" "$fwversion" "$fwdate" "$fw_branch" "$fw_rev"
+gen_download_json_start "$output_dir" "$fwdate" "$fw_branch" "$fw_rev"
 
 
 #################################################################################################
 # copy build dl
 #################################################################################################
 $ENABLE_COPY && {
-  printf "${C_YELLOW}copy downloaded packages${C_NONE}\n"
-  cp -a $firmwareroot/dl/* $target_dir/downloaded_packages/
-#	gen_download_json_add_single_link '[downloaded_packages]' 'downloaded_packages' $target_dir
+	printf "${C_YELLOW}copy downloaded packages${C_NONE}\n"
+	mkdir -p $output_dir/downloaded_packages/
+	cp -a $firmwareroot/dl/* $output_dir/downloaded_packages/
+#	gen_download_json_add_single_link '[downloaded_packages]' 'downloaded_packages' $output_dir
 }
 
 #################################################################################################
@@ -468,22 +421,22 @@ $ENABLE_COPY && {
 
 #changelog
 $ENABLE_COPY && {
-  printf "${C_YELLOW}copy changelog${C_NONE}\n"
-  cp -a $firmwareroot/changelog.txt $target_dir/
-#	gen_download_json_add_single_link 'changelog.txt' 'changelog.txt' $target_dir
+	printf "${C_YELLOW}copy changelog${C_NONE}\n"
+	cp -a $firmwareroot/changelog.txt $output_dir/
+#	gen_download_json_add_single_link 'changelog.txt' 'changelog.txt' $output_dir
 }
 
 #licenses
 $ENABLE_COPY && {
-  printf "${C_YELLOW}copy licenses${C_NONE}\n"
-  cp -a $firmwareroot/license $target_dir/
-#	gen_download_json_add_single_link '[license]' 'license' $target_dir
+	printf "${C_YELLOW}copy licenses${C_NONE}\n"
+	cp -a $firmwareroot/license $output_dir/
+#	gen_download_json_add_single_link '[license]' 'license' $output_dir
 }
 
 $ENABLE_COPY && {
-  printf "${C_YELLOW}copy www${C_NONE}\n"
-  cp -a $info_dir/files/index.html $target_dir/
-  cp -a $info_dir/files/_res $target_dir/
+	printf "${C_YELLOW}copy www${C_NONE}\n"
+	cp -a $info_dir/files/index.html $output_dir/
+	cp -a $info_dir/files/_res $output_dir/
 }
 
 #################################################################################################
@@ -493,91 +446,106 @@ $ENABLE_COPY && {
 # run through all openwrt version (targets may be created for different openwrt versions)
 for _buildroot in $(ls -1 $firmwareroot/workdir/)
 do
-  printf "${C_YELLOW}build root:${C_NONE}[${C_GREEN}${_buildroot}${C_NONE}]\n"
+	printf "${C_YELLOW}build root:${C_NONE}[${C_GREEN}${_buildroot}${C_NONE}]\n"
 
-  buildroot=$firmwareroot/workdir/$_buildroot
+	buildroot=$firmwareroot/workdir/$_buildroot
 
-  # add binaries to host tools so 'mkhash' will be found when
-  # calling ipkg-make-index.sh
-  # needed until 21.02
-  export PATH=$SAVED_SYSTEM_PATH:$buildroot/staging_dir/host/bin/
+	# add binaries to host tools so 'mkhash' will be found when
+	# calling ipkg-make-index.sh
+	# needed until 21.02
+	export PATH=$SAVED_SYSTEM_PATH:$buildroot/staging_dir/host/bin/
 
-  # set variable MKHASH, unless script ipkg-make-index.sh will fail
-  # needed since openwrt 22.03
-  export MKHASH=$buildroot/staging_dir/host/bin/mkhash
+	# set variable MKHASH, unless script ipkg-make-index.sh will fail
+	# needed since openwrt 22.03
+	export MKHASH=$buildroot/staging_dir/host/bin/mkhash
 
-  _platforms=${buildroot}/${GENERATED_FIRMWARE_OUTPUT_DIR}
+	_platforms=${buildroot}/${GENERATED_FIRMWARE_OUTPUT_DIR}
 
-  # check directory
-  test -d ${_platforms} || continue
+	# check directory
+	test -d ${_platforms} || continue
+
+	# _output contains several platforms for one freifunk firmware version
+	fw_version=$(cat ${buildroot}/${GENERATED_FIRMWARE_OUTPUT_DIR}/${GENERATED_FIRMWARE_VERSION_FILE})
+	if [ -z "$fw_version" ]; then
+		printf "ERROR: firmware version not detected (invalid path)\n"
+		exit 1
+	fi
+	printf "${C_LPURPLE}detected firmware version:${C_NONE} $fw_version\n"
+
+	target_dir=$output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version
+	mkdir -p $target_dir
+
+	printf "$fw_version\n" >$target_dir/version
+
 
 #	# add directory entry into download json, so it can be displayed in dataTable (index.html)
 #	for platform in $(ls $_platforms)
 #	do
-#		gen_download_json_add_single_link "[$platform]" "$platform" $target_dir
+#		gen_download_json_add_single_link "[$platform]" "$platform" $output_dir
 #	done
 
-  for platform in $(ls $_platforms)
-  do
+	for platform in $(ls $_platforms)
+	do
 
-    printf -- "  ---------------------------------------------------------\n"
+		printf -- "  ---------------------------------------------------------\n"
+		printf "  ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
 
-    printf "  ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
-    tmpTargetDir="$target_dir/firmware/$platform"
-    mkdir -p ${tmpTargetDir}
+		tmpTargetDir="${target_dir}/firmware/$platform"
+		mkdir -p ${tmpTargetDir}
 
-    filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
-    $ENABLE_COPY && {
-      printf "  copy ${_platforms}/${platform}/images/$filefilter $tmpTargetDir\n"
-      # use "eval" to resolv filefilter wildcards
-      eval cp -a ${_platforms}/${platform}/images/$filefilter $tmpTargetDir 2>/dev/null
+		filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
+		$ENABLE_COPY && {
+			printf "  copy ${_platforms}/${platform}/images/$filefilter $tmpTargetDir\n"
+			# use "eval" to resolv filefilter wildcards
+			eval cp -a ${_platforms}/${platform}/images/$filefilter $tmpTargetDir 2>/dev/null
 
-      # remove not-wanted files, because those are not used and added for different openwrt versions
-      # This would cause duplicate warning in gen-upload.sh
-      rm -f $tmpTargetDir/freifunk-dresden*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
-    }
+			# remove not-wanted files, because those are not used and added for different openwrt versions
+			# This would cause duplicate warning in gen-upload.sh
+			rm -f $tmpTargetDir/freifunk-dresden*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
+		}
 
-    #create md5sums file used when automatically or manually downloading via firmware.cgi
-    # solange das file erzeugen, wie software mit alter firmware drausen ist
-    # oder github
-    p=$(pwd)
-    cd $tmpTargetDir
-    printf "    ${C_YELLOW}calculate md5sum${C_NONE}\n"
-    md5sum * > $tmpTargetDir/md5sums 2>/dev/null
-    cd $p
+		#create md5sums file used when automatically or manually downloading via firmware.cgi
+		# solange das file erzeugen, wie software mit alter firmware drausen ist
+		# oder github
+		p=$(pwd)
+		cd $tmpTargetDir
+		printf "    ${C_YELLOW}calculate md5sum${C_NONE}\n"
+		md5sum * > $tmpTargetDir/md5sums 2>/dev/null
+		cd $p
 
-    #copy packages
-    mkdir -p $tmpTargetDir/packages
-    printf "    ${C_YELLOW}search package dir:${C_NONE} ${_platforms}/${platform}/\n"
-    for package in $(cat $info_dir/packages | sed 's/#.*//;/^[	 ]*$/d')
-    do
+		#copy packages
+		mkdir -p $tmpTargetDir/packages
+		printf "    ${C_YELLOW}search package dir:${C_NONE} ${_platforms}/${platform}/\n"
+		for package in $(cat $info_dir/packages | sed 's/#.*//;/^[	 ]*$/d')
+		do
 
-      filename=$(find ${_platforms}/${platform}/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
-      printf "      ${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE} [${filename}]\n"
+			filename=$(find ${_platforms}/${platform}/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
+			printf "      ${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE} [${filename}]\n"
 
-      test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
-      $ENABLE_COPY && {
+			test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
+			$ENABLE_COPY && {
 #			printf "copy package: $package -> [$filename]\n"
-        test -n "$filename" && cp -a $filename $tmpTargetDir/packages/
-      }
-    done
+				test -n "$filename" && cp -a $filename $tmpTargetDir/packages/
+			}
+		done
 
-    printf "    ${C_YELLOW}generate package index${C_NONE}\n"
-    p=$(pwd)
-    cd $tmpTargetDir/packages/
-    $buildroot/scripts/ipkg-make-index.sh . > Packages 2>/dev/null
-    gzip -f Packages
-    cd $p
+		printf "    ${C_YELLOW}generate package index${C_NONE}\n"
+		p=$(pwd)
+		cd $tmpTargetDir/packages/
+		$buildroot/scripts/ipkg-make-index.sh . > Packages 2>/dev/null
+		gzip -f Packages
+		cd $p
 
-    # last parameter only is used to track previously added firmware when checking for duplicates
-    gen_download_json_add_data "$target_dir" "firmware/${platform}" "$filefilter" "$_buildroot/${GENERATED_FIRMWARE_OUTPUT_DIR}/${platform}/images/"
+		# last parameter only is used to track previously added firmware when checking for duplicates
+		gen_download_json_add_data "$output_dir" "${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/firmware/${platform}" "$filefilter" ${fw_version}
+		#"$_buildroot/${GENERATED_FIRMWARE_OUTPUT_DIR}/${platform}/images/"
 
-  done	# for platform
-  printf -- "\n=========================================================\n\n"
+	done	# for platform
+	printf -- "\n=========================================================\n\n"
 
 done # for buildroot
 
-gen_download_json_end $target_dir
+gen_download_json_end $output_dir
 
 # make new generated fileinfo pretty, for easier comparison
 tmp=$(mktemp)
@@ -586,8 +554,8 @@ cat ${tmp}| jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename)
 
 
 # generate js file
-cat << EOM > $target_dir/$OUTPUT_DOWNLOAD_JSON_JS_FILENAME
-var data = $(cat $target_dir/$OUTPUT_DOWNLOAD_JSON_FILENAME) ;
+cat << EOM > $output_dir/$OUTPUT_DOWNLOAD_JSON_JS_FILENAME
+var data = $(cat $output_dir/$OUTPUT_DOWNLOAD_JSON_FILENAME) ;
 EOM
 
 # ENABLE_GENERATE
@@ -596,36 +564,36 @@ EOM
 # now, all files are copied for uploading and new fileinfo.json is generated
 # - check for duplicate firmware files but ignore versions in filename
 printf "${C_YELLOW}checking for firmware duplicates...${C_NONE}\n"
-find $target_dir/firmware/ | sed -n 's#\(\(.*\)/freifunk-dresden-\([0-9.-]\+\)*\(snapshot-\)*\(.*\)$\)#\5 \1#p' \
-      | sort -k1 \
-      | awk '
-       BEGIN { ret = 0;}
-       { name=$1;path=$2
-         if(name==last)
-         {
-           printf("ERROR: DUPLICATE firmware found: %s\n", name);
-           printf("       -> %s\n", path);
-           printf("       -> %s\n", lastpath);
-           ret = 1;
-         }
-         last=name;
-         lastpath=path;
-       }
-       END {exit ret;}' || exit 1
+find $output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/ | sed -n 's#\(\(.*\)/freifunk-dresden-\([0-9.-]\+\)*\(snapshot-\)*\(.*\)$\)#\5 \1#p' \
+			| sort -k1 \
+			| awk '
+			 BEGIN { ret = 0;}
+			 { name=$1;path=$2
+				 if(name==last)
+				 {
+					 printf("ERROR: DUPLICATE firmware found: %s\n", name);
+					 printf("       -> %s\n", path);
+					 printf("       -> %s\n", lastpath);
+					 ret = 1;
+				 }
+				 last=name;
+				 lastpath=path;
+			 }
+			 END {exit ret;}' || exit 1
 
 printf "${C_YELLOW}checking for firmware duplicates done.${C_NONE}\n"
 
 #------ now sort fileinfo.json and generated file. to see diffs better with diff tools (meld).------
 cat ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} | jq '. |
-            { comment: (.comment)}
-          + { json_version: (.json_version)}
-          + { fileinfo: (.fileinfo | sort_by(.sortkey, .filename)) }' > ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME}.sorted
+						{ comment: (.comment)}
+					+ { json_version: (.json_version)}
+					+ { fileinfo: (.fileinfo | sort_by(.sortkey, .filename)) }' > ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME}.sorted
 mv ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME}.sorted ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME}
 
 cat ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} | jq '. |
-            { comment: (.comment)}
-          + { json_version: (.json_version)}
-          + { fileinfo: (.fileinfo | sort_by(.sortkey, .filename)) }' > ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.sorted
+						{ comment: (.comment)}
+					+ { json_version: (.json_version)}
+					+ { fileinfo: (.fileinfo | sort_by(.sortkey, .filename)) }' > ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.sorted
 mv ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.sorted ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}
 
 #------ now compare fileinfo.json and generated file (sorting is not needed).------
@@ -635,8 +603,8 @@ if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILEN
 
 # only consider filenames
 #if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' ([$current.fileinfo[] | .filename]) - ([$generated.fileinfo[] | .filename]) | if length > 0 then . else empty end'; then
-  echo -e "${C_RED}ERROR: missing firmware files${C_NONE}"
-  error=1
+	echo -e "${C_RED}ERROR: missing firmware files${C_NONE}"
+	error=1
 fi
 
 [ $error -eq 1 ] && echo "----------------------------------------------------"
@@ -645,8 +613,8 @@ if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILEN
 
 # only consider filenames
 #if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' ([$generated.fileinfo[] | .filename]) - ([$current.fileinfo[] | .filename]) | if length > 0 then . else empty end'; then
-  echo -e "${C_BLUE}INFO: new devices found${C_NONE}"
-  error=1
+	echo -e "${C_BLUE}INFO: new devices found${C_NONE}"
+	error=1
 fi
 
 [ $error -eq 1 ] && exit 1
