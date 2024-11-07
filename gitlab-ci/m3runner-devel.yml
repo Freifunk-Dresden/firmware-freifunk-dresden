@@ -208,8 +208,13 @@ m3devel:upload:
   # do not use 'manual' job, because the build result may
   # have gone (overwritten by following builds) in /mycache/...
 
-  only:
-    - se-openwrt-23
+  #only:
+  #  - se-openwrt-23
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "se-openwrt-23"
+      when: manual
+    - when: never
+
   stage: deploy
   needs: ["m3devel:test"]
   script:
