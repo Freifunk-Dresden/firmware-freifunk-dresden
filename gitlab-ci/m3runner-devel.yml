@@ -15,6 +15,7 @@ m3devel:init:
   only:
     - se-openwrt-23
   stage: init       # special state, run before all other stages
+
   # immer manuell, damit nicht bei jeden checkin gebaut wird
   rules:
     - when: manual
