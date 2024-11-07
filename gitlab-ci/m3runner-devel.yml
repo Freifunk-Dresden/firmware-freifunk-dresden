@@ -11,7 +11,7 @@ variables:
   FF_GITLAB_REMOVE_WORKDIR: 0
   FF_GITLAB_REMOVE_DL: 0
 
-m3:init:
+m3devel:init:
   only:
     - se-openwrt-23
   stage: init       # special state, run before all other stages
@@ -56,11 +56,11 @@ m3:init:
   tags:
     - m3runner
 
-m3:ar71xx.tiny.lowmem:
+m3devel:ar71xx.tiny.lowmem:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -68,11 +68,11 @@ m3:ar71xx.tiny.lowmem:
   tags:
     - m3runner
 
-m3:ar71xx.generic.lowmem:
+m3devel:ar71xx.generic.lowmem:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -80,11 +80,11 @@ m3:ar71xx.generic.lowmem:
   tags:
     - m3runner
 
-m3:x86.64.offloader:
+m3devel:x86.64.offloader:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -92,11 +92,11 @@ m3:x86.64.offloader:
   tags:
     - m3runner
 
-m3:ramips:
+m3devel:ramips:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -104,11 +104,11 @@ m3:ramips:
   tags:
     - m3runner
 
-m3:ipq40xx:
+m3devel:ipq40xx:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -116,11 +116,11 @@ m3:ipq40xx:
   tags:
     - m3runner
 
-m3:lantiq:
+m3devel:lantiq:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -128,11 +128,11 @@ m3:lantiq:
   tags:
     - m3runner
 
-m3:ath79:
+m3devel:ath79:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -140,11 +140,11 @@ m3:ath79:
   tags:
     - m3runner
 
-m3:sunxi:
+m3devel:sunxi:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -152,11 +152,11 @@ m3:sunxi:
   tags:
     - m3runner
 
-m3:mpc85xx:
+m3devel:mpc85xx:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -164,11 +164,11 @@ m3:mpc85xx:
   tags:
     - m3runner
 
-m3:mediatek:
+m3devel:mediatek:
   only:
     - se-openwrt-23
   stage: build
-  needs: ["m3:init"]
+  needs: ["m3devel:init"]
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
@@ -176,12 +176,12 @@ m3:mediatek:
   tags:
     - m3runner
 
-m3:test:
+m3devel:test:
   only:
     - se-openwrt-23
   stage: test
-  needs: ["m3:ar71xx.tiny.lowmem","m3:ar71xx.generic.lowmem","m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx","m3:mediatek"]
-  #needs: ["m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx","m3:mediatek"]
+  needs: ["m3devel:ar71xx.tiny.lowmem","m3devel:ar71xx.generic.lowmem","m3devel:x86.64.offloader","m3devel:ramips","m3devel:lantiq","m3devel:ath79","m3devel:ipq40xx","m3devel:sunxi","m3devel:mpc85xx","m3devel:mediatek"]
+  #needs: ["m3devel:x86.64.offloader","m3devel:ramips","m3devel:lantiq","m3devel:ath79","m3devel:ipq40xx","m3devel:sunxi","m3devel:mpc85xx","m3devel:mediatek"]
   artifacts:
     paths:
       # keep this as artifact, so I can compare it also when building firmware on gitlab
@@ -198,14 +198,14 @@ m3:test:
   tags:
     - m3runner
 
-m3:upload:
+m3devel:upload:
   # do not use 'manual' job, because the build result may
   # have gone (overwritten by following builds) in /mycache/...
 
   only:
     - se-openwrt-23
   stage: deploy
-  needs: ["m3:test"]
+  needs: ["m3devel:test"]
   script:
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
