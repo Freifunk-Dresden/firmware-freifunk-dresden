@@ -42,11 +42,12 @@
 <h2> Freifunk Dresden - Firmware </h2>
 
 <div>
-	<div id="pipeline"> </div>
-	<div id="coverage"> </div>
+  <div id="pipeline"> </div>
+  <div id="coverage"> </div>
 </div>
-<div id="version"></div>
 <div id="build_date"></div>
+<div><b>Changelog</b> <a href="changelog.txt">changelog.txt</a></div>
+<div><b>Lizenz</b> <a href="license">license/</a></div>
 <br>
 
 <div>
@@ -59,6 +60,7 @@
             <tr style="background-color:#434244;color:#cccccc;">
                 <th>Ger&auml;t</th>
                 <th>Auto Update</th>
+                <th>Version</th>
                 <th>Firmware</th>
                 <th>md5sum</th>
                 <th>Model</th>
@@ -66,9 +68,9 @@
             </tr>
         </thead>
 <!--
-	  <tfoot>
+    <tfoot>
             <tr style="background-color:#434244;color:#cccccc;">
-	  <th colspan="6" ></th>
+    <th colspan="6" ></th>
             </tr>
         </tfoot>
 -->
@@ -94,41 +96,34 @@ my.query = jQuery.noConflict( true );
 
 // use new way to call function when DOM is ready. old way was $(document).ready(handler)
 my.query(function() {
-
-
-  my.query('#version').html("<b>Software Version</b>: " + data.firmware_version);
-  my.query('#build_date').html("<b>Software Version</b>: " + data.firmware_date);
-
+  my.query('#build_date').html("<b>Software Date</b>: " + data.firmware_date);
   my.query('#pipeline').html("<a href=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/pipelines\"><img alt=\"pipeline status\" src=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/badges/" + data.firmware_branch + "/pipeline.svg\" /></a>");
-
   my.query('#coverage').html("<a href=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/commits/"+ data.firmware_branch +"\"><img alt=\"coverage report\" src=\"https://gitlab.freifunk-dresden.de/firmware-developer/firmware/badges/" + data.firmware_branch + "/coverage.svg\" /></a>");
-
-
 
   // remember Table, to later access it via event function when a link is clicked with
   // specific class name to make columns visible
   var myTable = my.query('#table').DataTable( {
-	"processing": true,
+  "processing": true,
 
-	//"pageLength" : 25,
-	//"lengthMenu": [[ 25, 50, 100, 200, -1 ], [25,50,100,200,"All"]],
-	paging: false,
+  //"pageLength" : 25,
+  //"lengthMenu": [[ 25, 50, 100, 200, -1 ], [25,50,100,200,"All"]],
+  paging: false,
 
-	// sort after filename
-	"order" : [[2,'asc']],
+  // sort after filename
+  "order" : [[2,'asc']],
 
-	// extensions
-	"fixedHeader": true,
+  // extensions
+  "fixedHeader": true,
 
-	//"responsive": true,
+  //"responsive": true,
 
-	// define nowrap for specific columns
-	"columnDefs": [
-		{ className: "dt-nowrap", "targets": [0,1,2,3,4,5] },
-		// default: visible
-		{ visible: false, "targets": [ 4 ] }
+  // define nowrap for specific columns
+  "columnDefs": [
+    { className: "dt-nowrap", "targets": [0,1,2,3,4,5] },
+    // default: visible
+    { visible: false, "targets": [ 4 ] }
 
-	],
+  ],
         "data": data.fileinfo,
 
 //        // https://datatables.net/reference/option/rowCallback
@@ -150,61 +145,66 @@ my.query(function() {
 
         // see: https://datatables.net/manual/data/orthogonal-data
         "columns": [
-		{ "data":	function(row, type, set, meta) { return row; },
-		  "render" : 	function (data, type, row) {
-					var n = data.name;
+    { "data":	function(row, type, set, meta) { return row; },
+      "render" : 	function (data, type, row) {
+          var n = data.name;
                                         if(n == '') n = data.model2;
                                         if(n == '') n = data.model1;
                                         if(n == '') n = '-';
                                         if(n == undefined) n = '-';
                                         return n;
-				}
-		},
-		{ "data":	function(row, type, set, meta) { return row; },
-		  "render" : 	function (data, type, row) {
-					var n = data.autoupdate;
+        }
+    },
+    { "data":	function(row, type, set, meta) { return row; },
+      "render" : 	function (data, type, row) {
+          var n = data.autoupdate;
                                         if(n == '1') n = "<font color=\"green\">yes</font>";
                                         else if(n == '0') n = "<font color=\"gray\">no</font>";
-					else n = "";
+          else n = "";
                                         return n;
-				}
-		},
-		{ "data":	function(row, type, set, meta) { return row; },
-		  "render" : 	function (data, type, row) {
-					if ( type === 'display' || type === 'filter' ) {
-						return '<a href="' + data.path + '/' + data.filename + '">' + data.filename + '</a>';
-					}
-					//else return some that is used when sorting this column
-					return data.filename;
-				}
-		},
-		{ "data":	function(row, type, set, meta) { return row; },
-		  "render" : 	function (data, type, row) {
-					if ( type === 'display' || type === 'filter' ) {
-						return data.md5sum;
-					}
-					//else return some that is used when sorting this column
-					return data.md5sum;
-				}
-		},
-		{ "data":	function(row, type, set, meta) { return row; },
-		  "render" : 	function (data, type, row) {
-					m1 = data.model;
-					m2 = data.model2;
-					if (m1 == undefined) m1 = '-';
-					if (m2 == undefined) m2 = '-';
-					return m1 + '/' + m2;
-				}
-		},
-		{ "data":	function(row, type, set, meta) { return row; },
-		  "render" : 	function (data, type, row) {
-					if ( type === 'display' || type === 'filter' ) {
-						return data.comment;
-					}
-					//else return some that is used when sorting this column
-					return data;
-				}
-		},
+        }
+    },
+    { "data":	function(row, type, set, meta) { return row; },
+      "render" : 	function (data, type, row) {
+          return data.version;
+        }
+    },
+    { "data":	function(row, type, set, meta) { return row; },
+      "render" : 	function (data, type, row) {
+          if ( type === 'display' || type === 'filter' ) {
+            return '<a href="' + data.path + '/' + data.filename + '">' + data.filename + '</a>';
+          }
+          //else return some that is used when sorting this column
+          return data.filename;
+        }
+    },
+    { "data":	function(row, type, set, meta) { return row; },
+      "render" : 	function (data, type, row) {
+          if ( type === 'display' || type === 'filter' ) {
+            return data.md5sum;
+          }
+          //else return some that is used when sorting this column
+          return data.md5sum;
+        }
+    },
+    { "data":	function(row, type, set, meta) { return row; },
+      "render" : 	function (data, type, row) {
+          m1 = data.model;
+          m2 = data.model2;
+          if (m1 == undefined) m1 = '-';
+          if (m2 == undefined) m2 = '-';
+          return m1 + '/' + m2;
+        }
+    },
+    { "data":	function(row, type, set, meta) { return row; },
+      "render" : 	function (data, type, row) {
+          if ( type === 'display' || type === 'filter' ) {
+            return data.comment;
+          }
+          //else return some that is used when sorting this column
+          return data;
+        }
+    },
         ]
     } );
 

@@ -1,0 +1,222 @@
+######## m3runner ################
+
+# dl and workdir symlinks are removed by gitlab for each job
+# so I need to recreate this
+#  - ln -s ~/mycache/dl
+#  - ln -s ~/mycache/workdir
+
+variables:
+  FF_UPLOAD_DIR: "devel"
+  FF_BUILD_TAG: "devel"
+  FF_GITLAB_REMOVE_WORKDIR: 0
+  FF_GITLAB_REMOVE_DL: 0
+
+m3:init:
+  only:
+    - se-openwrt-23
+  stage: init       # special state, run before all other stages
+  # immer manuell, damit nicht bei jeden checkin gebaut wird
+  rules:
+    when: manual
+
+  script:
+    # - create local cache storage in /home/gitlab-user (created when installing runner)
+    # - link from workdir to local storage to avoid downloading packages every time and to have
+    #   a place to "backup" those packages.
+    # THis also keeps built toolchains to optimize compile time.
+    # Workdir contains artifacts that will be uploaded in last stage.
+    # Symlink creation is needed for every job, because gitlab will checkout the sources
+    # in new empty directory.
+    - mkdir -p ~/mycache/dl && ln -s ~/mycache/dl
+    - mkdir -p ~/mycache/workdir && ln -s ~/mycache/workdir
+
+    # ensure that we have no old data. This is important when
+    # generating download.json. Else all old openwrt images would be
+    # included and mixed
+
+    - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
+    - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
+
+    # if not set -> error
+    # note: I have set default FF_UPLOAD_DIR in gitlab (variables) to 'nightly'
+    if [ -z "${FF_UPLOAD_DIR}" ]; then
+      echo "FF_UPLOAD_DIR not defined! Aborting."
+      exit 1
+    fi
+
+    # dont delete dl, it is not so important to have different old version for
+    # one packges, but it will reduce download overhead from external servers
+    # every night. so just only delete workdirs to always have a clean build
+    #- test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl/*
+    #- test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
+    - ./build.sh list
+    - /bin/true
+  tags:
+    - m3runner
+
+m3:ar71xx.tiny.lowmem:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:ar71xx.generic.lowmem:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:x86.64.offloader:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh x86.64.offloader rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:ramips:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ramips.mt* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:ipq40xx:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:lantiq:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:ath79:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:sunxi:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh sunxi.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:mpc85xx:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:mediatek:
+  only:
+    - se-openwrt-23
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh mediatek.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+m3:test:
+  only:
+    - se-openwrt-23
+  stage: test
+  needs: ["m3:ar71xx.tiny.lowmem","m3:ar71xx.generic.lowmem","m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx","m3:mediatek"]
+  #needs: ["m3:x86.64.offloader","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:sunxi","m3:mpc85xx","m3:mediatek"]
+  artifacts:
+    paths:
+      # keep this as artifact, so I can compare it also when building firmware on gitlab
+      # other artifacts are not needed (waste of disk storage), because they are uploaded to download server
+      - ff-upload-infos/fileinfo.json.new-generated
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh list
+    # generate ff-upload-infos/fileinfo.json.new-generated and let store it also on error
+    # "all" needed to copy all firmware to output from which
+    # the json is generated
+    - ./gen-upload.sh all || true
+  tags:
+    - m3runner
+
+m3:upload:
+  # do not use 'manual' job, because the build result may
+  # have gone (overwritten by following builds) in /mycache/...
+
+  only:
+    - se-openwrt-23
+  stage: deploy
+  needs: ["m3:test"]
+  script:
+    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./gen-upload.sh all
+    - |
+      # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys.
+      # On download server there is a user "deploy-firmware" who owns the download directories.
+      if [ -n "${FF_UPLOAD_DIR}" ]; then
+        rsync -av --info=all1 --delete -EH --progress final_output/*/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/
+      fi
+      rm -rf final_output
+
+  tags:
+  - m3runner

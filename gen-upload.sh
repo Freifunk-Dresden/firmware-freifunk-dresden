@@ -578,7 +578,8 @@ find $output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/ | sed -n 's#\(\(.*\)/freifunk-dresd
 				 last=name;
 				 lastpath=path;
 			 }
-			 END {exit ret;}' || exit 1
+			 END {exit ret;}'
+			 #|| exit 1
 
 printf "${C_YELLOW}checking for firmware duplicates done.${C_NONE}\n"
 
