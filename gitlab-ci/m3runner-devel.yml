@@ -22,7 +22,7 @@ m3devel:init:
   #
   rules:
     - if: $CI_COMMIT_REF_NAME == "se-openwrt-23"
-      when: on_success
+      when: manual
     - when: never
 
   script:
@@ -47,8 +47,8 @@ m3devel:init:
     # if not set -> error
     # note: I have set default FF_UPLOAD_DIR in gitlab (variables) to 'nightly'
     - |
-      if [ -z "${FF_UPLOAD_DIR}" ]; then
-        echo "FF_UPLOAD_DIR not defined! Aborting."
+      if [ "${FF_UPLOAD_DIR}" != "devel" ]; then
+        echo "FF_UPLOAD_DIR not 'devel'! Aborting."
         exit 1
       fi
 
