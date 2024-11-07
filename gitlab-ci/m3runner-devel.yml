@@ -12,13 +12,18 @@ variables:
   FF_GITLAB_REMOVE_DL: 0
 
 m3devel:init:
-  only:
-    - se-openwrt-23
   stage: init       # special state, run before all other stages
 
-  # immer manuell, damit nicht bei jeden checkin gebaut wird
+  # immer manuell, damit nicht bei jeden checkin gebaut wird.
+  # only: kann ich nicht verwenden, um den branch einzuschraenken, wenn
+  # ich "rules" verwende, um auf manual zu stellen
+  # only:
+  #  - se-openwrt-23
+  #
   rules:
-    - when: manual
+    - if: $CI_COMMIT_REF_NAME == "se-openwrt-23"
+      when: on_success
+    - when: never
 
   script:
     # - create local cache storage in /home/gitlab-user (created when installing runner)
