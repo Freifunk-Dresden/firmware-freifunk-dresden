@@ -17,7 +17,7 @@ m3devel:init:
   stage: init       # special state, run before all other stages
   # immer manuell, damit nicht bei jeden checkin gebaut wird
   rules:
-    when: manual
+    - when: manual
 
   script:
     # - create local cache storage in /home/gitlab-user (created when installing runner)
