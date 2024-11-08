@@ -10,7 +10,6 @@ variables:
   FF_BUILD_TAG: "devel"
   FF_GITLAB_REMOVE_WORKDIR: 0
   FF_GITLAB_REMOVE_DL: 0
-  PROTECTED_DEV_BRANCH: "DEV_openwrt-23"
 
 m3devel:init:
   stage: init       # special state, run before all other stages
@@ -19,10 +18,10 @@ m3devel:init:
   # only: kann ich nicht verwenden, um den branch einzuschraenken, wenn
   # ich "rules" verwende, um auf manual zu stellen
   # only:
-  #  - ${PROTECTED_DEV_BRANCH}
+  #  - /^DEV_/
   #
   rules:
-    - if: $CI_COMMIT_REF_NAME == "${PROTECTED_DEV_BRANCH}"
+    - if: $CI_COMMIT_REF_NAME =~ "/^DEV_/"
       when: manual
     - when: never
 
@@ -65,7 +64,7 @@ m3devel:init:
 
 m3devel:ar71xx.tiny.lowmem:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -77,7 +76,7 @@ m3devel:ar71xx.tiny.lowmem:
 
 m3devel:ar71xx.generic.lowmem:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -89,7 +88,7 @@ m3devel:ar71xx.generic.lowmem:
 
 m3devel:x86.64.offloader:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -101,7 +100,7 @@ m3devel:x86.64.offloader:
 
 m3devel:ramips:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -113,7 +112,7 @@ m3devel:ramips:
 
 m3devel:ipq40xx:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -125,7 +124,7 @@ m3devel:ipq40xx:
 
 m3devel:lantiq:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -137,7 +136,7 @@ m3devel:lantiq:
 
 m3devel:ath79:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -149,7 +148,7 @@ m3devel:ath79:
 
 m3devel:sunxi:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -161,7 +160,7 @@ m3devel:sunxi:
 
 m3devel:mpc85xx:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -173,7 +172,7 @@ m3devel:mpc85xx:
 
 m3devel:mediatek:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: build
   needs: ["m3devel:init"]
   script:
@@ -185,7 +184,7 @@ m3devel:mediatek:
 
 m3devel:test:
   only:
-    - ${PROTECTED_DEV_BRANCH}
+    - /^DEV_/
   stage: test
   needs: ["m3devel:ar71xx.tiny.lowmem","m3devel:ar71xx.generic.lowmem","m3devel:x86.64.offloader","m3devel:ramips","m3devel:lantiq","m3devel:ath79","m3devel:ipq40xx","m3devel:sunxi","m3devel:mpc85xx","m3devel:mediatek"]
   #needs: ["m3devel:x86.64.offloader","m3devel:ramips","m3devel:lantiq","m3devel:ath79","m3devel:ipq40xx","m3devel:sunxi","m3devel:mpc85xx","m3devel:mediatek"]
@@ -210,9 +209,9 @@ m3devel:upload:
   # have gone (overwritten by following builds) in /mycache/...
 
   #only:
-  #  - ${PROTECTED_DEV_BRANCH}
+  #  - /^DEV_/
   rules:
-    - if: $CI_COMMIT_REF_NAME == "${PROTECTED_DEV_BRANCH}"
+    - if: $CI_COMMIT_REF_NAME == "/^DEV_/"
       when: manual
     - when: never
 
