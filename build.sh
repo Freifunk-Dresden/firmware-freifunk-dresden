@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="2.25"
+SCRIPT_VERSION="3"
 
 
 # gitlab variables
@@ -117,16 +117,21 @@ else
 fi
 
 # define color lookup table used when displaying targets via "list"
-declare -A list_color
-list_color['18.06']="${BG_BLACK}"
-list_color['21.02']="${BG_BLACK}"
-list_color['22.03']="${BG_BLUE}"
-list_color['23.05.3']="${BG_PURBLE}"
-list_color['8.2.6']="${BG_BLUE}"
-list_color['9.0.0']="${BG_PURBLE}"
+declare -A color_selector
+declare -A color_firmware
+declare -A color_openwrt
+# selectors
+color_selector['18.06']="${BG_BLACK}"
+color_selector['21.02']="${BG_BLACK}"
+color_selector['22.03']="${BG_BLUE}"
+color_selector['23.05.3']="${BG_PURBLE}"
+color_selector['8.2.6']="${BG_BLUE}"
+color_firmware['9.0.0']="${BG_PURBLE}"
+color_openwrt['v22.03.7']="${BG_BLUE}"
+color_openwrt['v23.05.3']="${BG_PURBLE}"
 
-#printf "${list_color['18.06']}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
-#printf "${list_color[$v]}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
+#printf "${color_selector['18.06']}aaa ${color_selector['21.02']}%s ${C_NONE}bbb\n" "value"
+#printf "${color_selector[$v]}aaa ${color_selector['21.02']}%s ${C_NONE}bbb\n" "value"
 
 # explicitly create an assotiative array that holds extracted template
 # values for each template
@@ -625,10 +630,10 @@ listTargets()
  OPT="--raw-output" # do not excape values
 
 # └ ┌ ┐ ┘ ├ ┤ ┬ ┴ ─ │ ┼
- printf -- '┌──────────────────────────────────┬─────────┬────────────┬─────────┬──────────┬─────────┬─────────┬─────────┬──────────────────────┐\n'
- printf -- '│ %-32.32s │ %-7.7s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' Name Version Openwrt  Openwrt Openwrt Feeds Files Patches "Build date"
- printf -- '│ %-32.32s │ %-7.7s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' ""   ""      Revision Variant Selector "" "" "" ""
- printf -- '├──────────────────────────────────┼─────────┼────────────┼─────────┼──────────┼─────────┼─────────┼─────────┼──────────────────────┤\n'
+ printf -- '┌──────────────────────────────┬─────┬─────────┬────────────┬─────────┬──────────┬─────────┬─────────┬─────────┬──────────────────────┐\n'
+ printf -- '│ %-28.28s │ %-3.3s │ %-7.7s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' "Name" "End" "Version" "Openwrt"  "Openwrt" "Openwrt" "Feeds" "Files" "Patches" "Build date"
+ printf -- '│ %-28.28s │ %-3.3s │ %-7.7s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' ""     ""    ""        "Revision" "Variant" "Sel."    "Sel."  "Sel."  "Sel."    ""
+ printf -- '├──────────────────────────────┼─────┼─────────┼────────────┼─────────┼──────────┼─────────┼─────────┼─────────┼──────────────────────┤\n'
 
  # run through all of json
  targetIdx=0
@@ -637,11 +642,16 @@ listTargets()
   entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
   targetIdx=$(( targetIdx + 1 ))
 
+	# sets a lot $_cfg_xxxx variables that are used below
   resolveConfigValues "${entry}"; ret=$?
   # last entry
   [ "$ret" = "1" ] && break
   # is template
   [ "$ret" = "2" ] && continue
+
+	# get eol status (end of life)
+	eol=""
+	test "${_cfg_name/eol.*/eol}" = "eol" && eol="EOL"
 
 	# get firmware version
 	fw_version_file="$RUN_DIR/fw-files/${_cfg_selector_files}/etc/version"
@@ -679,10 +689,11 @@ listTargets()
     cstatus="${PBC_DISABLED}"
   fi
 
-  printf  "│$cstatus %-31s │ ${list_color[${fw_version}]}%-7.7s${C_NONE} │ %-10.10s │ %-7.7s │ ${list_color[${_cfg_selector_config}]}%-8.8s${C_NONE} │ ${list_color[${_cfg_selector_files}]}%-7.7s${C_NONE} │ ${list_color[${_cfg_selector_feeds}]}%-7.7s${C_NONE} │ ${list_color[${_cfg_selector_patches}]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
+  printf  "│$cstatus %-27s │ %-3.3s │ ${color_firmware[${fw_version}]}%-7.7s${C_NONE} │ ${color_openwrt[${_cfg_openwrt_rev}]}%-10.10s${C_NONE} │ %-7.7s │ ${color_selector[${_cfg_selector_config}]}%-8.8s${C_NONE} │ ${color_selector[${_cfg_selector_files}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_feeds}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_patches}]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${eol}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
+
  done
 
- printf -- '└──────────────────────────────────┴─────────┴────────────┴─────────┴──────────┴─────────┴─────────┴─────────┴──────────────────────┘\n'
+ printf -- '└──────────────────────────────┴─────┴─────────┴────────────┴─────────┴──────────┴─────────┴─────────┴─────────┴──────────────────────┘\n'
 }
 
 

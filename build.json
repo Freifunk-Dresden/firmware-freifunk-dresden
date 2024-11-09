@@ -32,19 +32,19 @@
     "type":"template",        # specifes that this object is a template for other targets or not.
                               # values: "template | target"
                               # default for "type" is "target"
-    "name":"22.03.6",         # template or target name
+    "name":"22.03",           # template or target name
 
     "template":"",            # name of the default template configuration
     "config":"",              # config file name
     "disabled": false,        # if type is "template" then all targets are disabled, unless one target overwrites it
                               # values: "true | false"
-    "openwrt_rev":"v22.03.6",
+    "openwrt_rev":"v22.03.7",
     "openwrt_variant":"",     # creates a separate buildroot. use it for low-mem devices
                               # where no kernel modules (e.g.: usb) must be included.
                               # Note that selecting some packages as module could have
                               # dependencies to kernel modules/libs, that are included
                               # in image also if package is optional (ipk)
-                          # This value is added to config file name
+                              # This value is added to config file name
 
     "selector-config" :"22.03",  # used to select config
     "selector-feeds"  :"22.03",  # used to select feeds
@@ -55,8 +55,8 @@
     # for short commit value use: git log --abbrev-commit
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"e34369a41b522" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"777c115b0a633" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"3b79b05673a1" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1ff9ee61cde0" }
     ],
 
     # install addional packages from feeds (see feeds.conf)
@@ -87,118 +87,118 @@
 # ---------- openwrt 23 ------------------------------------------------------
   {
     "template":"23.05.3",
-    "name":"_testing-ramips.mt7621.generic",
-    "config":"testing-stuerst-ab-ramips.mt7621.generic.23.cfg",
-    "disabled": false 
+    "name":"ramips.mt7621.23.generic",
+    "config":"ramips.mt7621.generic.23.cfg",
+    "disabled": false
   },
   {
     "template":"23.05.3",
     "name":"ath79.23.generic",
     "config":"ath79.generic.23.cfg",
-    "disabled": true 
+    "disabled": true
   },
 
-  # ---------- openwrt 22 ------------------------------------------------------
+# ---------- openwrt 22 ------------------------------------------------------
   {
-    "template":"22.03.6",
-    "name":"ramips.mt7620.small.usb",
-    "config":"ramips.mt7620.small.usb.22.cfg"
+    "template":"22.03",
+    "name":"ramips.22.mt7620.small.usb",
+    "config":"ramips.22.mt7620.small.usb.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ramips.mt7620.generic",
-    "config":"ramips.mt7620.generic.22.cfg"
+    "template":"22.03",
+    "name":"ramips.22.mt7620.generic",
+    "config":"ramips.22.mt7620.generic.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ramips.mt76x8.generic",
-    "config":"ramips.mt76x8.generic.22.cfg"
+    "template":"22.03",
+    "name":"ramips.22.mt76x8.generic",
+    "config":"ramips.22.mt76x8.generic.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ramips.mt76x8.small",
-    "config":"ramips.mt76x8.small.22.cfg"
+    "template":"22.03",
+    "name":"ramips.22.mt76x8.small",
+    "config":"ramips.22.mt76x8.small.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"lantiq-xrx200.generic",
-    "config":"lantiq-xrx200.generic.22.cfg"
+    "template":"22.03",
+    "name":"lantiq-xrx200.22.generic",
+    "config":"lantiq-xrx200.22.generic.cfg"
   },
   {
-    "template":"22.03.6",
+    "template":"22.03",
     "name":"lantiq-xrx200.22.small",
-    "config":"lantiq-xrx200.small.22.cfg"
+    "config":"lantiq-xrx200.22.small.cfg"
   },
   {
-    "template":"22.03.6",
+    "template":"22.03",
     "name":"lantiq-xway.22.generic",
-    "config":"lantiq-xway.generic.22.cfg"
+    "config":"lantiq-xway.22.generic.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"lantiq-xway.small",
-    "config":"lantiq-xway.small.22.cfg"
+    "template":"22.03",
+    "name":"lantiq-xway.22.small",
+    "config":"lantiq-xway.22.small.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ath79.nand",
-    "config":"ath79.nand.22.cfg"
+    "template":"22.03",
+    "name":"ath79.22.nand",
+    "config":"ath79.22.nand.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ath79.small.smallbuffers",
-    "config":"ath79.small.smallbuffers.22.cfg"
+    "template":"22.03",
+    "name":"ath79.22.small.smallbuffers",
+    "config":"ath79.22.small.smallbuffers.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ipq40xx.generic",
-    "config":"ipq40xx.generic.22.cfg"
+    "template":"22.03",
+    "name":"ipq40xx.22.generic",
+    "config":"ipq40xx.22.generic.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ipq40xx.generic.fritz-tffs-nand",
-    "config":"ipq40xx.generic.fritz-tffs-nand.22.cfg"
+    "template":"22.03",
+    "name":"ipq40xx.22.generic.fritz",
+    "config":"ipq40xx.22.generic.fritz-tffs-nand.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"mpc85xx.p1020",
-    "config":"mpc85xx.p1020.22.cfg"
+    "template":"22.03",
+    "name":"mpc85xx.22.p1020",
+    "config":"mpc85xx.22.p1020.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ath79.generic.gl-mifi",
-    "config":"ath79.generic.gl-mifi.22.cfg"
+    "template":"22.03",
+    "name":"ath79.22.generic.gl-mifi",
+    "config":"ath79.22.generic.gl-mifi.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ath79.nand.gl-e750",
-    "config":"ath79.nand.gl-e750.22.cfg"
+    "template":"22.03",
+    "name":"ath79.22.nand.gl-e750",
+    "config":"ath79.22.nand.gl-e750.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"mediatek.mt7622.generic",
-    "config":"mediatek.mt7622.generic.22.cfg"
+    "template":"22.03",
+    "name":"mediatek.22.mt7622.generic",
+    "config":"mediatek.22.mt7622.generic.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"mpc85xx.p1010",
-    "config":"mpc85xx.p1010.22.cfg"
+    "template":"22.03",
+    "name":"mpc85xx.22.p1010",
+    "config":"mpc85xx.22.p1010.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ramips.mt7621.small",
-    "config":"ramips.mt7621.small.22.cfg"
+    "template":"22.03",
+    "name":"ramips.22.mt7621.small",
+    "config":"ramips.22.mt7621.small.cfg"
   },
   {
-    "template":"22.03.6",
-    "name":"ramips.mt7621.offloader",
-    "config":"ramips.mt7621.offloader.22.cfg",
+    "template":"22.03",
+    "name":"ramips.22.mt7621.offloader",
+    "config":"ramips.22.mt7621.offloader.cfg",
     "openwrt_variant":"offloader"
   },
   {
-    "template":"22.03.6",
-    "name":"x86.64.offloader",
-    "config":"x86.64.offloader.22.cfg",
+    "template":"22.03",
+    "name":"x86-64.offloader",
+    "config":"x86-64.22.offloader.cfg",
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
@@ -206,33 +206,34 @@
     ]
   },
   {
-    "template":"22.03.6",
-    "name":"sunxi.cortexa7.offloader",
-    "config":"sunxi.cortexa7.offloader.22.cfg",
+    "template":"22.03",
+    "name":"sunxi.22.cortexa7.offloader",
+    "config":"sunxi.22.cortexa7.offloader.cfg",
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
       "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
     ]
   },
-  # ---------- openwrt 22 ---------must stick to 22 ----------------------------
+# ---------- openwrt 22 -- eol (end of life) -----------------------------------
   {
-    "template":"22.03.6",
-    "name":"ath79.22.generic",
-    "config":"ath79.generic.22.cfg"
+    "template":"22.03",
+    "name":"eol.ath79.22.generic",
+    "config":"eol.ath79.22.generic.cfg"
    },
    {
-    "template":"22.03.6",
-    "name":"ath79.small",
-    "config":"ath79.small.22.cfg"
+    "template":"22.03",
+    "name":"eol.22.ath79.small",
+    "config":"eol.ath79.22.small.cfg"
   },
-  { # memory error on openwrt 23.05 so stick to 22.03
-    "template":"22.03.6",
-    "name":"ramips.mt7621.generic",
-    "config":"ramips.mt7621.generic.22.cfg"
-  },
+  // { # memory error on openwrt 23.05 so stick to 22.03
+  //   "template":"22.03",
+  //   "name":"ramips.22.mt7621.generic",
+  //   "config":"moved-to-23.ramips.22.mt7621.generic.cfg",
+	// 	"disabled": false
+  // },
 
-  # ---------- openwrt 21 ------------------------------------------------------
+# ---------- openwrt 21 ------------------------------------------------------
   // {
   //   "type":"template",
   //   "name":"21.02.3",
@@ -252,7 +253,7 @@
   //   ]
   // },
 
-  // # ---------- openwrt 18 -----------------------------------------------------------------------
+# ---------- openwrt 18 -- eol (end of life) -----------------------------------
   {
     "type":"template",
     "name":"18.06",
@@ -276,18 +277,18 @@
   },
   {
     "template":"18.06",
-    "name":"ar71xx.tiny.lowmem",
-    "config":"ar71xx.tiny.lowmem.18.cfg"
+    "name":"eol.ar71xx.18.tiny",
+    "config":"eol.ar71xx.18.tiny.lowmem.cfg"
   },
    {
     "template":"18.06",
-    "name":"ar71xx.generic.lowmem",
-    "config":"ar71xx.generic.lowmem.18.cfg"
+    "name":"eol.ar71xx.18.generic",
+    "config":"eol.ar71xx.18.generic.lowmem.cfg"
    },
    {
     "template":"18.06",
-    "name":"ramips.rt305x.tiny.lowmem",
-    "config":"ramips.rt305x.tiny.lowmem.18.cfg"
+    "name":"eol.ramips.18.rt305x.tiny",
+    "config":"eol.ramips.18.rt305x.tiny.lowmem.cfg"
    }
  ]
 }
