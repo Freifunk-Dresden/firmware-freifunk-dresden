@@ -40,7 +40,23 @@ docker:init:
   tags:
     - docker
 
-docker:x86.64.offloader:
+m3:eol:
+  except:
+    - schedules
+    - master
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh eol.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
+docker:x86-64:
   except:
     - schedules
     - master
@@ -54,10 +70,9 @@ docker:x86.64.offloader:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh x86.64.offloader rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh x86-64.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
-
 
 docker:ramips:
   except:
@@ -73,10 +88,27 @@ docker:ramips:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ramips.mt* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
+docker:ipq40xx:
+  except:
+    - schedules
+    - master
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
+  stage: build
+  needs: ["docker:init"]
+  script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
+    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+  - docker
 
 docker:lantiq:
   except:
@@ -111,24 +143,6 @@ docker:ath79:
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))" V=s
-  tags:
-  - docker
-
-docker:ipq40xx:
-  except:
-    - schedules
-    - master
-    - /^T_/
-    - /^TESTING/
-    - /^R_/
-  stage: build
-  needs: ["docker:init"]
-  script:
-    - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
-    - mkdir -p /mycache/workdir
-    - ln -s /mycache/workdir
-    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 

@@ -62,7 +62,7 @@ m3devel:init:
   tags:
     - m3runner
 
-m3devel:ar71xx.tiny.lowmem:
+m3devel:eol:
   only:
     - /^DEV_/
   stage: build
@@ -70,11 +70,11 @@ m3devel:ar71xx.tiny.lowmem:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh eol.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
 
-m3devel:ar71xx.generic.lowmem:
+m3devel:x86-64:
   only:
     - /^DEV_/
   stage: build
@@ -82,19 +82,7 @@ m3devel:ar71xx.generic.lowmem:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
-  tags:
-    - m3runner
-
-m3devel:x86.64.offloader:
-  only:
-    - /^DEV_/
-  stage: build
-  needs: ["m3devel:init"]
-  script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
-    - ./build.sh x86.64.offloader rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh x86-64.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
 
@@ -106,7 +94,7 @@ m3devel:ramips:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ramips.mt* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
 
@@ -186,8 +174,8 @@ m3devel:test:
   only:
     - /^DEV_/
   stage: test
-  needs: ["m3devel:ar71xx.tiny.lowmem","m3devel:ar71xx.generic.lowmem","m3devel:x86.64.offloader","m3devel:ramips","m3devel:lantiq","m3devel:ath79","m3devel:ipq40xx","m3devel:sunxi","m3devel:mpc85xx","m3devel:mediatek"]
-  #needs: ["m3devel:x86.64.offloader","m3devel:ramips","m3devel:lantiq","m3devel:ath79","m3devel:ipq40xx","m3devel:sunxi","m3devel:mpc85xx","m3devel:mediatek"]
+  needs: ["m3devel:eol","m3devel:x86-64","m3devel:ramips","m3devel:lantiq","m3devel:ath79","m3devel:ipq40xx","m3devel:sunxi","m3devel:mpc85xx","m3devel:mediatek"]
+  #needs: ["m3devel:x86-64","m3devel:ramips","m3devel:lantiq","m3devel:ath79","m3devel:ipq40xx","m3devel:sunxi","m3devel:mpc85xx","m3devel:mediatek"]
   artifacts:
     paths:
       # keep this as artifact, so I can compare it also when building firmware on gitlab
