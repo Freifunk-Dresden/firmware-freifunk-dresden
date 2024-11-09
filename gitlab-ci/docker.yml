@@ -54,7 +54,7 @@ m3:eol:
     - ln -s ~/mycache/workdir
     - ./build.sh eol.* rerun -j"$(( $(nproc) + 1))"
   tags:
-    - m3runner
+    - docker
 
 docker:x86-64:
   except:
