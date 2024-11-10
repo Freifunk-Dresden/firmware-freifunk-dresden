@@ -95,13 +95,13 @@ MARK_FAIL='✘'
 MARK_BLINK='➤'
 MARK_NONE=' '
 MARK_SKIP='-'
-MARK_IGNORE='i'
+MARK_NOCONFIG='c'
 MARK_DISABLED='/'
 
 if true; then
   PBC_RUNNING="${C_YELLOW}${C_BLINK}${MARK_BLINK}${C_NONE}"
   PBC_ERROR="${C_LRED}${MARK_FAIL}${C_NONE}"
-  PBC_IGNORE="${C_RED}${MARK_IGNORE}${C_NONE}"
+  PBC_NOCONFIG="${C_RED}${MARK_NOCONFIG}${C_NONE}"
   PBC_DISABLED="${C_LPURPLE}${MARK_DISABLED}${C_NONE}"
   PBC_SUCCESS="${C_GREEN}${MARK_OK}${C_NONE}"
   PBC_SKIP="${C_GREEN}${MARK_SKIP}${C_NONE}"
@@ -109,7 +109,7 @@ if true; then
 else
   PBC_RUNNING="${MARK_BLINK}"
   PBC_ERROR="${MARK_FAIL}"
-  PBC_IGNORE="${MARK_IGNORE}"
+  PBC_NOCONFIG="${MARK_NOCONFIG}"
   PBC_DISABLED="${MARK_DISABLED}"
   PBC_SUCCESS="${MARK_OK}"
   PBC_SKIP="${MARK_SKIP}"
@@ -1468,7 +1468,7 @@ EOM
       # no config and no menuconfig -> continue with next target; do not create config yet.
       # it only should be down by menuconfig
       echo -e $C_CYAN"no configuration, continue with next target if any$C_NONE"
-      progbar_char_array[$((progress_counter-1))]="${PBC_IGNORE}"
+      progbar_char_array[$((progress_counter-1))]="${PBC_NOCONFIG}"
       continue
     fi
   else
@@ -1581,7 +1581,12 @@ done
 show_progress ${_cfg_name} $progress_counter $progress_max "${progbar_char_array[@]}"
 sleep 1
 
-echo -e $C_CYAN".......... complete build finished (exitcode ${global_error})........................"$C_NONE
+echo -e "${C_CYAN}.......... complete build finished (exitcode ${global_error})........................${C_NONE}"
+echo -e "${PBC_SUCCESS} - built successfully"
+echo -e "${PBC_ERROR} - Error"
+echo -e "${PBC_NOCONFIG} - target ignored (no configuration)"
+echo -e "${PBC_DISABLED} - target disabled"
+echo -e "${PBC_SKIP} - target skipped (already built)"
 echo ""
 
 clean_up_exit ${global_error}

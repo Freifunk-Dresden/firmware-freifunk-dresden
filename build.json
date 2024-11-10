@@ -87,8 +87,8 @@
 # ---------- openwrt 23 ------------------------------------------------------
   {
     "template":"23.05.3",
-    "name":"ramips.mt7621.23.generic",
-    "config":"ramips.mt7621.generic.23.cfg",
+    "name":"ramips.23.mt7621.generic",
+    "config":"ramips.23.mt7621.generic.cfg",
     "disabled": false
   },
   {
