@@ -134,16 +134,16 @@ fw_rev="$git_ddmesh_rev"
 
 #get path of this script (upload dir) and change to it
 cd $PWD/${0%/*}
-output_dir="$PWD/$OUTPUT_BASE_DIR"
+final_output_dir="$PWD/$OUTPUT_BASE_DIR"
 info_dir="$PWD/$UPLOAD_INFO_DIR"
 
 # check if a different directory is used to create files in
 if [ -n "$directory_suffix" ]; then
-	output_dir=$output_dir."$directory_suffix"
-	printf "use output dir: $output_dir\n"
+	final_output_dir=$final_output_dir."$directory_suffix"
+	printf "use output dir: $final_output_dir\n"
 fi
 
-mkdir -p ${output_dir}
+mkdir -p ${final_output_dir}
 
 #################################################################################################
 # functions
@@ -392,8 +392,8 @@ gen_download_json_end()
 #################################################################################################
 
 $ENABLE_COPY && {
-	printf " delete old data: $output_dir\n"
-	rm -rf $output_dir/*
+	printf " delete old data: $final_output_dir\n"
+	rm -rf $final_output_dir/*
 }
 
 
@@ -402,7 +402,7 @@ $ENABLE_COPY && {
 #################################################################################################
 $ENABLE_GENERATE && {
 
-gen_download_json_start "$output_dir" "$fwdate" "$fw_branch" "$fw_rev"
+gen_download_json_start "$final_output_dir" "$fwdate" "$fw_branch" "$fw_rev"
 
 
 #################################################################################################
@@ -410,9 +410,10 @@ gen_download_json_start "$output_dir" "$fwdate" "$fw_branch" "$fw_rev"
 #################################################################################################
 $ENABLE_COPY && {
 	printf "${C_YELLOW}copy downloaded packages${C_NONE}\n"
-	mkdir -p $output_dir/downloaded_packages/
-	cp -a $firmwareroot/dl/* $output_dir/downloaded_packages/
-#	gen_download_json_add_single_link '[downloaded_packages]' 'downloaded_packages' $output_dir
+	mkdir -p $final_output_dir/downloaded_packages/
+	#cp -a $firmwareroot/dl/* $final_output_dir/downloaded_packages/
+	rsync --info=progress2 $firmwareroot/dl/* $final_output_dir/downloaded_packages/
+#	gen_download_json_add_single_link '[downloaded_packages]' 'downloaded_packages' $final_output_dir
 }
 
 #################################################################################################
@@ -422,21 +423,21 @@ $ENABLE_COPY && {
 #changelog
 $ENABLE_COPY && {
 	printf "${C_YELLOW}copy changelog${C_NONE}\n"
-	cp -a $firmwareroot/changelog.txt $output_dir/
-#	gen_download_json_add_single_link 'changelog.txt' 'changelog.txt' $output_dir
+	cp -a $firmwareroot/changelog.txt $final_output_dir/
+#	gen_download_json_add_single_link 'changelog.txt' 'changelog.txt' $final_output_dir
 }
 
 #licenses
 $ENABLE_COPY && {
 	printf "${C_YELLOW}copy licenses${C_NONE}\n"
-	cp -a $firmwareroot/license $output_dir/
-#	gen_download_json_add_single_link '[license]' 'license' $output_dir
+	cp -a $firmwareroot/license $final_output_dir/
+#	gen_download_json_add_single_link '[license]' 'license' $final_output_dir
 }
 
 $ENABLE_COPY && {
 	printf "${C_YELLOW}copy www${C_NONE}\n"
-	cp -a $info_dir/files/index.html $output_dir/
-	cp -a $info_dir/files/_res $output_dir/
+	cp -a $info_dir/files/index.html $final_output_dir/
+	cp -a $info_dir/files/_res $final_output_dir/
 }
 
 #################################################################################################
@@ -464,7 +465,7 @@ do
 	# check directory
 	test -d ${_platforms} || continue
 
-	# _output contains several platforms for one freifunk firmware version
+	# _output contains several platforms but only for exactly one freifunk firmware version
 	fw_version=$(cat ${buildroot}/${GENERATED_FIRMWARE_OUTPUT_DIR}/${GENERATED_FIRMWARE_VERSION_FILE})
 	if [ -z "$fw_version" ]; then
 		printf "ERROR: firmware version not detected (invalid path)\n"
@@ -472,35 +473,34 @@ do
 	fi
 	printf "  ${C_LPURPLE}detected firmware version:${C_NONE} $fw_version\n"
 
-	target_dir=$output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version
+	# -> final_output/firmware/8.2.5
+	target_dir=$final_output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version
 	mkdir -p $target_dir
-
 	printf "$fw_version\n" >$target_dir/version
 
 
 #	# add directory entry into download json, so it can be displayed in dataTable (index.html)
 #	for platform in $(ls $_platforms)
 #	do
-#		gen_download_json_add_single_link "[$platform]" "$platform" $output_dir
+#		gen_download_json_add_single_link "[$platform]" "$platform" $final_output_dir
 #	done
-
-	for platform in $(ls --hide 'version' $_platforms)
+	for platform in $(ls -1 --hide 'version' $_platforms)
 	do
 
 		printf -- "  >>>>>>>> ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
 
-		tmpTargetDir="${target_dir}/platform/$platform"
+		tmpTargetDir="${target_dir}/${platform}"
 		mkdir -p ${tmpTargetDir}
 
 		filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
 		$ENABLE_COPY && {
 			printf "    ${C_YELLOW}copy:${C_NONE} ${platform}/images/$filefilter\n"
 			# use "eval" to resolv filefilter wildcards
-			eval cp -a ${_platforms}/${platform}/images/$filefilter $tmpTargetDir 2>/dev/null
+			eval cp -a ${_platforms}/${platform}/images/$filefilter ${tmpTargetDir}/ 2>/dev/null
 
 			# remove not-wanted files, because those are not used and added for different openwrt versions
 			# This would cause duplicate warning in gen-upload.sh
-			rm -f $tmpTargetDir/freifunk-dresden*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
+			rm -f ${tmpTargetDir}/freifunk-dresden*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
 		}
 
 		#create md5sums file used when automatically or manually downloading via firmware.cgi
@@ -535,16 +535,14 @@ do
 		gzip -f Packages
 		cd $p
 
-		# last parameter only is used to track previously added firmware when checking for duplicates
-		gen_download_json_add_data "$output_dir" "${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/platform/${platform}" "$filefilter" ${fw_version}
-		#"$_buildroot/${GENERATED_FIRMWARE_OUTPUT_DIR}/${platform}/images/"
+		gen_download_json_add_data "$final_output_dir" "${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/${platform}" "$filefilter" ${fw_version}
 
 	done	# for platform
 	printf -- "\n=========================================================\n\n"
 
 done # for buildroot
 
-gen_download_json_end $output_dir
+gen_download_json_end $final_output_dir
 
 # make new generated fileinfo pretty, for easier comparison
 tmp=$(mktemp)
@@ -553,8 +551,8 @@ cat ${tmp}| jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename)
 
 
 # generate js file
-cat << EOM > $output_dir/$OUTPUT_DOWNLOAD_JSON_JS_FILENAME
-var data = $(cat $output_dir/$OUTPUT_DOWNLOAD_JSON_FILENAME) ;
+cat << EOM > $final_output_dir/$OUTPUT_DOWNLOAD_JSON_JS_FILENAME
+var data = $(cat $final_output_dir/$OUTPUT_DOWNLOAD_JSON_FILENAME) ;
 EOM
 
 # ENABLE_GENERATE
@@ -563,7 +561,7 @@ EOM
 # now, all files are copied for uploading and new fileinfo.json is generated
 # - check for duplicate firmware files but ignore versions in filename
 printf "${C_YELLOW}checking for firmware duplicates...${C_NONE}\n"
-find $output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/ | sed -n 's#\(\(.*\)/freifunk-dresden-\([0-9.-]\+\)*\(snapshot-\)*\(.*\)$\)#\5 \1#p' \
+find $final_output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/ | sed -n 's#\(\(.*\)/freifunk-dresden-\([0-9.-]\+\)*\(snapshot-\)*\(.*\)$\)#\5 \1#p' \
 			| sort -k1 \
 			| awk '
 			 BEGIN { ret = 0;}
