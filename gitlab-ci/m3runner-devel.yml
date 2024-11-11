@@ -6,10 +6,7 @@
 #  - ln -s ~/mycache/workdir
 
 variables:
-  FF_UPLOAD_DIR: "devel"
-  FF_BUILD_TAG: "devel"
-  FF_GITLAB_REMOVE_WORKDIR: 0
-  FF_GITLAB_REMOVE_DL: 0
+  DEV_FF_UPLOAD_DIR: "devel"
 
 m3devel:init:
   stage: init       # special state, run before all other stages
@@ -43,12 +40,13 @@ m3devel:init:
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
+    - echo "DEV_FF_UPLOAD_DIR = [${DEV_FF_UPLOAD_DIR}]"
 
     # if not set -> error
     # note: I have set default FF_UPLOAD_DIR in gitlab (variables) to 'nightly'
     - |
-      if [ "${FF_UPLOAD_DIR}" != "devel" ]; then
-        echo "FF_UPLOAD_DIR not 'devel'! Aborting."
+      if [ "${DEV_FF_UPLOAD_DIR}" != "devel" ]; then
+        echo "DEV_FF_UPLOAD_DIR not 'devel'! Aborting."
         exit 1
       fi
 
@@ -206,16 +204,23 @@ m3devel:upload:
   stage: deploy
   needs: ["m3devel:test"]
   script:
-    - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
+    - echo "DEV_FF_UPLOAD_DIR = [${DEV_FF_UPLOAD_DIR}]"
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
+
+    # if not set -> error
+    # note: I have set default FF_UPLOAD_DIR in gitlab (variables) to 'nightly'
+    - |
+      if [ "${DEV_FF_UPLOAD_DIR}" != "devel" ]; then
+        echo "DEV_FF_UPLOAD_DIR not 'devel'! Aborting."
+        exit 1
+      fi
+
     - ./gen-upload.sh all
     - |
       # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys.
       # On download server there is a user "deploy-firmware" who owns the download directories.
-      if [ -n "${FF_UPLOAD_DIR}" ]; then
-        rsync -av --info=all1 --delete -EH --progress final_output/* deploy-firmware@download.intern:/var/www/files/firmware/${FF_UPLOAD_DIR}/
-      fi
+      rsync -av --info=all1 --delete -EH --progress final_output/* deploy-firmware@download.intern:/var/www/files/firmware/${DEV_FF_UPLOAD_DIR}/
       rm -rf final_output
 
   tags:
