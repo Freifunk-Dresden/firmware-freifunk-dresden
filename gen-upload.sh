@@ -207,7 +207,7 @@ gen_download_json_add_data()
 
 	# progress info
 	printf "    ${C_LBLUE}# model info complete${C_NONE} | ${C_ORANGE}+ partly model info missing${C_NONE} | ${C_LRED}- NO model info${C_NONE} | ${C_LPURPLE}. disabled${C_NONE}\n"
-	printf "    "
+	printf "    ["
 
 	# get info for each filename
 	# eval is needed because file_filter must be evaluated
@@ -215,10 +215,10 @@ gen_download_json_add_data()
 	do
 		file=$(basename $path)
 		# only contains the "device-part"
-		#   freifunk-dresden-22.03.6-ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin
+		#   freifunk-dresden-v8.2.5-22.03.6-ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin
 		# becomes:  ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin
 		# This is used to filter filename entries and as sort-key
-		file_device_part_name="$(echo "$file" | sed 's#^freifunk-dresden-\([0-9.]\+-\)*\(snapshot-\)*##')"
+		file_device_part_name="$(echo "$file" | sed 's#^freifunk-dresden-v\([0-9.]\+\)-\([0-9.]\+\)-\(snapshot-\)*##')"
 #printf "$file\n"
 		# defaults
 		disabled="0"
@@ -363,7 +363,7 @@ gen_download_json_add_data()
 		printf "${C_LRED}Error: there were some duplicates.${C_NONE}\n"
 		exit 1
 	fi
-	printf "\n"
+	printf "]\n"
 }
 
 gen_download_json_end()
