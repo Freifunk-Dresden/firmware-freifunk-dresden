@@ -94,7 +94,7 @@
   {
     "template":"23.05.3",
     "name":"ath79.23.generic",
-    "config":"ath79.generic.23.cfg",
+    "config":"ath79.23.generic.cfg",
     "disabled": true
   },
 
@@ -223,7 +223,7 @@
    },
    {
     "template":"22.03",
-    "name":"eol.22.ath79.small",
+    "name":"eol.ath79.22.small",
     "config":"eol.ath79.22.small.cfg"
   },
   // { # memory error on openwrt 23.05 so stick to 22.03
