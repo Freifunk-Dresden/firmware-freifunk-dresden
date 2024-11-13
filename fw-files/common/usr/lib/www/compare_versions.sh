@@ -3,9 +3,11 @@
 # GNU General Public License Version 3
 
 #return 0 if new > cur
+#returns 1 if new <= cur
 compare_versions() {
-	new=$1
-	cur=$2
+	new="$1"
+	cur="$2"
+	[ -z "$new" -o -z "$cur" ] && return 0
 	local IFS='.';
 	set $new; a1=$1; a2=$2; a3=$3
 	set $cur; b1=$1; b2=$2; b3=$3
