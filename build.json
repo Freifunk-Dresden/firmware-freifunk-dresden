@@ -231,7 +231,7 @@
   {
     "name":"mediatek.mt7622.generic.22",
     "config":"config.mediatek.mt7622.generic",
-    "openwrt_rev":"v22.03.7",
+    "openwrt_rev":"v22.03.6",
 
     "selector-config"  : "22.03",
     "selector-feeds"   : "22.03",
