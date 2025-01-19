@@ -352,16 +352,11 @@ upgrade_8_2_7()
 	true
 }
 
-upgrade_8_3_0()
+upgrade_9_0_0()
 {
 	cp /rom/etc/config/firewall /etc/config/firewall
 	uci -q delete ddmesh.network.mesh_mode
 	uci -q delete credentials.wifi_2g.bssid
-}
-
-upgrade_9_0_0()
-{
-	true
 }
 
 ##################################
