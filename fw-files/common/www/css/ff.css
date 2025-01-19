@@ -70,7 +70,7 @@ big.plugin {
 	font-size: 20px;
 	font-weight: bolder;
 	line-height: 25px;
-	font-family: Trebuchet, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	vertical-align: bottom;
 	margin-left: 3px;
 	margin-right: 3px;
@@ -81,7 +81,7 @@ big.subplugin {
 	font-size: 16px;
 	font-weight: bolder;
 	line-height: 20px;
-	font-family: Trebuchet, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 }
 div.plugin {
 	/* Navbar left */
@@ -89,7 +89,7 @@ div.plugin {
 	padding-right: 14px;
 	font-size: 13px;
 	font-weight: bolder;
-	font-family: Trebuchet, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	margin-left: 10px;
 }
 div.plugin-disabled {
@@ -98,7 +98,7 @@ div.plugin-disabled {
 	padding-right: 14px;
 	font-size: 13px;
 	font-weight: bolder;
-	font-family: Trebuchet, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	margin-left: 10px;
 }
 div.subplugin {
@@ -107,7 +107,7 @@ div.subplugin {
 	padding-right: 14px;
 	font-size: 13px;
 	font-weight: bolder;
-	font-family: Trebuchet, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	margin-left: 10px;
 }
 table.body {
@@ -120,7 +120,7 @@ h1,h2,h3 {
 	font-weight: bold;
 	margin-top: 10px;
 	margin-bottom: 4px;
-	font-family: Trebuchet, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 }
 h1 {
 	font-size: 15px;
@@ -135,19 +135,19 @@ p,ol,ul,dl,li,dt,dd {
 	font-size: 11px;
 	font-weight: normal;
 	line-height: 16px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	text-align: left;
 	vertical-align:top;
 }
 th {
 	font-size: 11px;
 	font-weight: bold;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	text-align: left;
 }
 td {
 	font-size: 11px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	text-align: left;
 }
 p,ol,ul,dl,pre {
@@ -215,7 +215,7 @@ fieldset.bubble {
 	border-radius: 4px;
 }
 fieldset.bubble legend {
-	font-family: Verdana, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	padding: 1px 10px;
 /*	background: #eaeaff; */
 	background: #fffbc5;
@@ -270,12 +270,12 @@ table.topbar {
 
 table.topbar td {
 	color: white;
-	font-weight: bolder;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	padding: 0px;
 	border: 0px solid black;
 	margin: 0px;
+	height: 19px;
 }
 
 .infobar {
@@ -340,7 +340,7 @@ td.topmenu {
 	font-weight: bolder;
 	padding-left: 5px;
 	padding-right: 5px;
-	font-family: Trebuchet, Arial, Helvetica, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 	border: 0px ;

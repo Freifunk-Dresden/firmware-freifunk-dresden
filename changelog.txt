@@ -1,3 +1,8 @@
+2024-09-24 [8.2.7] (release)
+--------------------------------------------------
+router                    - xiaomi_redmi-router-ax6s: revert back to 22.03.6
+                            (openwrt.org has unsolved bug in 22.03.7 -> boot loop)
+gui                       - fix minor css issue on windows pc
 
 2024-09-24 [8.2.5] (testing)
 --------------------------------------------------

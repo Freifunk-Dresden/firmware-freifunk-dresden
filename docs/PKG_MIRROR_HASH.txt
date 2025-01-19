@@ -1,0 +1,20 @@
+
+packete haben neben der revision  (wenn von github geladen wird) auch noch eine MIRROR_HASH.
+
+Berechung:
+
+- PKG_MIRROR_HASH auskommentieren
+- openwrt make aufrufen und downloaden lassen
+- dann sha256sum auf das file, was in dl liegt
+
+ sha256sum workdir/v22.03.7/dl/mt76-2022-09-06-d7054646.tar.xz
+
+Beispiel: workdir/v22.03.7/package/kernel/mt76/Makefile
+
+PKG_SOURCE_URL:=https://github.com/openwrt/mt76
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_DATE:=2022-09-06
+PKG_SOURCE_VERSION:=d70546462b7b51ebc2bcdd5c534fdf3465be62a4
+PKG_MIRROR_HASH:=3d6b68d70a78c0072ed10ab2548344b6b3a70ad99e4edc258fafa16886f4abf9
+
+
