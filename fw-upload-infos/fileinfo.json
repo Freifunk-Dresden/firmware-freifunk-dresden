@@ -1144,7 +1144,7 @@
       "sortkey": "ath79-generic-tplink_archer-c6-v2-squashfs-sysupgrade.bin",
       "autoupdate": "1",
       "model": "tplink,archer-c6-v2",
-      "model2": "TP-Link Archer C6 v2",
+      "model2": "TP-Link Archer C6 v2 (EU/RU/JP)",
       "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c6-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
