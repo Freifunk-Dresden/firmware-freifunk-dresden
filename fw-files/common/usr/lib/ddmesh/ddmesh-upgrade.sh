@@ -352,6 +352,11 @@ upgrade_8_2_7()
 	true
 }
 
+upgrade_8_2_8()
+{
+	true
+}
+
 upgrade_9_0_0()
 {
 	cp /rom/etc/config/firewall /etc/config/firewall
