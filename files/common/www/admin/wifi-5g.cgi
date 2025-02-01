@@ -6,6 +6,11 @@ export TITLE="Verwaltung &gt; Konfiguration: WIFI 5GHz"
 
 . /usr/lib/www/page-pre.sh ${0%/*}
 
+# for bugfix only Gl.iNet E750
+. /lib/functions.sh
+boardname=$(board_name) # function in function.sh
+
+
 cat<<EOF
 <h2>$TITLE</h2>
 <br>
@@ -96,13 +101,30 @@ function fold_mode()
 <tr>
 <td>
 EOM
+
 mode="$(uci -q get ddmesh.network.wifi5g_mode)"
-for i in "disabled:Aus" "normal:Normal" "client:WAN"
+MODES='disabled:Aus: normal:Normal: client:WAN:'
+
+# bugfix workaround: gl.inet e750 bootloop.
+# router does work with client mode only.
+#-start-e750
+	if	[ "${boardname}" = "glinet,gl-e750" ]; then
+		MODES='disabled:Aus: normal:Normal:disabled client:WAN:'
+		if	[ "$mode" = "normal" ]; then
+			mode="disabled"
+			uci -q set ddmesh.network.wifi5g_mode="$mode"
+		fi
+	fi
+#-end-e750
+
+for i in $MODES
 do
-	value=${i%:*}
-	text=${i#*:}
+	IFS=':'; set $i; unset IFS
+	value="$1"
+	text="$2"
+	disabled="$3"
 	[ "$value" = "$mode" ] && checked="checked" || checked=""
-	echo "<input onchange=\"fold_mode()\" name=\"form_wifi5g_mode\" type=\"radio\" value=\"${value}\" id=\"radio_wifi5g_mode_${value}\" $checked>${text}"
+	echo "<input ${disabled} onchange=\"fold_mode()\" name=\"form_wifi5g_mode\" type=\"radio\" value=\"${value}\" id=\"radio_wifi5g_mode_${value}\" $checked>${text}"
 done
 cat<<EOM
 </td></tr>

@@ -9,6 +9,10 @@ eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 
 POST_SCRIPT="/etc/ddmesh/post-setup-wifi.sh"
 
+# for bugfix only Gl.iNet E750
+. /lib/functions.sh
+boardname=$(board_name) # function in function.sh
+
 setup_wireless()
 {
  rm -f /etc/config/wireless
@@ -20,11 +24,21 @@ setup_wireless()
  # update mesh_key from rom
  wifi_mesh_key="$(uci -c /rom/etc/config get credentials.network.wifi_mesh_key)"
 
+ # set default, if not configured
  wifi5g_mode="$(uci -q get ddmesh.network.wifi5g_mode)"
  if [ -z "$wifi5g_mode" ]; then
 	wifi5g_mode="normal"
 	uci -q set ddmesh.network.wifi5g_mode="$wifi5g_mode"
  fi
+
+ # bugfix workaround: gl.inet e750 bootloop.
+ # router does work with client mode only.
+ #-start-e750
+ if [ "${boardname}" = "glinet,gl-e750" -a "$wifi5g_mode" = "normal" ]; then
+	wifi5g_mode="disabled"
+	uci -q set ddmesh.network.wifi5g_mode="$wifi5g_mode"
+ fi
+ #-end-e750
 
  # --- update and detect 2/5GHz radios
  # "store" should only be done here when creating wireless config (it writes to flash)
