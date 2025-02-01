@@ -1,4 +1,10 @@
-2024-09-24 [8.2.7] (release)
+
+2024-01-31 [8.2.8] ()
+--------------------------------------------------
+router                    - add "ASUS RT-AX53U"
+
+
+2024-01-19 [8.2.7] (release)
 --------------------------------------------------
 router                    - xiaomi_redmi-router-ax6s: revert back to 22.03.6
                             (openwrt.org has unsolved bug in 22.03.7 -> boot loop)
