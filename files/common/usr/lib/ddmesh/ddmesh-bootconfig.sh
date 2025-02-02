@@ -510,7 +510,7 @@ nightly_hour="${nightly_hour:=4}"
 
 cat<<EOM > /var/etc/crontabs/root
 * * * * * /usr/lib/ddmesh/ddmesh-tasks.sh watchdog
-* */6 * * * /usr/lib/ddmesh/ddmesh-backbone-regwg.sh refresh >/dev/null 2>/dev/null
+${reg_min} */2 * * * /usr/lib/ddmesh/ddmesh-backbone-regwg.sh refresh >/dev/null 2>/dev/null
 ${reg_min} */1 * * * /usr/lib/ddmesh/ddmesh-register-node.sh >/dev/null 2>/dev/null
 ${nightly_min} ${nightly_hour} * * *  [ "$(uci -q get ddmesh.system.firmware_autoupdate)" = "1" ] && /usr/lib/ddmesh/ddmesh-firmware-autoupdate.sh run nightly >/dev/null 2>/dev/null || ([ "$(uci -q get ddmesh.system.nightly_reboot)" = "1" ] && /sbin/reboot)
 EOM
