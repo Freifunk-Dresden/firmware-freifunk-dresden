@@ -2464,7 +2464,7 @@
     },
 		{
 			"name": "",
-			"filename": "openwrt-ramips-mt7621-asus_rt-ax53u-squashfs-factory.bin",
+			"filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-asus_rt-ax53u-squashfs-factory.bin",
 			"comment": ""
 		},
 		{
@@ -2472,12 +2472,12 @@
 			"autoupdate": "1",
 			"model": "asus,rt-ax53u",
 			"model2": "ASUS RT-AX53U",
-			"filename": "openwrt-ramips-mt7621-asus_rt-ax53u-squashfs-sysupgrade.bin",
+			"filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-asus_rt-ax53u-squashfs-sysupgrade.bin",
 			"comment": ""
 		},
 		{
       "name": "",
-      "filename": "openwrt-ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
       "comment": ""
     },
     {
