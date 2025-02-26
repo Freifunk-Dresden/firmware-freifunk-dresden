@@ -97,6 +97,12 @@
     "config":"ath79.23.generic.cfg",
     "disabled": true
   },
+  {
+    "template":"23.05.3",
+    "name":"mediatek.23.filogic",
+    "config":"mediatek.23.filogic.cfg",
+    "disabled": false
+  },
 
 # ---------- openwrt 22 ------------------------------------------------------
   {
