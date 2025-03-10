@@ -211,6 +211,24 @@
     ]
   },
   {
+    "name":"ath79.nand.22",
+    "config":"config.ath79.nand.22",
+    "openwrt_rev":"v22.03.7",
+
+    "selector-config"  : "22.03",
+    "selector-feeds"   : "22.03",
+    "selector-patches" : "22.03",
+    "selector-files"   : "22.03",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"3b79b05673a1" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1ff9ee61cde0" }
+    ],
+    "packages" : [
+      "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "liblzma"
+    ]
+  },
+  {
     "name":"ath79.nand.gl-e750",
     "config":"config.ath79.nand.gl-e750",
     "openwrt_rev":"v22.03.7",
