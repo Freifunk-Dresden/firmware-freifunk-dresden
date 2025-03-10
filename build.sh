@@ -391,7 +391,7 @@ numberOfTargets()
 search_target()
 {
 	target=$1
-	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{line=gsub(/^CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t,"$0}' openwrt-configs/*/*
+	awk 'BEGIN {IGNORECASE=1;} /CONFIG_TARGET_.*'$target'/{line=gsub(/CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t: "$0}' openwrt-configs/*/*
 }
 
 print_devices_for_target()
