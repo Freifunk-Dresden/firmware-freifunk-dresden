@@ -1577,7 +1577,7 @@ EOM
 		do
 			basename="$(basename $src)"
 			newname="freifunk-dresden-v${fw_version}-${basename/freifunk-dresden-/}"
-			echo "cp ${src} ${outdir}/images/${newname}"
+			#echo "cp ${src} ${outdir}/images/${newname}"
 			cp ${src} ${outdir}/images/${newname}
 		done
 		unset IFS
