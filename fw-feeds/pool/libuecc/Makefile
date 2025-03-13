@@ -17,7 +17,7 @@ PKG_NAME:=libuecc
 #PKG_MD5SUM:=7f44df5dc69cb8686947562e2a11eea9
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://git.universe-factory.net/libuecc
+PKG_SOURCE_URL:=https://git.universe-factory.net/fastd/libuecc
 PKG_REV:=7c9a6f6af088d0764e792cf849e553d7f55ff99e
 #sha256sum (PKG_HASH is used to check if local downloaded files matches. if so, it will be use
 #           instead of downloaded each time. github has a download rate constrictions)
@@ -34,7 +34,7 @@ include $(INCLUDE_DIR)/cmake.mk
 define Package/libuecc
   CATEGORY:=ddmesh
   TITLE:=Very small Elliptic Curve Cryptography library
-  URL:=http://git.universe-factory.net/libuecc/
+  URL:=http://git.universe-factory.net/fastd/libuecc/
   SUBMENU:=Packages
 endef
 
