@@ -1614,6 +1614,24 @@
     },
     {
       "name": "",
+      "filename": "openwrt-ath79-nand-netgear_r6100-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ath79-nand-netgear_r6100-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "openwrt-ath79-nand-netgear_r6100-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
       "autoupdate": "0",
       "model": "",
       "model2": "",
@@ -1936,25 +1954,25 @@
       "filename": "openwrt-ramips-mt7620-tplink_re200-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
-		{
-			"name": "",
-			"filename": "openwrt-ramips-mt7621-asus_rt-ax53u-initramfs-kernel.bin",
-			"comment": ""
-		},
-		{
-			"name": "",
-			"filename": "openwrt-ramips-mt7621-asus_rt-ax53u-squashfs-factory.bin",
-			"comment": ""
-		},
-		{
-			"name": "",
-			"autoupdate": "1",
-			"model": "asus,rt-ax53u",
-			"model2": "ASUS RT-AX53U",
-			"filename": "openwrt-ramips-mt7621-asus_rt-ax53u-squashfs-sysupgrade.bin",
-			"comment": ""
-		},
-		{
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-asus_rt-ax53u-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "filename": "openwrt-ramips-mt7621-asus_rt-ax53u-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "name": "",
+      "autoupdate": "1",
+      "model": "asus,rt-ax53u",
+      "model2": "ASUS RT-AX53U",
+      "filename": "openwrt-ramips-mt7621-asus_rt-ax53u-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
       "name": "",
       "filename": "openwrt-ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
       "comment": ""
