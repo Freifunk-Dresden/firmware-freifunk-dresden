@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="3"
+SCRIPT_VERSION="24"
 
 
 # gitlab variables
@@ -319,11 +319,11 @@ write_compile_status()
 
 progressbar()
 {
-	_value=$1
+  _value=$1
 	shift
-	_maxValue=$1
+  _maxValue=$1
 	shift
-	_marker=$1
+  _marker=$1
 	shift
 	_char_array=("$@")	# get all other strings and create array again
 
@@ -394,7 +394,7 @@ progressbar()
 # clean up screen and
 clean_up_exit()
 {
-	EXIT="$1"
+  EXIT="$1"
 	if [ "$_TERM" = "1" ]; then
 		# reset region
 		if [ -n "$row" ]; then
@@ -480,17 +480,17 @@ p
 # It creates an array of template variables associated with the template names
 resolveTemplates()
 {
-	OPT="--raw-output" # do not excape values
+ OPT="--raw-output" # do not excape values
 
-	targetIdx=0
-	while true
-	do
-		entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+ targetIdx=0
+ while true
+ do
+ 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
 		targetIdx=$(( targetIdx + 1 ))
 
-		if [ "$entry" = "null" ]; then
+	if [ "$entry" = "null" ]; then
 			break
-		fi
+	fi
 
 		# extract feeds and packages separately to keep quotes
 		x='"_cfg_type=\"\(.type)\";
@@ -715,7 +715,7 @@ numberOfTargets()
 search_target()
 {
 	target=$1
-	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'.*=y/{line=gsub(/^CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t,"$0}' fw-configs/*/*
+	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{line=gsub(/^CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t,"$0}' fw-configs/*/*
 }
 
 print_devices_for_target()
@@ -738,7 +738,7 @@ print_devices_for_target()
 		# when I do not have a target passt to "build.sh devices" then show all.
 		if [ -n "$target" -a "$target" != "$_cfg_name" ]; then
 			continue
-		fi
+	fi
 
 		echo "target: [$_cfg_name] (${_cfg_selector_config})"
 		grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${_cfg_selector_config}/${_cfg_file}"
@@ -771,29 +771,29 @@ verify_firmware_present()
 			continue
 		fi
 
-		# extract selected devices from openwrt config file and check
-		# if sysupgrade file is present
-		status=0
+	# extract selected devices from openwrt config file and check
+	# if sysupgrade file is present
+	status=0
 		for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/fw-configs/${_cfg_selector_config}/${_cfg_file}")
-		do
-			# extract firmware device name part
-			dev="${dev/*_DEVICE_/}"
-			dev_str="${dev/=*/}"
+	do
+		# extract firmware device name part
+		dev="${dev/*_DEVICE_/}"
+		dev_str="${dev/=*/}"
 
-			printf "verify firmware for: ${dev_str}: "
+		printf "verify firmware for: ${dev_str}: "
 
-			p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
-			p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
+		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
+		p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
 
-			if [ -n "$p1" -o -n "$p2" ]; then
-				printf -- "${C_GREEN}ok${C_NONE}\n"
-			else
-				printf -- "${C_RED}failed${C_NONE}\n"
-				status=1
-			fi
+		if [ -n "$p1" -o -n "$p2" ]; then
+			printf -- "${C_GREEN}ok${C_NONE}\n"
+		else
+			printf -- "${C_RED}failed${C_NONE}\n"
+			status=1
+		fi
 
-		done
-		return ${status};
+	done
+	return ${status};
 	done
 }
 
@@ -855,15 +855,15 @@ usage()
 	cat <<EOM
 
  options:
-	 -h    docker host, if not specified environment variable 'FF_DOCKER_HOST' or 'DOCKER_HOST' is used.
-				 FF_DOCKER_HOST is used in favour to DOCKER_HOST. -h still has highest preference
-				 e.g: tcp://192.168.123.123
+   -h    docker host, if not specified environment variable 'FF_DOCKER_HOST' or 'DOCKER_HOST' is used.
+         FF_DOCKER_HOST is used in favour to DOCKER_HOST. -h still has highest preference
+         e.g: tcp://192.168.123.123
 
-	 -d    use docker for compiling (keep workdir)
-	 -D    use docker for compiling (clear workdir)
-	 -s    opens a shell to running docker
+   -d    use docker for compiling (keep workdir)
+   -D    use docker for compiling (clear workdir)
+   -s    opens a shell to running docker
 
-	commands:
+  commands:
 	 bash-completion         - adds bash completion. Must be called from same directory
 														 where "build.sh" is located.
 														 Example:
@@ -873,36 +873,36 @@ usage()
 														 add an alias to your .bash_aliases
 														 $ alias ff='cd ~/projects/freifunk/firmware; source ./build.sh bash-completion'
 
-	 list                    - lists all available targets
-	 lt | list-targets       - lists only target names for usage in IDE
-	 watch                   - same as 'list' but updates display
-	 devices [target]        - displays all selected routers for a target
-	 search <string>         - search specific router (target)
-	 feed-revisions          - displays the openwrt default feed revisions.
-														 The revisions then could be set in build.json
+   list                    - lists all available targets
+   lt | list-targets       - lists only target names for usage in IDE
+   watch                   - same as 'list' but updates display
+   devices [target]        - displays all selected routers for a target
+   search <string>         - search specific router (target)
+   feed-revisions          - displays the openwrt default feed revisions.
+                             The revisions then could be set in build.json
 
-	 target-pattern          - target to build
-					 that are defined by build.json. use 'list' for supported targets.
-					 'all'                   - builds all targets
-					 'failed'                - builds only previously failed or not built targets
-					 'ramips* '              - builds all ramips targets only
-					 'ramips.rt305x.generic' - builds exact this target
-					 '*generic'              - builds all that end with generic
+   target-pattern          - target to build
+           that are defined by build.json. use 'list' for supported targets.
+           'all'                   - builds all targets
+           'failed'                - builds only previously failed or not built targets
+           'ramips* '              - builds all ramips targets only
+           'ramips.rt305x.generic' - builds exact this target
+           '*generic'              - builds all that end with generic
 
-	flags
-	 clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
-	 menuconfig       - displays configuration menu
+  flags
+   clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
+   menuconfig       - displays configuration menu
 	 defconfig        - only updates configs (dependencies)
-	 rerun            - enables a second compilation with make option 'V=s'
-											If first make failes a second make is tried with this option
-	 -- make params   - all paramerters that follows are passed to make command
+   rerun            - enables a second compilation with make option 'V=s'
+                      If first make failes a second make is tried with this option
+   -- make params   - all paramerters that follows are passed to make command
 
 
 Devel-Notes:
 
  To compile a specific feed change to workdir and call something like:
 
-		 make package/feeds/ddmesh/fastd/compile -j1 V=s
+     make package/feeds/ddmesh/fastd/compile -j1 V=s
 
 EOM
 }
@@ -977,7 +977,7 @@ if $USE_DOCKER; then
 	# create container if it does not exisits and upload current directory
 	docker inspect ${DOCKER_CONTAINER_NAME} >/dev/null 2>/dev/null || {
 		echo -e "${C_CYAN}create container${C_NONE}"
-		docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
+  	docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
 	}
 	echo -e "${C_CYAN}start container${C_NONE}"
 	docker start ${DOCKER_CONTAINER_NAME}
@@ -1126,7 +1126,7 @@ case "$1" in
 					# check for make parameters "--"
 					while [ -n "$1" ]
 					do
-						endLoop=0;
+					  endLoop=0;
 						arg="$1"
 						shift			# prepare for next loop
 						case "${arg}" in
@@ -1253,7 +1253,7 @@ progress_counter=0
 progress_max=$(numberOfTargets "$targetRegex")
 
 if [ $progress_max -eq 0 ]; then
-	 echo "no target found"
+ 	echo "no target found"
 	clean_up_exit 1
 fi
 # progbar_char holds the current count character for each build.
@@ -1370,7 +1370,7 @@ do
 
 	# create feed config from build.json
 	if [ "$_cfg_feeds" = "null" ]; then
-		 echo -e $C_RED"Error: no feeds specified"$C_NONE
+	 	echo -e $C_RED"Error: no feeds specified"$C_NONE
 		clean_up_exit 1
 	fi
 
@@ -1435,7 +1435,7 @@ EOM
 	idx=0
 	while true
 	do
-			# use OPT to prevent jq from adding ""
+	  	# use OPT to prevent jq from adding ""
 		entry="$(echo ${_cfg_packages} | jq $OPT .[$idx])"
 		test "$entry" = "null" && break
 		idx=$(( idx + 1 ))
@@ -1448,7 +1448,7 @@ EOM
 	./scripts/feeds install -a -p ddmesh
 
 	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
-									# create a new config
+                  # create a new config
 
 	DEFAULT_CONFIG="${RUN_DIR}/${CONFIG_DIR}/${_cfg_selector_config}/${CONFIG_DEFAULT_FILE}"
 	if [ ! -f "${RUN_DIR}/${config_file}" ]; then
@@ -1514,38 +1514,38 @@ EOM
 
 	if [ ! "$DEFCONFIG" = "1" ]; then
 		# run make command
-		make clean
-		echo -e $C_CYAN"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
-		time -p make -j$(nproc) $BUILD_PARAMS
-		error=$?
-		echo "make ret: $error"
+	make clean
+	echo -e $C_CYAN"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
+	time -p make -j$(nproc) $BUILD_PARAMS
+	error=$?
+	echo "make ret: $error"
 
-		# continue with next target in build.targets
-		if [ $error -ne 0 ]; then
-			global_error=1
-			progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
+	# continue with next target in build.targets
+	if [ $error -ne 0 ]; then
+		global_error=1
+		progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
 
 			echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_cfg_name}" $C_NONE
 
-			if [ "$REBUILD_ON_FAILURE" = "1" ]; then
-				echo -e $C_CYAN".......... rerun build with V=s ........................"$C_NONE
-				time -p make $BUILD_PARAMS V=s -j1
-				error=$?
-				if [ $error -ne 0 ]; then
-					echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
-					clean_up_exit 1
-				fi
+		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
+			echo -e $C_CYAN".......... rerun build with V=s ........................"$C_NONE
+			time -p make $BUILD_PARAMS V=s -j1
+			error=$?
+			if [ $error -ne 0 ]; then
+				echo -e $C_RED"Error: build error - 2nd make run reported an error"$C_NONE
+				clean_up_exit 1
 			fi
-			# ignore error and continue with next target
-			echo -e "${C_RED}Error: ignore build error${C_NONE} target and ${C_YELLOW}continue${C_NONE} with next"
-			continue
 		fi
+		# ignore error and continue with next target
+		echo -e "${C_RED}Error: ignore build error${C_NONE} target and ${C_YELLOW}continue${C_NONE} with next"
+		continue
+	fi
 
-		# check if we have file
-		target_dir="${RUN_DIR}/${buildroot}/bin/targets"
-		if [ ! -d "${target_dir}" ]; then
-			echo -e "${C_RED}Error: build error - generated directory not found${C_NONE}"
-			echo "     ${target_dir}"
+	# check if we have file
+	target_dir="${RUN_DIR}/${buildroot}/bin/targets"
+	if [ ! -d "${target_dir}" ]; then
+		echo -e "${C_RED}Error: build error - generated directory not found${C_NONE}"
+		echo "     ${target_dir}"
 			clean_up_exit 1
 		fi
 
@@ -1555,21 +1555,21 @@ EOM
 			fw_version="$(cat $fw_version_file)"
 		else
 			echo -e "${C_RED}Error: build error - version file not found in buildroot/files/etc/version ${C_NONE}"
-			clean_up_exit 1
-		fi
+		clean_up_exit 1
+	fi
 
-		# copy files to our own output directory
+	# copy files to our own output directory
 		mkdir -p ${outdir}/packages
 		mkdir -p ${outdir}/images
 
 		echo -e "${C_CYAN}copy version file${C_NONE}"
 		mv ${RUN_DIR}/${buildroot}/files/etc/version "${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/" 2>/dev/null
 
-		echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
+	echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
 		# -> buildroot/bin/packages/<mipsel_24kc>/*
-		mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
+	mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
 
-		echo -e "${C_CYAN}copy images${C_NONE}"
+	echo -e "${C_CYAN}copy images${C_NONE}"
 		# copy every firmware file and add freifunk version to its name
 		# -> buildroot/bin/target/<ramips>/<mt7621>/*
 		#mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
@@ -1582,27 +1582,27 @@ EOM
 		done
 		unset IFS
 
-		echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
+	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
 
 		# verify presence of all images
 		echo -e "${C_CYAN}verify images${C_NONE} for ${_cfg_name}"
 		if ! verify_firmware_present "${_cfg_name}" "${outdir}/images"; then
-			echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
-			error=1
-			global_error=1
-			# clean_up_exit 1
-		fi
+		echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
+		error=1
+		global_error=1
+		# clean_up_exit 1
+	fi
 
-		# write build status which is displayed by "build.sh list"
-		echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
+	# write build status which is displayed by "build.sh list"
+	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
 		write_compile_status "${_cfg_name}" "${error}" "${compile_status_file}"
 
-		# success status
-		if [ ${error} == 0 ]; then
-			progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
-		else
-			progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
-		fi
+	# success status
+	if [ ${error} == 0 ]; then
+		progbar_char_array[$((progress_counter-1))]="${PBC_SUCCESS}"
+	else
+		progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
+	fi
 	fi # if [ ! "$DEFCONFIG" = "1" ]
 
 done

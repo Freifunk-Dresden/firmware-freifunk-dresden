@@ -43,8 +43,8 @@
                               # where no kernel modules (e.g.: usb) must be included.
                               # Note that selecting some packages as module could have
                               # dependencies to kernel modules/libs, that are included
-                              # in image also if package is optional (ipk)
-                              # This value is added to config file name
+                          # in image also if package is optional (ipk)
+                          # This value is added to config file name
 
     "selector-config" :"22.03",  # used to select config
     "selector-feeds"  :"22.03",  # used to select feeds
@@ -205,8 +205,8 @@
     "template":"22.03",
     "name":"x86-64.offloader",
     "config":"x86-64.22.offloader.cfg",
-    "openwrt_variant"  : "offloader",
-    "packages":[
+    "openwrt_variant":"offloader",
+    "packages" : [
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
       "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
     ]
@@ -275,7 +275,7 @@
       { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
     ],
-    "packages" : [
+    "packages":[
       "libpam","libcap","libopenldap",
       "libidn2","libssh2","libnetsnmp",
       "libcap", "jansson", "kmod-cryptodev", "liblzma"
@@ -295,6 +295,6 @@
     "template":"18.06",
     "name":"eol.ramips.18.rt305x.tiny",
     "config":"eol.ramips.18.rt305x.tiny.lowmem.cfg"
-   }
+  }
  ]
 }
