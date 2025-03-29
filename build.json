@@ -208,7 +208,7 @@
     "openwrt_variant":"offloader",
     "packages" : [
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
-      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
     ]
   },
   {
@@ -218,7 +218,7 @@
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
-      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils"
+      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
     ]
   },
 # ---------- openwrt 22 -- eol (end of life) -----------------------------------
