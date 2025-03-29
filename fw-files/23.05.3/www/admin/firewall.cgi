@@ -25,121 +25,74 @@ cat <<'EOM'
   // -----------------------------
   // Hilfsfunktionen
   // -----------------------------
-  function formatBytes(bytes) {
+  const formatBytes = bytes => {
     if (bytes === 0) return '0 Byte';
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i];
-  }
+  };
 
   // Standardextraktion: Handhabt Strings, Zahlen, Arrays (set) und prefix-Objekte.
-  function extractValue(valObj) {
-    if (typeof valObj === 'string') {
-      return valObj;
-    } else if (typeof valObj === 'number') {
-      return valObj.toString();
-    } else if (valObj && valObj.set) {
-      return valObj.set.join(', ');
-    } else if (valObj && valObj.prefix) {
-      return valObj.prefix.addr + '/' + valObj.prefix.len;
-    }
-    return '*';
-  }
+  const extractValue = valObj =>
+    typeof valObj === 'string' ? valObj :
+    typeof valObj === 'number' ? valObj.toString() :
+    valObj && valObj.set ? valObj.set.join(', ') :
+    valObj && valObj.prefix ? valObj.prefix.addr + '/' + valObj.prefix.len :
+    '*';
 
   // Für "In" und "Out": Falls mehrere Interfaces (über "set") vorhanden sind,
   // werden diese zeilenweise (mit <br>) dargestellt.
-  function extractInterfaceValue(valObj) {
-    if (valObj && valObj.set) {
-      return valObj.set.join('<br>');
-    }
-    return extractValue(valObj);
-  }
+  const extractInterfaceValue = valObj =>
+    (valObj && valObj.set) ? valObj.set.join('<br>') : extractValue(valObj);
 
   // Formatiert ein Match-Objekt im Format "variable=value".
   // Hier werden Versuche unternommen, den Schlüssel aus ct, meta oder payload zu ermitteln.
   // Falls im Payload-Bereich kein field vorhanden ist, wird "flags" verwendet.
   // Wenn bisher "unknown" herauskommt und der Wert "sync" ist, wird "flags" gesetzt.
-  function formatMatchObject(matchObj) {
-    let variable = "";
-    let value = "";
-    if (matchObj.left && matchObj.left.ct && matchObj.left.ct.key) {
-      variable = matchObj.left.ct.key;
-    } else if (matchObj.left && matchObj.left.meta && matchObj.left.meta.key) {
-      if (matchObj.left.meta.key.toLowerCase() === "state") {
-        variable = "state";
-      } else {
-        variable = matchObj.left.meta.key;
-      }
-    } else if (matchObj.left && matchObj.left.payload) {
-      variable = matchObj.left.payload.field || "flags";
-    } else {
-      variable = "unknown";
-    }
-    if (Array.isArray(matchObj.right)) {
-      value = matchObj.right.join(', ');
-    } else {
-      value = extractValue(matchObj.right);
-    }
-    if (variable === "unknown") {
-      variable = "flags";
-    }
+  const formatMatchObject = matchObj => {
+    let variable = matchObj.left && matchObj.left.ct && matchObj.left.ct.key ? matchObj.left.ct.key :
+                   matchObj.left && matchObj.left.meta && matchObj.left.meta.key ? (matchObj.left.meta.key.toLowerCase() === "state" ? "state" : matchObj.left.meta.key) :
+                   matchObj.left && matchObj.left.payload ? (matchObj.left.payload.field || "flags") :
+                   "unknown";
+    let value = Array.isArray(matchObj.right) ? matchObj.right.join(', ') : extractValue(matchObj.right);
+    if (variable === "unknown") variable = "flags";
     return variable + "=" + value;
-  }
+  };
 
   // Neue Funktion: Formatiert ein beliebiges Objekt (z. B. für mangle).
   // Falls das Objekt eine "name"-Eigenschaft enthält, wird diese Basis verwendet.
   // Weitere Schlüssel (außer "name") werden alphabetisch sortiert und mit Punkten angehängt.
   // Dabei werden alle Leerzeichen in Schlüsseln durch Unterstriche ersetzt.
-  function formatGeneric(obj) {
-    if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
-      if (obj.name) {
-        let keys = [];
-        for (let k in obj) {
-          if (k !== "name") {
-            keys.push(k.replace(/ /g, "_"));
-          }
-        }
-        keys.sort();
-        let base = obj.name.replace(/ /g, "_");
-        return base + (keys.length > 0 ? "." + keys.join(".") : "");
-      }
+  const formatGeneric = obj => {
+    if (obj && typeof obj === 'object' && !Array.isArray(obj) && obj.name) {
+      const keys = Object.keys(obj)
+                         .filter(k => k !== "name")
+                         .map(k => k.replace(/ /g, "_"))
+                         .sort();
+      return obj.name.replace(/ /g, "_") + (keys.length ? "." + keys.join(".") : "");
     }
     return extractValue(obj);
-  }
+  };
 
   // Formatiert ein mangle-Objekt im Format "variable=value".
   // Für den linken Teil (key) und für den rechten Teil (value) wird jeweils formatGeneric genutzt.
   // Außerdem werden alle Leerzeichen in Property-Namen durch Unterstriche ersetzt.
   // Im Value-Bereich: Falls das Unterobjekt einen "key" besitzt, wird dessen Wert ausgegeben.
-  function formatMangle(mangleObj) {
-    let leftStr = "";
-    let rightStr = "";
-    if (mangleObj.key && typeof mangleObj.key === 'object') {
-      let parts = [];
-      for (let prop in mangleObj.key) {
-        let newProp = prop.replace(/ /g, "_");
-        let sub = mangleObj.key[prop];
-        let part = newProp + "." + formatGeneric(sub);
-        parts.push(part);
-      }
-      leftStr = parts.join(";");
-    } else {
-      leftStr = extractValue(mangleObj.key);
-    }
-    if (mangleObj.value && typeof mangleObj.value === 'object') {
-      let parts = [];
-      for (let prop in mangleObj.value) {
-        let newProp = prop.replace(/ /g, "_");
-        let sub = mangleObj.value[prop];
-        let detail = (sub && typeof sub === 'object' && sub.key) ? sub.key : formatGeneric(sub);
-        parts.push(newProp + "." + detail);
-      }
-      rightStr = parts.join(";");
-    } else {
-      rightStr = extractValue(mangleObj.value);
-    }
+  const formatMangle = mangleObj => {
+    let leftStr = (mangleObj.key && typeof mangleObj.key === 'object') ?
+      Object.keys(mangleObj.key)
+            .map(prop => prop.replace(/ /g, "_") + "." + formatGeneric(mangleObj.key[prop]))
+            .join(";")
+      : extractValue(mangleObj.key);
+    let rightStr = (mangleObj.value && typeof mangleObj.value === 'object') ?
+      Object.keys(mangleObj.value)
+            .map(prop => prop.replace(/ /g, "_") + "." +
+              ((mangleObj.value[prop] && typeof mangleObj.value[prop] === 'object' && mangleObj.value[prop].key)
+                ? mangleObj.value[prop].key : formatGeneric(mangleObj.value[prop])))
+            .join(";")
+      : extractValue(mangleObj.value);
     return leftStr + "=" + rightStr;
-  }
+  };
 
   // -----------------------------
   // Erzeugt ein Fieldset für eine bestimmte Chain.
@@ -155,9 +108,7 @@ cat <<'EOM'
       if (item.rule) {
         const rule = item.rule;
         const cname = (rule.chain || 'unknown').toLowerCase();
-        if (!rulesByChain[cname]) {
-          rulesByChain[cname] = [];
-        }
+        rulesByChain[cname] = rulesByChain[cname] || [];
         rulesByChain[cname].push(rule);
       }
     });
@@ -206,13 +157,7 @@ cat <<'EOM'
         rules.forEach((rule, index) => {
           let rowClass = (index % 2 === 0) ? "colortoggle1" : "colortoggle2";
           html += `      <tr class="${rowClass}">\n`;
-          let pkts = 0, bytes = 0;
-          let protocol = 'all';
-          let ifaceIn = '*';
-          let ifaceOut = '*';
-          let source = '*';
-          let destination = '*';
-          let target = '';
+          let pkts = 0, bytes = 0, protocol = 'all', ifaceIn = '*', ifaceOut = '*', source = '*', destination = '*', target = '';
           const paramsArr = [];
           const mangleArr = [];
           if (Array.isArray(rule.expr)) {
@@ -241,7 +186,6 @@ cat <<'EOM'
                 // Im payload-Bereich:
                 if (left.payload) {
                   if (left.payload.field) {
-                    // Nutze field, falls definiert, ansonsten "flags"
                     let fieldName = left.payload.field || "flags";
                     paramsArr.push(fieldName + "=" + extractValue(expr.match.right));
                     return;
@@ -270,11 +214,7 @@ cat <<'EOM'
                 if (!target) target = 'DROP';
               } else if (expr.reject !== undefined) {
                 if (!target) {
-                  if (typeof expr.reject === 'object' && expr.reject.type) {
-                    target = 'REJECT (' + expr.reject.type + ')';
-                  } else {
-                    target = 'REJECT';
-                  }
+                  target = (typeof expr.reject === 'object' && expr.reject.type) ? 'REJECT (' + expr.reject.type + ')' : 'REJECT';
                 }
               } else if (expr.masquerade !== undefined) {
                 if (!target) target = 'MASQUERADE';
@@ -331,7 +271,7 @@ cat <<'EOM'
       if (!def.type) continue;
       let type = def.type.toLowerCase();
       if (type !== "filter" && type !== "nat" && type !== "route") continue;
-      if (!groups[type]) { groups[type] = []; }
+      groups[type] = groups[type] || [];
       groups[type].push(def);
     }
     selectedGroup = selectedGroup || "filter";
@@ -340,11 +280,9 @@ cat <<'EOM'
     ["filter", "nat", "route"].forEach(function(gr) {
       navHtml += `<li><a href="#group=${gr}" ${gr===selectedGroup ? "style='font-weight:bold'" : ""}>${gr.charAt(0).toUpperCase()+gr.slice(1)}</a></li>`;
     });
-    navHtml += "</ul>";
-
+    navHtml += "</ul>\n";
     // Überschrift zur aktiven Gruppe
-    navHtml += `<h4>Aktive Gruppe: ${selectedGroup.charAt(0).toUpperCase()+selectedGroup.slice(1)}</h4>`;
-
+    navHtml += `<h4>Aktive Gruppe: ${selectedGroup.charAt(0).toUpperCase()+selectedGroup.slice(1)}</h4>\n`;
     navHtml += "<ul id='chainNav'>";
     if (groups[selectedGroup]) {
       groups[selectedGroup].forEach(function(def) {
@@ -433,7 +371,6 @@ cat <<'EOM'
       });
   });
 </script>
-
 EOM
 
 . /usr/lib/www/page-post.sh
