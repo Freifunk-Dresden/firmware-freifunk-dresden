@@ -1624,9 +1624,9 @@
     },
     {
       "name": "",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "autoupdate": "1",
+      "model": "netgear,r6100",
+      "model2": "Netgear R6100",
       "filename": "openwrt-ath79-nand-netgear_r6100-squashfs-sysupgrade.bin",
       "comment": ""
     },
