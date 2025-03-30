@@ -18,6 +18,7 @@ config zone 'zone_lan'
 	# ddmesh-firewall-addons.sh needs this to get 'srcnat_lan'. masquerade rule will be deleted
 	option masq '1'
 	option mtu_fix '1'
+	option counter '1'
 	# no subnet to allow dhcp
 
 config zone 'zone_wan'
@@ -42,6 +43,7 @@ config zone 'zone_wifi2'
 	# ddmesh-firewall-addons.sh needs this to get 'srcnat_wifi2'. masquerade rule will be deleted
 	option masq '1'
 	option mtu_fix '1'
+	option counter '1'
 	# no subnet to allow dhcp
 
 #interface is NOT brought up by network system, because it is created NOT by openwrt network environment.
@@ -53,6 +55,7 @@ config zone 'zone_ffgw'
 	option forward 'REJECT'
 	option masq '1'
 	option mtu_fix '1'
+	option counter '1'
 
 #interface is not brought up by network system, because it is created not by openwrt network environment.
 #created by wireguard.
@@ -65,6 +68,7 @@ config zone 'zone_tbbwg'
 	option masq '0'
 	option mtu_fix '1'
 	option subnet '10.203.0.0/16'
+	option counter '1'
 
 config zone 'zone_mesh'
 	option name 'mesh'
@@ -74,6 +78,7 @@ config zone 'zone_mesh'
 	# ddmesh-firewall-addons.sh needs this to get 'srcnat_mesh'. masquerade rule will be deleted
 	option masq '1'
 	option mtu_fix '1'
+	option counter '1'
 	list network 'mesh_lan'
 	list network 'mesh_wan'
 	list network 'mesh_vlan'
@@ -93,6 +98,7 @@ config zone 'zone_vpn'
 	option forward 'REJECT'
 	option masq '1'
 	option mtu_fix '1'
+	option counter '1'
 
 #### zone forwarding rules
 # ---- lan to lan ----
