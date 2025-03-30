@@ -64,11 +64,12 @@ setup_forwarding()
 		$NFT flush chain inet fw4 ${chain}
 
 		# insert my chains into openwrt chains
-		# Any package with destination _ddmesh_ip
+		# Any packet with destination _ddmesh_ip and 255.255.255.255 (for dhcp)
 		MARKER="ddmesh-forwarding-nat-${i}-ip-jump"
 		present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.comment=\"${MARKER}\"].rule.handle")"
 		if [ -z "$present" ]; then
 			$NFT add rule inet fw4 "dstnat" ip daddr ${_ddmesh_ip} counter jump ${chain} comment "\"${MARKER}\""
+			$NFT add rule inet fw4 "dstnat" ip daddr 255.255.255.255 counter jump ${chain} comment "\"${MARKER}\""
 		fi
 
 		# forward incomming packets from lan to lan ip

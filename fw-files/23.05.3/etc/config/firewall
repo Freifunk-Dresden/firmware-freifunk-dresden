@@ -18,6 +18,7 @@ config zone 'zone_lan'
 	# ddmesh-firewall-addons.sh needs this to get 'srcnat_lan'. masquerade rule will be deleted
 	option masq '1'
 	option mtu_fix '1'
+	# no subnet to allow dhcp
 
 config zone 'zone_wan'
 	option name 'wan'
@@ -41,7 +42,7 @@ config zone 'zone_wifi2'
 	# ddmesh-firewall-addons.sh needs this to get 'srcnat_wifi2'. masquerade rule will be deleted
 	option masq '1'
 	option mtu_fix '1'
-	list subnet '100.64.0.0/10'
+	# no subnet to allow dhcp
 
 #interface is NOT brought up by network system, because it is created NOT by openwrt network environment.
 config zone 'zone_ffgw'
