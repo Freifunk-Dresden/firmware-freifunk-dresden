@@ -3,7 +3,7 @@
 
 config defaults
 	option syn_flood '1'
-	option input 'ACCEPT'
+	option input 'REJECT'
 	option output 'ACCEPT'
 	option forward 'REJECT'
 #	option custom_chains '1'
@@ -30,6 +30,7 @@ config zone 'zone_wan'
 	list network 'wwan_helper'
 	list network 'twan'
 	list network 'cwan'
+	option counter '1'
 
 config zone 'zone_wifi2'
 	option name 'wifi2'
@@ -103,6 +104,7 @@ config rule 'forward_lan_lan'
 	option dest 'lan'
 	# dest_ip: allow internet ips
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_lan_lan_catch'
 	option name 'forward_lan_lan_catch'
@@ -110,6 +112,7 @@ config rule 'forward_lan_lan_catch'
 	option src 'lan'
 	option dest 'lan'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- lan to wan ----
 # allow only internet ips
@@ -120,6 +123,7 @@ config rule 'forward_lan_to_wan_192_168'
 	option dest 'wan'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_wan_172_16'
 	option name 'forward_lan_to_wan_172_16'
@@ -128,6 +132,7 @@ config rule 'forward_lan_to_wan_172_16'
 	option dest 'wan'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_wan_10'
 	option name 'forward_lan_to_wan_10'
@@ -136,6 +141,7 @@ config rule 'forward_lan_to_wan_10'
 	option dest 'wan'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_wan_100'
 	option name 'forward_lan_to_wan_100'
@@ -144,6 +150,7 @@ config rule 'forward_lan_to_wan_100'
 	option dest 'wan'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_wan'
 	option name 'forward_lan_to_wan'
@@ -152,6 +159,7 @@ config rule 'forward_lan_to_wan'
 	option src_ip '192.168.0.0/16'
 	option dest 'wan'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_lan_to_wan_catch'
 	option name 'forward_lan_to_wan_catch'
@@ -159,6 +167,7 @@ config rule 'forward_lan_to_wan_catch'
   option src 'lan'
 	option dest 'wan'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- lan to mesh ----
 config rule 'forward_lan_to_mesh_10'
@@ -169,6 +178,7 @@ config rule 'forward_lan_to_mesh_10'
 	option dest 'mesh'
 	option dest_ip '10.200.0.0/16'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_lan_to_mesh_catch'
 	option name 'forward_to_mesh_catch'
@@ -176,6 +186,7 @@ config rule 'forward_lan_to_mesh_catch'
 	option src 'lan'
 	option dest 'mesh'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- lan to ffgw ----
 # allow only internet ips
@@ -186,6 +197,8 @@ config rule 'forward_lan_to_ffgw_192_168'
 	option dest 'ffgw'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
+	option counter '1'
 
 config rule 'forward_lan_to_ffgw_172_16'
 	option name 'forward_lan_to_ffgw_172_16'
@@ -194,6 +207,7 @@ config rule 'forward_lan_to_ffgw_172_16'
 	option dest 'ffgw'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_ffgw_10'
 	option name 'forward_lan_to_ffgw_10'
@@ -202,6 +216,7 @@ config rule 'forward_lan_to_ffgw_10'
 	option dest 'ffgw'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_ffgw_100'
 	option name 'forward_lan_to_ffgw_100'
@@ -210,6 +225,7 @@ config rule 'forward_lan_to_ffgw_100'
 	option dest 'ffgw'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_ffgw'
 	option name 'forward_lan_to_ffgw'
@@ -218,6 +234,7 @@ config rule 'forward_lan_to_ffgw'
 	option src_ip '192.168.0.0/16'
 	option dest 'ffgw'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_lan_to_ffgw_catch'
 	option name 'forward_lan_to_ffgw_catch'
@@ -225,6 +242,7 @@ config rule 'forward_lan_to_ffgw_catch'
   option src 'lan'
 	option dest 'ffgw'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- lan to vpn ----
 # allow only internet ips
@@ -235,6 +253,7 @@ config rule 'forward_lan_to_vpn_192_168'
 	option dest 'vpn'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_vpn_172_16'
 	option name 'forward_lan_to_vpn_172_16'
@@ -243,6 +262,7 @@ config rule 'forward_lan_to_vpn_172_16'
 	option dest 'vpn'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_vpn_10'
 	option name 'forward_lan_to_vpn_10'
@@ -251,6 +271,7 @@ config rule 'forward_lan_to_vpn_10'
 	option dest 'vpn'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_vpn_100'
 	option name 'forward_lan_to_vpn_100'
@@ -259,6 +280,7 @@ config rule 'forward_lan_to_vpn_100'
 	option dest 'vpn'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_lan_to_vpn'
 	option name 'forward_lan_to_vpn'
@@ -267,6 +289,7 @@ config rule 'forward_lan_to_vpn'
 	option src_ip '192.168.0.0/16'
 	option dest 'vpn'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_lan_to_vpn_catch'
 	option name 'forward_lan_to_vpn'
@@ -274,6 +297,7 @@ config rule 'forward_lan_to_vpn_catch'
   option src 'lan'
 	option dest 'vpn'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- lan to wifi2 ----
 config rule 'forward_lan_wifi2_catch'
@@ -282,6 +306,7 @@ config rule 'forward_lan_wifi2_catch'
 	option src 'lan'
 	option dest 'wifi2'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- wan to *----
 config rule 'forward_wan_any_catch'
@@ -290,6 +315,7 @@ config rule 'forward_wan_any_catch'
 	option src 'wan'
 	option dest '*'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- mesh to mesh ----
 # allow src_ip also from internet (answers)
@@ -300,6 +326,7 @@ config rule 'forward_mesh_to_mesh'
 	option dest 'mesh'
 	option dest_ip '10.200.0.0/16'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_mesh_to_any_catch'
 	option name 'forward_mesh_to_any_catch'
@@ -307,6 +334,7 @@ config rule 'forward_mesh_to_any_catch'
 	option src 'mesh'
 	option dest '*'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- ffgw to lan ----
 config rule 'forward_ffgw_to_lan_192_168'
@@ -316,6 +344,7 @@ config rule 'forward_ffgw_to_lan_192_168'
 	option dest 'lan'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_lan_172_16'
 	option name 'forward_ffgw_to_lan_172_16'
@@ -324,6 +353,7 @@ config rule 'forward_ffgw_to_lan_172_16'
 	option dest 'lan'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_lan_10'
 	option name 'forward_ffgw_to_lan_10'
@@ -332,6 +362,7 @@ config rule 'forward_ffgw_to_lan_10'
 	option dest 'lan'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_lan_100'
 	option name 'forward_ffgw_to_lan_100'
@@ -340,6 +371,7 @@ config rule 'forward_ffgw_to_lan_100'
 	option dest 'lan'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 # only when node is local internet
 config rule 'forward_ffgw_to_lan'
@@ -350,6 +382,7 @@ config rule 'forward_ffgw_to_lan'
 	option dest 'lan'
 	option target 'ACCEPT'
 	option enabled '0'
+	option counter '1'
 
 config rule 'forward_ffgw_to_lan_catch'
 	option name 'forward_ffgw_to_lan_catch'
@@ -357,6 +390,7 @@ config rule 'forward_ffgw_to_lan_catch'
   option src 'ffgw'
 	option dest 'lan'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- ffgw to wan ----
 config rule 'forward_ffgw_to_wan_192_168'
@@ -366,6 +400,7 @@ config rule 'forward_ffgw_to_wan_192_168'
 	option dest 'wan'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_wan_172_16'
 	option name 'forward_ffgw_to_wan_172_16'
@@ -374,6 +409,7 @@ config rule 'forward_ffgw_to_wan_172_16'
 	option dest 'wan'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_wan_10'
 	option name 'forward_ffgw_to_wan_10'
@@ -382,6 +418,7 @@ config rule 'forward_ffgw_to_wan_10'
 	option dest 'wan'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_wan_100'
 	option name 'forward_ffgw_to_wan_100'
@@ -390,6 +427,7 @@ config rule 'forward_ffgw_to_wan_100'
 	option dest 'wan'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 # only when node is local internet
 config rule 'forward_ffgw_to_wan'
@@ -400,6 +438,7 @@ config rule 'forward_ffgw_to_wan'
 	option dest 'wan'
 	option target 'ACCEPT'
 	option enabled '0'
+	option counter '1'
 
 config rule 'forward_ffgw_to_wan_catch'
 	option name 'forward_ffgw_to_wan_catch'
@@ -407,6 +446,7 @@ config rule 'forward_ffgw_to_wan_catch'
   option src 'ffgw'
 	option dest 'wan'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- ffgw to mesh ----
 config rule 'forward_ffgw_to_mesh_catch'
@@ -415,6 +455,7 @@ config rule 'forward_ffgw_to_mesh_catch'
 	option src 'ffgw'
 	option dest 'mesh'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- ffgw to ffgw ----
 config rule 'forward_ffgw_to_ffgw_catch'
@@ -423,6 +464,7 @@ config rule 'forward_ffgw_to_ffgw_catch'
 	option src 'ffgw'
 	option dest 'ffgw'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- ffgw to vpn ----
 config rule 'forward_ffgw_to_vpn_192_168'
@@ -432,6 +474,7 @@ config rule 'forward_ffgw_to_vpn_192_168'
 	option dest 'vpn'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_vpn_172_16'
 	option name 'forward_ffgw_to_vpn_172_16'
@@ -440,6 +483,7 @@ config rule 'forward_ffgw_to_vpn_172_16'
 	option dest 'vpn'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_vpn_10'
 	option name 'forward_ffgw_to_vpn_10'
@@ -448,6 +492,7 @@ config rule 'forward_ffgw_to_vpn_10'
 	option dest 'vpn'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_vpn_100'
 	option name 'forward_ffgw_to_vpn_100'
@@ -456,6 +501,7 @@ config rule 'forward_ffgw_to_vpn_100'
 	option dest 'vpn'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 # only when node is local internet
 config rule 'forward_ffgw_to_vpn'
@@ -465,6 +511,7 @@ config rule 'forward_ffgw_to_vpn'
 	option src_ip '192.168.0.0/16'
 	option dest 'vpn'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_ffgw_to_vpn_catch'
 	option name 'forward_ffgw_to_vpn_catch'
@@ -472,6 +519,7 @@ config rule 'forward_ffgw_to_vpn_catch'
   option src 'ffgw'
 	option dest 'vpn'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- ffgw to wifi2 ----
 config rule 'forward_ffgw_to_wifi2_catch'
@@ -480,6 +528,7 @@ config rule 'forward_ffgw_to_wifi2_catch'
 	option src 'ffgw'
 	option dest 'wifi2'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- vpn to * ----
 config rule 'forward_vpn_to_any_catch'
@@ -488,6 +537,7 @@ config rule 'forward_vpn_to_any_catch'
 	option src 'vpn'
 	option dest '*'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- wifi2 to lan ----
 config rule 'forward_wifi2_to_lan_192_168'
@@ -497,6 +547,7 @@ config rule 'forward_wifi2_to_lan_192_168'
 	option dest 'lan'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_lan_172_16'
 	option name 'forward_wifi2_to_lan_172_16'
@@ -505,6 +556,7 @@ config rule 'forward_wifi2_to_lan_172_16'
 	option dest 'lan'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_lan_10'
 	option name 'forward_wifi2_to_lan_10'
@@ -513,6 +565,7 @@ config rule 'forward_wifi2_to_lan_10'
 	option dest 'lan'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_lan_100'
 	option name 'forward_wifi2_to_lan_100'
@@ -521,6 +574,7 @@ config rule 'forward_wifi2_to_lan_100'
 	option dest 'lan'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 # only when node is local internet
 config rule 'forward_wifi2_to_lan'
@@ -531,6 +585,7 @@ config rule 'forward_wifi2_to_lan'
 	option dest 'lan'
 	option target 'ACCEPT'
 	option enabled '0'
+	option counter '1'
 
 config rule 'forward_wifi2_to_lan_catch'
 	option name 'forward_wifi2_to_lan_catch'
@@ -538,6 +593,7 @@ config rule 'forward_wifi2_to_lan_catch'
   option src 'wifi2'
 	option dest 'lan'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- wifi2 to wan ----
 config rule 'forward_wifi2_to_wan_192_168'
@@ -547,6 +603,7 @@ config rule 'forward_wifi2_to_wan_192_168'
 	option dest 'wan'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_wan_172_16'
 	option name 'forward_wifi2_to_wan_172_16'
@@ -555,6 +612,7 @@ config rule 'forward_wifi2_to_wan_172_16'
 	option dest 'wan'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_wan_10'
 	option name 'forward_wifi2_to_wan_10'
@@ -563,6 +621,7 @@ config rule 'forward_wifi2_to_wan_10'
 	option dest 'wan'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_wan_100'
 	option name 'forward_wifi2_to_wan_100'
@@ -571,6 +630,7 @@ config rule 'forward_wifi2_to_wan_100'
 	option dest 'wan'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 # only when node is local internet
 config rule 'forward_wifi2_to_wan'
@@ -581,6 +641,7 @@ config rule 'forward_wifi2_to_wan'
 	option dest 'wan'
 	option target 'ACCEPT'
 	option enabled '0'
+	option counter '1'
 
 config rule 'forward_wifi2_to_wan_catch'
 	option name 'forward_wifi2_to_wan_catch'
@@ -588,6 +649,7 @@ config rule 'forward_wifi2_to_wan_catch'
   option src 'wifi2'
 	option dest 'wan'
 	option target 'ACCEPT'
+	option counter '1'
 
 # ---- wifi2 to mesh ----
 config rule 'forward_wifi2_to_mesh_10'
@@ -598,6 +660,7 @@ config rule 'forward_wifi2_to_mesh_10'
 	option dest 'mesh'
 	option dest_ip '10.200.0.0/16'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_mesh_catch'
 	option name 'forward_wifi2_to_mesh_catch'
@@ -605,6 +668,7 @@ config rule 'forward_wifi2_to_mesh_catch'
 	option src 'wifi2'
 	option dest 'mesh'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- wifi2 to ffgw ----
 config rule 'forward_wifi2_to_ffgw_192_168'
@@ -614,6 +678,7 @@ config rule 'forward_wifi2_to_ffgw_192_168'
 	option dest 'ffgw'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_ffgw_172_16'
 	option name 'forward_wifi2_to_ffgw_172_16'
@@ -622,6 +687,7 @@ config rule 'forward_wifi2_to_ffgw_172_16'
 	option dest 'ffgw'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_ffgw_10'
 	option name 'forward_wifi2_to_ffgw_10'
@@ -630,6 +696,7 @@ config rule 'forward_wifi2_to_ffgw_10'
 	option dest 'ffgw'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_ffgw_100'
 	option name 'forward_wifi2_to_ffgw_100'
@@ -638,6 +705,7 @@ config rule 'forward_wifi2_to_ffgw_100'
 	option dest 'ffgw'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_ffgw'
 	option name 'forward_wifi2_to_ffgw'
@@ -646,6 +714,7 @@ config rule 'forward_wifi2_to_ffgw'
 	option src_ip '100.64.0.0/10'
 	option dest 'ffgw'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_ffgw_catch'
 	option name 'forward_wifi2_to_ffgw_catch'
@@ -653,6 +722,7 @@ config rule 'forward_wifi2_to_ffgw_catch'
   option src 'wifi2'
 	option dest 'ffgw'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- wifi2 to vpn ----
 config rule 'forward_wifi2_to_vpn_192_168'
@@ -662,6 +732,7 @@ config rule 'forward_wifi2_to_vpn_192_168'
 	option dest 'vpn'
 	option dest_ip '192.168.0.0/16'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_vpn_172_16'
 	option name 'forward_wifi2_to_vpn_172_16'
@@ -670,6 +741,7 @@ config rule 'forward_wifi2_to_vpn_172_16'
 	option dest 'vpn'
 	option dest_ip '172.16.0.0/12'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_vpn_10'
 	option name 'forward_wifi2_to_vpn_10'
@@ -678,6 +750,7 @@ config rule 'forward_wifi2_to_vpn_10'
 	option dest 'vpn'
 	option dest_ip '10.0.0.0/8'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_vpn_100'
 	option name 'forward_wifi2_to_vpn_100'
@@ -686,6 +759,7 @@ config rule 'forward_wifi2_to_vpn_100'
 	option dest 'vpn'
 	option dest_ip '100.64.0.0/10'
 	option target 'REJECT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_vpn'
 	option name 'forward_wifi2_to_vpn'
@@ -694,6 +768,7 @@ config rule 'forward_wifi2_to_vpn'
 	option src_ip '100.64.0.0/10'
 	option dest 'vpn'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'forward_wifi2_to_vpn_catch'
 	option name 'forward_wifi2_to_vpn_catch'
@@ -701,6 +776,7 @@ config rule 'forward_wifi2_to_vpn_catch'
   option src 'wifi2'
 	option dest 'vpn'
 	option target 'REJECT'
+	option counter '1'
 
 # ---- wifi2 to wifi2 ----
 config rule 'forward_wifi2_to_wifi2_catch'
@@ -709,6 +785,7 @@ config rule 'forward_wifi2_to_wifi2_catch'
 	option src 'wifi2'
 	option dest 'wifi2'
 	option target 'REJECT'
+	option counter '1'
 
 #============================================
 
@@ -722,6 +799,7 @@ config rule
 	option proto 'tcp'
 	option dest_port '22'
 	option target 'ACCEPT'
+	option counter '1'
 
 ##### bmxd #####
 config rule
@@ -731,6 +809,7 @@ config rule
 	option dest_port '4305'
 	option target 'ACCEPT'
 	option family 'ipv4'
+	option counter '1'
 
 config rule
 	option name 'Allow-tbbwg-icmp'
@@ -738,6 +817,7 @@ config rule
 	option proto 'icmp'
 	option family 'ipv4'
 	option target 'ACCEPT'
+	option counter '1'
 
 #### dhcp ####
 # We need to accept udp packets on port 68,
@@ -749,6 +829,7 @@ config rule
 	option dest_port '68'
 	option target 'ACCEPT'
 	option family 'ipv4'
+	option counter '1'
 
 # also broadcasts
 config rule
@@ -759,6 +840,7 @@ config rule
 	option dest_port '67'
 	option target 'ACCEPT'
 	option family 'ipv4'
+	option counter '1'
 
 # also broadcasts
 config rule
@@ -769,6 +851,7 @@ config rule
 	option dest_port '67'
 	option target 'ACCEPT'
 	option family 'ipv4'
+	option counter '1'
 
 #dns
 config rule
@@ -777,6 +860,7 @@ config rule
 	option proto 'udp'
 	option dest_port '53'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule
 	option name 'Allow-dns-wifi2-requests'
@@ -784,6 +868,7 @@ config rule
 	option proto 'udp'
 	option dest_port '53'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule
 	option name 'Allow-dns-mesh-requests'
@@ -791,6 +876,7 @@ config rule
 	option proto 'udp'
 	option dest_port '53'
 	option target 'ACCEPT'
+	option counter '1'
 
 #### http ####
 
@@ -801,6 +887,7 @@ config rule
 	option proto 'tcp'
 	option dest_port '80'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule
 	option name 'Allow-HTTP-mesh'
@@ -809,6 +896,7 @@ config rule
 	option proto 'tcp'
 	option dest_port '80'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule
 	option name 'Allow-HTTP-wifi2'
@@ -817,6 +905,7 @@ config rule
 	option proto 'tcp'
 	option dest_port '80'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule
 	option name 'Allow-HTTPS-lan'
@@ -825,6 +914,7 @@ config rule
 	option proto 'tcp'
 	option dest_port '443'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule
 	option name 'Allow-HTTPS-mesh'
@@ -834,6 +924,7 @@ config rule
 	option dest_port '443'
 	option target 'ACCEPT'
 	option family 'ipv4'
+	option counter '1'
 
 config rule
 	option name 'Allow-HTTPS-wifi2'
@@ -842,6 +933,7 @@ config rule
 	option proto 'tcp'
 	option dest_port '443'
 	option target 'ACCEPT'
+	option counter '1'
 
 # Allow IPv4 ping
 config rule
@@ -850,6 +942,7 @@ config rule
 	option proto 'icmp'
 	option family 'ipv4'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule
 	option name 'Allow-icmp-mesh'
@@ -858,6 +951,7 @@ config rule
 	option proto 'icmp'
 	option family 'ipv4'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule
 	option name 'Allow-icmp-wifi2'
@@ -866,6 +960,7 @@ config rule
 	option proto 'icmp'
 	option family 'ipv4'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'iperf3_mesh_tcp'
 	option name 'Allow-iperf3-mesh-tcp'
@@ -875,6 +970,7 @@ config rule 'iperf3_mesh_tcp'
 	option dest_port '5201'
 	option target 'ACCEPT'
 	option family 'ipv4'
+	option counter '1'
 
 config rule 'iperf3_mesh_udp'
 	option name 'Allow-iperf3-mesh-udp'
@@ -884,6 +980,7 @@ config rule 'iperf3_mesh_udp'
 	option dest_port '5201'
 	option target 'ACCEPT'
 	option family 'ipv4'
+	option counter '1'
 
 config rule 'wanssh'
 	option name 'Allow-wan-ssh'
@@ -891,6 +988,7 @@ config rule 'wanssh'
 	option proto 'tcp'
 	option dest_port '22'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'meshssh'
 	option name 'Allow-mesh-ssh'
@@ -898,6 +996,7 @@ config rule 'meshssh'
 	option proto 'tcp'
 	option dest_port '22'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'wifi2ssh'
 	option name 'Allow-wifi2-ssh'
@@ -905,6 +1004,7 @@ config rule 'wifi2ssh'
 	option proto 'tcp'
 	option dest_port '22'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'wanhttp'
 	option name 'Allow-wan-http'
@@ -912,6 +1012,7 @@ config rule 'wanhttp'
 	option proto 'tcp'
 	option dest_port '80'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'wanhttps'
 	option name 'Allow-wan-https'
@@ -919,12 +1020,14 @@ config rule 'wanhttps'
 	option proto 'tcp'
 	option dest_port '443'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'wanicmp'
 	option name 'Allow-wan-icmp'
 	option src 'wan'
 	option proto 'icmp'
 	option target 'ACCEPT'
+	option counter '1'
 
 config rule 'mesh_ipip'
 	option name 'Allow-ipip-mesh'
@@ -934,6 +1037,7 @@ config rule 'mesh_ipip'
 	option proto '4'
 	option target 'ACCEPT'
 	option family 'ipv4'
+	option counter '1'
 
 config include
 	option path '/etc/firewall.user'

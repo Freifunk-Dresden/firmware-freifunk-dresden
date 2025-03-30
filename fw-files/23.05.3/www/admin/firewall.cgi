@@ -276,20 +276,23 @@ cat <<'EOM'
     }
     selectedGroup = selectedGroup || "filter";
 
-    let navHtml = "<ul id='groupNav'>";
+    let navHtml = ""
+    navHtml += `<b>JSON-Dump: </b><a href="/admin/nft.json">nft.json</a><br><br>\n`;
+		navHtml += "<b>NFT chain types:</b>"
+    navHtml += "<ul id='groupNav'>";
     ["filter", "nat", "route"].forEach(function(gr) {
       navHtml += `<li><a href="#group=${gr}" ${gr===selectedGroup ? "style='font-weight:bold'" : ""}>${gr.charAt(0).toUpperCase()+gr.slice(1)}</a></li>`;
     });
     navHtml += "</ul>\n";
     // Überschrift zur aktiven Gruppe
     navHtml += `<h4>Aktive Gruppe: ${selectedGroup.charAt(0).toUpperCase()+selectedGroup.slice(1)}</h4>\n`;
-    navHtml += "<ul id='chainNav'>";
-    if (groups[selectedGroup]) {
-      groups[selectedGroup].forEach(function(def) {
-        navHtml += `<li><a href="#${def.name.toLowerCase()}">${def.name}</a></li>`;
-      });
-    }
-    navHtml += "</ul>";
+//    navHtml += "<ul id='chainNav'>";
+//    if (groups[selectedGroup]) {
+//      groups[selectedGroup].forEach(function(def) {
+//        navHtml += `<li><a href="#${def.name.toLowerCase()}">${def.name}</a></li>`;
+//      });
+//    }
+//    navHtml += "</ul>";
     document.getElementById("navigation").innerHTML = navHtml;
   }
 
