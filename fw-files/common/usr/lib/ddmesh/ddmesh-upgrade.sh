@@ -362,6 +362,8 @@ upgrade_9_0_0()
 	cp /rom/etc/config/firewall /etc/config/firewall
 	uci -q delete ddmesh.network.mesh_mode
 	uci -q delete credentials.wifi_2g.bssid
+	# no subnet to allow dhcp
+	uci delete firewall.zone_wifi2.subnet
 }
 
 ##################################

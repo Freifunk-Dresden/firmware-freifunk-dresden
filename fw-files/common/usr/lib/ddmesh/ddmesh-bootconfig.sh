@@ -395,12 +395,6 @@ config_update() {
 	lan_net=$NETWORK
 	lan_pre=$PREFIX
 
-	# add source net to zone to avoid fake source ip attacks
-	# except for lan and wan, to allow internet ip going to gw
-	# if bmxd one-way-tunnel is used, we must accept inet
-	uci delete firewall.zone_wifi2.subnet
-	uci add_list firewall.zone_wifi2.subnet="$_ddmesh_wifi2net"
-
 	# firewall rules for user enabled services
 	uci -q del firewall.wanssh
 	test "$(uci -q get ddmesh.system.wanssh)" = "1" && {
