@@ -780,7 +780,7 @@ verify_firmware_present()
 		dev="${dev/*_DEVICE_/}"
 		dev_str="${dev/=*/}"
 
-		printf "verify firmware for: ${dev_str}: "
+		printf "firmware generated: ${dev_str}: "
 
 		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
 		p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
@@ -1585,7 +1585,7 @@ EOM
 	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
 
 		# verify presence of all images
-		echo -e "${C_CYAN}verify images${C_NONE} for ${_cfg_name}"
+		echo -e "${C_CYAN}verify images${C_NONE} for target ${_cfg_name}:"
 		if ! verify_firmware_present "${_cfg_name}" "${outdir}/images"; then
 		echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
 		error=1
