@@ -24,6 +24,7 @@ docker:init:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: init
   script:
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
@@ -47,6 +48,7 @@ docker:eol:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -65,6 +67,7 @@ docker:x86-64:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -83,6 +86,7 @@ docker:ramips:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -101,6 +105,7 @@ docker:ipq40xx:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -119,6 +124,7 @@ docker:lantiq:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -137,6 +143,7 @@ docker:ath79:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -155,6 +162,7 @@ docker:sunxi:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -173,6 +181,7 @@ docker:mpc85xx:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -191,6 +200,7 @@ docker:mediatek:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
