@@ -124,11 +124,11 @@ declare -A color_openwrt
 color_selector['18.06']="${BG_BLACK}"
 color_selector['21.02']="${BG_BLACK}"
 color_selector['22.03']="${BG_BLUE}"
-color_selector['23.05.3']="${BG_PURBLE}"
+color_selector['24.10.0']="${BG_PURBLE}"
 color_selector['8.2.6']="${BG_BLUE}"
 color_firmware['9.0.0']="${BG_PURBLE}"
 color_openwrt['v22.03.7']="${BG_BLUE}"
-color_openwrt['v23.05.3']="${BG_PURBLE}"
+color_openwrt['v24.10.0']="${BG_PURBLE}"
 
 #printf "${color_selector['18.06']}aaa ${color_selector['21.02']}%s ${C_NONE}bbb\n" "value"
 #printf "${color_selector[$v]}aaa ${color_selector['21.02']}%s ${C_NONE}bbb\n" "value"

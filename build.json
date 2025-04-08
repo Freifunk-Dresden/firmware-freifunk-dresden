@@ -66,17 +66,17 @@
   },
   {
     "type":"template",
-    "name":"23.05.3",
-    "openwrt_rev":"v23.05.3",
+    "name":"24.10.0",
+    "openwrt_rev":"v24.10.0",
     "openwrt_variant":"",
-    "selector-config":"23.05.3",
-    "selector-feeds":"23.05.3",
-    "selector-patches":"23.05.3",
-    "selector-files":"23.05.3",
+    "selector-config":"24.10",
+    "selector-feeds":"24.10",
+    "selector-patches":"24.10",
+    "selector-files":"24.10",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"063b2393cbc3" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"648753932d5a" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"201fd099b80a" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"e87b55c6a642" }
     ],
     "packages" : [
       "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
@@ -84,23 +84,23 @@
   },
 
 # =================== targets =======================================================
-# ---------- openwrt 23 ------------------------------------------------------
+# ---------- openwrt 24 ------------------------------------------------------
   {
-    "template":"23.05.3",
-    "name":"ramips.23.mt7621.generic",
-    "config":"ramips.23.mt7621.generic.cfg",
+    "template":"24.10.0",
+    "name":"ramips.24.mt7621.generic",
+    "config":"ramips.24.mt7621.generic.cfg",
     "disabled": false
   },
   {
-    "template":"23.05.3",
-    "name":"ath79.23.generic",
-    "config":"ath79.23.generic.cfg",
+    "template":"24.10.0",
+    "name":"ath79.24.generic",
+    "config":"ath79.24.generic.cfg",
     "disabled": true
   },
   {
-    "template":"23.05.3",
-    "name":"mediatek.23.filogic",
-    "config":"mediatek.23.filogic.cfg",
+    "template":"24.10.0",
+    "name":"mediatek.24.filogic",
+    "config":"mediatek.24.filogic.cfg",
     "disabled": false
   },
 
