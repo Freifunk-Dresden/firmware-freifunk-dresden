@@ -1,6 +1,7 @@
---- a/target/linux/ath79/generic/base-files/etc/board.d/02_network.ori	2023-05-27 14:01:42.596395344 +0200
-+++ b/target/linux/ath79/generic/base-files/etc/board.d/02_network	2023-05-27 14:02:15.712548615 +0200
-@@ -545,7 +545,7 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt24/target/linux/ath79/generic/base-files/etc/board.d/02_network openwrt24.patch/target/linux/ath79/generic/base-files/etc/board.d/02_network
+--- openwrt24/target/linux/ath79/generic/base-files/etc/board.d/02_network	2025-04-08 19:30:02.318229083 +0200
++++ openwrt24.patch/target/linux/ath79/generic/base-files/etc/board.d/02_network	2025-04-08 21:17:33.527559052 +0200
+@@ -597,7 +597,7 @@
  	ubnt,unifiac-mesh-pro|\
  	ubnt,unifiac-pro)
  		ucidef_add_switch "switch0" \
