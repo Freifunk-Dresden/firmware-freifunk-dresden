@@ -13,8 +13,8 @@ diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt24/target/linux/ram
 +# create patch between 'openwrt24' and 'openwrt24.patched'
 +# copy this patch to fw-patches/24.10/...
 +diff -Naur --suppress-blank-empty --strip-trailing-cr drivers/pci/controller/pcie-mt7621.c drivers.patched/pci/controller/pcie-mt7621.c
-+--- drivers/pci/controller/pcie-mt7621.c	2025-01-21 09:49:10.000000000 +0100
-++++ drivers.patched/pci/controller/pcie-mt7621.c	2025-04-09 00:02:19.361675537 +0200
++--- a/drivers/pci/controller/pcie-mt7621.c	2025-01-21 09:49:10.000000000 +0100
+++++ b/drivers/pci/controller/pcie-mt7621.c	2025-04-09 00:02:19.361675537 +0200
 +@@ -60,7 +60,7 @@
 + #define PCIE_PORT_LINKUP		BIT(0)
 + #define PCIE_PORT_CNT			3
