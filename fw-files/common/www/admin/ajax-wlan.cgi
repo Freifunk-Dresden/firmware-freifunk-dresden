@@ -51,7 +51,8 @@ s#	capability: IBSS.*#wifi_mode="ad-hoc";#p
 	#check if this is my own signal
 	test $wifi_signal -eq 0 && continue
 
-	# calulate channel
+	# calulate channel; remove floating point
+	wifi_freq=${wifi_freq%.*}
 	if [ "$wifi_freq" -lt 5000 ]; then
 		wifi_channel=$(( ($wifi_freq-2412)/5 + 1 ))
 	else
