@@ -219,7 +219,7 @@ setup_buildroot ()
 	# 2. copy all version specific files. this will overwrite existing files the came from 'common'
 	# 3. delete files that should be remove.
 	#    Note: files that should be deleted, should end with '~'. for instance, when
-	#    '/www/admin/iptables.cgi' from common is should not present in specific version,
+	#    '/www/admin/iptables.cgi' from common should not be present in specific version,
 	#    then create an empty file '/www/admin/iptables.cgi~'
 	#    this file will then be removed from specific version
 	#
