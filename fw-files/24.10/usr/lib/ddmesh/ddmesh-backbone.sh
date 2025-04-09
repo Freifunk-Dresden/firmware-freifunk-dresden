@@ -211,7 +211,7 @@ callback_outgoing_wireguard_connection ()
 
 		eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 		local remote_wg_ip=$_ddmesh_wireguard_ip
-		wg set $tbbwg_ifname peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
+		wg set $tbbwg_ifname fwmark 0x5002 peer $key persistent-keepalive 25 allowed-ips $remote_wg_ip/32 endpoint $host:$port
 
 	fi
 }
@@ -276,6 +276,7 @@ setup_firewall()
 		$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-mesh-jump\""
 		$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-ffgw-jump\""
 		$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-wifi2-jump\""
+		$NFT insert rule inet fw4 input_vpn position 0 counter jump ddmesh_backbone_input_reject comment "\"${MARKER}-vpn-jump\""
 
 		MARKER="ddmesh-backbone-out"
 		$NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_backbone_output_accept comment "\"${MARKER}-wan-jump\""
@@ -283,6 +284,7 @@ setup_firewall()
 		$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-mesh-jump\""
 		$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-ffgw-jump\""
 		$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-wifi2-jump\""
+		$NFT insert rule inet fw4 output_vpn position 0 counter jump ddmesh_backbone_output_reject comment "\"${MARKER}-vpn-jump\""
 	fi
 }
 
@@ -298,8 +300,8 @@ callback_firewall_outgoing()
 	if [ -n "$host" -a -n "$port" ]; then
 		#dont use hostnames, can not be resolved
 		MARKER="ddmesh-backbone-out"
-		$NFT add rule inet fw4 ddmesh_backbone_output_accept udp dport ${port} counter accept comment "\"${MARKER}-accept\""
-		$NFT add rule inet fw4 ddmesh_backbone_output_reject udp dport ${port} counter goto handle_reject comment "\"${MARKER}-reject\""
+		$NFT add rule inet fw4 ddmesh_backbone_output_accept udp dport ${port} counter accept comment "\"${MARKER}-accept (${host})\""
+		$NFT add rule inet fw4 ddmesh_backbone_output_reject udp dport ${port} counter goto handle_reject comment "\"${MARKER}-reject (${host})\""
 	fi
 }
 
