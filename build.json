@@ -67,7 +67,7 @@
   {
     "type":"template",
     "name":"24.10.0",
-    "openwrt_rev":"v24.10.0",
+    "openwrt_rev":"v24.10.1",
     "openwrt_variant":"",
     "selector-config":"24.10",
     "selector-feeds":"24.10",
@@ -75,8 +75,8 @@
     "selector-files":"24.10",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"201fd099b80a" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"e87b55c6a642" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d8cd30f4e281" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"c9b636698881" }
     ],
     "packages" : [
       "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
