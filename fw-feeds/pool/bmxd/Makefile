@@ -4,7 +4,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bmxd
-PKG_VERSION:=1.1-freifunk-dresden
+PKG_VERSION:=1.2
 PKG_RELEASE:=2
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
@@ -28,8 +28,7 @@ define Package/bmxd
 endef
 
 define Package/bmxd/description
- Modifiziertes bmxd: Beim Gateway umschalten wird /etc/batmand.gw.sh
- aufgerufen. Einige Bufixes.
+ routing deamon for Freifunk Dresden
 endef
 
 define Build/Prepare

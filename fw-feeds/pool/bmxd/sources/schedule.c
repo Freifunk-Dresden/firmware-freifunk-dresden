@@ -306,7 +306,15 @@ static void recv_ifevent_netlink_sk(void)
 	char buf[4096]; //test this with a very small value !!
 	struct iovec iov = {buf, sizeof(buf)};
 	struct sockaddr_nl sa;
-	struct msghdr msg = {(void *)&sa, sizeof(sa), &iov, 1, NULL, 0, 0};
+	struct msghdr msg = {0};
+
+	msg.msg_name = (void *)&sa;
+	msg.msg_namelen = sizeof(sa);
+	msg.msg_iov = &iov;
+	msg.msg_iovlen = 1;
+	msg.msg_control = NULL;
+	msg.msg_controllen = 0;
+	msg.msg_flags = 0;
 
 	while (recvmsg(ifevent_sk, &msg, 0) > 0)
 		;
