@@ -105,13 +105,13 @@
 # =================== targets =======================================================
 # ---------- openwrt 24 ------------------------------------------------------
   {
-    "template":"24.10.1",
+    "template":"master",
     "name":"ramips.24.mt7621.generic",
     "config":"ramips.24.mt7621.generic.cfg",
     "disabled": false
   },
   {
-    "template":"24.10.1",
+    "template":"master",
     "name":"ath79.24.generic",
     "config":"ath79.24.generic.cfg",
     "disabled": true
@@ -251,12 +251,6 @@
     "name":"eol.ath79.22.small",
     "config":"eol.ath79.22.small.cfg"
   },
-  // { # memory error on openwrt 23.05 so stick to 22.03
-  //   "template":"22.03",
-  //   "name":"ramips.22.mt7621.generic",
-  //   "config":"moved-to-23.ramips.22.mt7621.generic.cfg",
-	// 	"disabled": false
-  // },
 
 # ---------- openwrt 21 ------------------------------------------------------
   // {

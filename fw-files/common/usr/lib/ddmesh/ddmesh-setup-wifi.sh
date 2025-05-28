@@ -260,7 +260,8 @@ setup_wireless()
 #boot_step is empty for new devices
 boot_step="$(uci get ddmesh.boot.boot_step)"
 
-if [ "$boot_step" = "2" -o ! -f /etc/config/wireless ];
+ddmesh_wifi_configured="$(uci -q get wireless.ddmesh)"
+if [ "$boot_step" = "2" -o ! -f /etc/config/wireless -o -z "$ddmesh_wifi_configured" ];
 then
 	logger -s -t "$LOGGER_TAG" "setup wifi config"
 	setup_wireless
