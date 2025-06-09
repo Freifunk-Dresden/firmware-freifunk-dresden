@@ -1,0 +1,39 @@
+diff -Naur --suppress-blank-empty --strip-trailing-cr openwrt24/target/linux/ramips/patches-6.6/901-ffdd-add-wifi-pci-init-delay-to-proper-detect-wifi2.4ghz.patch openwrt24.p/target/linux/ramips/patches-6.6/901-ffdd-add-wifi-pci-init-delay-to-proper-detect-wifi2.4ghz.patch
+--- openwrt24/target/linux/ramips/patches-6.6/901-ffdd-add-wifi-pci-init-delay-to-proper-detect-wifi2.4ghz.patch	1970-01-01 01:00:00.000000000 +0100
++++ openwrt24.p/target/linux/ramips/patches-6.6/901-ffdd-add-wifi-pci-init-delay-to-proper-detect-wifi2.4ghz.patch	2025-04-09 00:04:22.610380873 +0200
+@@ -0,0 +1,35 @@
++# steps to create this patch:
++# checkout openwrt and run make menuconfig (select image ramips netgear r6220)
++# build image until tools are built and drivers are downloaded
++# ./build_dir/target-mipsel_24kc_musl/linux-ramips_mt7621/linux-6.6.73/drivers/pci/controller/pcie-mt7621.c
++# copy directory 'drivers' and add changes
++# create patch between 'drivers' and 'drivers.patched'
++# correct path in patches to a/drivers/pci/controller/pcie-mt7621.c
++# copy patch to openwrt24.patched (a clean copy of openwrt24) to openwrt24.patched/target/linux/ramips/patches-6.6
++# create patch between 'openwrt24' and 'openwrt24.patched'
++# copy this patch to fw-patches/24.10/...
++diff -Naur --suppress-blank-empty --strip-trailing-cr drivers/pci/controller/pcie-mt7621.c drivers.patched/pci/controller/pcie-mt7621.c
++--- a/drivers/pci/controller/pcie-mt7621.c	2025-01-21 09:49:10.000000000 +0100
+++++ b/drivers/pci/controller/pcie-mt7621.c	2025-04-09 00:02:19.361675537 +0200
++@@ -60,7 +60,7 @@
++ #define PCIE_PORT_LINKUP		BIT(0)
++ #define PCIE_PORT_CNT			3
++
++-#define INIT_PORTS_DELAY_MS		100
+++#define INIT_PORTS_DELAY_MS		250 //100; Freifunk Netgear R6220 wifi 2.4ghz init chipset patch
++ #define PERST_DELAY_MS			100
++
++ /**
++@@ -352,8 +352,12 @@
++ 	u8 num_disabled = 0;
++ 	int err;
++
+++	//100; Freifunk Netgear R6220 wifi 2.4ghz init chipset patch
+++	mdelay(250);
++ 	mt7621_pcie_reset_assert(pcie);
+++	mdelay(250);
++ 	mt7621_pcie_reset_rc_deassert(pcie);
+++	mdelay(250);
++
++ 	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
++ 		u32 slot = port->slot;

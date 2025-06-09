@@ -32,26 +32,26 @@
     "type":"template",        # specifes that this object is a template for other targets or not.
                               # values: "template | target"
                               # default for "type" is "target"
-    "name":"22.03",           # template or target name
+    "name":"22.03",           # [template|target ]template or target name
 
-    "template":"",            # name of the default template configuration
-    "config":"",              # config file name
-    "disabled": false,        # if type is "template" then all targets are disabled, unless one target overwrites it
+    "template":"",            # [target]          name of the template configuration
+    "config":"",              # [target]          config file name
+    "disabled": false,        # [template|target] if type is "template" then all targets are disabled, unless one target overwrites it
                               # values: "true | false"
-    "openwrt_rev":"v22.03.7",
-    "openwrt_variant":"",     # creates a separate buildroot. use it for low-mem devices
-                              # where no kernel modules (e.g.: usb) must be included.
-                              # Note that selecting some packages as module could have
-                              # dependencies to kernel modules/libs, that are included
-                          # in image also if package is optional (ipk)
-                          # This value is added to config file name
+    "openwrt_rev":"v22.03.7", # [template|target]
+    "openwrt_variant":"",     # [template|target] creates a separate buildroot. use it for low-mem devices
+                              #                   where no kernel modules (e.g.: usb) must be included.
+                              #                   Note that selecting some packages as module could have
+                              #                   dependencies to kernel modules/libs, that are included
+                              #                   in image also if package is optional (ipk)
+                              #                   This value is added to config file name
 
-    "selector-config" :"22.03",  # used to select config
-    "selector-feeds"  :"22.03",  # used to select feeds
-    "selector-patches":"22.03",  # used to select patches
-    "selector-files"  :"22.03",
+    "selector-config" :"22.03",  # [template|target] used to select config
+    "selector-feeds"  :"22.03",  # [template|target] used to select feeds
+    "selector-patches":"22.03",  # [template|target] used to select patches
+    "selector-files"  :"22.03",  # [template|target] used to select files
 
-    # generates the feeds/feeds-[selector].conf
+    # [template|target] generates the feeds/feeds-[selector].conf
     # for short commit value use: git log --abbrev-commit
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
@@ -59,15 +59,55 @@
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1ff9ee61cde0" }
     ],
 
-    # install addional packages from feeds (see feeds.conf)
+    # [template|target] install addional packages from feeds (see feeds.conf)
+    "packages" : [
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
+    ]
+  },
+  { # --- eol openwrt 18 -------------
+    "type":"template",
+    "name":"18.06",
+    "disabled": false,
+    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
+    "openwrt_variant"  : "lowmem",
+    "selector-config"  : "18.06",
+    "selector-feeds"   : "18.06",
+    "selector-patches" : "18.06",
+    "selector-files"   : "18.06",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
+    ],
+    "packages":[
+      "libpam","libcap","libopenldap",
+      "libidn2","libssh2","libnetsnmp",
+      "libcap", "jansson", "kmod-cryptodev", "liblzma"
+    ]
+  },
+
+	{
+    "type":"template",
+    "name":"wifitest",
+    "openwrt_rev":"v23.05.5",
+    "openwrt_variant":"",
+    "selector-config":"wifitest",
+    "selector-feeds":"wifitest",
+    "selector-patches":"wifitest",
+    "selector-files":"wifitest",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"b5ed85f6e9" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"e351d1e623e" }
+    ],
     "packages" : [
       "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
     ]
   },
   {
     "type":"template",
-    "name":"24.10.1",
-    "openwrt_rev":"v24.10.1",
+    "name":"24.10rc5",
+    "openwrt_rev":"v24.10.0-rc5",
     "openwrt_variant":"",
     "selector-config":"24.10",
     "selector-feeds":"24.10",
@@ -75,14 +115,13 @@
     "selector-files":"24.10",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"d8cd30f4e281" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"c9b636698881" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"c84e022ee9fae" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"84d97e684bcb6" }
     ],
     "packages" : [
       "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
     ]
   },
-
   {
     "type":"template",
     "name":"master",
@@ -103,21 +142,27 @@
   },
 
 # =================== targets =======================================================
+  {
+    "template":"wifitest",
+    "name":"wifitest",
+    "config":"wifitest-ramips.mt7621.generic.cfg",
+    "disabled": false
+  },
 # ---------- openwrt 24 ------------------------------------------------------
   {
-    "template":"master",
+    "template":"24.10rc5",
     "name":"ramips.24.mt7621.generic",
     "config":"ramips.24.mt7621.generic.cfg",
     "disabled": false
   },
   {
-    "template":"master",
+    "template":"24.10rc5",
     "name":"ath79.24.generic",
     "config":"ath79.24.generic.cfg",
     "disabled": true
   },
   {
-    "template":"master",
+    "template":"24.10rc5",
     "name":"mediatek.24.filogic",
     "config":"mediatek.24.filogic.cfg",
     "disabled": false
@@ -273,27 +318,6 @@
   // },
 
 # ---------- openwrt 18 -- eol (end of life) -----------------------------------
-  {
-    "type":"template",
-    "name":"18.06",
-    "disabled": false,
-    "openwrt_rev":"5625f5bc36954d644cb80adf8de47854c65d91c3", # 18.06 08-11-2020
-    "openwrt_variant"  : "lowmem",
-    "selector-config"  : "18.06",
-    "selector-feeds"   : "18.06",
-    "selector-patches" : "18.06",
-    "selector-files"   : "18.06",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"de3766173" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"ff5100e" }
-    ],
-    "packages":[
-      "libpam","libcap","libopenldap",
-      "libidn2","libssh2","libnetsnmp",
-      "libcap", "jansson", "kmod-cryptodev", "liblzma"
-    ]
-  },
   {
     "template":"18.06",
     "name":"eol.ar71xx.18.tiny",
