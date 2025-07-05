@@ -52,11 +52,13 @@
     "selector-files"  :"22.03",  # [template|target] used to select files
 
     # [template|target] generates the feeds/feeds-[selector].conf
-    # for short commit value use: git log --abbrev-commit
+    # revision is either a hash (for short commit value use: git log --abbrev-commit)
+    # or special word 'default' which then uses the revision from feed.conf.default of the
+    # selected openwrt revision (openwrt_rev)
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"3b79b05673a1" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"1ff9ee61cde0" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"default" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
     ],
 
     # [template|target] install addional packages from feeds (see feeds.conf)
@@ -97,8 +99,8 @@
     "selector-files":"wifitest",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"b5ed85f6e9" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"e351d1e623e" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"default" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
     ],
     "packages" : [
       "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
@@ -115,8 +117,26 @@
     "selector-files":"24.10",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"c84e022ee9fae" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"84d97e684bcb6" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"default" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
+    ],
+    "packages" : [
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
+    ]
+  },
+  {
+    "type":"template",
+    "name":"24.10.2",
+    "openwrt_rev":"v24.10.2",
+    "openwrt_variant":"",
+    "selector-config":"24.10",
+    "selector-feeds":"24.10",
+    "selector-patches":"24.10",
+    "selector-files":"24.10",
+    "feeds" : [
+      { "type":"src-link", "name":"ddmesh",   "src":"" },
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"default" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
     ],
     "packages" : [
       "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
@@ -133,8 +153,8 @@
     "selector-files":"master",
     "feeds" : [
       { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"HEAD" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"HEAD" }
+      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"default" },
+      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
     ],
     "packages" : [
       "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
@@ -162,7 +182,8 @@
     "disabled": true
   },
   {
-    "template":"24.10rc5",
+    # "template":"24.10rc5",
+    "template":"24.10.2",
     "name":"mediatek.24.filogic",
     "config":"mediatek.24.filogic.cfg",
     "disabled": false
@@ -296,26 +317,6 @@
     "name":"eol.ath79.22.small",
     "config":"eol.ath79.22.small.cfg"
   },
-
-# ---------- openwrt 21 ------------------------------------------------------
-  // {
-  //   "type":"template",
-  //   "name":"21.02.3",
-  // 	"openwrt_rev":"v21.02.3", # "42a15ca378e1bc52f125f894d748c31ce3c52903"
-  //   "openwrt_variant":"",
-  //   "selector-config":"21.02",
-  //   "selector-feeds":"21.02",
-  //   "selector-patches":"21.02",
-  //   "selector-files":"21.02",
-  //   "feeds" : [
-  //     { "type":"src-link", "name":"ddmesh",   "src":"" },
-  //     { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"ce0446269" },
-  //     { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"bdefc83" }
-  //   ],
-  //   "packages" : [
-  //     "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "iperf3"
-  //   ]
-  // },
 
 # ---------- openwrt 18 -- eol (end of life) -----------------------------------
   {
