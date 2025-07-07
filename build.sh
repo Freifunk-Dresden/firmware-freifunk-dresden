@@ -835,7 +835,7 @@ bash_completion()
 	#this function must be alled "sourced" to tell bash how to complete
 	# list all values that bash should complete
 
-	ARGS="list lt list-targets watch devices search feed-revisions clean menuconfig defconfig rerun all failed"
+	ARGS="list lt list-targets watch devices search clean menuconfig defconfig rerun all failed"
 
 	# add targets
 	ARGS="${ARGS} $(listTargetsNames)"
@@ -879,8 +879,6 @@ usage()
    watch                   - same as 'list' but updates display
    devices [target]        - displays all selected routers for a target
    search <string>         - search specific router (target)
-   feed-revisions          - displays the openwrt default feed revisions.
-                             The revisions then could be set in build.json
 
    target-pattern          - target to build
            that are defined by build.json. use 'list' for supported targets.
@@ -1024,7 +1022,6 @@ if $USE_DOCKER; then
 		lt | list-targets) ;;
 		search) ;;
 		clean) ;;
-		feed-revisions) ;;
 
 		*)
 			if [ "$target" = "all" ]; then
@@ -1110,11 +1107,6 @@ case "$1" in
 					# fi
 					print_devices_for_target $2
 				#verify_firmware_present $2 $3 && echo ok || echo fehler
-					exit 0
-					;;
-
-		feed-revisions)
-					echo "!!! go to openwrt build directory and look at 'feeds.conf.default'"
 					exit 0
 					;;
 
@@ -1415,7 +1407,7 @@ EOM
       # default revision from openwrt file feeds.conf.default should be used.
       # this makes build.json configuration of feeds more simple
       if [ "${_feed_rev}" = "default" ]; then
-        _feed_url="$(cat ${defaultFeedConfFileName} | awk '/'${_feed_name}'/{print $3}')"
+        _feed_url="$(cat ${defaultFeedConfFileName} | awk '/^src-git[ ]+'${_feed_name}'/{print $3}')"
       else
   			test -n "${_feed_rev}" && _feed_rev="^${_feed_rev}"
         _feed_url="${_feed_src}${_feed_rev}"

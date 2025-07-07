@@ -87,29 +87,10 @@
       "libcap", "jansson", "kmod-cryptodev", "liblzma"
     ]
   },
-
-	{
-    "type":"template",
-    "name":"wifitest",
-    "openwrt_rev":"v23.05.5",
-    "openwrt_variant":"",
-    "selector-config":"wifitest",
-    "selector-feeds":"wifitest",
-    "selector-patches":"wifitest",
-    "selector-files":"wifitest",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"default" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
-    ],
-    "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
-    ]
-  },
   {
     "type":"template",
-    "name":"24.10rc5",
-    "openwrt_rev":"v24.10.0-rc5",
+    "name":"24.10.2",
+    "openwrt_rev":"v24.10.2",
     "openwrt_variant":"",
     "selector-config":"24.10",
     "selector-feeds":"24.10",
@@ -126,7 +107,7 @@
   },
   {
     "type":"template",
-    "name":"24.10.2",
+    "name":"test",
     "openwrt_rev":"v24.10.2",
     "openwrt_variant":"",
     "selector-config":"24.10",
@@ -162,27 +143,20 @@
   },
 
 # =================== targets =======================================================
-  {
-    "template":"wifitest",
-    "name":"wifitest",
-    "config":"wifitest-ramips.mt7621.generic.cfg",
-    "disabled": false
-  },
 # ---------- openwrt 24 ------------------------------------------------------
   {
-    "template":"24.10rc5",
+    "template":"24.10.2",
     "name":"ramips.24.mt7621.generic",
     "config":"ramips.24.mt7621.generic.cfg",
     "disabled": false
   },
   {
-    "template":"24.10rc5",
+    "template":"24.10.2",
     "name":"ath79.24.generic",
     "config":"ath79.24.generic.cfg",
     "disabled": true
   },
   {
-    # "template":"24.10rc5",
     "template":"24.10.2",
     "name":"mediatek.24.filogic",
     "config":"mediatek.24.filogic.cfg",
