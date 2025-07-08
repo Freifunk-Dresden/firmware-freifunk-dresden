@@ -48,46 +48,46 @@ setup_ipv6_rules()
 
 # these rules prevent access router via ip addresses from different interfaces.
 # function flushs chain and re-adds rules. it is save to call this anytime
-setup_blocked_iface_ip()
-{
-	logger -s -t $TAG "setup_blocked_iface_ip"
-	MARKER="ddmesh-block-iface-ip"
-
-	#add tables that are later filled with IPs that should be blocked.
-	# loop through zones
-	for i in mesh wifi2 ffgw lan wan vpn
-	do
-		chain="ddmesh_input_${i}_deny"
-		# create chains (with counter, but do not register with standard hooks because chain is added
-		# to specific openwrt chain
-		$NFT create chain inet fw4 ${chain} '{counter;}' 2>/dev/null
-		$NFT flush chain inet fw4 ${chain}
-
-		# insert my chains into openwrt chains
-		present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.comment=\"${MARKER}-${i}-jump\"].rule.handle")"
-		if [ -z "$present" ]; then
-			$NFT insert rule inet fw4 input_${i} position 0 counter jump ${chain} comment "\"${MARKER}-${i}-jump\""
-		fi
-	done
-
-	# -- lan --
-	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
-		for i in mesh wifi2 ffgw wan vpn
-		do
-			chain="ddmesh_input_${i}_deny"
-			$NFT add rule inet fw4 ${chain} ip daddr "${lan_network}/${lan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}-reject\""
-		done
-	fi
-
-	# -- wan --
-	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
-		for i in mesh wifi2 ffgw lan vpn
-		do
-			chain="ddmesh_input_${i}_deny"
-			$NFT add rule inet fw4 ${chain} ip daddr "${wan_network}/${wan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}-reject\""
-		done
-	fi
-}
+#setup_blocked_iface_ip()
+#{
+#	logger -s -t $TAG "setup_blocked_iface_ip"
+#	MARKER="ddmesh-block-iface-ip"
+#
+#	#add tables that are later filled with IPs that should be blocked.
+#	# loop through zones
+#	for i in mesh wifi2 ffgw lan wan vpn
+#	do
+#		chain="ddmesh_input_${i}_deny"
+#		# create chains (with counter, but do not register with standard hooks because chain is added
+#		# to specific openwrt chain
+#		$NFT create chain inet fw4 ${chain} '{counter;}' 2>/dev/null
+#		$NFT flush chain inet fw4 ${chain}
+#
+#		# insert my chains into openwrt chains
+#		present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.comment=\"${MARKER}-${i}-jump\"].rule.handle")"
+#		if [ -z "$present" ]; then
+#			$NFT insert rule inet fw4 input_${i} position 0 counter jump ${chain} comment "\"${MARKER}-${i}-jump\""
+#		fi
+#	done
+#
+#	# -- lan --
+#	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
+#		for i in mesh wifi2 ffgw wan vpn
+#		do
+#			chain="ddmesh_input_${i}_deny"
+#			$NFT add rule inet fw4 ${chain} ip daddr "${lan_network}/${lan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}-reject\""
+#		done
+#	fi
+#
+#	# -- wan --
+#	if [ "$wan_up" = "1" -a -n "$wan_network" -a -n "$wan_mask" ]; then
+#		for i in mesh wifi2 ffgw lan vpn
+#		do
+#			chain="ddmesh_input_${i}_deny"
+#			$NFT add rule inet fw4 ${chain} ip daddr "${wan_network}/${wan_mask}" counter goto handle_reject comment "\"${MARKER}-${i}-reject\""
+#		done
+#	fi
+#}
 
 setup_nat_rules()
 {
@@ -210,16 +210,16 @@ setup_ignored_nodes() {
 case "$1" in
 	restart_firewall)
 		setup_ipv6_rules
-		setup_blocked_iface_ip
+#		setup_blocked_iface_ip
 		setup_nat_rules
 		setup_ignored_nodes
 
 		;;
 
-  firewall-update)
-    # used for hotplug wan port
-    setup_blocked_iface_ip
-    ;;
+#  firewall-update)
+#    # used for hotplug wan port
+#    setup_blocked_iface_ip
+#    ;;
 
 	update-ignore)
 		setup_ignored_nodes

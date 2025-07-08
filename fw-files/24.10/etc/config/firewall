@@ -797,6 +797,76 @@ config rule 'forward_wifi2_to_wifi2_catch'
 #============================================
 
 ## INPUT Rules ###
+# first block input with wrong IP
+config rule
+	option name 'Block-mesh-192.168'
+	option src 'mesh'
+	option dest_ip '192.168.0.0/16'
+	option target 'REJECT'
+	option counter '1'
+
+config rule
+	option name 'Block-mesh-172.12'
+	option src 'mesh'
+	option dest_ip '172.16.0.0/12'
+	option target 'REJECT'
+	option counter '1'
+
+config rule
+	option name 'Block-tbbwg-192.168'
+	option src 'tbbwg'
+	option dest_ip '192.168.0.0/16'
+	option target 'REJECT'
+	option counter '1'
+
+config rule
+	option name 'Block-tbbwg-172.12'
+	option src 'tbbwg'
+	option dest_ip '172.16.0.0/12'
+	option target 'REJECT'
+	option counter '1'
+
+config rule
+	option name 'Block-vpn-all'
+	option src 'vpn'
+	option target 'REJECT'
+	option counter '1'
+
+config rule
+	option name 'Block-vpn-172.12'
+	option src 'vpn'
+	option dest_ip '172.16.0.0/12'
+	option target 'REJECT'
+	option counter '1'
+
+config rule
+	option name 'Block-ffgw-192.168'
+	option src 'ffgw'
+	option dest_ip '192.168.0.0/16'
+	option target 'REJECT'
+	option counter '1'
+
+config rule
+	option name 'Block-ffgw-172.12'
+	option src 'ffgw'
+	option dest_ip '172.16.0.0/12'
+	option target 'REJECT'
+	option counter '1'
+
+config rule
+	option name 'Block-wifi2-192.168'
+	option src 'wifi2'
+	option dest_ip '192.168.0.0/16'
+	option target 'REJECT'
+	option counter '1'
+
+config rule
+	option name 'Block-wifi2-172.12'
+	option src 'wifi2'
+	option dest_ip '172.16.0.0/12'
+	option target 'REJECT'
+	option counter '1'
+
 
 #### ssh ####
 config rule
