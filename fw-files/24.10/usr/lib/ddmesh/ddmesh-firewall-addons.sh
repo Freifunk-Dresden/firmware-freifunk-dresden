@@ -216,6 +216,11 @@ case "$1" in
 
 		;;
 
+  firewall-update)
+    # used for hotplug wan port
+    setup_blocked_iface_ip
+    ;;
+
 	update-ignore)
 		setup_ignored_nodes
 		;;
