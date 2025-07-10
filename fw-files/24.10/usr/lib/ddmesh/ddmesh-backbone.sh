@@ -491,13 +491,13 @@ case "$1" in
 		fi
 		;;
 
-		gen_wgsecret_key)
+	gen_wgsecret_key)
 		if [ -n "$WG_BIN" ]; then
 						gen_wg_key
 		fi
 					;;
 
-		get_public_key)
+	get_public_key)
 		if [ -n "$FASTD_BIN" ]; then
 			fastd --machine-readable --show-key --config $FASTD_CONF
 		fi

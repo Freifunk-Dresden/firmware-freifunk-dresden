@@ -132,6 +132,10 @@ setup_ethernet()
 			done
 		fi
 	done
+
+  # ------- disable ipv6 interfaces ------
+  # which also stops odhcp6c
+  uci -q delete network.wan6
 }
 
 setup_mesh()
