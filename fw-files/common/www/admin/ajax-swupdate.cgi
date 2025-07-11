@@ -18,17 +18,21 @@ download_file_info()
 	error=$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.error')
 	test -n "$error" && TESTING_FILE_INFO_JSON=""
 
-	firmware_release_version=$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.firmware_version')
-	firmware_release_url="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.firmware_url')"
-	firmware_release_md5sum="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.md5sum')"
-	firmware_release_filename="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.filename')"
-	firmware_release_comment="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.comment')"
+  if [ -n "$RELEASE_FILE_INFO_JSON" ]; then
+  	firmware_release_version=$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.firmware_version')
+  	firmware_release_url="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.firmware_url')"
+  	firmware_release_md5sum="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.md5sum')"
+  	firmware_release_filename="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.filename')"
+  	firmware_release_comment="$(echo $RELEASE_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.comment')"
+  fi
 
-	firmware_testing_version=$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.firmware_version')
-	firmware_testing_url="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.firmware_url')"
-	firmware_testing_md5sum="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.md5sum')"
-	firmware_testing_filename="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.filename')"
-	firmware_testing_comment="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.comment')"
+  if  [ -n "$TESTING_FILE_INFO_JSON" ]; then
+  	firmware_testing_version=$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.firmware_version')
+  	firmware_testing_url="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.firmware_url')"
+  	firmware_testing_md5sum="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.md5sum')"
+  	firmware_testing_filename="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.filename')"
+  	firmware_testing_comment="$(echo $TESTING_FILE_INFO_JSON | jsonfilter -e '@.fileinfo.comment')"
+  fi
 }
 
 download_file_info
