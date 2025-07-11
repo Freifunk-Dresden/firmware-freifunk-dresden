@@ -2074,7 +2074,7 @@
       "disabled": "0",
       "name": "",
       "sortkey": "ipq40xx-generic-avm_fritzbox-4040-squashfs-sysupgrade.bin",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "avm,fritzbox-4040",
       "model2": "AVM FRITZ!Box 4040",
       "filename": "freifunk-dresden-v8.2.6-22.03.7-ipq40xx-generic-avm_fritzbox-4040-squashfs-sysupgrade.bin",
