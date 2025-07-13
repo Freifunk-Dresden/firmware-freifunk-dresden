@@ -865,14 +865,14 @@ usage()
    -s    opens a shell to running docker
 
   commands:
-	 bash-completion         - adds bash completion. Must be called from same directory
-														 where "build.sh" is located.
-														 Example:
-															 $ cd ~/projects/freifunk/firmware
-															 $ source ./build.sh bash-completion
+   bash-completion         - adds bash completion. Must be called from same directory
+                             where "build.sh" is located.
+                             Example:
+                              $ cd ~/projects/freifunk/firmware
+                              $ source ./build.sh bash-completion
 
-														 add an alias to your .bash_aliases
-														 $ alias ff='cd ~/projects/freifunk/firmware; source ./build.sh bash-completion'
+                             add an alias to your .bash_aliases
+                              $ alias ff='cd ~/projects/freifunk/firmware; source ./build.sh bash-completion'
 
    list                    - lists all available targets
    lt | list-targets       - lists only target names for usage in IDE
@@ -891,14 +891,13 @@ usage()
   flags
    clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    menuconfig       - displays configuration menu
-	 defconfig        - only updates configs (dependencies)
+   defconfig        - only updates configs (dependencies)
    rerun            - enables a second compilation with make option 'V=s'
                       If first make failes a second make is tried with this option
    -- make params   - all paramerters that follows are passed to make command
 
 
 Devel-Notes:
-
  To compile a specific feed change to workdir and call something like:
 
      make package/feeds/ddmesh/fastd/compile -j1 V=s
