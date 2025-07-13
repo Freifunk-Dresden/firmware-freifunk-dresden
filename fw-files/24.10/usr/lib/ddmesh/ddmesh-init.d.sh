@@ -45,6 +45,7 @@ start() {
 	# depends on ddmesh-bootconfig.sh
 	/usr/lib/ddmesh/ddmesh-led.sh wifi off
 
+  # -- start: firewall delay
 	# wait for wifi before setting firewall, because it would be run parallel
 	[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
 
@@ -52,14 +53,7 @@ start() {
 	logger -t "SLEEP" "SLEEP START (give netifd 60s)"
 	sleep 60
 	logger -t "SLEEP" "SLEEP END"
-
-	logger -s -t $LOGGER_TAG "restart firewall"
-	fw4 restart
-	# manually update (firmware still not running, see test in /etc/firewall.user)
-	/usr/lib/ddmesh/ddmesh-firewall-addons.sh restart_firewall
-	/usr/lib/ddmesh/ddmesh-portfw.sh load
-	/usr/lib/ddmesh/ddmesh-backbone.sh restart_firewall
-	/usr/lib/ddmesh/ddmesh-privnet.sh restart_firewall
+  # -- end: firewall delay
 
 	#check if we have a node
 	test -z "$(uci get ddmesh.system.node)" && logger -s -t $LOGGER_TAG "router not registered" && exit
@@ -111,6 +105,9 @@ start() {
 	# enable hotplug events, and bmxd-gateway.sh calles before starting bmxd
 	# to avoid missing events
 	touch /tmp/freifunk-running
+
+  # update firewall (after touching /tmp/freifunk-running)
+  fw4 restart
 
 	# AFTER dnsmasq (bmxd script will set resolv.conf.final)
 	# and at latest as possible (causes hotplug events and possible ubus call deadlock)

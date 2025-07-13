@@ -3,9 +3,12 @@
 
 # called by fw4 after start, restart and reload
 
-test -f /tmp/freifunk-running || exit 0
+FF_RUNNING="$(test -f /tmp/freifunk-running && echo yes || echo no)"
+logger -t "firewall.user" "update freifunk firewall: freifunk running: $FF_RUNNING;"
 
-/usr/lib/ddmesh/ddmesh-firewall-addons.sh restart_firewall
-/usr/lib/ddmesh/ddmesh-portfw.sh load
-/usr/lib/ddmesh/ddmesh-backbone.sh restart_firewall
-/usr/lib/ddmesh/ddmesh-privnet.sh restart_firewall
+if [ "$FF_RUNNING" = "yes" ]; then
+  /usr/lib/ddmesh/ddmesh-firewall-addons.sh restart_firewall
+  /usr/lib/ddmesh/ddmesh-portfw.sh load
+  /usr/lib/ddmesh/ddmesh-backbone.sh restart_firewall
+  /usr/lib/ddmesh/ddmesh-privnet.sh restart_firewall
+fi
