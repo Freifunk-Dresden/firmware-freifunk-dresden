@@ -9,21 +9,28 @@ PIDFILE="/var/run/ddmesh-tasks.pid"
 # watchdog time must be greater than 1min + script runtime
 WD_TIME=120
 
+# syslog warning, if task took to long
+WARN_CALL_TIME_S=10
+
 # watchdog check via cron.d
 if [ "$1" = "watchdog" ]; then
-	pid="$(cat $PIDFILE)"
-        tdiff="$(( $(date +'%s') - $(cat $TIMESTAMP) ))"
+
+  pid="$(cat $PIDFILE)"
+  tdiff="$(( $(date +'%s') - $(cat $TIMESTAMP) ))"
 
 	# kill check
-	if [ $tdiff -gt $WD_TIME ]; then
+  if [ $tdiff -gt $WD_TIME ]; then
 
-		kill $pid
+    kill $pid
 
-		logger -t "WD" "kill hanging ddmesh-tasks.sh (since $tdiff s)"
+    logger -t "WD" "kill hanging ddmesh-tasks.sh (since $tdiff s > $WD_TIME s )"
 
-		# reset timestamp to avoid comparing against old value
-		date +'%s' > $TIMESTAMP
-	fi
+    # reset timestamp to avoid comparing against old value
+    date +'%s' > $TIMESTAMP
+
+    # restart in case service has also stopped
+    service freifunk-tasks running || service freifunk-tasks restart
+  fi
 	exit 0
 fi
 
@@ -36,15 +43,27 @@ echo "$$" > $PIDFILE
 call_task()
 { # $1 - interval in min
   # $x - function or script with arguments
- interval=$1
- shift
- args=$*
+  interval=$1
+  shift
+  args=$*
 
- test $(expr $MINUTE_COUNTER % $interval) -eq 0 && {
-	[ "$(uci -q get ddmesh.log.tasks)" = "1" ] && logger -t "$TAG" "CALL interval:$interval [$args]"
-	$args 2>/dev/null >/dev/null
-	[ "$(uci -q get ddmesh.log.tasks)" = "1" ] && logger -t "$TAG" "RETURN interval:$interval [$args]"
- }
+
+
+  test $(expr $MINUTE_COUNTER % $interval) -eq 0 && {
+    tstart="$(date +'%s')"
+
+    [ "$(uci -q get ddmesh.log.tasks)" = "1" ] && logger -s -t "$TAG" "CALL interval:$interval [$args]"
+    $args 2>/dev/null >/dev/null
+    [ "$(uci -q get ddmesh.log.tasks)" = "1" ] && logger -s -t "$TAG" "RETURN interval:$interval [$args]"
+
+    tdiff="$(( $(date +'%s') - $tstart ))"
+    if [ $tdiff -gt $WARN_CALL_TIME_S ]; then
+      logger -s -t "$TAG" "WARNING: call took too long: $tdiff > $WARN_CALL_TIME_S [$1]"
+    fi
+  }
+
+
+
 }
 
 
