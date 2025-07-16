@@ -46,9 +46,9 @@ setup_wireless()
  #setup wifi rates
  uci -q delete wireless.radio2g.basic_rate
  uci -q delete wireless.radio2g.supported_rates
- if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" != "1" ]; then
-	uci add_list wireless.radio2g.basic_rate='6000 9000 12000 18000 24000 36000 48000 54000'
-	uci add_list wireless.radio2g.supported_rates='6000 9000 12000 18000 24000 36000 48000 54000'
+ uci -q delete wireless.radio2g.legacy_rates
+ if [ "$(uci -q get ddmesh.network.wifi_slow_rates)" = "1" ]; then
+	uci add_list wireless.radio2g.legacy_rates='1'
  fi
 
 	# 5 GHz
