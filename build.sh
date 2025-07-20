@@ -742,7 +742,7 @@ print_devices_for_target()
 	fi
 
 		echo "target: [$_cfg_name] (${_cfg_selector_config})"
-		grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${_cfg_selector_config}/${_cfg_file}"
+		grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${_cfg_selector_config}/${_cfg_file}" | sort
 		echo ""
 
 		# if I had a target, then no need to run through rest

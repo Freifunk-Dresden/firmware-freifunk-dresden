@@ -154,13 +154,18 @@
     "template":"24.10.2",
     "name":"ath79.24.generic",
     "config":"ath79.24.generic.cfg",
-    "disabled": true
+    "disabled": false
   },
   {
     "template":"24.10.2",
     "name":"mediatek.24.filogic",
     "config":"mediatek.24.filogic.cfg",
     "disabled": false
+  },
+  {
+    "template":"24.10.2",
+    "name":"mediatek.24.mt7622.generic",
+    "config":"mediatek.24.mt7622.generic.cfg"
   },
 
 # ---------- openwrt 22 ------------------------------------------------------
@@ -238,11 +243,6 @@
     "template":"22.03",
     "name":"ath79.22.nand.gl-e750",
     "config":"ath79.22.nand.gl-e750.cfg"
-  },
-  {
-    "template":"22.03",
-    "name":"mediatek.22.mt7622.generic",
-    "config":"mediatek.22.mt7622.generic.cfg"
   },
   {
     "template":"22.03",
