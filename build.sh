@@ -447,7 +447,10 @@ verify_firmware_present()
 		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
 		p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
 
-		if [ -n "$p1" -o -n "$p2" ]; then
+    # some devices have only one file ending with squashfs.trx (e.g. asus rt-ac68u)
+    p3="$(ls -1 ${firmware_path}/*${dev_str}*squashfs.trx 2>/dev/null)"
+
+		if [ -n "$p1" -o -n "$p2" -o -n "$p3" ]; then
 			printf -- "${C_GREEN}ok${C_NONE}\n"
 		else
 			printf -- "${C_RED}failed${C_NONE}\n"

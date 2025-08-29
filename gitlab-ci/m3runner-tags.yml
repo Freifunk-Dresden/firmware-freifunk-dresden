@@ -182,6 +182,23 @@ m3tags:ipq40xx:
   tags:
     - m3runner
 
+m3tags:bcm:
+  only:
+    - /^R_/
+    - /^TESTING/
+    - /^T_/
+  stage: build
+  needs: ["m3tags:init"]
+  dependencies: ["m3tags:init"]
+  script:
+    - eval $(cat gitlab.environment)
+    - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh bcm.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
 m3tags:lantiq:
   only:
     - /^R_/

@@ -98,6 +98,18 @@ m3:ipq40xx:
   tags:
     - m3runner
 
+m3:bcm:
+  only:
+    - master
+  stage: build
+  needs: ["m3:init"]
+  script:
+    - ln -s ~/mycache/dl
+    - ln -s ~/mycache/workdir
+    - ./build.sh bcm.* rerun -j"$(( $(nproc) + 1))"
+  tags:
+    - m3runner
+
 m3:lantiq:
   only:
     - master
