@@ -262,6 +262,12 @@
   },
   {
     "template":"22.03",
+    "name":"bcm.bcm53xx.offloader",
+    "config":"bcm.22.bcm53xx.offloader.cfg",
+    "openwrt_variant":"offloader"
+  },
+  {
+    "template":"22.03",
     "name":"x86-64.offloader",
     "config":"x86-64.22.offloader.cfg",
     "openwrt_variant":"offloader",

@@ -3262,6 +3262,16 @@
       "sortkey": "x86-64-generic-squashfs-rootfs.img.gz",
       "filename": "freifunk-dresden-v8.2.6-22.03.7-x86-64-generic-squashfs-rootfs.img.gz",
       "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "bcm53xx-generic-asus_rt-ac68u-squashfs.trx",
+      "autoupdate": "0",
+      "model": "asus,rt-ac68u",
+      "model2": "Asus RT-AC68U (BCM4708)",
+      "filename": "openwrt-bcm53xx-generic-asus_rt-ac68u-squashfs.trx",
+      "comment": "Offloader: (no wifi)"
     }
   ]
 }

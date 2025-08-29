@@ -98,14 +98,13 @@ docker:ramips:
   tags:
   - docker
 
-docker:ipq40xx:
+docker:bcm:
   except:
     - schedules
     - master
     - /^T_/
     - /^TESTING/
     - /^R_/
-    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -113,7 +112,7 @@ docker:ipq40xx:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh bcm.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -152,6 +151,25 @@ docker:ath79:
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))" V=s
+  tags:
+  - docker
+
+docker:ipq40xx:
+  except:
+    - schedules
+    - master
+    - /^T_/
+    - /^TESTING/
+    - /^R_/
+    - /^DEV_/
+  stage: build
+  needs: ["docker:init"]
+  script:
+    - mkdir -p /mycache/dl
+    - ln -s /mycache/dl
+    - mkdir -p /mycache/workdir
+    - ln -s /mycache/workdir
+    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 

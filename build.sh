@@ -786,7 +786,10 @@ verify_firmware_present()
 		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
 		p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
 
-		if [ -n "$p1" -o -n "$p2" ]; then
+    # some devices have only one file ending with squashfs.trx (e.g. asus rt-ac68u)
+    p3="$(ls -1 ${firmware_path}/*${dev_str}*squashfs.trx 2>/dev/null)"
+
+		if [ -n "$p1" -o -n "$p2" -o -n "$p3" ]; then
 			printf -- "${C_GREEN}ok${C_NONE}\n"
 		else
 			printf -- "${C_RED}failed${C_NONE}\n"
@@ -1406,7 +1409,7 @@ EOM
       # default revision from openwrt file feeds.conf.default should be used.
       # this makes build.json configuration of feeds more simple
       if [ "${_feed_rev}" = "default" ]; then
-        _feed_url="$(cat ${defaultFeedConfFileName} | awk '/^src-git[ ]+'${_feed_name}'/{print $3}')"
+        _feed_url="$(cat ${defaultFeedConfFileName} | awk '/^src-git(-full)?[ ]+'${_feed_name}'/{print $3}')"
       else
   			test -n "${_feed_rev}" && _feed_rev="^${_feed_rev}"
         _feed_url="${_feed_src}${_feed_rev}"
