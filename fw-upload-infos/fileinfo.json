@@ -828,6 +828,16 @@
       "model": "gl-ar150",
       "model2": "GL.iNet GL-AR150",
       "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
+      "comment": "alte Kennung"
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
+      "autoupdate": "1",
+      "model": "glinet,gl-ar150",
+      "model2": "GL.iNet GL-AR150",
+      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
