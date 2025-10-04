@@ -85,6 +85,7 @@ BG_BLUE='\033[44m'
 BG_PURBLE='\033[45m'
 BG_CYAN='\033[46m'
 BG_WHITE='\033[47m'
+STRIKE_ON='\033[9m'
 
 # MARK_OK='+'
 # MARK_FAIL='E'
@@ -632,7 +633,7 @@ listTargets()
 
 # └ ┌ ┐ ┘ ├ ┤ ┬ ┴ ─ │ ┼
  printf -- '┌──────────────────────────────┬─────┬──────────┬─────────┬────────────┬─────────┬──────────┬─────────┬─────────┬─────────┬──────────────────────┐\n'
- printf -- '│ %-28.28s │ %-3.3s │ %-8.8s │ %-7.7s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' "Name" "End" "Template" "Version" "Openwrt"  "Openwrt" "Openwrt" "Feeds" "Files" "Patches" "Build date"
+ printf -- '│ %-28.28s │ %-3.3s │ %-8.8s │ %-7.7s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' " Name" "End" "Template" "Version" "Openwrt"  "Openwrt" "Openwrt" "Feeds" "Files" "Patches" "Build date"
  printf -- '│ %-28.28s │ %-3.3s │ %-8.8s │ %-7.7s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' ""     ""    ""         ""        "Revision" "Variant" "Sel."    "Sel."  "Sel."  "Sel."    ""
  printf -- '├──────────────────────────────┼─────┼──────────┼─────────┼────────────┼─────────┼──────────┼─────────┼─────────┼─────────┼──────────────────────┤\n'
 
@@ -671,6 +672,9 @@ listTargets()
 		eval $(cat "${compile_status_file}" | jq $OPT '"compile_data=\"\(.date)\";compile_status=\(.status)"')
 	fi
 
+  cstatus=""
+  strike=""
+
 	case "${compile_status}" in
 		"0") cstatus="${PBC_SUCCESS}" ;;
 		"1") cstatus="${PBC_ERROR}" ;;
@@ -688,9 +692,10 @@ listTargets()
 	# overwrite if disabled
 	if [ "${_cfg_disabled}" == "true" ]; then
 		cstatus="${PBC_DISABLED}"
+    strike="${STRIKE_ON}"
 	fi
 
-	printf  "│$cstatus %-27s │ ${color_eol}%-3.3s${C_NONE} │ %-8.8s | ${color_firmware[${fw_version}]}%-7.7s${C_NONE} │ ${color_openwrt[${_cfg_openwrt_rev}]}%-10.10s${C_NONE} │ %-7.7s │ ${color_selector[${_cfg_selector_config}]}%-8.8s${C_NONE} │ ${color_selector[${_cfg_selector_files}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_feeds}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_patches}]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${eol}" "${_cfg_template}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
+	printf  "│$cstatus ${strike}%-27s${C_NONE} │ ${color_eol}%-3.3s${C_NONE} │ %-8.8s | ${color_firmware[${fw_version}]}%-7.7s${C_NONE} │ ${color_openwrt[${_cfg_openwrt_rev}]}%-10.10s${C_NONE} │ %-7.7s │ ${color_selector[${_cfg_selector_config}]}%-8.8s${C_NONE} │ ${color_selector[${_cfg_selector_files}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_feeds}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_patches}]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${eol}" "${_cfg_template}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
 
  done
 

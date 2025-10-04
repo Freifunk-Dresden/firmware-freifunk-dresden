@@ -290,12 +290,14 @@
   {
     "template":"22.03",
     "name":"eol.ath79.22.generic",
-    "config":"eol.ath79.22.generic.cfg"
+    "config":"eol.ath79.22.generic.cfg",
+    "disabled": false
    },
    {
     "template":"22.03",
     "name":"eol.ath79.22.small",
-    "config":"eol.ath79.22.small.cfg"
+    "config":"eol.ath79.22.small.cfg",
+    "disabled": false
   },
 
 # ---------- openwrt 18 -- eol (end of life) -----------------------------------
