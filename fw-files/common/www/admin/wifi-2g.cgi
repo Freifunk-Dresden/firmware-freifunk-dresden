@@ -94,7 +94,7 @@ function checkInput()
 <td><input name="form_wifi2_roaming" TYPE="CHECKBOX"
 $(if [ "$_ddmesh_wifi2roaming" != "1" ];then echo ' disabled';fi)
 onchange="enable_custom_roaming();"
-VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" ];then echo ' checked="checked"';fi)> Aktiviert Roaming wenn m&ouml;glich (Knotennummer < 32767).</td></tr>
+VALUE="1"$(if [ "$(uci -q get ddmesh.network.wifi2_roaming_enabled)" = "1" -a "$_ddmesh_wifi2roaming" = "1" ];then echo ' checked="checked"';fi)> Aktiviert Roaming wenn m&ouml;glich (Knotennummer < 32767).</td></tr>
 
 <tr><th>Freifunk-DHCP Bereich:</th>
 <td><input name="form_wifi_dncp" size="32" type="text" value="$_ddmesh_wifi2dhcpstart - $_ddmesh_wifi2dhcpend" disabled> <br/>
