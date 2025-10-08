@@ -278,8 +278,8 @@
   },
   {
     "template":"22.03",
-    "name":"sunxi.22.cortexa7.offloader",
-    "config":"sunxi.22.cortexa7.offloader.cfg",
+    "name":"eol.sunxi.22.cortexa7",
+    "config":"eol.sunxi.22.cortexa7.offloader.cfg",
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
