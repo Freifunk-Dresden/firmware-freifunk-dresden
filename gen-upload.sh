@@ -187,7 +187,7 @@ gen_download_json_start()
 #  name=$1
 #  file=$2
 #  output_path=$3
-#  printf "{ \"name\":\"$name\", \"path\":\".\", \"filename\":\"$file\", \"md5sum\":\"\",\"comment\":\"\"},\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+#  printf "{ \"name\":\"$name\", \"path\":\".\", \"filename\":\"$file\", \"md5sum\":\"\",\"sha256sum\":\"\",\"comment\":\"\"},\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 #}
 
 # isFirstFile must be global, else calling this function for different
@@ -227,6 +227,7 @@ gen_download_json_add_data()
 		model=""
 		model2=""
 		md5sum=""
+		sha256sum=""
 		filename=""
 		comment=""
 
@@ -314,6 +315,7 @@ gen_download_json_add_data()
 			fi
 
 			md5sum=$(md5sum $path | cut -d' ' -f1)
+			sha256sum=$(sha256sum $path | cut -d' ' -f1)
 
 
 			# append comma
@@ -330,7 +332,7 @@ gen_download_json_add_data()
 			if [ $sysupgrade = 1 ]; then
 
 				if [ "$disabled" = "0" ]; then
-					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"sha256sum\":\"$sha256sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 				fi
 
 				# generate new input info file (and remember source of firmware file, for error checking during gen_upload.sh)
@@ -338,7 +340,7 @@ gen_download_json_add_data()
 			else
 
 				if [ "$disabled" = "0" ]; then
-					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"sha256sum\":\"$sha256sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 				fi
 
 				# generate new input info file
@@ -503,13 +505,14 @@ do
 			rm -f ${tmpTargetDir}/freifunk-dresden*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
 		}
 
-		#create md5sums file used when automatically or manually downloading via firmware.cgi
+		#create md5sums/sha256sum file used when automatically or manually downloading via firmware.cgi
 		# solange das file erzeugen, wie software mit alter firmware drausen ist
 		# oder github
 		p=$(pwd)
 		cd $tmpTargetDir
 		printf "    ${C_YELLOW}calculate md5sum${C_NONE}\n"
 		md5sum * > $tmpTargetDir/md5sums 2>/dev/null
+		sha256sum * > $tmpTargetDir/sha256sum 2>/dev/null
 		cd $p
 
 		#copy packages
