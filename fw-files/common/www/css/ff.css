@@ -2,6 +2,10 @@ html, body {
 	height: 100%;
 }
 
+.bottom-spacer {
+  height: 10px;
+}
+
 img.block {
 	/* remove spaces around images */
 	display: block;

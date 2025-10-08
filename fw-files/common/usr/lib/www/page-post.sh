@@ -22,6 +22,7 @@ cat<<EOM
 	</td></tr>
 
 </table>
+<div class="bottom-spacer"></div>
 </body>
 </html>
 EOM
