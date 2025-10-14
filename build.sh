@@ -16,6 +16,7 @@ case "$TERM" in
 	xterm*) _TERM=1 ;;
 	screen) _TERM=1 ;;
 	vt1*)   _TERM=1 ;;
+	tmux*)  _TERM=1 ;;
 	*) _TERM=0 ;;
 esac
 
