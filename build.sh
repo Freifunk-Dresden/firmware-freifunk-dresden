@@ -3,13 +3,18 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="25"
+SCRIPT_VERSION="26"
 
 
 # gitlab variables
 # FF_REGISTERKEY_PREFIX
 # FF_BUILD_TAG
 # FF_MESH_KEY
+
+
+# When running in Windows Linux Subystem, remove windows mounted path because spaces in 'Program Files' cause errors
+# with find command. 
+export PATH=$(echo $PATH | sed 's#\([:]*/mnt/[^:]\+[:]*\)##g')
 
 # check terms
 case "$TERM" in
