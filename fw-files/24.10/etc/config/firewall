@@ -77,6 +77,9 @@ config zone 'zone_mesh'
 	option forward 'REJECT'
 	# ddmesh-firewall-addons.sh needs this to get 'srcnat_mesh'. masquerade rule will be deleted
 	option masq '1'
+	# prevent openwrt to add a rule that drops illegal connection status. It would prevent forwarding
+	# packet answers from internet
+	option masq_allow_invalid '1'
 	option mtu_fix '1'
 	option counter '1'
 	list network 'mesh_lan'
