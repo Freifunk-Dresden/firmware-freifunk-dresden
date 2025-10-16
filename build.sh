@@ -18,12 +18,13 @@ export PATH=$(echo $PATH | sed 's#\([:]*/mnt/[^:]\+[:]*\)##g')
 
 # check terms
 case "$TERM" in
-	xterm*) _TERM=1 ;;
+	xterm*) _TERM=1; export TERM=xterm ;;
 	screen) _TERM=1 ;;
 	vt1*)   _TERM=1 ;;
 	tmux*)  _TERM=1 ;;
 	*) _TERM=0 ;;
 esac
+
 
 
 # target file
