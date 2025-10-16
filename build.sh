@@ -12,10 +12,6 @@ SCRIPT_VERSION="26"
 # FF_MESH_KEY
 
 
-# When running in Windows Linux Subystem, remove windows mounted path because spaces in 'Program Files' cause errors
-# with find command. 
-export PATH=$(echo $PATH | sed 's#\([:]*/mnt/[^:]\+[:]*\)##g')
-
 # check terms
 case "$TERM" in
 	xterm*) _TERM=1; export TERM=xterm ;;
@@ -1125,6 +1121,10 @@ case "$1" in
 					;;
 
 		*)
+					# When running in Windows Linux Subystem, remove windows mounted path because spaces in 'Program Files' cause errors
+					# with find command. 
+					export PATH=$(echo $PATH | sed 's#\([:]*/mnt/[^:]\+[:]*\)##g')
+
 					preProcessBuildJson
 
 					# targets, menuconfig, rerun and make parameters are passed as argument with its parameters
