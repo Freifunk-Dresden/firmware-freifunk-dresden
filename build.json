@@ -84,7 +84,7 @@
     "packages":[
       "libpam","libcap","libopenldap",
       "libidn2","libssh2","libnetsnmp",
-      "libcap", "jansson", "kmod-cryptodev", "liblzma"
+      "libcap", "jansson", "kmod-cryptodev", "liblzma", "libgnutls"
     ]
   },
   {
@@ -166,6 +166,16 @@
     "template":"24.10.2",
     "name":"mediatek.24.mt7622.generic",
     "config":"mediatek.24.mt7622.generic.cfg"
+  },
+  {
+    "template":"24.10.2",
+    "name":"x86-64.offloader",
+    "config":"x86-64.24.offloader.cfg",
+    "openwrt_variant":"offloader",
+    "packages" : [
+      "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
+      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux"
+    ]
   },
 
 # ---------- openwrt 22 ------------------------------------------------------
@@ -265,16 +275,6 @@
     "name":"bcm.bcm53xx.offloader",
     "config":"bcm.22.bcm53xx.offloader.cfg",
     "openwrt_variant":"offloader"
-  },
-  {
-    "template":"22.03",
-    "name":"x86-64.offloader",
-    "config":"x86-64.22.offloader.cfg",
-    "openwrt_variant":"offloader",
-    "packages" : [
-      "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
-      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
-    ]
   },
   {
     "template":"22.03",
