@@ -13,8 +13,6 @@
 # export STAGING_DIR=../../../../workdir/b4d7885/staging_dir
 
 
-REVISION =	"$(shell git show --abbrev-commit | sed -n '1{s/.* //p}')"
-DATE=		"$(shell git show --abbrev-commit | sed -n '3{s/Date:[ ]\+\(.*\) +.*/\1/p}' )"
 SOURCE_MD5=	$(shell md5sum *.[ch] Makefile | md5sum | cut -d' ' -f1)
 REVISION_VERSION ="\" [md5:$(SOURCE_MD5)]\""
 
