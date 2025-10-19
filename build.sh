@@ -155,14 +155,15 @@ global_error=0
 setup_buildroot ()
 {
  buildroot=$1
- openwrt_rev=$2
- openwrt_dl_dir=$3
- openwrt_patches_dir=$4
- firmware_files=$5
+ openwrt_repo=$2
+ openwrt_rev=$3
+ openwrt_dl_dir=$4
+ openwrt_patches_dir=$5
+ firmware_files=$6
 
  openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
 
- git_url="https://git.openwrt.org/openwrt/openwrt.git"
+ openwrt_repo="https://git.openwrt.org/openwrt/openwrt.git"
 
 	# check if directory exists. I'm not just checking
 	# the build root itself, because gitlab left a working directory
@@ -191,7 +192,7 @@ setup_buildroot ()
 		else
 			#clone from openwrt
 			echo "cloning openwrt"
-			git clone $git_url $buildroot
+			git clone $openwrt_repo $buildroot
 			echo "switch to specific revision"
 			cd $buildroot
 			git checkout $openwrt_rev >/dev/null
@@ -503,6 +504,7 @@ resolveTemplates()
 				_cfg_name=\"\(.name)\";
 				_cfg_file=\"\(.config)\";
 				_cfg_disabled=\"\(.disabled)\";
+				_cfg_openwrt_repo=\"\(.openwrt_repo)\";
 				_cfg_openwrt_rev=\"\(.openwrt_rev)\";
 				_cfg_openwrt_variant=\"\(.openwrt_variant)\";
 				_cfg_selector_config=\"\(.["selector-config"])\";
@@ -521,6 +523,7 @@ resolveTemplates()
 			configTemplateValues["${_cfg_name}_config_selector_files"]="${_cfg_selector_files}"
 			configTemplateValues["${_cfg_name}_config_selector_feeds"]="${_cfg_selector_feeds}"
 			configTemplateValues["${_cfg_name}_config_selector_patches"]="${_cfg_selector_patches}"
+			configTemplateValues["${_cfg_name}_config_openwrt_repo"]="${_cfg_openwrt_repo}"
 			configTemplateValues["${_cfg_name}_config_openwrt_rev"]="${_cfg_openwrt_rev}"
 			configTemplateValues["${_cfg_name}_config_openwrt_variant"]="${_cfg_openwrt_variant}"
 
@@ -557,6 +560,7 @@ resolveConfigValues()
 			_cfg_name=\"\(.name)\";
 			_cfg_file=\"\(.config)\";
 			_cfg_disabled=\"\(.disabled)\";
+			_cfg_openwrt_repo=\"\(.openwrt_repo)\";
 			_cfg_openwrt_rev=\"\(.openwrt_rev)\";
 			_cfg_openwrt_variant=\"\(.openwrt_variant)\";
 			_cfg_selector_config=\"\(.["selector-config"])\";
@@ -597,6 +601,7 @@ resolveConfigValues()
 		test "$_cfg_selector_files" = "null" && _cfg_selector_files="${configTemplateValues["${_cfg_template}_config_selector_files"]}"
 		test "$_cfg_selector_feeds" = "null" && _cfg_selector_feeds="${configTemplateValues["${_cfg_template}_config_selector_feeds"]}"
 		test "$_cfg_selector_patches" = "null" && _cfg_selector_patches="${configTemplateValues["${_cfg_template}_config_selector_patches"]}"
+		test "$_cfg_openwrt_repo" = "null"  && _cfg_openwrt_repo="${configTemplateValues["${_cfg_template}_config_openwrt_repo"]}"
 		test "$_cfg_openwrt_rev" = "null"  && _cfg_openwrt_rev="${configTemplateValues["${_cfg_template}_config_openwrt_rev"]}"
 		test "$_cfg_openwrt_variant" = "null"  && _cfg_openwrt_variant="${configTemplateValues["${_cfg_template}_config_openwrt_variant"]}"
 		test "$_cfg_feeds" = "null"  && _cfg_feeds="${configTemplateValues["${_cfg_template}_config_feeds"]}"
@@ -605,12 +610,14 @@ resolveConfigValues()
 
 	# 3. check that all mandatory values are set (if no template was given in a config section, all entries
 	#    must be specified)
-	if [ "$_cfg_openwrt_rev" = "null" \
-				-o "$_cfg_selector_config" = "null" -o "$_cfg_selector_files" = "null" \
-				-o "$_cfg_selector_feeds" = "null" -o "$_cfg_selector_patches" = "null" ]; then
-				echo "Error: configuration '${_cfg_name}' is not complete or there is no template specified"
-				echo $entry | jq $OPT "$x"
-				return 3
+
+	if [   "$_cfg_openwrt_repo" = "null" \
+		-o "$_cfg_openwrt_rev" = "null" \
+		-o "$_cfg_selector_config" = "null" -o "$_cfg_selector_files" = "null" \
+		-o "$_cfg_selector_feeds" = "null" -o "$_cfg_selector_patches" = "null" ]; then
+		echo "Error: configuration '${_cfg_name}' is not complete or there is no template specified"
+		echo $entry | jq $OPT "$x"
+		return 3
 	fi
 
 # echo "_cfg_type=[${_cfg_type}]"
@@ -618,6 +625,7 @@ resolveConfigValues()
 # echo "_cfg_name=[${_cfg_name}]"
 # echo "_cfg_file=[${_cfg_file}]"
 # echo "_cfg_disabled=[${_cfg_disabled}]"
+# echo "_cfg_openwrt_repo=[${_cfg_openwrt_repo}]"
 # echo "_cfg_openwrt_rev=[${_cfg_openwrt_rev}]"
 # echo "_cfg_openwrt_variant=[${_cfg_openwrt_variant}]"
 # echo "_cfg_selector_config=[${_cfg_selector_config}]"
@@ -1369,7 +1377,7 @@ do
 	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/${_cfg_selector_patches}"
 
 	# --------- setup build root with selected openwrt revision
-	setup_buildroot $buildroot $_cfg_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_cfg_selector_files
+	setup_buildroot $buildroot $_cfg_openwrt_repo $_cfg_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_cfg_selector_files
 
 	# --------  generate feed configuration from selected config -----------
 	echo -e $C_CYAN"generate feed config"$C_NONE
