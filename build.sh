@@ -13,9 +13,10 @@ SCRIPT_VERSION="23"
 
 # check terms
 case "$TERM" in
-	xterm*) _TERM=1 ;;
+	xterm*) _TERM=1; export TERM=xterm ;;
 	screen) _TERM=1 ;;
 	vt1*)   _TERM=1 ;;
+	tmux*)  _TERM=1 ;;
 	*) _TERM=0 ;;
 esac
 
@@ -720,6 +721,11 @@ case "$1" in
 						;;
 
 		*)
+
+					# When running in Windows Linux Subystem, remove windows mounted path because spaces in 'Program Files' cause errors
+					# with find command. 
+					export PATH=$(echo $PATH | sed 's#\([:]*/mnt/[^:]\+[:]*\)##g')
+
 					# targets, menuconfig, rerun and make parameters are passed as argument with its parameters
 					# check for "menuconfig"
 					# check for "rerun"
