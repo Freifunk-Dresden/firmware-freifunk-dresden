@@ -64,7 +64,7 @@
 
     # [template|target] install addional packages from feeds (see feeds.conf)
     "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux", "iperf3"
     ]
   },
   { # --- eol openwrt 18 -------------
@@ -86,7 +86,7 @@
     "packages":[
       "libpam","libcap","libopenldap",
       "libidn2","libssh2","libnetsnmp",
-      "libcap", "jansson", "kmod-cryptodev", "liblzma", "libgnutls"
+      "libcap", "jansson", "kmod-cryptodev", "liblzma", "libgnutls", "iperf3"
     ]
   },
   {
@@ -105,7 +105,7 @@
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
     ],
     "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux"
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux", "iperf3"
     ]
   },
   {
@@ -124,7 +124,7 @@
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
     ],
     "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux", "iperf3"
     ]
   },
   {
@@ -143,7 +143,7 @@
       { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
     ],
     "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
+      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux", "iperf3"
     ]
   },
 
@@ -179,7 +179,7 @@
     "openwrt_variant":"offloader",
     "packages" : [
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
-      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux"
+      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux", "iperf3"
     ]
   },
 
@@ -288,7 +288,7 @@
     "openwrt_variant"  : "offloader",
     "packages":[
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
-      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux"
+      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux", "iperf3"
     ]
   },
 # ---------- openwrt 22 -- eol (end of life) -----------------------------------
