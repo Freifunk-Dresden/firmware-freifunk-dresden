@@ -28,6 +28,7 @@ define Package/$(PKG_NAME)-base
     +libmbedtls +libustream-mbedtls +px5g-mbedtls \
     +bmxd +freifunk-upload \
     +iperf3 \
+    +ethtool \
     +kmod-ipip \
     +PACKAGE_fastd:nacl \
     +PACKAGE_fastd:libuecc \
