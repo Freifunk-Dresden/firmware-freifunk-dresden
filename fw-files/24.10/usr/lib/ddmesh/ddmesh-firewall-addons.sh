@@ -152,31 +152,39 @@ callback_add_ignored_nodes()
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
 
+  chain_in="ddmesh_ignore_nodes_in_${i}"
+  chain_out="ddmesh_ignore_nodes_out_${i}"
+
 	MARKER="ddmesh-ignore-nodes"
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 	if [ "$opt_lan" = "1" ]; then
 		for i in mesh_lan mesh_wan
 		do
-			$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+			$NFT add rule inet fw4 "${chain_in}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+			$NFT add rule inet fw4 "${chain_out}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 		done
 	fi
 	if [ "$opt_tbb" = "1" ]; then
 		for i in tbb_wg tbb_fastd
 		do
-			$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+			$NFT add rule inet fw4 "${chain_in}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+      $NFT add rule inet fw4 "${chain_out}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 		done
 	fi
 	if [ "$opt_wifi_mesh2g" = "1" ]; then
 		i="wifi_mesh2g"
-		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+		$NFT add rule inet fw4 "${chain_in}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+    $NFT add rule inet fw4 "${chain_out}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 	fi
 	if [ "$opt_wifi_mesh5g" = "1" ]; then
 		i="wifi_mesh5g"
-		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+		$NFT add rule inet fw4 "${chain_in}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+    $NFT add rule inet fw4 "${chain_out}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 	fi
 	if [ "$opt_vlan" = "1" ]; then
 		i="mesh_vlan"
-		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+		$NFT add rule inet fw4 "${chain_in}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+    $NFT add rule inet fw4 "${chain_out}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 	fi
 }
 
@@ -185,9 +193,14 @@ setup_ignored_nodes() {
 
 	for i in wifi_mesh2g wifi_mesh5g mesh_lan mesh_wan mesh_vlan tbb_wg tbb_fastd
 	do
-		chain="ddmesh_ignore_nodes_${i}"
-		$NFT create chain inet fw4 ${chain} '{counter;}' 2>/dev/null
-		$NFT flush chain inet fw4 ${chain}
+    # incomming
+		chain_in="ddmesh_ignore_nodes_in_${i}"
+		$NFT create chain inet fw4 ${chain_in} '{counter;}' 2>/dev/null
+		$NFT flush chain inet fw4 ${chain_in}
+
+		chain_out="ddmesh_ignore_nodes_out_${i}"
+		$NFT create chain inet fw4 ${chain_out} '{counter;}' 2>/dev/null
+		$NFT flush chain inet fw4 ${chain_out}
 
 		# insert my chains into openwrt chains
 		MARKER="ddmesh-ignore-nodes-${i}-jump"
@@ -197,7 +210,8 @@ setup_ignored_nodes() {
 			# replace '+' with '*'
 			iface="${iface/+/*}"
 			# udp dport 4305
-			$NFT insert rule inet fw4 input_mesh position 0 iifname ${iface} counter jump ${chain} comment "\"${MARKER}\""
+			$NFT insert rule inet fw4 input_mesh position 0 iifname ${iface} counter jump ${chain_in} comment "\"${MARKER}\""
+      $NFT insert rule inet fw4 input_mesh position 0 oifname ${iface} counter jump ${chain_out} comment "\"${MARKER}\""
 		fi
   done
 
