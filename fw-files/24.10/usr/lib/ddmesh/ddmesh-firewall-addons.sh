@@ -157,26 +157,26 @@ callback_add_ignored_nodes()
 	if [ "$opt_lan" = "1" ]; then
 		for i in mesh_lan mesh_wan
 		do
-			$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+			$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 		done
 	fi
 	if [ "$opt_tbb" = "1" ]; then
 		for i in tbb_wg tbb_fastd
 		do
-			$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+			$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 		done
 	fi
 	if [ "$opt_wifi_mesh2g" = "1" ]; then
 		i="wifi_mesh2g"
-		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 	fi
 	if [ "$opt_wifi_mesh5g" = "1" ]; then
 		i="wifi_mesh5g"
-		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 	fi
 	if [ "$opt_vlan" = "1" ]; then
 		i="mesh_vlan"
-		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip daddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
+		$NFT add rule inet fw4 "ddmesh_ignore_nodes_${i}" ip saddr ${_ddmesh_nonprimary_ip} counter reject comment "\"${MARKER}-${i}-reject\""
 	fi
 }
 
