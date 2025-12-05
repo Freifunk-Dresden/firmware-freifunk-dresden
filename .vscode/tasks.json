@@ -20,7 +20,7 @@
     {
       "label": "upload current file",
       "type": "shell",
-      "command": "eval scp ${file} root@${input:targetIp}:/$(echo '${relativeFile}' | sed 's#fw-files/[^/]*/##' )",
+      "command": "eval scp -O ${file} root@${input:targetIp}:/$(echo '${relativeFile}' | sed 's#fw-files/[^/]*/##' )",
       "problemMatcher": [],
       "presentation": {
         "echo": true,
