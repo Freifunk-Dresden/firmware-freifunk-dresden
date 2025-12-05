@@ -78,6 +78,7 @@ cat<<EOM
 <input type="checkbox" name="$1" value="1"$(test "$2" = "1" && echo ' checked="checked"')>&nbsp;
 EOM
 }
+
 html_msg()
 {
 	test ! "$1" = "0" && {
@@ -145,6 +146,8 @@ content()
 {
 	privnet_server_port=$(uci get ddmesh.privnet.fastd_port)
 	privnet_server_port=${privnet_server_port:-$DEFAULT_PORT}
+  privnet_forward="$(uci -q get ddmesh.privnet.forward)"
+
 
 	COUNT=$(uci show ddmesh | grep '=privnet_\(client\|accept\)' | wc -l)
 
@@ -161,10 +164,14 @@ aufbauen.
 <input name="form_action" value="none" type="hidden">
 <input name="form_entry" value="none" type="hidden">
 <table>
-<tr><th title="TCP-Port des Servers">Server-TCP-Port:</th><td><input name="form_privnet_server_port" type="text" size="8" value="$privnet_server_port"</td>
+<tr><th class="privnet" title="TCP-Port des Servers">Server-TCP-Port:</th><td><input name="form_privnet_server_port" type="text" size="8" value="$privnet_server_port"</td></tr>
+<tr><th class="privnet" title="Weiterleitung von Paketen zwischen Clients">Paket-Weiterleitung zwischen Clients:</th><td>$(html_checkbox "form_privnet_server_forward" "$privnet_forward")</td></tr>
+<tr><td colspan="2"></td></tr>
+<tr>
  <td title="Einstellungen werden nach Neustart wirksam."><button onclick="if(checkinput_server())form_submit(document.forms.privnet_form_server,'local','none')" name="bb_btn_new" type="button">Speichern</button></td></tr>
 </table>
 </form>
+<hr>
 
 <form name="privnet_form_keygen" action="privnet.cgi" method="POST">
 <input name="form_action" value="none" type="hidden">
@@ -269,6 +276,7 @@ else
 	case $form_action in
 		local)
 			uci set ddmesh.privnet.fastd_port=$form_privnet_server_port
+      uci set ddmesh.privnet.forward=$form_privnet_server_forward
 			uci commit
 			MSG=2
 		;;

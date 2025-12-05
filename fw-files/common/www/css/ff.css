@@ -154,6 +154,9 @@ td {
 	font-family: Arial, Helvetica, sans-serif;
 	text-align: left;
 }
+th.privnet {
+    width: 20%;
+}
 p,ol,ul,dl,pre {
 	margin-top: 4px;
 	margin-bottom: 4px;

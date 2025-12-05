@@ -35,7 +35,7 @@ cp /rom/etc/config/firewall /etc/config/firewall
 
 cat <<EOM >/etc/config/overlay
 config overlay 'data'
-	option	md5sum '0'
+	option md5sum '0'
 EOM
 
 cat <<EOM >/etc/config/ddmesh
@@ -53,31 +53,31 @@ config communities 'communities'
 	list	community '2000%Leipzig'
 
 config system 'system'
-	option	mesh_network_id '0'
-	option	community 'Dresden'
-#	option 	node 0
-	option	group_id 0
-	option 	tmp_min_node 900
-	option	tmp_max_node 999
-#	option 	register_key ''
-	option	announce_gateway 0
-	option  wanssh 1
-	option  wanhttp 1
-	option  wanhttps 1
-	option  wanicmp 1
-	option  wansetup 1
-	option  meshssh 1
-	option  meshsetup 1
-	option	firmware_autoupdate 1
-	option	fwupdate_always_allow_testing 0
-	option	email_notification 0
-	option	node_type 'node'
+	option mesh_network_id '0'
+	option community 'Dresden'
+#	option node 0
+	option group_id 0
+	option tmp_min_node 900
+	option tmp_max_node 999
+#	option register_key ''
+	option announce_gateway 0
+	option wanssh 1
+	option wanhttp 1
+	option wanhttps 1
+	option wanicmp 1
+	option wansetup 1
+	option meshssh 1
+	option meshsetup 1
+	option firmware_autoupdate 1
+	option fwupdate_always_allow_testing 0
+	option email_notification 0
+	option node_type 'node'
 	list	node_types 'node'
 	list	node_types 'mobile'
 	list	node_types 'server'
-	option	nightly_reboot 0
-	option	ignore_factory_reset_button 0
-	option	mesh_sleep 1
+	option nightly_reboot 0
+	option ignore_factory_reset_button 0
+	option mesh_sleep 1
 
 config boot 'boot'
 	option boot_step 0
@@ -95,152 +95,153 @@ config log 'log'
 	option tasks 0
 
 config gps 'gps'
-	option 	latitude '0'
-	option  longitude '0'
-	option  altitude '0'
+	option latitude '0'
+	option longitude '0'
+	option altitude '0'
 
 config geoloc 'geoloc'
 	list	ignore_macs ''
 
 config contact 'contact'
-	option	name ''
-	option	email ''
-	option	location ''
-	option	note ''
+	option name ''
+	option email ''
+	option location ''
+	option note ''
 
 config network 'network'
-	option	client_disconnect_timeout 0
-	option	dhcp_lan_offset 100
-	option	dhcp_lan_limit 0
-	option	dhcp_lan_lease '12h'
-#	option	essid_ap '' #custom essid
-	option	wifi_country 'DE'
-	option	wifi_channel 13
-	option	wifi_txpower 18
-	option	wifi5g_mode 'normal'
-	option	wifi_channel_5g 44
-	option	wifi_txpower_5g 18
-	option	wifi_indoor_5g 0
+	option client_disconnect_timeout 0
+	option dhcp_lan_offset 100
+	option dhcp_lan_limit 0
+	option dhcp_lan_lease '12h'
+#	option essid_ap '' #custom essid
+	option wifi_country 'DE'
+	option wifi_channel 13
+	option wifi_txpower 18
+	option wifi5g_mode 'normal'
+	option wifi_channel_5g 44
+	option wifi_txpower_5g 18
+	option wifi_indoor_5g 0
 # multiple of 20,40,80 Mhz !!!
-	option	wifi_channels_5g_outdoor '100-144'
-	option	wifi_ch_5g_outdoor_min 100
-	option	wifi_ch_5g_outdoor_max 144
-	option	wifi_slow_rates 0
-	option	wifi2_dhcplease '5m'
-	option	wifi2_isolate '1'
-	option	wifi2_roaming_enabled '1'
-	option	lan_local_internet '0'
-	option	internal_dns1 '10.200.0.4'
-	option	internal_dns2 '10.200.0.16'
-	option	force_ether_100mbit 0
-	option	mesh_mtu 1200
-	option	mesh_on_lan 0
-	option	mesh_on_wan 0
-	option	mesh_on_vlan 0
-	option	mesh_vlan_id 9
-	option	wifi3_2g_enabled 0
-	option	wifi3_2g_network 'lan'
-	option	wifi3_2g_security 1
-	option	wifi3_5g_enabled 0
-	option	wifi3_5g_network 'lan'
-	option	wifi3_5g_security 1
-	option	wwan_apn 'internet'
-	option	wwan_pincode ''
-	option	wwan_syslog 0
-	option	fallback_dns ''
-	option	lan_ipaddr '192.168.222.1'
-	option	lan_netmask '255.255.255.0'
-	option	lan_gateway ''
-	option	lan_dns ''
-	option	lan_proto 'static'
-	option	lan_stp 1
-	option	wan_proto 'dhcp'
-	option	wan_stp 1
-	#option	wan_ipaddr
-	#option	wan_netmask
-	#option	wan_gateway
-	#option	wan_dns
+	option wifi_channels_5g_outdoor '100-144'
+	option wifi_ch_5g_outdoor_min 100
+	option wifi_ch_5g_outdoor_max 144
+	option wifi_slow_rates 0
+	option wifi2_dhcplease '5m'
+	option wifi2_isolate '1'
+	option wifi2_roaming_enabled '1'
+	option lan_local_internet '0'
+	option internal_dns1 '10.200.0.4'
+	option internal_dns2 '10.200.0.16'
+	option force_ether_100mbit 0
+	option mesh_mtu 1200
+	option mesh_on_lan 0
+	option mesh_on_wan 0
+	option mesh_on_vlan 0
+	option mesh_vlan_id 9
+	option wifi3_2g_enabled 0
+	option wifi3_2g_network 'lan'
+	option wifi3_2g_security 1
+	option wifi3_5g_enabled 0
+	option wifi3_5g_network 'lan'
+	option wifi3_5g_security 1
+	option wwan_apn 'internet'
+	option wwan_pincode ''
+	option wwan_syslog 0
+	option fallback_dns ''
+	option lan_ipaddr '192.168.222.1'
+	option lan_netmask '255.255.255.0'
+	option lan_gateway ''
+	option lan_dns ''
+	option lan_proto 'static'
+	option lan_stp 1
+	option wan_proto 'dhcp'
+	option wan_stp 1
+	#option wan_ipaddr
+	#option wan_netmask
+	#option wan_gateway
+	#option wan_dns
 	option wificlient_5g_ssid 'dummy'
 	option wificlient_5g_encryption 'psk2-ccmp'
 
 config bmxd 'bmxd'
-	option routing_class	3
-	option gateway_class	'1024/1024'
+	option routing_class 3
+	option gateway_class '1024/1024'
 	option prefered_gateway	''
 	option only_community_gateways '1'
 
 
 config backbone 'backbone'
-	option  fastd_port	'5002'
-	option  default_fastd_port	'5002'
-	option  default_wg_port	'5003'
-	option	number_of_clients	${MAX_BACKBONE_CLIENTS}
+	option fastd_port '5002'
+	option default_fastd_port '5002'
+	option default_wg_port '5003'
+	option number_of_clients ${MAX_BACKBONE_CLIENTS}
 
 #config backbone_accept
-#	option	key			''
-#	option	comment	''
+#	option key ''
+#	option comment ''
 
 config backbone_client
-	option 	host				'vpn9.freifunk-dresden.de'
-	option	type				'wireguard'
-	option	disabled		'0'
-	option 	port				''
-	option	public_key	''
-	option	node				''
+	option host 'vpn9.freifunk-dresden.de'
+	option type 'wireguard'
+	option disabled '0'
+	option port ''
+	option public_key ''
+	option node ''
 
 config backbone_client
-	option 	host				'vpn12.freifunk-dresden.de'
-	option	type				'wireguard'
-	option	disabled		'0'
-	option 	port				''
-	option	public_key	''
-	option	node				''
+	option host 'vpn1.freifunk-dresden.de'
+	option type 'wireguard'
+	option disabled '0'
+	option port ''
+	option public_key ''
+	option node ''
 
 config backbone_client
-	option 	host				'vpn15.freifunk-dresden.de'
-	option	type				'wireguard'
-	option	disabled		'0'
-	option 	port				''
-	option	public_key	''
-	option	node				''
+	option host 'vpn15.freifunk-dresden.de'
+	option type 'wireguard'
+	option disabled '0'
+	option port ''
+	option public_key ''
+	option node ''
 
 config backbone_client
-	option 	host				'vpn18.freifunk-dresden.de'
-	option	type				'wireguard'
-	option	disabled		'0'
-	option 	port				''
-	option	public_key 	''
-	option	node				''
+	option host 'vpn18.freifunk-dresden.de'
+	option type 'wireguard'
+	option disabled '0'
+	option port ''
+	option public_key ''
+	option node ''
 
 config backbone_client
-	option 	host				'vpn1le.freifunk-leipzig.de'
-	option	type				'wireguard'
-	option	disabled		'0'
-	option 	port				''
-	option	public_key 	''
-	option	node				''
+	option host 'vpn1le.freifunk-leipzig.de'
+	option type 'wireguard'
+	option disabled '0'
+	option port ''
+	option public_key ''
+	option node ''
 
 config backbone_client
-	option 	host				'vpn3le.freifunk-leipzig.de'
-	option	type				'wireguard'
-	option	disabled		'0'
-	option 	port				''
-	option	public_key 	''
-	option	node				''
+	option host 'vpn3le.freifunk-leipzig.de'
+	option type 'wireguard'
+	option disabled '0'
+	option port ''
+	option public_key ''
+	option node ''
 
 config privnet 'privnet'
-	option  fastd_port		'4000'
-	option  default_fastd_port	'4000'
-	option	number_of_clients	5
+	option fastd_port '4000'
+	option default_fastd_port '4000'
+	option number_of_clients '5'
+	option forward '0'
 
 #config privnet_accept
-#	option	key			''
-#	option	comment			''
+#	option key ''
+#	option comment ''
 
 #config privnet_client
-#	option	host			''
-#	option	port			''
-#	option	public_key		''
+#	option host ''
+#	option port ''
+#	option public_key ''
 
 EOM
 

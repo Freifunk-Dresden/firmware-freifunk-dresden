@@ -15,6 +15,8 @@ DEFAULT_PORT=$(uci -q get ddmesh.privnet.default_fastd_port)
 privnet_server_port=$(uci -q get ddmesh.privnet.fastd_port)
 privnet_server_port=${privnet_server_port:-$DEFAULT_PORT}
 
+test "$(uci -q get ddmesh.privnet.forward)" = "1" && privnet_forward="yes" || privnet_forward="no"
+
 eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh privnet)
 
 # priv interface is added to br-lan. a bridge derives
@@ -58,7 +60,7 @@ bind any:$privnet_server_port;
 secret "$secret";
 mtu $MTU;
 include peers from "$CONF_PEERS";
-forward no;
+forward $privnet_forward;
 on up sync "/etc/fastd/privnet-cmd.sh up";
 on down sync "/etc/fastd/privnet-cmd.sh down";
 on connect sync "/etc/fastd/privnet-cmd.sh connect";
