@@ -24,7 +24,7 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh privnet)
 # if this lan is also used to carry fastd pakets of
 # priv (e.g. gateway over lan), those pakets would not fit into mtu.
 # Therefore leave mtu 1500 and let kernel fragment this paket.
-# note: backbone fastd pakets use mesh_mtu as this iface
+# note: fastd packets use mesh_mtu as this iface
 # is not bridged.
 MTU=1500
 
