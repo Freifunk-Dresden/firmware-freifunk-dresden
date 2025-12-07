@@ -105,6 +105,7 @@ docker:bcm:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
