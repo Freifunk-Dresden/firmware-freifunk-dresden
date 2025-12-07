@@ -16,7 +16,6 @@ stages:
 include:
   - local: '/gitlab-ci/m3runner-tags.yml'
   - local: '/gitlab-ci/m3runner-master.yml'
-#devel abgeschaltet, da gitlab meckert, dass das file angeblich nicht exisiert
-#  - local: '/gitlab-ci/m3runner-devel.yml'
+  - local: '/gitlab-ci/m3runner-devel.yml'
   - local: '/gitlab-ci/docker2-yaro.yml'
   - local: '/gitlab-ci/docker.yml'
