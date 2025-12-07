@@ -1,40 +1,38 @@
 
 
-# to compile  with target compiler
-# Yohua
-# export CC=../../../../workdir/b4d7885/staging_dir/toolchain-mipsel_24kc_gcc-8.4.0_musl/bin/mipsel-openwrt-linux-gcc
-# export STAGING_DIR=../../../../workdir/b4d7885/staging_dir
-#
-# tp-link 841
-# export CC=/home/stephan/freifunk/firmware/workdir/5625f5b.lowmem/staging_dir/toolchain-mips_24kc_gcc-7.3.0_musl/bin/mips-openwrt-linux-gcc
-# export STAGING_DIR=../../../../workdir/5625f5b.lowmem/staging_dir
-#
-# export CC=../../../../workdir/b4d7885/staging_dir/toolchain-mips_24kc_gcc-8.4.0_musl/bin/mips-openwrt-linux-gcc
-# export STAGING_DIR=../../../../workdir/b4d7885/staging_dir
 
 
 SOURCE_MD5=	$(shell md5sum *.[ch] Makefile | md5sum | cut -d' ' -f1)
 REVISION_VERSION ="\" [md5:$(SOURCE_MD5)]\""
+
+# if bmxd is compiled by openwrt, I have to use their CFLAGS for the targets
+# especially floating point ABI stuff
+CFLAGS := $(TARGET_CFLAGS)
 
 # Recommended defines and approximate binary sizes with gcc-x86
 # -static
 # -pedantic -Wall -W -Wno-unused-parameter -O1 -g3 -std=gnu99
 # -pg  # "-pg" with openWrt toolchain results in "gcrt1.o: No such file" ?!
 #
-
+#
 # -DDEBUG_MALLOC  						+ ~0k
 # -DMEMORY_USAGE 						+ ~1k
 # -DPROFILE_DATA	(some realtime profiling)		+ ~3k
-
+#
 # optional defines (you may disable these features if you dont need it):
 # -DNODEBUGALL							- ~13k
 # -DLESS_OPTIONS                                                - ~7K
 #
-
+#
 # experimental or advanced defines (please dont touch):
 # -DNOPARANOIA		(makes bug-hunting impossible)		- ~2k
 #
+#CFLAGS += -DDEBUG_MALLOC -DMEMORY_USAGE
+#CFLAGS += -DNODEBUGALL
 
+# network id is a addtional feature that inserts and checks a network id (number)
+# to ignore packets when this ID does not match
+# default: feature is active
 #CFLAGS += -DDISABLE_NETWORK_ID_CHECK
 
 CFLAGS += -DREVISION_VERSION=$(REVISION_VERSION)
@@ -45,10 +43,6 @@ CFLAGS += -Os -g0
 
 # for debugging (coredumps) / valgrind
 #CFLAGS += -Og -g3 -ggdb
-
-
-#CFLAGS += -DDEBUG_MALLOC -DMEMORY_USAGE
-#CFLAGS += -DNODEBUGALL
 
 #LDFLAGS =
 # -static
