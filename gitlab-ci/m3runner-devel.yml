@@ -18,9 +18,9 @@ m3devel:init:
   #  - /^DEV_/
   #
   rules:
-    - if: $CI_MERGE_REQUEST_ID
-      when: on_success
-    - if: $CI_COMMIT_REF_NAME =~ "/^DEV_/"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: '$CI_COMMIT_REF_NAME =~ /^DEV_/'
       when: manual
     - when: never
 
@@ -199,9 +199,9 @@ m3devel:upload:
   #only:
   #  - /^DEV_/
   rules:
-    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
-    - if: $CI_COMMIT_REF_NAME =~ "/^DEV_/"
+    - if: $CI_COMMIT_REF_NAME =~ /^DEV_/
       when: manual
     - when: never
 
