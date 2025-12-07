@@ -38,7 +38,7 @@ endef
 
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) CC="$(TARGET_CC)" clean
-	$(MAKE) -C $(PKG_BUILD_DIR) CC="$(TARGET_CC)"
+	$(MAKE) -C $(PKG_BUILD_DIR) CC="$(TARGET_CC)" TARGET_CFLAGS="$(TARGET_CFLAGS)"
 endef
 
 define Package/bmxd/install
