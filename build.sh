@@ -1130,7 +1130,7 @@ case "$1" in
 
 		*)
 					# When running in Windows Linux Subystem, remove windows mounted path because spaces in 'Program Files' cause errors
-					# with find command. 
+					# with find command.
 					export PATH=$(echo $PATH | sed 's#\([:]*/mnt/[^:]\+[:]*\)##g')
 
 					preProcessBuildJson
@@ -1584,43 +1584,49 @@ EOM
 	fi
 
 	# copy files to our own output directory
-		mkdir -p ${outdir}/packages
-		mkdir -p ${outdir}/images
+	mkdir -p ${outdir}/packages
+	mkdir -p ${outdir}/images
 
-		echo -e "${C_CYAN}copy version file${C_NONE}"
-		mv ${RUN_DIR}/${buildroot}/files/etc/version "${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/" 2>/dev/null
+	echo -e "${C_CYAN}copy version file${C_NONE}"
+	mv ${RUN_DIR}/${buildroot}/files/etc/version "${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/" 2>/dev/null
 
 	echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
-		# -> buildroot/bin/packages/<mipsel_24kc>/*
+	# -> buildroot/bin/packages/<mipsel_24kc>/*
 	mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
 
 	echo -e "${C_CYAN}copy images${C_NONE}"
-		# copy every firmware file and add freifunk version to its name
-		# -> buildroot/bin/target/<ramips>/<mt7621>/*
-		#mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
-		for src in $(ls -1 ${RUN_DIR}/${buildroot}/bin/targets/*/*/freifunk-dresden-*)
-		do
-			basename="$(basename $src)"
-			newname="freifunk-dresden-v${fw_version}-${basename/freifunk-dresden-/}"
-			#echo "cp ${src} ${outdir}/images/${newname}"
-			cp ${src} ${outdir}/images/${newname}
-		done
-		unset IFS
+	# copy every firmware file and add freifunk version to its name
+	# -> buildroot/bin/target/<ramips>/<mt7621>/*
+	#mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
+	for src in $(ls -1 ${RUN_DIR}/${buildroot}/bin/targets/*/*/freifunk-dresden-*)
+	do
+		basename="$(basename $src)"
+		newname="freifunk-dresden-v${fw_version}-${basename/freifunk-dresden-/}"
+		#echo "cp ${src} ${outdir}/images/${newname}"
+		cp ${src} ${outdir}/images/${newname}
+	done
+	unset IFS
 
 	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
 
 		# verify presence of all images
-		echo -e "${C_CYAN}verify images${C_NONE} for target ${_cfg_name}:"
-		if ! verify_firmware_present "${_cfg_name}" "${outdir}/images"; then
-		echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
-		error=1
-		global_error=1
-		# clean_up_exit 1
+	echo -e "${C_CYAN}verify images${C_NONE} for target ${_cfg_name}:"
+	if ! verify_firmware_present "${_cfg_name}" "${outdir}/images"; then
+  	echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
+  	error=1
+  	global_error=1
+  	# clean_up_exit 1
 	fi
+
+	echo -e "${C_CYAN}create md5sum/sha256sum ${C_NONE} of ${C_GREEN}${outdir}${C_NONE}"
+  ( cd ${outdir}/images;
+    md5sum * > md5sum.txt;
+    sha256sum * > sha256sum.txt;
+  )
 
 	# write build status which is displayed by "build.sh list"
 	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
-		write_compile_status "${_cfg_name}" "${error}" "${compile_status_file}"
+	write_compile_status "${_cfg_name}" "${error}" "${compile_status_file}"
 
 	# success status
 	if [ ${error} == 0 ]; then
