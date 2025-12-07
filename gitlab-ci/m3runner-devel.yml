@@ -56,7 +56,7 @@ m3devel:init:
     # one packges, but it will reduce download overhead from external servers
     # every night. so just only delete workdirs to always have a clean build
     #- test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl/*
-    - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir/*
+    - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir
     - ./build.sh list
     - /bin/true
   tags:
