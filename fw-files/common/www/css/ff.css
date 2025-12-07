@@ -1,9 +1,13 @@
-html, body {
-	height: 100%;
+html {
+	height: 99%;
 }
 
 .bottom-spacer {
   height: 10px;
+}
+
+body {
+	height: 99%;
 }
 
 img.block {
