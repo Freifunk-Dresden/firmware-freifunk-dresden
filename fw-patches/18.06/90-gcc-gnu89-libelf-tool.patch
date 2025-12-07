@@ -1,0 +1,39 @@
+diff -rN -U10 --no-dereference openwrt.ori/tools/libelf/Makefile openwrt/tools/libelf/Makefile
+--- openwrt.ori/tools/libelf/Makefile	2025-12-06 22:27:47.057008253 +0100
++++ openwrt/tools/libelf/Makefile	2025-12-06 22:54:32.388725770 +0100
+@@ -17,30 +17,32 @@
+ 	http://distfiles.gentoo.org/distfiles/ \
+ 	http://distcache.freebsd.org/ports-distfiles/
+ HOST_BUILD_PARALLEL:=1
+
+ include $(INCLUDE_DIR)/host-build.mk
+
+ HOST_CONFIGURE_ARGS += \
+ 	--disable-shared \
+ 	--enable-elf64
+
++# Override Host/Compile to ensure gnu89 is used during compilation
++# configure script macht test-compilierungen und testet damit Voraussetzungen
+ define Host/Configure
+         (cd $(HOST_BUILD_DIR)/$(3); \
+-                $(HOST_CONFIGURE_CMD) \
++                CFLAGS="-std=gnu89" $(HOST_CONFIGURE_CMD) \
+                 $(HOST_CONFIGURE_ARGS); \
+         )
+ endef
+
+-
++# Override Host/Compile to ensure gnu89 is used during compilation
+ define Host/Compile
+-	+$(MAKE) $(HOST_JOBS) -C $(HOST_BUILD_DIR)/lib/ libelf.a
++	+ CFLAGS="-std=gnu89" $(MAKE) $(HOST_JOBS) -C $(HOST_BUILD_DIR)/lib/ libelf.a
+ endef
+
+ define Host/Install
+ 	$(INSTALL_DIR) $(STAGING_DIR_HOST)/{lib,include/libelf}
+ 	$(CP) $(HOST_BUILD_DIR)/lib/{elf_repl.h,gelf.h,libelf.h,nlist.h,sys_elf.h} \
+ 						$(STAGING_DIR_HOST)/include/libelf/
+ 	$(CP) $(HOST_BUILD_DIR)/lib/libelf.a $(STAGING_DIR_HOST)/lib/
+ endef
+
+ define Host/Clean

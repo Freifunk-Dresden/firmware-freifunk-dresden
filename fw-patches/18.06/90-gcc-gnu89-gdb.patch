@@ -1,0 +1,26 @@
+diff -rN -U10 --no-dereference openwrt.ori/toolchain/gdb/Makefile openwrt.gdb/toolchain/gdb/Makefile
+--- openwrt.ori/toolchain/gdb/Makefile	2025-12-06 22:27:47.041008257 +0100
++++ openwrt.gdb/toolchain/gdb/Makefile	2025-12-06 23:43:10.980252423 +0100
+@@ -44,20 +44,22 @@
+ 	--enable-tui --disable-gdbtk --without-x \
+ 	--without-included-gettext \
+ 	--enable-threads \
+ 	--with-expat \
+ 	--without-python \
+ 	--disable-binutils \
+ 	--disable-ld \
+ 	--disable-gas \
+ 	--disable-sim
+ 
++HOST_CFLAGS=-std=gnu89
++
+ define Host/Install
+ 	mkdir -p $(TOOLCHAIN_DIR)/bin
+ 	$(INSTALL_BIN) $(HOST_BUILD_DIR)/gdb/gdb $(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)gdb
+ 	ln -fs $(TARGET_CROSS)gdb $(TOOLCHAIN_DIR)/bin/$(GNU_TARGET_NAME)-gdb
+ 	strip $(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)gdb
+ endef
+ 
+ define Host/Clean
+ 	rm -rf \
+ 		$(HOST_BUILD_DIR) \

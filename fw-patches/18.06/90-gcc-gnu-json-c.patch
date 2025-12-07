@@ -1,0 +1,26 @@
+diff -rN -U10 --no-dereference openwrt.ori/package/libs/libjson-c/Makefile openwrt.json-c/package/libs/libjson-c/Makefile
+--- openwrt.ori/package/libs/libjson-c/Makefile	2025-12-06 22:27:46.689008344 +0100
++++ openwrt.json-c/package/libs/libjson-c/Makefile	2025-12-07 00:11:04.607975615 +0100
+@@ -23,21 +23,21 @@
+ 
+ PKG_FIXUP:=autoreconf
+ PKG_INSTALL:=1
+ 
+ PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
+ 
+ include $(INCLUDE_DIR)/package.mk
+ include $(INCLUDE_DIR)/host-build.mk
+ 
+ TARGET_CFLAGS += $(FPIC) -Wno-implicit-fallthrough
+-HOST_CFLAGS += -Wno-implicit-fallthrough
++HOST_CFLAGS += -Wno-implicit-fallthrough -Wno-error=calloc-transposed-args
+ HOST_BUILD_PREFIX:=$(STAGING_DIR_HOST)
+ 
+ define Package/libjson-c
+   SECTION:=libs
+   CATEGORY:=Libraries
+   TITLE:=javascript object notation
+   URL:=https://json-c.github.io/json-c/
+ endef
+ 
+ define Package/libjson-c/description
