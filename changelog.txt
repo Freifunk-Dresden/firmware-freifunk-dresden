@@ -1,4 +1,24 @@
 
+
+
+2025-12-31 [9.0.0] ()
+--------------------------------------------------
+openwrt                   - add support for openwrt 24
+                          - complete firewall rework (iptables -> netfilter)
+                          - fix compile errors because of comiler updates
+                          - revert openwrt changes to keep wifi mesh working and compatible
+
+build environment         - add support for different openwrt versions
+                          - add build.json templates
+                          - add default feed revision
+
+targets/routers           - move some routers ot EOL (end of life)
+                          - add new routers (openwrt 24)
+
+gui                       - adapt firewall page to new netfilter
+                          - minor layout fixes
+
+
 2024-01-31 [8.2.8] ()
 --------------------------------------------------
 router                    - add "ASUS RT-AX53U"
