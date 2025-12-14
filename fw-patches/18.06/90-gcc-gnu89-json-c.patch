@@ -13,7 +13,7 @@ diff -rN -U10 --no-dereference openwrt.ori/package/libs/libjson-c/Makefile openw
  
  TARGET_CFLAGS += $(FPIC) -Wno-implicit-fallthrough
 -HOST_CFLAGS += -Wno-implicit-fallthrough
-+HOST_CFLAGS += -Wno-implicit-fallthrough -Wno-error=calloc-transposed-args
++HOST_CFLAGS += -Wno-implicit-fallthrough -std=gnu89
  HOST_BUILD_PREFIX:=$(STAGING_DIR_HOST)
  
  define Package/libjson-c
