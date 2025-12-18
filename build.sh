@@ -64,7 +64,6 @@ COMPILE_STATUS_FILE_SUFFIX="compile-status.json"
 # 9 strike
 
 C_NONE='\033[0m' # No Color
-C_GREY='\033[1;30m'
 C_RED='\033[0;31m'
 C_LRED='\033[1;31m'
 C_GREEN='\033[0;32m'
@@ -121,18 +120,28 @@ else
 fi
 
 # define color lookup table used when displaying targets via "list"
-declare -A color_selector
-declare -A color_firmware
+declare -A color_template
+declare -A color_fwversion
 declare -A color_openwrt
-# selectors
-color_selector['18.06']="${BG_BLACK}"
-color_selector['21.02']="${BG_BLACK}"
-color_selector['22.03']="${BG_BLUE}"
-color_selector['24.10.0']="${BG_PURBLE}"
-color_selector['8.2.6']="${BG_BLUE}"
-color_firmware['9.0.0']="${BG_PURBLE}"
-color_openwrt['v22.03.7']="${BG_BLUE}"
-color_openwrt['v24.10.0']="${BG_PURBLE}"
+declare -A color_selector
+
+color_template['18.06']="${C_ORANGE}"
+color_template['22.03']="${C_BLUE}"
+color_template['24.10.2']="${C_PURPLE}"
+#---
+color_fwversion['8.2.6']="${C_BLUE}"
+color_fwversion['8.2.8']="${C_GREEN}"
+color_fwversion['9.0.0']="${C_PURPLE}"
+#---
+color_openwrt['5625f5bc36954d644cb80adf8de47854c65d91c3']="${C_ORANGE}"
+color_openwrt['v22.03.7']="${C_BLUE}"
+color_openwrt['v24.10.2']="${C_PURPLE}"
+#---
+color_selector['18.06']="${C_ORANGE}"
+color_selector['22.03']="${C_BLUE}"
+color_selector['24.10']="${C_PURPLE}"
+
+
 color_eol="${C_LRED}"
 
 #printf "${color_selector['18.06']}aaa ${color_selector['21.02']}%s ${C_NONE}bbb\n" "value"
@@ -706,7 +715,7 @@ listTargets()
     strike="${STRIKE_ON}"
 	fi
 
-	printf  "│$cstatus ${strike}%-27s${C_NONE} │ ${color_eol}%-3.3s${C_NONE} │ %-8.8s | ${color_firmware[${fw_version}]}%-7.7s${C_NONE} │ ${color_openwrt[${_cfg_openwrt_rev}]}%-10.10s${C_NONE} │ %-7.7s │ ${color_selector[${_cfg_selector_config}]}%-8.8s${C_NONE} │ ${color_selector[${_cfg_selector_files}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_feeds}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_patches}]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${eol}" "${_cfg_template}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
+	printf  "│$cstatus ${strike}%-27s${C_NONE} │ ${color_eol}%-3.3s${C_NONE} │ ${color_template[${_cfg_template}]}%-8.8s${C_NONE} | ${color_fwversion[${fw_version}]}%-7.7s${C_NONE} │ ${color_openwrt[${_cfg_openwrt_rev}]}%-10.10s${C_NONE} │ %-7.7s │ ${color_selector[${_cfg_selector_config}]}%-8.8s${C_NONE} │ ${color_selector[${_cfg_selector_files}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_feeds}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_patches}]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${eol}" "${_cfg_template}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
 
  done
 
