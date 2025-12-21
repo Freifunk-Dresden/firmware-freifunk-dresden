@@ -7,7 +7,7 @@
 # copy firwmare,packets and generate download.json
 
 # -------------------------------------------------------------------
-VERSION="10"
+VERSION="11"
 
 #Black        0;30     Dark Gray     1;30
 #Red          0;31     Light Red     1;31
@@ -41,53 +41,63 @@ C_LGREY='\033[1;37m'
 #parameter check
 usage()
 {
-	printf "${0##*/} (all | json <commands>\n"
-	printf "Version ${VERSION}\n"
-	printf "commands:\n"
-	printf "   all                                                       - generates all (incl.copying files)\n"
-	printf "   json                                                      - only updates download.json\n"
-	printf "   compare-json                                              - only compare fileinfo.json  against last generated version\n"
-	printf "   directory-suffix                                          - optional. if defined firmware files are created in different directory '.file.<directory_suffix>'\n"
-	printf "   pretty                   <download.json | fileinfo.json>  - reads file info json from file and prints sorted (by filename) json on stdout\n"
-	printf "   show-multiple-used-files <download.json | fileinfo.json>  - shows filenames that are used more than once\n"
-	printf "\n"
+cat << EOM
+${0##*/} all | json | only-verify-json | pretty <json-file> |  | [directory-suffix]
+Version ${VERSION}
+commands:
+  all              [directory-suffix]      - generates all (incl.copying files)
+  json             [directory-suffix]      - only updates download.json
+  only-verify-json [directory-suffix]      - only compare fileinfo.json against last generated version
+  pretty <download.json | fileinfo.json>   - reads file info json from file and prints
+                                               sorted (by filename) json on stdout
+  show-multiple-used-files <download.json | fileinfo.json>
+                                           - shows filenames that are used more than once
+
+  [directory-suffix] if defined firmware files are created in different
+  directory '.file.<directory_suffix>'
+
+EOM
 	exit 1
 }
 
 # DEVEL: can be set to false to when only debugging index-generation and generation of download.json stuff
 case "$1" in
 	"all") 	ENABLE_COPY=true
-		ENABLE_GENERATE=true
-		;;
+		      ENABLE_GENERATE=true
+          directory_suffix=$2
+		      ;;
 
 	"json") ENABLE_COPY=false
-		ENABLE_GENERATE=true
-		;;
+		      ENABLE_GENERATE=true
+          directory_suffix=$2
+		      ;;
 
-	"compare-json")
-		ENABLE_COPY=false
-		ENABLE_GENERATE=false
-		;;
+	"only-verify-json")
+		      ENABLE_COPY=false
+		      ENABLE_GENERATE=false
+          directory_suffix=$2
+      		;;
 
 	"pretty")
-		if [ -z "$2" ]; then
-			printf "missing file\n"
-			exit 1
-		fi
-		cat "$2" | jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename) }'
-		exit 0
-		;;
+      		if [ -z "$2" ]; then
+      			printf "missing file\n"
+      			exit 1
+      		fi
+      		cat "$2" | jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename) }'
+      		exit 0
+      		;;
 
 	"show-multiple-used-files")
-		if [ -z "$2" ]; then
-			printf "missing json file\n"
-			exit 1
-		fi
-		cat "$2" | jq '[ .fileinfo[] | select(.filename | contains("sysupgrade")) ] |  (.  - unique_by(.filename))[] | .filename'
-		exit 0
-		;;
+      		if [ -z "$2" ]; then
+      			printf "missing json file\n"
+      			exit 1
+      		fi
+      		cat "$2" | jq '[ .fileinfo[] | select(.filename | contains("sysupgrade")) ] |  (.  - unique_by(.filename))[] | .filename'
+      		exit 0
+      		;;
 
-	*) 	printf "invalid parameter\n"
+	*)
+    test -n "$1" &&	printf "invalid parameter\n"
 		usage
 		exit 1
 		;;
@@ -106,7 +116,6 @@ GENERATED_FIRMWARE_VERSION_FILE="version"
 
 #get apsolute path before changing to it.
 firmwareroot="$PWD"
-directory_suffix=$2
 
 # save PATH (needed to add build root binaries for different openwrt versions)
 SAVED_SYSTEM_PATH=$PATH
