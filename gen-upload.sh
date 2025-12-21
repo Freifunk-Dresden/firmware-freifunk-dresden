@@ -608,20 +608,20 @@ mv ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.sorted ${info_dir}/${OUTPUT_FILE
 #------ now compare fileinfo.json and generated file (sorting is not needed).------
 # check for missing firmware files (not generated)
 error=0
-if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current.fileinfo - $generated.fileinfo | if length > 0 then . else empty end'; then
+if jq --exit-status -n --slurpfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --slurpfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current[0].fileinfo - $generated[0].fileinfo | if length > 0 then . else empty end'; then
 
 # only consider filenames
-#if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' ([$current.fileinfo[] | .filename]) - ([$generated.fileinfo[] | .filename]) | if length > 0 then . else empty end'; then
+#if jq --exit-status -n --slurpfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --slurpfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' ([$current[0].fileinfo[] | .filename]) - ([$generated[0].fileinfo[] | .filename]) | if length > 0 then . else empty end'; then
 	echo -e "${C_RED}ERROR: missing firmware files${C_NONE}"
 	error=1
 fi
 
 [ $error -eq 1 ] && echo "----------------------------------------------------"
 
-if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $generated.fileinfo - $current.fileinfo | if length > 0 then . else empty end'; then
+if jq --exit-status -n --slurpfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --slurpfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $generated[0].fileinfo - $current[0].fileinfo | if length > 0 then . else empty end'; then
 
 # only consider filenames
-#if jq --exit-status -n --argfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --argfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' ([$generated.fileinfo[] | .filename]) - ([$current.fileinfo[] | .filename]) | if length > 0 then . else empty end'; then
+#if jq --exit-status -n --slurpfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --slurpfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' ([$generated[0].fileinfo[] | .filename]) - ([$current[0].fileinfo[] | .filename]) | if length > 0 then . else empty end'; then
 	echo -e "${C_BLUE}INFO: new devices found${C_NONE}"
 	error=1
 fi
