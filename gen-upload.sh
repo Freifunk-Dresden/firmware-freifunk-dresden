@@ -49,7 +49,7 @@ commands:
   json             [directory-suffix]      - only updates download.json
   only-verify-json [directory-suffix]      - only compare fileinfo.json against last generated version
   pretty <download.json | fileinfo.json>   - reads file info json from file and prints
-                                               sorted (by filename) json on stdout
+                                               sorted (by sortkey) json on stdout
   show-multiple-used-files <download.json | fileinfo.json>
                                            - shows filenames that are used more than once
 
@@ -83,7 +83,7 @@ case "$1" in
       			printf "missing file\n"
       			exit 1
       		fi
-      		cat "$2" | jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.filename) }'
+      		cat "$2" | jq '{comment,json_version,"fileinfo": .fileinfo | sort_by(.sortkey) }'
       		exit 0
       		;;
 
@@ -606,7 +606,8 @@ cat ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} | jq '. |
 mv ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.sorted ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}
 
 #------ now compare fileinfo.json and generated file (sorting is not needed).------
-# check for missing firmware files (not generated)
+printf "${C_YELLOW}check for missing firmware files (not generated)${C_NONE}\n"
+#
 error=0
 if jq --exit-status -n --slurpfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --slurpfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $current[0].fileinfo - $generated[0].fileinfo | if length > 0 then . else empty end'; then
 
@@ -617,6 +618,7 @@ if jq --exit-status -n --slurpfile current ${info_dir}/${INPUT_FILEINFO_JSON_FIL
 fi
 
 [ $error -eq 1 ] && echo "----------------------------------------------------"
+printf "${C_YELLOW}check for new firmware files${C_NONE}\n"
 
 if jq --exit-status -n --slurpfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --slurpfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} ' $generated[0].fileinfo - $current[0].fileinfo | if length > 0 then . else empty end'; then
 
