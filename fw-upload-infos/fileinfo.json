@@ -6,7 +6,7 @@
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-generic-tl-wr1043nd-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-tl-wr1043nd-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-tl-wr1043nd-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -16,14 +16,14 @@
       "autoupdate": "1",
       "model": "tl-wr1043nd",
       "model2": "TP-Link TL-WR1043N/ND v1",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-tl-wr1043nd-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-tl-wr1043nd-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-generic-tl-wr842n-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-tl-wr842n-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-tl-wr842n-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -33,14 +33,14 @@
       "autoupdate": "1",
       "model": "tl-mr3420",
       "model2": "TP-Link TL-WR842N/ND v1",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-tl-wr842n-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-tl-wr842n-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-generic-ubnt-bullet-m-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-bullet-m-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-bullet-m-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -50,7 +50,7 @@
       "autoupdate": "1",
       "model": "bullet-m",
       "model2": "Ubiquiti Bullet M",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -60,14 +60,14 @@
       "autoupdate": "1",
       "model": "bullet-m",
       "model2": "Ubiquiti Bullet M2",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "Ubiquiti Loco M XW (factory)",
       "sortkey": "ar71xx-generic-ubnt-loco-m-xw-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-loco-m-xw-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-loco-m-xw-squashfs-factory.bin",
       "comment": "(XW) Kleines Gehäuse; Label: NanoStation Loco M2 (RAM: 64Mbyte)"
     },
     {
@@ -77,14 +77,14 @@
       "autoupdate": "1",
       "model": "loco-m-xw",
       "model2": "Ubiquiti Loco M XW",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-loco-m-xw-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-loco-m-xw-squashfs-sysupgrade.bin",
       "comment": "(XW) Kleines Gehäuse; Label: NanoStation Loco M2 (RAM: 64Mbyte)"
     },
     {
       "disabled": "0",
       "name": "Ubiquiti NanoStation Loco M2 (XM) (factory)",
       "sortkey": "ar71xx-generic-ubnt-nano-m-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-nano-m-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-nano-m-squashfs-factory.bin",
       "comment": "(XM) Kleine/Groß Gehäuse; Label: NanoStation (Loco) M2 (RAM: 32Mbyte)"
     },
     {
@@ -94,7 +94,7 @@
       "autoupdate": "1",
       "model": "nanostation-m",
       "model2": "Ubiquiti NanoStation M2",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
       "comment": "(XM) Kleine/Groß Gehäuse; Label: NanoStation (Loco) M2 (RAM: 32Mbyte)"
     },
     {
@@ -104,14 +104,14 @@
       "autoupdate": "1",
       "model": "nanostation-m",
       "model2": "Ubiquiti NanoStation loco M2",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
       "comment": "(XM) Kleines Gehäuse (RAM: 32Mbyte)"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-generic-ubnt-nano-m-xw-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-nano-m-xw-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-nano-m-xw-squashfs-factory.bin",
       "comment": "(XW) Großes Gehäuse (RAM: 64Mbyte)"
     },
     {
@@ -121,14 +121,14 @@
       "autoupdate": "1",
       "model": "nanostation-m-xw",
       "model2": "Ubiquiti Nanostation M XW",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-generic-ubnt-nano-m-xw-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-nano-m-xw-squashfs-sysupgrade.bin",
       "comment": "(XW) Großes Gehäuse (RAM: 64Mbyte)"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-mr3020-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-mr3020-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-mr3020-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -138,14 +138,14 @@
       "autoupdate": "1",
       "model": "tl-mr3020",
       "model2": "TP-Link TL-MR3020 v1",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-mr3020-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-mr3020-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-mr3220-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-mr3220-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-mr3220-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -155,14 +155,14 @@
       "autoupdate": "1",
       "model": "tl-mr3220",
       "model2": "TP-Link TL-WR842N/ND v1",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-mr3220-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-mr3220-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa701nd-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa701nd-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa701nd-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -172,14 +172,14 @@
       "autoupdate": "1",
       "model": "tl-wa701nd-v2",
       "model2": "TP-Link TL-WA701N/ND v2",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa701nd-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa701nd-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa801nd-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -189,14 +189,14 @@
       "autoupdate": "1",
       "model": "tl-wa901nd",
       "model2": "TP-Link TL-WA801N/ND v1",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa801nd-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -206,14 +206,14 @@
       "autoupdate": "1",
       "model": "tl-wa801nd-v2",
       "model2": "TP-Link TL-WA801N/ND v2",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa801nd-v3-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v3-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -223,14 +223,14 @@
       "autoupdate": "1",
       "model": "tl-wa801nd-v3",
       "model2": "TP-Link TL-WA801N/ND v3",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa830re-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa830re-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa830re-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -240,14 +240,14 @@
       "autoupdate": "1",
       "model": "tl-wa830re-v2",
       "model2": "TP-Link TL-WA830RE v2",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa830re-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa830re-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa850re-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa850re-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa850re-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -257,14 +257,14 @@
       "autoupdate": "1",
       "model": "tl-wa850re",
       "model2": "TP-Link TL-WA850RE v1",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa850re-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa850re-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa860re-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa860re-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa860re-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -274,14 +274,14 @@
       "autoupdate": "1",
       "model": "tl-wa860re",
       "model2": "TP-Link TL-WA860RE v1",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa860re-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa860re-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -291,14 +291,14 @@
       "autoupdate": "1",
       "model": "tl-wa901nd-v2",
       "model2": "TP-Link TL-WA901N/ND v2",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v3-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v3-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -308,14 +308,14 @@
       "autoupdate": "1",
       "model": "tl-wa901nd-v3",
       "model2": "TP-Link TL-WA901N/ND v3",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v4-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v4-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -325,14 +325,14 @@
       "autoupdate": "1",
       "model": "tl-wa901nd-v4",
       "model2": "TP-Link TL-WA901N/ND v4",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v4-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v4-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v5-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v5-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v5-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -342,14 +342,14 @@
       "autoupdate": "1",
       "model": "tl-wa901nd-v5",
       "model2": "TP-Link TL-WA901N/ND v5",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v5-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v5-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr740n-v4-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr740n-v4-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr740n-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -359,14 +359,14 @@
       "autoupdate": "1",
       "model": "tl-wr741nd-v4",
       "model2": "TP-Link TL-WR740N/ND v4",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr740n-v4-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr740n-v4-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr741nd-v4-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr741nd-v4-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr741nd-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -376,21 +376,21 @@
       "autoupdate": "1",
       "model": "tl-wr741nd-v4",
       "model2": "TP-Link TL-WR741N/ND v4",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr741nd-v4-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr741nd-v4-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr840n-v2-squashfs-factory-eu.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr840n-v2-squashfs-factory-eu.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr840n-v2-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr840n-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr840n-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr840n-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -400,14 +400,14 @@
       "autoupdate": "1",
       "model": "tl-wr840n-v2",
       "model2": "TP-LINK TL-WR840N v2",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr840n-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr840n-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v10-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v10-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v10-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -417,28 +417,28 @@
       "autoupdate": "1",
       "model": "tl-wr841n-v9",
       "model2": "TP-Link TL-WR841N/ND v10",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v10-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v10-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v11-squashfs-factory-eu.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-factory-eu.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v11-squashfs-factory-us.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-factory-us.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-factory-us.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v11-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -448,28 +448,28 @@
       "autoupdate": "1",
       "model": "tl-wr841n-v11",
       "model2": "TP-Link TL-WR841N/ND v11",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v12-squashfs-factory-eu.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-factory-eu.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v12-squashfs-factory-us.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-factory-us.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-factory-us.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v12-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -479,14 +479,14 @@
       "autoupdate": "1",
       "model": "tl-wr841n-v11",
       "model2": "TP-Link TL-WR841N/ND v12",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v5-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v5-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v5-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -496,14 +496,14 @@
       "autoupdate": "1",
       "model": "tl-wr741nd",
       "model2": "TP-Link TL-WR841N/ND v5",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v5-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v5-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v7-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v7-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v7-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -513,14 +513,14 @@
       "autoupdate": "1",
       "model": "tl-wr841n-v7",
       "model2": "TP-Link TL-WR841N/ND v7",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v7-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v7-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v8-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v8-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v8-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -530,14 +530,14 @@
       "autoupdate": "1",
       "model": "tl-wr841n-v8",
       "model2": "TP-Link TL-WR841N/ND v8",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v8-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v8-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v9-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v9-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v9-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -547,35 +547,35 @@
       "autoupdate": "1",
       "model": "tl-wr841n-v9",
       "model2": "TP-Link TL-WR841N/ND v9",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr841-v9-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v9-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v4-squashfs-factory-br.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-br.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-br.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v4-squashfs-factory-eu.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-eu.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v4-squashfs-factory-us.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-us.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-us.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v4-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -585,35 +585,35 @@
       "autoupdate": "1",
       "model": "tl-wr940n-v4",
       "model2": "TP-Link TL-WR940N v4",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v6-squashfs-factory-br.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-br.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-br.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v6-squashfs-factory-eu.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-eu.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v6-squashfs-factory-us.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-us.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-us.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v6-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -623,14 +623,14 @@
       "autoupdate": "1",
       "model": "tl-wr940n-v6",
       "model2": "TP-Link TL-WR940N v6",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr941nd-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -640,14 +640,14 @@
       "autoupdate": "1",
       "model": "tl-wr941nd",
       "model2": "TP-Link TL-WR941N/ND v2",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr941nd-v5-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v5-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v5-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -657,14 +657,14 @@
       "autoupdate": "1",
       "model": "tl-wr941nd-v5",
       "model2": "TP-Link TL-WR941N/ND v5",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v5-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v5-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr941nd-v6-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v6-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v6-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -674,14 +674,14 @@
       "autoupdate": "1",
       "model": "tl-wr941nd-v6",
       "model2": "TP-Link TL-WR941N/ND v6",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v6-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v6-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-aruba_ap-105-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-aruba_ap-105-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-aruba_ap-105-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -691,14 +691,14 @@
       "autoupdate": "1",
       "model": "aruba,ap-105",
       "model2": "Aruba AP-105",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-aruba_ap-105-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-aruba_ap-105-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-avm_fritz4020-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-avm_fritz4020-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-avm_fritz4020-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -708,7 +708,7 @@
       "autoupdate": "1",
       "model": "avm,fritz4020",
       "model2": "AVM FRITZ!Box 4020",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -718,14 +718,14 @@
       "autoupdate": "1",
       "model": "fritz4020",
       "model2": "AVM FRITZ!Box 4020",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-avm_fritz4020-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-avm_fritz450e-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-avm_fritz450e-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-avm_fritz450e-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -735,14 +735,14 @@
       "autoupdate": "1",
       "model": "avm,fritz450e",
       "model2": "AVM FRITZ!WLAN Repeater 450E",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-avm_fritz450e-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-avm_fritz450e-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-comfast_cf-e110n-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-comfast_cf-e110n-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-comfast_cf-e110n-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -752,14 +752,14 @@
       "autoupdate": "1",
       "model": "comfast,cf-e110n-v2",
       "model2": "COMFAST CF-E110N v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-comfast_cf-e110n-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-comfast_cf-e110n-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-comfast_cf-e130n-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-comfast_cf-e130n-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-comfast_cf-e130n-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -769,14 +769,14 @@
       "autoupdate": "1",
       "model": "comfast,cf-e130n-v2",
       "model2": "COMFAST CF-E130N v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-comfast_cf-e130n-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-comfast_cf-e130n-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-comfast_cf-e314n-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-comfast_cf-e314n-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-comfast_cf-e314n-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -786,21 +786,21 @@
       "autoupdate": "1",
       "model": "comfast,cf-e314n-v2",
       "model2": "COMFAST CF-E314N v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-comfast_cf-e314n-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-comfast_cf-e314n-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-dlink_dir-825-b1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-dlink_dir-825-b1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-dlink_dir-825-b1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-dlink_dir-825-b1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-dlink_dir-825-b1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-dlink_dir-825-b1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -810,14 +810,14 @@
       "autoupdate": "1",
       "model": "dlink,dir-825-b1",
       "model2": "D-Link DIR825B1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-dlink_dir-825-b1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-dlink_dir-825-b1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-glinet_gl-ar150-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar150-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-glinet_gl-ar150-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -827,7 +827,7 @@
       "autoupdate": "1",
       "model": "gl-ar150",
       "model2": "GL.iNet GL-AR150",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
@@ -837,14 +837,14 @@
       "autoupdate": "1",
       "model": "glinet,gl-ar150",
       "model2": "GL.iNet GL-AR150",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-glinet_gl-ar150-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-glinet_gl-ar300m-lite-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar300m-lite-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-glinet_gl-ar300m-lite-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -854,14 +854,14 @@
       "autoupdate": "1",
       "model": "glinet,gl-ar300m-lite",
       "model2": "GL.iNet GL-AR300M-Lite",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar300m-lite-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-glinet_gl-ar300m-lite-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-glinet_gl-ar300m16-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar300m16-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-glinet_gl-ar300m16-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -871,14 +871,14 @@
       "autoupdate": "1",
       "model": "glinet,gl-ar300m16",
       "model2": "GL.iNet GL-AR300M16",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar300m16-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-glinet_gl-ar300m16-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-glinet_gl-ar750-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar750-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-glinet_gl-ar750-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -888,14 +888,14 @@
       "autoupdate": "1",
       "model": "glinet,gl-ar750",
       "model2": "GL.iNet GL-AR750",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-ar750-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-glinet_gl-ar750-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-glinet_gl-mifi-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-mifi-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-glinet_gl-mifi-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -905,14 +905,14 @@
       "autoupdate": "1",
       "model": "glinet,gl-mifi",
       "model2": "GL.iNet GL-MiFi",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-glinet_gl-mifi-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-glinet_gl-mifi-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-joyit_jt-or750i-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-joyit_jt-or750i-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-joyit_jt-or750i-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -922,28 +922,28 @@
       "autoupdate": "1",
       "model": "joyit,jt-or750i",
       "model2": "Joy-IT JT-OR750i",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-joyit_jt-or750i-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-joyit_jt-or750i-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wndr3700-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wndr3700-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-netgear_wndr3700-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wndr3700-squashfs-factory-NA.img",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wndr3700-squashfs-factory-NA.img",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-netgear_wndr3700-squashfs-factory-NA.img",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wndr3700-squashfs-factory.img",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wndr3700-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-netgear_wndr3700-squashfs-factory.img",
       "comment": ""
     },
     {
@@ -953,21 +953,21 @@
       "autoupdate": "1",
       "model": "netgear,wndr3700",
       "model2": "Netgear WNDR3700",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wndr3700-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-netgear_wndr3700-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wndr3700-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wndr3700-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-netgear_wndr3700-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wndr3700-v2-squashfs-factory.img",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wndr3700-v2-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-netgear_wndr3700-v2-squashfs-factory.img",
       "comment": ""
     },
     {
@@ -977,21 +977,21 @@
       "autoupdate": "1",
       "model": "netgear,wndr3700-v2",
       "model2": "Netgear WNDR3700 v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wndr3700-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-netgear_wndr3700-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wnr2200-16m-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wnr2200-16m-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-netgear_wnr2200-16m-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wnr2200-16m-squashfs-factory.img",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wnr2200-16m-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-netgear_wnr2200-16m-squashfs-factory.img",
       "comment": ""
     },
     {
@@ -1001,28 +1001,28 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wnr2200-16m-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-netgear_wnr2200-16m-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wnr2200-8m-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wnr2200-8m-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-netgear_wnr2200-8m-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wnr2200-8m-squashfs-factory-NA.img",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wnr2200-8m-squashfs-factory-NA.img",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-netgear_wnr2200-8m-squashfs-factory-NA.img",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-netgear_wnr2200-8m-squashfs-factory.img",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wnr2200-8m-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-netgear_wnr2200-8m-squashfs-factory.img",
       "comment": ""
     },
     {
@@ -1032,14 +1032,14 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-netgear_wnr2200-8m-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-netgear_wnr2200-8m-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-sophos_ap100-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-sophos_ap100-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-sophos_ap100-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -1049,21 +1049,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-sophos_ap100-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-sophos_ap100-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c5-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c5-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c5-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c5-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c5-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c5-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1073,7 +1073,7 @@
       "autoupdate": "1",
       "model": "archer-c5",
       "model2": "TP-Link Archer C5 v1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
@@ -1083,21 +1083,21 @@
       "autoupdate": "1",
       "model": "tplink,archer-c5-v1",
       "model2": "TP-Link Archer C5 v1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c5-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c59-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c59-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c59-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c59-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c59-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c59-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1107,21 +1107,21 @@
       "autoupdate": "1",
       "model": "tplink,archer-c59-v1",
       "model2": "TP-Link Archer C59 v1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c59-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c59-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c59-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c59-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c59-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c59-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c59-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c59-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1131,21 +1131,21 @@
       "autoupdate": "1",
       "model": "tplink,archer-c59-v2",
       "model2": "TP-Link Archer C59 v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c59-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c59-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c6-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c6-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_archer-c6-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c6-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c6-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_archer-c6-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1155,21 +1155,21 @@
       "autoupdate": "1",
       "model": "tplink,archer-c6-v2",
       "model2": "TP-Link Archer C6 v2 (EU/RU/JP)",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c6-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_archer-c6-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c60-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c60-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_archer-c60-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c60-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c60-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_archer-c60-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1179,21 +1179,21 @@
       "autoupdate": "1",
       "model": "tplink,archer-c60-v1",
       "model2": "TP-Link Archer C60 v1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c60-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_archer-c60-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c60-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c60-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_archer-c60-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c60-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c60-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_archer-c60-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1203,35 +1203,35 @@
       "autoupdate": "1",
       "model": "tplink,archer-c60-v2",
       "model2": "TP-Link Archer C60 v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c60-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_archer-c60-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c7-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c7-v2-squashfs-factory-eu.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v2-squashfs-factory-eu.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v2-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c7-v2-squashfs-factory-us.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v2-squashfs-factory-us.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v2-squashfs-factory-us.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c7-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1241,7 +1241,7 @@
       "autoupdate": "1",
       "model": "tplink,archer-c7-v2",
       "model2": "TP-Link Archer C7 v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1251,21 +1251,45 @@
       "autoupdate": "1",
       "model": "archer-c7",
       "model2": "TP-Link Archer C7 v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v2-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
       "disabled": "0",
       "name": "",
+      "sortkey": "ath79-generic-tplink_archer-c7-v4-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v4-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ath79-generic-tplink_archer-c7-v4-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v4-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ath79-generic-tplink_archer-c7-v4-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v4-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
       "sortkey": "ath79-generic-tplink_archer-c7-v5-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v5-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v5-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_archer-c7-v5-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v5-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v5-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1275,7 +1299,7 @@
       "autoupdate": "1",
       "model": "tplink,archer-c7-v5",
       "model2": "TP-Link Archer C7 v5",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1285,21 +1309,21 @@
       "autoupdate": "1",
       "model": "archer-c7-v5",
       "model2": "TP-LINK Archer C7 v5",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_archer-c7-v5-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe210-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe210-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1309,7 +1333,7 @@
       "autoupdate": "1",
       "model": "cpe210",
       "model2": "TP-Link CPE210 v1.0",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
@@ -1319,7 +1343,7 @@
       "autoupdate": "1",
       "model": "tplink,cpe210-v1",
       "model2": "TP-Link CPE210 v1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1329,21 +1353,21 @@
       "autoupdate": "1",
       "model": "cpe210",
       "model2": "TP-Link CPE210 v1.1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe210-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe210-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1353,7 +1377,7 @@
       "autoupdate": "1",
       "model": "tplink,cpe210-v2",
       "model2": "TP-Link CPE210 v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1363,21 +1387,21 @@
       "autoupdate": "1",
       "model": "cpe210-v2",
       "model2": "TP-Link CPE210 v2.0",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v2-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe210-v3-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v3-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v3-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe210-v3-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v3-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1387,7 +1411,7 @@
       "autoupdate": "1",
       "model": "tplink,cpe210-v3",
       "model2": "TP-Link CPE210 v3",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1397,7 +1421,7 @@
       "autoupdate": "1",
       "model": "cpe210-v3",
       "model2": "TP-Link CPE210 v3.0",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
@@ -1407,21 +1431,21 @@
       "autoupdate": "1",
       "model": "cpe210-v3",
       "model2": "TP-Link CPE210 v3.20",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe210-v3-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe220-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe220-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe220-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe220-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe220-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe220-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1431,21 +1455,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe220-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe220-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe220-v3-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe220-v3-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe220-v3-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_cpe220-v3-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe220-v3-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe220-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1455,21 +1479,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_cpe220-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_cpe220-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_eap225-outdoor-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_eap225-outdoor-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_eap225-outdoor-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_eap225-outdoor-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_eap225-outdoor-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_eap225-outdoor-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1479,21 +1503,21 @@
       "autoupdate": "1",
       "model": "tplink,eap225-outdoor-v1",
       "model2": "TP-Link EAP225-Outdoor v1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_eap225-outdoor-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_eap225-outdoor-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_re450-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_re450-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_re450-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_re450-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_re450-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_re450-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1503,21 +1527,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_re450-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_re450-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_re450-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_re450-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_re450-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_re450-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_re450-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_re450-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1527,21 +1551,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_re450-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_re450-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_re450-v3-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_re450-v3-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_re450-v3-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_re450-v3-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_re450-v3-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_re450-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1551,21 +1575,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_re450-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_re450-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wdr3600-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wdr3600-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wdr3600-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wdr3600-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wdr3600-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wdr3600-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1575,21 +1599,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wdr3600-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wdr3600-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wdr4300-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wdr4300-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wdr4300-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wdr4300-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wdr4300-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wdr4300-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1599,21 +1623,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wdr4300-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wdr7500-v3-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wdr7500-v3-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wdr7500-v3-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wdr7500-v3-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wdr7500-v3-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wdr7500-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1623,21 +1647,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wdr7500-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wdr7500-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr1043n-v5-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043n-v5-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_tl-wr1043n-v5-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_tl-wr1043n-v5-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1647,21 +1671,21 @@
       "autoupdate": "1",
       "model": "tplink,tl-wr1043n-v5",
       "model2": "TP-Link TL-WR1043N v5",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043n-v5-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_tl-wr1043n-v5-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr1043nd-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043nd-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wr1043nd-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr1043nd-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1671,21 +1695,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wr1043nd-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr1043nd-v3-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043nd-v3-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wr1043nd-v3-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr1043nd-v3-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1695,21 +1719,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wr1043nd-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr1043nd-v4-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043nd-v4-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_tl-wr1043nd-v4-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr1043nd-v4-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1719,21 +1743,21 @@
       "autoupdate": "1",
       "model": "tplink,tl-wr1043nd-v4",
       "model2": "TP-Link TL-WR1043ND v4",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-tplink_tl-wr1043nd-v4-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr2543-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr2543-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wr2543-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-tplink_tl-wr2543-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr2543-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wr2543-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1743,21 +1767,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-tplink_tl-wr2543-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-tplink_tl-wr2543-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifi-ap-outdoor-plus-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-ap-outdoor-plus-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifi-ap-outdoor-plus-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1767,21 +1791,21 @@
       "autoupdate": "1",
       "model": "unifi-outdoor-plus",
       "model2": "Ubiquiti UniFiAP Outdoor+",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifi-ap-outdoor-plus-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifi-ap-pro-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-ap-pro-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifi-ap-pro-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifi-ap-pro-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-ap-pro-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifi-ap-pro-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1791,21 +1815,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-ap-pro-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifi-ap-pro-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifi-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-ubnt_unifi-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifi-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-ubnt_unifi-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1815,7 +1839,7 @@
       "autoupdate": "1",
       "model": "ubnt,unifi",
       "model2": "Ubiquiti UniFi",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1825,14 +1849,14 @@
       "autoupdate": "1",
       "model": "ubnt,unifi",
       "model2": "Ubiquiti UniFi AP",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-generic-ubnt_unifi-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -1842,21 +1866,21 @@
       "autoupdate": "1",
       "model": "ubnt,unifiac-lite",
       "model2": "Ubiquiti UniFi-AC-LITE",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifiac-lite-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifiac-lite-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifiac-mesh-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifiac-mesh-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifiac-mesh-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifiac-mesh-pro-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifiac-mesh-pro-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifiac-mesh-pro-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -1866,7 +1890,7 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifiac-mesh-pro-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifiac-mesh-pro-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1876,14 +1900,14 @@
       "autoupdate": "1",
       "model": "ubnt,unifiac-mesh",
       "model2": "Ubiquiti UniFi AC Mesh",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifiac-mesh-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifiac-mesh-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifiac-pro-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifiac-pro-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifiac-pro-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -1893,21 +1917,21 @@
       "autoupdate": "1",
       "model": "ubnt,unifiac-pro",
       "model2": "Ubiquiti UniFi AC Pro",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-ubnt_unifiac-pro-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-ubnt_unifiac-pro-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-wd_mynet-n750-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-wd_mynet-n750-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-wd_mynet-n750-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-wd_mynet-n750-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-wd_mynet-n750-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-wd_mynet-n750-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1917,21 +1941,21 @@
       "autoupdate": "1",
       "model": "wd,mynet-n750",
       "model2": "Western Digital My Net N750",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-generic-wd_mynet-n750-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ath79-generic-wd_mynet-n750-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-nand-aerohive_hiveap-121-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-aerohive_hiveap-121-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-aerohive_hiveap-121-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-nand-aerohive_hiveap-121-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-aerohive_hiveap-121-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-aerohive_hiveap-121-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -1941,7 +1965,7 @@
       "autoupdate": "1",
       "model": "aerohive,hiveap-121",
       "model2": "Aerohive HiveAP 121",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -1951,21 +1975,21 @@
       "autoupdate": "1",
       "model": "hiveap-121",
       "model2": "Aerohive HiveAP-121",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-aerohive_hiveap-121-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-nand-glinet_gl-ar300m-nand-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-ar300m-nand-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-ar300m-nand-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-nand-glinet_gl-ar300m-nand-squashfs-factory.img",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-ar300m-nand-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-ar300m-nand-squashfs-factory.img",
       "comment": ""
     },
     {
@@ -1975,14 +1999,14 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-ar300m-nand-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-ar300m-nand-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-nand-glinet_gl-ar300m-nor-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-ar300m-nor-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-ar300m-nor-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -1992,21 +2016,21 @@
       "autoupdate": "1",
       "model": "glinet,gl-ar300m-nor",
       "model2": "GL.iNet GL-AR300M (NOR)",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-ar300m-nor-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-ar300m-nor-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-nand-glinet_gl-ar750s-nor-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-ar750s-nor-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-ar750s-nor-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-nand-glinet_gl-ar750s-nor-nand-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-ar750s-nor-nand-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-ar750s-nor-nand-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2016,7 +2040,7 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-ar750s-nor-nand-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-ar750s-nor-nand-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -2026,21 +2050,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-ar750s-nor-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-ar750s-nor-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-nand-glinet_gl-e750-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-e750-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-e750-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-nand-glinet_gl-e750-squashfs-factory.img",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-e750-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-e750-squashfs-factory.img",
       "comment": ""
     },
     {
@@ -2050,7 +2074,48 @@
       "autoupdate": "1",
       "model": "glinet,gl-e750",
       "model2": "GL.iNet GL-E750",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ath79-nand-glinet_gl-e750-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-glinet_gl-e750-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ath79-nand-netgear_r6100-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-netgear_r6100-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ath79-nand-netgear_r6100-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-netgear_r6100-squashfs-factory.img",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ath79-nand-netgear_r6100-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ath79-nand-netgear_r6100-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "bcm53xx-generic-asus_rt-ac68u-squashfs.trx",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-bcm53xx-generic-asus_rt-ac68u-squashfs.trx",
+      "comment": "Offloader: (no wifi), factory+sysupgrade"
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ipq40xx-generic-aruba_ap-303-initramfs-fit-uImage.itb",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-aruba_ap-303-initramfs-fit-uImage.itb",
       "comment": ""
     },
     {
@@ -2060,7 +2125,14 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ipq40xx-generic-aruba_ap-303-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-aruba_ap-303-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ipq40xx-generic-aruba_ap-303h-initramfs-fit-uImage.itb",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-aruba_ap-303h-initramfs-fit-uImage.itb",
       "comment": ""
     },
     {
@@ -2070,14 +2142,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ipq40xx-generic-aruba_ap-303h-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-aruba_ap-303h-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ipq40xx-generic-avm_fritzbox-4040-initramfs-fit-uImage.itb",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-avm_fritzbox-4040-initramfs-fit-uImage.itb",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ipq40xx-generic-avm_fritzbox-4040-squashfs-eva.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ipq40xx-generic-avm_fritzbox-4040-squashfs-eva.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-avm_fritzbox-4040-squashfs-eva.bin",
       "comment": ""
     },
     {
@@ -2087,8 +2166,15 @@
       "autoupdate": "0",
       "model": "avm,fritzbox-4040",
       "model2": "AVM FRITZ!Box 4040",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ipq40xx-generic-avm_fritzbox-4040-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-avm_fritzbox-4040-squashfs-sysupgrade.bin",
       "comment": "Autoupdate abgeschaltet, da selten der Router nur noch via ftp/bootloader geflasht werden kann. [<a href=https://wiki.freifunk-dresden.de/index.php/Fritzbox4040>Wiki</a>]"
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ipq40xx-generic-avm_fritzbox-7530-initramfs-fit-uImage.itb",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-avm_fritzbox-7530-initramfs-fit-uImage.itb",
+      "comment": ""
     },
     {
       "disabled": "0",
@@ -2097,7 +2183,14 @@
       "autoupdate": "1",
       "model": "avm,fritzbox-7530",
       "model2": "AVM FRITZ!Box 7530",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ipq40xx-generic-avm_fritzbox-7530-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-avm_fritzbox-7530-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ipq40xx-generic-avm_fritzrepeater-1200-initramfs-fit-uImage.itb",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-avm_fritzrepeater-1200-initramfs-fit-uImage.itb",
       "comment": ""
     },
     {
@@ -2107,28 +2200,28 @@
       "autoupdate": "1",
       "model": "avm,fritzrepeater-1200",
       "model2": "AVM FRITZ!Repeater 1200",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ipq40xx-generic-avm_fritzrepeater-1200-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ipq40xx-generic-avm_fritzrepeater-1200-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz3370-rev2-hynix-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-hynix-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-hynix-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-filesystem.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-filesystem.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-filesystem.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-eva-kernel.bin",
       "comment": ""
     },
     {
@@ -2138,28 +2231,28 @@
       "autoupdate": "1",
       "model": "avm,fritz3370-rev2-hynix",
       "model2": "AVM FRITZ!Box 3370 Rev. 2 (Hynix NAND)",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-hynix-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz3370-rev2-micron-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-micron-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-micron-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-filesystem.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-filesystem.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-filesystem.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-eva-kernel.bin",
       "comment": ""
     },
     {
@@ -2169,14 +2262,14 @@
       "autoupdate": "1",
       "model": "avm,fritz3370-rev2-micron",
       "model2": "AVM FRITZ!Box 3370 Rev. 2 (Micron NAND)",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-micron-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz7360-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7360-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7360-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2186,14 +2279,14 @@
       "autoupdate": "1",
       "model": "avm,fritz7360-v2",
       "model2": "AVM FRITZ!Box 7360 V2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7360-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7360-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz7360sl-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7360sl-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7360sl-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2203,14 +2296,14 @@
       "autoupdate": "1",
       "model": "avm,fritz7360sl",
       "model2": "AVM FRITZ!Box 7360 SL",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7360sl-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7360sl-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz7362sl-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7362sl-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7362sl-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2220,14 +2313,14 @@
       "autoupdate": "1",
       "model": "avm,fritz7362sl",
       "model2": "AVM FRITZ!Box 7362 SL",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7362sl-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7362sl-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz7412-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7412-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7412-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2237,14 +2330,14 @@
       "autoupdate": "1",
       "model": "avm,fritz7412",
       "model2": "AVM FRITZ!Box 7412",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7412-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7412-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz7430-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7430-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7430-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2254,14 +2347,14 @@
       "autoupdate": "1",
       "model": "avm,fritz7430",
       "model2": "AVM FRITZ!Box 7430",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-avm_fritz7430-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz7430-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xrx200-tplink_tdw8970-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-tplink_tdw8970-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-tplink_tdw8970-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2271,14 +2364,14 @@
       "autoupdate": "1",
       "model": "tplink,tdw8970",
       "model2": "TP-LINK TD-W8970",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xrx200-tplink_tdw8970-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-tplink_tdw8970-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xway-arcadyan_arv752dpw22-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xway-arcadyan_arv752dpw22-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xway-arcadyan_arv752dpw22-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2288,14 +2381,14 @@
       "autoupdate": "1",
       "model": "arcadyan,arv752dpw22",
       "model2": "Arcor 803",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xway-arcadyan_arv752dpw22-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xway-arcadyan_arv752dpw22-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xway-arcadyan_arv8539pw22-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xway-arcadyan_arv8539pw22-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xway-arcadyan_arv8539pw22-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2305,14 +2398,14 @@
       "autoupdate": "1",
       "model": "arcadyan,arv8539pw22",
       "model2": "Speedport W 504V Typ A",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xway-arcadyan_arv8539pw22-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xway-arcadyan_arv8539pw22-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xway-avm_fritz7312-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xway-avm_fritz7312-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xway-avm_fritz7312-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2322,14 +2415,14 @@
       "autoupdate": "1",
       "model": "avm,fritz7312",
       "model2": "AVM FRITZ!Box 7312",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xway-avm_fritz7312-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xway-avm_fritz7312-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "lantiq-xway-avm_fritz7320-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xway-avm_fritz7320-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xway-avm_fritz7320-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2339,38 +2432,205 @@
       "autoupdate": "1",
       "model": "avm,fritz7320",
       "model2": "AVM FRITZ!Box 7320",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-lantiq-xway-avm_fritz7320-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xway-avm_fritz7320-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-factory.bin",
+      "sortkey": "mediatek-filogic-cudy_ap3000-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_ap3000-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.bin",
+      "sortkey": "mediatek-filogic-cudy_ap3000-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "cudy,ap3000-v1",
+      "model2": "Cudy AP3000 v1",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_ap3000-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_ap3000outdoor-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_ap3000outdoor-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_ap3000outdoor-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_ap3000outdoor-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_m3000-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_m3000-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_m3000-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "cudy,m3000-v1",
+      "model2": "Cudy M3000 v1",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_m3000-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_re3000-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_re3000-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_re3000-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "cudy,re3000-v1",
+      "model2": "Cudy RE3000 v1",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_re3000-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_tr3000-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_tr3000-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_tr3000-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "cudy,tr3000-v1",
+      "model2": "Cudy TR3000 v1",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_tr3000-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_wr3000-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_wr3000-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_wr3000-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "cudy,wr3000-v1",
+      "model2": "Cudy WR3000 v1",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_wr3000-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_wr3000e-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_wr3000e-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_wr3000e-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "cudy,wr3000e-v1",
+      "model2": "Cudy WR3000E v1",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_wr3000e-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_wr3000h-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_wr3000h-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_wr3000h-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "cudy,wr3000h-v1",
+      "model2": "Cudy WR3000H v1",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_wr3000h-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_wr3000s-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_wr3000s-v1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_wr3000s-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "cudy,wr3000s-v1",
+      "model2": "Cudy WR3000S v1",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-filogic-cudy_wr3000s-v1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-mt7622-xiaomi_redmi-router-ax6s-factory.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-initramfs-recovery.itb",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-mt7622-xiaomi_redmi-router-ax6s-initramfs-recovery.itb",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.itb",
       "autoupdate": "1",
       "model": "xiaomi,redmi-router-ax6s",
       "model2": "Xiaomi Redmi Router AX6S",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.itb",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-ubi-loader.itb",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-mediatek-mt7622-xiaomi_redmi-router-ax6s-ubi-loader.itb",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "mpc85xx-p1010-tplink_tl-wdr4900-v1-fdt.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-mpc85xx-p1010-tplink_tl-wdr4900-v1-fdt.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-mpc85xx-p1010-tplink_tl-wdr4900-v1-fdt.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "mpc85xx-p1010-tplink_tl-wdr4900-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-mpc85xx-p1010-tplink_tl-wdr4900-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-mpc85xx-p1010-tplink_tl-wdr4900-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -2380,14 +2640,14 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-mpc85xx-p1010-tplink_tl-wdr4900-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-mpc85xx-p1010-tplink_tl-wdr4900-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "mpc85xx-p1020-aerohive_hiveap-330-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-mpc85xx-p1020-aerohive_hiveap-330-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-mpc85xx-p1020-aerohive_hiveap-330-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2397,14 +2657,14 @@
       "autoupdate": "1",
       "model": "aerohive,hiveap-330",
       "model2": "Aerohive HiveAP-330",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-mpc85xx-p1020-aerohive_hiveap-330-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-mpc85xx-p1020-aerohive_hiveap-330-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7620-tplink_archer-c2-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7620-tplink_archer-c2-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7620-tplink_archer-c2-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2414,28 +2674,28 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7620-tplink_archer-c2-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7620-tplink_archer-c2-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7620-tplink_archer-c50-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7620-tplink_archer-c50-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7620-tplink_archer-c50-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7620-tplink_archer-c50-v1-squashfs-factory-eu.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7620-tplink_archer-c50-v1-squashfs-factory-eu.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7620-tplink_archer-c50-v1-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7620-tplink_archer-c50-v1-squashfs-factory-us.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7620-tplink_archer-c50-v1-squashfs-factory-us.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7620-tplink_archer-c50-v1-squashfs-factory-us.bin",
       "comment": ""
     },
     {
@@ -2445,21 +2705,21 @@
       "autoupdate": "1",
       "model": "tplink,archer-c50-v1",
       "model2": "TP-Link Archer C50 v1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7620-tplink_archer-c50-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7620-tplink_archer-c50-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7620-tplink_re200-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7620-tplink_re200-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7620-tplink_re200-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7620-tplink_re200-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7620-tplink_re200-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7620-tplink_re200-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -2469,32 +2729,45 @@
       "autoupdate": "1",
       "model": "tplink,re200-v1",
       "model2": "TP-Link RE200 v1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7620-tplink_re200-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7620-tplink_re200-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
-		{
-			"name": "",
-			"filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-asus_rt-ax53u-squashfs-factory.bin",
-			"comment": ""
-		},
-		{
-			"name": "",
-			"autoupdate": "1",
-			"model": "asus,rt-ax53u",
-			"model2": "ASUS RT-AX53U",
-			"filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-asus_rt-ax53u-squashfs-sysupgrade.bin",
-			"comment": ""
-		},
-		{
+    {
+      "disabled": "0",
       "name": "",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
+      "sortkey": "ramips-mt7621-asus_rt-ax53u-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-asus_rt-ax53u-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ramips-mt7621-asus_rt-ax53u-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-asus_rt-ax53u-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ramips-mt7621-asus_rt-ax53u-squashfs-sysupgrade.bin",
+      "autoupdate": "1",
+      "model": "asus,rt-ax53u",
+      "model2": "ASUS RT-AX53U",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-asus_rt-ax53u-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-d-team_newifi-d2-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2504,28 +2777,28 @@
       "autoupdate": "1",
       "model": "d-team,newifi-d2",
       "model2": "Newifi-D2",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-dlink_covr-x1860-a1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-dlink_covr-x1860-a1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-dlink_covr-x1860-a1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-dlink_covr-x1860-a1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-dlink_covr-x1860-a1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-dlink_covr-x1860-a1-squashfs-factory.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-dlink_covr-x1860-a1-squashfs-recovery.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-dlink_covr-x1860-a1-squashfs-recovery.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-dlink_covr-x1860-a1-squashfs-recovery.bin",
       "comment": ""
     },
     {
@@ -2535,21 +2808,21 @@
       "autoupdate": "1",
       "model": "dlink,covr-x1860-a1",
       "model2": "D-Link COVR-X1860 A1",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-dlink_covr-x1860-a1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-dlink_covr-x1860-a1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-dlink_dap-x1860-a1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-dlink_dap-x1860-a1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-dlink_dap-x1860-a1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-dlink_dap-x1860-a1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-dlink_dap-x1860-a1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-dlink_dap-x1860-a1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -2559,14 +2832,14 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-dlink_dap-x1860-a1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-dlink_dap-x1860-a1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-glinet_gl-mt1300-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-glinet_gl-mt1300-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-glinet_gl-mt1300-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2576,14 +2849,14 @@
       "autoupdate": "1",
       "model": "glinet,gl-mt1300",
       "model2": "GL.iNet GL-MT1300",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-glinet_gl-mt1300-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-glinet_gl-mt1300-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-mtc_wr1201-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-mtc_wr1201-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-mtc_wr1201-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2593,35 +2866,35 @@
       "autoupdate": "1",
       "model": "mtc,wr1201",
       "model2": "MTC Wireless Router WR1201",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-mtc_wr1201-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-mtc_wr1201-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-netgear_r6220-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_r6220-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_r6220-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-netgear_r6220-squashfs-factory.img",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_r6220-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_r6220-squashfs-factory.img",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-netgear_r6220-squashfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_r6220-squashfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_r6220-squashfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-netgear_r6220-squashfs-rootfs.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_r6220-squashfs-rootfs.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_r6220-squashfs-rootfs.bin",
       "comment": ""
     },
     {
@@ -2631,7 +2904,7 @@
       "autoupdate": "1",
       "model": "r6220",
       "model2": "Netgear R6220",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
       "comment": "alte Kennung; Achtung: manche Geräte verlieren ihr 2.4Ghz Wifi seit Openwrt 21"
     },
     {
@@ -2641,35 +2914,35 @@
       "autoupdate": "1",
       "model": "netgear,r6220",
       "model2": "Netgear R6220",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_r6220-squashfs-sysupgrade.bin",
       "comment": "Achtung: manche Geräte verlieren ihr 2.4Ghz Wifi seit Openwrt 21"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-netgear_wac104-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_wac104-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_wac104-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-netgear_wac104-squashfs-factory.img",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_wac104-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_wac104-squashfs-factory.img",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-netgear_wac104-squashfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_wac104-squashfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_wac104-squashfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-netgear_wac104-squashfs-rootfs.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_wac104-squashfs-rootfs.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_wac104-squashfs-rootfs.bin",
       "comment": ""
     },
     {
@@ -2679,14 +2952,14 @@
       "autoupdate": "1",
       "model": "netgear,wac104",
       "model2": "Netgear WAC104",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-netgear_wac104-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-netgear_wac104-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-renkforce_ws-wn530hp3-a-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-renkforce_ws-wn530hp3-a-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-renkforce_ws-wn530hp3-a-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2696,21 +2969,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-renkforce_ws-wn530hp3-a-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-renkforce_ws-wn530hp3-a-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-tplink_archer-c6-v3-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-tplink_archer-c6-v3-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-tplink_archer-c6-v3-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-tplink_archer-c6-v3-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-tplink_archer-c6-v3-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-tplink_archer-c6-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -2720,21 +2993,21 @@
       "autoupdate": "1",
       "model": "tplink,archer-c6-v3",
       "model2": "TP-Link Archer C6 v3",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-tplink_archer-c6-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-tplink_archer-c6-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-tplink_archer-c6u-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-tplink_archer-c6u-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-tplink_archer-c6u-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-tplink_archer-c6u-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-tplink_archer-c6u-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-tplink_archer-c6u-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -2744,21 +3017,21 @@
       "autoupdate": "1",
       "model": "tplink,archer-c6u-v1",
       "model2": "TP-Link Archer C6U v1",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-tplink_archer-c6u-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-tplink_archer-c6u-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-tplink_re650-v1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-tplink_re650-v1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-tplink_re650-v1-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-tplink_re650-v1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-tplink_re650-v1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-tplink_re650-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -2768,21 +3041,21 @@
       "autoupdate": "1",
       "model": "tplink,re650-v1",
       "model2": "TP-Link RE650 v1",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-tplink_re650-v1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-tplink_re650-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-tplink_re650-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7621-tplink_re650-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7621-tplink_re650-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-tplink_re650-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7621-tplink_re650-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7621-tplink_re650-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -2792,14 +3065,14 @@
       "autoupdate": "1",
       "model": "tplink,re650-v2",
       "model2": "TP-Link RE650 v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7621-tplink_re650-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7621-tplink_re650-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-ubnt_edgerouter-x-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7621-ubnt_edgerouter-x-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7621-ubnt_edgerouter-x-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2809,7 +3082,7 @@
       "autoupdate": "1",
       "model": "ubnt-erx",
       "model2": "UBNT-ERX",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
       "comment": "alte Kennung"
     },
     {
@@ -2819,14 +3092,14 @@
       "autoupdate": "1",
       "model": "ubnt,edgerouter-x",
       "model2": "Ubiquiti EdgeRouter X",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt7621-ubnt_edgerouter-x-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-xiaomi_mi-router-4a-gigabit-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-xiaomi_mi-router-4a-gigabit-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-xiaomi_mi-router-4a-gigabit-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2836,28 +3109,28 @@
       "autoupdate": "1",
       "model": "xiaomi,mi-router-4a-gigabit",
       "model2": "Xiaomi Mi Router 4A Gigabit Edition",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-xiaomi_mi-router-4a-gigabit-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-xiaomi_mi-router-4a-gigabit-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-xiaomi_redmi-router-ac2100-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-xiaomi_redmi-router-ac2100-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-xiaomi_redmi-router-ac2100-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-kernel1.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-kernel1.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-kernel1.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-rootfs0.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-rootfs0.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-rootfs0.bin",
       "comment": ""
     },
     {
@@ -2867,14 +3140,14 @@
       "autoupdate": "1",
       "model": "xiaomi,redmi-router-ac2100",
       "model2": "Xiaomi Redmi Router AC2100",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-youhua_wr1200js-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-youhua_wr1200js-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-youhua_wr1200js-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2884,28 +3157,28 @@
       "autoupdate": "1",
       "model": "youhua,wr1200js",
       "model2": "YouHua WR1200JS",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-youhua_wr1200js-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-youhua_wr1200js-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-zyxel_nwa55axe-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-zyxel_nwa55axe-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-zyxel_nwa55axe-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-zyxel_nwa55axe-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-zyxel_nwa55axe-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-zyxel_nwa55axe-squashfs-factory.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt7621-zyxel_nwa55axe-squashfs-ramboot-factory.bin",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-zyxel_nwa55axe-squashfs-ramboot-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-zyxel_nwa55axe-squashfs-ramboot-factory.bin",
       "comment": ""
     },
     {
@@ -2915,14 +3188,14 @@
       "autoupdate": "1",
       "model": "zyxel,nwa55axe",
       "model2": "ZyXEL NWA55AXE",
-      "filename": "freifunk-dresden-v9.0.0-23.05.3-ramips-mt7621-zyxel_nwa55axe-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-ramips-mt7621-zyxel_nwa55axe-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-glinet_gl-mt300n-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-glinet_gl-mt300n-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-glinet_gl-mt300n-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2932,21 +3205,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-glinet_gl-mt300n-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-glinet_gl-mt300n-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-netgear_r6120-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-netgear_r6120-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-netgear_r6120-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-netgear_r6120-squashfs-factory.img",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-netgear_r6120-squashfs-factory.img",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-netgear_r6120-squashfs-factory.img",
       "comment": ""
     },
     {
@@ -2956,14 +3229,14 @@
       "autoupdate": "1",
       "model": "netgear,r6120",
       "model2": "Netgear R6120",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-netgear_r6120-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-netgear_r6120-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_archer-c20-v4-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_archer-c20-v4-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_archer-c20-v4-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2973,28 +3246,28 @@
       "autoupdate": "1",
       "model": "tplink,archer-c20-v4",
       "model2": "TP-Link Archer C20 v4",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_archer-c20-v4-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_archer-c20-v4-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_archer-c20-v4-squashfs-tftp-recovery.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_archer-c20-v4-squashfs-tftp-recovery.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_archer-c20-v4-squashfs-tftp-recovery.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_re200-v2-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_re200-v2-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_re200-v2-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_re200-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -3004,21 +3277,21 @@
       "autoupdate": "1",
       "model": "tplink,re200-v2",
       "model2": "TP-Link RE200 v2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_re200-v2-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_re200-v2-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_re200-v3-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_re200-v3-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_re200-v3-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_re200-v3-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_re200-v3-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_re200-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -3028,21 +3301,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_re200-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_re200-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_re200-v4-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_re200-v4-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_re200-v4-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_re200-v4-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_re200-v4-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_re200-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -3052,14 +3325,14 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_re200-v4-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_re200-v4-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_tl-wr841n-v13-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_tl-wr841n-v13-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_tl-wr841n-v13-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -3069,21 +3342,21 @@
       "autoupdate": "1",
       "model": "tplink,tl-wr841n-v13",
       "model2": "TP-Link TL-WR841N v13",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_tl-wr841n-v13-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_tl-wr841n-v13-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_tl-wr841n-v13-squashfs-tftp-recovery.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_tl-wr841n-v13-squashfs-tftp-recovery.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_tl-wr841n-v13-squashfs-tftp-recovery.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_tl-wr902ac-v3-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_tl-wr902ac-v3-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_tl-wr902ac-v3-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -3093,28 +3366,28 @@
       "autoupdate": "1",
       "model": "tplink,tl-wr902ac-v3",
       "model2": "TP-Link TL-WR902AC v3",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_tl-wr902ac-v3-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_tl-wr902ac-v3-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-tplink_tl-wr902ac-v3-squashfs-tftp-recovery.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-tplink_tl-wr902ac-v3-squashfs-tftp-recovery.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-tplink_tl-wr902ac-v3-squashfs-tftp-recovery.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-xiaomi_mi-router-4a-100m-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-xiaomi_mi-router-4a-100m-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-xiaomi_mi-router-4a-100m-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-xiaomi_mi-router-4a-100m-intl-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-xiaomi_mi-router-4a-100m-intl-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-xiaomi_mi-router-4a-100m-intl-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -3124,7 +3397,7 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-xiaomi_mi-router-4a-100m-intl-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-xiaomi_mi-router-4a-100m-intl-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -3134,14 +3407,14 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-xiaomi_mi-router-4a-100m-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-xiaomi_mi-router-4a-100m-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-mt76x8-xiaomi_mi-router-4c-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-xiaomi_mi-router-4c-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-xiaomi_mi-router-4c-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -3151,14 +3424,14 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-ramips-mt76x8-xiaomi_mi-router-4c-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-ramips-mt76x8-xiaomi_mi-router-4c-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-rt305x-dir-615-d-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ramips-rt305x-dir-615-d-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ramips-rt305x-dir-615-d-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -3168,14 +3441,14 @@
       "autoupdate": "1",
       "model": "dir-615-d",
       "model2": "D-Link DIR-615 D",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ramips-rt305x-dir-615-d-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ramips-rt305x-dir-615-d-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-rt305x-dir-615-h1-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ramips-rt305x-dir-615-h1-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ramips-rt305x-dir-615-h1-squashfs-factory.bin",
       "comment": ""
     },
     {
@@ -3185,21 +3458,21 @@
       "autoupdate": "1",
       "model": "dir-615-h1",
       "model2": "D-Link DIR-615 H1",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ramips-rt305x-dir-615-h1-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ramips-rt305x-dir-615-h1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ramips-rt305x-uImage.bin",
-      "filename": "freifunk-dresden-v8.2.6-18.06-snapshot-ramips-rt305x-uImage.bin",
+      "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ramips-rt305x-uImage.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "sunxi-cortexa7-xunlong_orangepi-r1-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-sunxi-cortexa7-xunlong_orangepi-r1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-sunxi-cortexa7-xunlong_orangepi-r1-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -3209,21 +3482,21 @@
       "autoupdate": "0",
       "model": "xunlong,orangepi-r1",
       "model2": "Xunlong Orange Pi R1",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-sunxi-cortexa7-xunlong_orangepi-r1-squashfs-sdcard.img.gz",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-sunxi-cortexa7-xunlong_orangepi-r1-squashfs-sdcard.img.gz",
       "comment": "Offloader: could change partions"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "x86-64-generic-kernel.bin",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-x86-64-generic-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-x86-64-generic-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "x86-64-generic-squashfs-combined-efi.img.gz",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-x86-64-generic-squashfs-combined-efi.img.gz",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-x86-64-generic-squashfs-combined-efi.img.gz",
       "comment": ""
     },
     {
@@ -3233,7 +3506,7 @@
       "autoupdate": "0",
       "model": "fujitsu-siemens-futro-s550",
       "model2": "FUJITSU SIEMENS FUTRO S550",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-x86-64-generic-squashfs-combined.img.gz",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-x86-64-generic-squashfs-combined.img.gz",
       "comment": "Offloader: could change partions"
     },
     {
@@ -3243,7 +3516,7 @@
       "autoupdate": "0",
       "model": "fujitsu-futro-s550-2",
       "model2": "FUJITSU FUTRO S550-2",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-x86-64-generic-squashfs-combined.img.gz",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-x86-64-generic-squashfs-combined.img.gz",
       "comment": "Offloader: could change partions"
     },
     {
@@ -3253,7 +3526,7 @@
       "autoupdate": "0",
       "model": "igel-technology-gmbh-h830c",
       "model2": "IGEL Technology GmbH H830C",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-x86-64-generic-squashfs-combined.img.gz",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-x86-64-generic-squashfs-combined.img.gz",
       "comment": "Offloader: could change partions"
     },
     {
@@ -3263,25 +3536,15 @@
       "autoupdate": "0",
       "model": "qemu-standard-pc-i440fx-piix-1996",
       "model2": "QEMU Standard PC (i440FX + PIIX, 1996)",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-x86-64-generic-squashfs-combined.img.gz",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-x86-64-generic-squashfs-combined.img.gz",
       "comment": "Offloader: could change partions"
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "x86-64-generic-squashfs-rootfs.img.gz",
-      "filename": "freifunk-dresden-v8.2.6-22.03.7-x86-64-generic-squashfs-rootfs.img.gz",
+      "filename": "freifunk-dresden-v9.0.0-24.10.2-x86-64-generic-squashfs-rootfs.img.gz",
       "comment": ""
-    },
-    {
-      "disabled": "0",
-      "name": "",
-      "sortkey": "bcm53xx-generic-asus_rt-ac68u-squashfs.trx",
-      "autoupdate": "0",
-      "model": "asus,rt-ac68u",
-      "model2": "Asus RT-AC68U (BCM4708)",
-      "filename": "openwrt-bcm53xx-generic-asus_rt-ac68u-squashfs.trx",
-      "comment": "Offloader: (no wifi)"
     }
   ]
 }

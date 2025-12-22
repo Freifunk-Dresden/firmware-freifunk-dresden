@@ -207,7 +207,7 @@ gen_download_json_add_data()
 {
 	output_path="$1" 	# output path "final_output/"
 	subpath="$2" 		# relativ path to firmware "firmware/8.3.0/platform/ar71xx/generic"
-	file_filter="$3" 	# file filter "*.{bin,trx,img,dlf,gz}"
+	file_filter="$3" 	# file filter "*.{bin,trx,img,itb,dlf,gz}"
 	fw_version="$4" # freifunk firmware version
 
 	error=0
@@ -229,6 +229,8 @@ gen_download_json_add_data()
 		# This is used to filter filename entries and as sort-key
 		file_device_part_name="$(echo "$file" | sed 's#^freifunk-dresden-v\([0-9.]\+\)-\([0-9.]\+\)-\(snapshot-\)*##')"
 #printf "$file\n"
+#printf "$file_device_part_name\n"
+
 		# defaults
 		disabled="0"
 		name=""
@@ -296,8 +298,10 @@ gen_download_json_add_data()
 			fi
 #printf "##$name:$autoupdate:$model:$model2:$filename:$comment\n"
 
+# trx file wird nur von ac68u fuer factory und sysupgrade verwendet.
 			# determine "sysupgrade" files
-			if [   	-z "${file/*-*-sysupgrade.bin*/}" \
+			if [   	-z "${file/*-*-sysupgrade.*/}" \
+					 -o	-z "${file/*-*-squashfs.trx*/}" \
 					 -o	-z "${file/*-*-combined.img.gz*/}" \
 					 -o	-z "${file/*-*-sdcard.img.gz*/}" ]
 			then
@@ -393,7 +397,7 @@ gen_download_json_end()
 
 #p=/tmp
 #gen_download_json_start $p 4.2.15 master
-#gen_download_json_add_data $p /home/freifunk/upload-firmware/files/4.2.15 ar71xx/generic "*.{bin,trx,img,dlf,gz}"
+#gen_download_json_add_data $p /home/freifunk/upload-firmware/files/4.2.15 ar71xx/generic "*.{bin,trx,itb,img,dlf,gz}"
 #gen_download_json_end $p
 #printf "ok\n"
 #exit
@@ -503,7 +507,7 @@ do
 		tmpTargetDir="${target_dir}/${platform}"
 		mkdir -p ${tmpTargetDir}
 
-		filefilter="*.{bin,trx,img,dlf,gz,tar,vdi,vmdk}"
+		filefilter="*.{bin,trx,img,itb,dlf,gz,tar,vdi,vmdk}"
 		$ENABLE_COPY && {
 			printf "    ${C_YELLOW}copy:${C_NONE} ${platform}/images/$filefilter\n"
 			# use "eval" to resolv filefilter wildcards
@@ -519,7 +523,7 @@ do
 		# oder github
 		p=$(pwd)
 		cd $tmpTargetDir
-		printf "    ${C_YELLOW}calculate md5sum${C_NONE}\n"
+		printf "    ${C_YELLOW}calculate md5sum/sha256sum${C_NONE}\n"
 		md5sum * > $tmpTargetDir/md5sums 2>/dev/null
 		sha256sum * > $tmpTargetDir/sha256sum 2>/dev/null
 		cd $p
