@@ -423,7 +423,7 @@ $ENABLE_COPY && {
 	printf "${C_YELLOW}copy downloaded packages${C_NONE}\n"
 	mkdir -p $final_output_dir/downloaded_packages/
 	#cp -a $firmwareroot/dl/* $final_output_dir/downloaded_packages/
-	rsync --info=progress2 $firmwareroot/dl/* $final_output_dir/downloaded_packages/
+	rsync -a --info=progress2 $firmwareroot/dl/* $final_output_dir/downloaded_packages/
 #	gen_download_json_add_single_link '[downloaded_packages]' 'downloaded_packages' $final_output_dir
 }
 
