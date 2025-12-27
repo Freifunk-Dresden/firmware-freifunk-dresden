@@ -158,7 +158,7 @@ m3:test:
   only:
     - master
   stage: test
-  needs: ["m3:eol","m3:x86-64","m3:ramips","m3:lantiq","m3:ath79","m3:ipq40xx","m3:mpc85xx","m3:mediatek"]
+  needs: ["m3:eol","m3:x86-64","m3:ramips","m3:bcm","m3:lantiq","m3:ath79","m3:ipq40xx","m3:mpc85xx","m3:mediatek"]
   artifacts:
     paths:
       # keep this as artifact, so I can compare it also when building firmware on gitlab
