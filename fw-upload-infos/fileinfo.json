@@ -3,14 +3,14 @@
   "json_version": "2",
   "fileinfo": [
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-tl-wr1043nd-v1-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-tl-wr1043nd-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-tl-wr1043nd-v1-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -20,14 +20,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-tl-wr842n-v1-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-tl-wr842n-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-tl-wr842n-v1-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -37,14 +37,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-ubnt-bullet-m-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-bullet-m-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -54,7 +54,7 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-ubnt-bullet-m-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -64,14 +64,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "Ubiquiti Loco M XW (factory)",
       "sortkey": "ar71xx-generic-ubnt-loco-m-xw-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-loco-m-xw-squashfs-factory.bin",
       "comment": "(XW) Kleines Gehäuse; Label: NanoStation Loco M2 (RAM: 64Mbyte)"
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "Ubiquiti Loco M XW",
       "sortkey": "ar71xx-generic-ubnt-loco-m-xw-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -81,14 +81,14 @@
       "comment": "(XW) Kleines Gehäuse; Label: NanoStation Loco M2 (RAM: 64Mbyte)"
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "Ubiquiti NanoStation Loco M2 (XM) (factory)",
       "sortkey": "ar71xx-generic-ubnt-nano-m-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-nano-m-squashfs-factory.bin",
       "comment": "(XM) Kleine/Groß Gehäuse; Label: NanoStation (Loco) M2 (RAM: 32Mbyte)"
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "Ubiquiti NanoStation Loco M2 (XM)",
       "sortkey": "ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -98,7 +98,7 @@
       "comment": "(XM) Kleine/Groß Gehäuse; Label: NanoStation (Loco) M2 (RAM: 32Mbyte)"
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-ubnt-nano-m-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -108,14 +108,14 @@
       "comment": "(XM) Kleines Gehäuse (RAM: 32Mbyte)"
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-ubnt-nano-m-xw-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-generic-ubnt-nano-m-xw-squashfs-factory.bin",
       "comment": "(XW) Großes Gehäuse (RAM: 64Mbyte)"
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-generic-ubnt-nano-m-xw-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -125,14 +125,14 @@
       "comment": "(XW) Großes Gehäuse (RAM: 64Mbyte)"
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-mr3020-v1-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-mr3020-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-mr3020-v1-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -142,14 +142,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-mr3220-v1-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-mr3220-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-mr3220-v1-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -159,14 +159,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa701nd-v2-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa701nd-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa701nd-v2-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -176,14 +176,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa801nd-v1-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa801nd-v1-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -193,14 +193,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa801nd-v2-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa801nd-v2-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -210,14 +210,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa801nd-v3-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa801nd-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa801nd-v3-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -227,14 +227,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa830re-v2-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa830re-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa830re-v2-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -244,14 +244,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa850re-v1-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa850re-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa850re-v1-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -261,14 +261,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa860re-v1-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa860re-v1-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa860re-v1-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -278,14 +278,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v2-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v2-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -295,14 +295,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v3-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v3-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v3-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -312,14 +312,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v4-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v4-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -329,14 +329,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v5-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wa901nd-v5-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wa901nd-v5-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -346,14 +346,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr740n-v4-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr740n-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr740n-v4-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -363,14 +363,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr741nd-v4-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr741nd-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr741nd-v4-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -380,21 +380,21 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr840n-v2-squashfs-factory-eu.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr840n-v2-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr840n-v2-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr840n-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr840n-v2-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -404,14 +404,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v10-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v10-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v10-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -421,28 +421,28 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v11-squashfs-factory-eu.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v11-squashfs-factory-us.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-factory-us.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v11-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v11-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v11-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -452,28 +452,28 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v12-squashfs-factory-eu.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v12-squashfs-factory-us.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-factory-us.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v12-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v12-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v12-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -483,14 +483,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v5-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v5-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v5-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -500,14 +500,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v7-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v7-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v7-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -517,14 +517,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v8-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v8-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v8-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -534,14 +534,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v9-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr841-v9-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr841-v9-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -551,35 +551,35 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v4-squashfs-factory-br.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-br.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v4-squashfs-factory-eu.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v4-squashfs-factory-us.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory-us.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v4-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v4-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v4-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -589,35 +589,35 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v6-squashfs-factory-br.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-br.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v6-squashfs-factory-eu.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-eu.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v6-squashfs-factory-us.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory-us.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v6-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr940n-v6-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr940n-v6-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -627,14 +627,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr941nd-v2-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v2-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr941nd-v2-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -644,14 +644,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr941nd-v5-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v5-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr941nd-v5-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -661,14 +661,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr941nd-v6-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ar71xx-tiny-tl-wr941nd-v6-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ar71xx-tiny-tl-wr941nd-v6-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -3428,14 +3428,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ramips-rt305x-dir-615-d-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ramips-rt305x-dir-615-d-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ramips-rt305x-dir-615-d-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -3445,14 +3445,14 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ramips-rt305x-dir-615-h1-squashfs-factory.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ramips-rt305x-dir-615-h1-squashfs-factory.bin",
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ramips-rt305x-dir-615-h1-squashfs-sysupgrade.bin",
       "autoupdate": "1",
@@ -3462,7 +3462,7 @@
       "comment": ""
     },
     {
-      "disabled": "0",
+      "disabled": "1",
       "name": "",
       "sortkey": "ramips-rt305x-uImage.bin",
       "filename": "freifunk-dresden-v8.2.8-18.06-snapshot-ramips-rt305x-uImage.bin",
