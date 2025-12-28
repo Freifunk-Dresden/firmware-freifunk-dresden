@@ -87,11 +87,8 @@ CONFIG_TARGET_DEVICE_ath79_nand_DEVICE_glinet_gl-ar750s-nor-nand=y
 CONFIG_TARGET_DEVICE_ath79_nand_DEVICE_glinet_gl-ar750s-nor=y
 
 
-************************************************
-22->24
-************************************************
 target: [bcm.bcm53xx.offloader] (22.03)
-CONFIG_TARGET_DEVICE_bcm53xx_generic_DEVICE_asus_rt-ac68u=y                       neu
+CONFIG_TARGET_DEVICE_bcm53xx_generic_DEVICE_asus_rt-ac68u=y                       nur als offloader, wifi nicht supported
 
 
 
