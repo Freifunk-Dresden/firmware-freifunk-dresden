@@ -800,7 +800,7 @@ verify_firmware_present()
 	# extract selected devices from openwrt config file and check
 	# if sysupgrade file is present
 	status=0
-		for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/fw-configs/${_cfg_selector_config}/${_cfg_file}")
+	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/fw-configs/${_cfg_selector_config}/${_cfg_file}")
 	do
 		# extract firmware device name part
 		dev="${dev/*_DEVICE_/}"
@@ -808,7 +808,7 @@ verify_firmware_present()
 
 		printf "firmware generated: ${dev_str}: "
 
-		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
+		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.* 2>/dev/null)"
 		p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
 
     # some devices have only one file ending with squashfs.trx (e.g. asus rt-ac68u)
@@ -1619,7 +1619,7 @@ EOM
 	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
 
 		# verify presence of all images
-	echo -e "${C_CYAN}verify images${C_NONE} for target ${_cfg_name}:"
+	echo -e "${C_CYAN}verify images${C_NONE} for target [${_cfg_name}]:"
 	if ! verify_firmware_present "${_cfg_name}" "${outdir}/images"; then
   	echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
   	error=1
