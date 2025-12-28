@@ -693,7 +693,6 @@ listTargets()
 	fi
 
   cstatus=""
-  strike=""
 
 	case "${compile_status}" in
 		"0") cstatus="${PBC_SUCCESS}" ;;
@@ -709,13 +708,34 @@ listTargets()
 			;;
 	esac
 
+  # colors
+  tc_name="${C_NONE}"
+  tc_template="${color_template[${_cfg_template}]}"
+  tc_fwversion="${color_fwversion[${fw_version}]}"
+  tc_openwrt="${color_openwrt[${_cfg_openwrt_rev}]}"
+  tc_variant="${C_NONE}"
+  tc_selector_config="${color_selector[${_cfg_selector_config}]}"
+  tc_selector_files="${color_selector[${_cfg_selector_files}]}"
+  tc_selector_feeds="${color_selector[${_cfg_selector_feeds}]}"
+  tc_selector_patches="${color_selector[${_cfg_selector_patches}]}"
+  tc_build_date="${C_NONE}"
+
 	# overwrite if disabled
 	if [ "${_cfg_disabled}" == "true" ]; then
 		cstatus="${PBC_DISABLED}"
-    strike="${STRIKE_ON}"
+    tc_name="${C_RED}"
+    tc_template="${C_RED}"
+    tc_fwversion="${C_RED}"
+    tc_openwrt="${C_RED}"
+    tc_variant="${C_RED}"
+    tc_selector_config="${C_RED}"
+    tc_selector_files="${C_RED}"
+    tc_selector_feeds="${C_RED}"
+    tc_selector_patches="${C_RED}"
+    tc_build_date="${C_RED}"
 	fi
 
-	printf  "│$cstatus ${strike}%-27s${C_NONE} │ ${color_eol}%-3.3s${C_NONE} │ ${color_template[${_cfg_template}]}%-8.8s${C_NONE} | ${color_fwversion[${fw_version}]}%-7.7s${C_NONE} │ ${color_openwrt[${_cfg_openwrt_rev}]}%-10.10s${C_NONE} │ %-7.7s │ ${color_selector[${_cfg_selector_config}]}%-8.8s${C_NONE} │ ${color_selector[${_cfg_selector_files}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_feeds}]}%-7.7s${C_NONE} │ ${color_selector[${_cfg_selector_patches}]}%-7.7s${C_NONE} │ %-20.20s │\n" "${_cfg_name}" "${eol}" "${_cfg_template}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
+	printf  "│$cstatus ${tc_name}%-27s${C_NONE} │ ${color_eol}%-3.3s${C_NONE} │ ${tc_template}%-8.8s${C_NONE} | ${tc_fwversion}%-7.7s${C_NONE} │ ${tc_openwrt}%-10.10s${C_NONE} │ ${tc_variant}%-7.7s${C_NONE} │ ${tc_selector_config}%-8.8s${C_NONE} │ ${tc_selector_files}%-7.7s${C_NONE} │ ${tc_selector_feeds}%-7.7s${C_NONE} │ ${tc_selector_patches}%-7.7s${C_NONE} │ ${tc_build_date}%-20.20s${C_NONE} │\n" "${_cfg_name}" "${eol}" "${_cfg_template}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
 
  done
 

@@ -1,0 +1,113 @@
+
+---------------------------------------------------------------------------------------------------
+flash zu klein
+---------------------------------------------------------------------------------------------------
+target: [ramips.22.mt76x8.small] (22.03)
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_netgear_r6120=y
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_tplink_archer-c20-v4=y
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_tplink_re200-v2=y
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_tplink_re200-v3=y
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_tplink_re200-v4=y
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_tplink_tl-wr841n-v13=y
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_tplink_tl-wr902ac-v3=y
+
+target: [ramips.22.mt7621.small] (22.03)
+CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_tplink_re650-v2=y
+
+target: [ramips.22.mt7620.small.usb] (22.03)
+CONFIG_TARGET_DEVICE_ramips_mt7620_DEVICE_tplink_archer-c50-v1=y
+
+
+target: [ath79.22.small.smallbuffers] (22.03)
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c60-v1=y
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_archer-c60-v2=y
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_re450-v1=y
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_re450-v2=y
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_tplink_re450-v3=y
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+flash layout änderung / kernel size -> upgrade nicht möglich
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+target: [ramips.22.mt7621.offloader] (22.03)
+CONFIG_TARGET_DEVICE_ramips_mt7621_DEVICE_ubnt_edgerouter-x=y
+
+===================================================================================================
+zu halt und langsam -> nicht mehr upgraded auf 24
+===================================================================================================
+target: [ath79.22.generic.gl-mifi] (22.03)
+CONFIG_TARGET_DEVICE_ath79_generic_DEVICE_glinet_gl-mifi=y
+
+
+
+
+???????????????????????????????????????????????????????????????????????????????????????????????????
+nicht gestestet bezüglich flash layout/upgrade 22->24
+???????????????????????????????????????????????????????????????????????????????????????????????????
+target: [ramips.22.mt76x8.generic] (22.03)
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_glinet_gl-mt300n-v2=y                   nur ein gerät
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_xiaomi_mi-router-4c=y                   wesenstein
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_xiaomi_mi-router-4a-100m-intl=y
+CONFIG_TARGET_DEVICE_ramips_mt76x8_DEVICE_xiaomi_mi-router-4a-100m=y
+
+target: [ramips.22.mt7620.generic] (22.03)
+CONFIG_TARGET_DEVICE_ramips_mt7620_DEVICE_tplink_archer-c2-v1=y                   nur ein gerät
+
+target: [mpc85xx.22.p1010] (22.03)
+CONFIG_TARGET_DEVICE_mpc85xx_p1010_DEVICE_tplink_tl-wdr4900-v1=y                  nur ein gerät
+
+target: [mpc85xx.22.p1020] (22.03)
+CONFIG_TARGET_DEVICE_mpc85xx_p1020_DEVICE_aerohive_hiveap-330=y                   nur ein gerät
+
+target: [lantiq-xway.22.generic] (22.03)
+CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_avm_fritz7312=y
+CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_avm_fritz7320=y
+
+target: [lantiq-xrx200.22.generic] (22.03)
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz3370-rev2-hynix=y
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz3370-rev2-micron=y
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz7360sl=y
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz7360-v2=y
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz7362sl=y
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz7412=y
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_avm_fritz7430=y
+
+target: [ipq40xx.22.generic.fritz] (22.03)
+CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_avm_fritzbox-7530=y
+CONFIG_TARGET_DEVICE_ipq40xx_generic_DEVICE_avm_fritzrepeater-1200=y
+
+target: [ath79.22.nand.gl-e750] (22.03)
+CONFIG_TARGET_DEVICE_ath79_nand_DEVICE_glinet_gl-e750=y                            nur 2 geräte, 5ghz ap nicht möglich
+
+target: [ath79.22.nand] (22.03)
+CONFIG_TARGET_DEVICE_ath79_nand_DEVICE_aerohive_hiveap-121=y
+CONFIG_TARGET_DEVICE_ath79_nand_DEVICE_glinet_gl-ar300m-nand=y
+CONFIG_TARGET_DEVICE_ath79_nand_DEVICE_glinet_gl-ar300m-nor=y
+CONFIG_TARGET_DEVICE_ath79_nand_DEVICE_glinet_gl-ar750s-nor-nand=y
+CONFIG_TARGET_DEVICE_ath79_nand_DEVICE_glinet_gl-ar750s-nor=y
+
+
+************************************************
+22->24
+************************************************
+target: [bcm.bcm53xx.offloader] (22.03)
+CONFIG_TARGET_DEVICE_bcm53xx_generic_DEVICE_asus_rt-ac68u=y                       neu
+
+
+
+
+####################################
+gelöscht
+##########################
+
+target: [lantiq-xway.22.small] (22.03)
+CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_arcadyan_arv752dpw22=y                   - ungenutzt
+CONFIG_TARGET_DEVICE_lantiq_xway_DEVICE_arcadyan_arv8539pw22=y                   - ungenutzt
+
+target: [lantiq-xrx200.22.small] (22.03)
+CONFIG_TARGET_DEVICE_lantiq_xrx200_DEVICE_tplink_tdw8970=y                        - ungenutzt
+
+
+
+CONFIG_TARGET_DEVICE_ath79_nand_DEVICE_netgear_r6100=y                            - ungenutzt
+CONFIG_TARGET_DEVICE_ramips_mt7620_DEVICE_tplink_re200-v1=y                       - ungenutzt

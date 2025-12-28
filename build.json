@@ -211,18 +211,8 @@
   },
   {
     "template":"22.03",
-    "name":"lantiq-xrx200.22.small",
-    "config":"lantiq-xrx200.22.small.cfg"
-  },
-  {
-    "template":"22.03",
     "name":"lantiq-xway.22.generic",
     "config":"lantiq-xway.22.generic.cfg"
-  },
-  {
-    "template":"22.03",
-    "name":"lantiq-xway.22.small",
-    "config":"lantiq-xway.22.small.cfg"
   },
   {
     "template":"22.03",
@@ -281,7 +271,9 @@
     "config":"bcm.22.bcm53xx.offloader.cfg",
     "openwrt_variant":"offloader"
   },
+# ---------- openwrt 22 -- eol (end of life) -----------------------------------
   {
+    "disabled": true,
     "template":"22.03",
     "name":"eol.sunxi.22.cortexa7",
     "config":"eol.sunxi.22.cortexa7.offloader.cfg",
@@ -291,18 +283,17 @@
       "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "htop", "tmux", "iperf3"
     ]
   },
-# ---------- openwrt 22 -- eol (end of life) -----------------------------------
   {
+    "disabled": true,
     "template":"22.03",
     "name":"eol.ath79.22.generic",
-    "config":"eol.ath79.22.generic.cfg",
-    "disabled": false
+    "config":"eol.ath79.22.generic.cfg"
    },
    {
+    "disabled": true,
     "template":"22.03",
     "name":"eol.ath79.22.small",
-    "config":"eol.ath79.22.small.cfg",
-    "disabled": false
+    "config":"eol.ath79.22.small.cfg"
   },
 
 # ---------- openwrt 18 -- eol (end of life) -----------------------------------
