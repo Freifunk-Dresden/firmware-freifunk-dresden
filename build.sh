@@ -153,7 +153,7 @@ declare -A configTemplateValues
 
 
 #save current directory when copying config file
-RUN_DIR=$(pwd)
+PROJECT_DIR=$(pwd)
 
 global_error=0
 
@@ -197,7 +197,7 @@ setup_buildroot ()
 			#extract into buildroot dir
 			echo "using already downloaded $openwrt_dl_tgz"
 			cd $buildroot
-			tar xzf $RUN_DIR/$openwrt_dl_tgz
+			tar xzf $PROJECT_DIR/$openwrt_dl_tgz
 		else
 			#clone from openwrt
 			echo "cloning openwrt"
@@ -206,9 +206,9 @@ setup_buildroot ()
 			cd $buildroot
 			git checkout $openwrt_rev >/dev/null
 			echo "create openwrt tgz"
-			tar czf $RUN_DIR/$openwrt_dl_tgz .
+			tar czf $PROJECT_DIR/$openwrt_dl_tgz .
 		fi
-		cd $RUN_DIR
+		cd $PROJECT_DIR
 
 		#apply openwrt patches
 		if [ -d $openwrt_patches_dir ]; then
@@ -244,7 +244,7 @@ setup_buildroot ()
 	mkdir -p $buildroot/files
 
 	# check for common symlink
-	common_dir="$RUN_DIR/fw-files/${firmware_files}.common"
+	common_dir="$PROJECT_DIR/fw-files/${firmware_files}.common"
 	if [ -L "${common_dir}" ]; then
 		echo -n -e "${C_CYAN}copy rootfs (${common_dir})${C_NONE}: "
 		# remove-destination forces copy (first remove existing file (e.g. symlinks))
@@ -258,9 +258,9 @@ setup_buildroot ()
 	# -------- specific files -----------
 	# copy specific files over (may overwrite common)
 	echo -n -e "${C_CYAN}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
-	if [ -n "${firmware_files}" -a -d "$RUN_DIR/fw-files/${firmware_files}" ]; then
+	if [ -n "${firmware_files}" -a -d "$PROJECT_DIR/fw-files/${firmware_files}" ]; then
 		# --remove-destination forces copy (first remove existing file (e.g. symlinks))
-		cp -a --remove-destination $RUN_DIR/fw-files/${firmware_files}/* $buildroot/files/
+		cp -a --remove-destination $PROJECT_DIR/fw-files/${firmware_files}/* $buildroot/files/
 		echo "done."
 
 		echo -n -e "${C_CYAN}removing unwanted files/directories ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
@@ -475,7 +475,7 @@ show_progress()
 
 getTargetsJson()
 {
-cat $RUN_DIR/$PLATFORMS_JSON | sed -n '
+cat $PROJECT_DIR/$PLATFORMS_JSON | sed -n '
 # delete comments (# must not be used anywhere)
 s/#.*//
 # delete lines starting with //
@@ -676,14 +676,14 @@ listTargets()
 	test "${_cfg_name/eol.*/eol}" = "eol" && eol="EOL"
 
 	# get firmware version
-	fw_version_file="$RUN_DIR/fw-files/${_cfg_selector_files}/etc/version"
-	[ -f "$fw_version_file" ] || fw_version_file="$RUN_DIR/fw-files/${_cfg_selector_files}.common/etc/version"
+	fw_version_file="$PROJECT_DIR/fw-files/${_cfg_selector_files}/etc/version"
+	[ -f "$fw_version_file" ] || fw_version_file="$PROJECT_DIR/fw-files/${_cfg_selector_files}.common/etc/version"
 	fw_version="$(cat $fw_version_file)"
 
 	# get status
 	buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
 	test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
-	_compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
+	_compile_status_dir="$PROJECT_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
 	compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
 
 	compile_status=""
@@ -820,7 +820,7 @@ verify_firmware_present()
 	# extract selected devices from openwrt config file and check
 	# if sysupgrade file is present
 	status=0
-	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/fw-configs/${_cfg_selector_config}/${_cfg_file}")
+	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${PROJECT_DIR}/fw-configs/${_cfg_selector_config}/${_cfg_file}")
 	do
 		# extract firmware device name part
 		dev="${dev/*_DEVICE_/}"
@@ -1312,7 +1312,7 @@ unset progbar_char_array
 targetIdx=0
 while true
 do
-	cd $RUN_DIR
+	cd $PROJECT_DIR
 
 	# read configuration from first target in build.json
 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
@@ -1365,7 +1365,7 @@ do
 	buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
 	test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
 
-	_compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
+	_compile_status_dir="$PROJECT_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
 	compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
 	mkdir -p ${_compile_status_dir}
 
@@ -1391,7 +1391,7 @@ do
 	# This is needed to avoid conflicts with packages when I have several configs that all
 	# use same target/subtarget directories.
 	# - reset also compile status ${compile_status_file}
-	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
+	outdir="${PROJECT_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
 	rm -rf ${outdir}/*
 	rm -rf ${buildroot}/bin
 
@@ -1446,10 +1446,17 @@ EOM
 		# ],
 		# The feed directory for "ddmesh" is directly located below firmware/feeds/<feed-selector>/
 		if [ "$_feed_type" = "src-link" ]; then
-			_feed_src="${RUN_DIR}/fw-feeds/${_cfg_selector_feeds}/${_feed_src}"
+			_feed_src="${PROJECT_DIR}/fw-feeds/${_cfg_selector_feeds}/${_feed_src}"
 			_feed_rev=""	# src-link does not have a rev, because it is already in current git repo
       _feed_url="${_feed_src}${_feed_rev}"
 		else
+
+# hier sollte geprüft werden, ob ich die externen feeds mit rev bereits herunter geladen habe,
+# und diese dann direkt auspacken und die links innerhalb von workdir/.../feeds/ setzen.
+# und ein update -a dann unterbinden.
+#  flag setzen:  use_local_dl_feeds=1 oder so
+
+
 			# if we have a feed revision, then add it. "^" is a special character
 			# followed by a "commit" (hash). openwrt then checks out this revision
 			test "${_feed_rev}" = "null" && _feed_rev=""
@@ -1501,11 +1508,11 @@ EOM
 	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh)"$C_NONE
 	./scripts/feeds install -a -p ddmesh
 
-	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
+	rm -f .config		# delete previous config in case we have no $PROJECT_DIR/$config_file yet and want to
                   # create a new config
 
-	DEFAULT_CONFIG="${RUN_DIR}/${CONFIG_DIR}/${_cfg_selector_config}/${CONFIG_DEFAULT_FILE}"
-	if [ ! -f "${RUN_DIR}/${config_file}" ]; then
+	DEFAULT_CONFIG="${PROJECT_DIR}/${CONFIG_DIR}/${_cfg_selector_config}/${CONFIG_DEFAULT_FILE}"
+	if [ ! -f "${PROJECT_DIR}/${config_file}" ]; then
 		if [ "$MENUCONFIG" = "1" ]; then
 			echo -e "${C_CYAN}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
 
@@ -1535,8 +1542,8 @@ EOM
 		fi
 	else
 		# copy specific config
-		echo -e $C_CYAN"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
-		cp $RUN_DIR/$config_file .config
+		echo -e $C_CYAN"copy configuration$C_NONE: $C_GREEN$PROJECT_DIR/$config_file$C_NONE"
+		cp $PROJECT_DIR/$config_file .config
 	fi
 
 	if [ "$MENUCONFIG" = "1" ]; then
@@ -1554,12 +1561,12 @@ EOM
 	# 2. rm .config
 	# 3. unselect all unwanted configuration that should be removed from (e.g. IPV6,PPP,....)
 
-	echo -e "${C_CYAN}post-overwrite configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+	echo -e "${C_CYAN}post-overwrite configuration${C_NONE}: ${C_GREEN}${PROJECT_DIR}/${config_file}${C_NONE}"
 	cat ${DEFAULT_CONFIG} >> .config
-	echo -e "${C_CYAN}reprocess configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+	echo -e "${C_CYAN}reprocess configuration${C_NONE}: ${C_GREEN}${PROJECT_DIR}/${config_file}${C_NONE}"
 	make defconfig
-	echo -e "${C_CYAN}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
-	cp .config ${RUN_DIR}/${config_file}
+	echo -e "${C_CYAN}copy back configuration${C_NONE}: ${C_GREEN}${PROJECT_DIR}/${config_file}${C_NONE}"
+	cp .config ${PROJECT_DIR}/${config_file}
 
 	if [ "$MENUCONFIG" = "1" ]; then
 		echo ""
@@ -1596,7 +1603,7 @@ EOM
 	fi
 
 	# check if we have file
-	target_dir="${RUN_DIR}/${buildroot}/bin/targets"
+	target_dir="${PROJECT_DIR}/${buildroot}/bin/targets"
 	if [ ! -d "${target_dir}" ]; then
 		echo -e "${C_RED}Error: build error - generated directory not found${C_NONE}"
 		echo "     ${target_dir}"
@@ -1604,7 +1611,7 @@ EOM
 		fi
 
 		# get firmware version
-		fw_version_file="${RUN_DIR}/${buildroot}/files/etc/version"
+		fw_version_file="${PROJECT_DIR}/${buildroot}/files/etc/version"
 		if [ -f "$fw_version_file" ]; then
 			fw_version="$(cat $fw_version_file)"
 		else
@@ -1617,17 +1624,17 @@ EOM
 	mkdir -p ${outdir}/images
 
 	echo -e "${C_CYAN}copy version file${C_NONE}"
-	mv ${RUN_DIR}/${buildroot}/files/etc/version "${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/" 2>/dev/null
+	mv ${PROJECT_DIR}/${buildroot}/files/etc/version "${PROJECT_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/" 2>/dev/null
 
 	echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
 	# -> buildroot/bin/packages/<mipsel_24kc>/*
-	mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
+	mv ${PROJECT_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
 
 	echo -e "${C_CYAN}copy images${C_NONE}"
 	# copy every firmware file and add freifunk version to its name
 	# -> buildroot/bin/target/<ramips>/<mt7621>/*
-	#mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
-	for src in $(ls -1 ${RUN_DIR}/${buildroot}/bin/targets/*/*/freifunk-dresden-*)
+	#mv ${PROJECT_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
+	for src in $(ls -1 ${PROJECT_DIR}/${buildroot}/bin/targets/*/*/freifunk-dresden-*)
 	do
 		basename="$(basename $src)"
 		newname="freifunk-dresden-v${fw_version}-${basename/freifunk-dresden-/}"
