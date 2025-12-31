@@ -111,7 +111,7 @@ UPLOAD_INFO_DIR="fw-upload-infos"
 INPUT_FILEINFO_JSON_FILENAME="fileinfo.json"
 # this file is generated to reflect any updated files. means when new files are added
 OUTPUT_FILEINFO_JSON_FILENAME="fileinfo.json.new-generated"
-GENERATED_FIRMWARE_OUTPUT_DIR="_output"
+GENERATED_FIRMWARE_OUTPUT_DIR="workdir/_output"
 GENERATED_FIRMWARE_VERSION_FILE="version"
 
 #get apsolute path before changing to it.
@@ -206,7 +206,7 @@ isFirstFileInfo=1
 gen_download_json_add_data()
 {
 	output_path="$1" 	# output path "final_output/"
-	subpath="$2" 		# relativ path to firmware "firmware/8.3.0/platform/ar71xx/generic"
+	subpath="$2" 		# relativ path to firmware "firmware/8.3.0/ramips.24.mt7621.generic"
 	file_filter="$3" 	# file filter "*.{bin,trx,img,itb,dlf,gz}"
 	fw_version="$4" # freifunk firmware version
 
@@ -458,105 +458,87 @@ $ENABLE_COPY && {
 #################################################################################################
 # copy firmware
 #################################################################################################
+# set variable MKHASH, unless script ipkg-make-index.sh will fail
+# needed since openwrt 22.03.
+# I have at least one working directory. mkhash might be found several times, but are all the same.
+# So I just use the first I find
+export MKHASH=$(find workdir/*/staging_dir -name mkhash -print -quit)
+
+# I generate my own package list. so find the script
+IPKG_MAKE_SCRIPT_SH=$(find workdir/*/scripts -name ipkg-make-index.sh -print -quit)
 
 # run through all openwrt version (targets may be created for different openwrt versions)
-for _buildroot in $(ls -1 $PROJECT_DIR/workdir/)
+for config  in $(ls -1 $PROJECT_DIR/${GENERATED_FIRMWARE_OUTPUT_DIR})
 do
-	printf "${C_YELLOW}build root:${C_NONE}[${C_GREEN}${_buildroot}${C_NONE}]\n"
+	printf "${C_YELLOW}>>>>>>>> firmware config:${C_NONE}[${C_GREEN}${config}${C_NONE}]\n"
 
-	buildroot=$PROJECT_DIR/workdir/$_buildroot
-
-	# add binaries to host tools so 'mkhash' will be found when
-	# calling ipkg-make-index.sh
-	# needed until 21.02
-	export PATH=$SAVED_SYSTEM_PATH:$buildroot/staging_dir/host/bin/
-
-	# set variable MKHASH, unless script ipkg-make-index.sh will fail
-	# needed since openwrt 22.03
-	export MKHASH=$buildroot/staging_dir/host/bin/mkhash
-
-	_platforms=${buildroot}/${GENERATED_FIRMWARE_OUTPUT_DIR}
-
-	# check directory
-	test -d ${_platforms} || continue
+	# -> final_output/firmware/8.2.5/ramips.24.mt7621.generic
+	target_dir=$final_output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/${config}
+	mkdir -p $target_dir
 
 	# _output contains several platforms but only for exactly one freifunk firmware version
-	fw_version=$(cat ${buildroot}/${GENERATED_FIRMWARE_OUTPUT_DIR}/${GENERATED_FIRMWARE_VERSION_FILE})
+	fw_version=$(cat ${GENERATED_FIRMWARE_OUTPUT_DIR}/${config}/${GENERATED_FIRMWARE_VERSION_FILE})
 	if [ -z "$fw_version" ]; then
 		printf "ERROR: firmware version not detected (invalid path)\n"
 		exit 1
 	fi
 	printf "  ${C_LPURPLE}detected firmware version:${C_NONE} $fw_version\n"
-
-	# -> final_output/firmware/8.2.5
-	target_dir=$final_output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version
-	mkdir -p $target_dir
 	printf "$fw_version\n" >$target_dir/version
 
 
-#	# add directory entry into download json, so it can be displayed in dataTable (index.html)
-#	for platform in $(ls $_platforms)
-#	do
-#		gen_download_json_add_single_link "[$platform]" "$platform" $final_output_dir
-#	done
-	for platform in $(ls -1 --hide 'version' $_platforms)
-	do
+	filefilter="*.{bin,trx,img,itb,dlf,gz,tar,vdi,vmdk}"
+  $ENABLE_COPY && {
+    printf "    ${C_YELLOW}copy:${C_NONE} ${config}/images/$filefilter\n"
+    # use "eval" to resolv filefilter wildcards
+    eval cp -a $PROJECT_DIR/${GENERATED_FIRMWARE_OUTPUT_DIR}/${config}/images/$filefilter ${target_dir}/ 2>/dev/null
 
-		printf -- "  >>>>>>>> ${C_YELLOW}platform:${C_NONE} [${C_GREEN}${platform}${C_NONE}]\n"
+    # remove not-wanted files, because those are not used and added for different openwrt versions
+    # This would cause duplicate warning in gen-upload.sh
+    rm -f ${target_dir}/freifunk-dresden*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
+  }
 
-		tmpTargetDir="${target_dir}/${platform}"
-		mkdir -p ${tmpTargetDir}
+  #create md5sums/sha256sum file used when automatically or manually downloading via firmware.cgi
+  # solange das file erzeugen, wie software mit alter firmware drausen ist
+  # oder github
+  printf "    ${C_YELLOW}calculate md5sum/sha256sum${C_NONE}\n"
+  (
+    cd $target_dir
+    md5sum * > $target_dir/md5sums 2>/dev/null
+    sha256sum * > $target_dir/sha256sum 2>/dev/null
+  )
 
-		filefilter="*.{bin,trx,img,itb,dlf,gz,tar,vdi,vmdk}"
-		$ENABLE_COPY && {
-			printf "    ${C_YELLOW}copy:${C_NONE} ${platform}/images/$filefilter\n"
-			# use "eval" to resolv filefilter wildcards
-			eval cp -a ${_platforms}/${platform}/images/$filefilter ${tmpTargetDir}/ 2>/dev/null
+  #copy packages
+  mkdir -p $target_dir/packages
+  printf "    ${C_YELLOW}search package dir:${C_NONE} ${GENERATED_FIRMWARE_OUTPUT_DIR}/${config}/\n"
+  for package in $(cat $info_dir/packages | sed 's/#.*//;/^[	 ]*$/d')
+  do
+    filename=$(find ${GENERATED_FIRMWARE_OUTPUT_DIR}/${config}/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
+    printf "      ${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}... "
 
-			# remove not-wanted files, because those are not used and added for different openwrt versions
-			# This would cause duplicate warning in gen-upload.sh
-			rm -f ${tmpTargetDir}/freifunk-dresden*-{vmlinux.bin,uImage-lzma.bin,rootfs.tar.gz}
-		}
+    $ENABLE_COPY && {
+      test -n "$filename" && {
+		    printf -- "--> copy ${filename}\n"
+        cp -a $filename $target_dir/packages/
+      }
+    }
 
-		#create md5sums/sha256sum file used when automatically or manually downloading via firmware.cgi
-		# solange das file erzeugen, wie software mit alter firmware drausen ist
-		# oder github
-		p=$(pwd)
-		cd $tmpTargetDir
-		printf "    ${C_YELLOW}calculate md5sum/sha256sum${C_NONE}\n"
-		md5sum * > $tmpTargetDir/md5sums 2>/dev/null
-		sha256sum * > $tmpTargetDir/sha256sum 2>/dev/null
-		cd $p
+    test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
 
-		#copy packages
-		mkdir -p $tmpTargetDir/packages
-		printf "    ${C_YELLOW}search package dir:${C_NONE} ${_platforms}/${platform}/\n"
-		for package in $(cat $info_dir/packages | sed 's/#.*//;/^[	 ]*$/d')
-		do
+  done
 
-			filename=$(find ${_platforms}/${platform}/ -name "$package""[0-9_]*.ipk" -print 2>/dev/null)
-			printf "      ${C_YELLOW}process package: ${C_GREEN}${package}${C_NONE}\n"
+  printf "    ${C_YELLOW}generate package index${C_NONE}\n"
+  (
+    cd $target_dir/packages/
+    ${IPKG_MAKE_SCRIPT_SH} . > Packages 2>/dev/null
+    gzip -f Packages
+  )
 
-			test -z "${filename}" && printf "${C_ORANGE}WARNING: no package file found for ${C_NONE}${package}\n"
-			$ENABLE_COPY && {
-#			printf "copy package: $package -> [$filename]\n"
-				test -n "$filename" && cp -a $filename $tmpTargetDir/packages/
-			}
-		done
+	gen_download_json_add_data "$final_output_dir" "${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/${config}" "$filefilter" ${fw_version}
 
-		printf "    ${C_YELLOW}generate package index${C_NONE}\n"
-		p=$(pwd)
-		cd $tmpTargetDir/packages/
-		$buildroot/scripts/ipkg-make-index.sh . > Packages 2>/dev/null
-		gzip -f Packages
-		cd $p
 
-		gen_download_json_add_data "$final_output_dir" "${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/${platform}" "$filefilter" ${fw_version}
-
-	done	# for platform
 	printf -- "\n=========================================================\n\n"
 
-done # for buildroot
+done # _output/<configs>
 
 gen_download_json_end $final_output_dir
 
@@ -573,6 +555,9 @@ EOM
 
 # ENABLE_GENERATE
 }
+
+echo exit
+exit 0
 
 # now, all files are copied for uploading and new fileinfo.json is generated
 # - check for duplicate firmware files but ignore versions in filename
