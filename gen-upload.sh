@@ -115,7 +115,7 @@ GENERATED_FIRMWARE_OUTPUT_DIR="_output"
 GENERATED_FIRMWARE_VERSION_FILE="version"
 
 #get apsolute path before changing to it.
-firmwareroot="$PWD"
+PROJECT_DIR="$PWD"
 
 # save PATH (needed to add build root binaries for different openwrt versions)
 SAVED_SYSTEM_PATH=$PATH
@@ -426,8 +426,8 @@ gen_download_json_start "$final_output_dir" "$fwdate" "$fw_branch" "$fw_rev"
 $ENABLE_COPY && {
 	printf "${C_YELLOW}copy downloaded packages${C_NONE}\n"
 	mkdir -p $final_output_dir/downloaded_packages/
-	#cp -a $firmwareroot/dl/* $final_output_dir/downloaded_packages/
-	rsync -a --info=progress2 $firmwareroot/dl/* $final_output_dir/downloaded_packages/
+	#cp -a $PROJECT_DIR/dl/* $final_output_dir/downloaded_packages/
+	rsync -a --info=progress2 $PROJECT_DIR/dl/* $final_output_dir/downloaded_packages/
 #	gen_download_json_add_single_link '[downloaded_packages]' 'downloaded_packages' $final_output_dir
 }
 
@@ -438,14 +438,14 @@ $ENABLE_COPY && {
 #changelog
 $ENABLE_COPY && {
 	printf "${C_YELLOW}copy changelog${C_NONE}\n"
-	cp -a $firmwareroot/changelog.txt $final_output_dir/
+	cp -a $PROJECT_DIR/changelog.txt $final_output_dir/
 #	gen_download_json_add_single_link 'changelog.txt' 'changelog.txt' $final_output_dir
 }
 
 #licenses
 $ENABLE_COPY && {
 	printf "${C_YELLOW}copy licenses${C_NONE}\n"
-	cp -a $firmwareroot/license $final_output_dir/
+	cp -a $PROJECT_DIR/license $final_output_dir/
 #	gen_download_json_add_single_link '[license]' 'license' $final_output_dir
 }
 
@@ -460,11 +460,11 @@ $ENABLE_COPY && {
 #################################################################################################
 
 # run through all openwrt version (targets may be created for different openwrt versions)
-for _buildroot in $(ls -1 $firmwareroot/workdir/)
+for _buildroot in $(ls -1 $PROJECT_DIR/workdir/)
 do
 	printf "${C_YELLOW}build root:${C_NONE}[${C_GREEN}${_buildroot}${C_NONE}]\n"
 
-	buildroot=$firmwareroot/workdir/$_buildroot
+	buildroot=$PROJECT_DIR/workdir/$_buildroot
 
 	# add binaries to host tools so 'mkhash' will be found when
 	# calling ipkg-make-index.sh
