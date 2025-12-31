@@ -40,7 +40,7 @@ CONFIG_DEFAULT_FILE="default.config"
 OPENWRT_PATCHES_DIR=fw-patches
 DDMESH_STATUS_DIR=".ddmesh"	# used to store build infos like openwrt_patches_target states
 DDMESH_PATCH_STATUS_DIR="$DDMESH_STATUS_DIR/patches-applied"
-COMPILE_STATUS_DIR=".compile-status"
+COMPILE_STATUS_DIR="compile-status"
 COMPILE_STATUS_FILE_SUFFIX="compile-status.json"
 
 # -------------------------------------------------------------------
@@ -683,7 +683,11 @@ listTargets()
 	# get status
 	buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
 	test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
-	_compile_status_dir="$PROJECT_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
+
+  # contains firmware, status packages from each config
+  outdir="${PROJECT_DIR}/${WORK_DIR}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
+
+  _compile_status_dir="${outdir}/${COMPILE_STATUS_DIR}"
 	compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
 
 	compile_status=""
@@ -1365,9 +1369,15 @@ do
 	buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
 	test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
 
-	_compile_status_dir="$PROJECT_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
-	compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
+  # contains firmware, status packages from each config
+  outdir="${PROJECT_DIR}/${WORK_DIR}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
+  mkdir -p ${outdir}
+
+	_compile_status_dir="${outdir}/${COMPILE_STATUS_DIR}"
 	mkdir -p ${_compile_status_dir}
+
+	compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
+
 
 	# remove compile status (before checking for failed only)
 	[ "${MAKE_CLEAN}" = "1" ] && rm -f ${compile_status_file}
@@ -1391,7 +1401,6 @@ do
 	# This is needed to avoid conflicts with packages when I have several configs that all
 	# use same target/subtarget directories.
 	# - reset also compile status ${compile_status_file}
-	outdir="${PROJECT_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
 	rm -rf ${outdir}/*
 	rm -rf ${buildroot}/bin
 
@@ -1624,7 +1633,7 @@ EOM
 	mkdir -p ${outdir}/images
 
 	echo -e "${C_CYAN}copy version file${C_NONE}"
-	mv ${PROJECT_DIR}/${buildroot}/files/etc/version "${PROJECT_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/" 2>/dev/null
+	mv ${PROJECT_DIR}/${buildroot}/files/etc/version "${outdir}/" 2>/dev/null
 
 	echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
 	# -> buildroot/bin/packages/<mipsel_24kc>/*
@@ -1638,7 +1647,7 @@ EOM
 	do
 		basename="$(basename $src)"
 		newname="freifunk-dresden-v${fw_version}-${basename/freifunk-dresden-/}"
-		#echo "cp ${src} ${outdir}/images/${newname}"
+		echo "cp ${src} ${outdir}/images/${newname}"
 		cp ${src} ${outdir}/images/${newname}
 	done
 	unset IFS
