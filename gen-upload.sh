@@ -556,8 +556,6 @@ EOM
 # ENABLE_GENERATE
 }
 
-echo exit
-exit 0
 
 # now, all files are copied for uploading and new fileinfo.json is generated
 # - check for duplicate firmware files but ignore versions in filename

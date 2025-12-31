@@ -18,7 +18,11 @@ targets/routers           - move some routers ot EOL (end of life)
 gui                       - adapt firewall page to new netfilter
                           - minor layout fixes
 
-EOL                      - remove support for end-of-life devices (to less memory/flash size and power)
+EOL                      - remove support for end-of-life devices (too small memory/flash size and power)
+                           Those devices can not be updated with newer openwrt versions. Openwrt.org
+                            only provides security fixes via new openwrt versions.
+                            Freifunk Dresden can not provide therefore any update for following devices.
+
                             target: [eol.ath79.22.generic] (22.03)
                               Sophos_ap100
                               TPLink-tl-wdr3600-v1
