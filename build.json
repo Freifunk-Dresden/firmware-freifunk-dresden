@@ -110,25 +110,6 @@
   },
   {
     "type":"template",
-    "name":"test",
-    "openwrt_repo"     : "https://git.openwrt.org/openwrt/openwrt.git",
-    "openwrt_rev"      : "v24.10.2",
-    "openwrt_variant"  : "",
-    "selector-config"  : "24.10",
-    "selector-feeds"   : "24.10",
-    "selector-patches" : "24.10",
-    "selector-files"   : "24.10",
-    "feeds" : [
-      { "type":"src-link", "name":"ddmesh",   "src":"" },
-      { "type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"default" },
-      { "type":"src-git",  "name":"routing",  "src":"https://git.openwrt.org/feed/routing.git",  "rev":"default" }
-    ],
-    "packages" : [
-      "liblzma", "libpam", "libnetsnmp", "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux", "iperf3"
-    ]
-  },
-  {
-    "type":"template",
     "name":"master",
     "openwrt_repo"     : "https://git.openwrt.org/openwrt/openwrt.git",
     "openwrt_rev"      : "HEAD",
