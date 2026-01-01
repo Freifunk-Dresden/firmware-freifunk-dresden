@@ -558,7 +558,8 @@ EOM
 
 
 # now, all files are copied for uploading and new fileinfo.json is generated
-# - check for duplicate firmware files but ignore versions in filename
+# - check for duplicate firmware files but ignore versions in filename.
+# - this checkes if there are more than one firmware files for ONE DEVICE (this would be an error)
 printf "${C_YELLOW}checking for firmware duplicates...${C_NONE}\n"
 find $final_output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/ | sed -n 's#\(\(.*\)/freifunk-dresden-\([0-9.-]\+\)*\(snapshot-\)*\(.*\)$\)#\5 \1#p' \
 			| sort -k1 \
@@ -579,6 +580,16 @@ find $final_output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/ | sed -n 's#\(\(.*\)/freifunk
 
 printf "${C_YELLOW}checking for firmware duplicates done.${C_NONE}\n"
 
+#------ the new generated json, does not have "disabled" entries, because there was no firmware.
+#  -> copy those entries, just to keep them
+jq -n --slurpfile current ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} --slurpfile generated ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} '
+            $current[0] | { comment: ($current[0].comment)}
+          + { json_version: ($current[0].json_version)}
+          + { fileinfo: ( $generated[0].fileinfo
+                      + ( $current[0].fileinfo | map(select(.disabled != "0" ))))  }' > ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.tmp
+mv ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.tmp ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}
+
+
 #------ now sort fileinfo.json and generated file. to see diffs better with diff tools (meld).------
 cat ${info_dir}/${INPUT_FILEINFO_JSON_FILENAME} | jq '. |
 						{ comment: (.comment)}
@@ -591,6 +602,8 @@ cat ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME} | jq '. |
 					+ { json_version: (.json_version)}
 					+ { fileinfo: (.fileinfo | sort_by(.sortkey, .filename)) }' > ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.sorted
 mv ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}.sorted ${info_dir}/${OUTPUT_FILEINFO_JSON_FILENAME}
+
+
 
 #------ now compare fileinfo.json and generated file (sorting is not needed).------
 printf "${C_YELLOW}check for missing firmware files (not generated)${C_NONE}\n"
