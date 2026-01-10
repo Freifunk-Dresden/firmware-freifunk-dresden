@@ -799,7 +799,8 @@ print_devices_for_target()
 	fi
 
 		echo "target: [$_cfg_name] (${_cfg_selector_config})"
-		grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${_cfg_selector_config}/${_cfg_file}" | sort
+		#grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${_cfg_selector_config}/${_cfg_file}" | sort
+    awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_DEVICE.*=y$/{line=gensub(/^CONFIG_TARGET_.*DEVICE_(.*)=y/,"\\1","1");print line,"'${PBC_SUCCESS}'"}' "fw-configs/${_cfg_selector_config}/${_cfg_file}" | sort
 		echo ""
 
 		# if I had a target, then no need to run through rest
