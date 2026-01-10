@@ -765,14 +765,15 @@ numberOfTargets()
 search_target()
 {
 	target=$1
+  # only consider only multi-target device configurations: CONFIG_TARGET_DEVICE_....
   echo "--------------------------------------------------------------------------------------------"
   echo "Not-Configured Tagets [$target]"
   echo "--------------------------------------------------------------------------------------------"
-	awk 'BEGIN {IGNORECASE=1;} /^# CONFIG_TARGET_.*'$target'.*$/{line=gensub(/^# CONFIG_TARGET_.*DEVICE_(.*) is not set/,"\\1","1");print FILENAME"\t\t,",line}' fw-configs/*/*
+	awk 'BEGIN {IGNORECASE=1;} /^# CONFIG_TARGET_DEVICE.*'$target'.*$/{line=gensub(/^# CONFIG_TARGET_.*DEVICE_(.*) is not set/,"\\1","1");print FILENAME"\t\t,",line,"'${PBC_ERROR}'"}' fw-configs/*/*
   echo "--------------------------------------------------------------------------------------------"
   echo "Configured Tagets [$target]"
   echo "--------------------------------------------------------------------------------------------"
-	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'.*=y$/{line=gensub(/^CONFIG_TARGET_.*DEVICE_(.*)=y/,"\\1","1");print FILENAME"\t\t,",line}' fw-configs/*/*
+	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_DEVICE.*'$target'.*=y$/{line=gensub(/^CONFIG_TARGET_.*DEVICE_(.*)=y/,"\\1","1");print FILENAME"\t\t,",line,"'${PBC_SUCCESS}'"}' fw-configs/*/*
 }
 
 print_devices_for_target()
