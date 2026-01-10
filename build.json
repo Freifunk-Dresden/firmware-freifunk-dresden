@@ -143,6 +143,16 @@
     "disabled": false
   },
   {
+    "template": "24.10.2",
+    "name": "ipq40xx.24.generic",
+    "config": "ipq40xx.24.generic.cfg"
+  },
+  {
+    "template": "24.10.2",
+    "name": "ipq807x.24.generic",
+    "config": "ipq807x.24.generic.cfg"
+  },
+  {
     "template":"24.10.2",
     "name":"mediatek.24.filogic",
     "config":"mediatek.24.filogic.cfg",
