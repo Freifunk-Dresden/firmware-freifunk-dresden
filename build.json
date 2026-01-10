@@ -91,9 +91,9 @@
   },
   {
     "type":"template",
-    "name":"24.10.2",
+    "name":"24.10.5",
     "openwrt_repo"      : "https://git.openwrt.org/openwrt/openwrt.git",
-    "openwrt_rev"       : "v24.10.2",
+    "openwrt_rev"       : "v24.10.5",
     "openwrt_variant"   : "",
     "selector-config"   : "24.10",
     "selector-feeds"    : "24.10",
@@ -131,40 +131,46 @@
 # =================== targets =======================================================
 # ---------- openwrt 24 ------------------------------------------------------
   {
-    "template":"24.10.2",
+    "template":"24.10.5",
     "name":"ramips.24.mt7621.generic",
     "config":"ramips.24.mt7621.generic.cfg",
     "disabled": false
   },
   {
-    "template":"24.10.2",
+    "template": "24.10.5",
+    "name": "ramips.24.mt7621.tiny-ubifs",
+    "config": "ramips.24.mt7621.tiny-ubifs.cfg",
+    "disabled": false
+  },
+  {
+    "template":"24.10.5",
     "name":"ath79.24.generic",
     "config":"ath79.24.generic.cfg",
     "disabled": false
   },
   {
-    "template": "24.10.2",
+    "template": "24.10.5",
     "name": "ipq40xx.24.generic",
     "config": "ipq40xx.24.generic.cfg"
   },
   {
-    "template": "24.10.2",
+    "template": "24.10.5",
     "name": "ipq807x.24.generic",
     "config": "ipq807x.24.generic.cfg"
   },
   {
-    "template":"24.10.2",
+    "template":"24.10.5",
     "name":"mediatek.24.filogic",
     "config":"mediatek.24.filogic.cfg",
     "disabled": false
   },
   {
-    "template":"24.10.2",
+    "template":"24.10.5",
     "name":"mediatek.24.mt7622.generic",
     "config":"mediatek.24.mt7622.generic.cfg"
   },
   {
-    "template":"24.10.2",
+    "template":"24.10.5",
     "name":"x86-64.offloader",
     "config":"x86-64.24.offloader.cfg",
     "openwrt_variant":"offloader",
