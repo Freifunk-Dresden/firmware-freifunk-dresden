@@ -765,7 +765,14 @@ numberOfTargets()
 search_target()
 {
 	target=$1
-	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'/{line=gsub(/^CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t,"$0}' fw-configs/*/*
+  echo "--------------------------------------------------------------------------------------------"
+  echo "Not-Configured Tagets [$target]"
+  echo "--------------------------------------------------------------------------------------------"
+	awk 'BEGIN {IGNORECASE=1;} /^# CONFIG_TARGET_.*'$target'.*$/{line=gensub(/^# CONFIG_TARGET_.*DEVICE_(.*) is not set/,"\\1","1");print FILENAME"\t\t,",line}' fw-configs/*/*
+  echo "--------------------------------------------------------------------------------------------"
+  echo "Configured Tagets [$target]"
+  echo "--------------------------------------------------------------------------------------------"
+	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_.*'$target'.*=y$/{line=gensub(/^CONFIG_TARGET_.*DEVICE_(.*)=y/,"\\1","1");print FILENAME"\t\t,",line}' fw-configs/*/*
 }
 
 print_devices_for_target()
