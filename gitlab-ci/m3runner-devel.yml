@@ -98,7 +98,7 @@ m3devel:ramips:
   tags:
     - m3runner
 
-m3devel:ipq40xx:
+m3devel:ipq:
   only:
     - /^DEV_/
   stage: build
@@ -106,7 +106,7 @@ m3devel:ipq40xx:
   script:
     - ln -s ~/mycache/dl
     - ln -s ~/mycache/workdir
-    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ipq* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
 
@@ -174,7 +174,7 @@ m3devel:test:
   only:
     - /^DEV_/
   stage: test
-  needs: ["m3devel:eol","m3devel:x86-64","m3devel:ramips","m3devel:bcm","m3devel:lantiq","m3devel:ath79","m3devel:ipq40xx","m3devel:mpc85xx","m3devel:mediatek"]
+  needs: ["m3devel:eol","m3devel:x86-64","m3devel:ramips","m3devel:bcm","m3devel:lantiq","m3devel:ath79","m3devel:ipq","m3devel:mpc85xx","m3devel:mediatek"]
   artifacts:
     paths:
       # keep this as artifact, so I can compare it also when building firmware on gitlab

@@ -155,7 +155,7 @@ docker:ath79:
   tags:
   - docker
 
-docker:ipq40xx:
+docker:ipq:
   except:
     - schedules
     - master
@@ -170,7 +170,7 @@ docker:ipq40xx:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ipq* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
