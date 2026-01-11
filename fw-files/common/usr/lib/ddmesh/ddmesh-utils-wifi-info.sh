@@ -77,8 +77,8 @@ if [ "$1" == "store" ]; then
 
 			# check for channel (one radio might support 2.4 and 5GHz)
 			# prefer 2g
-			freq2="$(iwinfo $phy freqlist | sed -n 's#[ *]*\([0-9]\).*$#\1#;/^2/{1p}')"
-			freq5="$(iwinfo $phy freqlist | sed -n 's#[ *]*\([0-9]\).*$#\1#;/^5/{1p}')"
+			freq2="$(iwinfo $phy freqlist | sed -n 's#[ *]*\([0-9]\).*$#\1#;/^2/{p;q}')"
+			freq5="$(iwinfo $phy freqlist | sed -n 's#[ *]*\([0-9]\).*$#\1#;/^5/{p;q}')"
 
 			#echo "[$freq2:$freq5]"
 
@@ -105,7 +105,7 @@ if [ "$1" == "store" ]; then
 
 			sysfs_path="${devpath}/ieee80211/${phy}"
 
-			if [ "$freq2" = "2" ]; then
+			if [ "$freq2" = "2" ] && [ "$radio2g_present" != "1" ]; then
 				radio2g_present=1
 				radio2g_phy=$phy
 				radio2g_config_index=$idx
