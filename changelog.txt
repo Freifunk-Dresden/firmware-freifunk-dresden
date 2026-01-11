@@ -3,7 +3,7 @@
 
 2025-12-31 [9.0.0] ()
 --------------------------------------------------
-openwrt                   - add support for openwrt 24
+openwrt                   - add support for openwrt 24.10.5
                           - complete firewall rework (iptables -> netfilter)
                           - fix compile errors because of comiler updates
                           - revert openwrt changes to keep wifi mesh working and compatible
@@ -11,9 +11,11 @@ openwrt                   - add support for openwrt 24
 build environment         - add support for different openwrt versions
                           - add build.json templates
                           - add default feed revision
+                          - fix fileinfo.json verification
+                          - optimize feed download (backup/use via dl folder)
 
-targets/routers           - move some routers ot EOL (end of life)
-                          - add new routers (openwrt 24)
+targets/routers           - move some devices to EOL (end of life)
+                          - add new devices (openwrt 24)
 
 gui                       - adapt firewall page to new netfilter
                           - minor layout fixes

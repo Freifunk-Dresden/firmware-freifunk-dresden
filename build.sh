@@ -3,7 +3,7 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="26"
+SCRIPT_VERSION="27"
 
 
 # gitlab variables
@@ -1504,9 +1504,43 @@ EOM
 		continue # clean next target
 	fi
 
-	# --------- update all feeds from feeds.conf (feed info) ----
-	echo -e $C_CYAN"update feeds"$C_NONE
-	./scripts/feeds update -a
+  # ----------- install feeds --------------------------------------------------
+
+  # always install feed 'ddmesh' (avoid backing up src-link feeds, to always use current version)
+  ./scripts/feeds update ddmesh
+
+  # check if we have already downloaded the EXTERNAL feeds (src-git) with same revision
+  # if yes, extract feeds and setup symlinks
+  # if no, update feeds
+
+  # feed_name=packages; feed_rev=3b79b05673a15e7f41f157d1320597244a344a95
+  # feed_name=routing; feed_rev=1ff9ee61cde0829f206f275b1b2f5fa990fd2ba9
+  IFS='
+  '
+  for feed in $(cat feeds.conf | sed -n '/^src-git/{s#src-git[ ]\+\([^ ]\+\).*^\(.*\)$#\1:\2#p}')
+  do
+    feed_name="${feed%:*}"
+    feed_rev="${feed#*:}"
+    dl_feed_filename="${PROJECT_DIR}/${DL_DIR}/feed-${feed_name}-${feed_rev}.tgz"
+    # echo "*** check ["${dl_feed_filename}"]"
+
+    if [ -f "${dl_feed_filename}" ]; then
+  	  echo -e $C_CYAN"use local downloaded feed: [${feed_name}]"$C_NONE
+      tar xvzf "${dl_feed_filename}" >/dev/null
+    else
+  	  # --------- update all feeds from feeds.conf (feed info) ----
+  	  echo -e $C_CYAN"download/update feed: [${feed_name}]"$C_NONE
+  	  ./scripts/feeds update ${feed_name} >/dev/null
+      echo ""
+
+      # backup feed
+      echo -e $C_CYAN"create backup feed: [${feed_name}]"$C_NONE
+      tar cvzf "${dl_feed_filename}" feeds/${feed_name}* >/dev/null
+    fi
+  done
+  unset IFS
+
+  # ----------- install packages -----------------------------------------------
 
 	echo -e $C_CYAN"install packages"$C_NONE
 	echo "$_cfg_packages" | jq
@@ -1525,6 +1559,9 @@ EOM
 
 	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh)"$C_NONE
 	./scripts/feeds install -a -p ddmesh
+
+
+  # ----------- setup config ---------------------------------------------------
 
 	rm -f .config		# delete previous config in case we have no $PROJECT_DIR/$config_file yet and want to
                   # create a new config
