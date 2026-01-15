@@ -1,0 +1,30 @@
+
+
+
+https://gitlab.freifunk-dresden.de/firmware-developer/firmware/-/issues/181
+
+Reproduzieren:
+- logread -f
+- iw dev mesh5g-80211s station dump
+- observe syslog dump messages
+
+
+# packet source code ermitteln im openwrt:
+# openwrt24.10: ./package/kernel/mac80211/Makefile
+# -> https://mirror2.openwrt.org/sources/backports-6.12.6.tar.xz
+
+# openwrt22.03: ./package/kernel/mac80211/Makefile
+# -> @KERNEL/linux/kernel/projects/backports/stable/v5.15.162/backports-5.15.162-1.tar.xz
+# scripts/download.pl:
+# -> https://cdn.kernel.org/pub/linux/kernel/projects/backports/stable/v5.15.162/backports-5.15.162-1.tar.xz
+
+# create Patches (Beispiel für openwrt 22)
+./firmware/tools/create-patch.sh backports-5.15.162-1.orig/ backports-5.15.162-1 >900-22.03-mac80211-mesh-disable-syslog-warning.patch
+
+# patch ins openwrt kopieren (openwrt muss die richtige Version haben)
+cp 900-22.03-mac80211-mesh-disable-syslog-warning.patch openwrt.22/package/kernel/mac80211/patches/
+
+# create Patches for openwrt (openwrt tag vorher auschecken, dann debackport Patches für die
+../firmware/tools/create-patch.sh openwrt.orig openwrt.22/ > ../firmware/fw-patches/22.03/900-22.03-mac80211-mesh-disable-syslog-warning.patch
+
+

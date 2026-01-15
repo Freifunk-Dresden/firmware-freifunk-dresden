@@ -1,0 +1,3 @@
+# remove file that was provided by fw-files/.../common/  in 24.10
+# original openwrt file is used (needed to reload fw correctly when
+# cable was plugged in or disconnected)

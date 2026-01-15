@@ -1,0 +1,14 @@
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
+# called by fw4 after start, restart and reload
+
+FF_RUNNING="$(test -f /tmp/freifunk-running && echo yes || echo no)"
+logger -t "firewall.user" "update freifunk firewall: freifunk running: $FF_RUNNING;"
+
+if [ "$FF_RUNNING" = "yes" ]; then
+  /usr/lib/ddmesh/ddmesh-firewall-addons.sh restart_firewall
+  /usr/lib/ddmesh/ddmesh-portfw.sh load
+  /usr/lib/ddmesh/ddmesh-backbone.sh restart_firewall
+  /usr/lib/ddmesh/ddmesh-privnet.sh restart_firewall
+fi

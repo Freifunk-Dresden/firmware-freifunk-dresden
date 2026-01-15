@@ -1,4 +1,118 @@
 
+
+
+2025-12-31 [9.0.0] ()
+--------------------------------------------------
+openwrt                   - add support for openwrt 24.10.5
+                          - complete firewall rework (iptables -> netfilter)
+                          - fix compile errors because of comiler updates
+                          - revert openwrt changes to keep wifi mesh working and compatible
+
+build environment         - add support for different openwrt versions
+                          - add build.json templates
+                          - add default feed revision
+                          - fix fileinfo.json verification
+                          - optimize feed download (backup/use via dl folder)
+
+targets/routers           - move some devices to EOL (end of life)
+                          - add new devices (openwrt 24)
+
+gui                       - adapt firewall page to new netfilter
+                          - minor layout fixes
+
+EOL                      - remove support for end-of-life devices (too small memory/flash size and power)
+                           Those devices can not be updated with newer openwrt versions. Openwrt.org
+                            only provides security fixes via new openwrt versions.
+                            Freifunk Dresden can not provide therefore any update for following devices.
+
+                            target: [eol.ath79.22.generic] (22.03)
+                              Sophos_ap100
+                              TPLink-tl-wdr3600-v1
+                              TPLink-tl-wdr4300-v1
+                              TPLink-tl-wdr7500-v3
+                              TPLink-tl-wr1043nd-v2
+                              TPLink-tl-wr1043nd-v3
+                              TPLink-tl-wr2543-v1=y
+
+                            target: [eol.ath79.22.small] (22.03)
+                              Comfast-cf-e110n-v2
+                              Comfast-cf-e130n-v2
+                              Comfast-cf-e314n-v2
+                              Dlink-dir-825-b1
+                              netgear_wndr3700
+                              netgear_wnr2200-8m
+                              TPLink-archer-c6-v2
+                              TPLink-cpe210-v1
+                              TPLink-cpe210-v2
+                              TPLink-cpe210-v3
+                              TPLink-cpe220-v2
+                              TPLink-cpe220-v3
+                              Ubnt_unifi
+
+                            target: [eol.sunxi.22.cortexa7] (22.03)
+                              Xunlong_orangepi-r1
+
+                            target: [eol.ramips.18.rt305x.tiny] (18.06)
+                              Dlink-dir-615-d
+                              Dlink-dir-615-h1
+
+                            target: [eol.ar71xx.18.generic] (18.06)
+                              TPLink-tl-wr1043nd-v1
+                              TPLink-tl-wr842n-v1
+                              Ubnt-bullet-m
+                              Ubnt-loco-m-xw
+                              Ubnt-nano-m-xw
+                              Ubnt-nano-m
+
+                            target: [eol.ar71xx.18.tiny] (18.06)
+                              TPLink-tl-mr3020-v1
+                              TPLink-tl-mr3220-v1
+                              TPLink-tl-wa701nd-v2
+                              TPLink-tl-wa801nd-v1
+                              TPLink-tl-wa801nd-v2
+                              TPLink-tl-wa801nd-v3
+                              TPLink-tl-wa830re-v2
+                              TPLink-tl-wa850re-v1
+                              TPLink-tl-wa860re-v1
+                              TPLink-tl-wa901nd-v2
+                              TPLink-tl-wa901nd-v3
+                              TPLink-tl-wa901nd-v4
+                              TPLink-tl-wa901nd-v5
+                              TPLink-tl-wr740n-v4
+                              TPLink-tl-wr741nd-v4
+                              TPLink-tl-wr840n-v2
+                              TPLink-tl-wr841-v10
+                              TPLink-tl-wr841-v11
+                              TPLink-tl-wr841-v12
+                              TPLink-tl-wr841-v5
+                              TPLink-tl-wr841-v7
+                              TPLink-tl-wr841-v8
+                              TPLink-tl-wr841-v9
+                              TPLink-tl-wr940n-v4
+                              TPLink-tl-wr940n-v6
+                              TPLink-tl-wr941nd-v2
+                              TPLink-tl-wr941nd-v5
+                              TPLink-tl-wr941nd-v6
+
+
+                            unused target: [lantiq-xway.22.small] (22.03)
+                              arcadyan_arv752dpw22
+                              arcadyan_arv8539pw22
+
+                            unused target: [lantiq-xrx200.22.small] (22.03)
+                              tplink_tdw8970
+
+                            unused target: [ramips.22.mt7620.generic] (22.03)
+                              tplink_re200-v1
+
+                            unused target: [ramips.22.mt76x8.generic] (22.03)
+                              tplink_re200-v2
+                              tplink_re200-v3
+                              tplink_re200-v4
+
+                            unused target: [ath79.22.nand] (22.03)
+                              netgear_r6100
+
 2024-01-31 [8.2.8] ()
 --------------------------------------------------
 router                    - add "ASUS RT-AX53U"
@@ -22,6 +136,7 @@ gui                       - fix missing text in backbone/private vpn after reloa
 wifi                      - remove obsolete adhoc mode
 router                    - re-enable 5ghz for GL.inet E750
 
+
 2024-05-11 [8.2.4] (testing)
 --------------------------------------------------
 community                 - add "Freifunk Geringswalde"
@@ -36,7 +151,13 @@ password                  - fix setting password when using special characters
 2024-03-31 [8.2.2] (testing)
 --------------------------------------------------
 WiFi                      - 5GHz client mode (WAN) wpa3 support added
+                          - remove disabled adhoc mode
+GUI                       - wifi: disable custom essid input fields when roaming is active
 sysinfo                   - sysinfo.json gets a new network statistic section
+build-env                 - build.sh/build.json reworked to support config templates, bash_completion,
+                            target list (command 'list')
+openwrt22                 - move all openwrt 21 firmware images to openwrt 22
+
 dsa-migration             - prepare for updates where openwrt changes the minor compatibility version
                             (e.g. dsa-migration)
 openvpn                   - remove obsolete openvpn

@@ -1,0 +1,26 @@
+diff -rN -U10 --no-dereference openwrt.ori/package/network/utils/iperf3/Makefile openwrt.iperf3/package/network/utils/iperf3/Makefile
+--- openwrt.ori/package/network/utils/iperf3/Makefile	2025-12-06 22:27:46.721008336 +0100
++++ openwrt.iperf3/package/network/utils/iperf3/Makefile	2025-12-07 00:36:02.143714860 +0100
+@@ -5,21 +5,21 @@
+ # See /LICENSE for more information.
+ #
+ 
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=iperf
+ PKG_VERSION:=3.5
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+-PKG_SOURCE_URL:=http://downloads.es.net/pub/iperf
++PKG_SOURCE_URL:=https://downloads.es.net/pub/iperf
+ PKG_HASH:=539bd9ecdca1b8c1157ff85b70ed09b3c75242e69886fc16b54883b399f72cd5
+ 
+ PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
+ PKG_LICENSE:=BSD-3-Clause
+ 
+ PKG_BUILD_PARALLEL:=1
+ PKG_INSTALL:=1
+ 
+ PKG_FIXUP:=autoreconf
+ 

@@ -3,13 +3,14 @@
 # GNU General Public License Version 3
 
 #usage: see below
-SCRIPT_VERSION="23"
+SCRIPT_VERSION="27"
 
 
 # gitlab variables
 # FF_REGISTERKEY_PREFIX
 # FF_BUILD_TAG
 # FF_MESH_KEY
+
 
 # check terms
 case "$TERM" in
@@ -21,8 +22,6 @@ case "$TERM" in
 esac
 
 
-#change to directory where build.sh is
-cd $(dirname $0)
 
 # target file
 PLATFORMS_JSON="build.json"
@@ -34,14 +33,14 @@ DOCKER_CONTAINER_NAME="ffbuild"
 
 DL_DIR=dl
 WORK_DIR=workdir
-FINAL_OUTPUT_DIR="final_output" # used by gen-upload.sh (docker)
-LOCAL_OUTPUT_DIR="output"				# location to copy images/packages to, after each targets
-CONFIG_DIR=openwrt-configs
+FINAL_OUTPUT_DIR="final_output"	# used by gen-upload.sh (docker)
+LOCAL_OUTPUT_DIR="_output"			# location to copy images/packages to, after each targets
+CONFIG_DIR=fw-configs
 CONFIG_DEFAULT_FILE="default.config"
-OPENWRT_PATCHES_DIR=openwrt-patches
+OPENWRT_PATCHES_DIR=fw-patches
 DDMESH_STATUS_DIR=".ddmesh"	# used to store build infos like openwrt_patches_target states
 DDMESH_PATCH_STATUS_DIR="$DDMESH_STATUS_DIR/patches-applied"
-COMPILE_STATUS_DIR=".compile-status"
+COMPILE_STATUS_DIR="compile-status"
 COMPILE_STATUS_FILE_SUFFIX="compile-status.json"
 
 # -------------------------------------------------------------------
@@ -65,7 +64,6 @@ COMPILE_STATUS_FILE_SUFFIX="compile-status.json"
 # 9 strike
 
 C_NONE='\033[0m' # No Color
-C_GREY='\033[1;30m'
 C_RED='\033[0;31m'
 C_LRED='\033[1;31m'
 C_GREEN='\033[0;32m'
@@ -89,36 +87,250 @@ BG_BLUE='\033[44m'
 BG_PURBLE='\033[45m'
 BG_CYAN='\033[46m'
 BG_WHITE='\033[47m'
-BG_GRAY='\033[48m'
+STRIKE_ON='\033[9m'
+
+# MARK_OK='+'
+# MARK_FAIL='E'
+# MARK_BLINK='*'
+# MARK_NONE=' '
+MARK_OK='✔'
+MARK_FAIL='✘'
+MARK_BLINK='➤'
+MARK_NONE=' '
+MARK_SKIP='-'
+MARK_NOCONFIG='c'
+MARK_DISABLED='/'
 
 if true; then
-	PBC_RUNNING="${C_YELLOW}${C_BLINK}*${C_NONE}"
-	PBC_ERROR="${C_LRED}E${C_NONE}"
-	PBC_IGNORE="${C_RED}i${C_NONE}"
-	PBC_SUCCESS="${C_GREEN}+${C_NONE}"
-	PBC_SKIP="${C_GREEN}-${C_NONE}"
+	PBC_RUNNING="${C_YELLOW}${C_BLINK}${MARK_BLINK}${C_NONE}"
+	PBC_ERROR="${C_LRED}${MARK_FAIL}${C_NONE}"
+	PBC_NOCONFIG="${C_LRED}${MARK_NOCONFIG}${C_NONE}"
+	PBC_DISABLED="${C_LPURPLE}${MARK_DISABLED}${C_NONE}"
+	PBC_SUCCESS="${C_GREEN}${MARK_OK}${C_NONE}"
+	PBC_SKIP="${C_GREEN}${MARK_SKIP}${C_NONE}"
+	PBC_SPACE="${MARK_NONE}"
 else
-	PBC_RUNNING="*"
-	PBC_ERROR="E"
-	PBC_IGNORE="i"
-	PBC_SUCCESS="+"
-	PBC_SKIP="-"
+	PBC_RUNNING="${MARK_BLINK}"
+	PBC_ERROR="${MARK_FAIL}"
+	PBC_NOCONFIG="${MARK_NOCONFIG}"
+	PBC_DISABLED="${MARK_DISABLED}"
+	PBC_SUCCESS="${MARK_OK}"
+	PBC_SKIP="${MARK_SKIP}"
+	PBC_SPACE="${MARK_NONE}"
 fi
 
 # define color lookup table used when displaying targets via "list"
-declare -A list_color
-list_color['18.06']="${BG_CYAN}"
-list_color['21.02']="${BG_PURBLE}"
-list_color['22.03']="${BG_BLUE}"
-#printf "${list_color['18.06']}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
-#printf "${list_color[$v]}aaa ${list_color['21.02']}%s ${C_NONE}bbb\n" "value"
+declare -A color_template
+declare -A color_fwversion
+declare -A color_openwrt
+declare -A color_selector
+
+color_template['18.06']="${C_ORANGE}"
+color_template['22.03']="${C_BLUE}"
+color_template['24.10.5']="${C_PURPLE}"
+#---
+color_fwversion['8.2.6']="${C_BLUE}"
+color_fwversion['8.2.8']="${C_GREEN}"
+color_fwversion['9.0.0']="${C_PURPLE}"
+#---
+color_openwrt['5625f5bc36954d644cb80adf8de47854c65d91c3']="${C_ORANGE}"
+color_openwrt['v22.03.7']="${C_BLUE}"
+color_openwrt['v24.10.5']="${C_PURPLE}"
+#---
+color_selector['18.06']="${C_ORANGE}"
+color_selector['22.03']="${C_BLUE}"
+color_selector['24.10']="${C_PURPLE}"
+
+
+color_eol="${C_LRED}"
+
+#printf "${color_selector['18.06']}aaa ${color_selector['21.02']}%s ${C_NONE}bbb\n" "value"
+#printf "${color_selector[$v]}aaa ${color_selector['21.02']}%s ${C_NONE}bbb\n" "value"
+
+# explicitly create an assotiative array that holds extracted template
+# values for each template
+declare -A configTemplateValues
+
 
 #save current directory when copying config file
-RUN_DIR=$(pwd)
+PROJECT_DIR=$(pwd)
 
 global_error=0
 
-############# progress bar ##########################
+###--------------------------------- functions -----------------------------------------------------
+
+
+
+setup_buildroot ()
+{
+ buildroot=$1
+ openwrt_repo=$2
+ openwrt_rev=$3
+ openwrt_dl_dir=$4
+ openwrt_patches_dir=$5
+ firmware_files=$6
+
+ openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
+
+ openwrt_repo="https://git.openwrt.org/openwrt/openwrt.git"
+
+	# check if directory exists. I'm not just checking
+	# the build root itself, because gitlab left a working directory
+	# only with freifunk files, but without all other openwrt files
+	if [ ! -d "$buildroot/toolchain" ]
+	then
+		echo "directory [$buildroot/toolchain] not present -> re-create '$buildroot'"
+		# ensure we have a clean workdir, after gitlab runner had removed
+		# openwrt.org files (e.g. toolchain)
+		rm -rf "$buildroot"
+
+		# re-create buildroot
+		mkdir -p "$buildroot"
+		if [ ! -d "$buildroot" ]; then
+			echo "Error: '$buildroot' could not be created. exit."
+			clean_up_exit 1
+		fi
+
+		#check if we have already downloaded the openwrt revision
+		if [ -f $openwrt_dl_tgz ]
+		then
+			#extract into buildroot dir
+			echo "using already downloaded $openwrt_dl_tgz"
+			cd $buildroot
+			tar xzf $PROJECT_DIR/$openwrt_dl_tgz
+		else
+			#clone from openwrt
+			echo "cloning openwrt"
+			git clone $openwrt_repo $buildroot
+			echo "switch to specific revision"
+			cd $buildroot
+			git checkout $openwrt_rev >/dev/null
+			echo "create openwrt tgz"
+			tar czf $PROJECT_DIR/$openwrt_dl_tgz .
+		fi
+		cd $PROJECT_DIR
+
+		#apply openwrt patches
+		if [ -d $openwrt_patches_dir ]; then
+			for i in $openwrt_patches_dir/*.patch
+			do
+				echo -e "${C_CYAN}apply openwrt patch:${C_NONE} $i to buildroot:$buildroot"
+				# --no-backup-if-mismatch avoids creating backup files for files
+				# with different names or if not exist (new files)
+				patch --no-backup-if-mismatch --directory=$buildroot -p1 < $i
+			done
+		fi
+	else
+		echo -e "${C_CYAN}Buildroot [$buildroot]${C_NONE} already present"
+	fi
+
+	echo -n -e $C_CYAN"create dl directory/links"$C_NONE": "
+	rm -f $buildroot/dl
+	ln -s ../../$openwrt_dl_dir $buildroot/dl
+	echo "done."
+
+	# ---------------------------------
+	# 1. copy 'common' files that are independent of openwrt version
+	# 2. copy all version specific files. this will overwrite existing files the came from 'common'
+	# 3. delete files that should be remove.
+	#    Note: files that should be deleted, should end with '~'. for instance, when
+	#    '/www/admin/iptables.cgi' from common should not be present in specific version,
+	#    then create an empty file '/www/admin/iptables.cgi~'
+	#    this file will then be removed from specific version
+	#
+	# -------- common files -----------
+	# copy common files first
+		rm -rf $buildroot/files
+	mkdir -p $buildroot/files
+
+	# check for common symlink
+	common_dir="$PROJECT_DIR/fw-files/${firmware_files}.common"
+	if [ -L "${common_dir}" ]; then
+		echo -n -e "${C_CYAN}copy rootfs (${common_dir})${C_NONE}: "
+		# remove-destination forces copy (first remove existing file (e.g. symlinks))
+		cp -a --remove-destination ${common_dir}/* $buildroot/files/
+		echo " done."
+	else
+		echo -e "${C_CYAN}No rootfs to copy: (${common_dir})${C_NONE}"
+	fi
+
+
+	# -------- specific files -----------
+	# copy specific files over (may overwrite common)
+	echo -n -e "${C_CYAN}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
+	if [ -n "${firmware_files}" -a -d "$PROJECT_DIR/fw-files/${firmware_files}" ]; then
+		# --remove-destination forces copy (first remove existing file (e.g. symlinks))
+		cp -a --remove-destination $PROJECT_DIR/fw-files/${firmware_files}/* $buildroot/files/
+		echo "done."
+
+		echo -n -e "${C_CYAN}removing unwanted files/directories ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
+		find $buildroot/files/ -name '*~' -exec sh -c 'f="{}"; rm -rf "$f" "${f%*~}"' \; 2>/dev/null
+		echo "done."
+	else
+		echo "no specific files."
+	fi
+
+	echo -n -e $C_CYAN"create rootfs/etc/built_info file: "$C_NONE
+	mkdir -p $buildroot/files/etc
+	> $buildroot/files/etc/built_info
+	echo "done."
+
+	# more dynamic changes
+	echo -n -e $C_CYAN"setup dynamic firmware config: "$C_NONE
+	setup_dynamic_firmware_config "$buildroot/files" || { echo "ERROR"; exit 1;}
+	echo "done."
+
+	echo "----- generate built_info ----"
+	git_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
+	git_openwrt_branch=$(cd $buildroot && git name-rev --name-only $git_openwrt_rev | sed 's#.*/##')
+	echo "git_openwrt_rev:$git_openwrt_rev" >> $buildroot/files/etc/built_info
+	echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
+
+	# when running from gitlab only specific revision is cloned. there are no branch infos.
+	# So I check if FF_BUILD_TAG is set and then use this. If not defined I use
+	# the one I can determine.
+	git_ddmesh_rev="$(git log -1 --format=%H)"
+	if [ -n "$FF_BUILD_TAG" ]; then
+		git_ddmesh_branch="$FF_BUILD_TAG"
+	else
+		git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
+
+		if [ "$git_ddmesh_branch" = "undefined" ]; then
+			git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
+			echo ""
+			echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"$C_NONE
+			echo ""
+			sleep 5
+		fi
+	fi
+
+	echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
+	echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
+	echo "builtdate:$(date +'%H:%M:%S / %d %h %y')" >> $buildroot/files/etc/built_info
+
+	echo "git_openwrt_rev:     $git_openwrt_rev"
+	echo "git_openwrt_branch:  $git_openwrt_branch"
+	echo "git_ddmesh_rev:      $git_ddmesh_rev"
+	echo "git_ddmesh_branch:   $git_ddmesh_branch"
+	echo ""
+
+
+} # setup_buildroot
+
+# status:
+#  0 - success
+#  1 - error
+#  2 - compiling
+write_compile_status()
+{
+	local config="$1"
+	local status="$2"
+	local file="$3"
+	mkdir -p $(dirname $file)
+	test "$status" = "0" && d="$(date +'%H:%M:%S / %d %h %y' | sed 's#Mär#Mar#')" || d=""
+	echo "{\"config\":\"${config}\", \"date\":\"$d\", \"status\":\"${status}\"}" > "${file}"
+}
+
 
 progressbar()
 {
@@ -170,10 +382,9 @@ progressbar()
 			pos=$((pos + 1))
 
 			if [ $pos -le $absCharPos ]; then
-#				_bar="${_bar}#"
 				_bar="${_bar}${_char_array[$barCharIdx]}"
 			else
-				_bar="${_bar} " # use space character for empty progress
+				_bar="${_bar}${PBC_SPACE}"
 			fi
 
 			[ $pos -ge $len ] && break;
@@ -183,7 +394,6 @@ progressbar()
 				nextMarkerPos=$(( nextMarkerPos + charsPerValue))
 				barCharIdx=$((barCharIdx +1 ))
 			fi
-
 		done
 
 
@@ -215,6 +425,9 @@ clean_up_exit()
 show_progress()
 {
 	if [ "$_TERM" = "1" ]; then
+		target="$1"
+		shift
+
 		# dont overwrite last value, when no parameter was given (window resize signal)
 		[ -n "$1" ] && _count=$1
 		shift
@@ -225,9 +438,10 @@ show_progress()
 		[ -z "$_count" ] && return
 		[ -z "$_max" -o "$_max" -eq 0 ] && return
 
+		# get current number of lines from (terminal size)
 		row=$(tput lines)
 
-		# empty second line
+		# empty second line of terminal (top)
 		tput cup 1 0
 		tput el
 
@@ -237,8 +451,13 @@ show_progress()
 																														# but as one argument with "" to allow
 																														# special characters like *
 
-		# print empty line above
+		# print current target
 		tput cup $(( $row - 2)) 0
+		tput el
+		echo -e "building: $C_BLUE${target}$C_NONE"
+
+		# print empty line above
+		tput cup $(( $row - 3)) 0
 		tput el
 
 		# define scroll region before setting cursor. else it would overwrite progress bar
@@ -256,9 +475,11 @@ show_progress()
 
 getTargetsJson()
 {
-cat $RUN_DIR/$PLATFORMS_JSON | sed -n "
-#delete comments
+cat $PROJECT_DIR/$PLATFORMS_JSON | sed -n '
+# delete comments (# must not be used anywhere)
 s/#.*//
+# delete lines starting with //
+s#^[ 	]*//.*##
 
 # delete empty lines
 # delete leading and tailing spaces
@@ -266,83 +487,208 @@ s/^[ 	]*//
 s/[ 	]*$//
 /^$/d
 p
-" | jq "[ .targets[] ] | sort_by(.name) "
+' | jq "[ .targets[] ] | sort_by(.name) "
+}
+
+# runs through "cleanJson" to create env variables for each template.
+# this is to optimizes resolving configs in resolveConfigValues
+# It creates an array of template variables associated with the template names
+resolveTemplates()
+{
+ OPT="--raw-output" # do not excape values
+
+ targetIdx=0
+ while true
+ do
+ 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+		targetIdx=$(( targetIdx + 1 ))
+
+	if [ "$entry" = "null" ]; then
+			break
+	fi
+
+		# extract feeds and packages separately to keep quotes
+		x='"_cfg_type=\"\(.type)\";
+				_cfg_template=\"\(.template)\";
+				_cfg_name=\"\(.name)\";
+				_cfg_file=\"\(.config)\";
+				_cfg_disabled=\"\(.disabled)\";
+				_cfg_openwrt_repo=\"\(.openwrt_repo)\";
+				_cfg_openwrt_rev=\"\(.openwrt_rev)\";
+				_cfg_openwrt_variant=\"\(.openwrt_variant)\";
+				_cfg_selector_config=\"\(.["selector-config"])\";
+				_cfg_selector_feeds=\"\(.["selector-feeds"])\";
+				_cfg_selector_files=\"\(.["selector-files"])\";
+				_cfg_selector_patches=\"\(.["selector-patches"])\""'
+		eval $(echo "$entry" | jq $OPT "$x")
+
+		# is template
+		if [ "$_cfg_type" = "template" ]; then
+		#echo "XXX:$x"
+		#echo $entry | jq  "$x"
+			configTemplateValues["${_cfg_name}_config_disabled"]="${_cfg_disabled}"
+
+			configTemplateValues["${_cfg_name}_config_selector_config"]="${_cfg_selector_config}"
+			configTemplateValues["${_cfg_name}_config_selector_files"]="${_cfg_selector_files}"
+			configTemplateValues["${_cfg_name}_config_selector_feeds"]="${_cfg_selector_feeds}"
+			configTemplateValues["${_cfg_name}_config_selector_patches"]="${_cfg_selector_patches}"
+			configTemplateValues["${_cfg_name}_config_openwrt_repo"]="${_cfg_openwrt_repo}"
+			configTemplateValues["${_cfg_name}_config_openwrt_rev"]="${_cfg_openwrt_rev}"
+			configTemplateValues["${_cfg_name}_config_openwrt_variant"]="${_cfg_openwrt_variant}"
+
+			# feeds and packages are still json and I have to "jq" those manually to keep quotes
+			configTemplateValues["${_cfg_name}_config_feeds"]="$(echo "$entry" | jq $OPT '.feeds')"
+			configTemplateValues["${_cfg_name}_config_packages"]="$(echo "$entry" | jq $OPT '.packages')"
+		fi
+	done
+	#echo "${_cfg_name["${_cfg_template}_config_feeds"]}"
+	#echo "${_cfg_name["${_cfg_template}_config_packages"]}"
+}
+
+# gets a config entry and resolves the referenced template.
+# it  sets the environment variables
+#
+# returns:
+#   0 - success
+#   1 - function argument error / might be use to detect last entry in a loop
+#   2 - config is a template /let ignore templates in a loop
+#   3 - incomplete configuration/template
+resolveConfigValues()
+{
+	targetConfigJson="$1"
+
+	OPT="--raw-output" # do not excape values
+
+	if [ "$targetConfigJson" = "null" -o -z "$targetConfigJson" ]; then
+		return 1;
+	fi
+
+	# create env variables and parse with one call to jq (it is faster than repeatly call it)
+	x='"_cfg_type=\"\(.type)\";
+			_cfg_template=\"\(.template)\";
+			_cfg_name=\"\(.name)\";
+			_cfg_file=\"\(.config)\";
+			_cfg_disabled=\"\(.disabled)\";
+			_cfg_openwrt_repo=\"\(.openwrt_repo)\";
+			_cfg_openwrt_rev=\"\(.openwrt_rev)\";
+			_cfg_openwrt_variant=\"\(.openwrt_variant)\";
+			_cfg_selector_config=\"\(.["selector-config"])\";
+			_cfg_selector_feeds=\"\(.["selector-feeds"])\";
+			_cfg_selector_files=\"\(.["selector-files"])\";
+			_cfg_selector_patches=\"\(.["selector-patches"])\"
+		"'
+	eval $(echo "$targetConfigJson" | jq $OPT "$x")
+
+	# feeds and packages are still json and I have to "jq" those manually to keep quotes
+	_cfg_feeds="$(echo "$targetConfigJson" | jq $OPT '.feeds')"
+	_cfg_packages="$(echo "$targetConfigJson" | jq $OPT '.packages')"
+
+	# echo " "
+	# echo "name:[$_cfg_name]"
+	# echo "type:[$_cfg_type]"
+	# echo "template_name:[$_cfg_template]"
+	# echo "file:[$_cfg_file]"
+	# echo "disabled:[$_cfg_disabled]"
+
+	# check that config and templates have a name
+	if [ -z "${_cfg_name}" ]; then
+		echo "error: configuration/template has no name"
+		return 3
+	fi
+
+	# ignore templates
+	if [ "${_cfg_type}" = "template" ]; then
+		return 2
+	fi
+
+	# 2. extract template if specified and set defaults if config has not explictly set values
+	if [ "${_cfg_template}" != "null" ]; then
+
+		test "$_cfg_disabled" = "null" && _cfg_disabled="${configTemplateValues["${_cfg_template}_config_disabled"]}"
+
+		test "$_cfg_selector_config" = "null" && _cfg_selector_config="${configTemplateValues["${_cfg_template}_config_selector_config"]}"
+		test "$_cfg_selector_files" = "null" && _cfg_selector_files="${configTemplateValues["${_cfg_template}_config_selector_files"]}"
+		test "$_cfg_selector_feeds" = "null" && _cfg_selector_feeds="${configTemplateValues["${_cfg_template}_config_selector_feeds"]}"
+		test "$_cfg_selector_patches" = "null" && _cfg_selector_patches="${configTemplateValues["${_cfg_template}_config_selector_patches"]}"
+		test "$_cfg_openwrt_repo" = "null"  && _cfg_openwrt_repo="${configTemplateValues["${_cfg_template}_config_openwrt_repo"]}"
+		test "$_cfg_openwrt_rev" = "null"  && _cfg_openwrt_rev="${configTemplateValues["${_cfg_template}_config_openwrt_rev"]}"
+		test "$_cfg_openwrt_variant" = "null"  && _cfg_openwrt_variant="${configTemplateValues["${_cfg_template}_config_openwrt_variant"]}"
+		test "$_cfg_feeds" = "null"  && _cfg_feeds="${configTemplateValues["${_cfg_template}_config_feeds"]}"
+		test "$_cfg_packages" = "null"  && _cfg_packages="${configTemplateValues["${_cfg_template}_config_packages"]}"
+	fi
+
+	# 3. check that all mandatory values are set (if no template was given in a config section, all entries
+	#    must be specified)
+
+	if [   "$_cfg_openwrt_repo" = "null" \
+		-o "$_cfg_openwrt_rev" = "null" \
+		-o "$_cfg_selector_config" = "null" -o "$_cfg_selector_files" = "null" \
+		-o "$_cfg_selector_feeds" = "null" -o "$_cfg_selector_patches" = "null" ]; then
+		echo "Error: configuration '${_cfg_name}' is not complete or there is no template specified"
+		echo $entry | jq $OPT "$x"
+		return 3
+	fi
+
+# echo "_cfg_type=[${_cfg_type}]"
+# echo "_cfg_template=[${_cfg_template}]"
+# echo "_cfg_name=[${_cfg_name}]"
+# echo "_cfg_file=[${_cfg_file}]"
+# echo "_cfg_disabled=[${_cfg_disabled}]"
+# echo "_cfg_openwrt_repo=[${_cfg_openwrt_repo}]"
+# echo "_cfg_openwrt_rev=[${_cfg_openwrt_rev}]"
+# echo "_cfg_openwrt_variant=[${_cfg_openwrt_variant}]"
+# echo "_cfg_selector_config=[${_cfg_selector_config}]"
+# echo "_cfg_selector_feeds=[${_cfg_selector_feeds}]"
+# echo "_cfg_selector_files=[${_cfg_selector_files}]"
+# echo "_cfg_selector_patches=[${_cfg_selector_patches}]"
+# echo "_cfg_feeds=[${_cfg_feeds}]"
+# echo "_cfg_packages=[${_cfg_packages}]"
+
+	return 0
 }
 
 listTargets()
 {
  OPT="--raw-output" # do not excape values
- cleanJson=$(getTargetsJson)
 
-#	ARG_regexTarget='ip'
-#	echo "$cleanJson" | jq --raw-output ".[] | select( .name | test (\"${ARG_regexTarget}\") ) | .name"
-
- # first read default
- entry=$(echo "$cleanJson" | jq '.[] | select(.name == "default")')
- if [ -n "$entry" ]; then
-	_def_name=$(echo $entry | jq $OPT '.name')
-	_def_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
-	_def_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
-	_def_selector_feeds=$(echo $entry | jq $OPT '.["selector-feeds"]')
-	_def_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
-	_def_target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
-	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
-	_def_openwrt_variant=$(echo $entry | jq $OPT '.openwrt_variant')
-	_def_feeds=$(echo $entry | jq $OPT '.feeds')
-	_def_packages=$(echo $entry | jq $OPT '.packages')
-#echo name:$_def_name
-#echo orev:$_def_openwrt_rev
-#echo ovariant:$_def_openwrt_variant
-#echo selconf:$_def_selector_config
-#echo selfeeds:$_def_selector_feeds
-#echo selfile:$_def_selector_files
-#echo selpatch:$_def_selector_patches
-#echo feeds:$_def_feeds
-#echo packages:$_def_packages
-
- fi
-
- printf -- '----------------------------------+------------+---------+----------+---------+---------+---------+------------------------------\n'
- printf  "  %-31s | %-10.10s | %-7.7s | %-8.8s | %-7.7s | %-7.7s | %-7.7s | Build date\n" Name Openwrt  Openwrt Openwrt Feeds Files Patches
- printf  "  %-31s | %-10.10s | %-7.7s | %-8.8s | %-7.7s | %-7.7s | %-7.7s |\n" ""   Revision Variant Selector "" "" ""
- printf -- '----------------------------------+------------+---------+----------+---------+---------+---------+------------------------------\n'
+# └ ┌ ┐ ┘ ├ ┤ ┬ ┴ ─ │ ┼
+ printf -- '┌──────────────────────────────┬─────┬──────────┬─────────┬────────────┬─────────┬──────────┬─────────┬─────────┬─────────┬──────────────────────┐\n'
+ printf -- '│ %-28.28s │ %-3.3s │ %-8.8s │ %-7.7s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' " Name" "End" "Template" "Version" "Openwrt"  "Openwrt" "Openwrt" "Feeds" "Files" "Patches" "Build date"
+ printf -- '│ %-28.28s │ %-3.3s │ %-8.8s │ %-7.7s │ %-10.10s │ %-7.7s │ %-8.8s │ %-7.7s │ %-7.7s │ %-7.7s │ %-20.20s │\n' ""     ""    ""         ""        "Revision" "Variant" "Sel."    "Sel."  "Sel."  "Sel."    ""
+ printf -- '├──────────────────────────────┼─────┼──────────┼─────────┼────────────┼─────────┼──────────┼─────────┼─────────┼─────────┼──────────────────────┤\n'
 
  # run through all of json
  targetIdx=0
  while true
  do
- 	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+	targetIdx=$(( targetIdx + 1 ))
 
-	if [ "$entry" = "null" ]; then
-		break;	# last entry
-	fi
+	# sets a lot $_cfg_xxxx variables that are used below
+	resolveConfigValues "${entry}"; ret=$?
+	# last entry
+	[ "$ret" = "1" ] && break
+	# is template
+	[ "$ret" = "2" ] && continue
 
-	_config_name=$(echo $entry | jq $OPT '.name')
+	# get eol status (end of life)
+	eol=""
+	test "${_cfg_name/eol.*/eol}" = "eol" && eol="EOL"
 
-	# ignore default entry
-  if [ "${_config_name}" = "default" ]; then
-		targetIdx=$(( targetIdx + 1 ))
-		continue
-	fi
-
-	# create env variables and parse with one call to jq (it is faster than repeatly call it)
-	x='"_config_name=\(.name); _openwrt_rev=\(.openwrt_rev); _openwrt_variant=\(.openwrt_variant); _selector_config=\(.["selector-config"]); _selector_feeds=\(.["selector-feeds"]); _selector_files=\(.["selector-files"]); _selector_patches=\(.["selector-patches"])	"'
-	eval $(echo $entry | jq $OPT "$x")
-
-	test -z "${_config_name}" && echo "error: configuration has no name" && break
-
-	test "$_openwrt_rev" = "null"  && _openwrt_rev="$_def_openwrt_rev"
-	test "$_openwrt_variant" = "null"  && _openwrt_variant="$_def_openwrt_variant"
-	test "$_selector_config" = "null" && _selector_config="$_def_selector_config"
-	test "$_selector_files" = "null" && _selector_files="$_def_selector_files"
-	test "$_selector_feeds" = "null" && _selector_feeds="$_def_selector_feeds"
-	test "$_selector_patches" = "null" && _selector_patches="$_def_selector_patches"
+	# get firmware version
+	fw_version_file="$PROJECT_DIR/fw-files/${_cfg_selector_files}/etc/version"
+	[ -f "$fw_version_file" ] || fw_version_file="$PROJECT_DIR/fw-files/${_cfg_selector_files}.common/etc/version"
+	fw_version="$(cat $fw_version_file)"
 
 	# get status
-	buildroot="$WORK_DIR/${_openwrt_rev:0:9}"
-	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
-	_compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
-	compile_status_file="${_compile_status_dir}/${_config_name}-${COMPILE_STATUS_FILE_SUFFIX}"
+	buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
+	test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
+
+  # contains firmware, status packages from each config
+  outdir="${PROJECT_DIR}/${WORK_DIR}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
+
+  _compile_status_dir="${outdir}/${COMPILE_STATUS_DIR}"
+	compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
 
 	compile_status=""
 	compile_data=""
@@ -350,31 +696,60 @@ listTargets()
 		eval $(cat "${compile_status_file}" | jq $OPT '"compile_data=\"\(.date)\";compile_status=\(.status)"')
 	fi
 
+  cstatus=""
+
 	case "${compile_status}" in
-		"0") cstatus="${C_NONE}${BG_GREEN}+${C_NONE}" ;;
-		"1") cstatus="${C_NONE}${BG_RED}E${C_NONE}" ;;
-		"2") cstatus="${C_NONE}${C_YELLOW}${C_BLINK}*${C_NONE}" ;;
+		"0") cstatus="${PBC_SUCCESS}" ;;
+		"1") cstatus="${PBC_ERROR}" ;;
+		"2") cstatus="${PBC_RUNNING}" ;;
 		*)
+			# if there is another compile status code
 			if [ -n "${compile_status}" ]; then
 				cstatus="${C_LBLUE}${BG_WHITE}${compile_status}${C_NONE}"
 			else
-				cstatus="${C_NONE}${BG_RED}-${C_NONE}"
+				cstatus="${PBC_SPACE}"
 			fi
 			;;
 	esac
 
- 	printf  $cstatus" %-31s | %-10.10s | %-7.7s | ${list_color[$_selector_config]}%-8.8s${C_NONE} | ${list_color[$_selector_files]}%-7.7s${C_NONE} | ${list_color[$_selector_feeds]}%-7.7s${C_NONE} | ${list_color[$_selector_patches]}%-7.7s${C_NONE} | %s\n" "${_config_name}" "${_openwrt_rev:0:9}" "$_openwrt_variant" "$_selector_config" "$_selector_feeds" "$_selector_files" "$_selector_patches" "$compile_data"
+  # colors
+  tc_name="${C_NONE}"
+  tc_template="${color_template[${_cfg_template}]}"
+  tc_fwversion="${color_fwversion[${fw_version}]}"
+  tc_openwrt="${color_openwrt[${_cfg_openwrt_rev}]}"
+  tc_variant="${C_NONE}"
+  tc_selector_config="${color_selector[${_cfg_selector_config}]}"
+  tc_selector_files="${color_selector[${_cfg_selector_files}]}"
+  tc_selector_feeds="${color_selector[${_cfg_selector_feeds}]}"
+  tc_selector_patches="${color_selector[${_cfg_selector_patches}]}"
+  tc_build_date="${C_NONE}"
 
-	targetIdx=$(( targetIdx + 1 ))
+	# overwrite if disabled
+	if [ "${_cfg_disabled}" == "true" ]; then
+		cstatus="${PBC_DISABLED}"
+    tc_name="${C_RED}"
+    tc_template="${C_RED}"
+    tc_fwversion="${C_RED}"
+    tc_openwrt="${C_RED}"
+    tc_variant="${C_RED}"
+    tc_selector_config="${C_RED}"
+    tc_selector_files="${C_RED}"
+    tc_selector_feeds="${C_RED}"
+    tc_selector_patches="${C_RED}"
+    tc_build_date="${C_RED}"
+	fi
+
+	printf  "│$cstatus ${tc_name}%-27s${C_NONE} │ ${color_eol}%-3.3s${C_NONE} │ ${tc_template}%-8.8s${C_NONE} | ${tc_fwversion}%-7.7s${C_NONE} │ ${tc_openwrt}%-10.10s${C_NONE} │ ${tc_variant}%-7.7s${C_NONE} │ ${tc_selector_config}%-8.8s${C_NONE} │ ${tc_selector_files}%-7.7s${C_NONE} │ ${tc_selector_feeds}%-7.7s${C_NONE} │ ${tc_selector_patches}%-7.7s${C_NONE} │ ${tc_build_date}%-20.20s${C_NONE} │\n" "${_cfg_name}" "${eol}" "${_cfg_template}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
+
  done
- printf -- '----------------------------------+------------+---------+----------+---------+---------+---------+------------------------------\n'
+
+ printf -- '└──────────────────────────────┴─────┴──────────┴─────────┴────────────┴─────────┴──────────┴─────────┴─────────┴─────────┴──────────────────────┘\n'
 }
 
 
 listTargetsNames()
 {
-	cleanJson=$(getTargetsJson)
-	echo "$cleanJson" | jq --raw-output '.[] | select(.name != "default") | .name'
+	echo "$cleanJson" | jq --raw-output '.[] | select(.type != "template") | .name'
 }
 
 # returns number of targets in build.json
@@ -383,39 +758,53 @@ numberOfTargets()
  ARG_regexTarget=$1
  [ -z "$ARG_regexTarget" ] && ARG_regexTarget='.*'
 
-	cleanJson=$(getTargetsJson)
-
-	echo "$cleanJson" | jq --raw-output "[  .[] | select(.name != \"default\")
+	echo "$cleanJson" | jq --raw-output "[  .[] | select(.type != \"template\")
 			| select(	.name | test (\"${ARG_regexTarget}\") ) ] | length"
 }
 
 search_target()
 {
 	target=$1
-	awk 'BEGIN {IGNORECASE=1;} /CONFIG_TARGET_.*'$target'/{line=gsub(/CONFIG_TARGET_.*DEVICE_/,"");print FILENAME"\t\t: "$0}' openwrt-configs/*/*
+  # only consider only multi-target device configurations: CONFIG_TARGET_DEVICE_....
+  echo "--------------------------------------------------------------------------------------------"
+  echo "Not-Configured Tagets [$target]"
+  echo "--------------------------------------------------------------------------------------------"
+	awk 'BEGIN {IGNORECASE=1;} /^# CONFIG_TARGET_DEVICE.*'$target'.*$/{line=gensub(/^# CONFIG_TARGET_.*DEVICE_(.*) is not set/,"\\1","1");print FILENAME"\t\t,",line,"'${PBC_ERROR}'"}' fw-configs/*/*
+  echo "--------------------------------------------------------------------------------------------"
+  echo "Configured Tagets [$target]"
+  echo "--------------------------------------------------------------------------------------------"
+	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_DEVICE.*'$target'.*=y$/{line=gensub(/^CONFIG_TARGET_.*DEVICE_(.*)=y/,"\\1","1");print FILENAME"\t\t,",line,"'${PBC_SUCCESS}'"}' fw-configs/*/*
 }
 
 print_devices_for_target()
 {
 	target=$1
-	cleanJson=$(getTargetsJson)
-	def_selector=$(echo "$cleanJson" | jq --raw-output '.[] | select(.name == "default") | . "selector-config"')
 
-	# get all targets
-	if [ -n "$target" ]; then
-		targets=$target
-	else
-		targets=$(listTargetsNames)
+	targetIdx=0
+	while true
+	do
+		entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+		targetIdx=$(( targetIdx + 1 ))	# for next build loop
+
+		resolveConfigValues "${entry}"; ret=$?
+		# last entry
+		[ "$ret" = "1" ] && break
+		# is template
+		[ "$ret" = "2" ] && continue
+
+		# when I have a target name, then only show this.
+		# when I do not have a target passt to "build.sh devices" then show all.
+		if [ -n "$target" -a "$target" != "$_cfg_name" ]; then
+			continue
 	fi
 
-	for _target in ${targets}
-	do
-		selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$_target\") | . \"selector-config\"")
-		test "${selector}" = "null" && selector=${def_selector}
-		config_filename=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$_target\") | .config")
-		echo "target: [$_target] (${selector})"
-		grep "^CONFIG_TARGET_DEVICE.*=y" "openwrt-configs/${selector}/${config_filename}"
+		echo "target: [$_cfg_name] (${_cfg_selector_config})"
+		#grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${_cfg_selector_config}/${_cfg_file}" | sort
+    awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_DEVICE.*=y$/{line=gensub(/^CONFIG_TARGET_.*DEVICE_(.*)=y/,"\\1","1");print line,"'${PBC_SUCCESS}'"}' "fw-configs/${_cfg_selector_config}/${_cfg_file}" | sort
 		echo ""
+
+		# if I had a target, then no need to run through rest
+		test -n "$target" && break
 	done
 }
 
@@ -424,28 +813,35 @@ verify_firmware_present()
 {
 	target=$1
 	firmware_path=$2
-	cleanJson=$(getTargetsJson)
 
-	# get selector
-	def_selector=$(echo "$cleanJson" | jq --raw-output '.[] | select(.name == "default") | . "selector-config"')
-	selector=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | . \"selector-config\"")
-	test "${selector}" = "null" && selector=${def_selector}
+	targetIdx=0
+	while true
+	do
+		entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
+		targetIdx=$(( targetIdx + 1 ))	# for next build loop
 
-	# get config filename
-	config=$(echo "$cleanJson" | jq --raw-output ".[] | select(.name == \"$target\") | .config")
+		resolveConfigValues "${entry}"; ret=$?
+		# last entry
+		[ "$ret" = "1" ] && break
+		# is template
+		[ "$ret" = "2" ] && continue
+
+		if [ "$target" != "$_cfg_name" ]; then
+			continue
+		fi
 
 	# extract selected devices from openwrt config file and check
 	# if sysupgrade file is present
 	status=0
-	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${RUN_DIR}/openwrt-configs/${selector}/${config}")
+	for dev in $(grep "^CONFIG_TARGET_DEVICE.*=y" "${PROJECT_DIR}/fw-configs/${_cfg_selector_config}/${_cfg_file}")
 	do
 		# extract firmware device name part
 		dev="${dev/*_DEVICE_/}"
 		dev_str="${dev/=*/}"
 
-		printf "verify firmware for: ${dev_str}: "
+		printf "firmware generated: ${dev_str}: "
 
-		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.bin 2>/dev/null)"
+		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.* 2>/dev/null)"
 		p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
 
     # some devices have only one file ending with squashfs.trx (e.g. asus rt-ac68u)
@@ -460,29 +856,60 @@ verify_firmware_present()
 
 	done
 	return ${status};
+	done
 }
 
 setup_dynamic_firmware_config()
 {
 	FILES="$1"
+	credentials="$FILES/etc/config/credentials"
+
+	test -f "$credentials" || return 1
 
 	# modify registration credentials from envronment variable passed in by gitlabs
 	# FF_REGISTERKEY_PREFIX is set in gitlab UI of freifunk-dresden-firmware: settings->CI/CD->Environment
-	sed -i "/register_service_url/s#registerkey='#registerkey=${FF_REGISTERKEY_PREFIX//_/:}'#" $FILES/etc/config/credentials
+	sed -i "/register_service_url/s#registerkey='#registerkey=${FF_REGISTERKEY_PREFIX//_/:}'#" $credentials
 
 	# modify key
 	[ -z "${FF_MESH_KEY}" ] && FF_MESH_KEY='custom-firmware-key'
-	sed -i "/wifi_mesh_key/s#ffkey-placeholder#${FF_MESH_KEY}#" $FILES/etc/config/credentials
+	sed -i "/wifi_mesh_key/s#ffkey-placeholder#${FF_MESH_KEY}#" $credentials
+
+	return 0
 }
 
+preProcessBuildJson()
+{
+	ignoreTemplates=$1
 
+	# get global clean build.json
+	cleanJson=$(getTargetsJson)
 
-#----------------- process argument ----------------------------------
+	if [ -z "$ignoreTemplates" ]; then
+		# uses cleanJson
+		echo "resolve config templates...."
+		resolveTemplates
+	fi
+}
+
+bash_completion()
+{
+	#this function must be alled "sourced" to tell bash how to complete
+	# list all values that bash should complete
+
+	ARGS="list lt list-targets watch devices search clean menuconfig defconfig rerun all failed"
+
+	# add targets
+	ARGS="${ARGS} $(listTargetsNames)"
+	# echo "[$ARGS]"
+	complete -W "${ARGS}" ./build.sh
+}
+
 usage_short()
 {
 	echo "Version: $SCRIPT_VERSION"
-	echo "usage: $(basename $0) [options] <command | target-pattern > [clean | menuconfig | rerun]   [-- < make params ... > ]"
+	echo "usage: $(basename $0) [options] <command | target-pattern > [clean | menuconfig | defconfig | rerun]   [-- < make params ... > ]"
 }
+
 usage()
 {
 	# create a simple menu
@@ -499,13 +926,20 @@ usage()
    -s    opens a shell to running docker
 
   commands:
+   bash-completion         - adds bash completion. Must be called from same directory
+                             where "build.sh" is located.
+                             Example:
+                              $ cd ~/projects/freifunk/firmware
+                              $ source ./build.sh bash-completion
+
+                             add an alias to your .bash_aliases
+                              $ alias ff='cd ~/projects/freifunk/firmware; source ./build.sh bash-completion'
+
    list                    - lists all available targets
    lt | list-targets       - lists only target names for usage in IDE
    watch                   - same as 'list' but updates display
    devices [target]        - displays all selected routers for a target
    search <string>         - search specific router (target)
-   feed-revisions          - displays the openwrt default feed revisions.
-                             The revisions then could be set in build.json
 
    target-pattern          - target to build
            that are defined by build.json. use 'list' for supported targets.
@@ -518,19 +952,24 @@ usage()
   flags
    clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
    menuconfig       - displays configuration menu
+   defconfig        - only updates configs (dependencies)
    rerun            - enables a second compilation with make option 'V=s'
                       If first make failes a second make is tried with this option
    -- make params   - all paramerters that follows are passed to make command
 
 
 Devel-Notes:
-
  To compile a specific feed change to workdir and call something like:
 
      make package/feeds/ddmesh/fastd/compile -j1 V=s
 
 EOM
 }
+
+
+
+###----------------------------------start----------------------------------------------------------
+
 
 # overwrite DOCKER_HOST variable if FF_DOCKER_HOST is present. this value can still be overwritten by -h option
 test -n "${FF_DOCKER_HOST}" && export DOCKER_HOST="${FF_DOCKER_HOST}"
@@ -582,6 +1021,7 @@ if [ -z "$1" -a "$RUN_DOCKER_SHELL" != "1" ]; then
 fi
 
 # if docker is used, this script should be called from docker container
+# --------------- DOCKER BEGIN ---------------------------------------------------------------------
 if $USE_DOCKER; then
 	echo "Using Docker at ${DOCKER_HOST:=localhost}"
 	docker_tar="$(mktemp -u).tgz"
@@ -605,24 +1045,26 @@ if $USE_DOCKER; then
 		docker exec -it ${DOCKER_CONTAINER_NAME} bash
 	else
 
-		# create file to upload
+		# create source tar-file to upload and process within dockerd
 		echo -e "${C_CYAN}create project archive${C_NONE}"
 		tar -cz --exclude ${WORK_DIR} --exclude ${DL_DIR} --exclude ${FINAL_OUTPUT_DIR} \
 				--exclude-backups --exclude-vcs --exclude-vcs-ignores \
 				-f "/tmp/${docker_tar}" ./
 
-		# upload and extract (workdir is not included)
+		# upload source tar-file to container (workdir is not included)
 		echo -e "${C_CYAN}copy project to container${C_NONE}"
 		docker cp "/tmp/${docker_tar}" ${DOCKER_CONTAINER_NAME}:/builds/
-		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "rm -rf files feeds openwrt-configs; tar -xzf ${docker_tar} && rm ${docker_tar}"
+		# extract tar-file within container
+		docker exec -it ${DOCKER_CONTAINER_NAME} sh -c "rm -rf fw-files fw-feeds fw-configs; tar -xzf ${docker_tar} && rm ${docker_tar}"
 		rm /tmp/${docker_tar}
 
-		# remove workdir from previous usage of this container (when still available)
+		# remove old workdir from previous run of this container (when still available)
 		${DOCKER_RM_WORKDIR} && {
 			echo -e "$${C_LCYAN}remove workdir${C_NONE}"
 			docker exec -it ${DOCKER_CONTAINER_NAME} rm -rf ${WORK_DIR}
 		}
 
+		# disable ssl check when downloading from external sites (have no certs installed in container?)
 		docker exec -it ${DOCKER_CONTAINER_NAME} git config --global http.sslverify false
 
 		echo -e "${C_CYAN}run build${C_NONE}"
@@ -630,7 +1072,9 @@ if $USE_DOCKER; then
 		# need to pass target as one parameter. $@ does separate target list ("ar71xx.tiny.lowmem ath79.generic lantiq.xrx200")
 		target="$1"
 		shift
+		docker exec -it -e FF_REGISTERKEY_PREFIX=$FF_REGISTERKEY_PREFIX ${DOCKER_CONTAINER_NAME} ./build.sh list
 		docker exec -it -e FF_REGISTERKEY_PREFIX=$FF_REGISTERKEY_PREFIX ${DOCKER_CONTAINER_NAME} ./build.sh "$target" $@
+		docker exec -it -e FF_REGISTERKEY_PREFIX=$FF_REGISTERKEY_PREFIX ${DOCKER_CONTAINER_NAME} ./build.sh list
 
 		# ignore some operations for some arguments. it makes no sence to start those short commands. can be done locally
 		case "$1" in
@@ -638,7 +1082,7 @@ if $USE_DOCKER; then
 		lt | list-targets) ;;
 		search) ;;
 		clean) ;;
-		feed-revisions) ;;
+
 		*)
 			if [ "$target" = "all" ]; then
 				echo -e "${C_CYAN}generate upload${C_NONE}"
@@ -647,8 +1091,9 @@ if $USE_DOCKER; then
 
 			# create tar and copy results back
 			echo -e"${C_CYAN}copy out results to [${C_YELLOW}${DOCKER_FINAL_TGZ}]${C_NONE}"
-
+			# create result tar-file within container
 			docker exec -it ${DOCKER_CONTAINER_NAME} tar czf ${DOCKER_FINAL_TGZ} final_output
+			# copy result tar-file out of container to local dir
 			docker cp ${DOCKER_CONTAINER_NAME}:/builds/${DOCKER_FINAL_TGZ} "${DOCKER_FINAL_TGZ}"
 
 			# extract it in local folder
@@ -663,30 +1108,44 @@ if $USE_DOCKER; then
 	fi
 
 	exit 0
-else
-	echo -e "${C_CYAN}build locally.${C_NONE}"
 fi
+# --------------- DOCKER END -----------------------------------------------------------------------
+
+
 
 #---- process parameters -----------
 targetRegex=""
 case "$1" in
+		bash-completion)
+						printf "setting up bash_completion... "
+						preProcessBuildJson true
+						bash_completion
+						printf "done\n"
+						# this script is called "sourced", so use return instead of exit to avoid
+						# closing current terminal
+						return
+						;;
+
 		list)
+						preProcessBuildJson
 						listTargets;
 						exit 0
 						;;
 
 		watch)
+						preProcessBuildJson
 						while sleep 1
 						do
 							view=$(listTargets)
 							clear
 							echo -e "$view"
-							date
+							date +'%H:%M:%S / %d %h %y'
 						done
 						exit 0
 						;;
 
 		lt|list-targets)
+						preProcessBuildJson true
 						listTargetsNames
 						exit 0
 						;;
@@ -701,6 +1160,7 @@ case "$1" in
 					;;
 
 		devices)
+					preProcessBuildJson
 					# if [ -z "$2" ]; then
 					# 	echo "Error: missing target"
 					# 	exit 1
@@ -710,21 +1170,12 @@ case "$1" in
 					exit 0
 					;;
 
-		feed-revisions)
-					echo "!!! go to openwrt build directory and look at 'feeds.conf.default'"
-					exit 0
-					;;
-
-		failed)
-						ARG_CompiledFailedOnly=1
-						targetRegex=".*"
-						;;
-
 		*)
-
 					# When running in Windows Linux Subystem, remove windows mounted path because spaces in 'Program Files' cause errors
-					# with find command. 
+					# with find command.
 					export PATH=$(echo $PATH | sed 's#\([:]*/mnt/[^:]\+[:]*\)##g')
+
+					preProcessBuildJson
 
 					# targets, menuconfig, rerun and make parameters are passed as argument with its parameters
 					# check for "menuconfig"
@@ -740,9 +1191,12 @@ case "$1" in
 											MAKE_CLEAN=1
 											endLoop=1
 										;;
-
 							menuconfig)
 											MENUCONFIG=1
+											endLoop=1
+											;;
+							defconfig)
+											DEFCONFIG=1
 											endLoop=1
 											;;
 							rerun)
@@ -755,6 +1209,10 @@ case "$1" in
 											;;
 							all)
 											ARG_TARET_ALL=1
+											targetRegex=".*"
+											;;
+							failed)
+											ARG_CompiledFailedOnly=1
 											targetRegex=".*"
 											;;
 
@@ -798,11 +1256,10 @@ targetRegex=$(echo "${targetRegex}" | sed 's#[ ]\+#$|^#g')
 
 targetRegex="^$targetRegex\$"
 
-echo "### target-regex:[$targetRegex] MENUCONFIG=${MENUCONFIG} CLEAN=${MAKE_CLEAN} REBUILD_ON_FAILURE=${REBUILD_ON_FAILURE} BUILD_PARAMS=[${BUILD_PARAMS}]"
-cleanJson=$(getTargetsJson)
+echo "### target-regex:[$targetRegex] MENUCONFIG=${MENUCONFIG} DEFCONFIG=${DEFCONFIG} CLEAN=${MAKE_CLEAN} REBUILD_ON_FAILURE=${REBUILD_ON_FAILURE} BUILD_PARAMS=[${BUILD_PARAMS}]"
 
 # prinzip:
-# 1. separate each object from array and pip it to 'select'
+# 1. separate each object from array and pipe it to 'select'
 # 2. 'select' only let pass objects when true
 # 3. .name is piped to both 'test' functions at same time.
 # 4. 'not' function seams to have highere priority than 'and'. brackets are not needed, but I
@@ -811,16 +1268,17 @@ cleanJson=$(getTargetsJson)
 #    second 'test'
 # 5. first 'test' second 'test' are logical evaluated with 'and', and determines the input of
 #    'select' function
-echo "$cleanJson" | jq --raw-output ".[]
-			| select(	.name |
-			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
-					    ) | .name"
-# same as first command; but creates an array from what 'select' filters, which in turn is
-# then counted by function 'length'
-echo "$cleanJson" | jq --raw-output "[ .[]
-			| select(	.name |
-			                ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
-					    ) ] | length"
+
+# echo "$cleanJson" | jq --raw-output ".[]
+#       | select(	.name |
+#                       ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+#               ) | .name"
+# # same as first command; but creates an array from what 'select' filters, which in turn is
+# # then counted by function 'length'
+# echo "$cleanJson" | jq --raw-output "[ .[]
+#       | select(	.name |
+#                       ( test (\"${targetRegex}\")  and  ( test(\"^default\") | not ) )
+#               ) ] | length"
 
 # emtpy line needed, else tput stuff clears some. So this emtpy line is cleared
 echo " "
@@ -830,153 +1288,6 @@ if [ "$_TERM" = "1" ]; then
 	trap show_progress WINCH
 fi
 
-setup_buildroot ()
-{
- buildroot=$1
- openwrt_rev=$2
- openwrt_dl_dir=$3
- openwrt_patches_dir=$4
- firmware_files=$5
-
- openwrt_dl_tgz="$openwrt_dl_dir/openwrt-$openwrt_rev.tgz"
-
- git_url="https://git.openwrt.org/openwrt/openwrt.git"
-
-	# check if directory exists. I'm not just checking
-	# the build root itself, because gitlab left a working directory
-	# only with freifunk files, but without all other openwrt files
-	if [ ! -d "$buildroot/toolchain" ]
-	then
-		echo "directory [$buildroot/toolchain] not present -> re-create '$buildroot'"
-		# ensure we have a clean workdir, after gitlab runner had removed
-		# openwrt.org files (e.g. toolchain)
-		rm -rf "$buildroot"
-
-		# re-create buildroot
-		mkdir -p "$buildroot"
-		if [ ! -d "$buildroot" ]; then
-			echo "Error: '$buildroot' could not be created. exit."
-			clean_up_exit 1
-		fi
-
-		#check if we have already downloaded the openwrt revision
-		if [ -f $openwrt_dl_tgz ]
-		then
-			#extract into buildroot dir
-			echo "using already downloaded $openwrt_dl_tgz"
-			cd $buildroot
-			tar xzf $RUN_DIR/$openwrt_dl_tgz
-		else
-			#clone from openwrt
-			echo "cloning openwrt"
-			git clone $git_url $buildroot
-			echo "switch to specific revision"
-			cd $buildroot
-			git checkout $openwrt_rev >/dev/null
-			echo "create openwrt tgz"
-			tar czf $RUN_DIR/$openwrt_dl_tgz .
-		fi
-		cd $RUN_DIR
-
-		#apply openwrt patches
-		if [ -d $openwrt_patches_dir ]; then
-			for i in $openwrt_patches_dir/*.patch
-			do
-				echo -e "${C_CYAN}apply openwrt patch:${C_NONE} $i to buildroot:$buildroot"
-				# --no-backup-if-mismatch avoids creating backup files for files
-				# with different names or if not exist (new files)
-				patch --no-backup-if-mismatch --directory=$buildroot -p1 < $i
-			done
-		fi
-	else
-		echo -e "${C_CYAN}Buildroot [$buildroot]${C_NONE} already present"
-	fi
-
-	echo -n -e $C_CYAN"create dl directory/links"$C_NONE": "
-	rm -f $buildroot/dl
-	ln -s ../../$openwrt_dl_dir $buildroot/dl
-	echo "done."
-
-	# -------- common files -----------
-	# copy common files first
-	echo -n -e "${C_CYAN}copy rootfs (common)${C_NONE}: "
-	rm -rf $buildroot/files
-	mkdir -p $buildroot/files
-	# --remove-destination forces copy (first remove (e.g. symlinks))
-	cp -a --remove-destination $RUN_DIR/files/common/* $buildroot/files/
-	echo " done."
-
-	# -------- specific files -----------
-	# copy specific files over (may overwrite common)
-	echo -n -e "${C_CYAN}copy specific files ${C_NONE} [${C_GREEN}${firmware_files}${C_NONE}]: "
-	if [ -n "${firmware_files}" -a -d "$RUN_DIR/files/${firmware_files}" ]; then
-		# --remove-destination forces copy (first remove (e.g. symlinks))
-		cp -a --remove-destination $RUN_DIR/files/${firmware_files}/* $buildroot/files/
-		echo "done."
-	else
-		echo "no specific files."
-	fi
-
-	echo -n -e $C_CYAN"create rootfs/etc/built_info file: "$C_NONE
-	mkdir -p $buildroot/files/etc
-	> $buildroot/files/etc/built_info
-	echo "done."
-
-	# more dynamic changes
-	echo -n -e $C_CYAN"setup dynamic firmware config: "$C_NONE
-	setup_dynamic_firmware_config "$buildroot/files"
-	echo "done."
-
-	echo "----- generate built_info ----"
-	git_openwrt_rev=$(cd $buildroot && git log -1 --format=%H)
-	git_openwrt_branch=$(cd $buildroot && git name-rev --name-only $git_openwrt_rev | sed 's#.*/##')
-	echo "git_openwrt_rev:$git_openwrt_rev" >> $buildroot/files/etc/built_info
-	echo "git_openwrt_branch:$git_openwrt_branch" >> $buildroot/files/etc/built_info
-
-	# when running from gitlab only specific revision is cloned. there are no branch infos.
-	# So I check if FF_BUILD_TAG is set and then use this. If not defined I use
-	# the one I can determine.
-	git_ddmesh_rev="$(git log -1 --format=%H)"
-	if [ -n "$FF_BUILD_TAG" ]; then
-		git_ddmesh_branch="$FF_BUILD_TAG"
-	else
-		git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
-
-		if [ "$git_ddmesh_branch" = "undefined" ]; then
-			git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
-			echo ""
-			echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"$C_NONE
-			echo ""
-			sleep 5
-		fi
-	fi
-
-	echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
-	echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
-	echo "builtdate:$(date)" >> $buildroot/files/etc/built_info
-
-	echo "git_openwrt_rev:     $git_openwrt_rev"
-	echo "git_openwrt_branch:  $git_openwrt_branch"
-	echo "git_ddmesh_rev:      $git_ddmesh_rev"
-	echo "git_ddmesh_branch:   $git_ddmesh_branch"
-	echo ""
-
-
-} # setup_buildroot
-
-# status:
-#  0 - success
-#  1 - error
-#  2 - compiling
-write_compile_status()
-{
-	local config="$1"
-	local status="$2"
-	local file="$3"
-	mkdir -p $(dirname $file)
-	test "$status" = "0" && d="$(date)" | d=""
-	echo "{\"config\":\"${config}\", \"date\":\"$d\", \"status\":\"${status}\"}" > "${file}"
-}
 # ---------- create directories: dl, workdir -----------
 # only create top-level directories if thoses do not not
 # exisist. I do not simply call 'mkdir -p'. This is because
@@ -993,24 +1304,6 @@ test -L $DL_DIR || mkdir -p $DL_DIR
 test -L $WORK_DIR || mkdir -p $WORK_DIR
 
 
-# ---------- process all targets ------------
-# first read default values
-OPT="--raw-output" # do not excape values
-entry=$(getTargetsJson | jq '.[] | select(.name == "default")')
-if [ -n "$entry" ]; then
-	_def_name=$(echo $entry | jq $OPT '.name')
-	_def_config=$(echo $entry | jq $OPT '.config')
-	_def_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
-	_def_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
-	_def_selector_feeds=$(echo $entry | jq $OPT '.["selector-feeds"]')
-	_def_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
-	_def_target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
-	_def_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
-	_def_openwrt_variant=$(echo $entry | jq $OPT '.openwrt_variant')
-	_def_feeds=$(echo $entry | jq $OPT '.feeds')
-	_def_packages=$(echo $entry | jq $OPT '.packages')
-fi
-
 
 # ------------- prepare progress bar -----------------------------------
 progress_counter=0
@@ -1024,44 +1317,35 @@ fi
 # this means that each target can display a different character in progressbar to show the
 # build status.
 # example: |####|.....|*****|
-# hier I use:
-#  ' ' - nothing compiled yet (default defined in progressbar
-#	 '+' - success;
-#  '-' - ignored previously successful targets (./build.sh failed)
-#  'i' - ignored (not yet done or no config or when only building "failed" targets)
-#  'E' - error
-#
+# see variables MARK_xxx for characters
+
 unset progbar_char_array
 
 # ---------------- build loop, run through all targets listed in build.json -----------------
 targetIdx=0
 while true
 do
-	cd $RUN_DIR
+	cd $PROJECT_DIR
 
 	# read configuration from first target in build.json
-	entry=$(getTargetsJson | jq ".[$targetIdx]")
+	entry=$(echo "$cleanJson" | jq ".[$targetIdx]")
 	targetIdx=$(( targetIdx + 1 ))	# for next build loop
 
-	# check if we have reached the end of all targets
-	test "$entry" = "null" && break
-
-	config_name=$(echo $entry | jq $OPT '.name')
-
-	# ignore default entry
-  if [ "${config_name}" = "default" ]; then
-		continue
-	fi
+	resolveConfigValues "${entry}"; ret=$?
+	# last entry
+	[ "$ret" = "1" ] && break
+	# is template
+	[ "$ret" = "2" ] && continue
 
 	#check if configuration name matches the targetRegex (target parameter)
 	# add '\' to each '|' only for sed command
 	sedTargetRegex=${targetRegex//|/\\|}
-	filterred=$(echo $config_name | sed -n "/$sedTargetRegex/p")
+	filterred=$(echo ${_cfg_name} | sed -n "/$sedTargetRegex/p")
 	test -z "$filterred" && continue
 
 	# only enable progressbar for tty
 	if [ "$_TERM" = "1" ]; then
-		show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
+		show_progress ${_cfg_name} $progress_counter $progress_max "${progbar_char_array[@]}"
 		echo ""
 	fi
 	# increment counter (needed also when no progressbar is displayed, because the
@@ -1069,71 +1353,40 @@ do
 	# the need of checking every time whether the progressbar is used or not
 	progress_counter=$(( $progress_counter + 1 ))
 
-	# check each config variable and use defaults when no value was defined
-	echo -e "${C_YELLOW}process configuration${C_NONE}"
-
-	_config_name=$(echo $entry | jq $OPT '.name')
-	test "${_config_name}" = "null" && _config_name="$_def_name"
-
-	_config_file=$(echo $entry | jq $OPT '.config')
-	test "${_config_file}" = "null" && _config_file="$_def_config"
-
-	_openwrt_rev=$(echo $entry | jq $OPT '.openwrt_rev')
-	test "$_openwrt_rev" = "null" && _openwrt_rev="$_def_openwrt_rev"
-
-	_openwrt_variant=$(echo $entry | jq $OPT '.openwrt_variant')
-	test "$_openwrt_variant" = "null" && _openwrt_variant="$_def_openwrt_variant"
-
-	_selector_config=$(echo $entry | jq $OPT '.["selector-config"]')
-	test "$_selector_config" = "null" && _selector_config="$_def_selector_config"
-
-	_selector_files=$(echo $entry | jq $OPT '.["selector-files"]')
-	test "$_selector_files" = "null" && _selector_files="$_def_selector_files"
-
-	_selector_feeds=$(echo $entry | jq $OPT '.["selector-feeds"]')
-	test "$_selector_feeds" = "null" && _selector_feeds="$_def_selector_feeds"
-
-	_selector_patches=$(echo $entry | jq $OPT '.["selector-patches"]')
-	test "$_selector_patches" = "null" && _selector_patches="$_def_selector_patches"
-
-	_target_patches=$(echo $entry | jq $OPT '.["target-patches"]')
-	test "$_target_patches" = "null" && _target_patches="$_def_target_patches"
-
-	_feeds=$(echo $entry | jq $OPT '.feeds')
-	test "$_feeds" = "null" && _feeds="$_def_feeds"
-
-	_packages=$(echo $entry | jq $OPT '.packages')
-	test "$_packages" = "null" && _packages="$_def_packages"
-#echo ${_config_name}
-#echo $_config_file
-#echo $_openwrt_rev
-#echo $_openwrt_variant
-#echo $_selector_config, $_selector_feeds, $_selector_files, $_selector_patches
-#echo $_feeds
-#echo $_packages
-
 	# construct config filename
-	config_file="$CONFIG_DIR/$_selector_config/${_config_file}"
+	config_file="$CONFIG_DIR/${_cfg_selector_config}/${_cfg_file}"
 
 	# summary
 	echo -e $C_GREY"----------------------------------------"$C_NONE
 	echo -e $C_YELLOW"Running as user$C_NONE   : $C_BLUE$(id | awk '{print $1,$2}')"$C_NONE
-	echo -e $C_YELLOW"Name$C_NONE              : $C_BLUE${_config_name}"$C_NONE
-	echo -e $C_YELLOW"Openwrt Variant$C_NONE   : $C_BLUE$_openwrt_variant"$C_NONE
-	echo -e $C_YELLOW"Config-File$C_NONE       : $C_BLUE$config_file"$C_NONE
+	echo -e $C_YELLOW"Name$C_NONE              : $C_BLUE${_cfg_name}"$C_NONE
+	echo -e $C_YELLOW"Openwrt Variant$C_NONE   : $C_BLUE${_cfg_openwrt_variant}"$C_NONE
+	echo -e $C_YELLOW"Config-File$C_NONE       : $C_BLUE${config_file}"$C_NONE
 	echo -e $C_GREY"----------------------------------------"$C_NONE
+
+	# ingore disabled targets
+	if [ "${_cfg_disabled}" == "true" ]; then
+		progbar_char_array[$((progress_counter-1))]="${PBC_DISABLED}"
+		continue
+	fi
 
 	# construct build directory name
 
 	# use short revision because openwrt build path gets too long and
 	# make for ipq40xx.generic (fritzbox 4040) will fail
 	# (see git log --abbrev-commit)
-	buildroot="$WORK_DIR/${_openwrt_rev:0:9}"
-	test -n "$_openwrt_variant" && buildroot="$buildroot.$_openwrt_variant"
+	buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
+	test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
 
-	_compile_status_dir="$RUN_DIR/$buildroot/${LOCAL_OUTPUT_DIR}/${COMPILE_STATUS_DIR}"
-	compile_status_file="${_compile_status_dir}/${_config_name}-${COMPILE_STATUS_FILE_SUFFIX}"
+  # contains firmware, status packages from each config
+  outdir="${PROJECT_DIR}/${WORK_DIR}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
+  mkdir -p ${outdir}
+
+	_compile_status_dir="${outdir}/${COMPILE_STATUS_DIR}"
 	mkdir -p ${_compile_status_dir}
+
+	compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
+
 
 	# remove compile status (before checking for failed only)
 	[ "${MAKE_CLEAN}" = "1" ] && rm -f ${compile_status_file}
@@ -1157,33 +1410,32 @@ do
 	# This is needed to avoid conflicts with packages when I have several configs that all
 	# use same target/subtarget directories.
 	# - reset also compile status ${compile_status_file}
-	outdir="${RUN_DIR}/${buildroot}/${LOCAL_OUTPUT_DIR}/${_config_name}"
 	rm -rf ${outdir}/*
 	rm -rf ${buildroot}/bin
 
-	write_compile_status "${_config_name}" "2" "${compile_status_file}"
+	write_compile_status "${_cfg_name}" "2" "${compile_status_file}"
 
 	# progress bar: compiling
 	progbar_char_array[$((progress_counter-1))]="${PBC_RUNNING}"
-	show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
+	show_progress ${_cfg_name} $progress_counter $progress_max "${progbar_char_array[@]}"
 
 
 	openwrt_dl_dir="$DL_DIR"
-	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/$_selector_patches"
+	openwrt_patches_dir="$OPENWRT_PATCHES_DIR/${_cfg_selector_patches}"
 
-	# --------- setup build root ------------------
-
-	setup_buildroot $buildroot $_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_selector_files
+	# --------- setup build root with selected openwrt revision
+	setup_buildroot $buildroot $_cfg_openwrt_repo $_cfg_openwrt_rev $openwrt_dl_dir $openwrt_patches_dir $_cfg_selector_files
 
 	# --------  generate feed configuration from selected config -----------
 	echo -e $C_CYAN"generate feed config"$C_NONE
 
 	# create feed config from build.json
-	if [ "$_feeds" = "null" ]; then
+	if [ "$_cfg_feeds" = "null" ]; then
 	 	echo -e $C_RED"Error: no feeds specified"$C_NONE
 		clean_up_exit 1
 	fi
 
+  defaultFeedConfFileName="$buildroot/feeds.conf.default"
 	feedConfFileName="$buildroot/feeds.conf"
 cat<<EOM > $feedConfFileName
 # This file is generated by build.sh from build.json
@@ -1194,7 +1446,7 @@ EOM
 	feedIdx=0
 	while true
 	do
- 		feed=$(echo "$_feeds" | jq ".[$feedIdx]")
+		feed=$(echo "${_cfg_feeds}" | jq ".[$feedIdx]")
 		feedIdx=$(( feedIdx + 1 ))
 		test "$feed" = "null" && break
 
@@ -1203,8 +1455,8 @@ EOM
 		_feed_src=$(echo $feed | jq $OPT '.src')
 		_feed_rev=$(echo $feed | jq $OPT '.rev')
 
-		# for local feeds set correct absolute filename because when workdir is a symlink (like on gitlab runners),
-		# relative path are note resolved correctly. Also we need to use $_selector_feeds.
+		# for local feeds (src-link) set correct absolute filename because when workdir is a symlink (like on gitlab runners),
+		# relative path are note resolved correctly. Also we need to use _cfg_selector_feeds.
 		# "feeds" : [
 		#   {"type":"src-link", "name":"ddmesh",   "src":"" },
 		#   {"type":"src-git",  "name":"packages", "src":"https://git.openwrt.org/feed/packages.git", "rev":"afea2bc"},
@@ -1212,20 +1464,35 @@ EOM
 		# ],
 		# The feed directory for "ddmesh" is directly located below firmware/feeds/<feed-selector>/
 		if [ "$_feed_type" = "src-link" ]; then
-			_feed_src="$RUN_DIR/feeds/$_selector_feeds/$_feed_src"
+			_feed_src="${PROJECT_DIR}/fw-feeds/${_cfg_selector_feeds}/${_feed_src}"
 			_feed_rev=""	# src-link does not have a rev, because it is already in current git repo
+      _feed_url="${_feed_src}${_feed_rev}"
 		else
+
+# hier sollte geprüft werden, ob ich die externen feeds mit rev bereits herunter geladen habe,
+# und diese dann direkt auspacken und die links innerhalb von workdir/.../feeds/ setzen.
+# und ein update -a dann unterbinden.
+#  flag setzen:  use_local_dl_feeds=1 oder so
+
+
 			# if we have a feed revision, then add it. "^" is a special character
 			# followed by a "commit" (hash). openwrt then checks out this revision
-			test "$_feed_rev" = "null" && _feed_rev=""
-			test -n "$_feed_rev" && _feed_rev="^$_feed_rev"
+			test "${_feed_rev}" = "null" && _feed_rev=""
+
+      # check if special word "default" is used. this is used to indicate that the
+      # default revision from openwrt file feeds.conf.default should be used.
+      # this makes build.json configuration of feeds more simple
+      if [ "${_feed_rev}" = "default" ]; then
+        _feed_url="$(cat ${defaultFeedConfFileName} | awk '/^src-git(-full)?[ ]+'${_feed_name}'/{print $3}')"
+      else
+  			test -n "${_feed_rev}" && _feed_rev="^${_feed_rev}"
+        _feed_url="${_feed_src}${_feed_rev}"
+      fi
 		fi
-
-		printf "%s %s %s\n" $_feed_type $_feed_name $_feed_src$_feed_rev  >>$feedConfFileName
-
+    _feed="${_feed_type} ${_feed_name} ${_feed_url}"
+    echo "[$_feed]"
+		echo "${_feed}"  >> ${feedConfFileName}
 	done
-
-
 
 	echo "------------------------------"
 	echo "change to buildroot [$buildroot]"
@@ -1237,32 +1504,70 @@ EOM
 		continue # clean next target
 	fi
 
-	# --------- update all feeds from feeds.conf (feed info) ----
-	echo -e $C_CYAN"update feeds"$C_NONE
-	./scripts/feeds update -a
+  # ----------- install feeds --------------------------------------------------
 
-	echo -e $C_CYAN"install missing packages from feeds"$C_NONE
+  # always install feed 'ddmesh' (avoid backing up src-link feeds, to always use current version)
+  ./scripts/feeds update ddmesh
+
+  # check if we have already downloaded the EXTERNAL feeds (src-git) with same revision
+  # if yes, extract feeds and setup symlinks
+  # if no, update feeds
+
+  # feed_name=packages; feed_rev=3b79b05673a15e7f41f157d1320597244a344a95
+  # feed_name=routing; feed_rev=1ff9ee61cde0829f206f275b1b2f5fa990fd2ba9
+  IFS='
+  '
+  for feed in $(cat feeds.conf | sed -n '/^src-git/{s#src-git[ ]\+\([^ ]\+\).*^\(.*\)$#\1:\2#p}')
+  do
+    feed_name="${feed%:*}"
+    feed_rev="${feed#*:}"
+    dl_feed_filename="${PROJECT_DIR}/${DL_DIR}/feed-${feed_name}-${feed_rev}.tgz"
+    # echo "*** check ["${dl_feed_filename}"]"
+
+    if [ -f "${dl_feed_filename}" ]; then
+  	  echo -e $C_CYAN"use local downloaded feed: [${feed_name}]"$C_NONE
+      tar xvzf "${dl_feed_filename}" >/dev/null
+    else
+  	  # --------- update all feeds from feeds.conf (feed info) ----
+  	  echo -e $C_CYAN"download/update feed: [${feed_name}]"$C_NONE
+  	  ./scripts/feeds update ${feed_name} >/dev/null
+      echo ""
+
+      # backup feed
+      echo -e $C_CYAN"create backup feed: [${feed_name}]"$C_NONE
+      tar cvzf "${dl_feed_filename}" feeds/${feed_name}* >/dev/null
+    fi
+  done
+  unset IFS
+
+  # ----------- install packages -----------------------------------------------
+
+	echo -e $C_CYAN"install packages"$C_NONE
+	echo "$_cfg_packages" | jq
 	# install additional packages (can be selected via "menuconfig")
 	idx=0
 	while true
 	do
 	  	# use OPT to prevent jq from adding ""
-		entry="$(echo $_packages | jq $OPT .[$idx])"
+		entry="$(echo ${_cfg_packages} | jq $OPT .[$idx])"
 		test "$entry" = "null" && break
 		idx=$(( idx + 1 ))
 
-		echo -e "[$idx] $C_GREEN$entry$C_NONE"
-		./scripts/feeds install $entry
+		echo -e "[$idx] package: [$C_GREEN${entry}$C_NONE]"
+		./scripts/feeds install ${entry}
 	done
 
 	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh)"$C_NONE
 	./scripts/feeds install -a -p ddmesh
 
-	rm -f .config		# delete previous config in case we have no $RUN_DIR/$config_file yet and want to
+
+  # ----------- setup config ---------------------------------------------------
+
+	rm -f .config		# delete previous config in case we have no $PROJECT_DIR/$config_file yet and want to
                   # create a new config
 
-	DEFAULT_CONFIG="${RUN_DIR}/${CONFIG_DIR}/${_selector_config}/${CONFIG_DEFAULT_FILE}"
-	if [ ! -f "${RUN_DIR}/${config_file}" ]; then
+	DEFAULT_CONFIG="${PROJECT_DIR}/${CONFIG_DIR}/${_cfg_selector_config}/${CONFIG_DEFAULT_FILE}"
+	if [ ! -f "${PROJECT_DIR}/${config_file}" ]; then
 		if [ "$MENUCONFIG" = "1" ]; then
 			echo -e "${C_CYAN}NO Config: use initial config${C_NONE} [${C_GREEN}${DEFAULT_CONFIG}${C_NONE}]"
 
@@ -1273,25 +1578,27 @@ EOM
 
 			# remove any old config from build root
 			rm -f .config
+
 			# default config contains important configs that must exist before creating
 			# a new config via menuconfig. this default config overwrites also some
 			# important configs after running menuconfig.
 			# SEE: CONFIG_VERSION_FILENAMES is not set
-			# -- per device rootfs MUST BE SET BEFORE selecting it in menuconfig
-			#    else this option is not applied, as all packages are already added via '*'
-			#    instead of 'M'. See comment on this option in menuconfig menu
+
+			# copy initial default config before firsttime "menuoconfig". this is needed
+			# to get CONFIG_TARGET_PER_DEVICE_ROOTFS working. see help page in menuconfig
 			cp ${DEFAULT_CONFIG} .config
+
 		else
 			# no config and no menuconfig -> continue with next target; do not create config yet.
 			# it only should be down by menuconfig
 			echo -e $C_CYAN"no configuration, continue with next target if any$C_NONE"
-			progbar_char_array[$((progress_counter-1))]="${PBC_IGNORE}"
+			progbar_char_array[$((progress_counter-1))]="${PBC_NOCONFIG}"
 			continue
 		fi
 	else
 		# copy specific config
-		echo -e $C_CYAN"copy configuration$C_NONE: $C_GREEN$RUN_DIR/$config_file$C_NONE"
-		cp $RUN_DIR/$config_file .config
+		echo -e $C_CYAN"copy configuration$C_NONE: $C_GREEN$PROJECT_DIR/$config_file$C_NONE"
+		cp $PROJECT_DIR/$config_file .config
 	fi
 
 	if [ "$MENUCONFIG" = "1" ]; then
@@ -1309,21 +1616,21 @@ EOM
 	# 2. rm .config
 	# 3. unselect all unwanted configuration that should be removed from (e.g. IPV6,PPP,....)
 
-	echo -e "${C_CYAN}post-overwrite configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+	echo -e "${C_CYAN}post-overwrite configuration${C_NONE}: ${C_GREEN}${PROJECT_DIR}/${config_file}${C_NONE}"
 	cat ${DEFAULT_CONFIG} >> .config
-	echo -e "${C_CYAN}reprocess configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
+	echo -e "${C_CYAN}reprocess configuration${C_NONE}: ${C_GREEN}${PROJECT_DIR}/${config_file}${C_NONE}"
 	make defconfig
-	echo -e "${C_CYAN}copy back configuration${C_NONE}: ${C_GREEN}${RUN_DIR}/${config_file}${C_NONE}"
-	cp .config ${RUN_DIR}/${config_file}
+	echo -e "${C_CYAN}copy back configuration${C_NONE}: ${C_GREEN}${PROJECT_DIR}/${config_file}${C_NONE}"
+	cp .config ${PROJECT_DIR}/${config_file}
 
 	if [ "$MENUCONFIG" = "1" ]; then
 		echo ""
 		clean_up_exit 0
 	fi
 
+	if [ ! "$DEFCONFIG" = "1" ]; then
+		# run make command
 	make clean
-
-	# run make command
 	echo -e $C_CYAN"time make$C_NONE $C_GREEN$BUILD_PARAMS$C_NONE"
 	time -p make -j$(nproc) $BUILD_PARAMS
 	error=$?
@@ -1334,7 +1641,7 @@ EOM
 		global_error=1
 		progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
 
-		echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_config_name}" $C_NONE
+			echo -e $C_RED"Error: build error"$C_NONE "at target" $C_YELLOW "${_cfg_name}" $C_NONE
 
 		if [ "$REBUILD_ON_FAILURE" = "1" ]; then
 			echo -e $C_CYAN".......... rerun build with V=s ........................"$C_NONE
@@ -1351,36 +1658,66 @@ EOM
 	fi
 
 	# check if we have file
-	target_dir="${RUN_DIR}/${buildroot}/bin/targets"
+	target_dir="${PROJECT_DIR}/${buildroot}/bin/targets"
 	if [ ! -d "${target_dir}" ]; then
 		echo -e "${C_RED}Error: build error - generated directory not found${C_NONE}"
 		echo "     ${target_dir}"
+			clean_up_exit 1
+		fi
+
+		# get firmware version
+		fw_version_file="${PROJECT_DIR}/${buildroot}/files/etc/version"
+		if [ -f "$fw_version_file" ]; then
+			fw_version="$(cat $fw_version_file)"
+		else
+			echo -e "${C_RED}Error: build error - version file not found in buildroot/files/etc/version ${C_NONE}"
 		clean_up_exit 1
 	fi
 
 	# copy files to our own output directory
-	mkdir -p ${outdir}/packages ${outdir}/images
+	mkdir -p ${outdir}/packages
+	mkdir -p ${outdir}/images
+
+	echo -e "${C_CYAN}copy version file${C_NONE}"
+	mv ${PROJECT_DIR}/${buildroot}/files/etc/version "${outdir}/" 2>/dev/null
 
 	echo -e "${C_CYAN}copy packages${C_NONE} (if any)"
-	mv ${RUN_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
+	# -> buildroot/bin/packages/<mipsel_24kc>/*
+	mv ${PROJECT_DIR}/${buildroot}/bin/packages/*/* ${outdir}/packages/ 2>/dev/null
 
 	echo -e "${C_CYAN}copy images${C_NONE}"
-	mv ${RUN_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
+	# copy every firmware file and add freifunk version to its name
+	# -> buildroot/bin/target/<ramips>/<mt7621>/*
+	#mv ${PROJECT_DIR}/${buildroot}/bin/targets/*/*/* ${outdir}/images/
+	for src in $(ls -1 ${PROJECT_DIR}/${buildroot}/bin/targets/*/*/freifunk-dresden-*)
+	do
+		basename="$(basename $src)"
+		newname="freifunk-dresden-v${fw_version}-${basename/freifunk-dresden-/}"
+		echo "cp ${src} ${outdir}/images/${newname}"
+		cp ${src} ${outdir}/images/${newname}
+	done
+	unset IFS
 
 	echo -e "${C_CYAN}images created in${C_NONE} ${C_GREEN}${outdir}${C_NONE}"
 
-	# verify presens of all images
-	echo -e "${C_CYAN}verify images${C_NONE} for ${_config_name}"
-	if ! verify_firmware_present "${_config_name}" "${outdir}/images"; then
-		echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
-		error=1
-		global_error=1
-		# clean_up_exit 1
+		# verify presence of all images
+	echo -e "${C_CYAN}verify images${C_NONE} for target [${_cfg_name}]:"
+	if ! verify_firmware_present "${_cfg_name}" "${outdir}/images"; then
+  	echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
+  	error=1
+  	global_error=1
+  	# clean_up_exit 1
 	fi
+
+	echo -e "${C_CYAN}create md5sum/sha256sum ${C_NONE} of ${C_GREEN}${outdir}${C_NONE}"
+  ( cd ${outdir}/images;
+    md5sum * > md5sum.txt;
+    sha256sum * > sha256sum.txt;
+  )
 
 	# write build status which is displayed by "build.sh list"
 	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
-	write_compile_status "${_config_name}" "${error}" "${compile_status_file}"
+	write_compile_status "${_cfg_name}" "${error}" "${compile_status_file}"
 
 	# success status
 	if [ ${error} == 0 ]; then
@@ -1388,13 +1725,19 @@ EOM
 	else
 		progbar_char_array[$((progress_counter-1))]="${PBC_ERROR}"
 	fi
+	fi # if [ ! "$DEFCONFIG" = "1" ]
 
 done
 
-show_progress $progress_counter $progress_max "${progbar_char_array[@]}"
+show_progress ${_cfg_name} $progress_counter $progress_max "${progbar_char_array[@]}"
 sleep 1
 
-echo -e $C_CYAN".......... complete build finished (exitcode ${global_error})........................"$C_NONE
+echo -e "${C_CYAN}.......... complete build finished (exitcode ${global_error})........................${C_NONE}"
+echo -e "${PBC_SUCCESS} - built successfully"
+echo -e "${PBC_ERROR} - Error"
+echo -e "${PBC_NOCONFIG} - target ignored (no configuration)"
+echo -e "${PBC_DISABLED} - target disabled"
+echo -e "${PBC_SKIP} - target skipped (already built)"
 echo ""
 
 clean_up_exit ${global_error}

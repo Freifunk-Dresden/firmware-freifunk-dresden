@@ -24,6 +24,7 @@ docker:init:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: init
   script:
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
@@ -40,13 +41,14 @@ docker:init:
   tags:
     - docker
 
-docker:ar71xx.tiny.lowmem:
+docker:eol:
   except:
     - schedules
     - master
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -54,18 +56,18 @@ docker:ar71xx.tiny.lowmem:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.tiny.lowmem rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh eol.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
-
-docker:ar71xx.generic.lowmem:
+docker:x86-64:
   except:
     - schedules
     - master
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -73,28 +75,9 @@ docker:ar71xx.generic.lowmem:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ar71xx.generic.lowmem rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh x86-64.* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
-
-docker:x86.64.offloader:
-  except:
-    - schedules
-    - master
-    - /^T_/
-    - /^TESTING/
-    - /^R_/
-  stage: build
-  needs: ["docker:init"]
-  script:
-    - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
-    - mkdir -p /mycache/workdir
-    - ln -s /mycache/workdir
-    - ./build.sh x86.64.offloader rerun -j"$(( $(nproc) + 1))"
-  tags:
-  - docker
-
 
 docker:ramips:
   except:
@@ -103,6 +86,7 @@ docker:ramips:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -121,6 +105,7 @@ docker:bcm:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -139,6 +124,7 @@ docker:lantiq:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -157,6 +143,7 @@ docker:ath79:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -168,13 +155,14 @@ docker:ath79:
   tags:
   - docker
 
-docker:ipq40xx:
+docker:ipq:
   except:
     - schedules
     - master
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -182,7 +170,7 @@ docker:ipq40xx:
     - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
     - ln -s /mycache/workdir
-    - ./build.sh ipq40xx.* rerun -j"$(( $(nproc) + 1))"
+    - ./build.sh ipq* rerun -j"$(( $(nproc) + 1))"
   tags:
   - docker
 
@@ -193,6 +181,7 @@ docker:sunxi:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -211,6 +200,7 @@ docker:mpc85xx:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:
@@ -229,6 +219,7 @@ docker:mediatek:
     - /^T_/
     - /^TESTING/
     - /^R_/
+    - /^DEV_/
   stage: build
   needs: ["docker:init"]
   script:

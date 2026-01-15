@@ -3,10 +3,10 @@ dl/
 coredumps/
 logs/
 final_output/
+tmp/
 
 # ignore generated
-upload-infos/fileinfo.json.*
+fw-upload-infos/fileinfo.json.*
 workdir*
-
 *.o
 docs/_build/

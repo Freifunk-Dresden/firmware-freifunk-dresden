@@ -1,77 +1,80 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build freifunk firmware",
-            "type": "shell",
-            "command": "./build.sh ${input:pickTarget}",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always"
-            }
-        },
-        {
-            "label": "upload current file",
-            "type": "shell",
-            "command": "eval scp ${file} root@${input:targetIp}:/$(echo '${relativeFile}' | sed 's#files/[^/]*/##' )",
-            "problemMatcher": [],
-            "presentation": {
-                "echo": true,
-                "reveal": "always"
-            }
-        }
-    ],
-    "inputs" : [
-        {
-            "id" : "targetIp",
-            "description" : "IP address of target",
-            "default" : "192.168.222.1",
-            "type" : "promptString",
-        },
-        {
-            "id" : "pickTarget",
-            "description" : "provides a list with targets",
-            "default" : "list",
-            "type" : "pickString",
-            "options" : [
-"list",
-"all",
-"failed",
-"ar71xx.generic.lowmem",
-"ar71xx.tiny.lowmem",
-"ath79.generic",
-"ath79.generic.gl-mifi",
-"ath79.nand",
-"ath79.nand.22",
-"ath79.small",
-"ath79.small.smallbuffers",
-"ath79.small.tether",
-"ipq40xx.generic",
-"ipq40xx.generic.fritz-tffs-nand",
-"lantiq-xrx200.generic",
-"lantiq-xrx200.small",
-"lantiq-xway.generic",
-"lantiq-xway.small",
-"mediatek.mt7622.generic",
-"mpc85xx.p1020",
-"ramips.mt7620.generic",
-"ramips.mt7620.small",
-"ramips.mt7621.generic",
-"ramips.mt7621.generic.22",
-"ramips.mt7621.offloader",
-"ramips.mt76x8.generic",
-"ramips.rt305x.tiny.lowmem",
-"sunxi.cortexa7.offloader",
-"x86.64.offloader"
-
-]
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build freifunk firmware",
+      "type": "shell",
+      "command": "./build.sh ${input:pickTarget}",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "upload current file",
+      "type": "shell",
+      "command": "eval scp -O ${file} root@${input:targetIp}:/$(echo '${relativeFile}' | sed 's#fw-files/[^/]*/##' )",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "targetIp",
+      "description": "IP address of target",
+      "default": "192.168.222.1",
+      "type": "promptString",
+    },
+    {
+      "id": "pickTarget",
+      "description": "provides a list with targets",
+      "default": "list",
+      "type": "pickString",
+      "options": [
+        "list",
+        "all",
+        "failed",
+        "ath79.22.generic.gl-mifi",
+        "ath79.22.nand",
+        "ath79.22.nand.gl-e750",
+        "ath79.22.small.smallbuffers",
+        "ath79.24.generic",
+        "bcm.bcm53xx.offloader",
+        "eol.ar71xx.18.generic",
+        "eol.ar71xx.18.tiny",
+        "eol.ath79.22.generic",
+        "eol.ath79.22.small",
+        "eol.ramips.18.rt305x.tiny",
+        "eol.sunxi.22.cortexa7",
+        "ipq40xx.22.generic",
+        "ipq40xx.22.generic.fritz",
+        "lantiq-xrx200.22.generic",
+        "lantiq-xrx200.22.small",
+        "lantiq-xway.22.generic",
+        "lantiq-xway.22.small",
+        "mediatek.24.filogic",
+        "mediatek.24.mt7622.generic",
+        "mpc85xx.22.p1010",
+        "mpc85xx.22.p1020",
+        "ramips.22.mt7620.generic",
+        "ramips.22.mt7620.small.usb",
+        "ramips.22.mt7621.offloader",
+        "ramips.22.mt7621.small",
+        "ramips.22.mt76x8.generic",
+        "ramips.22.mt76x8.small",
+        "ramips.24.mt7621.generic",
+        "x86-64.offloader"
+      ]
+    }
+  ]
 }
