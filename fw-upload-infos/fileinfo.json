@@ -2608,32 +2608,25 @@
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-factory.bin",
-      "filename": "freifunk-dresden-v9.0.0-24.10.5-mediatek-mt7622-xiaomi_redmi-router-ax6s-factory.bin",
-      "comment": ""
-    },
-    {
-      "disabled": "0",
-      "name": "",
       "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-initramfs-recovery.itb",
-      "filename": "freifunk-dresden-v9.0.0-24.10.5-mediatek-mt7622-xiaomi_redmi-router-ax6s-initramfs-recovery.itb",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-mediatek-mt7622-xiaomi_redmi-router-ax6s-initramfs-recovery.itb",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.itb",
-      "autoupdate": "1",
-      "model": "xiaomi,redmi-router-ax6s",
-      "model2": "Xiaomi Redmi Router AX6S",
-      "filename": "freifunk-dresden-v9.0.0-24.10.5-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.itb",
+      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-factory.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-ubi-loader.itb",
-      "filename": "freifunk-dresden-v9.0.0-24.10.5-mediatek-mt7622-xiaomi_redmi-router-ax6s-ubi-loader.itb",
+      "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.0-22.03.7-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
