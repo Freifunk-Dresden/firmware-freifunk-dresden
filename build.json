@@ -268,11 +268,6 @@
     "config":"bcm.22.bcm53xx.offloader.cfg",
     "openwrt_variant":"offloader"
   },
-  {
-    "template": "22.03",
-    "name": "mediatek.22.mt7622.generic",
-    "config": "mediatek.22.mt7622.generic.cfg"
-  },
 # ---------- openwrt 22 -- eol (end of life) -----------------------------------
   {
     "disabled": true,
