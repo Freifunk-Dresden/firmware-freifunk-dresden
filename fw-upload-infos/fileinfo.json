@@ -2623,11 +2623,11 @@
       "disabled": "0",
       "name": "",
       "sortkey": "mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.itb",
-      "autoupdate": "1",
+      "autoupdate": "0",
       "model": "xiaomi,redmi-router-ax6s",
       "model2": "Xiaomi Redmi Router AX6S",
       "filename": "freifunk-dresden-v9.0.0-24.10.5-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.itb",
-      "comment": ""
+      "comment": "Achtung: Sysupgrade kann schief gehen (bedingt durch Hersteller Flash-Layout). Siehe openwrt.org !!!"
     },
     {
       "disabled": "0",
