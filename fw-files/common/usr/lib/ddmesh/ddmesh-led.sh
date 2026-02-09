@@ -23,7 +23,7 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 #---- wifi2g
 # "link2" nanostation
 # keep order !! only add new at the end (else other routers might not work anymore)
-for i in wifi wlan wifi2g wlan2g link2 wifi2 wlan-2ghz ${wifi_status_radio2g_phy} usb mt76-phy0
+for i in wifi wlan wifi2g wlan2g link2 wifi2 wlan-2ghz ${wifi_status_radio2g_phy} usb
 do
 	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
@@ -32,7 +32,7 @@ _led_wifi2g="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
 
 #---- wifi5g
 # keep order !! only add new at the end (else other routers might not work anymore)
-for i in wifi5g wlan5g wifi5 wlan-5ghz ${wifi_status_radio5g_phy} mt76-phy1
+for i in wifi5g wlan5g wifi5 wlan-5ghz ${wifi_status_radio5g_phy}
 do
 	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
@@ -42,7 +42,7 @@ _led_wifi5g="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
 #---- status
 # "link1" nanostation
 # keep order !! only add new at the end (else other routers might not work anymore)
-for i in system info power wps usb link1 status blue:power
+for i in system info power wps usb link1 status
 do
 	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
@@ -81,7 +81,7 @@ case "$platform" in
 	lantiq|ipq40xx)
 		case  "$boardname" in
 			*)
-          test -z "${_led_status}" && _led_status="$(uci -q get system.led_dsl.sysfs)"
+					test -z "${_led_status}" && _led_status="$(uci -q get system.led_dsl.sysfs)"
 					;;
 		esac
 		;;
