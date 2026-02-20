@@ -1,0 +1,66 @@
+Debian 13:
+Voraussetzung: es läuft kein tftp Server auf port 69
+Ziel: Recover Xiaomi redme ax6s via tftp bootloader und Serial port
+URL: https://openwrt.org/toh/xiaomi/ax3200
+     https://github.com/mikeeq/xiaomi_ax3200_openwrt#uart-flash
+
+
+> sudo su
+> apt install tcpdump
+> apt install dnsmasq
+
+# tftp via dnsmasq
+dnsmasq --no-daemon -i eth1 --dhcp-range=192.168.31.1,192.168.31.99 --enable-tftp --tftp-root=/srv/tftp --dhcp-boot=C0A81F01.img -p0 -K --log-dhcp --bootp-dynamic
+
+# Verzeichnisrechte anpassen, damit man als normaler Nutzer die Firmware kopieren kann
+> chmod 777 /srv/tftp
+
+# Linux erwartete IP addresse geben
+> ip addr add 192.168.31.100/24 dev eth0
+
+# tftpboot Firmware kopieren. diese wird im uboot mit "tftpboot" nur in den ram geladen.
+> cp freifunk-dresden-24.10.5-mediatek-mt7622-xiaomi_redmi-router-ax6s-initramfs-recovery.itb /srv/tftp/C0A81F01.img
+
+# wenn recovery ram image geladen wurde:
+# ubi-loader kopieren und flashen
+> scp -O freifunk-dresden-24.10.5-mediatek-mt7622-xiaomi_redmi-router-ax6s-ubi-loader.itb root@192.168.1.1:/tmp/ubi.bin
+ 
+
+### serial console ###
+
+> dmesg
+[    0.906725] Creating 10 MTD partitions on "spi0.0":
+[    0.911606] 0x000000000000-0x000000080000 : "Preloader"
+[    0.917760] 0x000000080000-0x0000000c0000 : "ATF"
+[    0.922993] 0x0000000c0000-0x000000140000 : "u-boot"
+[    0.928803] 0x000000140000-0x000000180000 : "u-boot-env"
+[    0.934665] 0x000000180000-0x0000001c0000 : "bdata"
+[    0.940184] 0x0000001c0000-0x000000240000 : "factory"
+[    0.946119] OF: Bad cell count for /spi@1100d000/flash@0/partitions
+[    0.952701] 0x000000240000-0x000000280000 : "crash"
+[    0.958171] 0x000000280000-0x0000002c0000 : "crash_log"
+[    0.963939] 0x0000002c0000-0x000000340000 : "ubi-loader"
+[    0.970108] 0x000000340000-0x0000075c0000 : "ubi"
+
+
+> mtd erase ubi-loader
+> mtd write ubi.bin ubi-loader
+> reboot -f
+
+
+# nach 3x boot hat router eine temporary nummer
+
+# sysupgrade
+HOST:   scp -O freifunk-dresden-24.10.5-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.itb root@192.168.222.1:/tmp/sysupgrade.bin
+router: cd /tmp; sysupgrade -n sysupgrade.bin
+
+
+
+
+
+
+
+
+
+
+

@@ -47,6 +47,7 @@ start() {
 
   # -- start: firewall delay
 	# wait for wifi before setting firewall, because it would be run parallel
+  # on openwrt 24 this is still phy0 in sysfs (not wl0 from /etc/board.json)
 	[ -d /sys/class/ieee80211/phy0 ] && wait_for_wifi
 
 	# need to wait, until async netifd has finished. (there is no event/condition to wait for)

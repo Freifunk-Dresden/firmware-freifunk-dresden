@@ -66,6 +66,7 @@ m3tags:init:
     # ensure that we have no old data. This is important when
     # generating download.json. Else all old openwrt images would be
     # included and mixed
+
     - echo "global FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "global FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "global FF_BUILD_TAG = [${FF_BUILD_TAG}]"
@@ -90,6 +91,7 @@ m3tags:init:
     # dont delete dl, it is not so important to have different old version for
     # one packges, but it will reduce download overhead from external servers
     # every night. so just only delete workdirs to always have a clean build
+    - rm -rf ~/mycache/workdir/_output
     - test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl
     - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir
 
