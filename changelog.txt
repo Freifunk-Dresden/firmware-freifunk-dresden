@@ -7,6 +7,7 @@ openwrt                   - add support for openwrt 24.10.5
                           - complete firewall rework (iptables -> netfilter)
                           - fix compile errors because of comiler updates
                           - revert openwrt changes to keep wifi mesh working and compatible
+                          - fix openwrt 24 wireless config generation
 
 build environment         - add support for different openwrt versions
                           - add build.json templates

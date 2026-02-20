@@ -8,8 +8,8 @@ docker2:build-all:
   image: openwrt-docker-build:latest
   stage: build
   script:
+    - rm -rf ./workdir/_output
     - ./build.sh all rerun -j"$(( $(nproc) + 1))"
     - ./gen-upload.sh all
   tags:
   - docker2
- 
