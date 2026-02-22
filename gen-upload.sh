@@ -160,15 +160,11 @@ mkdir -p ${final_output_dir}
 
 gen_download_json_start()
 {
-	output_path="$1" # output path "firmware/4.2.15"
+	output_path="$1" # output path "firmware"
 	fw_date="$2" # build date
 	fw_branch="$3" # ddmesh repository branch or tag
 	fw_rev="$4" # ddmesh git hash
 
-# diese version wird von der alten firmware geprueft, um ein autoupdate oder ein
-# update via button zu erlauben.
-# neue versionen prüfen auf die firmware version innerhalb ihren eintrages.
-	fw_version="9.0.0"
 
 	printf "${C_YELLOW}create download.json${C_NONE} [$output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME]\n"
 
@@ -176,7 +172,23 @@ gen_download_json_start()
 
 	printf "{\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"json_version\":\"2\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+
+# das feld "firmware_version" wird von der alten firmware geprueft, um ein autoupdate oder ein
+# update via button zu erlauben.
+# neue versionen prüfen auf die firmware version innerhalb eines firmware eintrages. es können somit mit
+# einem "build" unterschiedliche versionen wie 8.2.7 und 9.0.0 entstehen, wenn für router keine neuere firmware version
+# möglich ist, aber das buildsystem für neue geräte eine höhere version braucht.
+# Die beiden folgenden Zeilen sind nur so lange notwendig, bis alle 8.x.x (openwrt 22) firmware router, für die es eine 9.0.0 (openwrt 24)
+# gibt, aktualisiert wurden.
+# TODO: diese beiden müssen dann rausgenommen werden !!!!!!
+  printf "    ${C_RED} gen-upload.sh temporär für upgrade auf 9.0.0 angepasst (hardcoded)\n"
+  printf "    -> muß wieder entfernt werden, wenn für alle openwrt 22 router, wo ein upgrade auf 24 möglich ist,\n"
+  printf "    aktualisert wurden${C_NONE}\n"
+  #--- begin --- block loeschen -
+	fw_version="9.0.0"
   printf " \"firmware_version\":\"$fw_version\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+  #--- end -----
+
 	printf " \"firmware_date\":\"$fw_date\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"firmware_branch\":\"$fw_branch\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 	printf " \"firmware_rev\":\"$fw_rev\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
@@ -206,7 +218,7 @@ isFirstFileInfo=1
 gen_download_json_add_data()
 {
 	output_path="$1" 	# output path "final_output/"
-	subpath="$2" 		# relativ path to firmware "firmware/8.3.0/ramips.24.mt7621.generic"
+	subpath="$2" 		# relativ path to firmware "firmware/ramips.24.mt7621.generic"
 	file_filter="$3" 	# file filter "*.{bin,trx,img,itb,dlf,gz}"
 	fw_version="$4" # freifunk firmware version
 
@@ -395,13 +407,6 @@ gen_download_json_end()
 }
 
 
-#p=/tmp
-#gen_download_json_start $p 4.2.15 master
-#gen_download_json_add_data $p /home/freifunk/upload-firmware/files/4.2.15 ar71xx/generic "*.{bin,trx,itb,img,dlf,gz}"
-#gen_download_json_end $p
-#printf "ok\n"
-#exit
-
 #################################################################################################
 # main script start
 #################################################################################################
@@ -467,16 +472,16 @@ export MKHASH=$(find workdir/*/staging_dir -name mkhash -print -quit)
 # I generate my own package list. so find the script
 IPKG_MAKE_SCRIPT_SH=$(find workdir/*/scripts -name ipkg-make-index.sh -print -quit)
 
-# run through all openwrt version (targets may be created for different openwrt versions)
+# run through all openwrt version (targets may be created for different openwrt/firmware versions)
 for config  in $(ls -1 $PROJECT_DIR/${GENERATED_FIRMWARE_OUTPUT_DIR})
 do
 	printf "${C_YELLOW}>>>>>>>> firmware config:${C_NONE}[${C_GREEN}${config}${C_NONE}]\n"
 
 	# -> final_output/firmware/8.2.5/ramips.24.mt7621.generic
-	target_dir=$final_output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/${config}
+	target_dir=$final_output_dir/${OUTPUT_FIRMWARE_SUB_DIR}/${config}
 	mkdir -p $target_dir
 
-	# _output contains several platforms but only for exactly one freifunk firmware version
+	# _output contains several platforms,  but only exactly one freifunk firmware version
 	fw_version=$(cat ${GENERATED_FIRMWARE_OUTPUT_DIR}/${config}/${GENERATED_FIRMWARE_VERSION_FILE})
 	if [ -z "$fw_version" ]; then
 		printf "ERROR: firmware version not detected (invalid path)\n"
@@ -533,7 +538,7 @@ do
     gzip -f Packages
   )
 
-	gen_download_json_add_data "$final_output_dir" "${OUTPUT_FIRMWARE_SUB_DIR}/$fw_version/${config}" "$filefilter" ${fw_version}
+	gen_download_json_add_data "$final_output_dir" "${OUTPUT_FIRMWARE_SUB_DIR}/${config}" "$filefilter" ${fw_version}
 
 
 	printf -- "\n=========================================================\n\n"
