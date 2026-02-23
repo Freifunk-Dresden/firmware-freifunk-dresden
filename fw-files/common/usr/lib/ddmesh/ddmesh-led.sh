@@ -23,7 +23,7 @@ eval $(/usr/lib/ddmesh/ddmesh-utils-wifi-info.sh)
 #---- wifi2g
 # "link2" nanostation
 # keep order !! only add new at the end (else other routers might not work anymore)
-for i in wifi wlan wifi2g wlan2g link2 wifi2 wlan-2ghz ${wifi_status_radio2g_phy} usb
+for i in wifi wlan wifi2g wlan2g link2 wifi2 wlan-2ghz ${wifi_status_radio2g_phy} usb mt76-phy0
 do
 	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
@@ -32,7 +32,7 @@ _led_wifi2g="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
 
 #---- wifi5g
 # keep order !! only add new at the end (else other routers might not work anymore)
-for i in wifi5g wlan5g wifi5 wlan-5ghz ${wifi_status_radio5g_phy}
+for i in wifi5g wlan5g wifi5 wlan-5ghz ${wifi_status_radio5g_phy} mt76-phy1
 do
 	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
@@ -42,7 +42,7 @@ _led_wifi5g="$(echo $tmp | sed -n '1s#/sys/class/leds/##p')"
 #---- status
 # "link1" nanostation
 # keep order !! only add new at the end (else other routers might not work anymore)
-for i in system info power wps usb link1 status
+for i in system info power wps usb link1 status blue:power
 do
 	tmp="$(ls -d /sys/class/leds/*${i} 2>/dev/null | sed -n '1p')"
 	test -n "$tmp" && break
@@ -100,15 +100,30 @@ case "$platform" in
 					_led_status="orange:status"
 					_led_flag_status_done="off"
 					;;
+			"genexis,pulse-ex400")
+					_led_wifi2g="green:wlan-2ghz"
+					_led_wifi5g="green:wlan-5ghz"
+					_led_status="green:status"
+					;;
 		esac
 		;;
 
 	mediatek)
 		case "$boardname" in
 			"cudy,ap3000outdoor-v1")
-					_led_wifi2g="green:power"
+					_led_wifi2g="red:status"
 					_led_wifi5g=""
-					_led_status="red:status"
+					_led_status="green:power"
+					;;
+			"cudy,tr3000-v1")
+					_led_wifi2g="red:power"
+					_led_wifi5g=""
+					_led_status="white:status"
+					;;
+			"cudy,m3000-v1")
+					_led_wifi2g="red:wan-online"
+					_led_wifi5g=""
+					_led_status="white:wan-online"
 					;;
 		esac
 		;;
