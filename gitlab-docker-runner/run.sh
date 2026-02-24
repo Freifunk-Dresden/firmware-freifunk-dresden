@@ -5,4 +5,5 @@
 echo "using volume: openwrt-docker-build for builds (keep dl and workdir in volume)"
 docker run --user "$(id -u):$(id -g)" --name test-container --rm -it -v openwrt-docker-build:/builds freifunkdresden/openwrt-docker-build /bin/bash
 
-
+# or build within test container
+# docker run --rm -it /bin/bash

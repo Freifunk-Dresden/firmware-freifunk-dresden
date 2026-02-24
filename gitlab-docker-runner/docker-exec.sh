@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# execute bash in running gitlab-runner container CREATED BY GITLAB using docker image
+# execute bash in running gitlab-runner container CREATED BY GITLAB which uses the docker image
 # that I have created..
 # gitlab-runner docker container was created by Gitlab with volume
 # "-v gitlab-runner-config:/etc/gitlab-runner".
