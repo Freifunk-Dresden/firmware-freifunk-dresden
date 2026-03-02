@@ -19,7 +19,7 @@ RUN apt-get install -y  python3 python3-pip python3-distutils-extra python3-stan
 RUN echo "deb http://archive.debian.org/debian/ stretch contrib main non-free" > /etc/apt/sources.list.d/debian-openwrt18-packets.list; \
     apt update && apt install -y python2.7
 
-# gitlab-runner uses /builds and /caches directories per default.
+# gitlab-runner uses /builds and /caches directories per default when it clones repo and starts build process.
 #
 # chown to a new created user here does not work at all.
 # gitlab starts a new container with a user (id 1000) .

@@ -11,7 +11,7 @@ This allows to create openwrt-docker-build with bind-mounted
 (max runner uses this way)
 
   2. install gitlab-runner as docker image, that has gitlab-runner tools
-in container. 
+in container.
 * gitlab docker (which runs gitlab-runner-helper) uses host dockerd (socket) to create more container
 * configuration lays within this container (run `docker exec -it gitlab-runner bash` to access it)
 * /mycache is mounted to /root/mycache (/ is not working). This is also on host available, because docker within gitlab-runner
@@ -25,8 +25,11 @@ docker run -d --name gitlab-runner --restart always \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v gitlab-runner-config:/etc/gitlab-runner \
     gitlab/gitlab-runner:latest
-~~~    
-    
+~~~
+
+If gitlab runner docker container already runs, /etc/gitlab-runner is already volume mounted and contains the runner configuration.
+See configuration file for more infos.
+
 ## Register docker runner with gitlab
  https://docs.gitlab.com/runner/register/#docker
 
@@ -43,12 +46,12 @@ docker run --rm -it -v gitlab-runner-config:/etc/gitlab-runner gitlab/gitlab-run
 docker exec -it gitlab-runner bash
 ~~~
 
-add to [runners.docker] to allow loading images when those are not present on any server 
+add to [runners.docker] to allow loading images when those are not present on any server
 (only generated locally) but .gitlab-ci.yml has a reference to a remote docker registry
 `pull_policy = ["if-not-present"]` # or `pull_policy = "if-not-present"` if service does not start (old ubuntu)
 
 Then you need to restart either the container (in gitlab-runner runs as container) or on natively installed runner
-restart with `gitlab-runner restart`.  
+restart with `gitlab-runner restart`.
 You may check if container or gitlab-runner service is running `service gitlab-runner status`.
 
 
@@ -67,7 +70,7 @@ You may check if container or gitlab-runner service is running `service gitlab-r
     - `mkdir -p /mycache/dl /mycache/workdir`
     - `ln -s /mycache/dl && ln -s /mycache/dl`
 
- 
+
 
 
 
