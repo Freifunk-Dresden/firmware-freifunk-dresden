@@ -11,12 +11,6 @@ POST_SCRIPT="/etc/ddmesh/post-setup-wifi.sh"
 
 setup_wireless()
 {
- # indirectly create /etc/board.json (if not already)
- if [ ! -f /etc/board.json ]; then
-  rm -f /etc/config/wireless
-  wifi config
- fi
-
  # clean wireless config (we create it from scratch)
  rm -f /etc/config/wireless
  touch /etc/config/wireless
