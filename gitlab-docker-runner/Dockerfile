@@ -10,11 +10,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tz
 RUN apt-get install -y nodejs git build-essential cmake devscripts debhelper \
                 python2 python3 dh-python libelf-dev libssl-dev libncurses5-dev unzip \
                 gawk zlib1g-dev subversion gcc-multilib flex gettext curl \
-                wget time rsync jq \
+                wget time rsync jq swig \
                 libjson-c-dev libjsoncpp-dev \
                 python3-pip pypy-scandir \
-		automake autoconf m4 \
-		vim tmux \
+                automake autoconf m4 \
+                vim tmux \
              && apt-get clean
 
 # gitlab-runner uses /builds and /caches directories per default.
