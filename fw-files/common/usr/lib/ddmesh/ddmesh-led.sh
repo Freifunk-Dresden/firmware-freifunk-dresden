@@ -101,8 +101,6 @@ case "$platform" in
 					_led_flag_status_done="off"
 					;;
 			"genexis,pulse-ex400")
-					_led_wifi2g="green:wlan-2ghz"
-					_led_wifi5g="green:wlan-5ghz"
 					_led_status="green:status"
 					;;
 		esac
@@ -111,9 +109,9 @@ case "$platform" in
 	mediatek)
 		case "$boardname" in
 			"cudy,ap3000outdoor-v1")
-					_led_wifi2g="red:status"
+					_led_wifi2g="red:power"
 					_led_wifi5g=""
-					_led_status="green:power"
+					_led_status="green:status"
 					;;
 			"cudy,tr3000-v1")
 					_led_wifi2g="red:power"
