@@ -209,12 +209,42 @@ setup_ignored_nodes() {
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 }
 
+setup_mangle_rules()
+{
+	logger -s -t $TAG "setup_mangle_rules"
+
+  # ping to 10.201.0.0/16 should use the same outgoing interface.
+  # routing rules will redirect marked packets to the correct interface
+  #$NFT flush chain inet fw4 ddmesh_mangle_input
+  $NFT flush chain inet fw4 ddmesh_mangle_prerouting
+  $NFT flush chain inet fw4 ddmesh_mangle_output
+
+  # set a connection mark (remembers mark for later marking outgoing icmp reply)
+  $NFT add rule inet fw4 ddmesh_mangle_prerouting iifname "mesh2g-80211s" icmp type echo-request ct mark set 1001 counter
+  $NFT add rule inet fw4 ddmesh_mangle_prerouting ip protocol icmp ct mark 1001 counter comment "\"ct mark\""
+  $NFT add rule inet fw4 ddmesh_mangle_prerouting iifname "mesh5g-80211s" icmp type echo-request ct mark set 1002 counter
+  $NFT add rule inet fw4 ddmesh_mangle_prerouting ip protocol icmp ct mark 1002 counter comment "\"ct mark\""
+
+  # copy connection mark to fwmark (before routing desision)
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp counter meta mark set ct mark
+
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp ct mark 1001 counter comment "\"ct mark\""
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp meta mark 1001 counter comment "\"meta mark\""
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp oifname mesh2g-80211s counter comment "\"interface\""
+
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp ct mark 1002 counter comment "\"ct mark\""
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp meta mark 1002 counter comment "\"meta mark\""
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp oifname mesh5g-80211s counter comment "\"interface\""
+
+}
+
 case "$1" in
 	restart_firewall)
 		setup_ipv6_rules
 #		setup_blocked_iface_ip
 		setup_nat_rules
 		setup_ignored_nodes
+    setup_mangle_rules
 
 		;;
 

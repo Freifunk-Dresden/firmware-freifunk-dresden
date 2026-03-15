@@ -20,3 +20,7 @@
 
 #batman
 64	bat_route
+
+200     icmp2g
+201     icmp5g
+
