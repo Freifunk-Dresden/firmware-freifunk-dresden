@@ -1029,7 +1029,7 @@ config rule
 config rule
 	option name 'Allow-icmp-mesh'
 	option src 'mesh'
-	option src_ip '10.200.0.0/16'
+	option src_ip '10.200.0.0/15'
 	option proto 'icmp'
 	option family 'ipv4'
 	option target 'ACCEPT'

@@ -18,10 +18,11 @@ ip rule $1 to 172.16.0.0/12 table main priority 320
 ip rule add to $_ddmesh_wireguard_network/$_ddmesh_netpre lookup main prio 330
 
 # for 10.201.0.0/16 only: redirect icmp reply to interface where request came in
-ip rule add fwmark 1001 lookup icmp2g prio 100
-ip route add ${_ddmesh_linknet} dev mesh2g-80211s table icmp2g
-ip rule add fwmark 1002 lookup icmp5g prio 100
-ip route add ${_ddmesh_linknet} dev mesh5g-80211s table icmp5g
+# fwmark must be hex!!!
+ip rule add fwmark 0x1001 lookup icmp2g prio 100
+ip route add default dev mesh2g-80211s table icmp2g
+ip rule add fwmark 0x1002 lookup icmp5g prio 100
+ip route add default dev mesh5g-80211s table icmp5g
 
 # byepass wifi2
 ip rule $1 to $_ddmesh_wifi2net table main priority 350
