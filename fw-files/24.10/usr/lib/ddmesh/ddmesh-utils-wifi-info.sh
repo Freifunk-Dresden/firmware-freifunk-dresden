@@ -2,14 +2,6 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
-. /usr/share/libubox/jshn.sh
-
-if [ ! -f /etc/board.json ]; then
-  echo "ERROR: /etc/board.json not generated"
-  exit 1
-fi
-
-
 mode="$(uci -q get ddmesh.network.wifi5g_mode)"
 [ "$mode" = "normal" ] && ifname5g="wifi5ap" || ifname5g="wifi-client5g"
 
@@ -28,14 +20,13 @@ radio5g_airtime=""
 radio5g_mode_ap=""
 radio5g_mode_mesh=""
 
-# https://github.com/json-path/JsonPath
 get_phy_list()
 {
   local phy_list=""
-  json_init
-  json_load "$(cat /etc/board.json)"
-  json_select 'wlan'
-  json_get_keys phy_list
+  for p in $(ls -1 /sys/class/ieee80211)
+  do
+    phy_list="$phy_list $p"
+  done
   echo "$phy_list"
 }
 

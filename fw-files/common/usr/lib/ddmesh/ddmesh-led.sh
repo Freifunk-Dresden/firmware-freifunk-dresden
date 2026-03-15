@@ -81,7 +81,7 @@ case "$platform" in
 	lantiq|ipq40xx)
 		case  "$boardname" in
 			*)
-					_led_status="$(uci -q get system.led_dsl.sysfs)"
+          test -z "${_led_status}" && _led_status="$(uci -q get system.led_dsl.sysfs)"
 					;;
 		esac
 		;;
