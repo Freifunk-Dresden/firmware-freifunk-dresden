@@ -5,10 +5,25 @@
 # set when called from commmand line
 test -z "$_ddmesh_ip" && eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
 
+/usr/lib/ddmesh/ddmesh-utils-network-info.sh update
+eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh all)
+
 setup()
 { # $1 - add | del
 
 # priority 99 is used for ping gateway check
+
+# for 10.201.0.0/16 only: redirect icmp reply to interface where request came in
+# fwmark must be hex!!!
+IFS=' '
+mark=1000
+for ifname in ${wifi_mesh2g_ifname} ${wifi_mesh5g_ifname} ${mesh_vlan_ifname} ${mesh_lan_ifname} ${mesh_wan_ifname}
+do
+  mark=$(( mark + 1 ))
+  ip rule add fwmark "0x${mark}" lookup "icmp0x${mark}" prio 200
+  ip route add default dev ${ifname} table "icmp0x${mark}"
+done
+unset IFS
 
 ip rule $1 to 169.254.0.0/16 table main priority 300
 
@@ -16,13 +31,6 @@ ip rule $1 to 169.254.0.0/16 table main priority 300
 ip rule $1 to 192.168.0.0/16 table main priority 310
 ip rule $1 to 172.16.0.0/12 table main priority 320
 ip rule add to $_ddmesh_wireguard_network/$_ddmesh_netpre lookup main prio 330
-
-# for 10.201.0.0/16 only: redirect icmp reply to interface where request came in
-# fwmark must be hex!!!
-ip rule add fwmark 0x1001 lookup icmp2g prio 100
-ip route add default dev mesh2g-80211s table icmp2g
-ip rule add fwmark 0x1002 lookup icmp5g prio 100
-ip route add default dev mesh5g-80211s table icmp5g
 
 # byepass wifi2
 ip rule $1 to $_ddmesh_wifi2net table main priority 350

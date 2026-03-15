@@ -221,21 +221,43 @@ setup_mangle_rules()
   #$NFT flush chain inet fw4 ddmesh_output
 
   # set a connection mark (remembers mark for later marking outgoing icmp reply)
-  $NFT add rule inet fw4 ddmesh_mangle_prerouting iifname "mesh2g-80211s" icmp type echo-request ct mark set 0x1001 counter
-  #$NFT add rule inet fw4 ddmesh_mangle_prerouting ip protocol icmp ct mark 0x1001 counter comment "\"ct mark\""
-  $NFT add rule inet fw4 ddmesh_mangle_prerouting iifname "mesh5g-80211s" icmp type echo-request ct mark set 0x1002 counter
-  #$NFT add rule inet fw4 ddmesh_mangle_prerouting ip protocol icmp ct mark 0x1002 counter comment "\"ct mark\""
+  IFS=' '
+  mark=1000
+  for ifname in ${wifi_mesh2g_ifname} ${wifi_mesh5g_ifname} ${mesh_vlan_ifname} ${mesh_lan_ifname} ${mesh_wan_ifname}
+  do
+    mark=$(( mark + 1 ))
+    $NFT add rule inet fw4 ddmesh_mangle_prerouting iifname "${ifname}" icmp type echo-request ct mark set "0x${mark}" counter
+  $NFT add rule inet fw4 ddmesh_mangle_prerouting ip protocol icmp ct mark "0x${mark}" counter comment "\"ct mark\""
 
-  # copy connection mark to fwmark (before routing desision)
-  $NFT add rule inet fw4 ddmesh_mangle_output ct mark 0x1001 mark set 0x1001 counter
-  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp ct mark 0x1001 counter comment "\"ct mark\""
-  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp meta mark 0x1001 counter comment "\"meta mark\""
-  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp oifname mesh2g-80211s counter comment "\"interface\""
+    # copy connection mark to fwmark (before routing desision)
+    $NFT add rule inet fw4 ddmesh_mangle_output ct mark "0x${mark}" mark set "0x${mark}" counter
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp ct mark "0x${mark}" counter comment "\"ct mark\""
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp meta mark "0x${mark}" counter comment "\"meta mark\""
+  $NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp oifname "${ifname}" counter comment "\"interface\""
 
-  $NFT add rule inet fw4 ddmesh_mangle_output ct mark 0x1002 mark set 0x1002 counter
-  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp ct mark 0x1002 counter comment "\"ct mark\""
-  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp meta mark 0x1002 counter comment "\"meta mark\""
-  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp oifname mesh5g-80211s counter comment "\"interface\""
+  $NFT add rule inet fw4 ddmesh_output ip protocol icmp ct mark "0x${mark}" counter comment "\"ct mark\""
+  $NFT add rule inet fw4 ddmesh_output ip protocol icmp meta mark "0x${mark}" counter comment "\"meta mark\""
+  $NFT add rule inet fw4 ddmesh_output ip protocol icmp oifname "${ifname}" counter comment "\"interface\""
+
+  done
+  unset IFS
+
+#  # set a connection mark (remembers mark for later marking outgoing icmp reply)
+#  $NFT add rule inet fw4 ddmesh_mangle_prerouting iifname "mesh2g-80211s" icmp type echo-request ct mark set 0x1001 counter
+#  #$NFT add rule inet fw4 ddmesh_mangle_prerouting ip protocol icmp ct mark 0x1001 counter comment "\"ct mark\""
+#  $NFT add rule inet fw4 ddmesh_mangle_prerouting iifname "mesh5g-80211s" icmp type echo-request ct mark set 0x1002 counter
+#  #$NFT add rule inet fw4 ddmesh_mangle_prerouting ip protocol icmp ct mark 0x1002 counter comment "\"ct mark\""
+
+#  # copy connection mark to fwmark (before routing desision)
+#  $NFT add rule inet fw4 ddmesh_mangle_output ct mark 0x1001 mark set 0x1001 counter
+#  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp ct mark 0x1001 counter comment "\"ct mark\""
+#  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp meta mark 0x1001 counter comment "\"meta mark\""
+#  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp oifname mesh2g-80211s counter comment "\"interface\""
+#
+#  $NFT add rule inet fw4 ddmesh_mangle_output ct mark 0x1002 mark set 0x1002 counter
+#  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp ct mark 0x1002 counter comment "\"ct mark\""
+#  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp meta mark 0x1002 counter comment "\"meta mark\""
+#  #$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp oifname mesh5g-80211s counter comment "\"interface\""
 
   #$NFT add rule inet fw4 ddmesh_output ip protocol icmp ct mark 0x1001 counter comment "\"ct mark\""
   #$NFT add rule inet fw4 ddmesh_output ip protocol icmp meta mark 0x1001 counter comment "\"meta mark\""
