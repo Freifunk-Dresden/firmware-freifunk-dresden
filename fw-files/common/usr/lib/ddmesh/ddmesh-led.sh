@@ -103,6 +103,9 @@ case "$platform" in
 			"genexis,pulse-ex400")
 					_led_status="green:status"
 					;;
+			"asus,rt-ax53u")
+					_led_wifi2g="mt76-phy0"
+					_led_wifi5g="mt76-phy1"
 		esac
 		;;
 
