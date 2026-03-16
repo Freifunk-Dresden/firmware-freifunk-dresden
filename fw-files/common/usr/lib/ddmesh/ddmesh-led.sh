@@ -106,6 +106,7 @@ case "$platform" in
 			"asus,rt-ax53u")
 					_led_wifi2g="mt76-phy0"
 					_led_wifi5g="mt76-phy1"
+					;;
 		esac
 		;;
 
