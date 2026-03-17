@@ -2182,30 +2182,6 @@
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "ipq40xx-generic-linksys_mr8300-initramfs-zImage.itb",
-      "filename": "freifunk-dresden-v9.0.0-24.10.5-ipq40xx-generic-linksys_mr8300-initramfs-zImage.itb",
-      "comment": ""
-    },
-    {
-      "disabled": "0",
-      "name": "",
-      "sortkey": "ipq40xx-generic-linksys_mr8300-squashfs-factory.bin",
-      "filename": "freifunk-dresden-v9.0.0-24.10.5-ipq40xx-generic-linksys_mr8300-squashfs-factory.bin",
-      "comment": ""
-    },
-    {
-      "disabled": "0",
-      "name": "",
-      "sortkey": "ipq40xx-generic-linksys_mr8300-squashfs-sysupgrade.bin",
-      "autoupdate": "0",
-      "model": "",
-      "model2": "",
-      "filename": "freifunk-dresden-v9.0.0-24.10.5-ipq40xx-generic-linksys_mr8300-squashfs-sysupgrade.bin",
-      "comment": ""
-    },
-    {
-      "disabled": "0",
-      "name": "",
       "sortkey": "lantiq-xrx200-avm_fritz3370-rev2-hynix-initramfs-kernel.bin",
       "filename": "freifunk-dresden-v9.0.0-22.03.7-lantiq-xrx200-avm_fritz3370-rev2-hynix-initramfs-kernel.bin",
       "comment": ""
@@ -3523,6 +3499,71 @@
       "name": "",
       "sortkey": "x86-64-generic-squashfs-rootfs.img.gz",
       "filename": "freifunk-dresden-v9.0.0-24.10.5-x86-64-generic-squashfs-rootfs.img.gz",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ipq40xx-generic-zte_mf289f-initramfs-zImage.itb",
+      "filename": "freifunk-dresden-v9.0.0-24.10.5-ipq40xx-generic-zte_mf289f-initramfs-zImage.itb",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ipq40xx-generic-zte_mf289f-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.0-24.10.5-ipq40xx-generic-zte_mf289f-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-glinet_gl-mt6000-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.5-mediatek-filogic-glinet_gl-mt6000-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-glinet_gl-mt6000-preloader.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.5-mediatek-filogic-glinet_gl-mt6000-preloader.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-glinet_gl-mt6000-squashfs-factory.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.5-mediatek-filogic-glinet_gl-mt6000-squashfs-factory.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-glinet_gl-mt6000-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.0-24.10.5-mediatek-filogic-glinet_gl-mt6000-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ramips-mt7621-zyxel_wsm20-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.0-24.10.5-ramips-mt7621-zyxel_wsm20-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "ramips-mt7621-zyxel_wsm20-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.0-24.10.5-ramips-mt7621-zyxel_wsm20-squashfs-sysupgrade.bin",
       "comment": ""
     }
   ]
