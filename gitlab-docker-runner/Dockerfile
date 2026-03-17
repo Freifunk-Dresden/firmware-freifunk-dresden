@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM debian:13
 LABEL org.opencontainers.image.authors="stephan@freifunk-dresden.de"
 
 RUN apt-get update && apt-get full-upgrade -y
@@ -7,17 +7,19 @@ RUN apt-get update && apt-get full-upgrade -y
 # to avoid blocking tzdata must be installed differently
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
 
-RUN apt-get install -y nodejs git build-essential cmake devscripts debhelper \
-                python2 python3 dh-python libelf-dev libssl-dev libncurses5-dev unzip \
-                gawk zlib1g-dev subversion gcc-multilib flex gettext curl \
-                wget time rsync jq swig \
-                libjson-c-dev libjsoncpp-dev \
-                python3-pip pypy-scandir \
-                automake autoconf m4 \
-                vim tmux \
-             && apt-get clean
+RUN apt-get install -y  python3 python3-pip python3-distutils-extra python3-standard-pipes \
+                        python-is-python3 \
+                        libssl-dev libncurses5-dev unzip gawk zlib1g-dev subversion \
+                        nodejs git build-essential devscripts debhelper \
+                        gcc-multilib flex gettext curl wget time rsync jq tmux vim \
+                        pkg-config bison flex bc lzop swig \
+                        && apt-get clean
 
-# gitlab-runner uses /builds and /caches directories per default.
+# install python2.7 for openwrt 18 targets
+RUN echo "deb http://archive.debian.org/debian/ stretch contrib main non-free" > /etc/apt/sources.list.d/debian-openwrt18-packets.list; \
+    apt update && apt install -y python2.7
+
+# gitlab-runner uses /builds and /caches directories per default when it clones repo and starts build process.
 #
 # chown to a new created user here does not work at all.
 # gitlab starts a new container with a user (id 1000) .

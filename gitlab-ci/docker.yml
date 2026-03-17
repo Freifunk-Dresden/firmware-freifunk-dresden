@@ -31,8 +31,8 @@ docker:init:
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - rm -rf /mycache/workdir/_output
 
@@ -55,8 +55,8 @@ docker:eol:
   needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - ./build.sh eol.* rerun -j"$(( $(nproc) + 1))"
   tags:
@@ -74,8 +74,8 @@ docker:x86-64:
   needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - ./build.sh x86-64.* rerun -j"$(( $(nproc) + 1))"
   tags:
@@ -93,8 +93,8 @@ docker:ramips:
   needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
@@ -112,8 +112,8 @@ docker:bcm:
   needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - ./build.sh bcm.* rerun -j"$(( $(nproc) + 1))"
   tags:
@@ -131,8 +131,8 @@ docker:lantiq:
   needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
   tags:
@@ -150,8 +150,8 @@ docker:ath79:
   needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))" V=s
   tags:
@@ -169,8 +169,8 @@ docker:ipq:
   needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - ./build.sh ipq* rerun -j"$(( $(nproc) + 1))"
   tags:
@@ -188,8 +188,8 @@ docker:mpc85xx:
   needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
@@ -207,8 +207,8 @@ docker:mediatek:
   needs: ["docker:init"]
   script:
     - mkdir -p /mycache/dl
-    - ln -s /mycache/dl
     - mkdir -p /mycache/workdir
+    - ln -s /mycache/dl
     - ln -s /mycache/workdir
     - ./build.sh mediatek.* rerun -j"$(( $(nproc) + 1))"
   tags:
