@@ -15,15 +15,15 @@ setup()
 
 # for 10.201.0.0/16 only: redirect icmp reply to interface where request came in
 # fwmark must be hex!!!
-IFS=' '
-mark=1000
-for ifname in ${wifi_mesh2g_ifname} ${wifi_mesh5g_ifname} ${mesh_vlan_ifname} ${mesh_lan_ifname} ${mesh_wan_ifname}
-do
-  mark=$(( mark + 1 ))
-  ip rule add fwmark "0x${mark}" lookup "icmp0x${mark}" prio 200
-  ip route add default dev ${ifname} table "icmp0x${mark}"
-done
-unset IFS
+#IFS=' '
+#mark=1000
+#for ifname in ${wifi_mesh2g_ifname} ${wifi_mesh5g_ifname} ${mesh_vlan_ifname} ${mesh_lan_ifname} ${mesh_wan_ifname}
+#do
+#  mark=$(( mark + 1 ))
+#  ip rule add fwmark "0x${mark}" lookup "icmp0x${mark}" prio 200
+#  ip route add default dev ${ifname} table "icmp0x${mark}"
+#done
+#unset IFS
 
 ip rule $1 to 169.254.0.0/16 table main priority 300
 
