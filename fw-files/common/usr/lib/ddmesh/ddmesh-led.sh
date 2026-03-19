@@ -81,7 +81,7 @@ case "$platform" in
 	lantiq|ipq40xx)
 		case  "$boardname" in
 			*)
-          test -z "${_led_status}" && _led_status="$(uci -q get system.led_dsl.sysfs)"
+					test -z "${_led_status}" && _led_status="$(uci -q get system.led_dsl.sysfs)"
 					;;
 		esac
 		;;
@@ -100,15 +100,32 @@ case "$platform" in
 					_led_status="orange:status"
 					_led_flag_status_done="off"
 					;;
+			"genexis,pulse-ex400")
+					_led_status="green:status"
+					;;
+			"asus,rt-ax53u")
+					_led_wifi2g="mt76-phy0"
+					_led_wifi5g="mt76-phy1"
+					;;
 		esac
 		;;
 
 	mediatek)
 		case "$boardname" in
 			"cudy,ap3000outdoor-v1")
-					_led_wifi2g="green:power"
+					_led_wifi2g="red:power"
 					_led_wifi5g=""
-					_led_status="red:status"
+					_led_status="green:status"
+					;;
+			"cudy,tr3000-v1")
+					_led_wifi2g="red:power"
+					_led_wifi5g=""
+					_led_status="white:status"
+					;;
+			"cudy,m3000-v1")
+					_led_wifi2g="red:wan-online"
+					_led_wifi5g=""
+					_led_status="white:wan-online"
 					;;
 		esac
 		;;
