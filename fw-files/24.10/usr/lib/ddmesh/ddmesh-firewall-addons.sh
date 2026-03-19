@@ -32,7 +32,7 @@ export CHAIN_NAME="ddmesh_ignore_nodes"
 setup_ipv6_rules()
 {
 	logger -s -t $TAG "setup_ipv6_rules"
-  MARKER="ddmesh-block-ipv6"
+	MARKER="ddmesh-block-ipv6"
 
 	# check if setup was already done (only check one rule to speed-up)
 	present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.chain=\"input\" && @.rule.comment=\"${MARKER}\"].rule.chain")"
@@ -151,8 +151,8 @@ callback_add_ignored_nodes()
 
 	# if no flag is set, only node is given (old format)
 	# -> enable wifi only
-  # output chains are not possible, because bmxd uses broadcast ip
-  chain_in="ddmesh_ignore_nodes_in"
+	# output chains are not possible, because bmxd uses broadcast ip
+	chain_in="ddmesh_ignore_nodes_in"
 	MARKER="ddmesh-ignore-nodes"
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $node)
 	if [ "$opt_lan" = "1" ]; then
@@ -186,7 +186,7 @@ setup_ignored_nodes() {
 
 	for i in wifi_mesh2g wifi_mesh5g mesh_lan mesh_wan mesh_vlan tbb_wg tbb_fastd
 	do
-    # incomming
+		# incomming
 		chain_in="ddmesh_ignore_nodes_in_${i}"
 		$NFT create chain inet fw4 ${chain_in} '{counter;}' 2>/dev/null
 		$NFT flush chain inet fw4 ${chain_in}
@@ -201,12 +201,46 @@ setup_ignored_nodes() {
 			# udp dport 4305
 			$NFT insert rule inet fw4 input_mesh position 0 iifname ${iface} counter jump ${chain_in} comment "\"${MARKER}\""
 		fi
-  done
+	done
 
 	config_load ddmesh
 	config_list_foreach ignore_nodes node callback_add_ignored_nodes
-  # reset back (was temporarily changed)
+	# reset back (was temporarily changed)
 	eval $(/usr/lib/ddmesh/ddmesh-ipcalc.sh -n $(uci get ddmesh.system.node))
+}
+
+setup_mangle_rules()
+{
+	logger -s -t $TAG "setup_mangle_rules"
+
+	# ping to 10.201.0.0/16 should use the same outgoing interface.
+	# routing rules will redirect marked packets to the correct interface
+	#$NFT flush chain inet fw4 ddmesh_mangle_input
+	$NFT flush chain inet fw4 ddmesh_mangle_prerouting
+	$NFT flush chain inet fw4 ddmesh_mangle_output
+	#$NFT flush chain inet fw4 ddmesh_output
+
+	# set a connection mark (remembers mark for later marking outgoing icmp reply)
+	IFS=' '
+	mark=1000
+	for ifname in ${wifi_mesh2g_ifname} ${wifi_mesh5g_ifname} ${mesh_vlan_ifname} ${mesh_lan_ifname} ${mesh_wan_ifname}
+	do
+		mark=$(( mark + 1 ))
+		$NFT add rule inet fw4 ddmesh_mangle_prerouting iifname "${ifname}" icmp type echo-request ct mark set "0x${mark}" counter
+		$NFT add rule inet fw4 ddmesh_mangle_prerouting ip protocol icmp ct mark "0x${mark}" counter comment "\"ct mark 0x${mark}\""
+
+		# copy connection mark to fwmark (before routing desision)
+		$NFT add rule inet fw4 ddmesh_mangle_output ct mark "0x${mark}" mark set "0x${mark}" counter
+		$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp ct mark "0x${mark}" counter comment "\"ct mark 0x${mark}\""
+		$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp meta mark "0x${mark}" counter comment "\"meta mark 0x${mark}\""
+		$NFT add rule inet fw4 ddmesh_mangle_output ip protocol icmp oifname "${ifname}" counter comment "\"interface\""
+
+		$NFT add rule inet fw4 ddmesh_output ip protocol icmp ct mark "0x${mark}" counter comment "\"ct mark 0x${mark}\""
+		$NFT add rule inet fw4 ddmesh_output ip protocol icmp meta mark "0x${mark}" counter comment "\"meta mark 0x${mark}\""
+		$NFT add rule inet fw4 ddmesh_output ip protocol icmp oifname "${ifname}" counter comment "\"interface\""
+
+	done
+	unset IFS
 }
 
 case "$1" in
@@ -215,6 +249,7 @@ case "$1" in
 #		setup_blocked_iface_ip
 		setup_nat_rules
 		setup_ignored_nodes
+#		setup_mangle_rules
 
 		;;
 

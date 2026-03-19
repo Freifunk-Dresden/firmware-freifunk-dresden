@@ -20,3 +20,12 @@
 
 #batman
 64	bat_route
+
+# icmp 10.201.x.x tables
+201     icmp0x1001
+202     icmp0x1002
+203     icmp0x1003
+204     icmp0x1004
+205     icmp0x1005
+
+

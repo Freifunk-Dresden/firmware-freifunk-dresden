@@ -2,6 +2,8 @@
 # GNU General Public License Version 3
 
 config defaults
+  # enable include netfilter extensions /usr/share/nftables.d/...
+  option auto_includes '1'
 	option syn_flood '1'
 	option input 'REJECT'
 	option output 'ACCEPT'
@@ -75,7 +77,7 @@ config zone 'zone_mesh'
 	option input 'REJECT'
 	option output 'ACCEPT'
 	option forward 'REJECT'
-	# ddmesh-firewall-addons.sh needs this to get 'srcnat_mesh'. masquerade rule will be deleted
+	# ddmesh-firewall-addons.sh needs this to get chain 'srcnat_mesh' created. masquerade rule will be deleted
 	option masq '1'
 	# prevent openwrt to add a rule that drops illegal connection status. It would prevent forwarding
 	# packet answers from internet
@@ -1027,7 +1029,7 @@ config rule
 config rule
 	option name 'Allow-icmp-mesh'
 	option src 'mesh'
-	option src_ip '10.200.0.0/16'
+	option src_ip '10.200.0.0/15'
 	option proto 'icmp'
 	option family 'ipv4'
 	option target 'ACCEPT'
