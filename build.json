@@ -109,6 +109,50 @@
     ]
   },
   {
+    "type": "template",
+    "name": "25.12.0",
+    "openwrt_repo": "https://git.openwrt.org/openwrt/openwrt.git",
+    "openwrt_rev": "v25.12.0",
+    "openwrt_variant": "",
+    "selector-config": "25.12",
+    "selector-feeds": "25.12",
+    "selector-patches": "25.12",
+    "selector-files": "25.12",
+    "feeds": [
+      {
+        "type": "src-link",
+        "name": "ddmesh",
+        "src": ""
+      },
+      {
+        "type": "src-git",
+        "name": "packages",
+        "src": "https://git.openwrt.org/feed/packages.git",
+        "rev": "default"
+      },
+      {
+        "type": "src-git",
+        "name": "routing",
+        "src": "https://git.openwrt.org/feed/routing.git",
+        "rev": "default"
+      }
+    ],
+    "packages": [
+      "liblzma",
+      "libpam",
+      "libnetsnmp",
+      "libusbmuxd",
+      "libimobiledevice",
+      "usbmuxd",
+      "usbutils",
+      "libev",
+      "libtirpc",
+      "htop",
+      "tmux",
+      "iperf3"
+    ]
+  },
+  {
     "type":"template",
     "name":"master",
     "openwrt_repo"     : "https://git.openwrt.org/openwrt/openwrt.git",
@@ -148,11 +192,11 @@
     "config":"ath79.24.generic.cfg",
     "disabled": false
   },
-  {
-    "template": "24.10.5",
-    "name": "ipq40xx.24.generic",
-    "config": "ipq40xx.24.generic.cfg"
-  },
+#  {
+#    "template": "24.10.5",
+#    "name": "ipq40xx.24.generic",
+#    "config": "ipq40xx.24.generic.cfg"
+#  },
   {
     "template": "24.10.5",
     "name": "ipq807x.24.generic",
@@ -178,6 +222,13 @@
       "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
       "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux", "iperf3"
     ]
+  },
+
+# ---------- openwrt 25 ------------------------------------------------------
+  {
+    "template": "25.12.0",
+    "name": "ipq40xx.25.generic",
+    "config": "ipq40xx.25.generic.cfg"
   },
 
 # ---------- openwrt 22 ------------------------------------------------------

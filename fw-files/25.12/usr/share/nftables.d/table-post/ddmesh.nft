@@ -1,0 +1,22 @@
+
+# https://github.com/openwrt/firewall4
+# https://deepwiki.com/openwrt/firewall4/5.3-nftables.d-extensions
+
+
+# create custom freifunk chains. This allows us to insert rules before fw4 rules
+# (generated from /etc/config/firewall)
+
+chain ddmesh_input {counter;};
+chain ddmesh_forward {counter;};
+chain ddmesh_output {counter;};
+chain ddmesh_prerouting {counter;};
+chain ddmesh_postrouting {counter;};
+
+chain ddmesh_mangle_prerouting {counter;};
+chain ddmesh_mangle_postrouting {counter;};
+chain ddmesh_mangle_input {counter;};
+chain ddmesh_mangle_forward {counter;};
+chain ddmesh_mangle_output {counter;};
+
+chain ddmesh_dstnat {counter;};
+chain ddmesh_srcnat {counter;};
