@@ -2,6 +2,8 @@
 # Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
 # GNU General Public License Version 3
 
+. /usr/share/libubox/jshn.sh
+
 mode="$(uci -q get ddmesh.network.wifi5g_mode)"
 [ "$mode" = "normal" ] && ifname5g="wifi5ap" || ifname5g="wifi-client5g"
 
@@ -22,27 +24,64 @@ radio5g_mode_mesh=""
 
 get_phy_list()
 {
-  local phy_list=""
-  for p in $(ls -1 /sys/class/ieee80211)
-  do
-    phy_list="$phy_list $p"
-  done
-  echo "$phy_list"
+	local phy_list=""
+	for p in $(ls -1 /sys/class/ieee80211)
+	do
+		phy_list="$phy_list $p"
+	done
+	echo "$phy_list"
+}
+
+get_htmodelist()
+{
+	local phy="$1"
+	local band="$2"
+	local mode_list=""
+
+	# first try to get htmode for band from board info. if not present, try using iwinfo
+	# BUT this only works, if board.json uses the same phy name (if wl0/wl1 is used like Xiaomi Redmi Router AX6S, this)
+	json_init
+	json_load "$(cat /etc/board.json)"
+
+	# check if wlan is present
+	json_get_values tmp "wlan"
+	if [ -n "$tmp" ]; then
+		json_select 'wlan'
+		json_select "$phy"
+		json_select 'info'
+		json_select 'bands'
+		# check if band is present
+		json_get_values tmp "${band}G"
+		if [ -n "$tmp" ]; then
+			json_select "${band}G"
+			json_get_values mode_list modes
+		fi
+	else
+		# if empty try iwinfo (old openwrt (<25) implementation)
+		mode_list=$(iwinfo "$phy" htmodelist)
+	fi
+
+	echo "$mode_list"
 }
 
 get_htmode()
 {
-	phy="$1"
-
-	# wifi config uses /lib/wifi/mac80211.uc to select htmod
-	# it has a hard coded order
-	htmode_order="EHT HE VHT HT"
+	local phy="$1"
+	local band="$2"
+  local htmode_order
+	# wifi config uses /lib/wifi/mac80211.uc to select htmod. it has a hard coded order
+  # Don't use VHT (like supported by ZTE MF289F), because it does not setup wifi mesh correctly.
+	if [ "$band" = "2" ]; then
+		htmode_order="HE HT"
+	else
+		htmode_order="EHT HE VHT HT"
+	fi
 	unset htmode
 
 	IFS=' '
 	for order in $htmode_order
 	do
-		for m in $(iwinfo "$phy" htmodelist)
+		for m in $(get_htmodelist $phy $band)
 		do
 			m2="${m//[0-9]/}"
 			if [ -z "$htmode" -a "$m2" = "$order" ]; then
@@ -50,7 +89,7 @@ get_htmode()
 			fi
 		done
 	done
-  unset IFS
+	unset IFS
 
 	test -z "$htmode" && htmode="HT"
 
@@ -74,6 +113,15 @@ airtime()
 }
 
 
+# echo phy0-2
+# get_htmodelist phy0 2
+# echo phy0-5
+# get_htmodelist phy0 5
+# echo phy1-2
+# get_htmodelist phy1 2
+# echo phy1-5
+# get_htmodelist phy1 5
+
 if [ "$1" == "store" ]; then
 
 	# ensure we have a file (uci needs it)
@@ -83,16 +131,17 @@ if [ "$1" == "store" ]; then
 	do
 #echo "[phy=$phy]"
 
-		htmode="$(get_htmode "$phy")"
-#echo "[htmode=$htmode]"
+		htmode2="$(get_htmode "$phy" 2)"
+		htmode5="$(get_htmode "$phy" 5)"
+#echo "[htmode2=$htmode; htmode5=$htmode5]"
 
 		unset freq2
 		unset freq5
 
 		# check for channel (one radio might support 2.4 and 5GHz)
 		# prefer 2g
-		freq2="$(iwinfo $phy freqlist | sed -n 's#[ *]*\([0-9]\).*$#\1#;/^2/{p;q}')"
-		freq5="$(iwinfo $phy freqlist | sed -n 's#[ *]*\([0-9]\).*$#\1#;/^5/{p;q}')"
+		freq2="$(iw phy $phy channels | sed -n '/[	 ]*\*/{s#[ 	*]*\([0-9]\).*$#\1#;/2/{p;q}}')"
+		freq5="$(iw phy $phy channels | sed -n '/[	 ]*\*/{s#[ 	*]*\([0-9]\).*$#\1#;/5/{p;q}}')"
 
 #echo "[freq2=$freq2; freq5=$freq5]"
 
@@ -124,14 +173,14 @@ if [ "$1" == "store" ]; then
 			radio2g_phy=$phy
 			radio2g_mode_ap="$mode_ap"
 			radio2g_mode_mesh="$mode_mesh"
-			radio2g_htmode="$htmode"
+			radio2g_htmode="$htmode2"
 
 		elif [ "$freq5" = "5" ]; then
 			radio5g_present=1
 			radio5g_phy=$phy
 			radio5g_mode_ap="$mode_ap"
 			radio5g_mode_mesh="$mode_mesh"
-			radio5g_htmode="$htmode"
+			radio5g_htmode="$htmode5"
 		fi
 	done
 

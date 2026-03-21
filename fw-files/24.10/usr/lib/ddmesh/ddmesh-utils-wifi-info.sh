@@ -30,19 +30,25 @@ get_phy_list()
   echo "$phy_list"
 }
 
+get_htmodelist()
+{
+  local phy="$1"
+  iwinfo "$phy" htmodelist
+}
+
 get_htmode()
 {
-	phy="$1"
+	local phy="$1"
 
 	# wifi config uses /lib/wifi/mac80211.uc to select htmod
 	# it has a hard coded order
-	htmode_order="EHT HE VHT HT"
+	local htmode_order="EHT HE VHT HT"
 	unset htmode
 
 	IFS=' '
 	for order in $htmode_order
 	do
-		for m in $(iwinfo "$phy" htmodelist)
+		for m in $(get_htmodelist $phy)
 		do
 			m2="${m//[0-9]/}"
 			if [ -z "$htmode" -a "$m2" = "$order" ]; then

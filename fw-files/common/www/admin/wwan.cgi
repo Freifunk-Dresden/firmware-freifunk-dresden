@@ -30,8 +30,22 @@ if [ -f "$lte_info" ]; then
 		-e m_phy_p_band='@.phy_info.primary.band' \
 		-e m_phy_p_freq='@.phy_info.primary.frequency' \
 		-e m_phy_p_duplex='@.phy_info.primary.duplex' \
-		-e m_phy_p_bandwidth='@.phy_info.primary.bandwidth'
+		-e m_phy_p_bandwidth='@.phy_info.primary.bandwidth' \
+    -e m_cellinfo_intra_cellid='@.cell_info.intrafrequency_lte_info.cell_id' \
+    -e m_cellinfo_intra_ch='@.cell_info.intrafrequency_lte_info.channel' \
+    -e m_cellinfo_intra_band='@.cell_info.intrafrequency_lte_info.band' \
+    -e m_cellinfo_intra_freq='@.cell_info.intrafrequency_lte_info.frequency' \
+    -e m_cellinfo_intra_duplex='@.cell_info.intrafrequency_lte_info.duplex' \
+    -e m_cellinfo_intra_serving_cellid='@.cell_info.intrafrequency_lte_info.serving_cell_id' \
 	)
+
+  # when no phy info
+  test -z "${m_phy_p_cellid}" && m_phy_p_cellid="${m_cellinfo_intra_cellid}"
+  test -z "${m_phy_p_ch}" && m_phy_p_ch="${m_cellinfo_intra_ch}"
+  test -z "${m_phy_p_band}" && m_phy_p_band="${m_cellinfo_intra_band}"
+  test -z "${m_phy_p_freq}" && m_phy_p_freq="${m_cellinfo_intra_freq}"
+  test -z "${m_phy_p_duplex}" && m_phy_p_duplex="${m_cellinfo_intra_duplex}"
+  test -z "${m_phy_p_bandwidth}" && m_phy_p_bandwidth="n/a"
 
 	gif=5
 	test $m_rssi -lt -60 && gif=4

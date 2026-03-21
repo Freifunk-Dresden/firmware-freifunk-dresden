@@ -108,9 +108,8 @@ define Package/$(PKG_NAME)-wifi
   # This simply just selects wpa-cli without hiding current packet
 
   DEPENDS:= $(PKG_NAME)-base \
-            +iw +iwinfo +@PACKAGE_wpa-cli \
+            +iw +iwinfo +libiwinfo +@PACKAGE_wpa-cli \
             +PACKAGE_ddmesh_large_device:wpad-basic-mbedtls
-#            +@!PACKAGE_ddmesh_large_device:wpad-mini \
 
 
   TITLE:=Selects all addtional wifi tools.

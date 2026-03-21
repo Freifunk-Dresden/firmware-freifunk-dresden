@@ -192,7 +192,8 @@
     "config":"ath79.24.generic.cfg",
     "disabled": false
   },
-#  {
+#  { bmxd mesh packete gehen, aber kein ping über mesh
+#    "disabled": true,
 #    "template": "24.10.5",
 #    "name": "ipq40xx.24.generic",
 #    "config": "ipq40xx.24.generic.cfg"
@@ -225,12 +226,17 @@
   },
 
 # ---------- openwrt 25 ------------------------------------------------------
+#  { # bmxd mesh packete gehen, aber kein ping über mesh (zte mf289f)
+#    "disabled": true,
+#    "template": "25.12.0",
+#    "name": "ipq40xx.25.generic",
+#    "config": "ipq40xx.25.generic.cfg"
+#  },
   {
     "template": "25.12.0",
-    "name": "ipq40xx.25.generic",
-    "config": "ipq40xx.25.generic.cfg"
+    "name": "mediatek.25.mt7622.generic",
+    "config": "mediatek.25.mt7622.generic.cfg"
   },
-
 # ---------- openwrt 22 ------------------------------------------------------
   {
     "template":"22.03",
