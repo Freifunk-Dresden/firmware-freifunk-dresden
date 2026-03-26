@@ -10,7 +10,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tz
 RUN apt-get install -y  python3 python3-pip python3-distutils-extra python3-standard-pipes \
                         python-is-python3 \
                         libssl-dev libncurses5-dev unzip gawk zlib1g-dev subversion \
-                        nodejs git build-essential devscripts debhelper \
+                        nodejs git build-essential devscripts debhelper ruby \
                         gcc-multilib flex gettext curl wget time rsync jq tmux vim \
                         pkg-config bison flex bc lzop swig \
                         && apt-get clean

@@ -174,56 +174,56 @@
 
 # =================== targets =======================================================
 # ---------- openwrt 24 ------------------------------------------------------
-  {
-    "template":"24.10.5",
-    "name":"ramips.24.mt7621.generic",
-    "config":"ramips.24.mt7621.generic.cfg",
-    "disabled": false
-  },
-  {
-    "template": "24.10.5",
-    "name": "ramips.24.mt7621.tiny-ubifs",
-    "config": "ramips.24.mt7621.tiny-ubifs.cfg",
-    "disabled": false
-  },
-  {
-    "template":"24.10.5",
-    "name":"ath79.24.generic",
-    "config":"ath79.24.generic.cfg",
-    "disabled": false
-  },
-#  { bmxd mesh packete gehen, aber kein ping über mesh
-#    "disabled": true,
-#    "template": "24.10.5",
-#    "name": "ipq40xx.24.generic",
-#    "config": "ipq40xx.24.generic.cfg"
+#  {
+#    "template":"24.10.5",
+#    "name":"ramips.24.mt7621.generic",
+#    "config":"ramips.24.mt7621.generic.cfg",
+#    "disabled": false
 #  },
-  {
-    "template": "24.10.5",
-    "name": "ipq807x.24.generic",
-    "config": "ipq807x.24.generic.cfg"
-  },
-  {
-    "template":"24.10.5",
-    "name":"mediatek.24.filogic",
-    "config":"mediatek.24.filogic.cfg",
-    "disabled": false
-  },
-  {
-    "template":"24.10.5",
-    "name":"mediatek.24.mt7622.generic",
-    "config":"mediatek.24.mt7622.generic.cfg"
-  },
-  {
-    "template":"24.10.5",
-    "name":"x86-64.offloader",
-    "config":"x86-64.24.offloader.cfg",
-    "openwrt_variant":"offloader",
-    "packages" : [
-      "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
-      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux", "iperf3"
-    ]
-  },
+#  {
+#    "template": "24.10.5",
+#    "name": "ramips.24.mt7621.tiny-ubifs",
+#    "config": "ramips.24.mt7621.tiny-ubifs.cfg",
+#    "disabled": false
+#  },
+#  {
+#    "template":"24.10.5",
+#    "name":"ath79.24.generic",
+#    "config":"ath79.24.generic.cfg",
+#    "disabled": false
+#  },
+##  { bmxd mesh packete gehen, aber kein ping über mesh
+##    "disabled": true,
+##    "template": "24.10.5",
+##    "name": "ipq40xx.24.generic",
+##    "config": "ipq40xx.24.generic.cfg"
+##  },
+#  {
+#    "template": "24.10.5",
+#    "name": "ipq807x.24.generic",
+#    "config": "ipq807x.24.generic.cfg"
+#  },
+#  {
+#    "template":"24.10.5",
+#    "name":"mediatek.24.filogic",
+#    "config":"mediatek.24.filogic.cfg",
+#    "disabled": false
+#  },
+#  {
+#    "template":"24.10.5",
+#    "name":"mediatek.24.mt7622.generic",
+#    "config":"mediatek.24.mt7622.generic.cfg"
+#  },
+#  {
+#    "template":"24.10.5",
+#    "name":"x86-64.24.offloader",
+#    "config":"x86-64.24.offloader.cfg",
+#    "openwrt_variant":"offloader",
+#    "packages" : [
+#      "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
+#      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux", "iperf3"
+#    ]
+#  },
 
 # ---------- openwrt 25 ------------------------------------------------------
 #  { # bmxd mesh packete gehen, aber kein ping über mesh (zte mf289f)
@@ -234,9 +234,66 @@
 #  },
   {
     "template": "25.12.0",
+    "name": "ramips.25.mt7621.generic",
+    "config": "ramips.25.mt7621.generic.cfg",
+    "disabled": false
+  },
+  {
+    "template": "25.12.0",
+    "name": "ramips.25.mt7621.tiny-ubifs",
+    "config": "ramips.25.mt7621.tiny-ubifs.cfg",
+    "disabled": false
+  },
+  {
+    "template": "25.12.0",
+    "name": "ath79.25.generic",
+    "config": "ath79.25.generic.cfg",
+    "disabled": false
+  },
+  {
+    "template": "25.12.0",
+    "name": "ipq807x.25.generic",
+    "config": "ipq807x.25.generic.cfg"
+  },
+  {
+    "template": "25.12.0",
+    "name": "mediatek.25.filogic",
+    "config": "mediatek.25.filogic.cfg",
+    "disabled": false
+  },
+  {
+    "template": "25.12.0",
     "name": "mediatek.25.mt7622.generic",
     "config": "mediatek.25.mt7622.generic.cfg"
   },
+  {
+    "template": "25.12.0",
+    "name": "x86-64.25.offloader",
+    "config": "x86-64.25.offloader.cfg",
+    "openwrt_variant": "offloader",
+    "packages": [
+      "qemu",
+      "libpam",
+      "libopenldap",
+      "libidn2",
+      "libssh2",
+      "libcap",
+      "liblzma",
+      "libnetsnmp",
+      "jansson",
+      "zabbix",
+      "libusbmuxd",
+      "libimobiledevice",
+      "usbmuxd",
+      "usbutils",
+      "libev",
+      "libtirpc",
+      "htop",
+      "tmux",
+      "iperf3"
+    ]
+  },
+
 # ---------- openwrt 22 ------------------------------------------------------
   {
     "template":"22.03",
