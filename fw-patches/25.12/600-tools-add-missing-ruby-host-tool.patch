@@ -1,0 +1,54 @@
+diff -rN -U10 --no-dereference tools.ori/Makefile tools/Makefile
+--- tools.ori/Makefile	2026-03-21 00:06:03.000000000 +0100
++++ tools/Makefile	2026-03-26 22:34:57.375839271 +0100
+@@ -58,20 +58,21 @@
+ tools-y += mkimage
+ tools-y += mklibs
+ tools-y += mtd-utils
+ tools-y += mtools
+ tools-y += ninja
+ tools-y += padjffs2
+ tools-y += patch-image
+ tools-y += patchelf
+ tools-y += pkgconf
+ tools-y += quilt
++tools-y += ruby 
+ tools-y += squashfs4
+ tools-y += sstrip
+ tools-y += util-linux
+ tools-y += xz
+ tools-y += zip
+ tools-y += zlib
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS),y) += liblzo
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_B43_TOOLS),y) += b43-tools
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_BZIP2_TOOLS),y) += bzip2
+ tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_ISL),y) += isl
+diff -rN -U10 --no-dereference tools.ori/ruby/Makefile tools/ruby/Makefile
+--- tools.ori/ruby/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ tools/ruby/Makefile	2026-03-26 22:42:18.476528920 +0100
+@@ -0,0 +1,25 @@
++include $(TOPDIR)/rules.mk
++
++PKG_NAME:=ruby
++PKG_VERSION:=system
++PKG_RELEASE:=1
++
++HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)
++
++include $(INCLUDE_DIR)/host-build.mk
++
++define Host/Prepare
++endef
++
++define Host/Configure
++endef
++
++define Host/Compile
++endef
++
++define Host/Install
++	$(INSTALL_DIR) $(STAGING_DIR_HOST)/bin
++	$(LN) /usr/bin/ruby $(STAGING_DIR_HOST)/bin/ruby
++endef
++
++$(eval $(call HostBuild))

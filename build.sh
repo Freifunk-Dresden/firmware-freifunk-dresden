@@ -125,21 +125,18 @@ declare -A color_fwversion
 declare -A color_openwrt
 declare -A color_selector
 
-color_template['18.06']="${C_ORANGE}"
 color_template['22.03']="${C_BLUE}"
 color_template['24.10.5']="${C_PURPLE}"
-color_template['25.12']="${C_ORANGE}"
+color_template['25.12.0']="${C_ORANGE}"
 #---
 color_fwversion['8.2.6']="${C_BLUE}"
 color_fwversion['8.2.8']="${C_GREEN}"
 color_fwversion['9.0.0']="${C_ORANGE}"
 #---
-color_openwrt['5625f5bc36954d644cb80adf8de47854c65d91c3']="${C_ORANGE}"
 color_openwrt['v22.03.7']="${C_BLUE}"
 color_openwrt['v24.10.5']="${C_PURPLE}"
-color_openwrt['25.12']="${C_ORANGE}"
+color_openwrt['v25.12.0']="${C_ORANGE}"
 #---
-color_selector['18.06']="${C_ORANGE}"
 color_selector['22.03']="${C_BLUE}"
 color_selector['24.10']="${C_PURPLE}"
 color_selector['25.12']="${C_ORANGE}"
@@ -336,11 +333,11 @@ write_compile_status()
 
 progressbar()
 {
-  _value=$1
+	_value=$1
 	shift
-  _maxValue=$1
+	_maxValue=$1
 	shift
-  _marker=$1
+	_marker=$1
 	shift
 	_char_array=("$@")	# get all other strings and create array again
 
@@ -411,7 +408,7 @@ progressbar()
 # clean up screen and
 clean_up_exit()
 {
-  EXIT="$1"
+	EXIT="$1"
 	if [ "$_TERM" = "1" ]; then
 		# reset region
 		if [ -n "$row" ]; then
@@ -686,10 +683,10 @@ listTargets()
 	buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
 	test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
 
-  # contains firmware, status packages from each config
-  outdir="${PROJECT_DIR}/${WORK_DIR}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
+	# contains firmware, status packages from each config
+	outdir="${PROJECT_DIR}/${WORK_DIR}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
 
-  _compile_status_dir="${outdir}/${COMPILE_STATUS_DIR}"
+	_compile_status_dir="${outdir}/${COMPILE_STATUS_DIR}"
 	compile_status_file="${_compile_status_dir}/${_cfg_name}-${COMPILE_STATUS_FILE_SUFFIX}"
 
 	compile_status=""
@@ -698,7 +695,7 @@ listTargets()
 		eval $(cat "${compile_status_file}" | jq $OPT '"compile_data=\"\(.date)\";compile_status=\(.status)"')
 	fi
 
-  cstatus=""
+	cstatus=""
 
 	case "${compile_status}" in
 		"0") cstatus="${PBC_SUCCESS}" ;;
@@ -714,31 +711,31 @@ listTargets()
 			;;
 	esac
 
-  # colors
-  tc_name="${C_NONE}"
-  tc_template="${color_template[${_cfg_template}]}"
-  tc_fwversion="${color_fwversion[${fw_version}]}"
-  tc_openwrt="${color_openwrt[${_cfg_openwrt_rev}]}"
-  tc_variant="${C_NONE}"
-  tc_selector_config="${color_selector[${_cfg_selector_config}]}"
-  tc_selector_files="${color_selector[${_cfg_selector_files}]}"
-  tc_selector_feeds="${color_selector[${_cfg_selector_feeds}]}"
-  tc_selector_patches="${color_selector[${_cfg_selector_patches}]}"
-  tc_build_date="${C_NONE}"
+	# colors
+	tc_name="${C_NONE}"
+	tc_template="${color_template[${_cfg_template}]}"
+	tc_fwversion="${color_fwversion[${fw_version}]}"
+	tc_openwrt="${color_openwrt[${_cfg_openwrt_rev}]}"
+	tc_variant="${C_NONE}"
+	tc_selector_config="${color_selector[${_cfg_selector_config}]}"
+	tc_selector_files="${color_selector[${_cfg_selector_files}]}"
+	tc_selector_feeds="${color_selector[${_cfg_selector_feeds}]}"
+	tc_selector_patches="${color_selector[${_cfg_selector_patches}]}"
+	tc_build_date="${C_NONE}"
 
 	# overwrite if disabled
 	if [ "${_cfg_disabled}" == "true" ]; then
 		cstatus="${PBC_DISABLED}"
-    tc_name="${C_RED}"
-    tc_template="${C_RED}"
-    tc_fwversion="${C_RED}"
-    tc_openwrt="${C_RED}"
-    tc_variant="${C_RED}"
-    tc_selector_config="${C_RED}"
-    tc_selector_files="${C_RED}"
-    tc_selector_feeds="${C_RED}"
-    tc_selector_patches="${C_RED}"
-    tc_build_date="${C_RED}"
+		tc_name="${C_RED}"
+		tc_template="${C_RED}"
+		tc_fwversion="${C_RED}"
+		tc_openwrt="${C_RED}"
+		tc_variant="${C_RED}"
+		tc_selector_config="${C_RED}"
+		tc_selector_files="${C_RED}"
+		tc_selector_feeds="${C_RED}"
+		tc_selector_patches="${C_RED}"
+		tc_build_date="${C_RED}"
 	fi
 
 	printf  "│$cstatus ${tc_name}%-27s${C_NONE} │ ${color_eol}%-3.3s${C_NONE} │ ${tc_template}%-8.8s${C_NONE} | ${tc_fwversion}%-7.7s${C_NONE} │ ${tc_openwrt}%-10.10s${C_NONE} │ ${tc_variant}%-7.7s${C_NONE} │ ${tc_selector_config}%-8.8s${C_NONE} │ ${tc_selector_files}%-7.7s${C_NONE} │ ${tc_selector_feeds}%-7.7s${C_NONE} │ ${tc_selector_patches}%-7.7s${C_NONE} │ ${tc_build_date}%-20.20s${C_NONE} │\n" "${_cfg_name}" "${eol}" "${_cfg_template}" "${fw_version}" "${_cfg_openwrt_rev:0:9}" "${_cfg_openwrt_variant}" "${_cfg_selector_config}" "${_cfg_selector_feeds}" "${_cfg_selector_files}" "${_cfg_selector_patches}" "${compile_data}"
@@ -767,20 +764,23 @@ numberOfTargets()
 search_target()
 {
 	target=$1
-  # only consider only multi-target device configurations: CONFIG_TARGET_DEVICE_....
-  echo "--------------------------------------------------------------------------------------------"
-  echo "Not-Configured Tagets [$target]"
-  echo "--------------------------------------------------------------------------------------------"
+	# only consider only multi-target device configurations: CONFIG_TARGET_DEVICE_....
+	echo "--------------------------------------------------------------------------------------------"
+	echo "Not-Configured Tagets [$target]"
+	echo "--------------------------------------------------------------------------------------------"
 	awk 'BEGIN {IGNORECASE=1;} /^# CONFIG_TARGET_DEVICE.*'$target'.*$/{line=gensub(/^# CONFIG_TARGET_.*DEVICE_(.*) is not set/,"\\1","1");print FILENAME"\t\t,",line,"'${PBC_ERROR}'"}' fw-configs/*/*
-  echo "--------------------------------------------------------------------------------------------"
-  echo "Configured Tagets [$target]"
-  echo "--------------------------------------------------------------------------------------------"
+	echo "--------------------------------------------------------------------------------------------"
+	echo "Configured Tagets [$target]"
+	echo "--------------------------------------------------------------------------------------------"
 	awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_DEVICE.*'$target'.*=y$/{line=gensub(/^CONFIG_TARGET_.*DEVICE_(.*)=y/,"\\1","1");print FILENAME"\t\t,",line,"'${PBC_SUCCESS}'"}' fw-configs/*/*
 }
 
 print_devices_for_target()
 {
 	target=$1
+
+	# if I pass the filename with *.cfg, remove cfg and use the rest as target name
+  target=${target%.cfg}
 
 	targetIdx=0
 	while true
@@ -798,11 +798,11 @@ print_devices_for_target()
 		# when I do not have a target passt to "build.sh devices" then show all.
 		if [ -n "$target" -a "$target" != "$_cfg_name" ]; then
 			continue
-	fi
+		fi
 
 		echo "target: [$_cfg_name] (${_cfg_selector_config})"
 		#grep "^CONFIG_TARGET_DEVICE.*=y" "fw-configs/${_cfg_selector_config}/${_cfg_file}" | sort
-    awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_DEVICE.*=y$/{line=gensub(/^CONFIG_TARGET_.*DEVICE_(.*)=y/,"\\1","1");print line,"'${PBC_SUCCESS}'"}' "fw-configs/${_cfg_selector_config}/${_cfg_file}" | sort
+		awk 'BEGIN {IGNORECASE=1;} /^CONFIG_TARGET_DEVICE.*=y$/{line=gensub(/^CONFIG_TARGET_.*DEVICE_(.*)=y/,"\\1","1");print line,"'${PBC_SUCCESS}'"}' "fw-configs/${_cfg_selector_config}/${_cfg_file}" | sort
 		echo ""
 
 		# if I had a target, then no need to run through rest
@@ -846,8 +846,8 @@ verify_firmware_present()
 		p1="$(ls -1 ${firmware_path}/*${dev_str}*sysupgrade.* 2>/dev/null)"
 		p2="$(ls -1 ${firmware_path}/*${dev_str}*.img.gz 2>/dev/null)"
 
-    # some devices have only one file ending with squashfs.trx (e.g. asus rt-ac68u)
-    p3="$(ls -1 ${firmware_path}/*${dev_str}*squashfs.trx 2>/dev/null)"
+		# some devices have only one file ending with squashfs.trx (e.g. asus rt-ac68u)
+		p3="$(ls -1 ${firmware_path}/*${dev_str}*squashfs.trx 2>/dev/null)"
 
 		if [ -n "$p1" -o -n "$p2" -o -n "$p3" ]; then
 			printf -- "${C_GREEN}ok${C_NONE}\n"
@@ -919,51 +919,51 @@ usage()
 	cat <<EOM
 
  options:
-   -h    docker host, if not specified environment variable 'FF_DOCKER_HOST' or 'DOCKER_HOST' is used.
-         FF_DOCKER_HOST is used in favour to DOCKER_HOST. -h still has highest preference
-         e.g: tcp://192.168.123.123
+	 -h    docker host, if not specified environment variable 'FF_DOCKER_HOST' or 'DOCKER_HOST' is used.
+				 FF_DOCKER_HOST is used in favour to DOCKER_HOST. -h still has highest preference
+				 e.g: tcp://192.168.123.123
 
-   -d    use docker for compiling (keep workdir)
-   -D    use docker for compiling (clear workdir)
-   -s    opens a shell to running docker
+	 -d    use docker for compiling (keep workdir)
+	 -D    use docker for compiling (clear workdir)
+	 -s    opens a shell to running docker
 
-  commands:
-   bash-completion         - adds bash completion. Must be called from same directory
-                             where "build.sh" is located.
-                             Example:
-                              $ cd ~/projects/freifunk/firmware
-                              $ source ./build.sh bash-completion
+	commands:
+	 bash-completion         - adds bash completion. Must be called from same directory
+														 where "build.sh" is located.
+														 Example:
+															$ cd ~/projects/freifunk/firmware
+															$ source ./build.sh bash-completion
 
-                             add an alias to your .bash_aliases
-                              $ alias ff='cd ~/projects/freifunk/firmware; source ./build.sh bash-completion'
+														 add an alias to your .bash_aliases
+															$ alias ff='cd ~/projects/freifunk/firmware; source ./build.sh bash-completion'
 
-   list                    - lists all available targets
-   lt | list-targets       - lists only target names for usage in IDE
-   watch                   - same as 'list' but updates display
-   devices [target]        - displays all selected routers for a target
-   search <string>         - search specific router (target)
+	 list                    - lists all available targets
+	 lt | list-targets       - lists only target names for usage in IDE
+	 watch                   - same as 'list' but updates display
+	 devices [target]        - displays all selected routers for a target
+	 search <string>         - search specific router (target)
 
-   target-pattern          - target to build
-           that are defined by build.json. use 'list' for supported targets.
-           'all'                   - builds all targets
-           'failed'                - builds only previously failed or not built targets
-           'ramips* '              - builds all ramips targets only
-           'ramips.rt305x.generic' - builds exact this target
-           '*generic'              - builds all that end with generic
+	 target-pattern          - target to build
+					 that are defined by build.json. use 'list' for supported targets.
+					 'all'                   - builds all targets
+					 'failed'                - builds only previously failed or not built targets
+					 'ramips* '              - builds all ramips targets only
+					 'ramips.rt305x.generic' - builds exact this target
+					 '*generic'              - builds all that end with generic
 
-  flags
-   clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
-   menuconfig       - displays configuration menu
-   defconfig        - only updates configs (dependencies)
-   rerun            - enables a second compilation with make option 'V=s'
-                      If first make failes a second make is tried with this option
-   -- make params   - all paramerters that follows are passed to make command
+	flags
+	 clean            - cleans buildroot/bin and buildroot/build_dir (keeps toolchains)
+	 menuconfig       - displays configuration menu
+	 defconfig        - only updates configs (dependencies)
+	 rerun            - enables a second compilation with make option 'V=s'
+											If first make failes a second make is tried with this option
+	 -- make params   - all paramerters that follows are passed to make command
 
 
 Devel-Notes:
  To compile a specific feed change to workdir and call something like:
 
-     make package/feeds/ddmesh/fastd/compile -j1 V=s
+		 make package/feeds/ddmesh/fastd/compile -j1 V=s
 
 EOM
 }
@@ -1038,7 +1038,7 @@ if $USE_DOCKER; then
 	# create container if it does not exisits and upload current directory
 	docker inspect ${DOCKER_CONTAINER_NAME} >/dev/null 2>/dev/null || {
 		echo -e "${C_CYAN}create container${C_NONE}"
-  	docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
+		docker create -it --name ${DOCKER_CONTAINER_NAME} --user $(id -u) ${DOCKER_IMAGE}
 	}
 	echo -e "${C_CYAN}start container${C_NONE}"
 	docker start ${DOCKER_CONTAINER_NAME}
@@ -1185,7 +1185,7 @@ case "$1" in
 					# check for make parameters "--"
 					while [ -n "$1" ]
 					do
-					  endLoop=0;
+						endLoop=0;
 						arg="$1"
 						shift			# prepare for next loop
 						case "${arg}" in
@@ -1380,9 +1380,9 @@ do
 	buildroot="$WORK_DIR/${_cfg_openwrt_rev:0:9}"
 	test -n "${_cfg_openwrt_variant}" && buildroot="$buildroot.${_cfg_openwrt_variant}"
 
-  # contains firmware, status packages from each config
-  outdir="${PROJECT_DIR}/${WORK_DIR}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
-  mkdir -p ${outdir}
+	# contains firmware, status packages from each config
+	outdir="${PROJECT_DIR}/${WORK_DIR}/${LOCAL_OUTPUT_DIR}/${_cfg_name}"
+	mkdir -p ${outdir}
 
 	_compile_status_dir="${outdir}/${COMPILE_STATUS_DIR}"
 	mkdir -p ${_compile_status_dir}
@@ -1437,7 +1437,7 @@ do
 		clean_up_exit 1
 	fi
 
-  defaultFeedConfFileName="$buildroot/feeds.conf.default"
+	defaultFeedConfFileName="$buildroot/feeds.conf.default"
 	feedConfFileName="$buildroot/feeds.conf"
 cat<<EOM > $feedConfFileName
 # This file is generated by build.sh from build.json
@@ -1468,7 +1468,7 @@ EOM
 		if [ "$_feed_type" = "src-link" ]; then
 			_feed_src="${PROJECT_DIR}/fw-feeds/${_cfg_selector_feeds}/${_feed_src}"
 			_feed_rev=""	# src-link does not have a rev, because it is already in current git repo
-      _feed_url="${_feed_src}${_feed_rev}"
+			_feed_url="${_feed_src}${_feed_rev}"
 		else
 
 # hier sollte geprüft werden, ob ich die externen feeds mit rev bereits herunter geladen habe,
@@ -1481,18 +1481,18 @@ EOM
 			# followed by a "commit" (hash). openwrt then checks out this revision
 			test "${_feed_rev}" = "null" && _feed_rev=""
 
-      # check if special word "default" is used. this is used to indicate that the
-      # default revision from openwrt file feeds.conf.default should be used.
-      # this makes build.json configuration of feeds more simple
-      if [ "${_feed_rev}" = "default" ]; then
-        _feed_url="$(cat ${defaultFeedConfFileName} | awk '/^src-git(-full)?[ ]+'${_feed_name}'/{print $3}')"
-      else
-  			test -n "${_feed_rev}" && _feed_rev="^${_feed_rev}"
-        _feed_url="${_feed_src}${_feed_rev}"
-      fi
+			# check if special word "default" is used. this is used to indicate that the
+			# default revision from openwrt file feeds.conf.default should be used.
+			# this makes build.json configuration of feeds more simple
+			if [ "${_feed_rev}" = "default" ]; then
+				_feed_url="$(cat ${defaultFeedConfFileName} | awk '/^src-git(-full)?[ ]+'${_feed_name}'/{print $3}')"
+			else
+				test -n "${_feed_rev}" && _feed_rev="^${_feed_rev}"
+				_feed_url="${_feed_src}${_feed_rev}"
+			fi
 		fi
-    _feed="${_feed_type} ${_feed_name} ${_feed_url}"
-    echo "[$_feed]"
+		_feed="${_feed_type} ${_feed_name} ${_feed_url}"
+		echo "[$_feed]"
 		echo "${_feed}"  >> ${feedConfFileName}
 	done
 
@@ -1506,43 +1506,43 @@ EOM
 		continue # clean next target
 	fi
 
-  # ----------- install feeds --------------------------------------------------
+	# ----------- install feeds --------------------------------------------------
 
-  # always install feed 'ddmesh' (avoid backing up src-link feeds, to always use current version)
-  ./scripts/feeds update ddmesh
+	# always install feed 'ddmesh' (avoid backing up src-link feeds, to always use current version)
+	./scripts/feeds update ddmesh
 
-  # check if we have already downloaded the EXTERNAL feeds (src-git) with same revision
-  # if yes, extract feeds and setup symlinks
-  # if no, update feeds
+	# check if we have already downloaded the EXTERNAL feeds (src-git) with same revision
+	# if yes, extract feeds and setup symlinks
+	# if no, update feeds
 
-  # feed_name=packages; feed_rev=3b79b05673a15e7f41f157d1320597244a344a95
-  # feed_name=routing; feed_rev=1ff9ee61cde0829f206f275b1b2f5fa990fd2ba9
-  IFS='
-  '
-  for feed in $(cat feeds.conf | sed -n '/^src-git/{s#src-git[ ]\+\([^ ]\+\).*^\(.*\)$#\1:\2#p}')
-  do
-    feed_name="${feed%:*}"
-    feed_rev="${feed#*:}"
-    dl_feed_filename="${PROJECT_DIR}/${DL_DIR}/feed-${feed_name}-${feed_rev}.tgz"
-    # echo "*** check ["${dl_feed_filename}"]"
+	# feed_name=packages; feed_rev=3b79b05673a15e7f41f157d1320597244a344a95
+	# feed_name=routing; feed_rev=1ff9ee61cde0829f206f275b1b2f5fa990fd2ba9
+	IFS='
+	'
+	for feed in $(cat feeds.conf | sed -n '/^src-git/{s#src-git[ ]\+\([^ ]\+\).*^\(.*\)$#\1:\2#p}')
+	do
+		feed_name="${feed%:*}"
+		feed_rev="${feed#*:}"
+		dl_feed_filename="${PROJECT_DIR}/${DL_DIR}/feed-${feed_name}-${feed_rev}.tgz"
+		# echo "*** check ["${dl_feed_filename}"]"
 
-    if [ -f "${dl_feed_filename}" ]; then
-  	  echo -e $C_CYAN"use local downloaded feed: [${feed_name}]"$C_NONE
-      tar xvzf "${dl_feed_filename}" >/dev/null
-    else
-  	  # --------- update all feeds from feeds.conf (feed info) ----
-  	  echo -e $C_CYAN"download/update feed: [${feed_name}]"$C_NONE
-  	  ./scripts/feeds update ${feed_name} >/dev/null
-      echo ""
+		if [ -f "${dl_feed_filename}" ]; then
+			echo -e $C_CYAN"use local downloaded feed: [${feed_name}]"$C_NONE
+			tar xvzf "${dl_feed_filename}" >/dev/null
+		else
+			# --------- update all feeds from feeds.conf (feed info) ----
+			echo -e $C_CYAN"download/update feed: [${feed_name}]"$C_NONE
+			./scripts/feeds update ${feed_name} >/dev/null
+			echo ""
 
-      # backup feed
-      echo -e $C_CYAN"create backup feed: [${feed_name}]"$C_NONE
-      tar cvzf "${dl_feed_filename}" feeds/${feed_name}* >/dev/null
-    fi
-  done
-  unset IFS
+			# backup feed
+			echo -e $C_CYAN"create backup feed: [${feed_name}]"$C_NONE
+			tar cvzf "${dl_feed_filename}" feeds/${feed_name}* >/dev/null
+		fi
+	done
+	unset IFS
 
-  # ----------- install packages -----------------------------------------------
+	# ----------- install packages -----------------------------------------------
 
 	echo -e $C_CYAN"install packages"$C_NONE
 	echo "$_cfg_packages" | jq
@@ -1550,7 +1550,7 @@ EOM
 	idx=0
 	while true
 	do
-	  	# use OPT to prevent jq from adding ""
+			# use OPT to prevent jq from adding ""
 		entry="$(echo ${_cfg_packages} | jq $OPT .[$idx])"
 		test "$entry" = "null" && break
 		idx=$(( idx + 1 ))
@@ -1563,10 +1563,10 @@ EOM
 	./scripts/feeds install -a -p ddmesh
 
 
-  # ----------- setup config ---------------------------------------------------
+	# ----------- setup config ---------------------------------------------------
 
 	rm -f .config		# delete previous config in case we have no $PROJECT_DIR/$config_file yet and want to
-                  # create a new config
+									# create a new config
 
 	DEFAULT_CONFIG="${PROJECT_DIR}/${CONFIG_DIR}/${_cfg_selector_config}/${CONFIG_DEFAULT_FILE}"
 	if [ ! -f "${PROJECT_DIR}/${config_file}" ]; then
@@ -1705,17 +1705,17 @@ EOM
 		# verify presence of all images
 	echo -e "${C_CYAN}verify images${C_NONE} for target [${_cfg_name}]:"
 	if ! verify_firmware_present "${_cfg_name}" "${outdir}/images"; then
-  	echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
-  	error=1
-  	global_error=1
-  	# clean_up_exit 1
+		echo -e "${C_RED}Error: not all firmware images generated${C_NONE}"
+		error=1
+		global_error=1
+		# clean_up_exit 1
 	fi
 
 	echo -e "${C_CYAN}create md5sum/sha256sum ${C_NONE} of ${C_GREEN}${outdir}${C_NONE}"
-  ( cd ${outdir}/images;
-    md5sum * > md5sum.txt;
-    sha256sum * > sha256sum.txt;
-  )
+	( cd ${outdir}/images;
+		md5sum * > md5sum.txt;
+		sha256sum * > sha256sum.txt;
+	)
 
 	# write build status which is displayed by "build.sh list"
 	echo -e $C_CYAN"write compile status to [${compile_status_file}]"$C_NONE
