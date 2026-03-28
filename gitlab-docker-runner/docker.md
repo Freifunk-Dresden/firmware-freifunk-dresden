@@ -13,9 +13,8 @@ This allows to create openwrt-docker-build with bind-mounted
   2. install gitlab-runner as docker image, that has gitlab-runner tools
 in container.
 * gitlab docker (which runs gitlab-runner-helper) uses host dockerd (socket) to create more container
-* configuration lays within this container (run `docker exec -it gitlab-runner bash` to access it)
-* /mycache is mounted to /root/mycache (/ is not working). This is also on host available, because docker within gitlab-runner
-container access the same docker socket from host.
+* configuration lays within this container (run `docker exec -it gitlab-runner bash` to access it). It is stored in a volume.
+* /mycache on host is mounted into container at /mycache (gitlab runner will create a temporary container and configures the mounts).
 
  (stephan runner uses this way)
 
@@ -62,7 +61,7 @@ You may check if container or gitlab-runner service is running `service gitlab-r
    `volumes = ["/cache", "/root/mycache:/mycache"]`
 2. host: `mkdir /mycache && chmod 777 /mycache`
     This is needed because gitlab-runner bind-mounts this directory. firmware is build as user "builder"
-    which is required not to be "root". It has to be able to create /root/mycache/dl and /mycache/workdir.
+    which is required not to be "root". It has to be able to create /mycache/dl and /mycache/workdir.
 3. Optional if testing manually.
     - `docker run --rm -it -v "/mycache:/mycache" freifunkdresden/openwrt-docker-build bash`
     - checkout project `git clone https://gitlab.freifunk-dresden.de/firmware-developer/firmware.git`
