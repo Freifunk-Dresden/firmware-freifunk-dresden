@@ -366,6 +366,11 @@ upgrade_9_0_0()
 	uci delete firewall.zone_wifi2.subnet
 }
 
+upgrade_9_0_1()
+{
+  true
+}
+
 ##################################
 
 run_upgrade

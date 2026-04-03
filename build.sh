@@ -131,7 +131,7 @@ color_template['25.12.0']="${C_ORANGE}"
 #---
 color_fwversion['8.2.6']="${C_BLUE}"
 color_fwversion['8.2.8']="${C_GREEN}"
-color_fwversion['9.0.0']="${C_ORANGE}"
+color_fwversion['9.0.1']="${C_ORANGE}"
 #---
 color_openwrt['v22.03.7']="${C_BLUE}"
 color_openwrt['v24.10.5']="${C_PURPLE}"
