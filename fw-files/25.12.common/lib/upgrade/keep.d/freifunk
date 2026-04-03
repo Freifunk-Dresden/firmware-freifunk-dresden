@@ -1,0 +1,20 @@
+# all openwrt configfiles are disabled. see /usr/lib/opkg/status
+# I control what should be kept
+/etc/config/
+/etc/dropbear/
+/etc/ethers
+/etc/fstab
+/etc/hosts
+/etc/group
+/etc/passwd
+/etc/shadow
+
+# keep urandom.seeds else it will be regenerated after firmware flash and modify overlay md5sum
+/etc/urandom.seed
+/etc/uhttpd.key
+/etc/uhttpd.crt
+/etc/installed.packages
+/etc/ddmesh
+
+# keep user files
+/root

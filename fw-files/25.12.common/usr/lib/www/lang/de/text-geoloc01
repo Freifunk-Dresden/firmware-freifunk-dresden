@@ -1,0 +1,2 @@
+Es wird die Umgebung nach Wifi-Accesspoints abgesucht und eine Liste mit deren MAC und Signalst&auml;rken an einen Standortdienst (GEO-Location Service) geschickt. Aktuell wird daf&uuml;r der Standorddienst von Google verwendet.
+Pers&ouml;nliche Daten werden nicht &uuml;bertragen.

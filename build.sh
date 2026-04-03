@@ -244,7 +244,7 @@ setup_buildroot ()
 
 	# check for common symlink
 	common_dir="$PROJECT_DIR/fw-files/${firmware_files}.common"
-	if [ -L "${common_dir}" ]; then
+	if [ -d "${common_dir}" ]; then
 		echo -n -e "${C_CYAN}copy rootfs (${common_dir})${C_NONE}: "
 		# remove-destination forces copy (first remove existing file (e.g. symlinks))
 		cp -a --remove-destination ${common_dir}/* $buildroot/files/

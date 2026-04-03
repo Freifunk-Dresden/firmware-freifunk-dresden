@@ -1,0 +1,17 @@
+#!/bin/sh
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
+test -f /tmp/freifunk-running || exit 0
+
+TAG="ddmesh-hotplug"
+TAG2="31-resolv-conf-final"
+
+# update resolv.conf.final if wan cable is inserted after bmxd has started
+
+if [ "$INTERFACE" = "wan" -o "$INTERFACE" = "wwan" ]; then
+	if [ "$ACTION" = "ifup" ]; then
+		logger -t "$TAG" "$TAG2: set resolv.conf.final"
+		/usr/lib/bmxd/bmxd-gateway.sh init
+	fi
+fi
