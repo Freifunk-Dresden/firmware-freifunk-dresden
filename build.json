@@ -327,7 +327,7 @@
   },
   {
     "template":"22.03",
-    "name":"bcm.bcm53xx.offloader",
+    "name":"bcm.22.bcm53xx.offloader",
     "config":"bcm.22.bcm53xx.offloader.cfg",
     "openwrt_variant":"offloader"
   },
