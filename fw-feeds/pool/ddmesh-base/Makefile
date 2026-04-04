@@ -21,7 +21,7 @@ define Package/$(PKG_NAME)-base
     +ca-bundle +procd +urandom-seed +urngd \
     +firewall4 \
     +ip-tiny \
-    +mtd +opkg \
+    +mtd \
     +uhttpd \
     +kmod-leds-gpio +kmod-gpio-button-hotplug \
     +kmod-tun \
