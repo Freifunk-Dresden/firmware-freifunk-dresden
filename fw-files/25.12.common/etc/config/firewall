@@ -1122,5 +1122,7 @@ config rule 'mesh_ipip'
 	option counter '1'
 
 config include
-	option path '/etc/firewall.user'
-	option fw4_compatible '1'
+	option	enabled		1
+	option	type		'script'
+	option	path		'/etc/firewall.user'
+	option	fw4_compatible	1

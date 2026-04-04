@@ -203,17 +203,11 @@ setup_mangle_rules()
 case "$1" in
 	restart_firewall)
 		setup_ipv6_rules
-#		setup_blocked_iface_ip
 		setup_nat_rules
 		setup_ignored_nodes
 #		setup_mangle_rules
 
 		;;
-
-#  firewall-update)
-#    # used for hotplug wan port
-#    setup_blocked_iface_ip
-#    ;;
 
 	update-ignore)
 		setup_ignored_nodes
