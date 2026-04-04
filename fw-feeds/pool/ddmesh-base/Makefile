@@ -28,12 +28,12 @@ define Package/$(PKG_NAME)-base
     +libmbedtls +libustream-mbedtls +px5g-mbedtls \
     +bmxd +freifunk-upload \
     +iperf3 \
-    +ethtool \
     +kmod-ipip \
     +PACKAGE_fastd:nacl \
     +PACKAGE_fastd:libuecc \
     +PACKAGE_fastd:libmnl \
-    +PACKAGE_fastd:kmod-l2tp-eth
+    +PACKAGE_fastd:kmod-l2tp-eth \
+    +PACKAGE_wireguard-tools:kmod-crypto-kpp
 
   TITLE:=Meta package to select all needed basic packages
 endef

@@ -400,9 +400,6 @@ cat << EOM >> $OUTPUT
 			"available_flash_size":"$avail_flash_size",
 			"overlay_md5sum": $(/usr/lib/ddmesh/ddmesh-overlay-md5sum.sh -json)
 		},
-		"opkg":{
-$(/usr/lib/ddmesh/ddmesh-installed-ipkg.sh json '		')
-		},
 		"common":{
 			"community":"$(uci -q get ddmesh.system.community)",
 			"group_id":"$(uci -q get ddmesh.system.group_id)",

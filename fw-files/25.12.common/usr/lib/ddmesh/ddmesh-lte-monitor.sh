@@ -13,11 +13,29 @@ wwan_device="$(uci -q get network.wwan.device)"
 syslog="$(uci -q get ddmesh.network.wwan_syslog)"
 
 # check if hw is present
-if ! uqmi -s -d $wwan_device --get-capabilities 2>&1 >/dev/null; then
+if [ ! -c "$wwan_device" ]; then
 	logger -s -t "lte-modem" "no LTE modem present -> exit monitor"
 	exit 1
 fi
-logger -s -t "lte-modem" "LTE modem present -> start monitoring"
+logger -s -t "lte-modem" "LTE modem present"
+
+# wait until netifd has brought up wwan; exit script if not up after 300s (5min)
+max_counter=30
+while true
+do
+  if [ $max_counter -eq 0 ]; then
+    logger -s -t "lte-modem" "LTE modem not up -> aborting"
+    exit 1
+  fi
+  max_counter=$((max_counter - 1))
+
+  /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
+  eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wwan)
+  [ "$net_up" = '1' ] && break;
+  sleep 10
+done
+
+logger -s -t "lte-modem" "LTE modem up -> start monitoring"
 
 dhcp_refresh_count=0
 while true;

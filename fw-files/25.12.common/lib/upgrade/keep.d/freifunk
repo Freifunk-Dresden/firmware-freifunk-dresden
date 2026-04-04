@@ -1,4 +1,4 @@
-# all openwrt configfiles are disabled. see /usr/lib/opkg/status
+# all openwrt configfiles are disabled.
 # I control what should be kept
 /etc/config/
 /etc/dropbear/
@@ -13,7 +13,6 @@
 /etc/urandom.seed
 /etc/uhttpd.key
 /etc/uhttpd.crt
-/etc/installed.packages
 /etc/ddmesh
 
 # keep user files
