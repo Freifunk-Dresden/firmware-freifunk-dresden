@@ -50,10 +50,6 @@ do
 	system_info="$(uqmi -d $wwan_device --get-system-info)"
 	service="$(uqmi -s -d $wwan_device --get-serving-system)"
 	phyinfo="$(uqmi -s -d $wwan_device --get-lte-cphy-ca-info)"
-	#cell_info="$(uqmi -s -d $wwan_device --get-cell-location-info)"
-  # only read first part "intrafrequency", other json is invalid
-  cell_info="$(uqmi -d /dev/cdc-wdm0  --get-cell-location-info | sed -n '1,14p') \"dummy\":\"dummy\"}}"
-
 
 	eval $(echo "$system_info" | jsonfilter -e m_mcc='@.lte.mcc' -e m_mnc='@.lte.mnc')
 	# https://mcc-mnc.net/
@@ -75,7 +71,6 @@ cat<<EOM > $lte_info.tmp
 	"pin_state" : $pin_state,
 	"system_info" : $system_info,
 	"phy_info" : $phyinfo,
-	"cell_info" : $cell_info,
 	"other" : { "operator":"$operator" }
 	}
 EOM
