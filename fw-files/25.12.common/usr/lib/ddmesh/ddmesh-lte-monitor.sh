@@ -4,6 +4,7 @@
 
 delay=10	# seconds
 dhcp_trigger_refresh_count=6	# refresh dhcp after x loops
+uqmi_timeout_ms=1000
 
 lte_info_dir="/var/lib/ddmesh"
 lte_info="$lte_info_dir/lte_info"
@@ -20,6 +21,7 @@ fi
 logger -s -t "lte-modem" "LTE modem present"
 
 # wait until netifd has brought up wwan; exit script if not up after 300s (5min)
+wait_s=10
 max_counter=30
 while true
 do
@@ -32,7 +34,8 @@ do
   /usr/lib/ddmesh/ddmesh-utils-network-info.sh update
   eval $(/usr/lib/ddmesh/ddmesh-utils-network-info.sh wwan)
   [ "$net_up" = '1' ] && break;
-  sleep 10
+  logger -s -t "lte-modem" "wait until wwan is up [$((max_counter*wait_s))]"
+  sleep $wait_s
 done
 
 logger -s -t "lte-modem" "LTE modem up -> start monitoring"
@@ -40,16 +43,12 @@ logger -s -t "lte-modem" "LTE modem up -> start monitoring"
 dhcp_refresh_count=0
 while true;
 do
-
-	# kill is needed to avoid deadlocks
-	killall uqmi 2>/dev/null
-
-	signal="$(uqmi -s -d $wwan_device --get-signal-info)"
-	status="$(uqmi -s -d $wwan_device --get-data-status)"
-	pin_state="$(uqmi -s -d $wwan_device --uim-get-sim-state)"
-	system_info="$(uqmi -d $wwan_device --get-system-info)"
-	service="$(uqmi -s -d $wwan_device --get-serving-system)"
-	phyinfo="$(uqmi -s -d $wwan_device --get-lte-cphy-ca-info)"
+	signal="$(uqmi -t ${uqmi_timeout_ms} -s -d $wwan_device --get-signal-info)"
+	status="$(uqmi -t ${uqmi_timeout_ms} -s -d $wwan_device --get-data-status)"
+	pin_state="$(uqmi -t ${uqmi_timeout_ms} -s -d $wwan_device --uim-get-sim-state)"
+	system_info="$(uqmi -t ${uqmi_timeout_ms} -d $wwan_device --get-system-info)"
+	service="$(uqmi -t ${uqmi_timeout_ms} -s -d $wwan_device --get-serving-system)"
+	phyinfo="$(uqmi -t ${uqmi_timeout_ms} -s -d $wwan_device --get-lte-cphy-ca-info)"
 
 	eval $(echo "$system_info" | jsonfilter -e m_mcc='@.lte.mcc' -e m_mnc='@.lte.mnc')
 	# https://mcc-mnc.net/
