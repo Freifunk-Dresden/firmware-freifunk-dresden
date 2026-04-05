@@ -21,19 +21,19 @@ define Package/$(PKG_NAME)-base
     +ca-bundle +procd +urandom-seed +urngd \
     +firewall4 \
     +ip-tiny \
-    +mtd +opkg \
+    +mtd \
     +uhttpd \
     +kmod-leds-gpio +kmod-gpio-button-hotplug \
     +kmod-tun \
     +libmbedtls +libustream-mbedtls +px5g-mbedtls \
     +bmxd +freifunk-upload \
     +iperf3 \
-    +ethtool \
     +kmod-ipip \
     +PACKAGE_fastd:nacl \
     +PACKAGE_fastd:libuecc \
     +PACKAGE_fastd:libmnl \
-    +PACKAGE_fastd:kmod-l2tp-eth
+    +PACKAGE_fastd:kmod-l2tp-eth \
+    +PACKAGE_wireguard-tools:kmod-crypto-kpp
 
   TITLE:=Meta package to select all needed basic packages
 endef
@@ -108,9 +108,8 @@ define Package/$(PKG_NAME)-wifi
   # This simply just selects wpa-cli without hiding current packet
 
   DEPENDS:= $(PKG_NAME)-base \
-            +iw +iwinfo +@PACKAGE_wpa-cli \
+            +iw +iwinfo +libiwinfo +@PACKAGE_wpa-cli \
             +PACKAGE_ddmesh_large_device:wpad-basic-mbedtls
-#            +@!PACKAGE_ddmesh_large_device:wpad-mini \
 
 
   TITLE:=Selects all addtional wifi tools.

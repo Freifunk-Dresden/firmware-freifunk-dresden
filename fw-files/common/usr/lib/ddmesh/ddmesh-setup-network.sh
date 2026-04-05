@@ -30,9 +30,7 @@ get_device_section()
 setup_ethernet()
 {
 	#############################################################################
-	# setup lan
-	# Interface for "lan" is initially  set in /etc/config/network
-	# tbb is a bridge used by mesh-on-lan
+	# setup lan/wan
 	#############################################################################
 	# reconfigure lan as bridge if needed
 	for NET in lan wan
@@ -138,6 +136,7 @@ setup_ethernet()
   uci -q delete network.wan6
 }
 
+# mesh_lan mesh_wan mesh_vlan
 setup_mesh()
 {
 	# determine switch type configuration
@@ -295,6 +294,7 @@ setup_mesh()
 	done
 }
 
+# mobile modem
 setup_wwan()
 {
 	# Note: the new network configuration scheme does not work for WWAN modems.
@@ -325,7 +325,7 @@ setup_wwan()
 	uci set network.wwan_helper.force_link='1'
 }
 
-# tether
+# tether (usb lte modem/smartphone)
 setup_twan()
 {
 	dev_config="bridge_twan"
@@ -350,6 +350,7 @@ setup_twan()
 	uci set network.twan.metric='70' # avoids overwriting WAN/LAN default route
 }
 
+# router uses wifi as client to geht wan from other wifi ap
 setup_cwan()
 {
 	uci add network interface
@@ -477,6 +478,10 @@ setup_network()
 {
  rm -f /etc/config/network
  /bin/config_generate
+
+ # remove wrong global option that is only for ipv6. udhcpc (ipv4) prevents working for
+ # wwan mobile modem
+ uci -q delete network.globals.dhcp_default_duid
 
  # add marker that we have generated this file
 	if [ -z "$(uci -q get network.ddmesh)" ]; then

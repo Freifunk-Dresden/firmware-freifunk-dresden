@@ -1,0 +1,8 @@
+# Copyright (C) 2006 - present, Stephan Enderlein<stephan@freifunk-dresden.de>
+# GNU General Public License Version 3
+
+# DON'T put anything here, because it is NOT saved and restored along
+# saving configurations
+# freifunk must not call scripts from here
+
+exit 0

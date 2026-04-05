@@ -1,0 +1,31 @@
+#
+# reserved values
+#
+255	local
+254	main
+253	default
+0	unspec
+
+#
+# local
+#
+251	public_gateway
+250	local_gateway
+#249	ping
+248	vpn
+247	unreachable
+246	fallback_gateway
+245	public_dns
+244	ff_gateway
+
+#batman
+64	bat_route
+
+# icmp 10.201.x.x tables
+201     icmp0x1001
+202     icmp0x1002
+203     icmp0x1003
+204     icmp0x1004
+205     icmp0x1005
+
+

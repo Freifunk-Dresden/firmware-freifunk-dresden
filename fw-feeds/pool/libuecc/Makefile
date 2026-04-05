@@ -41,7 +41,7 @@ endef
 TARGET_CFLAGS += -ffunction-sections -fdata-sections
 
 CMAKE_OPTIONS += \
-	-DCMAKE_BUILD_TYPE:String="MINSIZEREL"
+	-DCMAKE_BUILD_TYPE:String="MINSIZEREL" -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 
 define Build/InstallDev

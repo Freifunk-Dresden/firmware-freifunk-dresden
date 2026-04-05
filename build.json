@@ -109,6 +109,50 @@
     ]
   },
   {
+    "type": "template",
+    "name": "25.12.0",
+    "openwrt_repo": "https://git.openwrt.org/openwrt/openwrt.git",
+    "openwrt_rev": "v25.12.0",
+    "openwrt_variant": "",
+    "selector-config": "25.12",
+    "selector-feeds": "25.12",
+    "selector-patches": "25.12",
+    "selector-files": "25.12",
+    "feeds": [
+      {
+        "type": "src-link",
+        "name": "ddmesh",
+        "src": ""
+      },
+      {
+        "type": "src-git",
+        "name": "packages",
+        "src": "https://git.openwrt.org/feed/packages.git",
+        "rev": "default"
+      },
+      {
+        "type": "src-git",
+        "name": "routing",
+        "src": "https://git.openwrt.org/feed/routing.git",
+        "rev": "default"
+      }
+    ],
+    "packages": [
+      "liblzma",
+      "libpam",
+      "libnetsnmp",
+      "libusbmuxd",
+      "libimobiledevice",
+      "usbmuxd",
+      "usbutils",
+      "libev",
+      "libtirpc",
+      "htop",
+      "tmux",
+      "iperf3"
+    ]
+  },
+  {
     "type":"template",
     "name":"master",
     "openwrt_repo"     : "https://git.openwrt.org/openwrt/openwrt.git",
@@ -129,54 +173,73 @@
   },
 
 # =================== targets =======================================================
-# ---------- openwrt 24 ------------------------------------------------------
+
+# ---------- openwrt 25 ------------------------------------------------------
+  { # bmxd mesh packete gehen, aber kein ping über mesh (zte mf289f)
+   "disabled": false,
+   "template": "25.12.0",
+   "name": "ipq40xx.25.generic",
+   "config": "ipq40xx.25.generic.cfg"
+  },
   {
-    "template":"24.10.5",
-    "name":"ramips.24.mt7621.generic",
-    "config":"ramips.24.mt7621.generic.cfg",
+    "template": "25.12.0",
+    "name": "ramips.25.mt7621.generic",
+    "config": "ramips.25.mt7621.generic.cfg",
     "disabled": false
   },
   {
-    "template": "24.10.5",
-    "name": "ramips.24.mt7621.tiny-ubifs",
-    "config": "ramips.24.mt7621.tiny-ubifs.cfg",
+    "template": "25.12.0",
+    "name": "ramips.25.mt7621.tiny-ubifs",
+    "config": "ramips.25.mt7621.tiny-ubifs.cfg",
     "disabled": false
   },
   {
-    "template":"24.10.5",
-    "name":"ath79.24.generic",
-    "config":"ath79.24.generic.cfg",
+    "template": "25.12.0",
+    "name": "ath79.25.generic",
+    "config": "ath79.25.generic.cfg",
     "disabled": false
   },
   {
-    "template": "24.10.5",
-    "name": "ipq40xx.24.generic",
-    "config": "ipq40xx.24.generic.cfg"
+    "template": "25.12.0",
+    "name": "ipq807x.25.generic",
+    "config": "ipq807x.25.generic.cfg"
   },
   {
-    "template": "24.10.5",
-    "name": "ipq807x.24.generic",
-    "config": "ipq807x.24.generic.cfg"
-  },
-  {
-    "template":"24.10.5",
-    "name":"mediatek.24.filogic",
-    "config":"mediatek.24.filogic.cfg",
+    "template": "25.12.0",
+    "name": "mediatek.25.filogic",
+    "config": "mediatek.25.filogic.cfg",
     "disabled": false
   },
   {
-    "template":"24.10.5",
-    "name":"mediatek.24.mt7622.generic",
-    "config":"mediatek.24.mt7622.generic.cfg"
+    "template": "25.12.0",
+    "name": "mediatek.25.mt7622.generic",
+    "config": "mediatek.25.mt7622.generic.cfg"
   },
   {
-    "template":"24.10.5",
-    "name":"x86-64.offloader",
-    "config":"x86-64.24.offloader.cfg",
-    "openwrt_variant":"offloader",
-    "packages" : [
-      "qemu", "libpam", "libopenldap", "libidn2", "libssh2", "libcap", "liblzma", "libnetsnmp", "jansson", "zabbix",
-      "libusbmuxd", "libimobiledevice", "usbmuxd", "usbutils", "libev", "libtirpc", "htop", "tmux", "iperf3"
+    "template": "25.12.0",
+    "name": "x86-64.25.offloader",
+    "config": "x86-64.25.offloader.cfg",
+    "openwrt_variant": "offloader",
+    "packages": [
+      "qemu",
+      "libpam",
+      "libopenldap",
+      "libidn2",
+      "libssh2",
+      "libcap",
+      "liblzma",
+      "libnetsnmp",
+      "jansson",
+      "zabbix",
+      "libusbmuxd",
+      "libimobiledevice",
+      "usbmuxd",
+      "usbutils",
+      "libev",
+      "libtirpc",
+      "htop",
+      "tmux",
+      "iperf3"
     ]
   },
 
@@ -264,7 +327,7 @@
   },
   {
     "template":"22.03",
-    "name":"bcm.bcm53xx.offloader",
+    "name":"bcm.22.bcm53xx.offloader",
     "config":"bcm.22.bcm53xx.offloader.cfg",
     "openwrt_variant":"offloader"
   },
