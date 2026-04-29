@@ -55,16 +55,15 @@ setup_forwarding()
 {
 	logger -s -t $TAG "setup_forwarding"
 
-	# nft type 'nat' -> use chain 'dstnat'
-	# keep order !!!
+	# nat: create portforwarding chains and insert these into "dstnat" chain.
+  # portforwarding chains hold rules to rewrite destination ip:port
 	for i in protect rules
 	do
 		chain="ddmesh_forwarding_nat_${i}"
 		$NFT create chain inet fw4 ${chain} '{counter;}' 2>/dev/null
 		$NFT flush chain inet fw4 ${chain}
 
-		# insert my chains into openwrt chains
-		# Any packet with destination _ddmesh_ip and 255.255.255.255 (for dhcp)
+		# Any packet with destination == _ddmesh_ip or 255.255.255.255 (for dhcp)
 		MARKER="ddmesh-forwarding-nat-${i}-ip-jump"
 		present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.comment=\"${MARKER}\"].rule.handle")"
 		if [ -z "$present" ]; then
@@ -72,7 +71,7 @@ setup_forwarding()
 			$NFT add rule inet fw4 "dstnat" ip daddr 255.255.255.255 counter jump ${chain} comment "\"${MARKER}\""
 		fi
 
-		# forward incomming packets from lan to lan ip
+		# # Any packet with destination for lan_ipaddr
 		# interface might not be ready yet (wait for other hotplug updates)
 		if [ "$lan_up" = "1" -a -n "$lan_ipaddr" ]; then
 			MARKER="ddmesh-forwarding-nat-${i}-lan-jump"
@@ -82,7 +81,7 @@ setup_forwarding()
 			fi
 		fi
 
-		# forward incomming packets from wan to wan ip
+		# # Any packet with destination for wan_ipaddr
 		# interface might not be ready yet (wait for other hotplug updates)
 		if [ "$wan_up" = "1" -a -n "$wan_ipaddr" ]; then
 			MARKER="ddmesh-forwarding-nat-${i}-wan-jump"
@@ -93,20 +92,19 @@ setup_forwarding()
 		fi
 	done
 
-	# nft type 'filter' -> use chain 'dstnat'
-	# allow port forwarding when request comes from lan,mesh,wifi2
-	# no need to check for dest ip and interface, as user adds its with intention
+	# filter: accept forwarding packets that have ct == dnat (set indirectly through dstnat rules)
+	# only allow port forwarding when request comes from lan,mesh,wifi2
 	for i in mesh wifi2 lan wan
 	do
 		MARKER="ddmesh-forwarding-${i}-jump"
-		# insert before rules form /etc/config/firewall
+		# insert before rules from /etc/config/firewall
 		present="$(nft --json list ruleset | jsonfilter -e "@.nftables[@.rule.comment=\"${MARKER}\"].rule.handle")"
 		if [ -z "$present" ]; then
 			$NFT insert rule inet fw4 "forward_${i}" position 0 ct status dnat counter accept comment "\"${MARKER}\""
 		fi
 	done
 
-	# (re)fill in protected ports
+  # nat: add protection rules
 	MARKER="ddmesh-forwarding-protect-ports"
 	for p in $PROTECTED_PORTS
 	do
@@ -114,7 +112,7 @@ setup_forwarding()
 		$NFT add rule inet fw4 "ddmesh_forwarding_nat_protect" udp dport ${p} counter accept comment "\"${MARKER}\""
 	done
 
-	# (re)fill in forwarding rules
+  # nat: add forwarding rules
 	config_load ddmesh
 	config_foreach callback_rules
 }
