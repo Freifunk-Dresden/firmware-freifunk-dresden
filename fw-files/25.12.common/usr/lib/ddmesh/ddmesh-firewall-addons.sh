@@ -140,8 +140,9 @@ setup_ignored_nodes() {
 			iface="$(eval echo "\$net_${i}")"
 			# replace '+' with '*'
 			iface="${iface/+/*}"
-			# udp dport 4305
-			$NFT insert rule inet fw4 input_mesh position 0 iifname ${iface} counter jump ${chain_in} comment "\"${MARKER}\""
+			if [ -n "${iface}" ]; then
+				$NFT insert rule inet fw4 input_mesh position 0 iifname ${iface} counter jump ${chain_in} comment "\"${MARKER}\""
+			fi
 		fi
 	done
 
