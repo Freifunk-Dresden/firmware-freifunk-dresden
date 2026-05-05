@@ -50,6 +50,16 @@ setup_nat_rules()
 {
 	logger -s -t $TAG "setup_nat_rules"
 
+  # keep order of rules (reverse)
+
+	# snat mesh from 10.201.xxx to 10.200.xxxx; packets going out via mesh interfaces would have 10.201 src ip (never routed)
+	MARKER="ddmesh-nat-mesh"
+	$NFT insert rule inet fw4 srcnat_mesh position 0 snat ip to ${_ddmesh_ip} comment "\"${MARKER}-snat\""
+
+	# don't snat icmp to debug tbb links with ping
+	MARKER="ddmesh-nat-icmp"
+	$NFT insert rule inet fw4 srcnat_mesh position 0 ip protocol icmp ip saddr ${_ddmesh_fullnet} counter accept comment "\"${MARKER}-accept\""
+
 	# never change bmxd IPs (insert before existing masq-rule)
 	MARKER="ddmesh-nat-bmxd"
 	$NFT insert rule inet fw4 srcnat_mesh position 0 udp dport 4305 counter accept comment "\"${MARKER}-accept\""
