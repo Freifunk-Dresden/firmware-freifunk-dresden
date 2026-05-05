@@ -102,41 +102,39 @@ if [ $ARG = "update" -o ! -f "$CACHE_DATA" ]; then
 		net_error="$wwan_error" #
 	fi
 
-	#if net_name matches requested network, stay in this entry
+	if [ -z "$net_ifname" ]; then
+		net_ifname="$(uci -q get network.${net_name}.ifname)"
+	fi
 
-		if [ "$net_available" = 1 ]; then
-			# check if ll_ifname is really present
-			ll_ifname="$(uci -q get network.${net_name}.ll_ifname)"
-			if [ -n "$ll_ifname" ]; then
-				ip link show dev ${ll_ifname} 2>/dev/null >/dev/null && net_iface_present=1
-			else
-				net_iface_present=1
-			fi
+	if [ "$net_available" = 1 ]; then
+		# check if ifname is really present
+		if [ -n "$net_ifname" ]; then
+			ip link show dev ${net_ifname} 2>/dev/null >/dev/null && net_iface_present=1
 		fi
+	fi
 
-		#calculate rest
-		[ "$net_up" = "1" ] &&  [ -n "$net_ipaddr" ] && {
-				eval $(ipcalc.sh $net_ipaddr/$net_mask)
-				net_broadcast=$BROADCAST
-				net_netmask=$NETMASK
-				net_network=$NETWORK
-		}
+	#calculate rest
+	[ "$net_up" = "1" ] &&  [ -n "$net_ipaddr" ] && {
+			eval $(ipcalc.sh $net_ipaddr/$net_mask)
+			net_broadcast=$BROADCAST
+			net_netmask=$NETMASK
+			net_network=$NETWORK
+	}
 
 
-		echo export $net_name"_iface_present=$net_iface_present" >> $CACHE_DATA
-		echo export $net_name"_mask=$net_mask" >> $CACHE_DATA
-		echo export $net_name"_ipaddr=$net_ipaddr" >> $CACHE_DATA
-		echo export $net_name"_netmask=$net_netmask" >> $CACHE_DATA
-		echo export $net_name"_broadcast=$net_broadcast" >> $CACHE_DATA
-		echo export $net_name"_gateway=$net_gateway" >> $CACHE_DATA
-		echo export $net_name"_dns=$net_dns" >> $CACHE_DATA
-		echo export $net_name"_connect_time=$net_connect_time" >> $CACHE_DATA
-		echo export $net_name"_ifname=$net_ifname" >> $CACHE_DATA
-		echo export $net_name"_up=$net_up" >> $CACHE_DATA
-		echo export $net_name"_network=$net_network" >> $CACHE_DATA
-		echo export $net_name"_error=$net_error" >> $CACHE_DATA
+	echo export $net_name"_iface_present=$net_iface_present" >> $CACHE_DATA
+	echo export $net_name"_mask=$net_mask" >> $CACHE_DATA
+	echo export $net_name"_ipaddr=$net_ipaddr" >> $CACHE_DATA
+	echo export $net_name"_netmask=$net_netmask" >> $CACHE_DATA
+	echo export $net_name"_broadcast=$net_broadcast" >> $CACHE_DATA
+	echo export $net_name"_gateway=$net_gateway" >> $CACHE_DATA
+	echo export $net_name"_dns=$net_dns" >> $CACHE_DATA
+	echo export $net_name"_connect_time=$net_connect_time" >> $CACHE_DATA
+	echo export $net_name"_ifname=$net_ifname" >> $CACHE_DATA
+	echo export $net_name"_up=$net_up" >> $CACHE_DATA
+	echo export $net_name"_network=$net_network" >> $CACHE_DATA
+	echo export $net_name"_error=$net_error" >> $CACHE_DATA
 
-#	fi
 	idx=$(( idx + 1 ))
  done
 
