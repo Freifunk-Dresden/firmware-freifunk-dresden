@@ -50,19 +50,32 @@ setup_nat_rules()
 {
 	logger -s -t $TAG "setup_nat_rules"
 
-  # keep order of rules (reverse)
+	# don't masquerade any anser from internet
+	$NFT flush chain inet fw4 srcnat_mesh
 
-	# snat mesh from 10.201.xxx to 10.200.xxxx; packets going out via mesh interfaces would have 10.201 src ip (never routed)
-	MARKER="ddmesh-nat-mesh"
-	$NFT insert rule inet fw4 srcnat_mesh position 0 snat ip to ${_ddmesh_ip} comment "\"${MARKER}-snat\""
-
-	# don't snat icmp to debug tbb links with ping
-	MARKER="ddmesh-nat-icmp"
-	$NFT insert rule inet fw4 srcnat_mesh position 0 ip protocol icmp ip saddr ${_ddmesh_fullnet} counter accept comment "\"${MARKER}-accept\""
+	# keep order of rules
 
 	# never change bmxd IPs (insert before existing masq-rule)
-	MARKER="ddmesh-nat-bmxd"
-	$NFT insert rule inet fw4 srcnat_mesh position 0 udp dport 4305 counter accept comment "\"${MARKER}-accept\""
+	MARKER="ddmesh-no-snat-bmxd"
+	$NFT add rule inet fw4 srcnat_mesh udp dport 4305 counter accept comment "\"${MARKER}\""
+
+	# don't snat icmp to debug tbb links with ping
+	MARKER="ddmesh-no-snat-icmp"
+	$NFT add rule inet fw4 srcnat_mesh ip protocol icmp ip saddr ${_ddmesh_fullnet} counter accept comment "\"${MARKER}\""
+
+	# snat mesh from 10.201.xxx to 10.200.xxxx; packets going out via mesh interfaces would have 10.201 src ip (never routed)
+	# don't snat answer from internet
+	MARKER="ddmesh-snat-mesh"
+	$NFT add rule inet fw4 srcnat_mesh ip saddr ${_ddmesh_linknet} counter snat to ${_ddmesh_ip} comment "\"${MARKER}\""
+
+	# allow access to freifunk ip from wifi2 device
+	MARKER="ddmesh-snat-wifi2-to-mesh"
+	$NFT add rule inet fw4 srcnat_mesh ip saddr ${_ddmesh_wifi2net} counter snat to ${_ddmesh_ip} comment "\"${MARKER}\""
+
+	if [ "$lan_up" = "1" -a -n "$lan_network" -a -n "$lan_mask" ]; then
+		MARKER="ddmesh-snat-lan-to-mesh"
+		$NFT add rule inet fw4 srcnat_mesh ip saddr "${lan_network}/${lan_mask}" counter snat to ${_ddmesh_ip} comment "\"${MARKER}\""
+	fi
 }
 
 callback_add_ignored_nodes()
