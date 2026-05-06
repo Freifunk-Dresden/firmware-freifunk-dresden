@@ -1,7 +1,18 @@
 
+2025-12-31 [9.0.2] (devel)
+--------------------------------------------------
+openwrt                   - upgrade to openwrt 25.12.0
+
+LTE modem                 - fix lte monitor (reconnect)
+
+router                    - add Netgear WAX206
+
+firewall                  - optimize firewall rules (snat)
+
+gui/network               - fix showing WWAN menu on devices without LTE modem
 
 
-2025-12-31 [9.0.0] ()
+2025-12-31 [9.0.0] (devel)
 --------------------------------------------------
 openwrt                   - add support for openwrt 24.10.5
                           - complete firewall rework (iptables -> netfilter)
@@ -114,7 +125,7 @@ EOL                      - remove support for end-of-life devices (too small mem
                             unused target: [ath79.22.nand] (22.03)
                               netgear_r6100
 
-2024-01-31 [8.2.8] ()
+2024-01-31 [8.2.8] (devel)
 --------------------------------------------------
 router                    - add "ASUS RT-AX53U"
 
