@@ -366,6 +366,16 @@ upgrade_9_0_0()
 	uci delete firewall.zone_wifi2.subnet
 }
 
+upgrade_9_0_1()
+{
+  cp /rom/etc/config/firewall /etc/config/firewall
+}
+
+upgrade_9_0_2()
+{
+  cp /rom/etc/config/firewall /etc/config/firewall
+}
+
 ##################################
 
 run_upgrade
