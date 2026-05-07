@@ -27,6 +27,7 @@ if [ "$error" = "1" ]; then
 	exit 1
 fi
 
+old_version_member=$(cat $LOCAL_FILE | jsonfilter -e "@.firmware_version")
 entry=$(cat $LOCAL_FILE | jsonfilter -e "@.fileinfo[@.model='$model' && @.model2='$model2']")
 
 if [ -z "$entry" ]; then
@@ -36,6 +37,7 @@ fi
 
 # get path, filename and version
 eval $(echo $entry | jsonfilter -e subpath='@.path' -e filename='@.filename' -e version='@.version')
+test -z "$version" && version="$old_version_member"
 
 firmware_url="$URL_DL/$subpath/$filename"
 packages_url="$URL_DL/$subpath/packages"
