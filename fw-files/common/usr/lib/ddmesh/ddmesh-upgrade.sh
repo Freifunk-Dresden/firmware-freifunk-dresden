@@ -376,6 +376,11 @@ upgrade_9_0_2()
   cp /rom/etc/config/firewall /etc/config/firewall
 }
 
+upgrade_9_0_3()
+{
+  true
+}
+
 ##################################
 
 run_upgrade
