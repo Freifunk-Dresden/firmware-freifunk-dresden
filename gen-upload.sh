@@ -176,16 +176,16 @@ gen_download_json_start()
 # das feld "firmware_version" wird von der alten firmware geprueft, um ein autoupdate oder ein
 # update via button zu erlauben.
 # neue versionen prüfen auf die firmware version innerhalb eines firmware eintrages. es können somit mit
-# einem "build" unterschiedliche versionen wie 8.2.7 und 9.0.0 entstehen, wenn für router keine neuere firmware version
+# einem "build" unterschiedliche versionen wie 8.2.7 und >9.0.0 entstehen, wenn für router keine neuere firmware version
 # möglich ist, aber das buildsystem für neue geräte eine höhere version braucht.
-# Die beiden folgenden Zeilen sind nur so lange notwendig, bis alle 8.x.x (openwrt 22) firmware router, für die es eine 9.0.0 (openwrt 24)
+# Die beiden folgenden Zeilen sind nur so lange notwendig, bis alle 8.x.x (openwrt 22) firmware router, für die es eine >9.0.0 (openwrt 24)
 # gibt, aktualisiert wurden.
 # TODO: diese beiden müssen dann rausgenommen werden !!!!!!
-  printf "    ${C_RED} gen-upload.sh temporär für upgrade auf 9.0.0 angepasst (hardcoded)\n"
+  printf "    ${C_RED} gen-upload.sh temporär für upgrade auf 9.0.3 angepasst (hardcoded)\n"
   printf "    -> muß wieder entfernt werden, wenn für alle openwrt 22 router, wo ein upgrade auf 24 möglich ist,\n"
   printf "    aktualisert wurden${C_NONE}\n"
   #--- begin --- block loeschen -
-	fw_version="9.0.0"
+	fw_version="9.0.3"
   printf " \"firmware_version\":\"$fw_version\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
   #--- end -----
 
