@@ -2123,7 +2123,7 @@
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-lite-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2133,7 +2133,7 @@
       "autoupdate": "1",
       "model": "ubnt,unifiac-lite",
       "model2": "Ubiquiti UniFi-AC-LITE",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-lite-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-lite-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -2143,21 +2143,21 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-lite-targz-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-lite-targz-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifiac-mesh-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-mesh-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-mesh-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifiac-mesh-pro-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-mesh-pro-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-mesh-pro-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2167,7 +2167,7 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-mesh-pro-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-mesh-pro-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -2177,7 +2177,7 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-mesh-pro-targz-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-mesh-pro-targz-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -2187,7 +2187,7 @@
       "autoupdate": "1",
       "model": "ubnt,unifiac-mesh",
       "model2": "Ubiquiti UniFi AC Mesh",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-mesh-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-mesh-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -2197,14 +2197,14 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-mesh-targz-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-mesh-targz-sysupgrade.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
       "sortkey": "ath79-generic-ubnt_unifiac-pro-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-pro-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-pro-initramfs-kernel.bin",
       "comment": ""
     },
     {
@@ -2214,7 +2214,7 @@
       "autoupdate": "1",
       "model": "ubnt,unifiac-pro",
       "model2": "Ubiquiti UniFi AC Pro",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-pro-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-pro-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
@@ -2224,7 +2224,7 @@
       "autoupdate": "0",
       "model": "",
       "model2": "",
-      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-ubnt_unifiac-pro-targz-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.3-22.03.7-ath79-generic-ubnt_unifiac-pro-targz-sysupgrade.bin",
       "comment": ""
     },
     {

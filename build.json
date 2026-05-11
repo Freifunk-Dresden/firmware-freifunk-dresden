@@ -285,6 +285,11 @@
     "config":"ath79.22.small.smallbuffers.cfg"
   },
   {
+    "template": "22.03",
+    "name": "ath79.22.small.8MB",
+    "config": "ath79.22.small.8MB.cfg"
+  },
+  {
     "template":"22.03",
     "name":"ipq40xx.22.generic",
     "config":"ipq40xx.22.generic.cfg"
