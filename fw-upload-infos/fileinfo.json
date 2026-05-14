@@ -1169,6 +1169,16 @@
     {
       "disabled": "0",
       "name": "",
+      "sortkey": "ath79-generic-sophos_ap100-targz-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-sophos_ap100-targz-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
       "sortkey": "ath79-generic-tplink_archer-c5-v1-initramfs-kernel.bin",
       "filename": "freifunk-dresden-v9.0.3-25.12.3-ath79-generic-tplink_archer-c5-v1-initramfs-kernel.bin",
       "comment": ""
