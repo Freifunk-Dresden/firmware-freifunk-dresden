@@ -1,32 +1,21 @@
-diff -rN -U10 --no-dereference tools.ori/Makefile tools/Makefile
---- tools.ori/Makefile	2026-03-21 00:06:03.000000000 +0100
-+++ tools/Makefile	2026-03-26 22:34:57.375839271 +0100
-@@ -58,20 +58,21 @@
- tools-y += mkimage
- tools-y += mklibs
- tools-y += mtd-utils
- tools-y += mtools
- tools-y += ninja
- tools-y += padjffs2
- tools-y += patch-image
+diff --git a/tools/Makefile b/tools/Makefile
+index 79d3954fef..b57b69779f 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -65,6 +65,7 @@ tools-y += patch-image
  tools-y += patchelf
  tools-y += pkgconf
  tools-y += quilt
-+tools-y += ruby 
++tools-y += ruby
  tools-y += squashfs4
  tools-y += sstrip
  tools-y += util-linux
- tools-y += xz
- tools-y += zip
- tools-y += zlib
- tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS),y) += liblzo
- tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_B43_TOOLS),y) += b43-tools
- tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_BZIP2_TOOLS),y) += bzip2
- tools-$(if $(CONFIG_BUILD_ALL_HOST_TOOLS)$(BUILD_ISL),y) += isl
-diff -rN -U10 --no-dereference tools.ori/ruby/Makefile tools/ruby/Makefile
---- tools.ori/ruby/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ tools/ruby/Makefile	2026-03-26 22:42:18.476528920 +0100
-@@ -0,0 +1,25 @@
+diff --git a/tools/ruby/Makefile b/tools/ruby/Makefile
+new file mode 100644
+index 0000000000..689d05bf48
+--- /dev/null
++++ b/tools/ruby/Makefile
+@@ -0,0 +1,26 @@
 +include $(TOPDIR)/rules.mk
 +
 +PKG_NAME:=ruby
@@ -52,3 +41,4 @@ diff -rN -U10 --no-dereference tools.ori/ruby/Makefile tools/ruby/Makefile
 +endef
 +
 +$(eval $(call HostBuild))
++

@@ -252,6 +252,7 @@ gen_download_json_add_data()
 		md5sum=""
 		sha256sum=""
 		filename=""
+    filesize=""
 		comment=""
 
 		# search file info. Key is the filename
@@ -339,8 +340,9 @@ gen_download_json_add_data()
 				fi
 			fi
 
-			md5sum=$(md5sum $path | cut -d' ' -f1)
-			sha256sum=$(sha256sum $path | cut -d' ' -f1)
+			md5sum=$(md5sum "$path" | cut -d' ' -f1)
+			sha256sum=$(sha256sum "$path" | cut -d' ' -f1)
+      filesize=$(stat -c %s "$path")
 
 
 			# append comma
@@ -357,7 +359,7 @@ gen_download_json_add_data()
 			if [ $sysupgrade = 1 ]; then
 
 				if [ "$disabled" = "0" ]; then
-					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"sha256sum\":\"$sha256sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"autoupdate\":\"$autoupdate\", \"model\":\"$model\", \"model2\":\"$model2\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"sha256sum\":\"$sha256sum\", \"filesize\":\"$filesize\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 				fi
 
 				# generate new input info file (and remember source of firmware file, for error checking during gen_upload.sh)
@@ -365,7 +367,7 @@ gen_download_json_add_data()
 			else
 
 				if [ "$disabled" = "0" ]; then
-					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"sha256sum\":\"$sha256sum\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
+					printf "{ \"version\":\"$fw_version\", \"name\":\"$name\", \"path\":\"$subpath\", \"filename\":\"$file\", \"md5sum\":\"$md5sum\", \"sha256sum\":\"$sha256sum\", \"filesize\":\"$filesize\", \"comment\":\"$comment\"}" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
 				fi
 
 				# generate new input info file
