@@ -2854,6 +2854,30 @@
     {
       "disabled": "0",
       "name": "",
+      "sortkey": "mediatek-filogic-dlink_aquila-pro-ai-m60-a1-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.4-25.12.3-mediatek-filogic-dlink_aquila-pro-ai-m60-a1-initramfs-kernel.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-dlink_aquila-pro-ai-m60-a1-squashfs-recovery.bin",
+      "filename": "freifunk-dresden-v9.0.4-25.12.3-mediatek-filogic-dlink_aquila-pro-ai-m60-a1-squashfs-recovery.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-dlink_aquila-pro-ai-m60-a1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "",
+      "model2": "",
+      "filename": "freifunk-dresden-v9.0.4-25.12.3-mediatek-filogic-dlink_aquila-pro-ai-m60-a1-squashfs-sysupgrade.bin",
+      "comment": ""
+    },
+    {
+      "disabled": "0",
+      "name": "",
       "sortkey": "mediatek-filogic-glinet_gl-mt6000-initramfs-kernel.bin",
       "filename": "freifunk-dresden-v9.0.4-25.12.3-mediatek-filogic-glinet_gl-mt6000-initramfs-kernel.bin",
       "comment": ""
