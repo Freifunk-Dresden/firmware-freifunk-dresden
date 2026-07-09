@@ -8,11 +8,11 @@ config uhttpd main
 	option redirect_https   '0'
 	option home             '/www'
 	option rfc1918_filter   '1'
-	option max_requests	    '10'
+	option max_requests	'10'
 	option max_connections	'10'
-	option http_keepalive   '0'
-	option script_timeout   '600'
-	option network_timeout  '600'
+	option http_keepalive   '10'
+	option script_timeout   '300'
+	option network_timeout  '300'
 	option cert             '/etc/uhttpd.crt'
 	option key              '/etc/uhttpd.key'
 	list interpreter        '.cgi=/bin/sh'
@@ -22,6 +22,7 @@ config uhttpd main
 	option error_page       '/index.cgi'
 
 # Certificate defaults for px5g key generator
+# HINT: Keep bits 1024
 config cert px5g
 	option days             '7300'
 	option bits             '1024'

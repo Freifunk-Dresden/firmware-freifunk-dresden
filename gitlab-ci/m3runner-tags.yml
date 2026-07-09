@@ -2,8 +2,8 @@
 
 # dl and workdir symlinks are removed by gitlab for each job
 # so I need to recreate this
-#  - ln -s ~/mycache/dl
-#  - ln -s ~/mycache/workdir
+#  - ln -s /mycache/dl
+#  - ln -s /mycache/workdir
 
 m3tags:init:
 
@@ -60,8 +60,8 @@ m3tags:init:
     # Workdir contains artifacts that will be uploaded in last stage.
     # Symlink creation is needed for every job, because gitlab will checkout the sources
     # in new empty directory.
-    - mkdir -p ~/mycache/dl && ln -s ~/mycache/dl
-    - mkdir -p ~/mycache/workdir && ln -s ~/mycache/workdir
+    - mkdir -p /mycache/dl && ln -s /mycache/dl
+    - mkdir -p /mycache/workdir && ln -s /mycache/workdir
 
     # ensure that we have no old data. This is important when
     # generating download.json. Else all old openwrt images would be
@@ -91,9 +91,9 @@ m3tags:init:
     # dont delete dl, it is not so important to have different old version for
     # one packges, but it will reduce download overhead from external servers
     # every night. so just only delete workdirs to always have a clean build
-    - rm -rf ~/mycache/workdir/_output
-    - test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl
-    - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir
+    - rm -rf /mycache/workdir/_output
+    - test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf /mycache/dl
+    - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf /mycache/workdir
 
     # create artifact to transfer variable gitlab.environment to jobs else
     # each job gets its value from default gitlab values
@@ -115,8 +115,8 @@ m3tags:eol:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh eol.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -132,8 +132,8 @@ m3tags:x86-64:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh x86-64.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -149,8 +149,8 @@ m3tags:ramips:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -166,8 +166,8 @@ m3tags:ipq:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh ipq* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -183,8 +183,8 @@ m3tags:bcm:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh bcm.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -200,8 +200,8 @@ m3tags:lantiq:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -217,8 +217,8 @@ m3tags:ath79:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -234,8 +234,8 @@ m3tags:mpc85xx:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -251,8 +251,8 @@ m3tags:mediatek:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_BUILD_TAG = [${FF_BUILD_TAG}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh mediatek.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -267,8 +267,8 @@ m3tags:test:
   dependencies: ["m3tags:init"]
   script:
     - eval $(cat gitlab.environment)
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh list
   tags:
     - m3runner
@@ -287,8 +287,8 @@ m3tags:upload:
   script:
     - eval $(cat gitlab.environment)
     - echo "FF_UPLOAD_DIR = [${FF_UPLOAD_DIR}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./gen-upload.sh all
     - |
       # gitlab-runner's public ssh key must added to /home/deploy-firmware/.ssh/authorized_keys.

@@ -386,6 +386,13 @@ upgrade_9_0_4()
   true
 }
 
+upgrade_9_0_5()
+{
+  uci add_list ddmesh.communities.community='1023%Freiberg'
+  cp /rom/etc/config/uhttpd /etc/config/uhttpd
+  rm -f /etc/uhttpd.crt /etc/uhttpd.key
+}
+
 ##################################
 
 run_upgrade

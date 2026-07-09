@@ -28,10 +28,4 @@ Um die Firmware zu nutzen und im Dresdner Freifunk Netzwerk zu verwenden, sind d
 zubeachten. Der genaue Text und die Regeln lassen sich in license/license.txt nachlesen und MÜSSEN eingehalten werden.
 Siehe dazu Knotenspezifikationen im Wiki!
 
-Links:
-------
-[Freifunk Dresden](https://www.freifunk-dresden.de)<br/>
-[Wiki: Freifunk Dresden](https://wiki.freifunk-dresden.de)<br/>
-[Issues](https://gitlab.freifunk-dresden.de/firmware-developer/firmware/issues)<br/>
-[Twitter](https://twitter.com/ddmesh)<br/>
-[Facebook](https://www.facebook.com/FreifunkDresden)
+

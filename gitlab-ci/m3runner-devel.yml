@@ -2,8 +2,8 @@
 
 # dl and workdir symlinks are removed by gitlab for each job
 # so I need to recreate this
-#  - ln -s ~/mycache/dl
-#  - ln -s ~/mycache/workdir
+#  - ln -s /mycache/dl
+#  - ln -s /mycache/workdir
 
 variables:
   DEV_FF_UPLOAD_DIR: "devel"
@@ -32,13 +32,13 @@ m3devel:init:
     # Workdir contains artifacts that will be uploaded in last stage.
     # Symlink creation is needed for every job, because gitlab will checkout the sources
     # in new empty directory.
-    - mkdir -p ~/mycache/dl && ln -s ~/mycache/dl
-    - mkdir -p ~/mycache/workdir && ln -s ~/mycache/workdir
+    - mkdir -p /mycache/dl && ln -s /mycache/dl
+    - mkdir -p /mycache/workdir && ln -s /mycache/workdir
 
     # ensure that we have no old data. This is important when
     # generating download.json. Else all old openwrt images would be
     # included and mixed
-    - rm -rf ~/mycache/workdir/_output
+    - rm -rf /mycache/workdir/_output
 
     - echo "FF_GITLAB_REMOVE_DL = [${FF_GITLAB_REMOVE_DL}]"
     - echo "FF_GITLAB_REMOVE_WORKDIR = [${FF_GITLAB_REMOVE_WORKDIR}]"
@@ -56,8 +56,8 @@ m3devel:init:
     # dont delete dl, it is not so important to have different old version for
     # one packges, but it will reduce download overhead from external servers
     # every night. so just only delete workdirs to always have a clean build
-    #- test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf ~/mycache/dl/*
-    - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf ~/mycache/workdir
+    #- test "${FF_GITLAB_REMOVE_DL}" = "1" && rm -rf /mycache/dl/*
+    - test "${FF_GITLAB_REMOVE_WORKDIR}" = "1" && rm -rf /mycache/workdir
     - ./build.sh list
     - /bin/true
   tags:
@@ -69,8 +69,8 @@ m3devel:eol:
   stage: build
   needs: ["m3devel:init"]
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh eol.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -81,8 +81,8 @@ m3devel:x86-64:
   stage: build
   needs: ["m3devel:init"]
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh x86-64.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -93,8 +93,8 @@ m3devel:ramips:
   stage: build
   needs: ["m3devel:init"]
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh ramips.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -105,8 +105,8 @@ m3devel:ipq:
   stage: build
   needs: ["m3devel:init"]
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh ipq* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -117,8 +117,8 @@ m3devel:bcm:
   stage: build
   needs: ["m3devel:init"]
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh bcm.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -129,8 +129,8 @@ m3devel:lantiq:
   stage: build
   needs: ["m3devel:init"]
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh lantiq.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -141,8 +141,8 @@ m3devel:ath79:
   stage: build
   needs: ["m3devel:init"]
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh ath79.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -153,8 +153,8 @@ m3devel:mpc85xx:
   stage: build
   needs: ["m3devel:init"]
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh mpc85xx.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -165,8 +165,8 @@ m3devel:mediatek:
   stage: build
   needs: ["m3devel:init"]
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh mediatek.* rerun -j"$(( $(nproc) + 1))"
   tags:
     - m3runner
@@ -182,8 +182,8 @@ m3devel:test:
       # other artifacts are not needed (waste of disk storage), because they are uploaded to download server
       - fw-upload-infos/fileinfo.json.new-generated
   script:
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
     - ./build.sh list
     # generate fw-upload-infos/fileinfo.json.new-generated and let store it also on error
     # "all" needed to copy all firmware to output from which
@@ -209,8 +209,8 @@ m3devel:upload:
   needs: ["m3devel:test"]
   script:
     - echo "DEV_FF_UPLOAD_DIR = [${DEV_FF_UPLOAD_DIR}]"
-    - ln -s ~/mycache/dl
-    - ln -s ~/mycache/workdir
+    - ln -s /mycache/dl
+    - ln -s /mycache/workdir
 
     # if not set -> error
     # note: I have set default FF_UPLOAD_DIR in gitlab (variables) to 'nightly'
