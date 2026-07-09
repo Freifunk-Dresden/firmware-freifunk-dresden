@@ -288,20 +288,30 @@ setup_buildroot ()
 	# when running from gitlab only specific revision is cloned. there are no branch infos.
 	# So I check if FF_BUILD_TAG is set and then use this. If not defined I use
 	# the one I can determine.
-	git_ddmesh_rev="$(git log -1 --format=%H)"
+	echo "CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}"
+	echo "CI_COMMIT_SHA=${CI_COMMIT_SHA}"
+
+	git_ddmesh_rev="${CI_COMMIT_SHA}"
+	git_ddmesh_branch="${CI_COMMIT_REF_NAME}"
+	#echo "A:git_ddmesh_rev=${git_ddmesh_rev}"
+	#echo "A:git_ddmesh_branch=${git_ddmesh_branch}"
+
+	# if empty it must be a local built
+	test -z "${git_ddmesh_rev}" && git_ddmesh_rev="$(git log -1 --format=%H)"
+	test -z "${git_ddmesh_branch}" &&  git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
+	#echo "B:git_ddmesh_rev=${git_ddmesh_rev}"
+	#echo "B:git_ddmesh_branch=${git_ddmesh_branch}"
+
 	if [ -n "$FF_BUILD_TAG" ]; then
 		git_ddmesh_branch="$FF_BUILD_TAG"
 	else
-		git_ddmesh_branch="$(git name-rev --tags --name-only $git_ddmesh_rev | sed 's#.*/##')"
-
 		if [ "$git_ddmesh_branch" = "undefined" ]; then
 			git_ddmesh_branch="$(git branch | sed -n 's#^\* \(.*\)#\1#p')"
-			echo ""
 			echo -e $C_RED"WARNING: building from UN-TAGGED (git) sources"$C_NONE
-			echo ""
-			sleep 5
 		fi
 	fi
+	#echo "C:git_ddmesh_rev=${git_ddmesh_rev}"
+	#echo "C:git_ddmesh_branch=${git_ddmesh_branch}"
 
 	echo "git_ddmesh_rev:$git_ddmesh_rev" >> $buildroot/files/etc/built_info
 	echo "git_ddmesh_branch:$git_ddmesh_branch" >> $buildroot/files/etc/built_info
@@ -780,7 +790,7 @@ print_devices_for_target()
 	target=$1
 
 	# if I pass the filename with *.cfg, remove cfg and use the rest as target name
-  target=${target%.cfg}
+	target=${target%.cfg}
 
 	targetIdx=0
 	while true
@@ -1555,11 +1565,11 @@ EOM
 		test "$entry" = "null" && break
 		idx=$(( idx + 1 ))
 
-    # check if already installed
-    if [ -d ./package/feeds/*/${entry} ]; then
-      echo -e "[$idx] package: [$C_GREEN${entry}$C_NONE] - already installed"
-      continue
-    fi
+		# check if already installed
+		if [ -d ./package/feeds/*/${entry} ]; then
+			echo -e "[$idx] package: [$C_GREEN${entry}$C_NONE] - already installed"
+			continue
+		fi
 
 		echo -e "[$idx] package: [$C_GREEN${entry}$C_NONE] - install"
 		./scripts/feeds install ${entry} 2>/dev/null >/dev/null
