@@ -127,15 +127,15 @@ declare -A color_selector
 
 color_template['22.03']="${C_BLUE}"
 color_template['24.10.5']="${C_PURPLE}"
-color_template['25.12.3']="${C_ORANGE}"
+color_template['25.12.4']="${C_ORANGE}"
 #---
 color_fwversion['8.2.6']="${C_BLUE}"
 color_fwversion['8.2.8']="${C_GREEN}"
-color_fwversion['9.0.2']="${C_ORANGE}"
+color_fwversion['9.0.5']="${C_ORANGE}"
 #---
 color_openwrt['v22.03.7']="${C_BLUE}"
 color_openwrt['v24.10.5']="${C_PURPLE}"
-color_openwrt['v25.12.3']="${C_ORANGE}"
+color_openwrt['v25.12.4']="${C_ORANGE}"
 #---
 color_selector['22.03']="${C_BLUE}"
 color_selector['24.10']="${C_PURPLE}"
@@ -1555,12 +1555,18 @@ EOM
 		test "$entry" = "null" && break
 		idx=$(( idx + 1 ))
 
-		echo -e "[$idx] package: [$C_GREEN${entry}$C_NONE]"
-		./scripts/feeds install ${entry}
+    # check if already installed
+    if [ -d ./package/feeds/*/${entry} ]; then
+      echo -e "[$idx] package: [$C_GREEN${entry}$C_NONE] - already installed"
+      continue
+    fi
+
+		echo -e "[$idx] package: [$C_GREEN${entry}$C_NONE] - install"
+		./scripts/feeds install ${entry} 2>/dev/null >/dev/null
 	done
 
 	echo -e $C_CYAN"install all packages from own local feed directory (ddmesh)"$C_NONE
-	./scripts/feeds install -a -p ddmesh
+	./scripts/feeds install -a -p ddmesh 2>/dev/null >/dev/null
 
 
 	# ----------- setup config ---------------------------------------------------

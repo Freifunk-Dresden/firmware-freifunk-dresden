@@ -1,3 +1,12 @@
+2025-12-31 [9.0.5] (devel) 
+--------------------------------------------------
+router                    - (re)add Sophos SP100
+                            add D-Link Aquila Pro AI
+
+firewall                  - add additional rules for protection
+gui                       - speed-up webinterface
+backbone                  - update default backbone servers
+
 
 2025-12-31 [9.0.2] (devel)
 --------------------------------------------------

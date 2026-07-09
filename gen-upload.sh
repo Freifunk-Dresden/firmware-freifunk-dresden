@@ -493,7 +493,7 @@ do
 	printf "$fw_version\n" >$target_dir/version
 
 
-	filefilter="*.{bin,trx,img,itb,dlf,gz,tar,vdi,vmdk}"
+	filefilter="*.{bin,trx,img,itb,dlf,gz,vdi,vmdk}"
   $ENABLE_COPY && {
     printf "    ${C_YELLOW}copy:${C_NONE} ${config}/images/$filefilter\n"
     # use "eval" to resolv filefilter wildcards

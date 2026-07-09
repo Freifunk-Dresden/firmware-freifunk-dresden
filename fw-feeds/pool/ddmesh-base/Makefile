@@ -53,12 +53,12 @@ define Package/$(PKG_NAME)-base/config
    #depends on PACKAGE_ddmesh-base
 
    # use SYMBOL of package that should be selected
-   config PACKAGE_ddmesh_large_device
-     depends on PACKAGE_ddmesh-base
-     bool "Enable firmware image for large devices"
-     help
-       Target is for large device.  Flash size >=16Mbyte; RAM size >= 64MByte.
-       When selected, wpa_basic_openssl gets selected which also selects libopenssl to support WPA3
+#   config PACKAGE_ddmesh_large_device
+#     depends on PACKAGE_ddmesh-base
+#     bool "Enable firmware image for large devices"
+#     help
+#       Target is for large device.  Flash size >=16Mbyte; RAM size >= 64MByte.
+#       When selected, wpa_basic_openssl gets selected which also selects libopenssl to support WPA3
 
    # use SYMBOL of package that should be selected
    config PACKAGE_fastd
@@ -108,9 +108,7 @@ define Package/$(PKG_NAME)-wifi
   # This simply just selects wpa-cli without hiding current packet
 
   DEPENDS:= $(PKG_NAME)-base \
-            +iw +iwinfo +libiwinfo +@PACKAGE_wpa-cli \
-            +PACKAGE_ddmesh_large_device:wpad-basic-mbedtls
-
+            +iw +iwinfo +libiwinfo +@PACKAGE_wpa-cli +wpad-basic-mbedtls
 
   TITLE:=Selects all addtional wifi tools.
 
