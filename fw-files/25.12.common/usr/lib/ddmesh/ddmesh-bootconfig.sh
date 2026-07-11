@@ -50,6 +50,7 @@ config communities 'communities'
 	list	community '1020%Pirna'
 	list	community '1021%OL'
 	list	community '1022%Geringswalde'
+	list	community '1023%Freiberg'
 	list	community '2000%Leipzig'
 
 config system 'system'
@@ -181,7 +182,7 @@ config backbone 'backbone'
 #	option comment ''
 
 config backbone_client
-	option host 'vpn9.freifunk-dresden.de'
+	option host 'vpn5.freifunk-dresden.de'
 	option type 'wireguard'
 	option disabled '0'
 	option port ''
@@ -197,7 +198,7 @@ config backbone_client
 	option node ''
 
 config backbone_client
-	option host 'vpn15.freifunk-dresden.de'
+	option host 'vpn2.freifunk-dresden.de'
 	option type 'wireguard'
 	option disabled '0'
 	option port ''
@@ -205,23 +206,7 @@ config backbone_client
 	option node ''
 
 config backbone_client
-	option host 'vpn18.freifunk-dresden.de'
-	option type 'wireguard'
-	option disabled '0'
-	option port ''
-	option public_key ''
-	option node ''
-
-config backbone_client
-	option host 'vpn1le.freifunk-leipzig.de'
-	option type 'wireguard'
-	option disabled '0'
-	option port ''
-	option public_key ''
-	option node ''
-
-config backbone_client
-	option host 'vpn3le.freifunk-leipzig.de'
+	option host 'vpn2le.freifunk-leipzig.de'
 	option type 'wireguard'
 	option disabled '0'
 	option port ''
