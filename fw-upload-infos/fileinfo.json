@@ -1047,8 +1047,8 @@
       "name": "",
       "sortkey": "ath79-generic-sophos_ap100-squashfs-sysupgrade.bin",
       "autoupdate": "0",
-      "model": "",
-      "model2": "",
+      "model": "sophos,ap100",
+      "model2": "Sophos AP100",
       "filename": "freifunk-dresden-v9.0.5-25.12.4-ath79-generic-sophos_ap100-squashfs-sysupgrade.bin",
       "comment": ""
     },
