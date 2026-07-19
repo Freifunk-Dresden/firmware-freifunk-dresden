@@ -3238,32 +3238,32 @@
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "ramips-mt7621-xiaomi_mi-router-ac2100-initramfs-kernel.bin",
-      "filename": "freifunk-dresden-v9.0.5-25.12.4-ramips-mt7621-xiaomi_mi-router-ac2100-initramfs-kernel.bin",
+      "sortkey": "ramips-mt7621-xiaomi_redmi-router-ac2100-initramfs-kernel.bin",
+      "filename": "freifunk-dresden-v9.0.5-25.12.4-ramips-mt7621-xiaomi_redmi-router-ac2100-initramfs-kernel.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "ramips-mt7621-xiaomi_mi-router-ac2100-squashfs-kernel1.bin",
-      "filename": "freifunk-dresden-v9.0.5-25.12.4-ramips-mt7621-xiaomi_mi-router-ac2100-squashfs-kernel1.bin",
+      "sortkey": "ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-kernel1.bin",
+      "filename": "freifunk-dresden-v9.0.5-25.12.4-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-kernel1.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "ramips-mt7621-xiaomi_mi-router-ac2100-squashfs-rootfs0.bin",
-      "filename": "freifunk-dresden-v9.0.5-25.12.4-ramips-mt7621-xiaomi_mi-router-ac2100-squashfs-rootfs0.bin",
+      "sortkey": "ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-rootfs0.bin",
+      "filename": "freifunk-dresden-v9.0.5-25.12.4-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-rootfs0.bin",
       "comment": ""
     },
     {
       "disabled": "0",
       "name": "",
-      "sortkey": "ramips-mt7621-xiaomi_mi-router-ac2100-squashfs-sysupgrade.bin",
+      "sortkey": "ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-sysupgrade.bin",
       "autoupdate": "1",
       "model": "xiaomi,redmi-router-ac2100",
       "model2": "Xiaomi Redmi Router AC2100",
-      "filename": "freifunk-dresden-v9.0.5-25.12.4-ramips-mt7621-xiaomi_mi-router-ac2100-squashfs-sysupgrade.bin",
+      "filename": "freifunk-dresden-v9.0.5-25.12.4-ramips-mt7621-xiaomi_redmi-router-ac2100-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
