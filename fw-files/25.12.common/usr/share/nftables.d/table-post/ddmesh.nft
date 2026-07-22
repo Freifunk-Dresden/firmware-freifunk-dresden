@@ -20,3 +20,13 @@ chain ddmesh_mangle_output {counter;};
 
 chain ddmesh_dstnat {counter;};
 chain ddmesh_srcnat {counter;};
+
+chain ddmesh_backbone_input_accept {counter;};
+chain ddmesh_backbone_output_accept {counter;};
+chain ddmesh_backbone_input_reject {counter;};
+chain ddmesh_backbone_output_reject {counter;};
+
+chain ddmesh_privnet_input_accept {counter;};
+chain ddmesh_privnet_output_accept {counter;};
+chain ddmesh_privnet_input_reject {counter;};
+chain ddmesh_privnet_output_reject {counter;};

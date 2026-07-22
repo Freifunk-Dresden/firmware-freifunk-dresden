@@ -258,13 +258,6 @@ setup_firewall()
     # Should only be called by firewall.user!
     logger -s -t $TAG "setup_firewall"
 
-    # create chains (with counter, but do not register with standard hooks because chain is added
-    # to specific openwrt chain
-    $NFT add chain inet fw4 "ddmesh_backbone_input_accept" "{counter;}"
-    $NFT add chain inet fw4 "ddmesh_backbone_output_accept" "{counter;}"
-    $NFT add chain inet fw4 "ddmesh_backbone_input_reject" "{counter;}"
-    $NFT add chain inet fw4 "ddmesh_backbone_output_reject" "{counter;}"
-
     # insert my chains into openwrt chains
     MARKER="ddmesh-backbone-in"
     $NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_backbone_input_accept comment "\"${MARKER}-wan-jump\""
