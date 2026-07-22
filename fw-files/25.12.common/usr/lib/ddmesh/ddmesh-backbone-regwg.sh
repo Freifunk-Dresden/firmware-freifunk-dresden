@@ -6,6 +6,7 @@
 
 LOGGER_TAG="backbone"
 WG_BIN=$(which wg)
+LOCAL_GW_STATUS_FILE='/var/state/local_gateway_present'
 
 test -z "$WG_BIN" && { echo "wg not found"; exit 1;}
 
@@ -97,9 +98,11 @@ case "${cmd}" in
 		getServerInfo "$arg" || { usage; exit 1; }
 		;;
 	"register")
+    test -f "$LOCAL_GW_STATUS_FILE" || { exit 1; }
 		backbone_register "$arg" || { usage; exit 1; }
 		;;
 	"refresh")
+    test -f "$LOCAL_GW_STATUS_FILE" || { exit 1; }
 		updateAllRegistrations
 		;;
 	*) usage ; exit 1 ;;
