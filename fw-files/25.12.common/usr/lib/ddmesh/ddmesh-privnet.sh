@@ -125,35 +125,30 @@ callback_outgoing_config ()
 
 setup_firewall()
 {
-	logger -s -t $TAG "setup_firewall"
+    # Should only be called by firewall.user!
+    logger -s -t $TAG "setup_firewall"
 
-	# check if setup was already done
-	present="$(nft --json list ruleset | jsonfilter -e '@.nftables[@.chain.name="ddmesh_privnet_input_accept"].chain.name')"
-	if [ -z "$present" ]; then
-	  logger -s -t $TAG "setup_firewall:init"
+    # create chains (with counter, but do not register with standard hooks because chain is added
+    # to specific openwrt chain
+    $NFT add chain inet fw4 "ddmesh_privnet_input_accept" "{counter;}"
+    $NFT add chain inet fw4 "ddmesh_privnet_output_accept" "{counter;}"
+    $NFT add chain inet fw4 "ddmesh_privnet_input_reject" "{counter;}"
+    $NFT add chain inet fw4 "ddmesh_privnet_output_reject" "{counter;}"
 
-		# create chains (with counter, but do not register with standard hooks because chain is added
-		# to specific openwrt chain
-		$NFT add chain inet fw4 "ddmesh_privnet_input_accept" "{counter;}"
-		$NFT add chain inet fw4 "ddmesh_privnet_output_accept" "{counter;}"
-		$NFT add chain inet fw4 "ddmesh_privnet_input_reject" "{counter;}"
-		$NFT add chain inet fw4 "ddmesh_privnet_output_reject" "{counter;}"
+    # insert my chains into openwrt chains
+    MARKER="ddmesh-privnet-in"
+    $NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-wan-jump\""
+    $NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-lan-jump\""
+    $NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_privnet_input_accept comment "\"${MARKER}-mesh-jump\""
+    $NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-ffgw-jump\""
+    $NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-wifi2-jump\""
 
-		# insert my chains into openwrt chains
-		MARKER="ddmesh-privnet-in"
-		$NFT insert rule inet fw4 input_wan position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-wan-jump\""
-		$NFT insert rule inet fw4 input_lan position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-lan-jump\""
-		$NFT insert rule inet fw4 input_mesh position 0 counter jump ddmesh_privnet_input_accept comment "\"${MARKER}-mesh-jump\""
-		$NFT insert rule inet fw4 input_ffgw position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-ffgw-jump\""
-		$NFT insert rule inet fw4 input_wifi2 position 0 counter jump ddmesh_privnet_input_reject comment "\"${MARKER}-wifi2-jump\""
-
-		MARKER="ddmesh-privnet-out"
-		$NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-wan-jump\""
-		$NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-lan-jump\""
-		$NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_privnet_output_accept comment "\"${MARKER}-mesh-jump\""
-		$NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-ffgw-jump\""
-		$NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-wifi2-jump\""
-	fi
+    MARKER="ddmesh-privnet-out"
+    $NFT insert rule inet fw4 output_wan position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-wan-jump\""
+    $NFT insert rule inet fw4 output_lan position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-lan-jump\""
+    $NFT insert rule inet fw4 output_mesh position 0 counter jump ddmesh_privnet_output_accept comment "\"${MARKER}-mesh-jump\""
+    $NFT insert rule inet fw4 output_ffgw position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-ffgw-jump\""
+    $NFT insert rule inet fw4 output_wifi2 position 0 counter jump ddmesh_privnet_output_reject comment "\"${MARKER}-wifi2-jump\""
 }
 
 callback_firewall_outgoing()
@@ -215,7 +210,6 @@ case "$1" in
 
 		generate_fastd_conf
 
-		setup_firewall
 		update_firewall
 
 		config_count=0
