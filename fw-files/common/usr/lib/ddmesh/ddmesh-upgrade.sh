@@ -393,6 +393,11 @@ upgrade_9_0_5()
   rm -f /etc/uhttpd.crt /etc/uhttpd.key
 }
 
+upgrade_9_0_6()
+{
+  true
+}
+
 ##################################
 
 run_upgrade

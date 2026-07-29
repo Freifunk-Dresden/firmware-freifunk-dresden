@@ -1,4 +1,9 @@
-2025-12-31 [9.0.5] (devel) 
+2025-12-31 [9.0.6] (devel)
+--------------------------------------------------
+firewall                  - fix backbone/privnet rules
+
+
+2025-12-31 [9.0.5] (devel)
 --------------------------------------------------
 router                    - (re)add Sophos SP100
                             add D-Link Aquila Pro AI

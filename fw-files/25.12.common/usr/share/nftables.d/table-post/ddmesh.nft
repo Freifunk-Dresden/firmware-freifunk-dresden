@@ -6,6 +6,7 @@
 # create custom freifunk chains. This allows us to insert rules before fw4 rules
 # (generated from /etc/config/firewall)
 
+# -- counters ---
 chain ddmesh_input {counter;};
 chain ddmesh_forward {counter;};
 chain ddmesh_output {counter;};
@@ -20,3 +21,15 @@ chain ddmesh_mangle_output {counter;};
 
 chain ddmesh_dstnat {counter;};
 chain ddmesh_srcnat {counter;};
+
+# -- backbone chains ---
+chain ddmesh_backbone_input_accept {counter;};
+chain ddmesh_backbone_output_accept {counter;};
+chain ddmesh_backbone_input_reject {counter;};
+chain ddmesh_backbone_output_reject {counter;};
+
+# -- privnet chains ---
+chain ddmesh_privnet_input_accept {counter;};
+chain ddmesh_privnet_output_accept {counter;};
+chain ddmesh_privnet_input_reject {counter;};
+chain ddmesh_privnet_output_reject {counter;};

@@ -181,11 +181,11 @@ gen_download_json_start()
 # Die beiden folgenden Zeilen sind nur so lange notwendig, bis alle 8.x.x (openwrt 22) firmware router, für die es eine >9.0.0 (openwrt 24)
 # gibt, aktualisiert wurden.
 # TODO: diese beiden müssen dann rausgenommen werden !!!!!!
-  printf "    ${C_RED} gen-upload.sh temporär für upgrade auf 9.0.5 angepasst (hardcoded)\n"
+  printf "    ${C_RED} gen-upload.sh temporär für upgrade auf 9.0.6 angepasst (hardcoded)\n"
   printf "    -> muß wieder entfernt werden, wenn für alle openwrt 22 router, wo ein upgrade auf 24 möglich ist,\n"
   printf "    aktualisert wurden${C_NONE}\n"
   #--- begin --- block loeschen -
-	fw_version="9.0.5"
+	fw_version="9.0.6"
   printf " \"firmware_version\":\"$fw_version\",\n" >> $output_path/$OUTPUT_DOWNLOAD_JSON_FILENAME
   #--- end -----
 

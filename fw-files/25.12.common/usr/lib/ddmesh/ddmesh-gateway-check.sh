@@ -6,6 +6,7 @@
 
 DEBUG='true'
 LOGGER_TAG='GW_CHECK'
+LOCAL_GW_STATUS_FILE='/var/state/local_gateway_present'
 
 . /lib/functions/network.sh
 
@@ -191,6 +192,9 @@ do
 		printf 'gateway found: via [%s] dev [%s]\n' "$via" "$dev"
 		printf 'landev: [%s], wandev=[%s], vpndev=[%s], twan=[%s], wwan=[%s]\n' "$default_lan_ifname" "$default_wan_ifname" "$default_vpn_ifname" "$default_cwan_ifname" "$default_twan_ifname" "$default_wwan_ifname"
 
+		# update gw state (wg-register uses this)
+		touch "${LOCAL_GW_STATUS_FILE}"
+
 		#always add wan/wwan or lan to local gateway
 		if [ "$dev" = "$default_lan_ifname" -o "$dev" = "$default_wan_ifname" -o "$dev" = "$default_cwan_ifname" -o "$dev" = "$default_twan_ifname" -o "$dev" = "$default_wwan_ifname" ]; then
 			printf 'Set local gateway: dev:%s, ip:%s\n' "$dev" "$via"
@@ -241,6 +245,9 @@ if [ "$ok" != "1" ]; then
 	ip route flush table local_gateway 2>/dev/null
 	ip route flush table public_gateway 2>/dev/null
 	/usr/lib/ddmesh/ddmesh-bmxd.sh no_gateway
+
+	# update gw state (wg-register uses this)
+	rm -f "${LOCAL_GW_STATUS_FILE}"
 fi
 
 exit 0
