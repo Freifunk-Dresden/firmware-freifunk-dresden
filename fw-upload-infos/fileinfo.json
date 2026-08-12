@@ -2443,6 +2443,16 @@
       "model": "cudy,m3000-v1",
       "model2": "Cudy M3000 v1",
       "filename": "freifunk-dresden-v9.0.6-25.12.4-mediatek-filogic-cudy_m3000-v1-squashfs-sysupgrade.bin",
+      "comment": "Old openwrt model name"
+    },
+    {
+      "disabled": "0",
+      "name": "",
+      "sortkey": "mediatek-filogic-cudy_m3000-v1-squashfs-sysupgrade.bin",
+      "autoupdate": "0",
+      "model": "cudy,m3000-v1",
+      "model2": "Cudy M3000 v1/v2",
+      "filename": "freifunk-dresden-v9.0.6-25.12.4-mediatek-filogic-cudy_m3000-v1-squashfs-sysupgrade.bin",
       "comment": ""
     },
     {
