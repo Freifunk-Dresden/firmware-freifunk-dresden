@@ -1,0 +1,26 @@
+# sync master+tags from gitlab to github
+# ALWAYS use new cloned directory to avoid errors (we do not want to push branches)
+# to github (it is a sync)
+
+
+# get original gitlab firmware
+git clone ssh://git@gitlab.freifunk-dresden.de:2211/firmware-developer/firmware.git
+cd firmware
+
+# add github repo
+git remote add github git@github.com:Freifunk-Dresden/firmware-freifunk-dresden.git
+
+# show all remotes
+git branch -av
+
+
+# SYNC: directly to server (note: local working directory uses "origin" master, but tis is not relevant here)
+git push github master --tags
+
+
+# VERIFY
+git brancch -av
+git log --oneline
+
+
+
