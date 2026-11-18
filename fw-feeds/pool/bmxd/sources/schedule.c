@@ -18,6 +18,7 @@
  */
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
@@ -340,6 +341,26 @@ void remove_outstanding_ogms(struct batman_if *bif)
 	}
 }
 
+/* Return stored bytes, not snprintf's would-have-written length. */
+static int dbg_if_append(char *buffer, size_t size, const char *format, ...)
+	__attribute__((format(printf, 3, 4)));
+
+static int dbg_if_append(char *buffer, size_t size, const char *format, ...)
+{
+	va_list args;
+	int written;
+
+	if (!size)
+		return 0;
+	va_start(args, format);
+	written = vsnprintf(buffer, size, format, args);
+	va_end(args);
+	buffer[size - 1] = '\0';
+	if (written < 0)
+		return 0;
+	return (size_t)written < size ? written : (int)(size - 1);
+}
+
 static void aggregate_outstanding_ogms(void *unused)
 {
 	prof_start(PROF_send_outstanding_ogms);
@@ -421,7 +442,7 @@ static void aggregate_outstanding_ogms(void *unused)
 
 			if (!send_node->if_outgoing->if_active)
 			{
-				dbg_if_out += snprintf((dbg_if_str + dbg_if_out), (MAX_DBG_IF_SIZE - dbg_if_out), " (down)");
+				dbg_if_out += dbg_if_append((dbg_if_str + dbg_if_out), (MAX_DBG_IF_SIZE - dbg_if_out), " (down)");
 			}
 			/* stephan:
  OGM kommt entweder von aussen oder von localen interfaces.
@@ -471,7 +492,7 @@ static void aggregate_outstanding_ogms(void *unused)
 					!cloned &&
 					(unidirectional || ttl == 0))
 			{
-				dbg_if_out += snprintf((dbg_if_str + dbg_if_out), (MAX_DBG_IF_SIZE - dbg_if_out),
+				dbg_if_out += dbg_if_append((dbg_if_str + dbg_if_out), (MAX_DBG_IF_SIZE - dbg_if_out),
 															 " %-12s  (NBD)", send_node->if_outgoing->dev);
 
 				if ((send_node->send_bucket + 100) < send_node->if_outgoing->if_send_clones)
@@ -539,11 +560,11 @@ static void aggregate_outstanding_ogms(void *unused)
 
 					bif->aggregation_len += send_node->ogm_buff_len;
 
-					dbg_if_out += snprintf((dbg_if_str + dbg_if_out),
+					dbg_if_out += dbg_if_append((dbg_if_str + dbg_if_out),
 																 (MAX_DBG_IF_SIZE - dbg_if_out), " %-12s", bif->dev);
 
 					if (if_hide_interface && send_node->if_outgoing == bif)
-						dbg_if_out += snprintf((dbg_if_str + dbg_if_out),
+						dbg_if_out += dbg_if_append((dbg_if_str + dbg_if_out),
 																	 (MAX_DBG_IF_SIZE - dbg_if_out), "  (hide)");
 				}
 			}
